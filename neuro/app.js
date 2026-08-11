@@ -77,11 +77,17 @@ function findSdl(sdlNumber) {
 }
 
 function allQuestionsForExam(examNumber) {
+  // Excludes batch 3 (Bloom Batch) — that's an opt-in experimental trial, not part of
+  // the standard question pool used for exam totals, Full Exam Simulation, or the
+  // Custom Exam Builder's current/prior blend.
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
   if (!exam) return [];
   let qs = [];
   exam.sdls.forEach(sdl => {
-    sdl.questions.forEach(q => qs.push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title })));
+    sdl.questions.forEach(q => {
+      if (q.batch === 3) return;
+      qs.push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title }));
+    });
   });
   return qs;
 }
@@ -169,12 +175,14 @@ function renderExamSdlList(examNumber) {
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
   if (!exam) { renderHome(); return; }
 
-  const totalQ = exam.sdls.reduce((s, sdl) => s + sdl.questions.length, 0);
+  const totalQ = exam.sdls.reduce((s, sdl) => s + sdl.questions.filter(q => q.batch !== 3).length, 0);
   const estMinutes = Math.round(totalQ * 90 / 60);
 
   const rows = exam.sdls.map(sdl => {
     const key = `sdl-${sdl.sdlNumber}`;
     const score = getScore(key);
+    const regularCount = sdl.questions.filter(q => q.batch !== 3).length;
+    const bloomCount = sdl.questions.filter(q => q.batch === 3).length;
     const scoreHtml = score
       ? `<div class="sdl-score">Last: ${score.last.correct}/${score.last.total}${score.best.correct === score.last.correct && score.best.total === score.last.total ? '' : ` · Best: ${score.best.correct}/${score.best.total}`}</div>`
       : `<div class="sdl-score none">Not attempted</div>`;
@@ -182,7 +190,7 @@ function renderExamSdlList(examNumber) {
       <div class="sdl-row" data-sdl="${sdl.sdlNumber}">
         <div>
           <div class="sdl-title">${escapeHtml(sdl.title)}</div>
-          <div class="sdl-meta">${sdl.questions.length} questions</div>
+          <div class="sdl-meta">${regularCount} questions${bloomCount ? ` &middot; 🧠 ${bloomCount} Bloom Batch` : ''}</div>
         </div>
         ${scoreHtml}
       </div>`;
@@ -373,10 +381,18 @@ function renderBatchPicker(sdlNumber) {
 
   const batch1Count = sdl.questions.filter(q => q.batch === 1).length;
   const batch2Count = sdl.questions.filter(q => q.batch === 2).length;
+  const bloomCount = sdl.questions.filter(q => q.batch === 3).length;
+  const classicBoth = batch1Count > 0 && batch2Count > 0;
 
-  // If only one batch exists for this SDL, skip the picker entirely.
-  if (!(batch1Count > 0 && batch2Count > 0)) {
-    renderPracticeStart(sdlNumber, 'all');
+  // Build the list of selectable options. If there's only one, skip the picker entirely.
+  const options = [];
+  if (batch1Count) options.push({ key: '1', title: 'Batch 1 — Quick Recall', meta: `${batch1Count} questions`, scoreKey: `sdl-${sdlNumber}-b1` });
+  if (batch2Count) options.push({ key: '2', title: 'Batch 2 — Deep Vignettes', meta: `${batch2Count} questions`, scoreKey: `sdl-${sdlNumber}-b2` });
+  if (classicBoth) options.push({ key: 'all', title: 'Both Batches', meta: `${batch1Count + batch2Count} questions`, scoreKey: `sdl-${sdlNumber}` });
+  if (bloomCount) options.push({ key: '3', title: '🧠 Bloom Batch — Level 3/4 Trial', meta: `${bloomCount} questions · experimental, board-qbank style`, scoreKey: `sdl-${sdlNumber}-b3`, special: true });
+
+  if (options.length <= 1) {
+    renderPracticeStart(sdlNumber, options.length ? options[0].key : 'all');
     return;
   }
 
@@ -385,35 +401,21 @@ function renderBatchPicker(sdlNumber) {
     return s ? `<div class="sdl-score">Last: ${s.last.correct}/${s.last.total}</div>` : `<div class="sdl-score none">Not attempted</div>`;
   };
 
+  const rows = options.map(opt => `
+    <div class="sdl-row ${opt.special ? 'bloom-row' : ''}" data-batch="${opt.key}">
+      <div>
+        <div class="sdl-title">${opt.title}</div>
+        <div class="sdl-meta">${opt.meta}</div>
+      </div>
+      ${scoreFor(opt.scoreKey)}
+    </div>`).join('');
+
   main.innerHTML = `
     <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
     <h1>${escapeHtml(sdl.title)}</h1>
     <p class="subtitle">Choose which batch to practice.</p>
-    <div class="sdl-list">
-      ${batch1Count ? `
-      <div class="sdl-row" data-batch="1">
-        <div>
-          <div class="sdl-title">Batch 1 — Quick Recall</div>
-          <div class="sdl-meta">${batch1Count} questions</div>
-        </div>
-        ${scoreFor(`sdl-${sdlNumber}-b1`)}
-      </div>` : ''}
-      ${batch2Count ? `
-      <div class="sdl-row" data-batch="2">
-        <div>
-          <div class="sdl-title">Batch 2 — Deep Vignettes</div>
-          <div class="sdl-meta">${batch2Count} questions</div>
-        </div>
-        ${scoreFor(`sdl-${sdlNumber}-b2`)}
-      </div>` : ''}
-      <div class="sdl-row" data-batch="all">
-        <div>
-          <div class="sdl-title">Both Batches</div>
-          <div class="sdl-meta">${sdl.questions.length} questions</div>
-        </div>
-        ${scoreFor(`sdl-${sdlNumber}`)}
-      </div>
-    </div>
+    <div class="sdl-list">${rows}</div>
+    ${bloomCount ? '<p class="setup-hint" style="margin-top:14px;">Bloom Batch is an experimental higher-rigor trial — short single-term answer choices and board-qbank-style vignettes, kept separate from the regular batches.</p>' : ''}
   `;
 
   document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
@@ -430,11 +432,17 @@ function renderPracticeStart(sdlNumber, batch) {
 
   const batch1Count = sdl.questions.filter(q => q.batch === 1).length;
   const batch2Count = sdl.questions.filter(q => q.batch === 2).length;
-  const hasBatches = batch1Count > 0 && batch2Count > 0;
+  const hasClassicBatches = batch1Count > 0 && batch2Count > 0;
 
-  let questions = sdl.questions;
+  let questions = sdl.questions.filter(q => q.batch !== 3); // default/"all": classic batches only, never bloom
   let scoreKey = `sdl-${sdlNumber}`;
-  if (hasBatches && (batch === '1' || batch === '2')) {
+  let isBloom = false;
+
+  if (batch === '3') {
+    questions = sdl.questions.filter(q => q.batch === 3);
+    scoreKey = `sdl-${sdlNumber}-b3`;
+    isBloom = true;
+  } else if (hasClassicBatches && (batch === '1' || batch === '2')) {
     questions = sdl.questions.filter(q => q.batch === Number(batch));
     scoreKey = `sdl-${sdlNumber}-b${batch}`;
   }
@@ -444,6 +452,7 @@ function renderPracticeStart(sdlNumber, batch) {
     sdlNumber,
     examNumber,
     scoreKey,
+    isBloom,
     questions,
     index: 0,
     correctCount: 0,
@@ -486,6 +495,7 @@ function renderPracticeQuestion() {
 
   main.innerHTML = `
     <button class="back-link" id="backExam">&larr; Exam ${session.examNumber}</button>
+    ${session.isBloom ? '<div class="bloom-banner">🧠 Bloom Batch — Level 3/4 Trial (experimental, board-qbank style)</div>' : ''}
     <div class="quiz-header">
       <span class="quiz-progress">Question ${session.index + 1} of ${total}</span>
       <span class="quiz-score">Score: ${session.correctCount}/${session.index + (session.answered ? 1 : 0)}</span>
@@ -493,7 +503,7 @@ function renderPracticeQuestion() {
     <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
     <div class="q-card">
       <div class="q-meta-row">
-        <span class="q-objective">Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''}</span>
+        <span class="q-objective">Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''} ${q.bloomLevel ? `<span class="bloom-badge">${escapeHtml(q.bloomLevel)}</span>` : ''}</span>
         <button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button>
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>

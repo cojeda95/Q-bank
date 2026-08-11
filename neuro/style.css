@@ -211,6 +211,12 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 }
 .sdl-row .sdl-score.none { color: #aaa; font-weight: 400; }
 
+.sdl-row.bloom-row {
+  border-color: var(--purple);
+  background: var(--purple-bg);
+}
+.sdl-row.bloom-row .sdl-title { color: #4a148c; }
+
 .btn {
   background: var(--navy);
   color: #fff;
@@ -298,6 +304,21 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   font-weight: 700;
   color: var(--red);
   white-space: nowrap;
+}
+.bloom-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--purple);
+  white-space: nowrap;
+}
+.bloom-banner {
+  background: var(--purple-bg);
+  color: #4a148c;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  margin-bottom: 14px;
 }
 .flag-btn {
   background: none;
