@@ -574,10 +574,8 @@ function renderPracticeStart(sdlNumber, batch) {
     isBloom,
     questions,
     index: 0,
-    correctCount: 0,
-    answered: null,     // letter chosen for current question, or null
-    pendingLetter: null, // letter chosen but not yet confirmed with a confidence rating
-    confidence: null,    // 'guessed' | 'confident' for the current question
+    records: new Array(questions.length).fill(null), // {letter, confidence, correct} once answered, per question
+    pendingLetter: null, // letter chosen but not yet confirmed with a confidence rating (current question only)
   };
   renderPracticeQuestion();
 }
@@ -587,28 +585,28 @@ function renderPracticeQuestion() {
   const total = session.questions.length;
   const flagged = isFlagged(q.id);
   const letters = ['A', 'B', 'C', 'D', 'E'];
-  const locked = !!(session.answered || session.pendingLetter);
+  const record = session.records[session.index];
+  const answered = !!record;
 
   const choicesHtml = letters.map(letter => {
     let cls = 'choice';
-    if (session.answered) {
+    if (answered) {
       cls += ' disabled';
       if (letter === q.correct) cls += ' correct';
-      else if (letter === session.answered) cls += ' incorrect';
-    } else if (session.pendingLetter) {
-      cls += ' disabled';
-      if (letter === session.pendingLetter) cls += ' selected';
+      else if (letter === record.letter) cls += ' incorrect';
+    } else if (session.pendingLetter === letter) {
+      cls += ' selected';
     }
-    return `<button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
+    return `<button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
       <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
     </button>`;
   }).join('');
 
   let confidenceHtml = '';
-  if (session.pendingLetter && !session.answered) {
+  if (!answered && session.pendingLetter) {
     confidenceHtml = `
       <div class="confidence-prompt">
-        <div class="confidence-label">How confident were you in that answer?</div>
+        <div class="confidence-label">How confident were you in that answer? <span style="font-weight:400; color:var(--grey-text);">(tap a different choice to change it)</span></div>
         <div class="confidence-buttons">
           <button class="btn secondary" id="confGuessed">🤔 Guessed</button>
           <button class="btn" id="confConfident">💪 Confident</button>
@@ -617,25 +615,26 @@ function renderPracticeQuestion() {
   }
 
   let feedbackHtml = '';
-  if (session.answered) {
-    const wasCorrect = session.answered === q.correct;
+  if (answered) {
     feedbackHtml = `
-      <div class="feedback-banner ${wasCorrect ? 'correct' : 'incorrect'}">
-        ${wasCorrect ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
+      <div class="feedback-banner ${record.correct ? 'correct' : 'incorrect'}">
+        ${record.correct ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
       </div>
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
-      <div class="next-row"><button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next Question' : 'Finish'}</button></div>
     `;
   }
+
+  const answeredSoFar = session.records.filter(r => r).length;
+  const correctSoFar = session.records.filter(r => r && r.correct).length;
 
   main.innerHTML = `
     <button class="back-link" id="backExam">&larr; Exam ${session.examNumber}</button>
     ${session.isBloom ? '<div class="bloom-banner">🧠 Bloom Batch — Level 3/4 Trial (experimental, board-qbank style)</div>' : ''}
     <div class="quiz-header">
       <span class="quiz-progress">Question ${session.index + 1} of ${total}</span>
-      <span class="quiz-score">Score: ${session.correctCount}/${session.index + (session.answered ? 1 : 0)}</span>
+      <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}</span>
     </div>
     <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
     <div class="q-card">
@@ -647,6 +646,10 @@ function renderPracticeQuestion() {
       <div class="choice-list">${choicesHtml}</div>
       ${confidenceHtml}
       ${feedbackHtml}
+      <div class="next-row" style="justify-content: space-between;">
+        <button class="btn secondary" id="prevBtn" ${session.index === 0 ? 'disabled' : ''}>&larr; Previous</button>
+        ${answered ? `<button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next Question' : 'Finish'}</button>` : '<span></span>'}
+      </div>
     </div>
   `;
 
@@ -655,12 +658,19 @@ function renderPracticeQuestion() {
     toggleFlag(q.id);
     renderPracticeQuestion();
   });
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    if (session.index > 0) {
+      session.index--;
+      session.pendingLetter = null;
+      renderPracticeQuestion();
+    }
+  });
 
   function finalizeAnswer(confidence) {
-    session.answered = session.pendingLetter;
-    session.confidence = confidence;
-    const correct = session.answered === q.correct;
-    if (correct) session.correctCount++;
+    const letter = session.pendingLetter;
+    const correct = letter === q.correct;
+    session.records[session.index] = { letter, confidence, correct };
+    session.pendingLetter = null;
     logAttempt({
       id: q.id, sdlNumber: session.sdlNumber, sdlTitle: findSdl(session.sdlNumber).sdl.title,
       examNumber: session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
@@ -669,28 +679,27 @@ function renderPracticeQuestion() {
     renderPracticeQuestion();
   }
 
-  if (!session.pendingLetter && !session.answered) {
+  if (!answered) {
     main.querySelectorAll('.choice').forEach(btn => {
       btn.addEventListener('click', () => {
         session.pendingLetter = btn.dataset.letter;
         renderPracticeQuestion();
       });
     });
-  } else if (session.pendingLetter && !session.answered) {
-    document.getElementById('confGuessed').addEventListener('click', () => finalizeAnswer('guessed'));
-    document.getElementById('confConfident').addEventListener('click', () => finalizeAnswer('confident'));
+    const confGuessed = document.getElementById('confGuessed');
+    const confConfident = document.getElementById('confConfident');
+    if (confGuessed) confGuessed.addEventListener('click', () => finalizeAnswer('guessed'));
+    if (confConfident) confConfident.addEventListener('click', () => finalizeAnswer('confident'));
   } else {
     const nextBtn = document.getElementById('nextBtn');
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
         if (session.index + 1 < total) {
           session.index++;
-          session.answered = null;
           session.pendingLetter = null;
-          session.confidence = null;
           renderPracticeQuestion();
         } else {
-          recordScore(session.scoreKey, session.correctCount, total);
+          recordScore(session.scoreKey, correctSoFar, total);
           renderPracticeComplete();
         }
       });
@@ -700,11 +709,12 @@ function renderPracticeQuestion() {
 
 function renderPracticeComplete() {
   const total = session.questions.length;
-  const pct = Math.round((session.correctCount / total) * 100);
+  const correctCount = session.records.filter(r => r && r.correct).length;
+  const pct = Math.round((correctCount / total) * 100);
   main.innerHTML = `
     <div class="result-summary">
       <div class="big-pct">${pct}%</div>
-      <div class="sub">${session.correctCount} / ${total} correct</div>
+      <div class="sub">${correctCount} / ${total} correct</div>
     </div>
     <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
       <button class="btn secondary" id="retryBtn">Retry This Batch</button>
@@ -1008,10 +1018,8 @@ function renderFlaggedReview() {
     mode: 'flagged',
     questions: flaggedQuestions,
     index: 0,
-    correctCount: 0,
-    answered: null,
+    records: new Array(flaggedQuestions.length).fill(null),
     pendingLetter: null,
-    confidence: null,
   };
   renderFlaggedQuestion();
 }
@@ -1020,28 +1028,28 @@ function renderFlaggedQuestion() {
   const q = session.questions[session.index];
   const total = session.questions.length;
   const letters = ['A', 'B', 'C', 'D', 'E'];
-  const locked = !!(session.answered || session.pendingLetter);
+  const record = session.records[session.index];
+  const answered = !!record;
 
   const choicesHtml = letters.map(letter => {
     let cls = 'choice';
-    if (session.answered) {
+    if (answered) {
       cls += ' disabled';
       if (letter === q.correct) cls += ' correct';
-      else if (letter === session.answered) cls += ' incorrect';
-    } else if (session.pendingLetter) {
-      cls += ' disabled';
-      if (letter === session.pendingLetter) cls += ' selected';
+      else if (letter === record.letter) cls += ' incorrect';
+    } else if (session.pendingLetter === letter) {
+      cls += ' selected';
     }
-    return `<button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
+    return `<button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
       <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
     </button>`;
   }).join('');
 
   let confidenceHtml = '';
-  if (session.pendingLetter && !session.answered) {
+  if (!answered && session.pendingLetter) {
     confidenceHtml = `
       <div class="confidence-prompt">
-        <div class="confidence-label">How confident were you in that answer?</div>
+        <div class="confidence-label">How confident were you in that answer? <span style="font-weight:400; color:var(--grey-text);">(tap a different choice to change it)</span></div>
         <div class="confidence-buttons">
           <button class="btn secondary" id="confGuessed">🤔 Guessed</button>
           <button class="btn" id="confConfident">💪 Confident</button>
@@ -1050,23 +1058,24 @@ function renderFlaggedQuestion() {
   }
 
   let feedbackHtml = '';
-  if (session.answered) {
-    const wasCorrect = session.answered === q.correct;
+  if (answered) {
     feedbackHtml = `
-      <div class="feedback-banner ${wasCorrect ? 'correct' : 'incorrect'}">
-        ${wasCorrect ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
+      <div class="feedback-banner ${record.correct ? 'correct' : 'incorrect'}">
+        ${record.correct ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
       </div>
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
-      <div class="next-row"><button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next Question' : 'Finish'}</button></div>
     `;
   }
+
+  const answeredSoFar = session.records.filter(r => r).length;
+  const correctSoFar = session.records.filter(r => r && r.correct).length;
 
   main.innerHTML = `
     <button class="back-link" id="backHome">&larr; Home</button>
     <div class="quiz-header">
       <span class="quiz-progress">Flagged Review — Question ${session.index + 1} of ${total}</span>
-      <span class="quiz-score">Score: ${session.correctCount}/${session.index + (session.answered ? 1 : 0)}</span>
+      <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}</span>
     </div>
     <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
     <div class="q-card">
@@ -1078,6 +1087,10 @@ function renderFlaggedQuestion() {
       <div class="choice-list">${choicesHtml}</div>
       ${confidenceHtml}
       ${feedbackHtml}
+      <div class="next-row" style="justify-content: space-between;">
+        <button class="btn secondary" id="prevBtn" ${session.index === 0 ? 'disabled' : ''}>&larr; Previous</button>
+        ${answered ? `<button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next Question' : 'Finish'}</button>` : '<span></span>'}
+      </div>
     </div>
   `;
 
@@ -1087,12 +1100,19 @@ function renderFlaggedQuestion() {
     // Refresh this same view (item stays visible until navigating away).
     renderFlaggedQuestion();
   });
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    if (session.index > 0) {
+      session.index--;
+      session.pendingLetter = null;
+      renderFlaggedQuestion();
+    }
+  });
 
   function finalizeAnswer(confidence) {
-    session.answered = session.pendingLetter;
-    session.confidence = confidence;
-    const correct = session.answered === q.correct;
-    if (correct) session.correctCount++;
+    const letter = session.pendingLetter;
+    const correct = letter === q.correct;
+    session.records[session.index] = { letter, confidence, correct };
+    session.pendingLetter = null;
     logAttempt({
       id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
       objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
@@ -1101,25 +1121,24 @@ function renderFlaggedQuestion() {
     renderFlaggedQuestion();
   }
 
-  if (!session.pendingLetter && !session.answered) {
+  if (!answered) {
     main.querySelectorAll('.choice').forEach(btn => {
       btn.addEventListener('click', () => {
         session.pendingLetter = btn.dataset.letter;
         renderFlaggedQuestion();
       });
     });
-  } else if (session.pendingLetter && !session.answered) {
-    document.getElementById('confGuessed').addEventListener('click', () => finalizeAnswer('guessed'));
-    document.getElementById('confConfident').addEventListener('click', () => finalizeAnswer('confident'));
+    const confGuessed = document.getElementById('confGuessed');
+    const confConfident = document.getElementById('confConfident');
+    if (confGuessed) confGuessed.addEventListener('click', () => finalizeAnswer('guessed'));
+    if (confConfident) confConfident.addEventListener('click', () => finalizeAnswer('confident'));
   } else {
     const nextBtn = document.getElementById('nextBtn');
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
         if (session.index + 1 < total) {
           session.index++;
-          session.answered = null;
           session.pendingLetter = null;
-          session.confidence = null;
           renderFlaggedQuestion();
         } else {
           setRoute('');
@@ -1170,10 +1189,8 @@ function renderReviewQueue() {
     mode: 'review',
     questions: shuffle(qs),
     index: 0,
-    correctCount: 0,
-    answered: null,
+    records: new Array(qs.length).fill(null),
     pendingLetter: null,
-    confidence: null,
   };
   renderReviewQuestion();
 }
@@ -1183,28 +1200,28 @@ function renderReviewQuestion() {
   const total = session.questions.length;
   const flagged = isFlagged(q.id);
   const letters = ['A', 'B', 'C', 'D', 'E'];
-  const locked = !!(session.answered || session.pendingLetter);
+  const record = session.records[session.index];
+  const answered = !!record;
 
   const choicesHtml = letters.map(letter => {
     let cls = 'choice';
-    if (session.answered) {
+    if (answered) {
       cls += ' disabled';
       if (letter === q.correct) cls += ' correct';
-      else if (letter === session.answered) cls += ' incorrect';
-    } else if (session.pendingLetter) {
-      cls += ' disabled';
-      if (letter === session.pendingLetter) cls += ' selected';
+      else if (letter === record.letter) cls += ' incorrect';
+    } else if (session.pendingLetter === letter) {
+      cls += ' selected';
     }
-    return `<button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
+    return `<button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
       <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
     </button>`;
   }).join('');
 
   let confidenceHtml = '';
-  if (session.pendingLetter && !session.answered) {
+  if (!answered && session.pendingLetter) {
     confidenceHtml = `
       <div class="confidence-prompt">
-        <div class="confidence-label">How confident were you in that answer?</div>
+        <div class="confidence-label">How confident were you in that answer? <span style="font-weight:400; color:var(--grey-text);">(tap a different choice to change it)</span></div>
         <div class="confidence-buttons">
           <button class="btn secondary" id="confGuessed">🤔 Guessed</button>
           <button class="btn" id="confConfident">💪 Confident</button>
@@ -1213,24 +1230,25 @@ function renderReviewQuestion() {
   }
 
   let feedbackHtml = '';
-  if (session.answered) {
-    const wasCorrect = session.answered === q.correct;
+  if (answered) {
     feedbackHtml = `
-      <div class="feedback-banner ${wasCorrect ? 'correct' : 'incorrect'}">
-        ${wasCorrect ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
+      <div class="feedback-banner ${record.correct ? 'correct' : 'incorrect'}">
+        ${record.correct ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
       </div>
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
-      <div class="next-row"><button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next Question' : 'Finish'}</button></div>
     `;
   }
+
+  const answeredSoFar = session.records.filter(r => r).length;
+  const correctSoFar = session.records.filter(r => r && r.correct).length;
 
   main.innerHTML = `
     <button class="back-link" id="backHome">&larr; Home</button>
     <div class="quiz-header">
       <span class="quiz-progress">Review Due — Question ${session.index + 1} of ${total}</span>
-      <span class="quiz-score">Score: ${session.correctCount}/${session.index + (session.answered ? 1 : 0)}</span>
+      <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}</span>
     </div>
     <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
     <div class="q-card">
@@ -1242,6 +1260,10 @@ function renderReviewQuestion() {
       <div class="choice-list">${choicesHtml}</div>
       ${confidenceHtml}
       ${feedbackHtml}
+      <div class="next-row" style="justify-content: space-between;">
+        <button class="btn secondary" id="prevBtn" ${session.index === 0 ? 'disabled' : ''}>&larr; Previous</button>
+        ${answered ? `<button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next Question' : 'Finish'}</button>` : '<span></span>'}
+      </div>
     </div>
   `;
 
@@ -1250,12 +1272,19 @@ function renderReviewQuestion() {
     toggleFlag(q.id);
     renderReviewQuestion();
   });
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    if (session.index > 0) {
+      session.index--;
+      session.pendingLetter = null;
+      renderReviewQuestion();
+    }
+  });
 
   function finalizeAnswer(confidence) {
-    session.answered = session.pendingLetter;
-    session.confidence = confidence;
-    const correct = session.answered === q.correct;
-    if (correct) session.correctCount++;
+    const letter = session.pendingLetter;
+    const correct = letter === q.correct;
+    session.records[session.index] = { letter, confidence, correct };
+    session.pendingLetter = null;
     logAttempt({
       id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
       objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
@@ -1264,25 +1293,24 @@ function renderReviewQuestion() {
     renderReviewQuestion();
   }
 
-  if (!session.pendingLetter && !session.answered) {
+  if (!answered) {
     main.querySelectorAll('.choice').forEach(btn => {
       btn.addEventListener('click', () => {
         session.pendingLetter = btn.dataset.letter;
         renderReviewQuestion();
       });
     });
-  } else if (session.pendingLetter && !session.answered) {
-    document.getElementById('confGuessed').addEventListener('click', () => finalizeAnswer('guessed'));
-    document.getElementById('confConfident').addEventListener('click', () => finalizeAnswer('confident'));
+    const confGuessed = document.getElementById('confGuessed');
+    const confConfident = document.getElementById('confConfident');
+    if (confGuessed) confGuessed.addEventListener('click', () => finalizeAnswer('guessed'));
+    if (confConfident) confConfident.addEventListener('click', () => finalizeAnswer('confident'));
   } else {
     const nextBtn = document.getElementById('nextBtn');
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
         if (session.index + 1 < total) {
           session.index++;
-          session.answered = null;
           session.pendingLetter = null;
-          session.confidence = null;
           renderReviewQuestion();
         } else {
           setRoute('');
