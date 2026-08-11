@@ -10,6 +10,9 @@ const homeBtn = document.getElementById('homeBtn');
 
 const LS_FLAGS = 'neuro_flags_v1';
 const LS_PROGRESS = 'neuro_progress_v1';
+const LS_ATTEMPTS = 'neuro_attempts_v1';
+const LS_SETTINGS = 'neuro_settings_v1';
+const MAX_ATTEMPTS_STORED = 5000;
 
 /* ── localStorage helpers ────────────────────────────────────────────── */
 function loadFlags() {
@@ -53,6 +56,44 @@ function getScore(key) {
   return progress[key] || null;
 }
 
+/* ── Attempt log (powers Analytics + Review Due) ─────────────────────── */
+function loadAttempts() {
+  try { return JSON.parse(localStorage.getItem(LS_ATTEMPTS)) || []; }
+  catch (e) { return []; }
+}
+function saveAttempts(list) {
+  // Cap growth so localStorage never bloats over a semester of use.
+  localStorage.setItem(LS_ATTEMPTS, JSON.stringify(list.slice(-MAX_ATTEMPTS_STORED)));
+}
+function logAttempt(rec) {
+  const list = loadAttempts();
+  list.push(rec);
+  saveAttempts(list);
+}
+function lastAttemptMap() {
+  // Later entries overwrite earlier ones, so this reflects the most recent
+  // outcome per question — a question you missed once but have since
+  // answered correctly no longer counts as "missed."
+  const list = loadAttempts();
+  const map = {};
+  list.forEach(a => { map[a.id] = a; });
+  return map;
+}
+
+/* ── Settings (High-Yield Only mode) ─────────────────────────────────── */
+function loadSettings() {
+  try { return Object.assign({ hyOnly: false }, JSON.parse(localStorage.getItem(LS_SETTINGS)) || {}); }
+  catch (e) { return { hyOnly: false }; }
+}
+function saveSettings(s) {
+  localStorage.setItem(LS_SETTINGS, JSON.stringify(s));
+}
+// Returns an SDL's questions filtered to high-yield-only if that mode is on.
+function visibleQuestions(sdl) {
+  const s = loadSettings();
+  return s.hyOnly ? sdl.questions.filter(q => q.isHighYield) : sdl.questions;
+}
+
 /* ── Utilities ────────────────────────────────────────────────────────── */
 function escapeHtml(str) {
   if (str == null) return '';
@@ -79,13 +120,15 @@ function findSdl(sdlNumber) {
 function allQuestionsForExam(examNumber) {
   // Excludes batch 3 (Bloom Batch) — that's an opt-in experimental trial, not part of
   // the standard question pool used for exam totals, Full Exam Simulation, or the
-  // Custom Exam Builder's current/prior blend.
+  // Custom Exam Builder's current/prior blend. Also respects High-Yield Only mode.
+  const settings = loadSettings();
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
   if (!exam) return [];
   let qs = [];
   exam.sdls.forEach(sdl => {
     sdl.questions.forEach(q => {
       if (q.batch === 3) return;
+      if (settings.hyOnly && !q.isHighYield) return;
       qs.push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title }));
     });
   });
@@ -130,6 +173,12 @@ function render() {
     renderExamSimStart(parseInt(parts[1], 10));
   } else if (parts[0] === 'flagged') {
     renderFlaggedReview();
+  } else if (parts[0] === 'review') {
+    renderReviewQueue();
+  } else if (parts[0] === 'analytics') {
+    renderAnalytics();
+  } else if (parts[0] === 'studysheet') {
+    renderStudySheet();
   } else {
     renderHome();
   }
@@ -149,25 +198,71 @@ function renderHome() {
   }).join('');
 
   const flagCount = Object.keys(loadFlags()).length;
+  const attempts = loadAttempts();
+
+  const map = lastAttemptMap();
+  const reviewIds = new Set();
+  Object.keys(map).forEach(id => { if (!map[id].correct) reviewIds.add(id); });
+  Object.keys(loadFlags()).forEach(id => reviewIds.add(id));
+  const reviewCount = reviewIds.size;
+
+  const settings = loadSettings();
 
   main.innerHTML = `
     <h1>Neuro Block Question Bank</h1>
-    <p class="subtitle">Choose an exam block to practice by SDL or run a full timed simulation.</p>
+    <p class="subtitle">Choose an exam block to practice by SDL or run a full timed simulation.${settings.hyOnly ? ' <strong>⚡ High-Yield Only Mode is ON.</strong>' : ''}</p>
     <div class="exam-grid">${examCards}</div>
-    <div class="section-label">Review</div>
+
+    <div class="section-label">Study Tools</div>
+    <div class="action-card" id="analyticsCard">
+      <span class="icon">📊</span>
+      <div>
+        <div class="sdl-title">Performance Analytics</div>
+        <div class="action-label">${attempts.length ? `${attempts.length} answers logged — see your weakest objectives` : 'Answer some questions to unlock this'}</div>
+      </div>
+    </div>
+    <div class="action-card" id="reviewCard">
+      <span class="icon">🔁</span>
+      <div>
+        <div class="sdl-title">Review Due (Missed + Flagged)</div>
+        <div class="action-label">${reviewCount} question${reviewCount === 1 ? '' : 's'} to revisit</div>
+      </div>
+    </div>
+    <div class="action-card" id="sheetCard">
+      <span class="icon">📄</span>
+      <div>
+        <div class="sdl-title">Export Study Sheet</div>
+        <div class="action-label">Printable list of missed + flagged questions, with explanations</div>
+      </div>
+    </div>
     <div class="action-card" id="flaggedCard">
       <span class="icon">&#9733;</span>
       <div>
-        <div class="sdl-title">Review Flagged Questions</div>
+        <div class="sdl-title">Review Flagged Only</div>
         <div class="action-label">${flagCount} question${flagCount === 1 ? '' : 's'} currently flagged, across all SDLs</div>
       </div>
     </div>
+
+    <div class="section-label">Settings</div>
+    <label class="radio-option" style="cursor:pointer;">
+      <input type="checkbox" id="hyToggle" ${settings.hyOnly ? 'checked' : ''}>
+      <span>⚡ High-Yield Only Mode — restrict Practice and Exam Simulation to questions tagged high-yield</span>
+    </label>
   `;
 
   main.querySelectorAll('.exam-card').forEach(card => {
     card.addEventListener('click', () => setRoute(`exam-sdls/${card.dataset.exam}`));
   });
   document.getElementById('flaggedCard').addEventListener('click', () => setRoute('flagged'));
+  document.getElementById('reviewCard').addEventListener('click', () => setRoute('review'));
+  document.getElementById('analyticsCard').addEventListener('click', () => setRoute('analytics'));
+  document.getElementById('sheetCard').addEventListener('click', () => setRoute('studysheet'));
+  document.getElementById('hyToggle').addEventListener('change', (e) => {
+    const s = loadSettings();
+    s.hyOnly = e.target.checked;
+    saveSettings(s);
+    renderHome();
+  });
 }
 
 /* ── Per-exam SDL selection screen ───────────────────────────────────── */
@@ -175,14 +270,16 @@ function renderExamSdlList(examNumber) {
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
   if (!exam) { renderHome(); return; }
 
-  const totalQ = exam.sdls.reduce((s, sdl) => s + sdl.questions.filter(q => q.batch !== 3).length, 0);
+  const settings = loadSettings();
+  const totalQ = exam.sdls.reduce((s, sdl) => s + visibleQuestions(sdl).filter(q => q.batch !== 3).length, 0);
   const estMinutes = Math.round(totalQ * 90 / 60);
 
   const rows = exam.sdls.map(sdl => {
     const key = `sdl-${sdl.sdlNumber}`;
     const score = getScore(key);
-    const regularCount = sdl.questions.filter(q => q.batch !== 3).length;
-    const bloomCount = sdl.questions.filter(q => q.batch === 3).length;
+    const visible = visibleQuestions(sdl);
+    const regularCount = visible.filter(q => q.batch !== 3).length;
+    const bloomCount = visible.filter(q => q.batch === 3).length;
     const scoreHtml = score
       ? `<div class="sdl-score">Last: ${score.last.correct}/${score.last.total}${score.best.correct === score.last.correct && score.best.total === score.last.total ? '' : ` · Best: ${score.best.correct}/${score.best.total}`}</div>`
       : `<div class="sdl-score none">Not attempted</div>`;
@@ -199,7 +296,7 @@ function renderExamSdlList(examNumber) {
   main.innerHTML = `
     <button class="back-link" id="backHome">&larr; All Exams</button>
     <h1>Exam ${examNumber}</h1>
-    <p class="subtitle">${exam.sdls.length} SDLs · ${totalQ} total questions</p>
+    <p class="subtitle">${exam.sdls.length} SDLs · ${totalQ} total questions${settings.hyOnly ? ' · <strong>⚡ High-Yield Only Mode is ON</strong>' : ''}</p>
     <div class="action-card" id="fullSimCard">
       <span class="icon">&#9201;</span>
       <div>
@@ -378,10 +475,12 @@ function renderBatchPicker(sdlNumber) {
   const found = findSdl(sdlNumber);
   if (!found) { renderHome(); return; }
   const { sdl, examNumber } = found;
+  const settings = loadSettings();
+  const visible = visibleQuestions(sdl);
 
-  const batch1Count = sdl.questions.filter(q => q.batch === 1).length;
-  const batch2Count = sdl.questions.filter(q => q.batch === 2).length;
-  const bloomCount = sdl.questions.filter(q => q.batch === 3).length;
+  const batch1Count = visible.filter(q => q.batch === 1).length;
+  const batch2Count = visible.filter(q => q.batch === 2).length;
+  const bloomCount = visible.filter(q => q.batch === 3).length;
   const classicBoth = batch1Count > 0 && batch2Count > 0;
 
   // Build the list of selectable options. If there's only one, skip the picker entirely.
@@ -391,8 +490,17 @@ function renderBatchPicker(sdlNumber) {
   if (classicBoth) options.push({ key: 'all', title: 'Both Batches', meta: `${batch1Count + batch2Count} questions`, scoreKey: `sdl-${sdlNumber}` });
   if (bloomCount) options.push({ key: '3', title: '🧠 Bloom Batch — Level 3/4 Trial', meta: `${bloomCount} questions · experimental, board-qbank style`, scoreKey: `sdl-${sdlNumber}-b3`, special: true });
 
-  if (options.length <= 1) {
-    renderPracticeStart(sdlNumber, options.length ? options[0].key : 'all');
+  if (options.length === 0) {
+    main.innerHTML = `
+      <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
+      <h1>${escapeHtml(sdl.title)}</h1>
+      <p class="empty-state">No high-yield questions in this SDL. Turn off High-Yield Only Mode on the Home screen to practice all questions here.</p>
+    `;
+    document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
+    return;
+  }
+  if (options.length === 1) {
+    renderPracticeStart(sdlNumber, options[0].key);
     return;
   }
 
@@ -413,7 +521,7 @@ function renderBatchPicker(sdlNumber) {
   main.innerHTML = `
     <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
     <h1>${escapeHtml(sdl.title)}</h1>
-    <p class="subtitle">Choose which batch to practice.</p>
+    <p class="subtitle">Choose which batch to practice.${settings.hyOnly ? ' <strong>⚡ High-Yield Only Mode is ON</strong> — counts below are already filtered.' : ''}</p>
     <div class="sdl-list">${rows}</div>
     ${bloomCount ? '<p class="setup-hint" style="margin-top:14px;">Bloom Batch is an experimental higher-rigor trial — short single-term answer choices and board-qbank-style vignettes, kept separate from the regular batches.</p>' : ''}
   `;
@@ -429,22 +537,33 @@ function renderPracticeStart(sdlNumber, batch) {
   const found = findSdl(sdlNumber);
   if (!found) { renderHome(); return; }
   const { sdl, examNumber } = found;
+  const baseQuestions = visibleQuestions(sdl);
 
-  const batch1Count = sdl.questions.filter(q => q.batch === 1).length;
-  const batch2Count = sdl.questions.filter(q => q.batch === 2).length;
+  const batch1Count = baseQuestions.filter(q => q.batch === 1).length;
+  const batch2Count = baseQuestions.filter(q => q.batch === 2).length;
   const hasClassicBatches = batch1Count > 0 && batch2Count > 0;
 
-  let questions = sdl.questions.filter(q => q.batch !== 3); // default/"all": classic batches only, never bloom
+  let questions = baseQuestions.filter(q => q.batch !== 3); // default/"all": classic batches only, never bloom
   let scoreKey = `sdl-${sdlNumber}`;
   let isBloom = false;
 
   if (batch === '3') {
-    questions = sdl.questions.filter(q => q.batch === 3);
+    questions = baseQuestions.filter(q => q.batch === 3);
     scoreKey = `sdl-${sdlNumber}-b3`;
     isBloom = true;
   } else if (hasClassicBatches && (batch === '1' || batch === '2')) {
-    questions = sdl.questions.filter(q => q.batch === Number(batch));
+    questions = baseQuestions.filter(q => q.batch === Number(batch));
     scoreKey = `sdl-${sdlNumber}-b${batch}`;
+  }
+
+  if (questions.length === 0) {
+    main.innerHTML = `
+      <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
+      <h1>${escapeHtml(sdl.title)}</h1>
+      <p class="empty-state">No questions match the current filters (High-Yield Only Mode is likely on). Turn it off on the Home screen, or pick a different batch.</p>
+    `;
+    document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
+    return;
   }
 
   session = {
@@ -456,7 +575,9 @@ function renderPracticeStart(sdlNumber, batch) {
     questions,
     index: 0,
     correctCount: 0,
-    answered: null, // letter chosen for current question, or null
+    answered: null,     // letter chosen for current question, or null
+    pendingLetter: null, // letter chosen but not yet confirmed with a confidence rating
+    confidence: null,    // 'guessed' | 'confident' for the current question
   };
   renderPracticeQuestion();
 }
@@ -466,6 +587,7 @@ function renderPracticeQuestion() {
   const total = session.questions.length;
   const flagged = isFlagged(q.id);
   const letters = ['A', 'B', 'C', 'D', 'E'];
+  const locked = !!(session.answered || session.pendingLetter);
 
   const choicesHtml = letters.map(letter => {
     let cls = 'choice';
@@ -473,11 +595,26 @@ function renderPracticeQuestion() {
       cls += ' disabled';
       if (letter === q.correct) cls += ' correct';
       else if (letter === session.answered) cls += ' incorrect';
+    } else if (session.pendingLetter) {
+      cls += ' disabled';
+      if (letter === session.pendingLetter) cls += ' selected';
     }
-    return `<button class="${cls}" data-letter="${letter}" ${session.answered ? 'disabled' : ''}>
+    return `<button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
       <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
     </button>`;
   }).join('');
+
+  let confidenceHtml = '';
+  if (session.pendingLetter && !session.answered) {
+    confidenceHtml = `
+      <div class="confidence-prompt">
+        <div class="confidence-label">How confident were you in that answer?</div>
+        <div class="confidence-buttons">
+          <button class="btn secondary" id="confGuessed">🤔 Guessed</button>
+          <button class="btn" id="confConfident">💪 Confident</button>
+        </div>
+      </div>`;
+  }
 
   let feedbackHtml = '';
   if (session.answered) {
@@ -508,6 +645,7 @@ function renderPracticeQuestion() {
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
       <div class="choice-list">${choicesHtml}</div>
+      ${confidenceHtml}
       ${feedbackHtml}
     </div>
   `;
@@ -518,14 +656,29 @@ function renderPracticeQuestion() {
     renderPracticeQuestion();
   });
 
-  if (!session.answered) {
+  function finalizeAnswer(confidence) {
+    session.answered = session.pendingLetter;
+    session.confidence = confidence;
+    const correct = session.answered === q.correct;
+    if (correct) session.correctCount++;
+    logAttempt({
+      id: q.id, sdlNumber: session.sdlNumber, sdlTitle: findSdl(session.sdlNumber).sdl.title,
+      examNumber: session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
+      batch: q.batch, correct, confidence, mode: 'practice', ts: Date.now(),
+    });
+    renderPracticeQuestion();
+  }
+
+  if (!session.pendingLetter && !session.answered) {
     main.querySelectorAll('.choice').forEach(btn => {
       btn.addEventListener('click', () => {
-        session.answered = btn.dataset.letter;
-        if (session.answered === q.correct) session.correctCount++;
+        session.pendingLetter = btn.dataset.letter;
         renderPracticeQuestion();
       });
     });
+  } else if (session.pendingLetter && !session.answered) {
+    document.getElementById('confGuessed').addEventListener('click', () => finalizeAnswer('guessed'));
+    document.getElementById('confConfident').addEventListener('click', () => finalizeAnswer('confident'));
   } else {
     const nextBtn = document.getElementById('nextBtn');
     if (nextBtn) {
@@ -533,6 +686,8 @@ function renderPracticeQuestion() {
         if (session.index + 1 < total) {
           session.index++;
           session.answered = null;
+          session.pendingLetter = null;
+          session.confidence = null;
           renderPracticeQuestion();
         } else {
           recordScore(session.scoreKey, session.correctCount, total);
@@ -567,6 +722,14 @@ function renderExamSimStart(examNumber) {
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
   if (!exam) { renderHome(); return; }
   const questions = shuffleExamQuestions(allQuestionsForExam(examNumber));
+  if (questions.length === 0) {
+    main.innerHTML = `
+      <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
+      <p class="empty-state">No questions match High-Yield Only Mode for this exam. Turn it off on the Home screen to run a full simulation.</p>
+    `;
+    document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
+    return;
+  }
   beginExamSession(examNumber, questions);
 }
 
@@ -715,6 +878,17 @@ function finishExamSim(timeExpired) {
 
   recordScore(`exam-${session.examNumber}`, correctCount, total);
 
+  // Log every question in this simulation to the attempts history (no confidence
+  // rating is collected in timed exam mode — that's reserved for practice/review).
+  session.questions.forEach((q, i) => {
+    const ans = session.answers[i];
+    logAttempt({
+      id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle,
+      examNumber: q.sourceExamNumber || session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
+      batch: q.batch, correct: ans === q.correct, confidence: null, mode: 'exam', ts: Date.now(),
+    });
+  });
+
   const bySource = {}; // 'current' | 'prior' -> {correct, total, examNumber}
   session.questions.forEach((q, i) => {
     if (!q.sourceTag) return;
@@ -836,6 +1010,8 @@ function renderFlaggedReview() {
     index: 0,
     correctCount: 0,
     answered: null,
+    pendingLetter: null,
+    confidence: null,
   };
   renderFlaggedQuestion();
 }
@@ -844,6 +1020,7 @@ function renderFlaggedQuestion() {
   const q = session.questions[session.index];
   const total = session.questions.length;
   const letters = ['A', 'B', 'C', 'D', 'E'];
+  const locked = !!(session.answered || session.pendingLetter);
 
   const choicesHtml = letters.map(letter => {
     let cls = 'choice';
@@ -851,11 +1028,26 @@ function renderFlaggedQuestion() {
       cls += ' disabled';
       if (letter === q.correct) cls += ' correct';
       else if (letter === session.answered) cls += ' incorrect';
+    } else if (session.pendingLetter) {
+      cls += ' disabled';
+      if (letter === session.pendingLetter) cls += ' selected';
     }
-    return `<button class="${cls}" data-letter="${letter}" ${session.answered ? 'disabled' : ''}>
+    return `<button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
       <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
     </button>`;
   }).join('');
+
+  let confidenceHtml = '';
+  if (session.pendingLetter && !session.answered) {
+    confidenceHtml = `
+      <div class="confidence-prompt">
+        <div class="confidence-label">How confident were you in that answer?</div>
+        <div class="confidence-buttons">
+          <button class="btn secondary" id="confGuessed">🤔 Guessed</button>
+          <button class="btn" id="confConfident">💪 Confident</button>
+        </div>
+      </div>`;
+  }
 
   let feedbackHtml = '';
   if (session.answered) {
@@ -884,6 +1076,7 @@ function renderFlaggedQuestion() {
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
       <div class="choice-list">${choicesHtml}</div>
+      ${confidenceHtml}
       ${feedbackHtml}
     </div>
   `;
@@ -895,14 +1088,29 @@ function renderFlaggedQuestion() {
     renderFlaggedQuestion();
   });
 
-  if (!session.answered) {
+  function finalizeAnswer(confidence) {
+    session.answered = session.pendingLetter;
+    session.confidence = confidence;
+    const correct = session.answered === q.correct;
+    if (correct) session.correctCount++;
+    logAttempt({
+      id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
+      objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
+      correct, confidence, mode: 'flagged', ts: Date.now(),
+    });
+    renderFlaggedQuestion();
+  }
+
+  if (!session.pendingLetter && !session.answered) {
     main.querySelectorAll('.choice').forEach(btn => {
       btn.addEventListener('click', () => {
-        session.answered = btn.dataset.letter;
-        if (session.answered === q.correct) session.correctCount++;
+        session.pendingLetter = btn.dataset.letter;
         renderFlaggedQuestion();
       });
     });
+  } else if (session.pendingLetter && !session.answered) {
+    document.getElementById('confGuessed').addEventListener('click', () => finalizeAnswer('guessed'));
+    document.getElementById('confConfident').addEventListener('click', () => finalizeAnswer('confident'));
   } else {
     const nextBtn = document.getElementById('nextBtn');
     if (nextBtn) {
@@ -910,6 +1118,8 @@ function renderFlaggedQuestion() {
         if (session.index + 1 < total) {
           session.index++;
           session.answered = null;
+          session.pendingLetter = null;
+          session.confidence = null;
           renderFlaggedQuestion();
         } else {
           setRoute('');
@@ -917,6 +1127,301 @@ function renderFlaggedQuestion() {
       });
     }
   }
+}
+
+/* ── Review Due (missed + flagged, combined) ─────────────────────────── */
+function reviewDueIds() {
+  const map = lastAttemptMap();
+  const ids = new Set();
+  Object.keys(map).forEach(id => { if (!map[id].correct) ids.add(id); });
+  Object.keys(loadFlags()).forEach(id => ids.add(id));
+  return ids;
+}
+
+function reviewDueQuestions() {
+  const ids = reviewDueIds();
+  const qs = [];
+  DATA.exams.forEach(exam => {
+    exam.sdls.forEach(sdl => {
+      sdl.questions.forEach(q => {
+        if (ids.has(q.id)) {
+          qs.push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title, examNumber: exam.examNumber }));
+        }
+      });
+    });
+  });
+  return qs;
+}
+
+function renderReviewQueue() {
+  const qs = reviewDueQuestions();
+
+  if (qs.length === 0) {
+    main.innerHTML = `
+      <button class="back-link" id="backHome">&larr; Home</button>
+      <h1>Review Due</h1>
+      <p class="empty-state">Nothing missed or flagged right now — you're all caught up. Keep practicing and this will fill in automatically.</p>
+    `;
+    document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+    return;
+  }
+
+  session = {
+    mode: 'review',
+    questions: shuffle(qs),
+    index: 0,
+    correctCount: 0,
+    answered: null,
+    pendingLetter: null,
+    confidence: null,
+  };
+  renderReviewQuestion();
+}
+
+function renderReviewQuestion() {
+  const q = session.questions[session.index];
+  const total = session.questions.length;
+  const flagged = isFlagged(q.id);
+  const letters = ['A', 'B', 'C', 'D', 'E'];
+  const locked = !!(session.answered || session.pendingLetter);
+
+  const choicesHtml = letters.map(letter => {
+    let cls = 'choice';
+    if (session.answered) {
+      cls += ' disabled';
+      if (letter === q.correct) cls += ' correct';
+      else if (letter === session.answered) cls += ' incorrect';
+    } else if (session.pendingLetter) {
+      cls += ' disabled';
+      if (letter === session.pendingLetter) cls += ' selected';
+    }
+    return `<button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
+      <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
+    </button>`;
+  }).join('');
+
+  let confidenceHtml = '';
+  if (session.pendingLetter && !session.answered) {
+    confidenceHtml = `
+      <div class="confidence-prompt">
+        <div class="confidence-label">How confident were you in that answer?</div>
+        <div class="confidence-buttons">
+          <button class="btn secondary" id="confGuessed">🤔 Guessed</button>
+          <button class="btn" id="confConfident">💪 Confident</button>
+        </div>
+      </div>`;
+  }
+
+  let feedbackHtml = '';
+  if (session.answered) {
+    const wasCorrect = session.answered === q.correct;
+    feedbackHtml = `
+      <div class="feedback-banner ${wasCorrect ? 'correct' : 'incorrect'}">
+        ${wasCorrect ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
+      </div>
+      <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
+      ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
+      ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
+      <div class="next-row"><button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next Question' : 'Finish'}</button></div>
+    `;
+  }
+
+  main.innerHTML = `
+    <button class="back-link" id="backHome">&larr; Home</button>
+    <div class="quiz-header">
+      <span class="quiz-progress">Review Due — Question ${session.index + 1} of ${total}</span>
+      <span class="quiz-score">Score: ${session.correctCount}/${session.index + (session.answered ? 1 : 0)}</span>
+    </div>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
+    <div class="q-card">
+      <div class="q-meta-row">
+        <span class="q-objective">${escapeHtml(q.sdlTitle)} · Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''}</span>
+        <button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button>
+      </div>
+      <div class="q-stem">${escapeHtml(q.stem)}</div>
+      <div class="choice-list">${choicesHtml}</div>
+      ${confidenceHtml}
+      ${feedbackHtml}
+    </div>
+  `;
+
+  document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+  document.getElementById('flagBtn').addEventListener('click', () => {
+    toggleFlag(q.id);
+    renderReviewQuestion();
+  });
+
+  function finalizeAnswer(confidence) {
+    session.answered = session.pendingLetter;
+    session.confidence = confidence;
+    const correct = session.answered === q.correct;
+    if (correct) session.correctCount++;
+    logAttempt({
+      id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
+      objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
+      correct, confidence, mode: 'review', ts: Date.now(),
+    });
+    renderReviewQuestion();
+  }
+
+  if (!session.pendingLetter && !session.answered) {
+    main.querySelectorAll('.choice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        session.pendingLetter = btn.dataset.letter;
+        renderReviewQuestion();
+      });
+    });
+  } else if (session.pendingLetter && !session.answered) {
+    document.getElementById('confGuessed').addEventListener('click', () => finalizeAnswer('guessed'));
+    document.getElementById('confConfident').addEventListener('click', () => finalizeAnswer('confident'));
+  } else {
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (session.index + 1 < total) {
+          session.index++;
+          session.answered = null;
+          session.pendingLetter = null;
+          session.confidence = null;
+          renderReviewQuestion();
+        } else {
+          setRoute('');
+        }
+      });
+    }
+  }
+}
+
+/* ── Performance Analytics ───────────────────────────────────────────── */
+function renderAnalytics() {
+  const attempts = loadAttempts();
+
+  if (attempts.length === 0) {
+    main.innerHTML = `
+      <button class="back-link" id="backHome">&larr; Home</button>
+      <h1>Performance Analytics</h1>
+      <p class="empty-state">No attempts logged yet. Answer some practice or exam questions and check back here.</p>
+    `;
+    document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+    return;
+  }
+
+  const bySdl = {};       // sdlNumber -> {correct, total, title}
+  const byObjective = {}; // "sdlNumber-objective" -> {correct, total, sdlNumber, objective, label}
+  let totalCorrect = 0;
+  let confConfidentTotal = 0, confConfidentWrong = 0;
+  let confGuessedTotal = 0, confGuessedRight = 0;
+
+  attempts.forEach(a => {
+    if (a.correct) totalCorrect++;
+
+    if (!bySdl[a.sdlNumber]) bySdl[a.sdlNumber] = { correct: 0, total: 0, title: a.sdlTitle || `SDL ${a.sdlNumber}` };
+    bySdl[a.sdlNumber].total++;
+    if (a.correct) bySdl[a.sdlNumber].correct++;
+
+    const objKey = `${a.sdlNumber}-${a.objective}`;
+    if (!byObjective[objKey]) byObjective[objKey] = { correct: 0, total: 0, sdlNumber: a.sdlNumber, objective: a.objective, label: a.objectiveLabel };
+    byObjective[objKey].total++;
+    if (a.correct) byObjective[objKey].correct++;
+
+    if (a.confidence === 'confident') {
+      confConfidentTotal++;
+      if (!a.correct) confConfidentWrong++;
+    } else if (a.confidence === 'guessed') {
+      confGuessedTotal++;
+      if (a.correct) confGuessedRight++;
+    }
+  });
+
+  const overallPct = Math.round((totalCorrect / attempts.length) * 100);
+
+  // Focus areas: objectives with at least 2 attempts, worst accuracy first.
+  const objList = Object.values(byObjective)
+    .filter(o => o.total >= 2)
+    .sort((a, b) => (a.correct / a.total) - (b.correct / b.total));
+  const focusRows = objList.slice(0, 10).map(o => {
+    const label = (o.label || '').replace(/^Objective\s+\d+\s*—?\s*/i, '');
+    return `<tr><td>SDL ${o.sdlNumber} — ${escapeHtml(label)}</td><td>${o.correct}/${o.total}</td><td>${Math.round((o.correct / o.total) * 100)}%</td></tr>`;
+  }).join('');
+
+  const sdlList = Object.values(bySdl).sort((a, b) => (a.correct / a.total) - (b.correct / b.total));
+  const sdlRows = sdlList.map(s =>
+    `<tr><td>${escapeHtml(s.title)}</td><td>${s.correct}/${s.total}</td><td>${Math.round((s.correct / s.total) * 100)}%</td></tr>`
+  ).join('');
+
+  const hasCalibration = (confConfidentTotal + confGuessedTotal) > 0;
+  const calibrationHtml = !hasCalibration
+    ? '<p class="setup-hint">Answer with a confidence rating (Guessed / Confident) during Practice, Flagged, or Review Due mode to unlock calibration stats here.</p>'
+    : `
+      <table class="breakdown-table">
+        <thead><tr><th>Pattern</th><th>Rate</th></tr></thead>
+        <tbody>
+          <tr><td>Confident but wrong</td><td>${confConfidentWrong} of ${confConfidentTotal} confident answers (${confConfidentTotal ? Math.round(confConfidentWrong / confConfidentTotal * 100) : 0}%)</td></tr>
+          <tr><td>Guessed but right</td><td>${confGuessedRight} of ${confGuessedTotal} guessed answers (${confGuessedTotal ? Math.round(confGuessedRight / confGuessedTotal * 100) : 0}%)</td></tr>
+        </tbody>
+      </table>
+      <p class="setup-hint">"Confident but wrong" flags overconfidence — those concepts are worth re-reading, not just re-drilling. "Guessed but right" flags lucky hits that still need reinforcement even though they scored.</p>
+    `;
+
+  main.innerHTML = `
+    <button class="back-link" id="backHome">&larr; Home</button>
+    <h1>Performance Analytics</h1>
+    <p class="subtitle">Based on ${attempts.length} logged answers across all practice and exam modes.</p>
+
+    <div class="result-summary">
+      <div class="big-pct">${overallPct}%</div>
+      <div class="sub">${totalCorrect} / ${attempts.length} correct, all-time</div>
+    </div>
+
+    <div class="section-label">Focus Areas — Weakest Objectives</div>
+    ${focusRows
+      ? `<table class="breakdown-table"><thead><tr><th>Objective</th><th>Score</th><th>%</th></tr></thead><tbody>${focusRows}</tbody></table>`
+      : '<p class="empty-state">Not enough repeated attempts per objective yet — answer a few more questions in each SDL.</p>'}
+
+    <div class="section-label">By SDL / Topic</div>
+    <table class="breakdown-table"><thead><tr><th>SDL</th><th>Score</th><th>%</th></tr></thead><tbody>${sdlRows}</tbody></table>
+
+    <div class="section-label">Confidence Calibration</div>
+    ${calibrationHtml}
+  `;
+  document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+}
+
+/* ── Printable Study Sheet (missed + flagged) ────────────────────────── */
+function renderStudySheet() {
+  const qs = reviewDueQuestions().sort((a, b) => a.examNumber - b.examNumber || a.sdlNumber - b.sdlNumber);
+  const flags = loadFlags();
+
+  if (qs.length === 0) {
+    main.innerHTML = `
+      <button class="back-link" id="backHome">&larr; Home</button>
+      <h1>Study Sheet</h1>
+      <p class="empty-state">Nothing missed or flagged yet — nothing to export.</p>
+    `;
+    document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+    return;
+  }
+
+  const itemsHtml = qs.map((q, i) => `
+    <div class="sheet-item">
+      <div class="sheet-meta">${escapeHtml(q.sdlTitle)} · Objective ${q.objective ?? ''}${q.isHighYield ? ' · ⚡ High Yield' : ''}${flags[q.id] ? ' · ★ Flagged' : ''}</div>
+      <div class="sheet-stem"><b>${i + 1}.</b> ${escapeHtml(q.stem)}</div>
+      <div class="sheet-answer">Correct answer: ${q.correct} — ${escapeHtml(q.choices[q.correct])}</div>
+      <div class="sheet-explanation">${escapeHtml(q.explanation)}</div>
+      ${q.boardPrep ? `<div class="sheet-boardprep"><b>Board Prep:</b> ${escapeHtml(q.boardPrep)}</div>` : ''}
+    </div>
+  `).join('');
+
+  main.innerHTML = `
+    <div class="no-print" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+      <button class="back-link" id="backHome" style="margin:0;">&larr; Home</button>
+      <button class="btn" id="printBtn">🖨️ Print / Save as PDF</button>
+    </div>
+    <h1 class="print-title">Study Sheet — Missed &amp; Flagged (${qs.length})</h1>
+    <div class="sheet-list">${itemsHtml}</div>
+  `;
+  document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
 }
 
 /* ── Boot ─────────────────────────────────────────────────────────────── */
