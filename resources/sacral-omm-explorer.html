@@ -17,15 +17,19 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: #222; }
   .topbar { background: var(--navy); color: #fff; padding: 14px 16px; }
-  .topbar-inner { max-width: 900px; margin: 0 auto; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 14px; }
+  .topbar-inner { max-width: 1100px; margin: 0 auto; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 14px; }
   .topbar-inner a { color: #fff; text-decoration: none; opacity: 0.85; font-weight: 500; font-size: 0.95rem; }
   .topbar-inner a:hover { opacity: 1; text-decoration: underline; }
-  .container { max-width: 900px; margin: 0 auto; padding: 28px 16px 60px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px; }
   h1 { font-size: 1.4rem; color: var(--navy); margin: 8px 0 4px; }
   p.subtitle { color: var(--grey-text); margin-top: 0; font-size: 0.95rem; line-height: 1.5; }
   .layout { display: flex; gap: 26px; flex-wrap: wrap; align-items: flex-start; margin-top: 20px; }
-  .canvas-col { flex: 0 0 300px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  #canvas-wrap { width: 300px; height: 300px; touch-action: none; cursor: grab; border-radius: 12px; background: var(--card-bg); border: 1px solid var(--grey-border); }
+  .canvas-col { flex: 0 0 620px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  #canvas-wrap {
+    width: 620px; height: 620px; touch-action: none; cursor: grab; border-radius: 16px;
+    background: radial-gradient(circle at 50% 38%, #2c3644 0%, #10141a 75%);
+    overflow: hidden;
+  }
   .hint { font-size: 0.8rem; color: #888; margin: 0; text-align: center; }
   .axis-toggles { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; align-self: flex-start; width: 100%; }
   .axis-toggles label { display: flex; align-items: center; gap: 8px; color: var(--grey-text); }
@@ -56,7 +60,7 @@
   <div class="topbar"><div class="topbar-inner"><a href="../index.html">&larr; All Blocks</a><span>Sacral OMM Explorer</span></div></div>
   <div class="container">
     <h1>Sacral somatic dysfunctions — OMM Level 1</h1>
-    <p class="subtitle">A schematic, rotatable 3D model of the sacrum with the 10 sacral somatic dysfunctions and their seated flexion, sphinx, and spring test findings. Drag the model to orbit it freely.</p>
+    <p class="subtitle">A schematic, rotatable 3D model of the sacrum with the 10 sacral somatic dysfunctions and their seated flexion, sphinx, and spring test findings. Drag the model to orbit it freely — each preset oscillates the model between neutral and the dysfunctional position to show the motion.</p>
 
     <div class="layout">
       <div class="canvas-col">
@@ -88,7 +92,7 @@
           <button class="preset-btn" data-p="bext">Bilateral extension</button>
         </div>
         <div class="findings-panel" id="findings-panel">
-          <p style="color:#888;">Pick a dysfunction above to see its exam findings.</p>
+          <p style="color:#888;">Pick a dysfunction above to see its exam findings. The model will oscillate to show the motion.</p>
         </div>
         <p class="source-note">Diagnostic findings sourced from Osmosis' "Diagnosing sacral somatic dysfunction" reference table and cross-checked against StatPearls' "Osteopathic Manipulative Treatment: Muscle Energy Procedure — Sacral Dysfunctions." This is a simplified schematic model, not a scanned anatomical mesh — verify against your own course materials before exam use.</p>
       </div>
@@ -100,39 +104,46 @@
 <script>
 const RED = 0xE24B4A, BLUE = 0x378ADD, NEUTRAL = 0x9a978c;
 const data = {
-  lol: {name:"Left-on-left sacral torsion (anterior)", tiltX:-0.35, tiltZ:-0.15, deep:"R", shallow:"L", ilaPost:"L", ilaAnt:"R", sft:"Positive on the right (oblique axis is on the left, opposite the positive side)", sphinx:"Negative — improves to symmetrical (anterior torsion)", spring:"Negative — soft, bouncy end point (anterior torsion)"},
-  ror: {name:"Right-on-right sacral torsion (anterior)", tiltX:-0.35, tiltZ:0.15, deep:"L", shallow:"R", ilaPost:"R", ilaAnt:"L", sft:"Positive on the left (oblique axis is on the right)", sphinx:"Negative — improves to symmetrical (anterior torsion)", spring:"Negative — soft, bouncy end point (anterior torsion)"},
-  lor: {name:"Left-on-right sacral torsion (posterior)", tiltX:0.35, tiltZ:-0.15, deep:"R", shallow:"L", ilaPost:"L", ilaAnt:"R", sft:"Positive on the left (oblique axis is on the right)", sphinx:"Positive — worsens/more asymmetrical (posterior torsion)", spring:"Positive — hard end point (posterior torsion)"},
-  rol: {name:"Right-on-left sacral torsion (posterior)", tiltX:0.35, tiltZ:0.15, deep:"L", shallow:"R", ilaPost:"R", ilaAnt:"L", sft:"Positive on the right (oblique axis is on the left)", sphinx:"Positive — worsens/more asymmetrical (posterior torsion)", spring:"Positive — hard end point (posterior torsion)"},
-  "uflex-l": {name:"Unilateral sacral flexion, left", tiltX:-0.15, tiltZ:-0.1, deep:"L", shallow:"R", ilaPost:"L", ilaAnt:"R", sft:"Positive on the left", sphinx:"Negative, consistent with a flexion-type finding", spring:"Negative"},
-  "uflex-r": {name:"Unilateral sacral flexion, right", tiltX:-0.15, tiltZ:0.1, deep:"R", shallow:"L", ilaPost:"R", ilaAnt:"L", sft:"Positive on the right", sphinx:"Negative, consistent with a flexion-type finding", spring:"Negative"},
-  "uext-l": {name:"Unilateral sacral extension, left", tiltX:0.15, tiltZ:-0.1, shallow:"L", deep:"R", ilaAnt:"L", ilaPost:"R", sft:"Positive on the left", sphinx:"Positive, consistent with an extension-type finding", spring:"Positive"},
-  "uext-r": {name:"Unilateral sacral extension, right", tiltX:0.15, tiltZ:0.1, shallow:"R", deep:"L", ilaAnt:"R", ilaPost:"L", sft:"Positive on the right", sphinx:"Positive, consistent with an extension-type finding", spring:"Positive"},
-  bflex: {name:"Bilateral sacral flexion", tiltX:-0.25, tiltZ:0, sulBoth:"deep", ilaBoth:"post", sft:"Negative — symmetric bilaterally", sphinx:"Negative", spring:"Negative — soft, bouncy end point"},
-  bext: {name:"Bilateral sacral extension", tiltX:0.25, tiltZ:0, sulBoth:"shallow", ilaBoth:"ant", sft:"Negative — symmetric bilaterally", sphinx:"Positive", spring:"Positive — hard end point"}
+  lol: {name:"Left-on-left sacral torsion (anterior)", tiltX:0.35, tiltZ:-0.15, deep:"R", shallow:"L", ilaPost:"L", ilaAnt:"R", sft:"Positive on the right (oblique axis is on the left, opposite the positive side)", sphinx:"Negative — improves to symmetrical (anterior torsion)", spring:"Negative — soft, bouncy end point (anterior torsion)"},
+  ror: {name:"Right-on-right sacral torsion (anterior)", tiltX:0.35, tiltZ:0.15, deep:"L", shallow:"R", ilaPost:"R", ilaAnt:"L", sft:"Positive on the left (oblique axis is on the right)", sphinx:"Negative — improves to symmetrical (anterior torsion)", spring:"Negative — soft, bouncy end point (anterior torsion)"},
+  lor: {name:"Left-on-right sacral torsion (posterior)", tiltX:-0.35, tiltZ:-0.15, deep:"R", shallow:"L", ilaPost:"L", ilaAnt:"R", sft:"Positive on the left (oblique axis is on the right)", sphinx:"Positive — worsens/more asymmetrical (posterior torsion)", spring:"Positive — hard end point (posterior torsion)"},
+  rol: {name:"Right-on-left sacral torsion (posterior)", tiltX:-0.35, tiltZ:0.15, deep:"L", shallow:"R", ilaPost:"R", ilaAnt:"L", sft:"Positive on the right (oblique axis is on the left)", sphinx:"Positive — worsens/more asymmetrical (posterior torsion)", spring:"Positive — hard end point (posterior torsion)"},
+  "uflex-l": {name:"Unilateral sacral flexion, left", tiltX:0.15, tiltZ:-0.1, deep:"L", shallow:"R", ilaPost:"L", ilaAnt:"R", sft:"Positive on the left", sphinx:"Negative, consistent with a flexion-type finding", spring:"Negative"},
+  "uflex-r": {name:"Unilateral sacral flexion, right", tiltX:0.15, tiltZ:0.1, deep:"R", shallow:"L", ilaPost:"R", ilaAnt:"L", sft:"Positive on the right", sphinx:"Negative, consistent with a flexion-type finding", spring:"Negative"},
+  "uext-l": {name:"Unilateral sacral extension, left", tiltX:-0.15, tiltZ:-0.1, shallow:"L", deep:"R", ilaAnt:"L", ilaPost:"R", sft:"Positive on the left", sphinx:"Positive, consistent with an extension-type finding", spring:"Positive"},
+  "uext-r": {name:"Unilateral sacral extension, right", tiltX:-0.15, tiltZ:0.1, shallow:"R", deep:"L", ilaAnt:"R", ilaPost:"L", sft:"Positive on the right", sphinx:"Positive, consistent with an extension-type finding", spring:"Positive"},
+  bflex: {name:"Bilateral sacral flexion", tiltX:0.25, tiltZ:0, sulBoth:"deep", ilaBoth:"post", sft:"Negative — symmetric bilaterally", sphinx:"Negative", spring:"Negative — soft, bouncy end point"},
+  bext: {name:"Bilateral sacral extension", tiltX:-0.25, tiltZ:0, sulBoth:"shallow", ilaBoth:"ant", sft:"Negative — symmetric bilaterally", sphinx:"Positive", spring:"Positive — hard end point"}
 };
 
 const wrap = document.getElementById('canvas-wrap');
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
-camera.position.set(0, 0, 15);
+camera.position.set(0, 0, 22);
 const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
-renderer.setSize(300, 300);
+renderer.setSize(620, 620);
 renderer.setPixelRatio(window.devicePixelRatio || 1);
 wrap.appendChild(renderer.domElement);
 
-scene.add(new THREE.AmbientLight(0xffffff, 0.75));
-const dl = new THREE.DirectionalLight(0xffffff, 0.65);
-dl.position.set(3, 5, 7);
-scene.add(dl);
-const dl2 = new THREE.DirectionalLight(0xffffff, 0.3);
-dl2.position.set(-4, -3, 5);
-scene.add(dl2);
+scene.add(new THREE.AmbientLight(0xffffff, 0.42));
+const keyLight = new THREE.DirectionalLight(0xfff2dd, 1.05);
+keyLight.position.set(4, 6, 8);
+scene.add(keyLight);
+const fillLight = new THREE.DirectionalLight(0xcfe0ff, 0.32);
+fillLight.position.set(-5, -2, 4);
+scene.add(fillLight);
+const rimLight = new THREE.DirectionalLight(0x8fb3ff, 0.55);
+rimLight.position.set(-2, 3, -7);
+scene.add(rimLight);
 
-const boneGroup = new THREE.Group();
+// orbitGroup handles the user's manual drag-to-rotate view. Axis lines live
+// directly on orbitGroup so they stay fixed relative to that view. tiltGroup
+// nests inside orbitGroup and only it oscillates — that's the sacrum moving
+// around the (visually static) axis.
+const orbitGroup = new THREE.Group();
+scene.add(orbitGroup);
 const tiltGroup = new THREE.Group();
-tiltGroup.add(boneGroup);
-scene.add(tiltGroup);
+orbitGroup.add(tiltGroup);
 
 const shape = new THREE.Shape();
 shape.moveTo(-4.6, 4.1);
@@ -173,35 +184,35 @@ for (let i = 0; i < posAttr.count; i++) {
 posAttr.needsUpdate = true;
 geo.computeVertexNormals();
 
-const mat = new THREE.MeshStandardMaterial({ color: 0xf1ead9, roughness: 0.82, metalness: 0.02 });
+const mat = new THREE.MeshStandardMaterial({ color: 0xf3ead2, roughness: 0.55, metalness: 0.04 });
 const boneMesh = new THREE.Mesh(geo, mat);
-boneGroup.add(boneMesh);
+tiltGroup.add(boneMesh);
 
 const MARKER_Z = -2.0;
 
 function marker(x, y, color) {
   const m = new THREE.Mesh(
-    new THREE.SphereGeometry(0.48, 20, 20),
-    new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.55, roughness: 0.4 })
+    new THREE.SphereGeometry(0.5, 22, 22),
+    new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.7, roughness: 0.35 })
   );
   m.position.set(x, y, MARKER_Z);
   m.renderOrder = 1;
-  boneGroup.add(m);
+  tiltGroup.add(m);
   return m;
 }
 function sideLine(x) {
   const points = [new THREE.Vector3(x, 3.9, MARKER_Z), new THREE.Vector3(x, -5.2, MARKER_Z)];
   const lgeo = new THREE.BufferGeometry().setFromPoints(points);
-  const line = new THREE.Line(lgeo, new THREE.LineDashedMaterial({ color: 0xb8b4a6, dashSize: 0.25, gapSize: 0.2, transparent: true, opacity: 0.5 }));
+  const line = new THREE.Line(lgeo, new THREE.LineDashedMaterial({ color: 0xd8d4c8, dashSize: 0.25, gapSize: 0.2, transparent: true, opacity: 0.6 }));
   line.computeLineDistances();
-  boneGroup.add(line);
+  tiltGroup.add(line);
 }
 function axisLine(x1, y1, x2, y2, color) {
   const points = [new THREE.Vector3(x1, y1, MARKER_Z - 0.1), new THREE.Vector3(x2, y2, MARKER_Z - 0.1)];
   const lgeo = new THREE.BufferGeometry().setFromPoints(points);
   const line = new THREE.Line(lgeo, new THREE.LineDashedMaterial({ color, dashSize: 0.3, gapSize: 0.22, linewidth: 2 }));
   line.computeLineDistances();
-  boneGroup.add(line);
+  orbitGroup.add(line);
   return line;
 }
 
@@ -230,7 +241,7 @@ const markers = {
 };
 
 let rotX = -0.15, rotY = 0.5 + Math.PI, dragging = false, lastX = 0, lastY = 0;
-function applyOrbit(){ boneGroup.rotation.x = rotX; boneGroup.rotation.y = rotY; }
+function applyOrbit(){ orbitGroup.rotation.x = rotX; orbitGroup.rotation.y = rotY; }
 applyOrbit();
 wrap.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; wrap.style.cursor='grabbing'; });
 window.addEventListener('pointerup', () => { dragging = false; wrap.style.cursor='grab'; });
@@ -241,7 +252,18 @@ window.addEventListener('pointermove', e => {
   lastX = e.clientX; lastY = e.clientY;
   applyOrbit();
 });
-function animate(){ requestAnimationFrame(animate); renderer.render(scene, camera); }
+
+let animTiltX = 0, animTiltZ = 0;
+function animate(t){
+  requestAnimationFrame(animate);
+  // Oscillates between 35% and 100% of the target tilt — always on the
+  // dysfunctional side, never swinging back through the neutral/starting axis.
+  const wave = (Math.sin((t || 0) / 900) + 1) / 2; // 0..1
+  const osc = 0.35 + 0.65 * wave; // 0.35..1
+  tiltGroup.rotation.x = animTiltX * osc;
+  tiltGroup.rotation.z = animTiltZ * osc;
+  renderer.render(scene, camera);
+}
 animate();
 
 function resetMarkers(){ Object.values(markers).forEach(m => { m.material.color.setHex(NEUTRAL); m.material.emissive.setHex(NEUTRAL); }); }
@@ -262,8 +284,8 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
     if (d.sulBoth === 'shallow') { setColor('sulL', RED); setColor('sulR', RED); }
     if (d.ilaBoth === 'ant') { setColor('ilaL', BLUE); setColor('ilaR', BLUE); }
     if (d.ilaBoth === 'post') { setColor('ilaL', RED); setColor('ilaR', RED); }
-    tiltGroup.rotation.x = d.tiltX;
-    tiltGroup.rotation.z = d.tiltZ;
+    animTiltX = d.tiltX;
+    animTiltZ = d.tiltZ;
     const panel = document.getElementById('findings-panel');
     panel.innerHTML =
       '<p class="fname">' + d.name + '</p>' +
