@@ -270,6 +270,27 @@ function renderHome() {
 }
 
 /* ── Per-exam SDL selection screen ───────────────────────────────────── */
+// An SDL can be attempted several ways (Both Batches, Batch 1 only, Batch 2
+// only, Bloom Batch) and each writes its score under a different key. The
+// list view should count the SDL as attempted if ANY of those keys has a
+// score, showing whichever was attempted most recently.
+function scoreKeysForSdl(sdlNumber) {
+  return [
+    { key: `sdl-${sdlNumber}`, label: 'Both Batches' },
+    { key: `sdl-${sdlNumber}-b1`, label: 'Batch 1' },
+    { key: `sdl-${sdlNumber}-b2`, label: 'Batch 2' },
+    { key: `sdl-${sdlNumber}-b3`, label: 'Bloom Batch' },
+  ];
+}
+function bestScoreForSdl(sdlNumber) {
+  const options = scoreKeysForSdl(sdlNumber)
+    .map(o => ({ label: o.label, score: getScore(o.key) }))
+    .filter(o => o.score);
+  if (options.length === 0) return null;
+  options.sort((a, b) => new Date(b.score.last.date) - new Date(a.score.last.date));
+  return options[0];
+}
+
 function renderExamSdlList(examNumber) {
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
   if (!exam) { renderHome(); return; }
@@ -279,13 +300,12 @@ function renderExamSdlList(examNumber) {
   const estMinutes = Math.round(totalQ * 90 / 60);
 
   const rows = exam.sdls.map(sdl => {
-    const key = `sdl-${sdl.sdlNumber}`;
-    const score = getScore(key);
+    const best = bestScoreForSdl(sdl.sdlNumber);
     const visible = visibleQuestions(sdl);
     const regularCount = visible.filter(q => q.batch !== 3).length;
     const bloomCount = visible.filter(q => q.batch === 3).length;
-    const scoreHtml = score
-      ? `<div class="sdl-score">Last: ${score.last.correct}/${score.last.total}${score.best.correct === score.last.correct && score.best.total === score.last.total ? '' : ` · Best: ${score.best.correct}/${score.best.total}`}</div>`
+    const scoreHtml = best
+      ? `<div class="sdl-score">${escapeHtml(best.label)} — Last: ${best.score.last.correct}/${best.score.last.total}${best.score.best.correct === best.score.last.correct && best.score.best.total === best.score.last.total ? '' : ` · Best: ${best.score.best.correct}/${best.score.best.total}`}</div>`
       : `<div class="sdl-score none">Not attempted</div>`;
     return `
       <div class="sdl-row" data-sdl="${sdl.sdlNumber}">
