@@ -139,6 +139,23 @@ function allQuestionsForExam(examNumber) {
   return qs;
 }
 
+// Pools every question from every exam block BEFORE examNumber — not just the single
+// immediately-preceding exam. Real exam structure carries "prior weeks" content forward
+// from any earlier week, not specifically the last exam's content, so the Custom Exam
+// Builder's 30% "prior" bucket must be able to draw from Exam 1, Exam 2, etc., all the way
+// up to (but not including) the exam currently being built. Each returned question keeps
+// track of which exam it actually came from via `_srcExam`, since a single "prior" bucket
+// can now legitimately span multiple different source exams at once.
+function allQuestionsForExamsBefore(examNumber) {
+  let qs = [];
+  DATA.exams.forEach(e => {
+    if (e.examNumber < examNumber) {
+      qs = qs.concat(allQuestionsForExam(e.examNumber).map(q => Object.assign({}, q, { _srcExam: e.examNumber })));
+    }
+  });
+  return qs;
+}
+
 function formatTime(seconds) {
   seconds = Math.max(0, Math.round(seconds));
   const m = Math.floor(seconds / 60);
@@ -173,6 +190,8 @@ function render() {
     renderPracticeStart(parseInt(parts[1], 10), parts[2]);
   } else if (parts[0] === 'examsetup' && parts[1]) {
     renderExamSetup(parseInt(parts[1], 10));
+  } else if (parts[0] === 'final-examsetup') {
+    renderFinalExamSetup();
   } else if (parts[0] === 'exam' && parts[1]) {
     renderExamSimStart(parseInt(parts[1], 10));
   } else if (parts[0] === 'flagged') {
@@ -212,10 +231,22 @@ function renderHome() {
 
   const settings = loadSettings();
 
+  const showFinalExamCard = DATA.exams.length > 1;
+
   main.innerHTML = `
     <h1>${escapeHtml(QUIZ_CONFIG.title)}</h1>
     <p class="subtitle">Choose an exam block to practice by SDL or run a full timed simulation.${settings.hyOnly ? ' <strong>⚡ High-Yield Only Mode is ON.</strong>' : ''}</p>
     <div class="exam-grid">${examCards}</div>
+
+    ${showFinalExamCard ? `
+    <div class="action-card" id="finalExamCard">
+      <span class="icon">&#127937;</span>
+      <div>
+        <div class="sdl-title">Final Exam Simulation</div>
+        <div class="action-label">Cumulative — 50% Exam ${lastExamNumber()}, 50% pooled from every earlier exam block</div>
+      </div>
+    </div>
+    ` : ''}
 
     <div class="section-label">Study Tools</div>
     <div class="action-card" id="analyticsCard">
@@ -257,6 +288,8 @@ function renderHome() {
   main.querySelectorAll('.exam-card').forEach(card => {
     card.addEventListener('click', () => setRoute(`exam-sdls/${card.dataset.exam}`));
   });
+  const finalExamCard = document.getElementById('finalExamCard');
+  if (finalExamCard) finalExamCard.addEventListener('click', () => setRoute('final-examsetup'));
   document.getElementById('flaggedCard').addEventListener('click', () => setRoute('flagged'));
   document.getElementById('reviewCard').addEventListener('click', () => setRoute('review'));
   document.getElementById('analyticsCard').addEventListener('click', () => setRoute('analytics'));
@@ -344,11 +377,12 @@ function renderExamSetup(examNumber) {
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
   if (!exam) { renderHome(); return; }
 
-  const priorExam = DATA.exams.find(e => e.examNumber === examNumber - 1);
-  const hasPrior = !!priorExam;
+  const priorPoolAll = examNumber > 1 ? allQuestionsForExamsBefore(examNumber) : [];
+  const hasPrior = priorPoolAll.length > 0;
+  const priorRangeLabel = examNumber > 2 ? `Exams 1–${examNumber - 1}` : `Exam 1`;
 
   const currentAllCount = allQuestionsForExam(examNumber).length;
-  const priorAllCount = hasPrior ? allQuestionsForExam(examNumber - 1).length : 0;
+  const priorAllCount = priorPoolAll.length;
 
   // Sensible defaults, recalculated client-side as controls change.
   const defaultPct = 70;
@@ -365,10 +399,10 @@ function renderExamSetup(examNumber) {
       <div class="setup-row">
         <div class="setup-label-row">
           <label for="pctSlider">Content Source</label>
-          <span id="pctReadout" class="setup-readout">${defaultPct}% Exam ${examNumber} · ${100 - defaultPct}% Exam ${examNumber - 1}</span>
+          <span id="pctReadout" class="setup-readout">${defaultPct}% Exam ${examNumber} · ${100 - defaultPct}% ${priorRangeLabel}</span>
         </div>
         <input type="range" id="pctSlider" min="0" max="100" step="5" value="${defaultPct}">
-        <div class="setup-hint">Real exam structure: ~70% this week's material (Exam ${examNumber}), ~30% carried over from Exam ${examNumber - 1}. Drag to change the mix.</div>
+        <div class="setup-hint">Real exam structure: ~70% this week's material (Exam ${examNumber}), ~30% carried over from prior weeks' content across ${priorRangeLabel}, not just the immediately-preceding exam. Drag to change the mix.</div>
       </div>
       ` : `
       <div class="setup-row">
@@ -414,19 +448,19 @@ function renderExamSetup(examNumber) {
   function poolSizes(batchMode) {
     const filterBatch = (qs) => batchMode === 'mix' ? qs : qs.filter(q => q.batch === Number(batchMode));
     const curPool = filterBatch(allQuestionsForExam(examNumber)).length;
-    const priorPool = hasPrior ? filterBatch(allQuestionsForExam(examNumber - 1)).length : 0;
+    const priorPool = hasPrior ? filterBatch(allQuestionsForExamsBefore(examNumber)).length : 0;
     return { curPool, priorPool };
   }
 
   function updatePoolHint() {
     const { batchMode } = currentSettings();
     const { curPool, priorPool } = poolSizes(batchMode);
-    poolHint.textContent = `Available with this batch filter: ${curPool} from Exam ${examNumber}${hasPrior ? `, ${priorPool} from Exam ${examNumber - 1}` : ''} (combined max ${curPool + priorPool}).`;
+    poolHint.textContent = `Available with this batch filter: ${curPool} from Exam ${examNumber}${hasPrior ? `, ${priorPool} from ${priorRangeLabel}` : ''} (combined max ${curPool + priorPool}).`;
   }
 
   if (pctSlider) {
     pctSlider.addEventListener('input', () => {
-      pctReadout.textContent = `${pctSlider.value}% Exam ${examNumber} · ${100 - pctSlider.value}% Exam ${examNumber - 1}`;
+      pctReadout.textContent = `${pctSlider.value}% Exam ${examNumber} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
     });
   }
   document.querySelectorAll('input[name="batchMode"]').forEach(radio => {
@@ -454,13 +488,16 @@ function renderExamSetup(examNumber) {
 }
 
 /* Randomly composes a question set for a custom exam simulation, blending
-   current-exam content with prior-exam content per the requested percentage,
-   optionally restricted to a single batch. */
+   current-exam content with prior-weeks content per the requested percentage,
+   optionally restricted to a single batch. The "prior" pool spans every exam
+   block before this one (Exam 1..examNumber-1), not just the exam immediately
+   before it — real exam structure carries content forward from any earlier
+   week, not specifically the last exam. */
 function buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior }) {
   const filterBatch = (qs) => batchMode === 'mix' ? qs : qs.filter(q => q.batch === Number(batchMode));
 
   const currentPool = filterBatch(allQuestionsForExam(examNumber));
-  const priorPool = hasPrior ? filterBatch(allQuestionsForExam(examNumber - 1)) : [];
+  const priorPool = hasPrior ? filterBatch(allQuestionsForExamsBefore(examNumber)) : [];
 
   let currentTarget, priorTarget;
   if (!hasPrior || priorPool.length === 0) {
@@ -488,10 +525,141 @@ function buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, ha
 
   const currentChosen = shuffle(currentPool).slice(0, currentTake)
     .map(q => Object.assign({}, q, { sourceExamNumber: examNumber, sourceTag: 'current' }));
+  // Prior pool now spans multiple exams — preserve each question's own originating exam
+  // number (`_srcExam`, set by allQuestionsForExamsBefore) rather than forcing a single
+  // prior exam number, so the results breakdown can show exactly where each question came
+  // from even when the 30% is drawn from more than one earlier exam block.
   const priorChosen = shuffle(priorPool).slice(0, priorTake)
-    .map(q => Object.assign({}, q, { sourceExamNumber: examNumber - 1, sourceTag: 'prior' }));
+    .map(q => Object.assign({}, q, { sourceExamNumber: q._srcExam, sourceTag: 'prior' }));
 
   return { questions: shuffle(currentChosen.concat(priorChosen)) };
+}
+
+/* ── Final Exam mode (50/50 cumulative: last exam vs. everything before it) ──
+   Reuses buildCustomExamQuestions/beginExamSession exactly like the per-exam
+   Custom Exam Builder, just with the "current" exam fixed to the last exam
+   block in the whole dataset (not whichever exam the user is browsing) and a
+   50/50 default split instead of 70/30, matching the real final's cumulative
+   structure: 50% from the most recent week's material, 50% from every week
+   before it, not weighted toward "just the last exam" either. */
+function lastExamNumber() {
+  return Math.max(...DATA.exams.map(e => e.examNumber));
+}
+
+function renderFinalExamSetup() {
+  const examNumber = lastExamNumber();
+  const exam = DATA.exams.find(e => e.examNumber === examNumber);
+  if (!exam) { renderHome(); return; }
+
+  const priorPoolAll = allQuestionsForExamsBefore(examNumber);
+  const hasPrior = priorPoolAll.length > 0;
+  const priorRangeLabel = examNumber > 2 ? `Exams 1–${examNumber - 1}` : `Exam 1`;
+
+  const currentAllCount = allQuestionsForExam(examNumber).length;
+  const priorAllCount = priorPoolAll.length;
+
+  const defaultPct = 50;
+  const defaultBatch = 'mix';
+  const defaultTotal = currentAllCount + priorAllCount;
+
+  if (!hasPrior) {
+    main.innerHTML = `
+      <button class="back-link" id="backHome">&larr; Home</button>
+      <h1>Final Exam Simulation</h1>
+      <p class="empty-state">Final Exam mode needs at least two exam blocks — only Exam ${examNumber} exists so far. Come back once an earlier exam's content is available to blend in.</p>
+    `;
+    document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+    return;
+  }
+
+  main.innerHTML = `
+    <button class="back-link" id="backHome">&larr; Home</button>
+    <h1>Final Exam Simulation</h1>
+    <p class="subtitle">Cumulative structure: ~50% Exam ${examNumber} (the most recent week's material), ~50% pooled from every week before it (${priorRangeLabel}) — not weighted toward just the last exam.</p>
+    <div class="setup-card">
+
+      <div class="setup-row">
+        <div class="setup-label-row">
+          <label for="pctSlider">Content Source</label>
+          <span id="pctReadout" class="setup-readout">${defaultPct}% Exam ${examNumber} · ${100 - defaultPct}% ${priorRangeLabel}</span>
+        </div>
+        <input type="range" id="pctSlider" min="0" max="100" step="5" value="${defaultPct}">
+        <div class="setup-hint">Real final exam structure: ~50% the most recent week (Exam ${examNumber}), ~50% carried over from any earlier week across ${priorRangeLabel}. Drag to change the mix.</div>
+      </div>
+
+      <div class="setup-row">
+        <div class="setup-label-row"><label>Batch Mix</label></div>
+        <div class="radio-group" id="batchGroup">
+          <label class="radio-option"><input type="radio" name="batchMode" value="mix" ${defaultBatch === 'mix' ? 'checked' : ''}> Mix Both Batches</label>
+          <label class="radio-option"><input type="radio" name="batchMode" value="1"> Batch 1 Only — Quick Recall</label>
+          <label class="radio-option"><input type="radio" name="batchMode" value="2"> Batch 2 Only — Deep Vignettes</label>
+        </div>
+      </div>
+
+      <div class="setup-row">
+        <div class="setup-label-row"><label for="totalInput">Total Questions</label></div>
+        <input type="number" id="totalInput" class="number-input" min="1" max="${Math.max(1, currentAllCount + priorAllCount)}" step="1" value="${defaultTotal}">
+        <div class="setup-hint" id="poolHint"></div>
+        <div class="setup-hint" id="totalError" style="color: var(--red); display: none;"></div>
+      </div>
+
+      <button class="btn" id="startSetupBtn" style="width:100%; margin-top:10px;">Start Final Exam Simulation</button>
+    </div>
+  `;
+
+  document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+
+  const pctSlider = document.getElementById('pctSlider');
+  const pctReadout = document.getElementById('pctReadout');
+  const totalInput = document.getElementById('totalInput');
+  const poolHint = document.getElementById('poolHint');
+  const totalError = document.getElementById('totalError');
+
+  function currentSettings() {
+    const pctCurrent = Number(pctSlider.value);
+    const batchMode = document.querySelector('input[name="batchMode"]:checked').value;
+    const total = Number(totalInput.value);
+    return { pctCurrent, batchMode, total };
+  }
+
+  function poolSizes(batchMode) {
+    const filterBatch = (qs) => batchMode === 'mix' ? qs : qs.filter(q => q.batch === Number(batchMode));
+    const curPool = filterBatch(allQuestionsForExam(examNumber)).length;
+    const priorPool = filterBatch(allQuestionsForExamsBefore(examNumber)).length;
+    return { curPool, priorPool };
+  }
+
+  function updatePoolHint() {
+    const { batchMode } = currentSettings();
+    const { curPool, priorPool } = poolSizes(batchMode);
+    poolHint.textContent = `Available with this batch filter: ${curPool} from Exam ${examNumber}, ${priorPool} from ${priorRangeLabel} (combined max ${curPool + priorPool}).`;
+  }
+
+  pctSlider.addEventListener('input', () => {
+    pctReadout.textContent = `${pctSlider.value}% Exam ${examNumber} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
+  });
+  document.querySelectorAll('input[name="batchMode"]').forEach(radio => {
+    radio.addEventListener('change', updatePoolHint);
+  });
+  updatePoolHint();
+
+  document.getElementById('startSetupBtn').addEventListener('click', () => {
+    const { pctCurrent, batchMode, total } = currentSettings();
+    if (!Number.isFinite(total) || total < 1) {
+      totalError.textContent = 'Enter a valid number of questions (at least 1).';
+      totalError.style.display = 'block';
+      return;
+    }
+    const { curPool, priorPool } = poolSizes(batchMode);
+    if (total > curPool + priorPool) {
+      totalError.textContent = `Only ${curPool + priorPool} questions are available with this batch filter — you asked for ${total}. Lower the count or switch to "Mix Both Batches."`;
+      totalError.style.display = 'block';
+      return;
+    }
+    totalError.style.display = 'none';
+    const composed = buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior });
+    beginExamSession(examNumber, composed.questions, { isFinal: true });
+  });
 }
 
 /* ── Batch picker (per-SDL) ───────────────────────────────────────────── */
@@ -767,14 +935,17 @@ function renderExamSimStart(examNumber) {
   beginExamSession(examNumber, questions);
 }
 
-/* Shared by both the default (100% current exam) and the Custom Exam
-   Builder's weighted/batch-filtered simulations. */
-function beginExamSession(examNumber, questions) {
+/* Shared by the default (100% current exam), Custom Exam Builder's
+   weighted/batch-filtered simulations, and Final Exam mode. `isFinal` just
+   changes labeling/back-navigation/score-key — the question composition
+   itself is already handled by the caller (buildCustomExamQuestions). */
+function beginExamSession(examNumber, questions, { isFinal } = {}) {
   const totalSeconds = questions.length * 90;
 
   session = {
     mode: 'exam',
     examNumber,
+    isFinal: !!isFinal,
     questions,
     index: 0,
     answers: new Array(questions.length).fill(null), // letter chosen, or null
@@ -830,7 +1001,7 @@ function renderExamQuestion() {
 
   main.innerHTML = `
     <div class="quiz-header">
-      <span class="quiz-progress">Exam ${session.examNumber} Simulation — Question ${session.index + 1} of ${total}</span>
+      <span class="quiz-progress">${session.isFinal ? 'Final Exam Simulation' : `Exam ${session.examNumber} Simulation`} — Question ${session.index + 1} of ${total}</span>
       <span id="examTimer" class="timer">${formatTime(session.remainingSeconds)}</span>
     </div>
     <div class="quiz-header">
@@ -910,7 +1081,7 @@ function finishExamSim(timeExpired) {
     if (isCorrect) byObjective[objKey].correct++;
   });
 
-  recordScore(`exam-${session.examNumber}`, correctCount, total);
+  recordScore(session.isFinal ? 'final-exam' : `exam-${session.examNumber}`, correctCount, total);
 
   // Log every question in this simulation to the attempts history (no confidence
   // rating is collected in timed exam mode — that's reserved for practice/review).
@@ -923,13 +1094,18 @@ function finishExamSim(timeExpired) {
     });
   });
 
-  const bySource = {}; // 'current' | 'prior' -> {correct, total, examNumber}
+  // Keyed by the question's actual source exam number (not just 'current'/'prior'),
+  // since the 30% "prior" bucket can now legitimately span multiple different earlier
+  // exam blocks at once — collapsing them into one 'prior' row would hide which specific
+  // earlier exam's content the student is weak on.
+  const bySource = {}; // examNumber -> {correct, total, examNumber, tag}
   session.questions.forEach((q, i) => {
     if (!q.sourceTag) return;
     const isCorrect = session.answers[i] === q.correct;
-    if (!bySource[q.sourceTag]) bySource[q.sourceTag] = { correct: 0, total: 0, examNumber: q.sourceExamNumber };
-    bySource[q.sourceTag].total++;
-    if (isCorrect) bySource[q.sourceTag].correct++;
+    const key = q.sourceExamNumber;
+    if (!bySource[key]) bySource[key] = { correct: 0, total: 0, examNumber: key, tag: q.sourceTag };
+    bySource[key].total++;
+    if (isCorrect) bySource[key].correct++;
   });
 
   session.results = { correctCount, total, missed, bySdl, byObjective, bySource };
@@ -946,9 +1122,9 @@ function renderExamResults() {
     <table class="breakdown-table">
       <thead><tr><th>Source</th><th>Score</th><th>%</th></tr></thead>
       <tbody>
-        ${sourceKeys.sort().reverse().map(tag => {
-          const r = bySource[tag];
-          const label = tag === 'current' ? `Exam ${r.examNumber} (this week's material)` : `Exam ${r.examNumber} (prior exam carryover)`;
+        ${sourceKeys.sort((a, b) => Number(b) - Number(a)).map(key => {
+          const r = bySource[key];
+          const label = r.tag === 'current' ? `Exam ${r.examNumber} (this week's material)` : `Exam ${r.examNumber} (prior weeks' carryover)`;
           return `<tr><td>${label}</td><td>${r.correct}/${r.total}</td><td>${Math.round((r.correct / r.total) * 100)}%</td></tr>`;
         }).join('')}
       </tbody>
@@ -981,7 +1157,7 @@ function renderExamResults() {
     `).join('');
 
   main.innerHTML = `
-    <h1>Exam ${session.examNumber} Simulation Results</h1>
+    <h1>${session.isFinal ? 'Final Exam Results' : `Exam ${session.examNumber} Simulation Results`}</h1>
     ${session.timeExpired ? '<p class="subtitle">Time expired — exam auto-submitted.</p>' : ''}
     <div class="result-summary">
       <div class="big-pct">${pct}%</div>
@@ -1006,10 +1182,10 @@ function renderExamResults() {
     ${missedHtml}
 
     <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
-      <button class="btn" id="doneBtn">Back to Exam ${session.examNumber}</button>
+      <button class="btn" id="doneBtn">${session.isFinal ? 'Back to Home' : `Back to Exam ${session.examNumber}`}</button>
     </div>
   `;
-  document.getElementById('doneBtn').addEventListener('click', () => setRoute(`exam-sdls/${session.examNumber}`));
+  document.getElementById('doneBtn').addEventListener('click', () => setRoute(session.isFinal ? '' : `exam-sdls/${session.examNumber}`));
 }
 
 /* ── Review Flagged Questions ─────────────────────────────────────────── */
