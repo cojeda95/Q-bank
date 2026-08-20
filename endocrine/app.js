@@ -1543,7 +1543,7 @@ function renderAnalytics() {
   attempts.forEach(a => {
     if (a.correct) totalCorrect++;
 
-    if (!bySdl[a.sdlNumber]) bySdl[a.sdlNumber] = { correct: 0, total: 0, title: a.sdlTitle || `SDL ${a.sdlNumber}` };
+    if (!bySdl[a.sdlNumber]) bySdl[a.sdlNumber] = { correct: 0, total: 0, title: a.sdlTitle || `SDL ${a.sdlNumber}`, sdlNumber: a.sdlNumber };
     bySdl[a.sdlNumber].total++;
     if (a.correct) bySdl[a.sdlNumber].correct++;
 
@@ -1572,10 +1572,38 @@ function renderAnalytics() {
     return `<tr><td>SDL ${o.sdlNumber} — ${escapeHtml(label)}</td><td>${o.correct}/${o.total}</td><td>${Math.round((o.correct / o.total) * 100)}%</td></tr>`;
   }).join('');
 
-  const sdlList = Object.values(bySdl).sort((a, b) => (a.correct / a.total) - (b.correct / b.total));
-  const sdlRows = sdlList.map(s =>
-    `<tr><td>${escapeHtml(s.title)}</td><td>${s.correct}/${s.total}</td><td>${Math.round((s.correct / s.total) * 100)}%</td></tr>`
-  ).join('');
+  // Group by-SDL rollups under their parent exam block, in exam order, so performance
+  // across the whole course reads at a glance instead of one long flat table mixing
+  // every exam's SDLs together. Each exam header also shows its own aggregate score.
+  const byExam = {}; // examNumber -> { examNumber, correct, total, sdls: [...] }
+  Object.values(bySdl).forEach(s => {
+    const found = SDL_INDEX.get(s.sdlNumber);
+    const examNumber = found ? found.examNumber : 0;
+    if (!byExam[examNumber]) byExam[examNumber] = { examNumber, correct: 0, total: 0, sdls: [] };
+    byExam[examNumber].correct += s.correct;
+    byExam[examNumber].total += s.total;
+    byExam[examNumber].sdls.push(s);
+  });
+
+  const examGroupsHtml = Object.values(byExam)
+    .sort((a, b) => a.examNumber - b.examNumber)
+    .map(group => {
+      const groupPct = Math.round((group.correct / group.total) * 100);
+      const rows = group.sdls
+        .sort((a, b) => a.sdlNumber - b.sdlNumber)
+        .map(s => `<tr><td>${escapeHtml(s.title)}</td><td>${s.correct}/${s.total}</td><td>${Math.round((s.correct / s.total) * 100)}%</td></tr>`)
+        .join('');
+      const title = group.examNumber === 0 ? 'Other' : `Exam ${group.examNumber}`;
+      return `
+        <div class="exam-group">
+          <div class="exam-group-header">
+            <span class="exam-group-title">${title}</span>
+            <span class="exam-group-score">${group.correct}/${group.total} &middot; ${groupPct}%</span>
+          </div>
+          <table class="breakdown-table"><thead><tr><th>SDL</th><th>Score</th><th>%</th></tr></thead><tbody>${rows}</tbody></table>
+        </div>
+      `;
+    }).join('');
 
   const hasCalibration = (confConfidentTotal + confGuessedTotal) > 0;
   const calibrationHtml = !hasCalibration
@@ -1606,8 +1634,8 @@ function renderAnalytics() {
       ? `<table class="breakdown-table"><thead><tr><th>Objective</th><th>Score</th><th>%</th></tr></thead><tbody>${focusRows}</tbody></table>`
       : '<p class="empty-state">Not enough repeated attempts per objective yet — answer a few more questions in each SDL.</p>'}
 
-    <div class="section-label">By SDL / Topic</div>
-    <table class="breakdown-table"><thead><tr><th>SDL</th><th>Score</th><th>%</th></tr></thead><tbody>${sdlRows}</tbody></table>
+    <div class="section-label">By Exam / SDL</div>
+    ${examGroupsHtml}
 
     <div class="section-label">Confidence Calibration</div>
     ${calibrationHtml}

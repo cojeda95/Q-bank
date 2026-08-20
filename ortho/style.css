@@ -419,6 +419,36 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 }
 .breakdown-table th { color: var(--grey-text); font-weight: 600; }
 
+/* ── Analytics: SDL performance grouped under its parent exam ── */
+.exam-group {
+  background: var(--card-bg);
+  border: 1px solid var(--grey-border);
+  border-radius: 10px;
+  padding: 14px 16px 2px;
+  margin-bottom: 16px;
+}
+.exam-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--navy);
+}
+.exam-group-title {
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 1.05rem;
+}
+.exam-group-score {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--grey-text);
+  white-space: nowrap;
+}
+.exam-group .breakdown-table { margin-bottom: 8px; }
+
 .missed-item {
   border: 1px solid var(--grey-border);
   border-radius: 10px;
