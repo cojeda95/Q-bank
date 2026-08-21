@@ -24,7 +24,7 @@ const FIREBASE_CONFIG = {
 };
 // ----------------------------------------------------------------------
 
-const BLOCK_KEYS = ['neuro', 'pulm', 'eent', 'endocrine', 'ortho', 'rheum'];
+const BLOCK_KEYS = ['neuro', 'pulm', 'eent', 'endocrine', 'ortho', 'rheum', 'psych'];
 const SUFFIXES = ['flags_v1', 'progress_v1', 'attempts_v1', 'settings_v1'];
 const LS_PIN = 'qbank_sync_pin';
 const LS_LAST_SYNC = 'qbank_sync_last';
