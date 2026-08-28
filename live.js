@@ -1,7 +1,7 @@
 'use strict';
 /**
  * live.js — in-person, Kahoot-style live question sessions for the
- * Board Prep Question Bank Hub. One person hosts from a laptop/projector;
+ * OCOM Question Hub. One person hosts from a laptop/projector;
  * everyone else joins from their own phone with a short room code and taps
  * A–E. The host controls when the answer is revealed and when the group
  * moves to the next question.
@@ -38,7 +38,7 @@ const BLOCKS = [
   { key: 'rheum', label: 'Rheumatology' },
 ];
 
-const POLL_MS = 1500;
+const POLL_MS = 2000;
 const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
 
 // ============================== Firestore REST ==============================
@@ -106,6 +106,43 @@ async function listDocs(path) {
     row._id = d.name.split('/').pop();
     return row;
   });
+}
+async function deleteDoc(path) {
+  await fetch(withKey(`${baseUrl()}/${path}`), { method: 'DELETE' }).catch(() => {});
+}
+// Server-side filtered query (cheaper than listDocs+filter: only the matching
+// docs count as reads, instead of the whole collection every poll tick).
+async function queryEquals(parentPath, collectionId, fieldPath, value) {
+  const res = await fetch(withKey(`${baseUrl()}/${parentPath}:runQuery`), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      structuredQuery: {
+        from: [{ collectionId }],
+        where: { fieldFilter: { field: { fieldPath }, op: 'EQUAL', value: encodeValue(value) } },
+      },
+    }),
+  });
+  if (!res.ok) throw new Error(`Firestore query failed (HTTP ${res.status})`);
+  const rows = await res.json();
+  return rows.filter(r => r.document).map(r => {
+    const row = fromDoc(r.document);
+    row._id = r.document.name.split('/').pop();
+    return row;
+  });
+}
+// Deletes an entire session and its subcollections. Best-effort — used when
+// a host explicitly ends/cancels a room so rooms don't pile up in Firestore.
+async function deleteSessionTree(code) {
+  const [participants, answers] = await Promise.all([
+    listDocs(`live_sessions/${code}/participants`).catch(() => []),
+    listDocs(`live_sessions/${code}/answers`).catch(() => []),
+  ]);
+  await Promise.all([
+    ...participants.map(p => deleteDoc(`live_sessions/${code}/participants/${p._id}`)),
+    ...answers.map(a => deleteDoc(`live_sessions/${code}/answers/${a._id}`)),
+  ]);
+  await deleteDoc(`live_sessions/${code}`);
 }
 
 // ============================== helpers ==============================
@@ -316,8 +353,9 @@ function startHostPolling() {
       if (!session) return;
       let answers = [];
       if (session.status === 'active') {
-        const all = await listDocs(`live_sessions/${state.code}/answers`);
-        answers = all.filter(a => a._id.startsWith(`${session.currentIndex}_`));
+        // Server-side filter by qIndex — only reads this question's answers,
+        // not the whole answer history (which otherwise grows every question).
+        answers = await queryEquals(`live_sessions/${state.code}`, 'answers', 'qIndex', session.currentIndex);
       }
       setState({ session, participants, answers });
     } catch (err) {
@@ -426,12 +464,21 @@ function renderHostRoom() {
         <ol class="leaderboard">
           ${sorted.map(p => `<li><span>${esc(p.name)}</span><span class="lb-score">${p.score || 0}</span></li>`).join('') || '<li>No participants.</li>'}
         </ol>
-        <div class="live-actions" style="margin-top:20px;">
-          <button class="live-btn" id="doneBtn">Back to Live Session home</button>
+        <p class="live-status" id="cleanupStatus">Everyone's had a chance to see this? Clean up the room so it doesn't sit around in the database.</p>
+        <div class="live-actions" style="margin-top:8px;">
+          <button class="live-btn secondary" id="doneBtn">Back without cleaning up</button>
+          <button class="live-btn" id="cleanupBtn">🧹 Clean Up Room</button>
         </div>
       </div>
     `;
     document.getElementById('doneBtn').addEventListener('click', () => setState({ screen: 'landing', code: null, session: null }));
+    document.getElementById('cleanupBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('cleanupBtn');
+      btn.disabled = true;
+      btn.textContent = 'Cleaning up…';
+      await deleteSessionTree(state.code).catch(() => {});
+      setState({ screen: 'landing', code: null, session: null });
+    });
   }
 }
 
@@ -450,8 +497,10 @@ async function hostPatch(patch) {
   setState({ session: merged });
 }
 async function endSessionAndExit() {
-  await putDoc(`live_sessions/${state.code}`, Object.assign({}, state.session, { status: 'ended' })).catch(() => {});
+  // Cancelled straight out of the lobby — nobody's mid-question, so it's
+  // safe to just delete the room outright instead of leaving it as "ended".
   stopPolling();
+  await deleteSessionTree(state.code).catch(() => {});
   setState({ screen: 'landing', code: null, session: null });
 }
 
@@ -591,9 +640,9 @@ function renderJoinRoom() {
               cls += ' disabled';
               if (letter === q.correct) cls += ' correct';
               else if (letter === mine) cls += ' incorrect';
-            } else if (mine) cls += ' disabled';
+            }
             return `
-              <button class="${cls}" data-letter="${letter}" ${(mine || s.revealed) ? 'disabled' : ''}>
+              <button class="${cls}" data-letter="${letter}" ${s.revealed ? 'disabled' : ''}>
                 <span class="letter">${letter}.</span>
                 <span>${esc(q.choices[letter])}</span>
               </button>
@@ -605,10 +654,10 @@ function renderJoinRoom() {
             ${mine === (q && q.correct) ? '✅ Correct!' : `❌ Correct answer: ${q ? q.correct : ''}`}
           </div>
           ${q && q.explanation ? `<div class="info-block">${esc(q.explanation)}</div>` : ''}
-        ` : `<p class="live-status">Answer locked in — waiting on everyone else…</p>`)}
+        ` : `<p class="live-status">Answer selected — tap another choice to change it, or wait for the host to reveal.</p>`)}
       </div>
     `;
-    if (!mine && !s.revealed) {
+    if (!s.revealed) {
       root().querySelectorAll('.choice').forEach(btn => {
         btn.addEventListener('click', () => submitAnswer(btn.dataset.letter));
       });
@@ -636,6 +685,7 @@ async function submitAnswer(letter) {
   try {
     await putDoc(`live_sessions/${state.code}/answers/${state.session.currentIndex}_${state.pid}`, {
       choice: letter,
+      qIndex: state.session.currentIndex,
       ts: Date.now(),
     });
   } catch (err) {

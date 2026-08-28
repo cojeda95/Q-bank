@@ -1,6 +1,6 @@
 'use strict';
 /**
- * sync.js — PIN-based cross-device sync for the Board Prep Question Bank Hub.
+ * sync.js — PIN-based cross-device sync for the OCOM Question Hub.
  *
  * No accounts, no login. A PIN is just a shared "room code": whoever has it
  * can read/write the same small cloud document. That document holds every
