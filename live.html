@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Session — Board Prep Question Bank Hub</title>
+<style>
+  :root {
+    --navy: #1f4e79;
+    --navy-dark: #163a5a;
+    --green: #2e7d32;
+    --green-bg: #e8f5e9;
+    --red: #c0392b;
+    --red-bg: #fdecea;
+    --sky-bg: #e8f4f8;
+    --grey-text: #555555;
+    --grey-border: #dddddd;
+    --bg: #fafafa;
+    --card-bg: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: #222; }
+  .topbar { background: var(--navy); color: #fff; padding: 14px 16px; }
+  .topbar-inner { max-width: 700px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-weight: 700; font-size: 1.1rem; }
+  .link-btn { background: none; border: 1px solid rgba(255,255,255,0.6); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; text-decoration: none; display: inline-block; }
+  .link-btn:hover { background: rgba(255,255,255,0.15); }
+  .container { max-width: 700px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  .live-card { background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 12px; padding: 24px 22px; }
+  .live-card .link-btn { background: none; border: none; color: var(--navy); padding: 0; margin-bottom: 10px; }
+  .live-card .link-btn:hover { text-decoration: underline; background: none; }
+  h1 { font-size: 1.4rem; color: var(--navy); margin: 4px 0 6px; }
+  h2 { font-size: 1.1rem; color: var(--navy); margin: 4px 0 10px; }
+  .subtitle { color: var(--grey-text); margin-top: 0; line-height: 1.5; }
+
+  .live-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .live-btn { background: var(--navy); color: #fff; border: none; padding: 12px 18px; border-radius: 8px; font-size: 0.98rem; cursor: pointer; }
+  .live-btn:hover { background: var(--navy-dark); }
+  .live-btn:disabled { opacity: 0.45; cursor: default; }
+  .live-btn.secondary { background: #fff; color: var(--navy); border: 1px solid var(--navy); }
+
+  .live-label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--grey-text); margin: 10px 0 6px; }
+  .live-select { width: 100%; padding: 10px 12px; border: 1px solid var(--grey-border); border-radius: 8px; font-size: 0.98rem; }
+  .live-status { font-size: 0.88rem; color: var(--grey-text); margin-top: 10px; min-height: 1.2em; }
+  .live-error { color: var(--red); font-size: 0.9rem; }
+  .loading { text-align: center; color: #888; padding: 20px 0; }
+
+  .sdl-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; margin-top: 6px; border: 1px solid var(--grey-border); border-radius: 8px; padding: 8px; }
+  .sdl-row { display: flex; align-items: flex-start; gap: 8px; font-size: 0.9rem; padding: 4px 2px; cursor: pointer; }
+  .sdl-row .q-count { color: #999; }
+
+  .room-code { font-size: 2.6rem; font-weight: 800; letter-spacing: 0.14em; color: var(--navy); text-align: center; margin: 10px 0 14px; }
+  .join-url { font-weight: 700; word-break: break-all; }
+  .participant-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .chip { background: var(--sky-bg); color: var(--navy); padding: 6px 12px; border-radius: 999px; font-size: 0.88rem; font-weight: 600; }
+
+  .host-meta { font-size: 0.85rem; color: var(--grey-text); margin-bottom: 10px; }
+  .link-btn-inline { background: none; border: 1px solid var(--grey-border); color: var(--navy); padding: 2px 8px; border-radius: 6px; font-size: 0.78rem; cursor: pointer; margin-left: 8px; }
+  .link-btn-inline:hover { background: var(--sky-bg); }
+  .q-stem { line-height: 1.4; }
+
+  .choice-list { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+  .choice {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid var(--grey-border); border-radius: 8px;
+    padding: 10px 12px; background: #fff; font-size: 0.96rem; line-height: 1.4; text-align: left;
+  }
+  button.choice { font: inherit; width: 100%; cursor: pointer; }
+  .choice:hover:not(.disabled) { border-color: var(--navy); background: #f5f8fb; }
+  .choice .letter { font-weight: 700; color: var(--navy); flex-shrink: 0; }
+  .choice.disabled { cursor: default; }
+  .choice.selected { border-color: var(--navy); background: var(--sky-bg); }
+  .choice.correct { border-color: var(--green); background: var(--green-bg); }
+  .choice.incorrect { border-color: var(--red); background: var(--red-bg); }
+
+  .host-choice { position: relative; overflow: hidden; }
+  .choice-text { flex: 1; }
+  .tally-bar-wrap { width: 70px; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; flex-shrink: 0; }
+  .tally-bar { display: block; height: 100%; background: var(--navy); }
+  .tally-count { width: 22px; text-align: right; font-weight: 700; color: var(--grey-text); flex-shrink: 0; }
+
+  .feedback-banner { margin-top: 14px; padding: 10px 14px; border-radius: 8px; font-weight: 700; }
+  .feedback-banner.correct { background: var(--green-bg); color: var(--green); }
+  .feedback-banner.incorrect { background: var(--red-bg); color: var(--red); }
+  .info-block { margin-top: 12px; padding: 12px 14px; border-radius: 8px; font-size: 0.92rem; line-height: 1.5; background: var(--sky-bg); }
+
+  .leaderboard { list-style: none; padding: 0; margin: 0; counter-reset: rank; }
+  .leaderboard li { counter-increment: rank; display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--grey-border); font-size: 0.98rem; }
+  .leaderboard li::before { content: counter(rank) ". "; font-weight: 700; color: var(--navy); margin-right: 6px; }
+  .lb-score { font-weight: 700; color: var(--navy); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="link-btn">&larr; All Blocks</a>
+      <span class="brand">🎮 Live Session</span>
+      <span></span>
+    </div>
+  </div>
+  <div class="container">
+    <div id="liveRoot"><p class="loading">Loading…</p></div>
+  </div>
+<script src="live.js"></script>
+</body>
+</html>
