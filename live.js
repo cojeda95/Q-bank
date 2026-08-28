@@ -418,6 +418,7 @@ function renderHostRoom() {
         <div class="host-meta">
           Room <b>${state.code}</b> &middot; Question ${s.currentIndex + 1} of ${s.questionIds.length} &middot; ${participants.length} joined &middot; ${answers.length} answered
           <button class="link-btn-inline" id="lockBtn">${s.locked ? '🔒 Locked' : '🔓 Lock room'}</button>
+          <button class="link-btn-inline" id="endEarlyBtn">⏹ End Early</button>
         </div>
         <h2 class="q-stem">${esc(q ? q.stem : '(question not found)')}</h2>
         <div class="choice-list">
@@ -445,6 +446,11 @@ function renderHostRoom() {
       </div>
     `;
     document.getElementById('lockBtn').addEventListener('click', () => hostPatch({ locked: !s.locked }));
+    document.getElementById('endEarlyBtn').addEventListener('click', () => {
+      if (confirm(`End the session now at question ${s.currentIndex + 1} of ${s.questionIds.length}? Everyone will see the final leaderboard.`)) {
+        hostPatch({ status: 'ended' });
+      }
+    });
     const revealBtn = document.getElementById('revealBtn');
     if (revealBtn) revealBtn.addEventListener('click', () => hostPatch({ revealed: true }));
     document.getElementById('nextBtn').addEventListener('click', () => {

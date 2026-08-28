@@ -86,8 +86,9 @@ function lastAttemptMap() {
 
 /* ── Settings (High-Yield Only mode) ─────────────────────────────────── */
 function loadSettings() {
-  try { return Object.assign({ hyOnly: false }, JSON.parse(localStorage.getItem(LS_SETTINGS)) || {}); }
-  catch (e) { return { hyOnly: false }; }
+  const defaults = { hyOnly: false, examInstantFeedback: false };
+  try { return Object.assign({}, defaults, JSON.parse(localStorage.getItem(LS_SETTINGS)) || {}); }
+  catch (e) { return Object.assign({}, defaults); }
 }
 function saveSettings(s) {
   localStorage.setItem(LS_SETTINGS, JSON.stringify(s));
@@ -283,6 +284,10 @@ function renderHome() {
       <input type="checkbox" id="hyToggle" ${settings.hyOnly ? 'checked' : ''}>
       <span>⚡ High-Yield Only Mode — restrict Practice and Exam Simulation to questions tagged high-yield</span>
     </label>
+    <label class="radio-option" style="cursor:pointer; margin-top:8px;">
+      <input type="checkbox" id="instantFeedbackToggle" ${settings.examInstantFeedback ? 'checked' : ''}>
+      <span>📝 Show Answers After Each Question (Exam Simulation) — reveal correct/incorrect + explanation right after you answer, same as Practice mode, instead of waiting until you submit the whole exam</span>
+    </label>
   `;
 
   main.querySelectorAll('.exam-card').forEach(card => {
@@ -297,6 +302,12 @@ function renderHome() {
   document.getElementById('hyToggle').addEventListener('change', (e) => {
     const s = loadSettings();
     s.hyOnly = e.target.checked;
+    saveSettings(s);
+    renderHome();
+  });
+  document.getElementById('instantFeedbackToggle').addEventListener('change', (e) => {
+    const s = loadSettings();
+    s.examInstantFeedback = e.target.checked;
     saveSettings(s);
     renderHome();
   });
@@ -358,7 +369,7 @@ function renderExamSdlList(examNumber) {
       <span class="icon">&#9201;</span>
       <div>
         <div class="sdl-title">Full Exam Simulation</div>
-        <div class="action-label">All ${totalQ} questions, timed (~${estMinutes} min budget), no immediate answer reveal</div>
+        <div class="action-label">All ${totalQ} questions, timed (~${estMinutes} min budget)${settings.examInstantFeedback ? ' · 📝 Instant Feedback is ON' : ', no immediate answer reveal'}</div>
       </div>
     </div>
     <div class="section-label">Practice by SDL</div>
@@ -988,20 +999,41 @@ function renderExamQuestion() {
   const flagged = isFlagged(q.id);
   const letters = ['A', 'B', 'C', 'D', 'E'];
   const selected = session.answers[session.index];
+  const instantFeedback = loadSettings().examInstantFeedback;
+  const locked = instantFeedback && !!selected; // answer revealed, choice no longer changeable
 
   const choicesHtml = letters.map(letter => {
     let cls = 'choice';
-    if (selected === letter) cls += ' selected';
-    return `<button class="${cls}" data-letter="${letter}">
+    if (locked) {
+      cls += ' disabled';
+      if (letter === q.correct) cls += ' correct';
+      else if (letter === selected) cls += ' incorrect';
+    } else if (selected === letter) {
+      cls += ' selected';
+    }
+    return `<button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
       <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
     </button>`;
   }).join('');
+
+  let feedbackHtml = '';
+  if (locked) {
+    const isCorrect = selected === q.correct;
+    feedbackHtml = `
+      <div class="feedback-banner ${isCorrect ? 'correct' : 'incorrect'}">
+        ${isCorrect ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
+      </div>
+      <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
+      ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
+      ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
+    `;
+  }
 
   const answeredCount = session.answers.filter(a => a !== null).length;
 
   main.innerHTML = `
     <div class="quiz-header">
-      <span class="quiz-progress">${session.isFinal ? 'Final Exam Simulation' : `Exam ${session.examNumber} Simulation`} — Question ${session.index + 1} of ${total}</span>
+      <span class="quiz-progress">${session.isFinal ? 'Final Exam Simulation' : `Exam ${session.examNumber} Simulation`} — Question ${session.index + 1} of ${total}${instantFeedback ? ' · 📝 Instant Feedback' : ''}</span>
       <span id="examTimer" class="timer">${formatTime(session.remainingSeconds)}</span>
     </div>
     <div class="quiz-header">
@@ -1016,6 +1048,7 @@ function renderExamQuestion() {
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
       <div class="choice-list">${choicesHtml}</div>
+      ${feedbackHtml}
       <div class="next-row" style="justify-content: space-between;">
         <button class="btn secondary" id="prevBtn" ${session.index === 0 ? 'disabled' : ''}>Previous</button>
         <div style="display:flex; gap:10px;">
@@ -1031,12 +1064,14 @@ function renderExamQuestion() {
     toggleFlag(q.id);
     renderExamQuestion();
   });
-  main.querySelectorAll('.choice').forEach(btn => {
-    btn.addEventListener('click', () => {
-      session.answers[session.index] = btn.dataset.letter;
-      renderExamQuestion();
+  if (!locked) {
+    main.querySelectorAll('.choice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        session.answers[session.index] = btn.dataset.letter;
+        renderExamQuestion();
+      });
     });
-  });
+  }
   const prevBtn = document.getElementById('prevBtn');
   if (prevBtn) prevBtn.addEventListener('click', () => {
     if (session.index > 0) { session.index--; renderExamQuestion(); }
