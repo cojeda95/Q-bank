@@ -951,7 +951,7 @@ function renderExamSimStart(examNumber) {
    changes labeling/back-navigation/score-key — the question composition
    itself is already handled by the caller (buildCustomExamQuestions). */
 function beginExamSession(examNumber, questions, { isFinal } = {}) {
-  const totalSeconds = questions.length * 90;
+  const totalSeconds = questions.length * 900;
 
   session = {
     mode: 'exam',
