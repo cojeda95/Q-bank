@@ -295,8 +295,14 @@ function renderSdlPicker() {
   const container = document.getElementById('sdlPicker');
   if (!container) return;
   const selected = state.selectedBatches || [];
+  const examNumbers = Array.from(new Set(state.sdls.map(s => s.examNumber))).sort((a, b) => a - b);
   container.innerHTML = `
     <label class="live-label" style="margin-top:16px;">SDLs &amp; batches to include</label>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+      ${examNumbers.map(en => `<button class="live-btn secondary" data-quick-exam="${en}" style="padding:6px 12px; font-size:0.82rem;">Select Entire Exam ${en}</button>`).join('')}
+      <button class="live-btn secondary" id="clearAllBtn" style="padding:6px 12px; font-size:0.82rem;" ${selected.length ? '' : 'disabled'}>Clear All</button>
+    </div>
+    <p class="live-status" style="margin-top:0;">Heads up: a full exam's worth of questions runs long as a live, host-paced round (Auto-Advance below can help) — great for a big review session, just budget the time.</p>
     <div class="sdl-list">
       ${state.sdls.map((s, i) => {
         const batches = Array.from(new Set(s.questions.map(q => q.batch))).sort((a, b) => a - b);
@@ -344,6 +350,22 @@ function renderSdlPicker() {
       setState({ selectedBatches: sel });
     });
   });
+  container.querySelectorAll('[data-quick-exam]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const en = Number(btn.dataset.quickExam);
+      const sel = (state.selectedBatches || []).slice();
+      state.sdls.forEach((s, i) => {
+        if (s.examNumber !== en) return;
+        Array.from(new Set(s.questions.map(q => q.batch))).forEach(b => {
+          const key = `${i}-${b}`;
+          if (!sel.includes(key)) sel.push(key);
+        });
+      });
+      setState({ selectedBatches: sel });
+    });
+  });
+  const clearAllBtn = document.getElementById('clearAllBtn');
+  if (clearAllBtn) clearAllBtn.addEventListener('click', () => setState({ selectedBatches: [] }));
   const autoAdvanceToggle = document.getElementById('autoAdvanceToggle');
   const autoAdvanceRow = document.getElementById('autoAdvanceRow');
   const autoAdvanceSecs = document.getElementById('autoAdvanceSecs');
