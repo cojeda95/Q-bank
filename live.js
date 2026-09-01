@@ -221,6 +221,19 @@ function allBlockQuestionIds(quizData, examNumber) {
   });
   return ids;
 }
+// Every question id from every exam strictly BEFORE examNumber — the "prior
+// weeks" pool used to blend a per-exam mock exam the same cumulative way the
+// per-block app's Full Exam Simulation does.
+function blockQuestionIdsBefore(quizData, examNumber) {
+  const ids = [];
+  (quizData.exams || []).forEach(exam => {
+    if (exam.examNumber >= examNumber) return;
+    (exam.sdls || []).forEach(sdl => {
+      (sdl.questions || []).forEach(q => { if (q.batch !== 3) ids.push(q.id); });
+    });
+  });
+  return ids;
+}
 function joinUrl(code) {
   const here = location.origin + location.pathname;
   return `${here}?join=${code}`;
@@ -319,7 +332,11 @@ function renderSdlPicker() {
   const selected = state.selectedBatches || [];
   const examNumbers = Array.from(new Set(state.sdls.map(s => s.examNumber))).sort((a, b) => a - b);
   const examCounts = {};
-  examNumbers.forEach(en => { examCounts[en] = allBlockQuestionIds(state.quizData, en).length; });
+  const priorCounts = {};
+  examNumbers.forEach(en => {
+    examCounts[en] = allBlockQuestionIds(state.quizData, en).length;
+    priorCounts[en] = blockQuestionIdsBefore(state.quizData, en).length;
+  });
   const blockTotal = allBlockQuestionIds(state.quizData).length;
   const mockDefault = Math.min(100, blockTotal);
   container.innerHTML = `
@@ -335,6 +352,13 @@ function renderSdlPicker() {
         <label for="mockExamCount" style="font-size:0.85rem; color:var(--grey-text); font-weight:700;">Questions</label>
         <input type="number" id="mockExamCount" class="live-select" style="width:90px;" min="10" max="${blockTotal}" step="5" value="${mockDefault}" ${blockTotal < 10 ? 'disabled' : ''}>
         <button class="live-btn" id="mockExamBtn" ${blockTotal < 10 ? 'disabled' : ''}>Create Mock Exam Session</button>
+      </div>
+      <div id="mockPctRow" style="margin-top:10px; display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label for="mockPctSlider" style="font-size:0.85rem; color:var(--grey-text); font-weight:700;">Content Source</label>
+          <span id="mockPctReadout" class="live-status" style="margin:0;"></span>
+        </div>
+        <input type="range" id="mockPctSlider" min="0" max="100" step="5" value="70" style="width:100%;">
       </div>
     </div>
     <label class="live-label" style="margin-top:16px;">SDLs &amp; batches to include (manual)</label>
@@ -409,16 +433,39 @@ function renderSdlPicker() {
   const mockExamBtn = document.getElementById('mockExamBtn');
   const mockExamCount = document.getElementById('mockExamCount');
   const mockExamScope = document.getElementById('mockExamScope');
+  const mockPctRow = document.getElementById('mockPctRow');
+  const mockPctSlider = document.getElementById('mockPctSlider');
+  const mockPctReadout = document.getElementById('mockPctReadout');
+
+  function scopeTotalFor(en) {
+    return en == null ? blockTotal : examCounts[en] + priorCounts[en];
+  }
+  function updateMockPctRow() {
+    const en = mockExamScope.value ? Number(mockExamScope.value) : null;
+    if (en == null) { mockPctRow.style.display = 'none'; return; }
+    mockPctRow.style.display = 'block';
+    const hasPrior = priorCounts[en] > 0;
+    mockPctSlider.disabled = !hasPrior;
+    if (!hasPrior) {
+      mockPctReadout.textContent = `100% Exam ${en} (no earlier exam to blend in)`;
+    } else {
+      mockPctReadout.textContent = `${mockPctSlider.value}% Exam ${en} · ${100 - mockPctSlider.value}% prior exams`;
+    }
+  }
   if (mockExamScope) mockExamScope.addEventListener('change', () => {
     const en = mockExamScope.value ? Number(mockExamScope.value) : null;
-    const scopeTotal = en == null ? blockTotal : examCounts[en];
+    const scopeTotal = scopeTotalFor(en);
     mockExamCount.max = scopeTotal;
     mockExamCount.value = Math.min(Number(mockExamCount.value) || mockDefault, scopeTotal);
+    updateMockPctRow();
   });
+  if (mockPctSlider) mockPctSlider.addEventListener('input', updateMockPctRow);
+  updateMockPctRow();
   if (mockExamBtn) mockExamBtn.addEventListener('click', () => {
     const en = mockExamScope && mockExamScope.value ? Number(mockExamScope.value) : null;
     const count = Math.max(10, Number(mockExamCount.value) || mockDefault);
-    createMockExamSession(count, en);
+    const pctCurrent = en != null ? Number(mockPctSlider.value) : undefined;
+    createMockExamSession(count, en, pctCurrent);
   });
   const autoAdvanceToggle = document.getElementById('autoAdvanceToggle');
   const autoAdvanceRow = document.getElementById('autoAdvanceRow');
@@ -451,11 +498,50 @@ async function createSession() {
 
 // Randomly composed mock exam — pulls from every SDL and both regular
 // batches, scoped to one exam or the whole block per examNumber (null =
-// whole block), same spirit as the per-block app's Full/Final Exam
-// Simulation, just for a live in-person round instead of a self-paced timed run.
-async function createMockExamSession(count, examNumber) {
-  const pool = allBlockQuestionIds(state.quizData, examNumber);
-  const questionIds = shuffleArr(pool).slice(0, Math.min(count, pool.length));
+// whole block). When a specific exam is picked, it's blended the same
+// cumulative way the per-block app's Full Exam Simulation is: pctCurrent%
+// from that exam, the rest pooled from every exam before it — not just
+// "that exam's own questions in isolation." Whole-block scope ignores
+// pctCurrent entirely since there's no single "current" exam to weight.
+async function createMockExamSession(count, examNumber, pctCurrent) {
+  let questionIds;
+
+  if (examNumber == null) {
+    const pool = allBlockQuestionIds(state.quizData);
+    questionIds = shuffleArr(pool).slice(0, Math.min(count, pool.length));
+  } else {
+    const currentPool = allBlockQuestionIds(state.quizData, examNumber);
+    const priorPool = blockQuestionIdsBefore(state.quizData, examNumber);
+    const hasPrior = priorPool.length > 0;
+
+    let currentTarget, priorTarget;
+    if (!hasPrior) {
+      currentTarget = count;
+      priorTarget = 0;
+    } else {
+      currentTarget = Math.round(count * (pctCurrent == null ? 70 : pctCurrent) / 100);
+      priorTarget = count - currentTarget;
+    }
+
+    let currentTake = Math.min(currentTarget, currentPool.length);
+    let priorTake = Math.min(priorTarget, priorPool.length);
+
+    // If one pool came up short, backfill from the other pool's remaining capacity —
+    // same shortfall redistribution as the per-block app's buildCustomExamQuestions.
+    let shortfall = (currentTarget - currentTake) + (priorTarget - priorTake);
+    if (shortfall > 0) {
+      const currentRemaining = currentPool.length - currentTake;
+      const addToCurrent = Math.min(shortfall, currentRemaining);
+      currentTake += addToCurrent;
+      shortfall -= addToCurrent;
+      const priorRemaining = priorPool.length - priorTake;
+      const addToPrior = Math.min(shortfall, priorRemaining);
+      priorTake += addToPrior;
+    }
+
+    questionIds = shuffleArr(shuffleArr(currentPool).slice(0, currentTake).concat(shuffleArr(priorPool).slice(0, priorTake)));
+  }
+
   await createSessionWithQuestionIds(questionIds);
 }
 
