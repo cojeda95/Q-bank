@@ -13,6 +13,8 @@
     --red: #c0392b;
     --red-bg: #fdecea;
     --sky-bg: #e8f4f8;
+    --purple-bg: #f3e5f5;
+    --blue-bg: #e3f2fd;
     --grey-text: #555555;
     --grey-border: #dddddd;
     --bg: #fafafa;
@@ -85,6 +87,29 @@
   .feedback-banner.correct { background: var(--green-bg); color: var(--green); }
   .feedback-banner.incorrect { background: var(--red-bg); color: var(--red); }
   .info-block { margin-top: 12px; padding: 12px 14px; border-radius: 8px; font-size: 0.92rem; line-height: 1.5; background: var(--sky-bg); }
+  .info-block b { display: block; margin-bottom: 4px; }
+  .info-block.explanation { background: #f5f5f5; }
+  .info-block.boardprep { background: var(--purple-bg); color: #4a148c; }
+  .info-block.xref { background: var(--blue-bg); color: #1565c0; font-style: italic; font-size: 0.85rem; }
+
+  .sdl-group { margin-bottom: 10px; }
+  .sdl-group-title { font-weight: 700; font-size: 0.88rem; color: var(--navy); margin: 6px 0 2px; }
+  .sdl-row-batch { padding-left: 6px; }
+
+  .q-card { border: 1px solid var(--grey-border); border-radius: 10px; padding: 14px 16px; }
+
+  .faq { margin-top: 18px; border-top: 1px solid var(--grey-border); padding-top: 14px; }
+  .faq summary { cursor: pointer; font-weight: 700; color: var(--navy); font-size: 0.92rem; list-style: none; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::before { content: "▸ "; }
+  .faq[open] summary::before { content: "▾ "; }
+  .faq-body { margin-top: 10px; font-size: 0.88rem; color: var(--grey-text); line-height: 1.55; }
+  .faq-body p { margin: 0 0 10px; }
+  .faq-body p:last-child { margin-bottom: 0; }
+  .faq-body b { color: #333; }
+
+  .qr-wrap { display: flex; justify-content: center; margin: 14px 0; }
+  .qr-wrap img, .qr-wrap canvas { border-radius: 8px; border: 1px solid var(--grey-border); }
 
   .leaderboard { list-style: none; padding: 0; margin: 0; counter-reset: rank; }
   .leaderboard li { counter-increment: rank; display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--grey-border); font-size: 0.98rem; }
@@ -103,6 +128,7 @@
   <div class="container">
     <div id="liveRoot"><p class="loading">Loading…</p></div>
   </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="live.js"></script>
 </body>
 </html>

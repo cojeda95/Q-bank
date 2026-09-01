@@ -216,6 +216,7 @@ function setState(patch) {
 }
 function stopPolling() {
   if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  clearAutoAdvanceTimer();
 }
 function startPolling(fn) {
   stopPolling();
@@ -234,6 +235,17 @@ function renderLanding() {
         <button class="live-btn" id="hostBtn">🖥️ Host a Session</button>
         <button class="live-btn secondary" id="joinBtn">📱 Join a Session</button>
       </div>
+      <details class="faq">
+        <summary>❓ How this works / FAQ</summary>
+        <div class="faq-body">
+          <p><b>Hosting</b> — pick a block, then pick which SDL(s) and batch(es) (Quick Recall / Deep Vignettes) to pull questions from. You'll land in a lobby with a 5-letter room code and a QR code — share either one. Once people have joined, hit "Start Session."</p>
+          <p><b>Joining</b> — go to the Live Session page, tap "Join a Session," and enter the room code plus your name. No account needed.</p>
+          <p><b>Pacing</b> — by default you control it manually: Reveal Answer, then Next Question. Turning on Auto-Advance at setup reveals and moves on for you after a set number of seconds, so you don't have to babysit the host screen.</p>
+          <p><b>During the round</b> — 🔓/🔒 Lock Room stops new people from joining mid-session (existing joiners are unaffected). ← Previous Question lets you back up if you moved on too fast. ⏹ End Early stops the round at any point and jumps straight to the leaderboard.</p>
+          <p><b>🧹 Clean Up Room</b> — once the session ends, this permanently deletes the room, its participants, and every submitted answer from the shared database. Please do this when you're done — old rooms don't expire on their own, and leaving a lot of them around makes room codes more likely to collide with a new session. "Back without cleaning up" is there if you want to leave it a bit longer so people can screenshot the leaderboard, but circle back and clean it up afterward.</p>
+          <p><b>Is anyone's personal data stored?</b> — Just whatever first name a participant types in to join, and their answers/score for that one room — all of it gets deleted the moment you clean up the room. Nothing here is tied to accounts or saved long-term.</p>
+        </div>
+      </details>
     </div>
   `;
   document.getElementById('hostBtn').addEventListener('click', () => setState({ screen: 'hostSetup' }));
@@ -260,11 +272,11 @@ function renderHostSetup() {
   document.getElementById('backBtn').addEventListener('click', () => setState({ screen: 'landing' }));
   document.getElementById('blockSelect').addEventListener('change', async (e) => {
     const key = e.target.value;
-    if (!key) { setState({ blockKey: '', sdls: null, selectedSdls: [] }); return; }
+    if (!key) { setState({ blockKey: '', sdls: null, selectedBatches: [] }); return; }
     document.getElementById('sdlPicker').innerHTML = `<p class="loading">Loading question bank…</p>`;
     try {
       const data = await loadBlockData(key);
-      setState({ blockKey: key, quizData: data, sdls: flattenSdls(data), selectedSdls: [] });
+      setState({ blockKey: key, quizData: data, sdls: flattenSdls(data), selectedBatches: [] });
     } catch (err) {
       document.getElementById('sdlPicker').innerHTML = `<p class="live-error">${esc(err.message)}</p>`;
     }
@@ -272,51 +284,95 @@ function renderHostSetup() {
   if (state.sdls) renderSdlPicker();
 }
 
+function batchLabel(b) {
+  if (b === 1) return 'Batch 1 — Quick Recall';
+  if (b === 2) return 'Batch 2 — Deep Vignettes';
+  if (b === 3) return 'Batch 3 — Bloom Batch';
+  return `Batch ${b}`;
+}
+
 function renderSdlPicker() {
   const container = document.getElementById('sdlPicker');
   if (!container) return;
-  const selected = state.selectedSdls || [];
+  const selected = state.selectedBatches || [];
   container.innerHTML = `
-    <label class="live-label" style="margin-top:16px;">SDLs to include</label>
+    <label class="live-label" style="margin-top:16px;">SDLs &amp; batches to include</label>
     <div class="sdl-list">
       ${state.sdls.map((s, i) => {
-        const qCount = s.questions.length;
-        const checked = selected.includes(i);
+        const batches = Array.from(new Set(s.questions.map(q => q.batch))).sort((a, b) => a - b);
         return `
-          <label class="sdl-row">
-            <input type="checkbox" data-idx="${i}" ${checked ? 'checked' : ''}>
-            <span>Exam ${s.examNumber} &middot; SDL ${s.sdlNumber} — ${esc(s.title)} <span class="q-count">(${qCount} questions)</span></span>
-          </label>
+          <div class="sdl-group">
+            <div class="sdl-group-title">Exam ${s.examNumber} &middot; SDL ${s.sdlNumber} — ${esc(s.title)}</div>
+            ${batches.map(b => {
+              const key = `${i}-${b}`;
+              const qCount = s.questions.filter(q => q.batch === b).length;
+              const checked = selected.includes(key);
+              return `
+                <label class="sdl-row sdl-row-batch">
+                  <input type="checkbox" data-key="${key}" ${checked ? 'checked' : ''}>
+                  <span>${batchLabel(b)} <span class="q-count">(${qCount} questions)</span></span>
+                </label>
+              `;
+            }).join('')}
+          </div>
         `;
       }).join('')}
     </div>
     <div class="live-status" id="pickerStatus">
-      ${selected.length ? `${totalQuestions()} question(s) selected` : 'Select at least one SDL'}
+      ${selected.length ? `${totalQuestions()} question(s) selected` : 'Select at least one batch'}
+    </div>
+    <label class="live-label" style="margin-top:16px;">Pacing</label>
+    <label class="sdl-row" style="cursor:pointer;">
+      <input type="checkbox" id="autoAdvanceToggle" ${state.autoAdvanceOn ? 'checked' : ''}>
+      <span>⏱ Auto-advance each question — reveal &amp; move on for me, no manual "Next" needed</span>
+    </label>
+    <div id="autoAdvanceRow" style="margin-top:8px; ${state.autoAdvanceOn ? '' : 'opacity:0.45;'}">
+      <div class="setup-label-row" style="display:flex; justify-content:space-between; align-items:center;">
+        <label for="autoAdvanceSecs" style="font-size:0.85rem; color:var(--grey-text); font-weight:700;">Seconds to answer before reveal</label>
+      </div>
+      <input type="number" id="autoAdvanceSecs" class="live-select" style="width:100px;" min="5" max="300" step="5" value="${state.autoAdvanceSecs || 20}" ${state.autoAdvanceOn ? '' : 'disabled'}>
     </div>
     <div class="live-actions" style="margin-top:14px;">
       <button class="live-btn" id="createBtn" ${selected.length ? '' : 'disabled'}>Create Session</button>
     </div>
   `;
-  container.querySelectorAll('input[type=checkbox]').forEach(cb => {
+  container.querySelectorAll('input[type=checkbox][data-key]').forEach(cb => {
     cb.addEventListener('change', () => {
-      const idx = parseInt(cb.dataset.idx, 10);
-      let sel = (state.selectedSdls || []).slice();
-      if (cb.checked) sel.push(idx); else sel = sel.filter(x => x !== idx);
-      setState({ selectedSdls: sel });
+      const key = cb.dataset.key;
+      let sel = (state.selectedBatches || []).slice();
+      if (cb.checked) sel.push(key); else sel = sel.filter(x => x !== key);
+      setState({ selectedBatches: sel });
     });
   });
+  const autoAdvanceToggle = document.getElementById('autoAdvanceToggle');
+  const autoAdvanceRow = document.getElementById('autoAdvanceRow');
+  const autoAdvanceSecs = document.getElementById('autoAdvanceSecs');
+  autoAdvanceToggle.addEventListener('change', () => {
+    state.autoAdvanceOn = autoAdvanceToggle.checked;
+    autoAdvanceRow.style.opacity = state.autoAdvanceOn ? '1' : '0.45';
+    autoAdvanceSecs.disabled = !state.autoAdvanceOn;
+  });
+  autoAdvanceSecs.addEventListener('input', () => { state.autoAdvanceSecs = Number(autoAdvanceSecs.value) || 20; });
   const createBtn = document.getElementById('createBtn');
   if (createBtn) createBtn.addEventListener('click', createSession);
 }
 
 function totalQuestions() {
-  return (state.selectedSdls || []).reduce((sum, i) => sum + state.sdls[i].questions.length, 0);
+  return (state.selectedBatches || []).reduce((sum, key) => {
+    const [i, b] = key.split('-').map(Number);
+    return sum + state.sdls[i].questions.filter(q => q.batch === b).length;
+  }, 0);
 }
 
 async function createSession() {
   const questionIds = [];
-  (state.selectedSdls || []).forEach(i => state.sdls[i].questions.forEach(q => questionIds.push(q.id)));
+  (state.selectedBatches || []).forEach(key => {
+    const [i, b] = key.split('-').map(Number);
+    state.sdls[i].questions.filter(q => q.batch === b).forEach(q => questionIds.push(q.id));
+  });
   if (!questionIds.length) return;
+
+  const autoAdvanceSeconds = state.autoAdvanceOn ? (state.autoAdvanceSecs || 20) : 0;
 
   setState({ screen: 'creating' });
   let code = generateCode();
@@ -333,6 +389,7 @@ async function createSession() {
     revealed: false,
     locked: false,
     questionIds,
+    autoAdvanceSeconds,
     createdAt: Date.now(),
     hostToken,
   });
@@ -372,11 +429,13 @@ function renderHostRoom() {
   const url = joinUrl(state.code);
 
   if (s.status === 'lobby') {
+    clearAutoAdvanceTimer();
     root().innerHTML = `
       <div class="live-card">
         <h1>Room Code</h1>
         <div class="room-code">${state.code}</div>
-        <p class="subtitle">Have everyone go to <span class="join-url">${esc(url)}</span> and enter this code.</p>
+        <div id="qrCode" class="qr-wrap"></div>
+        <p class="subtitle">Have everyone go to <span class="join-url">${esc(url)}</span> and enter this code, or just scan the QR code above.</p>
         <div class="live-actions">
           <button class="live-btn secondary" id="copyBtn">Copy join link</button>
           <button class="live-btn secondary" id="lockBtn">${s.locked ? '🔒 Room Locked' : '🔓 Lock Room'}</button>
@@ -402,6 +461,14 @@ function renderHostRoom() {
     const startBtn = document.getElementById('startBtn');
     if (startBtn) startBtn.addEventListener('click', () => hostPatch({ status: 'active', currentIndex: 0, revealed: false }));
     document.getElementById('cancelBtn').addEventListener('click', endSessionAndExit);
+    // Best-effort — if the QR library didn't load (offline, CDN blocked), the
+    // room code and copy-link button above still work fine on their own.
+    const qrEl = document.getElementById('qrCode');
+    if (qrEl && window.QRCode) {
+      try {
+        new QRCode(qrEl, { text: url, width: 160, height: 160, colorDark: '#1f4e79', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+      } catch (e) { /* ignore — degrade to code + link only */ }
+    }
     return;
   }
 
@@ -416,7 +483,7 @@ function renderHostRoom() {
     root().innerHTML = `
       <div class="live-card">
         <div class="host-meta">
-          Room <b>${state.code}</b> &middot; Question ${s.currentIndex + 1} of ${s.questionIds.length} &middot; ${participants.length} joined &middot; ${answers.length} answered
+          Room <b>${state.code}</b> &middot; Question ${s.currentIndex + 1} of ${s.questionIds.length} &middot; ${participants.length} joined &middot; ${answers.length} answered${s.autoAdvanceSeconds ? ` &middot; ⏱ Auto-pacing on (${s.autoAdvanceSeconds}s/question)` : ''}
           <button class="link-btn-inline" id="lockBtn">${s.locked ? '🔒 Locked' : '🔓 Lock room'}</button>
           <button class="link-btn-inline" id="endEarlyBtn">⏹ End Early</button>
         </div>
@@ -438,8 +505,13 @@ function renderHostRoom() {
             `;
           }).join('') : ''}
         </div>
-        ${s.revealed && q ? `<div class="info-block" style="margin-top:14px;">${esc(q.explanation || '')}</div>` : ''}
+        ${s.revealed && q ? `
+          <div class="info-block explanation" style="margin-top:14px;"><b>Explanation</b>${esc(q.explanation || '')}</div>
+          ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${esc(q.boardPrep)}</div>` : ''}
+          ${q.crossRef ? `<div class="info-block xref">${esc(q.crossRef)}</div>` : ''}
+        ` : ''}
         <div class="live-actions" style="margin-top:20px;">
+          <button class="live-btn secondary" id="prevBtn" ${s.currentIndex <= 0 ? 'disabled' : ''}>&larr; Previous Question</button>
           ${!s.revealed ? `<button class="live-btn" id="revealBtn">Reveal Answer</button>` : ''}
           <button class="live-btn ${s.revealed ? '' : 'secondary'}" id="nextBtn">${isLast ? 'End Session' : 'Next Question'}</button>
         </div>
@@ -448,19 +520,27 @@ function renderHostRoom() {
     document.getElementById('lockBtn').addEventListener('click', () => hostPatch({ locked: !s.locked }));
     document.getElementById('endEarlyBtn').addEventListener('click', () => {
       if (confirm(`End the session now at question ${s.currentIndex + 1} of ${s.questionIds.length}? Everyone will see the final leaderboard.`)) {
+        clearAutoAdvanceTimer();
         hostPatch({ status: 'ended' });
       }
     });
     const revealBtn = document.getElementById('revealBtn');
-    if (revealBtn) revealBtn.addEventListener('click', () => hostPatch({ revealed: true }));
+    if (revealBtn) revealBtn.addEventListener('click', () => { clearAutoAdvanceTimer(); hostPatch({ revealed: true }); });
+    const prevBtn = document.getElementById('prevBtn');
+    if (prevBtn) prevBtn.addEventListener('click', () => {
+      if (s.currentIndex > 0) { clearAutoAdvanceTimer(); hostPatch({ currentIndex: s.currentIndex - 1, revealed: false }); }
+    });
     document.getElementById('nextBtn').addEventListener('click', () => {
+      clearAutoAdvanceTimer();
       if (isLast) hostPatch({ status: 'ended' });
       else hostPatch({ currentIndex: s.currentIndex + 1, revealed: false });
     });
+    scheduleAutoAdvance(s);
     return;
   }
 
   if (s.status === 'ended') {
+    clearAutoAdvanceTimer();
     stopPolling();
     const sorted = participants.slice().sort((a, b) => (b.score || 0) - (a.score || 0));
     root().innerHTML = `
@@ -497,14 +577,45 @@ async function hostPatch(patch) {
     revealed: merged.revealed,
     locked: !!merged.locked,
     questionIds: merged.questionIds,
+    autoAdvanceSeconds: merged.autoAdvanceSeconds || 0,
     createdAt: merged.createdAt,
     hostToken: merged.hostToken,
   });
   setState({ session: merged });
 }
+
+// ============================== host: auto-advance ==============================
+// When the host set a per-question time limit at setup, the host's own tab
+// drives pacing locally (via hostPatch, same as a manual click) so every
+// participant sees it through the normal 2s poll — no separate schema needed.
+function clearAutoAdvanceTimer() {
+  if (state._autoTimer) { clearTimeout(state._autoTimer); state._autoTimer = null; }
+  state._autoKey = null;
+}
+function scheduleAutoAdvance(s) {
+  const secs = s && s.autoAdvanceSeconds;
+  if (!secs || s.status !== 'active') { clearAutoAdvanceTimer(); return; }
+  const key = `${s.currentIndex}:${s.revealed}`;
+  if (state._autoKey === key) return; // already scheduled for this exact question/reveal state
+  clearAutoAdvanceTimer();
+  state._autoKey = key;
+  const isLast = s.currentIndex >= s.questionIds.length - 1;
+  if (!s.revealed) {
+    state._autoTimer = setTimeout(() => { hostPatch({ revealed: true }); }, secs * 1000);
+  } else {
+    // Brief pause to let everyone see the reveal, then move on automatically.
+    const revealPause = Math.min(10, Math.max(4, Math.round(secs / 3)));
+    state._autoTimer = setTimeout(() => {
+      if (isLast) hostPatch({ status: 'ended' });
+      else hostPatch({ currentIndex: s.currentIndex + 1, revealed: false });
+    }, revealPause * 1000);
+  }
+}
+
 async function endSessionAndExit() {
   // Cancelled straight out of the lobby — nobody's mid-question, so it's
   // safe to just delete the room outright instead of leaving it as "ended".
+  clearAutoAdvanceTimer();
   stopPolling();
   await deleteSessionTree(state.code).catch(() => {});
   setState({ screen: 'landing', code: null, session: null });
@@ -563,6 +674,7 @@ async function submitJoin() {
     setState({
       screen: 'joinRoom', code, pid, name, quizData: data,
       session, answeredThisQ: null, scoredIndexes: loadScoredIndexes(code),
+      myAnswers: {}, showBreakdown: false,
     });
     startJoinPolling();
   } catch (err) {
@@ -591,6 +703,10 @@ function startJoinPolling() {
         if (!state._lastIndex || state._lastIndex !== session.currentIndex) {
           const own = await getDoc(`live_sessions/${state.code}/answers/${session.currentIndex}_${state.pid}`);
           answeredThisQ = own ? own.choice : null;
+          // Keep a running local record of this participant's own answer per
+          // question — powers the "Your Answers" breakdown once the session
+          // ends. It's only ever this device's own answers, never anyone else's.
+          if (own) state.myAnswers = Object.assign({}, state.myAnswers, { [session.currentIndex]: own.choice });
         }
       }
       setState({ session, answeredThisQ, _lastIndex: session.currentIndex });
@@ -659,7 +775,9 @@ function renderJoinRoom() {
           <div class="feedback-banner ${mine === (q && q.correct) ? 'correct' : 'incorrect'}">
             ${mine === (q && q.correct) ? '✅ Correct!' : `❌ Correct answer: ${q ? q.correct : ''}`}
           </div>
-          ${q && q.explanation ? `<div class="info-block">${esc(q.explanation)}</div>` : ''}
+          ${q && q.explanation ? `<div class="info-block explanation"><b>Explanation</b>${esc(q.explanation)}</div>` : ''}
+          ${q && q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${esc(q.boardPrep)}</div>` : ''}
+          ${q && q.crossRef ? `<div class="info-block xref">${esc(q.crossRef)}</div>` : ''}
         ` : `<p class="live-status">Answer selected — tap another choice to change it, or wait for the host to reveal.</p>`)}
       </div>
     `;
@@ -673,21 +791,47 @@ function renderJoinRoom() {
 
   if (s.status === 'ended') {
     stopPolling();
+    const myAnswers = state.myAnswers || {};
+    const showBreakdown = !!state.showBreakdown;
+    let correctCount = 0;
+    const rows = s.questionIds.map((qid, i) => {
+      const q = questionById(state.quizData, qid);
+      const mine = myAnswers[i];
+      const isCorrect = q && mine === q.correct;
+      if (isCorrect) correctCount++;
+      if (!q) return '';
+      return `
+        <div class="q-card" style="margin-top:12px;">
+          <div class="host-meta">Question ${i + 1} of ${s.questionIds.length}</div>
+          <div class="q-stem" style="font-weight:600;">${esc(q.stem)}</div>
+          <div class="feedback-banner ${isCorrect ? 'correct' : 'incorrect'}" style="margin-top:8px;">
+            ${mine ? (isCorrect ? '✅ You answered correctly' : `❌ You answered ${mine} — correct answer: ${q.correct}`) : `⚠️ Not answered — correct answer: ${q.correct}`}
+          </div>
+          ${q.explanation ? `<div class="info-block explanation"><b>Explanation</b>${esc(q.explanation)}</div>` : ''}
+          ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${esc(q.boardPrep)}</div>` : ''}
+          ${q.crossRef ? `<div class="info-block xref">${esc(q.crossRef)}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
     root().innerHTML = `
       <div class="live-card">
         <h1>Session Ended</h1>
-        <p class="subtitle">Thanks for playing, ${esc(state.name)}!</p>
+        <p class="subtitle">Thanks for playing, ${esc(state.name)}! You got ${correctCount} of ${s.questionIds.length} correct.</p>
         <div class="live-actions" style="margin-top:16px;">
+          <button class="live-btn secondary" id="toggleBreakdownBtn">${showBreakdown ? 'Hide' : 'Show'} Your Answers</button>
           <button class="live-btn" id="doneBtn">Back to Live Session home</button>
         </div>
+        ${showBreakdown ? rows : ''}
       </div>
     `;
-    document.getElementById('doneBtn').addEventListener('click', () => setState({ screen: 'landing', code: null, session: null }));
+    document.getElementById('doneBtn').addEventListener('click', () => setState({ screen: 'landing', code: null, session: null, myAnswers: {} }));
+    document.getElementById('toggleBreakdownBtn').addEventListener('click', () => setState({ showBreakdown: !showBreakdown }));
   }
 }
 
 async function submitAnswer(letter) {
-  setState({ answeredThisQ: letter });
+  setState({ answeredThisQ: letter, myAnswers: Object.assign({}, state.myAnswers, { [state.session.currentIndex]: letter }) });
   try {
     await putDoc(`live_sessions/${state.code}/answers/${state.session.currentIndex}_${state.pid}`, {
       choice: letter,

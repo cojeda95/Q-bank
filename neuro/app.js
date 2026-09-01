@@ -16,6 +16,7 @@ const LS_FLAGS = QUIZ_CONFIG.storageKey + '_flags_v1';
 const LS_PROGRESS = QUIZ_CONFIG.storageKey + '_progress_v1';
 const LS_ATTEMPTS = QUIZ_CONFIG.storageKey + '_attempts_v1';
 const LS_SETTINGS = QUIZ_CONFIG.storageKey + '_settings_v1';
+const LS_EXAM_SESSION = QUIZ_CONFIG.storageKey + '_examsession_v1';
 const MAX_ATTEMPTS_STORED = 5000;
 
 /* ── localStorage helpers ────────────────────────────────────────────── */
@@ -48,10 +49,15 @@ function recordScore(key, correct, total) {
   const progress = loadProgress();
   const prev = progress[key] || {};
   const entry = prev;
-  entry.last = { correct, total, date: new Date().toISOString() };
+  const date = new Date().toISOString();
+  entry.last = { correct, total, date };
   if (!entry.best || correct / total > entry.best.correct / entry.best.total) {
     entry.best = { correct, total };
   }
+  // Capped run history — powers the Score Trend chart in Analytics. Only
+  // exam-simulation scores are recorded here (this is the only caller of
+  // recordScore), so this never touches per-question attempt data.
+  entry.history = (entry.history || []).concat([{ correct, total, date }]).slice(-20);
   progress[key] = entry;
   saveProgress(progress);
 }
@@ -92,6 +98,35 @@ function loadSettings() {
 }
 function saveSettings(s) {
   localStorage.setItem(LS_SETTINGS, JSON.stringify(s));
+}
+
+/* ── In-progress exam session snapshot (powers "Resume" on the home screen) ─
+   Saved on every question transition/answer while an exam simulation is in
+   progress, so a closed tab, accidental navigation, or refresh doesn't lose
+   the run. Cleared as soon as the exam is submitted (or time runs out). */
+function saveExamSessionSnapshot() {
+  if (!session || session.mode !== 'exam' || session.submitted) return;
+  try {
+    localStorage.setItem(LS_EXAM_SESSION, JSON.stringify({
+      examNumber: session.examNumber,
+      isFinal: !!session.isFinal,
+      timed: session.timed,
+      totalSeconds: session.totalSeconds,
+      deadlineAt: session.deadlineAt || null,
+      questions: session.questions,
+      index: session.index,
+      answers: session.answers,
+      timeSpentMs: session.timeSpentMs || [],
+      savedAt: Date.now(),
+    }));
+  } catch (e) { /* storage full/blocked — resume just won't be offered */ }
+}
+function loadExamSessionSnapshot() {
+  try { return JSON.parse(localStorage.getItem(LS_EXAM_SESSION)); }
+  catch (e) { return null; }
+}
+function clearExamSessionSnapshot() {
+  localStorage.removeItem(LS_EXAM_SESSION);
 }
 // Returns an SDL's questions filtered to high-yield-only if that mode is on.
 function visibleQuestions(sdl) {
@@ -164,6 +199,32 @@ function formatTime(seconds) {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
+function findQuestionById(id) {
+  for (const exam of DATA.exams) {
+    for (const sdl of exam.sdls) {
+      for (const q of sdl.questions) {
+        if (q.id === id) return Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title, examNumber: exam.examNumber });
+      }
+    }
+  }
+  return null;
+}
+
+// Tiny dependency-free sparkline — just enough to show a score trend inline.
+function sparklineSvg(values, width, height) {
+  width = width || 130; height = height || 30;
+  if (values.length < 2) return '';
+  const stepX = width / (values.length - 1);
+  const y = (v) => height - (Math.max(0, Math.min(100, v)) / 100) * height;
+  const points = values.map((v, i) => `${(i * stepX).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const lastX = ((values.length - 1) * stepX).toFixed(1);
+  const lastY = y(values[values.length - 1]).toFixed(1);
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:block; overflow:visible;">
+    <polyline points="${points}" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${lastX}" cy="${lastY}" r="3" fill="var(--navy)"/>
+  </svg>`;
+}
+
 /* ── Router ───────────────────────────────────────────────────────────── */
 function setRoute(hash) {
   window.location.hash = hash;
@@ -173,7 +234,7 @@ window.addEventListener('hashchange', render);
 
 function render() {
   // Guard: leaving an active timed exam mid-way just abandons the timer.
-  if (session && session.timerId && !window.location.hash.startsWith('#exam/')) {
+  if (session && session.timerId && !window.location.hash.startsWith('#exam/') && !window.location.hash.startsWith('#resume-exam')) {
     clearInterval(session.timerId);
   }
   const hash = window.location.hash.replace(/^#/, '');
@@ -193,12 +254,16 @@ function render() {
     renderExamSetup(parseInt(parts[1], 10));
   } else if (parts[0] === 'final-examsetup') {
     renderFinalExamSetup();
+  } else if (parts[0] === 'resume-exam') {
+    resumeExamSession();
   } else if (parts[0] === 'exam' && parts[1]) {
     renderExamSimStart(parseInt(parts[1], 10));
   } else if (parts[0] === 'flagged') {
     renderFlaggedReview();
   } else if (parts[0] === 'review') {
     renderReviewQueue();
+  } else if (parts[0] === 'toughest') {
+    renderToughestQueue();
   } else if (parts[0] === 'analytics') {
     renderAnalytics();
   } else if (parts[0] === 'studysheet') {
@@ -234,9 +299,23 @@ function renderHome() {
 
   const showFinalExamCard = DATA.exams.length > 1;
 
+  const resumeSnap = loadExamSessionSnapshot();
+  const resumeHtml = resumeSnap ? `
+    <div class="action-card" id="resumeExamCard" style="border-color: var(--navy); border-width: 2px;">
+      <span class="icon">▶️</span>
+      <div>
+        <div class="sdl-title">Resume In-Progress Exam</div>
+        <div class="action-label">${resumeSnap.isFinal ? 'Final Exam Simulation' : `Exam ${resumeSnap.examNumber} Simulation`} — question ${resumeSnap.index + 1} of ${resumeSnap.questions.length}, ${resumeSnap.answers.filter(a => a !== null).length} answered${resumeSnap.timed ? (resumeSnap.deadlineAt - Date.now() <= 0 ? ' · time expired' : ` · ${formatTime((resumeSnap.deadlineAt - Date.now()) / 1000)} left`) : ' · untimed'}
+          <button class="link-btn-inline" id="discardResumeBtn" style="margin-left:8px; background:none; border:1px solid var(--grey-border, #ccc); border-radius:6px; padding:2px 8px; cursor:pointer; font-size:0.78rem;">Discard</button>
+        </div>
+      </div>
+    </div>
+  ` : '';
+
   main.innerHTML = `
     <h1>${escapeHtml(QUIZ_CONFIG.title)}</h1>
     <p class="subtitle">Choose an exam block to practice by SDL or run a full timed simulation.${settings.hyOnly ? ' <strong>⚡ High-Yield Only Mode is ON.</strong>' : ''}</p>
+    ${resumeHtml}
     <div class="exam-grid">${examCards}</div>
 
     ${showFinalExamCard ? `
@@ -295,6 +374,16 @@ function renderHome() {
   });
   const finalExamCard = document.getElementById('finalExamCard');
   if (finalExamCard) finalExamCard.addEventListener('click', () => setRoute('final-examsetup'));
+  const resumeExamCard = document.getElementById('resumeExamCard');
+  if (resumeExamCard) resumeExamCard.addEventListener('click', () => setRoute('resume-exam'));
+  const discardResumeBtn = document.getElementById('discardResumeBtn');
+  if (discardResumeBtn) discardResumeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (confirm('Discard the in-progress exam? This cannot be undone.')) {
+      clearExamSessionSnapshot();
+      renderHome();
+    }
+  });
   document.getElementById('flaggedCard').addEventListener('click', () => setRoute('flagged'));
   document.getElementById('reviewCard').addEventListener('click', () => setRoute('review'));
   document.getElementById('analyticsCard').addEventListener('click', () => setRoute('analytics'));
@@ -437,6 +526,21 @@ function renderExamSetup(examNumber) {
         <div class="setup-hint" id="totalError" style="color: var(--red); display: none;"></div>
       </div>
 
+      <div class="setup-row">
+        <div class="setup-label-row"><label>Timer</label></div>
+        <label class="radio-option" style="cursor:pointer;">
+          <input type="checkbox" id="timerToggle" checked>
+          <span>&#9201; Timed — default 1.5 min per question</span>
+        </label>
+        <div id="timerMinutesRow" style="margin-top:8px;">
+          <div class="setup-label-row">
+            <label for="minutesPerQInput">Minutes per question</label>
+            <span id="timerReadout" class="setup-readout"></span>
+          </div>
+          <input type="number" id="minutesPerQInput" class="number-input" min="0.5" max="30" step="0.5" value="1.5">
+        </div>
+      </div>
+
       <button class="btn" id="startSetupBtn" style="width:100%; margin-top:10px;">Start Simulation</button>
     </div>
   `;
@@ -448,12 +552,32 @@ function renderExamSetup(examNumber) {
   const totalInput = document.getElementById('totalInput');
   const poolHint = document.getElementById('poolHint');
   const totalError = document.getElementById('totalError');
+  const timerToggle = document.getElementById('timerToggle');
+  const minutesPerQInput = document.getElementById('minutesPerQInput');
+  const timerMinutesRow = document.getElementById('timerMinutesRow');
+  const timerReadout = document.getElementById('timerReadout');
+
+  function updateTimerReadout() {
+    const timed = timerToggle.checked;
+    timerMinutesRow.style.opacity = timed ? '1' : '0.45';
+    minutesPerQInput.disabled = !timed;
+    if (!timed) { timerReadout.textContent = 'No time limit'; return; }
+    const total = Number(totalInput.value) || 0;
+    const minutesPerQ = Number(minutesPerQInput.value) || 1.5;
+    timerReadout.textContent = `~${Math.round(total * minutesPerQ)} min total`;
+  }
+  timerToggle.addEventListener('change', updateTimerReadout);
+  minutesPerQInput.addEventListener('input', updateTimerReadout);
+  totalInput.addEventListener('input', updateTimerReadout);
+  updateTimerReadout();
 
   function currentSettings() {
     const pctCurrent = hasPrior && pctSlider ? Number(pctSlider.value) : 100;
     const batchMode = document.querySelector('input[name="batchMode"]:checked').value;
     const total = Number(totalInput.value);
-    return { pctCurrent, batchMode, total };
+    const timed = timerToggle.checked;
+    const minutesPerQuestion = Number(minutesPerQInput.value) || 1.5;
+    return { pctCurrent, batchMode, total, timed, minutesPerQuestion };
   }
 
   function poolSizes(batchMode) {
@@ -480,7 +604,7 @@ function renderExamSetup(examNumber) {
   updatePoolHint();
 
   document.getElementById('startSetupBtn').addEventListener('click', () => {
-    const { pctCurrent, batchMode, total } = currentSettings();
+    const { pctCurrent, batchMode, total, timed, minutesPerQuestion } = currentSettings();
     if (!Number.isFinite(total) || total < 1) {
       totalError.textContent = 'Enter a valid number of questions (at least 1).';
       totalError.style.display = 'block';
@@ -494,7 +618,7 @@ function renderExamSetup(examNumber) {
     }
     totalError.style.display = 'none';
     const composed = buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior });
-    beginExamSession(examNumber, composed.questions);
+    beginExamSession(examNumber, composed.questions, { timed, secondsPerQuestion: minutesPerQuestion * 60 });
   });
 }
 
@@ -614,6 +738,21 @@ function renderFinalExamSetup() {
         <div class="setup-hint" id="totalError" style="color: var(--red); display: none;"></div>
       </div>
 
+      <div class="setup-row">
+        <div class="setup-label-row"><label>Timer</label></div>
+        <label class="radio-option" style="cursor:pointer;">
+          <input type="checkbox" id="timerToggle" checked>
+          <span>&#9201; Timed — default 1.5 min per question</span>
+        </label>
+        <div id="timerMinutesRow" style="margin-top:8px;">
+          <div class="setup-label-row">
+            <label for="minutesPerQInput">Minutes per question</label>
+            <span id="timerReadout" class="setup-readout"></span>
+          </div>
+          <input type="number" id="minutesPerQInput" class="number-input" min="0.5" max="30" step="0.5" value="1.5">
+        </div>
+      </div>
+
       <button class="btn" id="startSetupBtn" style="width:100%; margin-top:10px;">Start Final Exam Simulation</button>
     </div>
   `;
@@ -625,12 +764,32 @@ function renderFinalExamSetup() {
   const totalInput = document.getElementById('totalInput');
   const poolHint = document.getElementById('poolHint');
   const totalError = document.getElementById('totalError');
+  const timerToggle = document.getElementById('timerToggle');
+  const minutesPerQInput = document.getElementById('minutesPerQInput');
+  const timerMinutesRow = document.getElementById('timerMinutesRow');
+  const timerReadout = document.getElementById('timerReadout');
+
+  function updateTimerReadout() {
+    const timed = timerToggle.checked;
+    timerMinutesRow.style.opacity = timed ? '1' : '0.45';
+    minutesPerQInput.disabled = !timed;
+    if (!timed) { timerReadout.textContent = 'No time limit'; return; }
+    const total = Number(totalInput.value) || 0;
+    const minutesPerQ = Number(minutesPerQInput.value) || 1.5;
+    timerReadout.textContent = `~${Math.round(total * minutesPerQ)} min total`;
+  }
+  timerToggle.addEventListener('change', updateTimerReadout);
+  minutesPerQInput.addEventListener('input', updateTimerReadout);
+  totalInput.addEventListener('input', updateTimerReadout);
+  updateTimerReadout();
 
   function currentSettings() {
     const pctCurrent = Number(pctSlider.value);
     const batchMode = document.querySelector('input[name="batchMode"]:checked').value;
     const total = Number(totalInput.value);
-    return { pctCurrent, batchMode, total };
+    const timed = timerToggle.checked;
+    const minutesPerQuestion = Number(minutesPerQInput.value) || 1.5;
+    return { pctCurrent, batchMode, total, timed, minutesPerQuestion };
   }
 
   function poolSizes(batchMode) {
@@ -655,7 +814,7 @@ function renderFinalExamSetup() {
   updatePoolHint();
 
   document.getElementById('startSetupBtn').addEventListener('click', () => {
-    const { pctCurrent, batchMode, total } = currentSettings();
+    const { pctCurrent, batchMode, total, timed, minutesPerQuestion } = currentSettings();
     if (!Number.isFinite(total) || total < 1) {
       totalError.textContent = 'Enter a valid number of questions (at least 1).';
       totalError.style.display = 'block';
@@ -669,7 +828,7 @@ function renderFinalExamSetup() {
     }
     totalError.style.display = 'none';
     const composed = buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior });
-    beginExamSession(examNumber, composed.questions, { isFinal: true });
+    beginExamSession(examNumber, composed.questions, { isFinal: true, timed, secondsPerQuestion: minutesPerQuestion * 60 });
   });
 }
 
@@ -950,8 +1109,9 @@ function renderExamSimStart(examNumber) {
    weighted/batch-filtered simulations, and Final Exam mode. `isFinal` just
    changes labeling/back-navigation/score-key — the question composition
    itself is already handled by the caller (buildCustomExamQuestions). */
-function beginExamSession(examNumber, questions, { isFinal } = {}) {
-  const totalSeconds = questions.length * 900;
+function beginExamSession(examNumber, questions, { isFinal, timed = true, secondsPerQuestion = 90 } = {}) {
+  const totalSeconds = timed ? questions.length * secondsPerQuestion : null;
+  const deadlineAt = timed ? Date.now() + totalSeconds * 1000 : null;
 
   session = {
     mode: 'exam',
@@ -960,24 +1120,77 @@ function beginExamSession(examNumber, questions, { isFinal } = {}) {
     questions,
     index: 0,
     answers: new Array(questions.length).fill(null), // letter chosen, or null
+    timed,
     totalSeconds,
+    deadlineAt,
     remainingSeconds: totalSeconds,
     timerId: null,
     submitted: false,
+    timeSpentMs: new Array(questions.length).fill(0),
+    questionShownAt: null,
   };
 
+  if (timed) startExamTimer();
+
+  // Reflect the active exam in the URL hash (without triggering the router,
+  // since replaceState doesn't fire hashchange) so a page refresh mid-exam
+  // lands back on the resume path instead of losing the run.
+  history.replaceState(null, '', '#resume-exam');
+
+  renderExamQuestion();
+}
+
+// Rebuilds `session` from a snapshot saved to localStorage by
+// saveExamSessionSnapshot() — used both for the "Resume In-Progress Exam"
+// home-screen card and for recovering after a page refresh (the URL hash
+// stays on #resume-exam for the duration of any exam simulation).
+function resumeExamSession() {
+  const snap = loadExamSessionSnapshot();
+  if (!snap || !Array.isArray(snap.questions) || snap.questions.length === 0) {
+    clearExamSessionSnapshot();
+    renderHome();
+    return;
+  }
+
+  session = {
+    mode: 'exam',
+    examNumber: snap.examNumber,
+    isFinal: !!snap.isFinal,
+    questions: snap.questions,
+    index: Math.min(snap.index || 0, snap.questions.length - 1),
+    answers: snap.answers,
+    timed: snap.timed,
+    totalSeconds: snap.totalSeconds,
+    deadlineAt: snap.deadlineAt,
+    remainingSeconds: snap.timed ? Math.max(0, Math.round((snap.deadlineAt - Date.now()) / 1000)) : null,
+    timerId: null,
+    submitted: false,
+    timeSpentMs: Array.isArray(snap.timeSpentMs) && snap.timeSpentMs.length === snap.questions.length
+      ? snap.timeSpentMs
+      : new Array(snap.questions.length).fill(0),
+    questionShownAt: null, // don't count any time the tab was closed/away
+  };
+
+  if (session.timed && session.remainingSeconds <= 0) {
+    // Time ran out while the page was closed — score it as a time-expired submission.
+    finishExamSim(true);
+    return;
+  }
+
+  if (session.timed) startExamTimer();
+  renderExamQuestion();
+}
+
+function startExamTimer() {
   session.timerId = setInterval(() => {
-    session.remainingSeconds--;
+    session.remainingSeconds = Math.max(0, Math.round((session.deadlineAt - Date.now()) / 1000));
     if (session.remainingSeconds <= 0) {
-      session.remainingSeconds = 0;
       clearInterval(session.timerId);
       finishExamSim(true);
       return;
     }
     updateTimerDisplay();
   }, 1000);
-
-  renderExamQuestion();
 }
 
 function shuffleExamQuestions(qs) {
@@ -989,11 +1202,26 @@ function shuffleExamQuestions(qs) {
 function updateTimerDisplay() {
   const el = document.getElementById('examTimer');
   if (!el) return;
+  if (!session.timed) { el.textContent = 'Untimed'; el.classList.remove('low'); return; }
   el.textContent = formatTime(session.remainingSeconds);
   el.classList.toggle('low', session.remainingSeconds <= 60);
 }
 
+// Flushes elapsed viewing time for the CURRENT question into
+// session.timeSpentMs before the index changes or the exam is submitted.
+// Left un-flushed between calls so repeated re-renders of the same
+// question (flagging it, picking an answer) don't reset the clock.
+function flushQuestionTime() {
+  if (!session.timeSpentMs) session.timeSpentMs = new Array(session.questions.length).fill(0);
+  if (session.questionShownAt) {
+    session.timeSpentMs[session.index] = (session.timeSpentMs[session.index] || 0) + (Date.now() - session.questionShownAt);
+    session.questionShownAt = null;
+  }
+}
+
 function renderExamQuestion() {
+  if (!session.questionShownAt) session.questionShownAt = Date.now();
+  saveExamSessionSnapshot();
   const q = session.questions[session.index];
   const total = session.questions.length;
   const flagged = isFlagged(q.id);
@@ -1034,7 +1262,7 @@ function renderExamQuestion() {
   main.innerHTML = `
     <div class="quiz-header">
       <span class="quiz-progress">${session.isFinal ? 'Final Exam Simulation' : `Exam ${session.examNumber} Simulation`} — Question ${session.index + 1} of ${total}${instantFeedback ? ' · 📝 Instant Feedback' : ''}</span>
-      <span id="examTimer" class="timer">${formatTime(session.remainingSeconds)}</span>
+      <span id="examTimer" class="timer">${session.timed ? formatTime(session.remainingSeconds) : 'Untimed'}</span>
     </div>
     <div class="quiz-header">
       <span class="quiz-progress">${q.sdlTitle}</span>
@@ -1074,11 +1302,11 @@ function renderExamQuestion() {
   }
   const prevBtn = document.getElementById('prevBtn');
   if (prevBtn) prevBtn.addEventListener('click', () => {
-    if (session.index > 0) { session.index--; renderExamQuestion(); }
+    if (session.index > 0) { flushQuestionTime(); session.index--; renderExamQuestion(); }
   });
   const nextBtn = document.getElementById('nextBtn');
   if (nextBtn) nextBtn.addEventListener('click', () => {
-    if (session.index + 1 < total) { session.index++; renderExamQuestion(); }
+    if (session.index + 1 < total) { flushQuestionTime(); session.index++; renderExamQuestion(); }
   });
   const submitBtn = document.getElementById('submitBtn');
   if (submitBtn) submitBtn.addEventListener('click', () => {
@@ -1090,15 +1318,18 @@ function renderExamQuestion() {
 }
 
 function finishExamSim(timeExpired) {
+  flushQuestionTime();
   if (session.timerId) clearInterval(session.timerId);
   session.submitted = true;
   session.timeExpired = timeExpired;
+  clearExamSessionSnapshot();
 
   const total = session.questions.length;
   let correctCount = 0;
   const missed = [];
   const bySdl = {}; // sdlNumber -> {correct, total, title}
   const byObjective = {}; // "sdlNumber-objective" -> {correct, total, sdlNumber, objective}
+  const timeSpentMs = session.timeSpentMs || new Array(total).fill(0);
 
   session.questions.forEach((q, i) => {
     const ans = session.answers[i];
@@ -1120,12 +1351,14 @@ function finishExamSim(timeExpired) {
 
   // Log every question in this simulation to the attempts history (no confidence
   // rating is collected in timed exam mode — that's reserved for practice/review).
+  // timeMs rides along here too, purely for this device's own Pacing summary below.
   session.questions.forEach((q, i) => {
     const ans = session.answers[i];
     logAttempt({
       id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle,
       examNumber: q.sourceExamNumber || session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
       batch: q.batch, correct: ans === q.correct, confidence: null, mode: 'exam', ts: Date.now(),
+      timeMs: timeSpentMs[i] || 0,
     });
   });
 
@@ -1143,7 +1376,15 @@ function finishExamSim(timeExpired) {
     if (isCorrect) bySource[key].correct++;
   });
 
-  session.results = { correctCount, total, missed, bySdl, byObjective, bySource };
+  // Pacing: average time per question vs. the allotted time (if timed), and
+  // the slowest few questions — helps spot where time actually went.
+  const answeredTimes = session.questions.map((q, i) => ({ q, ms: timeSpentMs[i] || 0 })).filter(t => t.ms > 0);
+  const avgMs = answeredTimes.length ? answeredTimes.reduce((s, t) => s + t.ms, 0) / answeredTimes.length : 0;
+  const allottedMs = session.timed && session.totalSeconds ? (session.totalSeconds / total) * 1000 : null;
+  const slowest = answeredTimes.slice().sort((a, b) => b.ms - a.ms).slice(0, 5);
+  const pacing = { avgMs, allottedMs, slowest, hasData: answeredTimes.length > 0 };
+
+  session.results = { correctCount, total, missed, bySdl, byObjective, bySource, pacing };
   renderExamResults();
 }
 
@@ -1179,6 +1420,23 @@ function renderExamResults() {
     return `<tr><td>SDL ${r.sdlNumber}, Obj ${r.objective ?? '—'}</td><td>${r.correct}/${r.total}</td><td>${Math.round((r.correct / r.total) * 100)}%</td></tr>`;
   }).join('');
 
+  const pacingHtml = !session.results.pacing || !session.results.pacing.hasData ? '' : (() => {
+    const { avgMs, allottedMs, slowest } = session.results.pacing;
+    const avgLabel = formatTime(avgMs / 1000);
+    const vsAllotted = allottedMs
+      ? ` &middot; allotted ${formatTime(allottedMs / 1000)}/question (${avgMs > allottedMs ? 'running slower than planned' : 'within your planned pace'})`
+      : '';
+    const slowRows = slowest.map(({ q, ms }) => `<tr><td>${escapeHtml(q.stem.length > 90 ? q.stem.slice(0, 90) + '…' : q.stem)}</td><td>SDL ${q.sdlNumber}</td><td>${formatTime(ms / 1000)}</td></tr>`).join('');
+    return `
+      <div class="section-label">Pacing</div>
+      <p class="setup-hint">Average ${avgLabel}/question${vsAllotted}</p>
+      <table class="breakdown-table">
+        <thead><tr><th>Slowest Questions</th><th>SDL</th><th>Time</th></tr></thead>
+        <tbody>${slowRows}</tbody>
+      </table>
+    `;
+  })();
+
   const missedHtml = missed.length === 0
     ? '<p class="empty-state">No missed questions — perfect score.</p>'
     : missed.map(({ q, given }) => `
@@ -1212,6 +1470,8 @@ function renderExamResults() {
       <thead><tr><th>Objective</th><th>Score</th><th>%</th></tr></thead>
       <tbody>${objRows}</tbody>
     </table>
+
+    ${pacingHtml}
 
     <div class="section-label">Missed Questions (${missed.length})</div>
     ${missedHtml}
@@ -1422,7 +1682,55 @@ function renderReviewQueue() {
 
   session = {
     mode: 'review',
+    queueLabel: 'Review Due',
     questions: shuffle(qs),
+    index: 0,
+    records: new Array(qs.length).fill(null),
+    pendingLetter: null,
+  };
+  renderReviewQuestion();
+}
+
+/* ── Toughest Questions (item-level, this browser's own attempts only) ──
+   Personal-only by construction: every stat here comes from LS_ATTEMPTS,
+   which never leaves this device — nothing about other users is read,
+   stored, or aggregated anywhere in this app. */
+function attemptStatsByQuestionId() {
+  const stats = {};
+  loadAttempts().forEach(a => {
+    if (!stats[a.id]) stats[a.id] = { id: a.id, total: 0, correct: 0 };
+    stats[a.id].total++;
+    if (a.correct) stats[a.id].correct++;
+  });
+  return stats;
+}
+function toughestQuestions(minAttempts, maxAccuracy, limit) {
+  minAttempts = minAttempts || 2;
+  maxAccuracy = maxAccuracy == null ? 1 : maxAccuracy;
+  const stats = Object.values(attemptStatsByQuestionId())
+    .filter(s => s.total >= minAttempts && (s.correct / s.total) <= maxAccuracy)
+    .sort((a, b) => (a.correct / a.total) - (b.correct / b.total) || b.total - a.total);
+  const withQ = stats.map(s => Object.assign({ accuracy: s.correct / s.total, attempts: s.total }, findQuestionById(s.id))).filter(q => q.id);
+  return limit ? withQ.slice(0, limit) : withQ;
+}
+
+function renderToughestQueue() {
+  const qs = toughestQuestions(2, 0.7, 30);
+
+  if (qs.length === 0) {
+    main.innerHTML = `
+      <button class="back-link" id="backHome">&larr; Home</button>
+      <h1>Toughest Questions</h1>
+      <p class="empty-state">Nothing qualifies yet — this fills in once you've answered a question at least twice and are still missing it more often than not. Keep practicing.</p>
+    `;
+    document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+    return;
+  }
+
+  session = {
+    mode: 'review',
+    queueLabel: 'Toughest Questions',
+    questions: qs,
     index: 0,
     records: new Array(qs.length).fill(null),
     pendingLetter: null,
@@ -1482,7 +1790,7 @@ function renderReviewQuestion() {
   main.innerHTML = `
     <button class="back-link" id="backHome">&larr; Home</button>
     <div class="quiz-header">
-      <span class="quiz-progress">Review Due — Question ${session.index + 1} of ${total}</span>
+      <span class="quiz-progress">${escapeHtml(session.queueLabel || 'Review Due')} — Question ${session.index + 1} of ${total}</span>
       <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}</span>
     </div>
     <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
@@ -1598,6 +1906,48 @@ function renderAnalytics() {
 
   const overallPct = Math.round((totalCorrect / attempts.length) * 100);
 
+  // Score Trend: each exam-simulation key's run history (recordScore keeps
+  // the last 20 runs per key), rendered as a tiny sparkline + the raw % sequence.
+  const progress = loadProgress();
+  const trendKeys = Object.keys(progress).filter(k => progress[k].history && progress[k].history.length >= 2);
+  const trendHtml = trendKeys.length === 0
+    ? '<p class="setup-hint">Run the same Full or Final Exam Simulation more than once to unlock a score trend here.</p>'
+    : trendKeys.sort().map(key => {
+        const h = progress[key].history;
+        const pcts = h.map(e => Math.round((e.correct / e.total) * 100));
+        const label = key === 'final-exam' ? 'Final Exam' : key.replace(/^exam-/, 'Exam ');
+        return `
+          <div style="display:flex; align-items:center; gap:16px; margin-bottom:10px; flex-wrap:wrap;">
+            <div style="min-width:100px; font-weight:700; color:var(--navy); font-size:0.92rem;">${escapeHtml(label)}</div>
+            ${sparklineSvg(pcts)}
+            <div style="font-size:0.85rem; color:var(--grey-text);">${pcts.join('% &rarr; ')}%</div>
+          </div>
+        `;
+      }).join('');
+
+  // Toughest Questions: item-level accuracy, computed only from this browser's
+  // own attempt log (see attemptStatsByQuestionId) — never shared or aggregated.
+  const toughest = toughestQuestions(2, 1, 8);
+  const toughestHtml = toughest.length === 0
+    ? '<p class="setup-hint">Answer a question two or more times to start surfacing your personal toughest questions here.</p>'
+    : `
+      <table class="breakdown-table">
+        <thead><tr><th>Question</th><th>SDL</th><th>Your Accuracy</th></tr></thead>
+        <tbody>
+          ${toughest.map(q => `
+            <tr>
+              <td>${escapeHtml(q.stem.length > 90 ? q.stem.slice(0, 90) + '…' : q.stem)}</td>
+              <td>SDL ${q.sdlNumber}</td>
+              <td>${Math.round(q.accuracy * 100)}% (${q.attempts} attempt${q.attempts === 1 ? '' : 's'})</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <div style="margin-top:12px;">
+        <button class="btn secondary" id="drillToughestBtn">Drill Toughest Questions</button>
+      </div>
+    `;
+
   // Focus areas: objectives with at least 2 attempts, worst accuracy first.
   const objList = Object.values(byObjective)
     .filter(o => o.total >= 2)
@@ -1664,6 +2014,13 @@ function renderAnalytics() {
       <div class="sub">${totalCorrect} / ${attempts.length} correct, all-time</div>
     </div>
 
+    <div class="section-label">Score Trend (Exam Simulations)</div>
+    ${trendHtml}
+
+    <div class="section-label">Your Toughest Questions</div>
+    <p class="setup-hint" style="margin-top:-4px;">Personal only — based purely on this browser's own answer history, never shared with anyone.</p>
+    ${toughestHtml}
+
     <div class="section-label">Focus Areas — Weakest Objectives</div>
     ${focusRows
       ? `<table class="breakdown-table"><thead><tr><th>Objective</th><th>Score</th><th>%</th></tr></thead><tbody>${focusRows}</tbody></table>`
@@ -1676,6 +2033,8 @@ function renderAnalytics() {
     ${calibrationHtml}
   `;
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+  const drillToughestBtn = document.getElementById('drillToughestBtn');
+  if (drillToughestBtn) drillToughestBtn.addEventListener('click', () => setRoute('toughest'));
 }
 
 /* ── Printable Study Sheet (missed + flagged) ────────────────────────── */
