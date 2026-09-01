@@ -199,6 +199,28 @@ function questionById(quizData, id) {
   }
   return null;
 }
+function shuffleArr(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+// Every question id in a block across both regular batches — excludes batch
+// 3 (Bloom Batch), same opt-in-only exclusion the regular per-block app uses
+// for its own Exam/Final Exam Simulation question pools. Pass examNumber to
+// scope to just that exam; omit (or pass null) for the whole block.
+function allBlockQuestionIds(quizData, examNumber) {
+  const ids = [];
+  (quizData.exams || []).forEach(exam => {
+    if (examNumber != null && exam.examNumber !== examNumber) return;
+    (exam.sdls || []).forEach(sdl => {
+      (sdl.questions || []).forEach(q => { if (q.batch !== 3) ids.push(q.id); });
+    });
+  });
+  return ids;
+}
 function joinUrl(code) {
   const here = location.origin + location.pathname;
   return `${here}?join=${code}`;
@@ -238,7 +260,7 @@ function renderLanding() {
       <details class="faq">
         <summary>❓ How this works / FAQ</summary>
         <div class="faq-body">
-          <p><b>Hosting</b> — pick a block, then pick which SDL(s) and batch(es) (Quick Recall / Deep Vignettes) to pull questions from. You'll land in a lobby with a 5-letter room code and a QR code — share either one. Once people have joined, hit "Start Session."</p>
+          <p><b>Hosting</b> — pick a block, then either pick specific SDL(s)/batch(es) to pull questions from, or use 🎯 Mock Exam to auto-build a random N-question set from the whole block in one click. You'll land in a lobby with a 5-letter room code and a QR code — share either one. Once people have joined, hit "Start Session."</p>
           <p><b>Joining</b> — go to the Live Session page, tap "Join a Session," and enter the room code plus your name. No account needed.</p>
           <p><b>Pacing</b> — by default you control it manually: Reveal Answer, then Next Question. Turning on Auto-Advance at setup reveals and moves on for you after a set number of seconds, so you don't have to babysit the host screen.</p>
           <p><b>During the round</b> — 🔓/🔒 Lock Room stops new people from joining mid-session (existing joiners are unaffected). ← Previous Question lets you back up if you moved on too fast. ⏹ End Early stops the round at any point and jumps straight to the leaderboard.</p>
@@ -296,8 +318,26 @@ function renderSdlPicker() {
   if (!container) return;
   const selected = state.selectedBatches || [];
   const examNumbers = Array.from(new Set(state.sdls.map(s => s.examNumber))).sort((a, b) => a - b);
+  const examCounts = {};
+  examNumbers.forEach(en => { examCounts[en] = allBlockQuestionIds(state.quizData, en).length; });
+  const blockTotal = allBlockQuestionIds(state.quizData).length;
+  const mockDefault = Math.min(100, blockTotal);
   container.innerHTML = `
-    <label class="live-label" style="margin-top:16px;">SDLs &amp; batches to include</label>
+    <div style="border: 2px solid var(--navy); border-radius: 10px; padding: 14px 16px; margin: 14px 0;">
+      <div style="font-weight:700; color:var(--navy); margin-bottom:4px;">🎯 Mock Exam</div>
+      <p class="live-status" style="margin-top:0;">Skip the manual picker below — randomly build a mock exam pulling from every SDL and both batches, scoped to one exam or the whole block. Same idea as the app's Full/Final Exam Simulation, just as a live round.</p>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <label for="mockExamScope" style="font-size:0.85rem; color:var(--grey-text); font-weight:700;">Scope</label>
+        <select id="mockExamScope" class="live-select" style="width:auto;">
+          <option value="">All Exams (${blockTotal} questions)</option>
+          ${examNumbers.map(en => `<option value="${en}">Exam ${en} only (${examCounts[en]} questions)</option>`).join('')}
+        </select>
+        <label for="mockExamCount" style="font-size:0.85rem; color:var(--grey-text); font-weight:700;">Questions</label>
+        <input type="number" id="mockExamCount" class="live-select" style="width:90px;" min="10" max="${blockTotal}" step="5" value="${mockDefault}" ${blockTotal < 10 ? 'disabled' : ''}>
+        <button class="live-btn" id="mockExamBtn" ${blockTotal < 10 ? 'disabled' : ''}>Create Mock Exam Session</button>
+      </div>
+    </div>
+    <label class="live-label" style="margin-top:16px;">SDLs &amp; batches to include (manual)</label>
     <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
       ${examNumbers.map(en => `<button class="live-btn secondary" data-quick-exam="${en}" style="padding:6px 12px; font-size:0.82rem;">Select Entire Exam ${en}</button>`).join('')}
       <button class="live-btn secondary" id="clearAllBtn" style="padding:6px 12px; font-size:0.82rem;" ${selected.length ? '' : 'disabled'}>Clear All</button>
@@ -366,6 +406,20 @@ function renderSdlPicker() {
   });
   const clearAllBtn = document.getElementById('clearAllBtn');
   if (clearAllBtn) clearAllBtn.addEventListener('click', () => setState({ selectedBatches: [] }));
+  const mockExamBtn = document.getElementById('mockExamBtn');
+  const mockExamCount = document.getElementById('mockExamCount');
+  const mockExamScope = document.getElementById('mockExamScope');
+  if (mockExamScope) mockExamScope.addEventListener('change', () => {
+    const en = mockExamScope.value ? Number(mockExamScope.value) : null;
+    const scopeTotal = en == null ? blockTotal : examCounts[en];
+    mockExamCount.max = scopeTotal;
+    mockExamCount.value = Math.min(Number(mockExamCount.value) || mockDefault, scopeTotal);
+  });
+  if (mockExamBtn) mockExamBtn.addEventListener('click', () => {
+    const en = mockExamScope && mockExamScope.value ? Number(mockExamScope.value) : null;
+    const count = Math.max(10, Number(mockExamCount.value) || mockDefault);
+    createMockExamSession(count, en);
+  });
   const autoAdvanceToggle = document.getElementById('autoAdvanceToggle');
   const autoAdvanceRow = document.getElementById('autoAdvanceRow');
   const autoAdvanceSecs = document.getElementById('autoAdvanceSecs');
@@ -392,6 +446,20 @@ async function createSession() {
     const [i, b] = key.split('-').map(Number);
     state.sdls[i].questions.filter(q => q.batch === b).forEach(q => questionIds.push(q.id));
   });
+  await createSessionWithQuestionIds(questionIds);
+}
+
+// Randomly composed mock exam — pulls from every SDL and both regular
+// batches, scoped to one exam or the whole block per examNumber (null =
+// whole block), same spirit as the per-block app's Full/Final Exam
+// Simulation, just for a live in-person round instead of a self-paced timed run.
+async function createMockExamSession(count, examNumber) {
+  const pool = allBlockQuestionIds(state.quizData, examNumber);
+  const questionIds = shuffleArr(pool).slice(0, Math.min(count, pool.length));
+  await createSessionWithQuestionIds(questionIds);
+}
+
+async function createSessionWithQuestionIds(questionIds) {
   if (!questionIds.length) return;
 
   const autoAdvanceSeconds = state.autoAdvanceOn ? (state.autoAdvanceSecs || 20) : 0;
