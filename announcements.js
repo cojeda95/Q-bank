@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: '',
+  text: 'Re-worked question logic and responses to make less obvious',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '',
+  date: '9/8/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
