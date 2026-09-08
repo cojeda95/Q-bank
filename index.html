@@ -77,6 +77,22 @@
     width: 140px;
   }
   .sync-status { font-size: 0.85rem; color: var(--grey-text); margin-top: 10px; min-height: 1.2em; }
+
+  .announce-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #fff8e1;
+    border: 1px solid #f0dca0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 18px 0 0;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: #6b5400;
+  }
+  .announce-banner .announce-icon { flex-shrink: 0; font-size: 1.05rem; line-height: 1.3; }
+  .announce-banner .announce-date { font-weight: 700; margin-right: 6px; }
 </style>
 </head>
 <body>
@@ -84,6 +100,7 @@
   <div class="container">
     <h1>Choose a Block</h1>
     <p class="subtitle">Practice questions and full exam simulations, organized by block. New blocks get added here as the semester goes on.</p>
+    <div id="announceBanner"></div>
     <div class="block-grid">
       <a class="block-card" href="psych/index.html">
         <div class="block-title">Psychiatry Block</div>
@@ -135,6 +152,18 @@
     <div id="syncSection"></div>
   </div>
   <div class="footer">Client-side only &mdash; each block's progress and flags are stored separately in your browser, optionally synced across devices via the PIN above.</div>
+<script src="announcements.js"></script>
 <script src="sync.js"></script>
+<script>
+  (function () {
+    var a = window.ANNOUNCEMENT;
+    var root = document.getElementById('announceBanner');
+    if (!root || !a || !a.text) return;
+    var dateHtml = a.date ? '<span class="announce-date">' + a.date + '</span>' : '';
+    root.innerHTML =
+      '<div class="announce-banner"><span class="announce-icon">📢</span>' +
+      '<span>' + dateHtml + a.text + '</span></div>';
+  })();
+</script>
 </body>
 </html>
