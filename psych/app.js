@@ -949,9 +949,13 @@ function renderPracticeQuestion() {
   const letters = ['A', 'B', 'C', 'D', 'E'];
   const record = session.records[session.index];
   const answered = !!record;
+  if (!session.struck) session.struck = {};
+  const struckArr = session.struck[session.index] || [];
 
   const choicesHtml = letters.map(letter => {
     let cls = 'choice';
+    const isStruck = struckArr.includes(letter);
+    if (isStruck && !answered) cls += ' struck';
     if (answered) {
       cls += ' disabled';
       if (letter === q.correct) cls += ' correct';
@@ -959,9 +963,12 @@ function renderPracticeQuestion() {
     } else if (session.pendingLetter === letter) {
       cls += ' selected';
     }
-    return `<button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
-      <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
-    </button>`;
+    const strikeBtn = !answered ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
+    return `<div class="choice-row">
+      <button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
+        <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
+      </button>${strikeBtn}
+    </div>`;
   }).join('');
 
   let confidenceHtml = '';
@@ -1045,6 +1052,17 @@ function renderPracticeQuestion() {
     main.querySelectorAll('.choice').forEach(btn => {
       btn.addEventListener('click', () => {
         session.pendingLetter = btn.dataset.letter;
+        renderPracticeQuestion();
+      });
+    });
+    main.querySelectorAll('.strike-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const letter = btn.dataset.strikeLetter;
+        const arr = session.struck[session.index] || [];
+        const i = arr.indexOf(letter);
+        if (i === -1) arr.push(letter); else arr.splice(i, 1);
+        session.struck[session.index] = arr;
         renderPracticeQuestion();
       });
     });
@@ -1229,9 +1247,13 @@ function renderExamQuestion() {
   const selected = session.answers[session.index];
   const instantFeedback = loadSettings().examInstantFeedback;
   const locked = instantFeedback && !!selected; // answer revealed, choice no longer changeable
+  if (!session.struck) session.struck = {};
+  const struckArr = session.struck[session.index] || [];
 
   const choicesHtml = letters.map(letter => {
     let cls = 'choice';
+    const isStruck = struckArr.includes(letter);
+    if (isStruck && !locked) cls += ' struck';
     if (locked) {
       cls += ' disabled';
       if (letter === q.correct) cls += ' correct';
@@ -1239,9 +1261,12 @@ function renderExamQuestion() {
     } else if (selected === letter) {
       cls += ' selected';
     }
-    return `<button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
-      <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
-    </button>`;
+    const strikeBtn = !locked ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
+    return `<div class="choice-row">
+      <button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
+        <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
+      </button>${strikeBtn}
+    </div>`;
   }).join('');
 
   let feedbackHtml = '';
@@ -1296,6 +1321,17 @@ function renderExamQuestion() {
     main.querySelectorAll('.choice').forEach(btn => {
       btn.addEventListener('click', () => {
         session.answers[session.index] = btn.dataset.letter;
+        renderExamQuestion();
+      });
+    });
+    main.querySelectorAll('.strike-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const letter = btn.dataset.strikeLetter;
+        const arr = session.struck[session.index] || [];
+        const i = arr.indexOf(letter);
+        if (i === -1) arr.push(letter); else arr.splice(i, 1);
+        session.struck[session.index] = arr;
         renderExamQuestion();
       });
     });
@@ -1525,9 +1561,13 @@ function renderFlaggedQuestion() {
   const letters = ['A', 'B', 'C', 'D', 'E'];
   const record = session.records[session.index];
   const answered = !!record;
+  if (!session.struck) session.struck = {};
+  const struckArr = session.struck[session.index] || [];
 
   const choicesHtml = letters.map(letter => {
     let cls = 'choice';
+    const isStruck = struckArr.includes(letter);
+    if (isStruck && !answered) cls += ' struck';
     if (answered) {
       cls += ' disabled';
       if (letter === q.correct) cls += ' correct';
@@ -1535,9 +1575,12 @@ function renderFlaggedQuestion() {
     } else if (session.pendingLetter === letter) {
       cls += ' selected';
     }
-    return `<button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
-      <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
-    </button>`;
+    const strikeBtn = !answered ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
+    return `<div class="choice-row">
+      <button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
+        <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
+      </button>${strikeBtn}
+    </div>`;
   }).join('');
 
   let confidenceHtml = '';
@@ -1620,6 +1663,17 @@ function renderFlaggedQuestion() {
     main.querySelectorAll('.choice').forEach(btn => {
       btn.addEventListener('click', () => {
         session.pendingLetter = btn.dataset.letter;
+        renderFlaggedQuestion();
+      });
+    });
+    main.querySelectorAll('.strike-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const letter = btn.dataset.strikeLetter;
+        const arr = session.struck[session.index] || [];
+        const i = arr.indexOf(letter);
+        if (i === -1) arr.push(letter); else arr.splice(i, 1);
+        session.struck[session.index] = arr;
         renderFlaggedQuestion();
       });
     });
@@ -1745,9 +1799,13 @@ function renderReviewQuestion() {
   const letters = ['A', 'B', 'C', 'D', 'E'];
   const record = session.records[session.index];
   const answered = !!record;
+  if (!session.struck) session.struck = {};
+  const struckArr = session.struck[session.index] || [];
 
   const choicesHtml = letters.map(letter => {
     let cls = 'choice';
+    const isStruck = struckArr.includes(letter);
+    if (isStruck && !answered) cls += ' struck';
     if (answered) {
       cls += ' disabled';
       if (letter === q.correct) cls += ' correct';
@@ -1755,9 +1813,12 @@ function renderReviewQuestion() {
     } else if (session.pendingLetter === letter) {
       cls += ' selected';
     }
-    return `<button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
-      <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
-    </button>`;
+    const strikeBtn = !answered ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
+    return `<div class="choice-row">
+      <button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
+        <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
+      </button>${strikeBtn}
+    </div>`;
   }).join('');
 
   let confidenceHtml = '';
@@ -1840,6 +1901,17 @@ function renderReviewQuestion() {
     main.querySelectorAll('.choice').forEach(btn => {
       btn.addEventListener('click', () => {
         session.pendingLetter = btn.dataset.letter;
+        renderReviewQuestion();
+      });
+    });
+    main.querySelectorAll('.strike-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const letter = btn.dataset.strikeLetter;
+        const arr = session.struck[session.index] || [];
+        const i = arr.indexOf(letter);
+        if (i === -1) arr.push(letter); else arr.splice(i, 1);
+        session.struck[session.index] = arr;
         renderReviewQuestion();
       });
     });

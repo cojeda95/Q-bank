@@ -363,6 +363,36 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 .choice.correct { border-color: var(--green); background: var(--green-bg); }
 .choice.incorrect { border-color: var(--red); background: var(--red-bg); }
 
+.choice-row { display: flex; align-items: stretch; gap: 6px; }
+.choice-row .choice { flex: 1 1 auto; }
+
+.choice.struck {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--grey-text);
+  opacity: 0.5;
+  background: #f4f4f4;
+}
+.choice.struck:hover:not(.disabled) { opacity: 0.7; }
+
+.strike-btn {
+  flex: 0 0 auto;
+  width: 36px;
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--grey-text);
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.strike-btn:hover { border-color: var(--navy); color: var(--navy); background: #f5f8fb; }
+.strike-btn.active { border-color: var(--navy-dark); background: var(--navy-dark); color: #fff; }
+
 .feedback-banner {
   margin-top: 16px;
   padding: 10px 14px;
