@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Re-worked question logic and responses to make less obvious; added strike-through option for choice selection',
+  text: 'Re-working obvious wrong choices again, QC sub-agent mitigation failed',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '9/9/26',
+  date: '9/15/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
