@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Re-worked obvious wrong choices again, QC re-ran with new parameters, progress might be reset sorry',
+  text: 'Added a metabolic map to help visualize drugs, ODs, toxicities, and genetic mutations, check it out!',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '9/15/26',
+  date: '9/16/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
