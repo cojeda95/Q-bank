@@ -15,7 +15,7 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Re-working obvious wrong choices again, QC sub-agent mitigation failed',
+  text: 'Re-worked obvious wrong choices again, QC re-ran with new parameters, progress might be reset sorry',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
   date: '9/15/26',
 };
