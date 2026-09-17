@@ -1,0 +1,37 @@
+#!/bin/bash
+# ship — commit and publish the Question Bank Hub to GitHub Pages.
+#   ./ship "what changed"      commit everything staged/unstaged, then push
+#   ./ship                     push already-made commits
+set -e
+export PATH="$HOME/.local/bin:$PATH"
+cd "$(dirname "$0")"
+
+if [ -n "$1" ]; then
+  git add -A
+  if git diff --cached --quiet; then
+    echo "nothing to commit"
+  else
+    git diff --cached --stat
+    git commit -q -m "$1"
+    echo "committed: $(git log --oneline -1)"
+  fi
+fi
+
+if [ -z "$(git log origin/main..HEAD --oneline 2>/dev/null)" ]; then
+  echo "nothing to push — already up to date with origin"
+  exit 0
+fi
+
+echo "pushing:"; git log origin/main..HEAD --oneline | sed 's/^/  /'
+git fetch -q origin
+git -c rebase.autoStash=true pull --rebase -q origin main
+git push -q origin main
+echo "pushed."
+
+if command -v gh >/dev/null 2>&1; then
+  sleep 6
+  ID=$(gh run list --limit 1 --json databaseId --jq '.[0].databaseId' 2>/dev/null || true)
+  [ -n "$ID" ] && gh run watch "$ID" --exit-status --compact >/dev/null 2>&1 \
+    && echo "deployed ✓  https://cojeda95.github.io/Q-bank/" \
+    || echo "pushed, but check the deploy: gh run list"
+fi
