@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 13 pan/zoom maps with 196 diseases, drug targets and regulatory switches pinned to the exact enzyme or transporter they act on.">
+<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 14 pan/zoom maps with 203 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Metabolic Lesion Atlas">
-<meta property="og:description" content="13 interactive maps. 196 lesions pinned to the step they break.">
+<meta property="og:description" content="14 interactive maps. 203 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -320,6 +320,9 @@ const PATHS = {
   nephron:{n:"Nephron tubule",v:"--p-glycolysis"},
   glomerulus:{n:"Glomerulus & vessels",v:"--p-sugars"},
   cd:{n:"Collecting duct",v:"--p-ppp"},
+  eicosanoid:{n:"Eicosanoid cascade",v:"--p-sugars"},
+  cox:{n:"COX arm",v:"--p-glycolysis"},
+  lox:{n:"Lipoxygenase arm",v:"--p-tca"},
   aki:{n:"Acute kidney injury",v:"--p-tca"},
   conduction:{n:"Conduction system",v:"--p-glycolysis"},
   actionpot:{n:"Action potential",v:"--p-gluconeo"},
@@ -1700,6 +1703,57 @@ altitude:{n:"High-altitude physiology",k:"reg",p:"gasex",enz:"Hypoxic ventilator
  buzz:["<b>Acetazolamide</b> prevents and treats it — the bicarbonate diuresis creates a metabolic acidosis that lets the patient keep hyperventilating","Descent is the definitive treatment"],
  tx:["Acetazolamide, dexamethasone, oxygen, descent; nifedipine for HAPE"]},
 
+
+/* ── eicosanoids ────────────────────────────────────── */
+eicosanoidreg:{n:"Prostacyclin vs thromboxane — the balance",k:"reg",p:"eicosanoid",enz:"Prostacyclin synthase (endothelium) vs thromboxane synthase (platelet)",inh:"—",hi:1,
+ mech:"The same precursor, PGH₂, becomes opposite molecules depending on which cell makes it. Endothelium makes <b>PGI₂</b>, which dilates vessels and blocks aggregation; platelets make <b>TXA₂</b>, which constricts and aggregates. Vascular tone and clotting are the running balance between them.",
+ find:["<b>PGI₂ (prostacyclin)</b> — endothelium · vasodilation · inhibits platelet aggregation","<b>TXA₂ (thromboxane)</b> — platelet · vasoconstriction · promotes aggregation","<b>PGE₂</b> — fever (hypothalamic set-point), pain sensitization, gastric mucus and bicarbonate, uterine contraction, keeps the <b>ductus arteriosus open</b>, afferent arteriolar dilation","<b>PGF₂α</b> — uterine contraction, lowers intraocular pressure","<b>LTB₄</b> — neutrophil chemotaxis","<b>LTC₄, D₄, E₄</b> — the slow-reacting substance of anaphylaxis: bronchoconstriction, vascular permeability, mucus"],
+ labs:["Arachidonic acid is released from membrane phospholipid, not stored free","COX-2 selective inhibition shifts the balance toward TXA₂ — the basis of their thrombotic risk"],
+ buzz:["\"Platelets Aggregate, Prostacyclin Anti-aggregates\"","PGE₂ keeps the PDA open; blocking it closes the PDA"],
+ tx:["—"]},
+
+nsaids:{n:"NSAIDs",k:"drug",p:"cox",enz:"Cyclooxygenase — reversible, both isoforms",inh:"—",hi:1,
+ mech:"Reversible competitive inhibition of COX-1 and COX-2. The therapeutic effect comes from blocking COX-2-derived prostaglandins at sites of inflammation; nearly every adverse effect comes from losing the COX-1-derived prostaglandins that protect the stomach and the kidney.",
+ find:["Ibuprofen, naproxen, diclofenac, indomethacin, ketorolac (potent, short courses only), meloxicam","Antipyretic (blocks hypothalamic PGE₂), analgesic, anti-inflammatory — but <b>not</b> antiplatelet in a clinically useful way","<b>Indomethacin closes a patent ductus arteriosus</b>"],
+ labs:["<b>GI</b>: erosions and ulcers from loss of PGE₂-driven mucus and bicarbonate","<b>Renal</b>: afferent constriction → AKI; also interstitial nephritis and papillary necrosis","<b>Cardiovascular</b>: raised thrombotic risk with most non-aspirin NSAIDs","Ibuprofen taken before aspirin blocks aspirin's access to COX-1 and can blunt its cardioprotection"],
+ buzz:["The \"triple whammy\": NSAID + ACE inhibitor/ARB + diuretic","Avoid in heart failure, CKD, cirrhosis and peptic ulcer disease"],
+ tx:["Co-prescribe a PPI or misoprostol when GI risk is high"]},
+
+aspirin:{n:"Aspirin",k:"drug",p:"cox",enz:"Cyclooxygenase — irreversible acetylation",inh:"—",hi:1,
+ mech:"Aspirin <b>covalently acetylates</b> a serine in the COX active site, so the enzyme is dead for good. Platelets have <b>no nucleus and cannot make new COX-1</b>, so a single low dose removes their TXA₂ for the platelet's entire 7–10 day lifespan. Endothelium has a nucleus and resynthesizes COX within hours — which is exactly why low doses are antiplatelet without sacrificing PGI₂.",
+ find:["Low dose (81 mg): antiplatelet. Intermediate: antipyretic and analgesic. High: anti-inflammatory","<b>Reye syndrome</b> — avoid in children with a viral illness: fatty liver with encephalopathy","Chronic use: gastric ulceration, renal injury, interstitial nephritis","Exacerbates asthma in aspirin-exacerbated respiratory disease (Samter triad)"],
+ labs:["<b>Overdose is biphasic</b>: early <b>respiratory alkalosis</b> from direct respiratory-centre stimulation, then a <b>mixed anion-gap metabolic acidosis</b> as it uncouples oxidative phosphorylation","Tinnitus is an early toxicity marker","Hold 7–10 days before surgery — the effect outlasts the drug"],
+ buzz:["Irreversible, so the effect tracks platelet turnover, not the half-life","Treat overdose with alkalinization: sodium bicarbonate traps salicylate in urine; dialysis if severe"],
+ tx:["Activated charcoal, bicarbonate, dialysis for severe toxicity"]},
+
+coxibs:{n:"COX-2 selective inhibitors",k:"drug",p:"cox",enz:"COX-2",inh:"—",hi:1,
+ mech:"COX-2 is the inducible isoform at sites of inflammation, so blocking it selectively spares the COX-1 that protects gastric mucosa and platelets. But COX-2 is also the isoform endothelium uses to make <b>PGI₂</b> — so selective inhibition removes the anti-aggregating side of the balance while leaving platelet TXA₂ untouched.",
+ find:["Celecoxib — arthritis when GI risk is high","<b>Spares the stomach and does not inhibit platelets</b>","<b>Raises thrombotic risk</b> — rofecoxib was withdrawn for exactly this","Sulfonamide structure — caution with sulfa allergy"],
+ labs:["Renal toxicity is <b>not</b> spared: COX-2 maintains afferent dilation too"],
+ buzz:["Good for the stomach, bad for the arteries","COX-2 is also constitutive in kidney and endothelium — \"inducible\" is only half the story"],
+ tx:["—"]},
+
+cortico:{n:"Corticosteroids and phospholipase A₂",k:"drug",p:"eicosanoid",enz:"Phospholipase A₂ (via annexin A1 / lipocortin)",inh:"—",hi:1,
+ mech:"Glucocorticoids induce annexin A1, which inhibits phospholipase A₂ — the step that liberates arachidonic acid from membrane phospholipid. Because that is <b>upstream of the branch point</b>, they shut down the COX arm and the lipoxygenase arm together. NSAIDs only close one.",
+ find:["That upstream position is why steroids control asthma when NSAIDs do nothing for it","They also suppress COX-2 transcription and a broad range of cytokines","Inhaled for asthma and COPD; systemic for severe inflammatory disease"],
+ labs:["Adverse effects on long-term systemic use: hyperglycemia, osteoporosis, immunosuppression, adrenal suppression, cataracts, thin skin, proximal myopathy"],
+ buzz:["Steroids block BOTH arms; NSAIDs block only COX","Never stop long-term systemic steroids abruptly — adrenal crisis"],
+ tx:["—"]},
+
+loxdrugs:{n:"Leukotriene pathway drugs",k:"drug",p:"lox",enz:"5-Lipoxygenase · CysLT₁ receptor",inh:"—",hi:1,
+ mech:"The lipoxygenase arm makes leukotrienes. LTB₄ recruits neutrophils; LTC₄, D₄ and E₄ are the <b>slow-reacting substance of anaphylaxis</b> — thousands of times more potent as bronchoconstrictors than histamine.",
+ find:["<b>Montelukast, zafirlukast</b> — CysLT₁ receptor antagonists; asthma, especially <b>aspirin-exacerbated</b> and exercise-induced; allergic rhinitis. Neuropsychiatric warning","<b>Zileuton</b> — 5-lipoxygenase inhibitor; <b>hepatotoxic</b>, needs LFT monitoring"],
+ labs:["In <b>Samter triad</b> (asthma + nasal polyps + aspirin sensitivity), COX inhibition shunts arachidonate down the lipoxygenase arm — which is why these agents work so well there"],
+ buzz:["LTB₄ = B for Bring in neutrophils","LTC₄/D₄/E₄ = the Cysteinyl leukotrienes, the bronchoconstrictors"],
+ tx:["—"]},
+
+pgdrugs:{n:"Prostaglandin analogues",k:"drug",p:"cox",enz:"PGE₁ · PGE₂ · PGF₂α · PGI₂ receptors",inh:"—",hi:1,
+ mech:"Given as drugs, prostaglandins do exactly what they do physiologically — which makes each one's use predictable from its receptor.",
+ find:["<b>Misoprostol</b> (PGE₁): restores gastric mucus and bicarbonate — prevents NSAID ulcers; also ripens the cervix and induces labor, so it is <b>contraindicated in pregnancy</b> when used for the stomach","<b>Alprostadil</b> (PGE₁): <b>keeps a ductus arteriosus OPEN</b> in duct-dependent congenital heart disease; also erectile dysfunction","<b>Indomethacin</b> (an NSAID): <b>CLOSES</b> a patent ductus — the mirror image","<b>Latanoprost</b> (PGF₂α): open-angle glaucoma; <b>darkens the iris</b> and lengthens lashes","<b>Epoprostenol, iloprost, treprostinil</b> (PGI₂): pulmonary arterial hypertension","<b>Dinoprostone</b> (PGE₂): cervical ripening"],
+ labs:["Remember the pair: PGE keeps the duct open, NSAIDs close it"],
+ buzz:["\"Come in and stay a while\" — PGE₁ keeps the PDA open","Latanoprost turning blue eyes brown is permanent"],
+ tx:["—"]},
+
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2845,7 +2899,69 @@ MAPS.pulm = {
   {a:"bpgconn",b:"rightshift",p:"o2transport",dash:1}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["index","Index"]];
+MAPS.eicosanoid = {
+ t:"Eicosanoids", sub:"Arachidonic acid → the COX and lipoxygenase arms, with every anti-inflammatory pinned to the enzyme it blocks",
+ w:2400, h:1100,
+ comps:[{x:190,y:110,w:2020,h:590,l:"Arachidonic acid cascade"}],
+ panels:[
+  {x:240,y:790,w:760,h:226,kw:150,t:"NSAIDs and the COX isoforms",rows:[
+   ["COX-1","Constitutive — GI mucosa, platelets, kidney"],
+   ["COX-2","Inducible at inflammation; also endothelium"],
+   ["NSAIDs","Reversible, both isoforms"],
+   ["Aspirin","Irreversible acetylation of both"],
+   ["Celecoxib","COX-2 selective — spares the stomach"],
+   ["GI toxicity","Loss of COX-1 PGE₂ mucosal protection"],
+   ["Renal toxicity","Loss of afferent arteriolar dilation"],
+   ["Reye syndrome","Aspirin + viral illness in a child"]]},
+  {x:1060,y:790,w:700,h:226,kw:160,t:"Why low-dose aspirin works",rows:[
+   ["Platelet","No nucleus — cannot remake COX-1"],
+   ["","So its TXA₂ is gone for 7–10 days"],
+   ["Endothelium","Has a nucleus — resynthesizes COX"],
+   ["","So PGI₂ recovers within hours"],
+   ["Net effect","Anti-aggregation, PGI₂ preserved"],
+   ["TXA₂","Vasoconstricts · aggregates"],
+   ["PGI₂","Vasodilates · anti-aggregates"],
+   ["Before surgery","Hold 7–10 days"]]},
+  {x:1820,y:790,w:560,h:204,kw:132,t:"Prostaglandin drugs",rows:[
+   ["Misoprostol","PGE₁ — NSAID ulcer prevention"],
+   ["Alprostadil","PGE₁ — keeps a PDA OPEN"],
+   ["Indomethacin","NSAID — CLOSES a PDA"],
+   ["Latanoprost","PGF₂α — glaucoma, darkens iris"],
+   ["Epoprostenol","PGI₂ — pulmonary hypertension"],
+   ["Montelukast","CysLT₁ blocker — asthma"],
+   ["Zileuton","5-lipoxygenase — hepatotoxic"]]}],
+ nodes:[
+  {id:"membrane",l:"Membrane phospholipid",x:350,y:260,p:"eicosanoid",s:"esterified arachidonate"},
+  {id:"aa",l:"Arachidonic acid",x:800,y:260,p:"eicosanoid",k:"hub",s:"20 carbons"},
+  {id:"pgh2",l:"PGG₂ → PGH₂",x:1250,y:180,p:"cox",s:"common precursor"},
+  {id:"lta4",l:"LTA₄",x:1250,y:480,p:"lox",s:"unstable intermediate"},
+  {id:"pgi2",l:"Prostacyclin (PGI₂)",x:1720,y:120,p:"cox",s:"endothelium",m:["pulmhtn"]},
+  {id:"txa2",l:"Thromboxane A₂",x:1720,y:250,p:"cox",s:"platelets"},
+  {id:"pge2",l:"PGE₂ · PGF₂α",x:1720,y:380,p:"cox",s:"inflammation · GI mucosa · uterus",m:["nsaidkidney"]},
+  {id:"ltb4",l:"LTB₄",x:1720,y:510,p:"lox",s:"neutrophil chemotaxis"},
+  {id:"ltcde",l:"LTC₄ / D₄ / E₄",x:1720,y:620,p:"lox",s:"bronchoconstriction",m:["asthma"]},
+  {id:"vasodil",l:"Vasodilation",x:2080,y:120,p:"cox",s:"⊣ aggregation"},
+  {id:"aggreg",l:"Aggregation",x:2080,y:250,p:"cox",s:"vasoconstriction",m:["eicosanoidreg"]},
+  {id:"nephconn",l:"→ Nephron",x:2080,y:380,p:"eicosanoid",k:"ghost",go:"nephron"},
+  {id:"chemo",l:"Neutrophils",x:2080,y:510,p:"lox",s:"recruited"},
+  {id:"pulmconn",l:"→ Pulmonary",x:2080,y:620,p:"eicosanoid",k:"ghost",go:"pulm"}],
+ edges:[
+  {a:"membrane",b:"aa",p:"eicosanoid",e:"Phospholipase A₂",note:"corticosteroids ⊣ via annexin A1",m:["cortico"]},
+  {a:"aa",b:"pgh2",p:"cox",e:"Cyclooxygenase|COX-1 constitutive · COX-2 inducible",note:"NSAIDs & aspirin ⊣",m:["nsaids","aspirin","coxibs"]},
+  {a:"aa",b:"lta4",p:"lox",e:"5-Lipoxygenase",note:"zileuton ⊣",m:["loxdrugs"]},
+  {a:"pgh2",b:"pgi2",p:"cox",e:"Prostacyclin synthase",note:"endothelium"},
+  {a:"pgh2",b:"txa2",p:"cox",e:"Thromboxane synthase",note:"platelet",m:["aspirin"]},
+  {a:"pgh2",b:"pge2",p:"cox",e:"PG synthases",m:["pgdrugs"]},
+  {a:"lta4",b:"ltb4",p:"lox",e:"LTA₄ hydrolase"},
+  {a:"lta4",b:"ltcde",p:"lox",e:"LTC₄ synthase",m:["loxdrugs"]},
+  {a:"pgi2",b:"vasodil",p:"cox",dash:1},
+  {a:"txa2",b:"aggreg",p:"cox",dash:1},
+  {a:"pge2",b:"nephconn",p:"eicosanoid",dash:1},
+  {a:"ltb4",b:"chemo",p:"lox",dash:1},
+  {a:"ltcde",b:"pulmconn",p:"eicosanoid",dash:1}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["index","Index"]];
 
 
 
