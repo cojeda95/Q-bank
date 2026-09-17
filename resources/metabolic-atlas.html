@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 14 pan/zoom maps with 203 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
+<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 15 pan/zoom maps with 211 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Metabolic Lesion Atlas">
-<meta property="og:description" content="14 interactive maps. 203 lesions pinned to the step they break.">
+<meta property="og:description" content="15 interactive maps. 211 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -323,6 +323,10 @@ const PATHS = {
   eicosanoid:{n:"Eicosanoid cascade",v:"--p-sugars"},
   cox:{n:"COX arm",v:"--p-glycolysis"},
   lox:{n:"Lipoxygenase arm",v:"--p-tca"},
+  gut:{n:"Gut segments",v:"--p-glycolysis"},
+  fat:{n:"Fat absorption",v:"--p-glycogen"},
+  b12:{n:"B12 pathway",v:"--p-gluconeo"},
+  iron:{n:"Iron handling",v:"--p-sugars"},
   aki:{n:"Acute kidney injury",v:"--p-tca"},
   conduction:{n:"Conduction system",v:"--p-glycolysis"},
   actionpot:{n:"Action potential",v:"--p-gluconeo"},
@@ -1754,6 +1758,64 @@ pgdrugs:{n:"Prostaglandin analogues",k:"drug",p:"cox",enz:"PGE₁ · PGE₂ · P
  buzz:["\"Come in and stay a while\" — PGE₁ keeps the PDA open","Latanoprost turning blue eyes brown is permanent"],
  tx:["—"]},
 
+
+/* ── GI absorption ──────────────────────────────────── */
+malabs:{n:"Working up malabsorption",k:"reg",p:"gut",enz:"Mucosa vs lumen vs lymphatics",inh:"—",hi:1,
+ mech:"Three things can go wrong: the lumen cannot break food down (pancreatic or bile-acid problem), the mucosa cannot take it up (celiac, Crohn, Whipple), or the lymphatics cannot carry it away. The tests separate them.",
+ find:["<b>Steatorrhea</b> — bulky, greasy, foul stool that floats; the common endpoint of fat malabsorption","Weight loss despite adequate intake; fat-soluble vitamin deficiency","Iron and folate deficiency point <b>proximal</b> (duodenum, jejunum)","B12 deficiency and bile-acid diarrhea point <b>distal</b> (terminal ileum)"],
+ labs:["<b>D-xylose test</b>: a sugar absorbed without any digestion. <b>Abnormal in mucosal disease</b> (celiac, Whipple), <b>normal in pancreatic insufficiency</b> — the single most useful discriminator","Fecal fat quantification; fecal elastase low in pancreatic insufficiency","Hydrogen breath test for lactose intolerance and bacterial overgrowth"],
+ buzz:["Low D-xylose = the wall is broken. Normal D-xylose = the enzymes are missing","Iron + folate low → think proximal; B12 low → think terminal ileum"],
+ tx:["Treat the cause; replace fat-soluble vitamins"]},
+
+celiac:{n:"Celiac disease",k:"dz",p:"gut",enz:"Tissue transglutaminase · gliadin",inh:"HLA-DQ2 / DQ8",hi:1,
+ mech:"Tissue transglutaminase deamidates gliadin, which is then presented on HLA-DQ2/DQ8 to drive an immune attack on the small-bowel mucosa. The damage is worst <b>proximally</b>, where gluten concentration is highest — so the duodenum and proximal jejunum lose their villi, and with them iron, folate and calcium absorption.",
+ find:["Diarrhea, bloating, weight loss; often just iron-deficiency anemia or osteoporosis in adults","<b>Dermatitis herpetiformis</b> — intensely pruritic vesicles on extensors, IgA deposits at the dermal papillae","Failure to thrive in children","Associated with type 1 diabetes, autoimmune thyroid disease, IgA deficiency, Down syndrome"],
+ labs:["<b>IgA anti-tissue transglutaminase</b> is the screening test — check total IgA too, since IgA deficiency is over-represented and causes false negatives","Biopsy: <b>villous atrophy, crypt hyperplasia, intraepithelial lymphocytes</b> in the duodenum","<b>Abnormal D-xylose</b> (mucosal disease)","Iron and folate deficiency; B12 usually spared (ileum intact)"],
+ buzz:["Iron-deficiency anemia that will not respond to oral iron","Must still be eating gluten when tested"],
+ tx:["Lifelong gluten-free diet; screen for and replace iron, folate, calcium and vitamin D"]},
+
+crohn:{n:"Crohn disease vs ulcerative colitis",k:"dz",p:"gut",enz:"Transmural vs mucosal inflammation",inh:"Multifactorial",hi:1,
+ mech:"Crohn is transmural and can hit anywhere from mouth to anus with skip lesions — and when it takes the <b>terminal ileum</b>, it takes exactly the two things only that segment absorbs: <b>B12 and bile acids</b>. UC is mucosal, continuous, and confined to the colon starting at the rectum.",
+ find:["<b>Crohn</b>: skip lesions, <b>cobblestone mucosa</b>, creeping fat, strictures, fistulae, perianal disease. Non-caseating granulomas. Smoking makes it worse","<b>UC</b>: continuous from the rectum, pseudopolyps, <b>crypt abscesses</b>, no granulomas. Smoking is protective","Terminal ileal Crohn or resection → B12 deficiency, <b>bile-acid diarrhea</b>, gallstones, calcium oxalate kidney stones"],
+ labs:["Crohn: ↑ risk of <b>oxalate stones</b> — unabsorbed fat binds calcium, leaving oxalate free to be absorbed","UC: strongly associated with <b>primary sclerosing cholangitis</b>; higher colorectal cancer risk","Both: erythema nodosum, pyoderma gangrenosum, uveitis, arthritis"],
+ buzz:["Crohn = skip lesions, transmural, granulomas, terminal ileum","UC = continuous, mucosal, rectum always, crypt abscesses"],
+ tx:["5-ASA, steroids for flares, azathioprine, anti-TNF; surgery is curative in UC but not in Crohn"]},
+
+lactose:{n:"Lactose intolerance",k:"dz",p:"gut",enz:"Brush-border lactase",inh:"Acquired (primary) / secondary",hi:1,
+ mech:"Lactase sits at the very tip of the villus, so it is the <b>first enzyme lost</b> to any mucosal injury and the last to recover. Undigested lactose stays in the lumen, pulls water in osmotically, and is fermented by colonic bacteria into gas and short-chain acids.",
+ find:["Bloating, cramps, flatulence and watery diarrhea after dairy","<b>Primary</b>: normal age-related decline in lactase, most of the world's adults","<b>Secondary</b>: after gastroenteritis, celiac, or any small-bowel injury — usually temporary"],
+ labs:["<b>↑ Stool osmotic gap</b>; stool pH < 6 from fermentation","<b>Positive hydrogen breath test</b>","Normal D-xylose — the wall is intact, only the enzyme is missing"],
+ buzz:["Osmotic diarrhea that stops when the patient stops eating","Lactase is the first brush-border enzyme lost and the last regained"],
+ tx:["Limit lactose, lactase supplements, ensure calcium and vitamin D intake"]},
+
+pancins:{n:"Exocrine pancreatic insufficiency",k:"dz",p:"gut",enz:"Pancreatic lipase, proteases, amylase",inh:"Acquired",hi:1,
+ mech:"Losing pancreatic enzymes means food is never broken into absorbable pieces — but the intestinal wall itself is healthy, which is why D-xylose (a sugar needing no digestion) is absorbed normally. Lipase is lost earliest and matters most, so fat malabsorption dominates.",
+ find:["<b>Steatorrhea</b>, weight loss, fat-soluble vitamin deficiency","Causes: <b>chronic pancreatitis</b> (alcohol), <b>cystic fibrosis</b> (the commonest cause in children), pancreatic cancer, resection","Pancreatic proteases are also what free B12 from R-binder — so insufficiency can cause B12 deficiency too"],
+ labs:["<b>Low fecal elastase</b>","<b>Normal D-xylose</b> — the discriminator from mucosal disease","Chronic pancreatitis: pancreatic calcifications on imaging"],
+ buzz:["Steatorrhea with a normal D-xylose test","In a child, think cystic fibrosis first"],
+ tx:["Pancreatic enzyme replacement with meals, fat-soluble vitamin supplementation, treat the cause"]},
+
+whipple:{n:"Whipple disease",k:"dz",p:"gut",enz:"Tropheryma whipplei in lamina propria macrophages",inh:"Infectious",hi:0,
+ mech:"Macrophages stuffed with the organism block the lacteals of the small-bowel villi, so absorbed fat cannot be carried away — a lymphatic obstruction rather than a digestive failure.",
+ find:["Malabsorption, diarrhea, weight loss in an <b>older white man</b>","<b>Arthralgias</b> (often years before the gut symptoms), fever, lymphadenopathy","Cardiac and neurologic involvement — ophthalmoplegia, dementia, myoclonus"],
+ labs:["<b>PAS-positive, diastase-resistant macrophages</b> in the lamina propria — the classic biopsy finding","Abnormal D-xylose (mucosal/lymphatic disease)"],
+ buzz:["\"Foamy Whipped cream in a CAN\" — Cardiac, Arthralgias, Neurologic","PAS-positive macrophages"],
+ tx:["Ceftriaxone then long-course trimethoprim-sulfamethoxazole — it relapses if treated briefly"]},
+
+bileacid:{n:"Bile acids & the enterohepatic circulation",k:"reg",p:"gut",enz:"Cholesterol 7α-hydroxylase · ileal bile-acid transporter",inh:"—",hi:1,
+ mech:"Bile acids are made from cholesterol, emulsify fat into micelles, and are then <b>reabsorbed in the terminal ileum — about 95% of them, five or six times per meal</b>. That recycling is why a small pool does so much work, and why losing the ileum breaks both fat absorption and cholesterol handling at once.",
+ find:["Lose the terminal ileum (Crohn, resection) and bile acids spill into the colon → <b>secretory bile-acid diarrhea</b>","The depleted pool can no longer solubilize cholesterol → <b>gallstones</b>","Fat malabsorption → steatorrhea and A, D, E, K deficiency","Unabsorbed fat binds calcium, freeing oxalate for absorption → <b>calcium oxalate kidney stones</b>"],
+ labs:["<b>Bile-acid sequestrants</b> (cholestyramine) interrupt the loop, forcing the liver to consume cholesterol to replace the losses — which upregulates LDL receptors and lowers serum LDL","7α-hydroxylase is the rate-limiting step of bile acid synthesis"],
+ buzz:["Terminal ileum does two unique jobs: B12 and bile acids","Ileal resection → diarrhea, gallstones AND oxalate kidney stones"],
+ tx:["Cholestyramine for bile-acid diarrhea; fat-soluble vitamin replacement"]},
+
+hemochrom:{n:"Hemochromatosis & iron regulation",k:"dz",p:"iron",enz:"HFE · hepcidin · ferroportin",inh:"Autosomal recessive (C282Y)",hi:1,
+ mech:"There is <b>no regulated route to excrete iron</b> — the body controls its stores entirely at absorption. <b>Hepcidin</b>, made by the liver when iron is plentiful, binds and degrades <b>ferroportin</b>, the only exporter on the enterocyte's basolateral membrane, trapping iron in the cell to be shed. Losing that brake means iron accumulates for decades.",
+ find:["Classic triad: <b>cirrhosis, diabetes mellitus, skin hyperpigmentation</b> — \"bronze diabetes\"","Restrictive or dilated <b>cardiomyopathy</b>, arrhythmia","Arthropathy, classically the <b>2nd and 3rd MCP joints</b>; hypogonadism","Markedly raised risk of <b>hepatocellular carcinoma</b>","Presents later in women (menstrual losses are protective)"],
+ labs:["<b>↑ Ferritin and ↑ transferrin saturation</b> (saturation rises first); ↓ TIBC","HFE gene testing (C282Y homozygous); liver biopsy with Prussian blue if needed","<b>Secondary</b> iron overload: repeated transfusions in thalassemia, sideroblastic anemia"],
+ buzz:["Vitamin C increases iron absorption — a real hazard in these patients","Ferroportin is the only way out; hepcidin is the off switch"],
+ tx:["<b>Serial phlebotomy</b> is first line; deferoxamine or deferasirox when phlebotomy is not possible; avoid alcohol, raw shellfish and iron/vitamin C supplements"]},
+
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2961,7 +3023,82 @@ MAPS.eicosanoid = {
   {a:"ltcde",b:"pulmconn",p:"eicosanoid",dash:1}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["index","Index"]];
+MAPS.gut = {
+ t:"GI & Absorption", sub:"Which segment absorbs what · fat, B12 and iron end to end · the malabsorption patterns that follow",
+ w:2500, h:1650,
+ comps:[
+  {x:190,y:110,w:2120,h:300,l:"Mouth to colon — where each nutrient is taken up"},
+  {x:190,y:490,w:1000,h:420,l:"Fat digestion & absorption"},
+  {x:1270,y:490,w:1040,h:420,l:"B12 — four organs, four steps"},
+  {x:190,y:960,w:2120,h:300,tx:300,l:"Iron — absorption is the only control point"}],
+ panels:[
+  {x:240,y:1340,w:760,h:226,kw:170,t:"Where each nutrient is absorbed",rows:[
+   ["Duodenum","Iron, calcium, folate"],
+   ["Jejunum","Most of it: carbs, amino acids, A D E K"],
+   ["Ileum","B12 with intrinsic factor, and bile acids"],
+   ["Terminal ileum only","B12 and bile salts — lose it and both fail"],
+   ["Colon","Water, electrolytes, vitamin K from flora"],
+   ["Celiac hits","Duodenum + proximal jejunum → iron, folate"],
+   ["Crohn hits","Terminal ileum → B12, bile acids, fat"],
+   ["So the deficiency","tells you the segment"]]},
+  {x:1060,y:1340,w:700,h:226,kw:175,t:"Malabsorption patterns",rows:[
+   ["Fat malabsorption","Steatorrhea + A D E K deficiency"],
+   ["Celiac","Anti-tTG IgA, DQ2/DQ8, villous atrophy"],
+   ["","Dermatitis herpetiformis; iron + folate low"],
+   ["Crohn, ileal","↓ B12, bile-acid diarrhea, gallstones"],
+   ["Pancreatic insuff.","Steatorrhea, NORMAL D-xylose"],
+   ["Lactose intolerance","Osmotic diarrhea, ↑ breath hydrogen"],
+   ["Whipple","PAS-positive macrophages, T. whipplei"],
+   ["D-xylose","Low = mucosa broken; normal = enzymes missing"]]},
+  {x:1820,y:1340,w:560,h:160,kw:150,t:"Bile acid loop",rows:[
+   ["Made from","Cholesterol, 7α-hydroxylase"],
+   ["Recycled at","Terminal ileum, ~95%"],
+   ["Lose the ileum","Diarrhea, gallstones, oxalate stones"],
+   ["Sequestrants","Cholestyramine → ↑ LDL receptors"],
+   ["Also lost","The fat-soluble vitamins"]]}],
+ nodes:[
+  {id:"mouth",l:"Mouth & stomach",x:330,y:250,p:"gut",s:"amylase · pepsin · IF · R-binder"},
+  {id:"duod",l:"Duodenum",x:780,y:250,p:"gut",s:"iron · calcium · folate",m:["celiac","zinc"]},
+  {id:"jej",l:"Jejunum",x:1230,y:250,p:"gut",s:"carbs · amino acids · A D E K",m:["whipple","hartnup","cystinuria"]},
+  {id:"ile",l:"Ileum",x:1680,y:250,p:"gut",s:"B12 + IF · bile acids",m:["crohn","b12def"]},
+  {id:"colon",l:"Colon",x:2130,y:250,p:"gut",s:"water · electrolytes · vit K",m:["vitkdef"]},
+  {id:"lipase",l:"Pancreatic lipase",x:340,y:590,p:"fat",s:"orlistat ⊣",m:["lipiddrugs","cf"]},
+  {id:"micelle",l:"Mixed micelle",x:700,y:590,p:"fat",s:"needs bile acids",m:["bileacid"]},
+  {id:"entero",l:"Enterocyte",x:1040,y:590,p:"fat",s:"re-esterified"},
+  {id:"adek",l:"A · D · E · K",x:340,y:790,p:"fat",s:"ride in the micelle",go:"vitamins"},
+  {id:"chylo2",l:"Chylomicron",x:700,y:790,p:"fat",s:"apoB-48 · needs MTP",go:"lipid"},
+  {id:"lymph",l:"Lymphatics",x:1040,y:790,p:"fat",s:"bypasses the portal vein"},
+  {id:"haptocorrin",l:"R-binder (haptocorrin)",x:1420,y:570,p:"b12",s:"saliva"},
+  {id:"ifactor",l:"Intrinsic factor",x:1760,y:570,p:"b12",s:"parietal cells",m:["b12def"]},
+  {id:"prot",l:"Pancreatic proteases",x:2120,y:570,p:"b12",s:"free B12 from R-binder",m:["pancins"]},
+  {id:"cubilin",l:"Cubilin receptor",x:1760,y:790,p:"b12",s:"terminal ileum",m:["crohn"]},
+  {id:"b12abs",l:"B12 absorbed",x:2120,y:790,p:"b12",s:"→ two enzymes only",go:"nitrogen"},
+  {id:"hepcidin",l:"Hepcidin",x:1200,y:1030,p:"iron",s:"from liver, ⊣ ferroportin"},
+  {id:"dietfe",l:"Dietary Fe³⁺",x:400,y:1160,p:"iron",s:"vitamin C → Fe²⁺",m:["scurvy"]},
+  {id:"dmt1",l:"DMT1 (enterocyte)",x:800,y:1160,p:"iron",s:"apical uptake"},
+  {id:"ferroportin",l:"Ferroportin",x:1200,y:1160,p:"iron",s:"the only way out",m:["hemochrom"]},
+  {id:"transferrin",l:"Transferrin",x:1620,y:1160,p:"iron",s:"→ marrow, liver",go:"nucleo"}],
+ edges:[
+  {a:"mouth",b:"duod",p:"gut",e:"Pepsin, then bicarbonate + enzymes",ly:-46,m:["pancins"]},
+  {a:"duod",b:"jej",p:"gut",e:"Villi lengthen, surface peaks",ly:-46,m:["malabs"]},
+  {a:"jej",b:"ile",p:"gut",e:"Brush-border disaccharidases",ly:-46,m:["lactose"]},
+  {a:"ile",b:"colon",p:"gut",e:"Ileocecal valve",ly:-46,m:["bileacid"]},
+  {a:"lipase",b:"micelle",p:"fat",e:"Triglyceride → FFA + monoglyceride",ly:-62},
+  {a:"micelle",b:"entero",p:"fat",e:"Crosses the brush border"},
+  {a:"entero",b:"chylo2",p:"fat",e:"Re-esterified → chylomicron",m:["abeta"]},
+  {a:"chylo2",b:"lymph",p:"fat",e:"To lymph, not portal vein",ly:-40},
+  {a:"adek",b:"micelle",p:"fat",e:"carried in the micelle",m:["vitadef","vitddef","vitedef","vitkdef"]},
+  {a:"haptocorrin",b:"ifactor",p:"b12",e:"binds B12 in the stomach",ly:-40},
+  {a:"ifactor",b:"prot",p:"b12",e:"travels to the duodenum"},
+  {a:"prot",b:"cubilin",p:"b12",e:"B12 switches to IF"},
+  {a:"cubilin",b:"b12abs",p:"b12",e:"receptor-mediated uptake",m:["mmacid"]},
+  {a:"dietfe",b:"dmt1",p:"iron",e:"Fe³⁺ → Fe²⁺ by ferric reductase"},
+  {a:"dmt1",b:"ferroportin",p:"iron",e:"across the enterocyte"},
+  {a:"ferroportin",b:"transferrin",p:"iron",e:"hephaestin → Fe³⁺"},
+  {a:"hepcidin",b:"ferroportin",p:"iron",e:"⊣ degrades ferroportin",arrow:"inhib",dash:1,m:["hemochrom"]}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["index","Index"]];
 
 
 
