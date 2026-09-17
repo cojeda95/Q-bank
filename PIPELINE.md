@@ -5,9 +5,19 @@ Live: https://cojeda95.github.io/Q-bank/
 ## The one rule
 
 **This clone (`~/Developer/Q-bank`) is the only source of truth.**
-Do not create a second clone anywhere — especially not on `/Volumes/OCOM`. Git on an
-external volume corrupts when the drive unmounts mid-write, and a second copy silently
-drifts from this one.
+
+The old hub paths on the external drive are now **symlinks pointing here**:
+
+    /Volumes/OCOM/OMS 2/OMS2 Semester 1/Psych Block/Question Bank Hub  ->  ~/Developer/Q-bank
+    /Volumes/OCOM/OMS 2/OMS2 Semester 1/Neuro Block/Question Bank Hub  ->  ~/Developer/Q-bank
+
+So writing to either old path writes *here* — same file, same inode, not a copy. There is no
+longer a wrong place to write. Do not replace those symlinks with real folders; a second copy
+silently drifts, and git on a drive that unmounts mid-write corrupts the working tree.
+
+`sync_hub_data.js` and `new_hub_block.js` additionally refuse to run if `HUB_ROOT` is not a
+git clone, so a mistake fails loudly instead of writing questions somewhere they never
+publish from.
 
 ## Where things live
 
