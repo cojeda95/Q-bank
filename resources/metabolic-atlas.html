@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 16 pan/zoom maps with 229 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
+<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 16 pan/zoom maps with 230 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Metabolic Lesion Atlas">
-<meta property="og:description" content="16 interactive maps. 229 lesions pinned to the step they break.">
+<meta property="og:description" content="16 interactive maps. 230 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -1851,12 +1851,19 @@ glanzmann:{n:"Glanzmann thrombasthenia",k:"dz",p:"hemostasis",enz:"GpIIb/IIIa re
  buzz:["Normal count, normal size, no aggregation — the pure function defect","Ristocetin normal in Glanzmann; abnormal in Bernard-Soulier and vWD","Abciximab is a pharmacologic Glanzmann"],
  tx:["Platelet transfusion, antifibrinolytics, recombinant factor VIIa in refractory bleeding"]},
 
-hemophilia:{n:"Hemophilia A and B",k:"dz",p:"coag",enz:"Factor VIII (A) · Factor IX (B)",inh:"X-linked recessive",hi:1,
+hemophilia:{n:"Hemophilia A and B",alias:"Factor VIII deficiency (A) · Factor IX deficiency — Christmas disease (B)",k:"dz",p:"coag",enz:"Factor VIII (A) · Factor IX (B)",inh:"X-linked recessive",hi:1,
  mech:"Both factors sit in the intrinsic arm just upstream of factor X, so losing either one cripples thrombin generation. Primary hemostasis is intact — the platelet plug forms normally — which is why bleeding is characteristically <b>delayed and deep</b> rather than immediate and mucosal.",
- find:["<b>Hemarthrosis</b> (the classic finding), deep muscle hematoma, intracranial bleed","Excessive bleeding after circumcision, surgery or dental extraction","<b>A is far more common</b> (factor VIII, ~85%); B is factor IX (\"Christmas disease\")","Affects boys; carrier mothers are usually asymptomatic"],
- labs:["<b>↑ PTT with a normal PT, normal platelet count and normal bleeding time</b>","<b>Mixing study corrects</b> — confirming a factor deficiency rather than an inhibitor","Specific factor assay distinguishes A from B"],
- buzz:["Deep bleeding, not mucosal — the opposite of platelet disorders","↑ PTT that corrects on mixing = deficiency; fails to correct = inhibitor"],
- tx:["Factor VIII or IX concentrate; desmopressin for mild hemophilia A (releases stored VIII)","<b>Emicizumab</b> — bispecific antibody that bridges IXa and X, doing factor VIII's job","Avoid NSAIDs and intramuscular injections"]},
+ find:["<b>Hemarthrosis</b> (the classic finding), deep muscle hematoma, intracranial bleed","Excessive bleeding after circumcision, surgery or dental extraction","<b>A is far more common</b> — factor VIII, ~85% of cases","<b>B is factor IX</b>, called <b>Christmas disease</b> after Stephen Christmas, the first patient reported (1952) — not the holiday","A and B are <b>clinically indistinguishable</b>: same X-linked inheritance, same deep bleeding, same ↑ PTT. Only a factor assay separates them","Affects boys; carrier mothers are usually asymptomatic"],
+ labs:["<b>↑ PTT with a normal PT, normal platelet count and normal bleeding time</b>","<b>Mixing study corrects</b> — confirming a factor deficiency rather than an inhibitor","<b>Specific factor assay is the only way to tell A from B</b> — the coagulation panel looks identical"],
+ buzz:["Deep bleeding, not mucosal — the opposite of platelet disorders","↑ PTT that corrects on mixing = deficiency; fails to correct = inhibitor","Christmas disease = hemophilia B = factor IX","A and B are X-linked; <b>hemophilia C (factor XI) is autosomal recessive</b>","<b>Desmopressin works in A, not in B</b> — it releases stored VIII, and there is no stored IX"],
+ tx:["Factor VIII or IX concentrate — replace the one that is missing","<b>Desmopressin only helps mild hemophilia A</b>; it releases stored factor VIII from endothelium and does nothing for factor IX","<b>Emicizumab</b> — bispecific antibody that bridges IXa and X, doing factor VIII's job","Avoid NSAIDs and intramuscular injections"]},
+
+factorxi:{n:"Hemophilia C",alias:"Factor XI deficiency · Rosenthal syndrome",k:"dz",p:"coag",enz:"Factor XI",inh:"Autosomal recessive",hi:1,
+ mech:"Factor XI sits in the intrinsic arm between XII and IX. Losing it prolongs the PTT like hemophilia A or B, but the bleeding is far milder and far less predictable — because tissue factor can still drive the cascade through the extrinsic route, and factor XI mainly serves to <b>amplify</b> thrombin once clotting is underway.",
+ find:["<b>Autosomal recessive — not X-linked</b>. This is the single biggest contrast with hemophilia A and B, and it means girls are affected just as often","Strongly associated with <b>Ashkenazi Jewish ancestry</b>","Bleeding is usually <b>mild and provoked</b>: after surgery, dental extraction or trauma, rather than spontaneously","<b>Spontaneous hemarthrosis is rare</b> — another break from A and B","Bleeding favours tissues rich in fibrinolytic activity: mouth, nose, tonsils, urinary tract"],
+ labs:["<b>↑ PTT with a normal PT</b>, normal platelet count and normal bleeding time — indistinguishable from A or B on the panel","Mixing study corrects; factor XI assay confirms","<b>Bleeding severity correlates poorly with the factor XI level</b> — a patient with very low factor XI may barely bleed, and the reverse also happens. You cannot predict risk from the number"],
+ buzz:["The hemophilia that is <b>autosomal recessive</b>, so it affects girls too","Ashkenazi Jewish ancestry","Severity does not track the factor level — unique among the hemophilias","Factor XI deficiency bleeds; factor XII deficiency does not bleed at all"],
+ tx:["<b>Fresh frozen plasma</b> — there is no widely available factor XI concentrate in the United States","<b>Antifibrinolytics</b> (tranexamic acid, aminocaproic acid) for dental and mucosal bleeding — often sufficient on their own","Plan ahead for surgery rather than treating reactively"]},
 
 itp:{n:"Immune thrombocytopenic purpura",k:"dz",p:"hemostasis",enz:"Anti-GpIIb/IIIa autoantibodies",inh:"Autoimmune",hi:1,
  mech:"IgG against platelet surface glycoproteins tags them for splenic macrophage destruction. Production is fine — the marrow actually compensates with more and larger platelets — but consumption outruns it.",
@@ -3275,7 +3282,7 @@ MAPS.hemostasis = {
   {id:"plug",l:"Platelet plug",x:2760,y:260,p:"hemostasis",k:"hub",s:"primary hemostasis",m:["ttp"]},
   {id:"eicoconn",l:"→ Eicosanoids",x:1980,y:400,p:"hemostasis",k:"ghost",go:"eicosanoid"},
   {id:"xii",l:"Factor XII",x:420,y:660,p:"coag",s:"contact activation — intrinsic"},
-  {id:"xi",l:"Factor XI",x:810,y:660,p:"coag"},
+  {id:"xi",l:"Factor XI",x:810,y:660,p:"coag",s:"hemophilia C",m:["factorxi"]},
   {id:"ix",l:"Factor IX",x:1200,y:660,p:"coag",s:"with VIII as cofactor",m:["hemophilia"]},
   {id:"tf",l:"Tissue factor + VII",x:2100,y:660,p:"coag",s:"extrinsic — measured by PT"},
   {id:"x",l:"Factor X → Xa",x:1200,y:880,p:"coag",k:"hub",s:"with V — common pathway",m:["coagreg"]},
@@ -3304,7 +3311,7 @@ MAPS.hemostasis = {
   {a:"activation",b:"aggregation",p:"hemostasis",e:"ADP → P2Y12 · TXA₂ → COX-1",rl:1,ly:-52,note:"the two amplifier loops",m:["p2y12","aspirin"]},
   {a:"aggregation",b:"plug",p:"hemostasis",e:"Fibrinogen cross-links",ly:-46,m:["glanzmann","gp2b3a"]},
   {a:"activation",b:"eicoconn",p:"hemostasis",dash:1,arrow:"none"},
-  {a:"xii",b:"xi",p:"coag",e:"Contact with collagen",ly:-46},
+  {a:"xii",b:"xi",p:"coag",e:"Contact with collagen",ly:-46,m:["factorxi"]},
   {a:"xi",b:"ix",p:"coag",e:"XIa activates IX",ly:-46},
   {a:"ix",b:"x",p:"coag",e:"IXa + VIIIa (tenase)",lx:120,m:["hemophilia"]},
   {a:"tf",b:"x",p:"coag",e:"VIIa + tissue factor",note:"the extrinsic shortcut"},
