@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 16 pan/zoom maps with 230 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
+<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 16 pan/zoom maps with 235 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Metabolic Lesion Atlas">
-<meta property="og:description" content="16 interactive maps. 230 lesions pinned to the step they break.">
+<meta property="og:description" content="16 interactive maps. 235 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -581,6 +581,49 @@ cpt2:{n:"CPT-II deficiency",k:"dz",p:"faox",enz:"Carnitine palmitoyltransferase 
  buzz:["Most common inherited cause of recurrent rhabdomyolysis in adults"],
  tx:["Avoid prolonged fasting/exercise; high-carb, low-fat diet; MCT oil"]},
 
+/* ── peroxisome ─────────────────────────────────────── */
+peroxreg:{n:"Peroxisomal vs mitochondrial β-oxidation",k:"reg",p:"faox",enz:"Acyl-CoA oxidase vs acyl-CoA dehydrogenase",inh:"—",hi:1,
+ mech:"These are <b>two different organelles running two different chemistries</b>, and the exam tests the contrast. The peroxisome is a <b>pre-processor</b>: it takes the fatty acids mitochondria cannot handle, chops them down to a manageable length, and hands them over. It makes <b>no ATP at all</b>.",
+ find:["<b>Peroxisome</b> — very-long-chain (>C22) and branched-chain fatty acids","First step is <b>acyl-CoA oxidase</b>, and the electrons go to O₂ → <b>H₂O₂</b>. No FADH₂, no electron transport chain, no ATP","Chain-shortens to roughly C8, then <b>exports the shortened acyl-CoA to the mitochondrion</b> to be finished","<b>Mitochondrion</b> — long, medium and short-chain fatty acids","First step is <b>acyl-CoA dehydrogenase</b>, and the electrons go to <b>FADH₂ → ETC → ATP</b>. Runs the spiral to completion, to acetyl-CoA"],
+ labs:["The peroxisome also does <b>α-oxidation</b> (the only route for branched phytanic acid), <b>plasmalogen</b> synthesis for myelin, bile-acid intermediates, and holds most of the cell's <b>catalase</b>","↑ VLCFA in plasma is the screening test when a peroxisomal disorder is suspected"],
+ buzz:["Peroxisome makes hydrogen peroxide; mitochondrion makes ATP","The peroxisome shortens, the mitochondrion finishes","Branched-chain fatty acids MUST go through the peroxisome first"],
+ tx:["—"]},
+
+zellweger:{n:"Zellweger syndrome",alias:"Cerebrohepatorenal syndrome · PEX genes",k:"dz",p:"faox",enz:"Peroxisome biogenesis (PEX genes)",inh:"Autosomal recessive",hi:1,
+ mech:"The <b>peroxisome itself fails to assemble</b> — PEX proteins normally import the enzymes into the organelle, so losing them takes out every peroxisomal function at once. VLCFAs accumulate and, just as damaging, <b>plasmalogens are never made</b>, so myelin cannot form.",
+ find:["<b>Craniofacial</b>: high forehead, large anterior fontanelle, flat occiput, epicanthal folds, broad nasal bridge","<b>Profound hypotonia</b> from birth — the \"floppy infant\"","Seizures, failure to feed, <b>hepatomegaly</b>, renal cysts","Death usually <b>within the first year</b>"],
+ labs:["<b>↑ VLCFA</b> in plasma","<b>↓ Plasmalogens</b> in red cells — this is the finding that separates it from X-ALD, where plasmalogens are normal","↑ Phytanic acid, abnormal bile acid intermediates"],
+ buzz:["The whole organelle is missing, so every peroxisomal pathway fails at once","Hypotonic newborn with a high forehead and hepatomegaly"],
+ tx:["Supportive only"]},
+
+refsum:{n:"Refsum disease",alias:"Phytanic acid storage disease",k:"dz",p:"faox",enz:"Phytanoyl-CoA hydroxylase (α-oxidation)",inh:"Autosomal recessive",hi:1,
+ mech:"Phytanic acid comes entirely from the diet and carries a <b>methyl group on its β-carbon</b>, which physically blocks β-oxidation. The only way to handle it is to remove one carbon by <b>α-oxidation</b> first. Lose that enzyme and dietary phytanic acid accumulates in myelin, retina and heart.",
+ find:["<b>Retinitis pigmentosa</b> — night blindness is often the first symptom","<b>Anosmia</b> (early and very characteristic), sensorineural deafness","Cerebellar ataxia, peripheral polyneuropathy","<b>Ichthyosis</b> — dry, scaly skin","Cataracts; <b>cardiac arrhythmia and conduction block</b>, which is what kills"],
+ labs:["<b>↑ Serum phytanic acid</b>; VLCFAs are <b>normal</b> — the defect is α-oxidation, not β-oxidation","↑ CSF protein with a normal cell count"],
+ buzz:["Retinitis pigmentosa + anosmia + ataxia + ichthyosis","<b>Dietary</b> disease — phytanic acid comes from dairy, beef and fish, not from your own metabolism","Rapid weight loss can mobilize stored phytanic acid and trigger an acute attack"],
+ tx:["<b>Dietary restriction</b> of phytanic acid (avoid dairy, ruminant fat, certain fish)","<b>Plasmapheresis</b> for acute exacerbations","Avoid fasting and rapid weight loss"]},
+
+xald:{n:"X-linked adrenoleukodystrophy",alias:"ABCD1 · Lorenzo's oil disease",k:"dz",p:"faox",enz:"ABCD1 — peroxisomal membrane VLCFA transporter",inh:"X-linked recessive",hi:1,
+ mech:"ABCD1 is the transporter that carries VLCFAs <b>into</b> the peroxisome. Without it they never reach the enzymes that would degrade them, and they accumulate in the two tissues that tolerate it worst: <b>adrenal cortex and CNS white matter</b>.",
+ find:["<b>Boys, typically 4–10 years old</b>","<b>Adrenal insufficiency</b> — fatigue, hyperpigmentation, salt craving, hypotension. It often comes <b>before</b> the neurologic disease, so an adrenal crisis can be the presentation","<b>Progressive demyelination</b>: behavioral change and school decline mistaken for ADHD, then spastic quadriparesis, vision and hearing loss, vegetative state","An adult-onset milder form (adrenomyeloneuropathy) causes spastic paraparesis and neuropathy"],
+ labs:["<b>↑ VLCFA</b> in plasma — the screening test","Low cortisol with a poor ACTH-stimulation response; ↑ ACTH","MRI: symmetric <b>posterior</b> periventricular white-matter demyelination with contrast enhancement at the advancing edge","Plasmalogens are normal, unlike Zellweger"],
+ buzz:["A boy with new behavioral decline <b>and</b> hyperpigmentation","Adrenal failure plus demyelination = check VLCFAs","Now on many newborn screening panels"],
+ tx:["<b>Corticosteroid replacement</b> — treats the adrenal disease but does not stop the demyelination","<b>Hematopoietic stem cell transplant early</b>, before significant white-matter change, is the only therapy that alters the neurologic course","Lorenzo's oil normalizes VLCFA levels but has not changed outcomes in symptomatic disease"]},
+
+catalase:{n:"Catalase & the H₂O₂ chain",k:"reg",p:"antiox",enz:"Catalase (peroxisomal)",inh:"—",hi:1,
+ mech:"Peroxisomal β-oxidation dumps its electrons onto O₂ and produces <b>hydrogen peroxide</b>. Catalase, which is concentrated in those same peroxisomes, immediately breaks it down to water and oxygen — which is why the organelle that makes the most H₂O₂ also holds the most catalase.",
+ find:["The reactive-oxygen chain: <b>O₂ → (NADPH oxidase) → superoxide → (superoxide dismutase) → H₂O₂ → (catalase or glutathione peroxidase) → H₂O</b>","Catalase is highest in <b>liver and red cells</b>","Glutathione peroxidase handles H₂O₂ elsewhere in the cell, and needs <b>selenium</b> and reduced glutathione"],
+ labs:["<b>Chronic granulomatous disease</b> is where this matters clinically: NADPH oxidase is broken, so neutrophils cannot make their own H₂O₂","<b>Catalase-POSITIVE organisms degrade the H₂O₂ they produce</b>, leaving the CGD neutrophil with nothing to work with — so those are the organisms that cause disease: <i>S. aureus</i>, <i>Serratia</i>, <i>Nocardia</i>, <i>Burkholderia cepacia</i>, <i>Aspergillus</i>","Catalase-negative organisms supply H₂O₂ that the CGD neutrophil can borrow","Diagnosed by <b>dihydrorhodamine flow cytometry</b> (or the older nitroblue tetrazolium test)"],
+ buzz:["\"Cats Need PLACESS to Belch their Hairballs\" — the catalase-positive organisms","Acatalasemia is rare and mostly benign — oral ulcers, occasionally gangrene"],
+ tx:["CGD: prophylactic TMP-SMX and itraconazole, interferon-γ"]},
+
+faoxpattern:{n:"Fatty-acid oxidation disorders — the shared pattern",k:"reg",p:"faox",enz:"Acyl-CoA dehydrogenases (chain-length specific)",inh:"Autosomal recessive",hi:1,
+ mech:"Whichever enzyme in the spiral is missing, the consequence is the same: once glycogen runs out, the patient <b>cannot make acetyl-CoA from fat</b>. Gluconeogenesis stalls without that acetyl-CoA to drive pyruvate carboxylase, and — the diagnostic giveaway — <b>ketones cannot be made either</b>.",
+ find:["<b>Hypoketotic hypoglycemia</b> is the signature: low glucose <b>without</b> the ketones that should accompany it","Triggered by <b>fasting or an intercurrent illness</b> — vomiting, lethargy, seizures, coma","Hepatomegaly with fatty liver, hyperammonemia — <b>can be mistaken for Reye syndrome</b>","<b>MCAD</b> is the most common; often presents at weaning when overnight feeds stop","<b>VLCAD</b>: also cardiomyopathy, arrhythmia and rhabdomyolysis","<b>LCHAD</b>: adds retinopathy and neuropathy — and a <b>heterozygous fetus can cause HELLP or acute fatty liver of pregnancy in the mother</b>","<b>SCAD</b>: mild, often found only on screening"],
+ labs:["<b>↓ or absent urine ketones</b> in the face of hypoglycemia","<b>↑ Urinary dicarboxylic acids</b> — ω-oxidation takes over when β-oxidation cannot","<b>Acylcarnitine profile</b> names the chain length and therefore the enzyme","↓ Free carnitine (it is consumed conjugating the stuck acyl groups)","On <b>newborn screening</b> in all US states"],
+ buzz:["Hypoglycemia with no ketones — think fatty-acid oxidation, not glycogen storage","A \"Reye-like\" presentation in an infant after a viral illness","LCHAD in the baby, HELLP in the mother"],
+ tx:["<b>Avoid fasting</b> — frequent feeds, cornstarch at night","<b>IV dextrose immediately</b> during any illness; do not wait for the glucose to fall","Carnitine supplementation; for long-chain defects, medium-chain triglyceride oil bypasses the block"]},
+
 mcad:{n:"MCAD deficiency",k:"dz",p:"faox",enz:"Medium-chain acyl-CoA dehydrogenase",inh:"Autosomal recessive",hi:1,
  mech:"β-oxidation stalls once chains shorten to C6–C12, so acetyl-CoA for ketogenesis is never generated. The child tolerates feeding normally and decompensates only when a fast or a viral illness forces a switch to fat.",
  find:["Presents 3–24 months, typically after weaning off night feeds or during a gastroenteritis","Vomiting, lethargy, seizures, coma; hepatomegaly with steatosis","Can present as sudden unexplained infant death or be mistaken for Reye syndrome"],
@@ -588,12 +631,6 @@ mcad:{n:"MCAD deficiency",k:"dz",p:"faox",enz:"Medium-chain acyl-CoA dehydrogena
  buzz:["Most common fatty-acid oxidation disorder; on the newborn screen","Hypoglycemia WITHOUT ketones"],
  tx:["Avoid fasting, cornstarch at bedtime, IV dextrose when ill, carnitine"]},
 
-peroxisome:{n:"Peroxisomal disorders",alias:"Zellweger · Refsum · X-ALD",k:"dz",p:"faox",enz:"Peroxisomal β- and α-oxidation",inh:"AR / X-linked",hi:0,
- mech:"Peroxisomes handle very-long-chain fatty acids (>C22) and branched phytanic acid, and synthesize plasmalogens for myelin. Substrates accumulate and myelin fails.",
- find:["<b>Zellweger</b> (PEX genes): hypotonia, seizures, high forehead with flat facies, hepatomegaly; death <1 yr","<b>Refsum</b> (phytanoyl-CoA hydroxylase, α-oxidation): scaly ichthyotic skin, ataxia, cataracts, <b>retinitis pigmentosa</b>, deafness","<b>X-linked adrenoleukodystrophy</b> (ABCD1): adrenal insufficiency + progressive demyelination in boys, behavioral change then spastic quadriparesis"],
- labs:["↑ VLCFA in plasma (Zellweger, X-ALD); ↑ phytanic acid (Refsum)","Low ACTH-stimulated cortisol in X-ALD"],
- buzz:["Refsum — avoid phytanic acid: dairy, beef, fish","X-ALD — boy with ADHD-like decline plus hyperpigmentation"],
- tx:["Refsum: dietary restriction + plasmapheresis. X-ALD: steroid replacement, HSCT early"]},
 
 ketones:{n:"Ketogenesis & ketoacidosis",k:"reg",p:"ketone",enz:"HMG-CoA synthase-2 (mitochondrial, rate-limiting)",inh:"—",hi:1,
  mech:"When oxaloacetate is consumed by gluconeogenesis, acetyl-CoA from β-oxidation cannot enter the TCA cycle and is condensed into acetoacetate and β-hydroxybutyrate. Ketones are water-soluble fuels for brain, heart and muscle after ~2–3 days of fasting. <b>Liver lacks SCOT (thiophorase) and therefore cannot use the ketones it makes.</b>",
@@ -2125,9 +2162,11 @@ MAPS.core = {
 };
 
 MAPS.lipid = {
- t:"Lipids & Sterols", sub:"Fatty-acid synthesis · carnitine shuttle · β-oxidation · ketones · cholesterol · lipoproteins",
- w:2200, h:1760,
- comps:[{x:460,y:700,w:1240,h:620,ty:40,l:"Mitochondrion — matrix"}],
+ t:"Lipids & Sterols", sub:"Fatty-acid synthesis · carnitine shuttle · β-oxidation · peroxisome · ketones · cholesterol · lipoproteins",
+ w:2200, h:2080,
+ comps:[
+  {x:460,y:700,w:1240,h:620,ty:40,l:"Mitochondrion — matrix"},
+  {x:60,y:1380,w:1640,h:320,l:"Peroxisome — the pre-processor"}],
  panels:[
   {x:1750,y:700,w:430,h:268,t:"Ketone body rules",rows:[
    ["Made in","Liver mitochondria only"],
@@ -2174,15 +2213,23 @@ MAPS.lipid = {
   {id:"bile",l:"Bile acids",x:1400,y:490,p:"sterol"},
   {id:"steroid",l:"Steroid hormones →",x:1670,y:490,p:"sterol",go:"steroid"},
   {id:"vitd",l:"Vitamin D₃",x:1960,y:350,p:"sterol",s:"UVB in skin"},
-  {id:"gut",l:"Intestine",x:260,y:1480,p:"lipoprotein"},
-  {id:"chylo",l:"Chylomicron",x:520,y:1480,p:"lipoprotein",s:"apoB-48"},
-  {id:"chyloR",l:"Chylomicron remnant",x:820,y:1480,p:"lipoprotein",s:"apoE"},
-  {id:"liverL",l:"Liver",x:1090,y:1480,p:"lipoprotein",k:"hub"},
-  {id:"vldl",l:"VLDL",x:1320,y:1480,p:"lipoprotein",s:"apoB-100"},
-  {id:"idl",l:"IDL",x:1540,y:1480,p:"lipoprotein"},
-  {id:"ldl",l:"LDL",x:1760,y:1480,p:"lipoprotein",s:"most atherogenic"},
-  {id:"periph",l:"Peripheral cell",x:2030,y:1480,p:"lipoprotein"},
-  {id:"hdl",l:"HDL",x:1090,y:1650,p:"lipoprotein",s:"apoA-I · reverse transport"}],
+  {id:"vlcfa",l:"VLCFA (>C22)",x:280,y:1470,p:"faox",s:"too long for mitochondria",m:["xald"]},
+  {id:"peroxbeta",l:"Peroxisomal β-oxidation",x:700,y:1470,p:"faox",k:"hub",s:"first step makes H₂O₂, not FADH₂",m:["peroxreg"]},
+  {id:"shortacyl",l:"Shortened acyl-CoA",x:1150,y:1470,p:"faox",s:"exported to mitochondria"},
+  {id:"mitoconn",l:"→ mitochondrial β-oxidation",x:1550,y:1470,p:"faox",k:"ghost",hl:"acylcoaM"},
+  {id:"phytanic",l:"Phytanic acid",x:280,y:1610,p:"faox",s:"branched — blocks β-oxidation"},
+  {id:"alphaox",l:"α-Oxidation",x:700,y:1610,p:"faox",s:"phytanoyl-CoA hydroxylase",m:["refsum"]},
+  {id:"catalasen",l:"Catalase",x:1150,y:1610,p:"antiox",s:"H₂O₂ → H₂O + O₂",m:["catalase"]},
+  {id:"plasmal",l:"Plasmalogens",x:1550,y:1610,p:"faox",s:"myelin phospholipids",m:["zellweger"]},
+  {id:"gut",l:"Intestine",x:260,y:1800,p:"lipoprotein"},
+  {id:"chylo",l:"Chylomicron",x:520,y:1800,p:"lipoprotein",s:"apoB-48"},
+  {id:"chyloR",l:"Chylomicron remnant",x:820,y:1800,p:"lipoprotein",s:"apoE"},
+  {id:"liverL",l:"Liver",x:1090,y:1800,p:"lipoprotein",k:"hub"},
+  {id:"vldl",l:"VLDL",x:1320,y:1800,p:"lipoprotein",s:"apoB-100"},
+  {id:"idl",l:"IDL",x:1540,y:1800,p:"lipoprotein"},
+  {id:"ldl",l:"LDL",x:1760,y:1800,p:"lipoprotein",s:"most atherogenic"},
+  {id:"periph",l:"Peripheral cell",x:2030,y:1800,p:"lipoprotein"},
+  {id:"hdl",l:"HDL",x:1090,y:1970,p:"lipoprotein",s:"apoA-I · reverse transport"}],
  edges:[
   {a:"citcyto",b:"acoaCyt",p:"fasyn",e:"ATP-citrate lyase",dash:1},
   {a:"acoaCyt",b:"malonyl",p:"fasyn",e:"Acetyl-CoA carboxylase",rl:1,note:"biotin · ATP · citrate ⊕ · insulin ⊕",m:["accreg"]},
@@ -2193,7 +2240,7 @@ MAPS.lipid = {
   {a:"ffa",b:"lcfacoa",p:"faox",e:"Acyl-CoA synthetase",lx:40,ly:-26},
   {a:"malonyl",b:"acylcoaM",p:"faox",e:"Malonyl-CoA ⊣ CPT-1",arrow:"inhib",dash:1,bend:60,lx:-40,m:["accreg"]},
   {a:"lcfacoa",b:"acylcoaM",p:"faox",e:"CPT-I (outer) → carnitine shuttle → CPT-II (inner)",m:["carndef","cpt2"]},
-  {a:"acylcoaM",b:"acoaMito",p:"faox",e:"β-Oxidation spiral|acyl-CoA DH → hydratase → thiolase",note:"per turn: 1 FADH₂ · 1 NADH · 1 acetyl-CoA",m:["mcad","peroxisome"]},
+  {a:"acylcoaM",b:"acoaMito",p:"faox",e:"β-Oxidation spiral|acyl-CoA DH → hydratase → thiolase",note:"per turn: 1 FADH₂ · 1 NADH · 1 acetyl-CoA",m:["mcad","faoxpattern"]},
   {a:"acoaMito",b:"tcaconn",p:"neutral",dash:1},
   {a:"acoaMito",b:"hmgcoaM",p:"ketone",e:"HMG-CoA synthase-2",rl:1,ly:-40,note:"mitochondrial · liver only",m:["ketones"]},
   {a:"hmgcoaM",b:"acac",p:"ketone",e:"HMG-CoA lyase"},
@@ -2212,6 +2259,11 @@ MAPS.lipid = {
   {a:"cholesterol",b:"chester",p:"sterol",e:"ACAT (cell) · LCAT (plasma)",arrow:"both"},
   {a:"cholesterol",b:"bile",p:"sterol",e:"Cholesterol 7α-hydroxylase",rl:1,lx:-60,note:"resins drive this step",m:["lipiddrugs"]},
   {a:"cholesterol",b:"steroid",p:"sterol",e:"Desmolase (StAR)",note:"ketoconazole ⊣"},
+  {a:"vlcfa",b:"peroxbeta",p:"faox",e:"Acyl-CoA oxidase",ly:-46,m:["peroxreg"]},
+  {a:"peroxbeta",b:"shortacyl",p:"faox",e:"Chain-shortened to ~C8",ly:-46},
+  {a:"shortacyl",b:"mitoconn",p:"faox",e:"Finished off in the mitochondrion",dash:1,ly:-46},
+  {a:"phytanic",b:"alphaox",p:"faox",e:"β-methyl blocks β-oxidation",ly:-46,m:["refsum"]},
+  {a:"peroxbeta",b:"catalasen",p:"antiox",e:"H₂O₂ is the by-product",dash:1,m:["catalase"]},
   {a:"gut",b:"chylo",p:"lipoprotein",e:"Assembly needs MTP + apoB-48",ly:-40,m:["abeta"]},
   {a:"chylo",b:"chyloR",p:"lipoprotein",e:"Lipoprotein lipase|activated by apoC-II",ly:-52,note:"releases free fatty acids",m:["hyperchylo"]},
   {a:"chyloR",b:"liverL",p:"lipoprotein",e:"ApoE remnant uptake",ly:-40,m:["dysbeta"]},
