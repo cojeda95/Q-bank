@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 17 pan/zoom maps with 257 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
+<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 18 pan/zoom maps with 272 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Metabolic Lesion Atlas">
-<meta property="og:description" content="17 interactive maps. 257 lesions pinned to the step they break.">
+<meta property="og:description" content="18 interactive maps. 272 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -343,6 +343,10 @@ const PATHS = {
   gasex:{n:"Gas exchange",v:"--p-ppp"},
   o2transport:{n:"Oxygen transport",v:"--p-sugars"},
   alveolus:{n:"Alveolus & interstitium",v:"--p-glycogen"},
+  th:{n:"T-helper subsets",v:"--p-tca"},
+  acute:{n:"Acute phase & innate",v:"--p-sugars"},
+  ifn:{n:"Interferons",v:"--p-ppp"},
+  biologic:{n:"Cytokine-directed drugs",v:"--p-gluconeo"},
   bcell:{n:"B-cell development",v:"--p-glycolysis"},
   tcell:{n:"T-cell development",v:"--p-tca"},
   phago:{n:"Phagocytes & innate",v:"--p-sugars"},
@@ -2156,7 +2160,112 @@ pnh:{n:"Paroxysmal nocturnal haemoglobinuria",alias:"PIGA · loss of CD55 and CD
  find:["<b>Intravascular haemolysis</b>, classically noticed as dark morning urine (\"nocturnal\" — it is actually continuous)","<b>Thrombosis in unusual sites</b>: hepatic (Budd-Chiari), portal, cerebral veins — the leading cause of death","Pancytopenia; association with <b>aplastic anaemia</b> and progression to AML"],
  labs:["<b>Flow cytometry for CD55 and CD59</b> on red cells and granulocytes — the diagnostic test","↑ LDH, ↓ haptoglobin, <b>haemoglobinuria with haemosiderinuria</b>","The old sucrose lysis and Ham tests are obsolete","Iron deficiency, from urinary iron loss"],
  buzz:["Dark urine in the morning plus a hepatic vein thrombosis","Complement-mediated, but the defect is on our cells, not in complement"],
- tx:["<b>Eculizumab</b> or ravulizumab — anti-C5. <b>Vaccinate against meningococcus first</b>, since blocking C5 recreates terminal complement deficiency","Anticoagulation; stem cell transplant is the only cure"]}
+ tx:["<b>Eculizumab</b> or ravulizumab — anti-C5. <b>Vaccinate against meningococcus first</b>, since blocking C5 recreates terminal complement deficiency","Anticoagulation; stem cell transplant is the only cure"]},
+
+/* ── cytokines ──────────────────────────────────────── */
+thelperreg:{n:"The T-helper fork",alias:"Th1 · Th2 · Th17 · Treg",k:"reg",p:"th",enz:"IL-12 · IL-4 · IL-6+TGF-β · TGF-β+IL-2",inh:"—",hi:1,
+ mech:"A naive CD4 cell is uncommitted. The <b>cytokine present when it meets antigen decides what it becomes</b>, and each subset then secretes the cytokine that reinforces itself and suppresses the others. That mutual antagonism is why responses polarize instead of staying mixed.",
+ find:["<b>IL-12 → Th1</b>, which makes <b>IFN-γ</b> and IL-2 — the axis against intracellular organisms","<b>IL-4 → Th2</b>, which makes IL-4, IL-5, IL-13 — parasites, IgE, eosinophils","<b>IL-6 + TGF-β → Th17</b>, which makes IL-17 and IL-22 — neutrophils at mucosal surfaces","<b>TGF-β + IL-2 → Treg</b> (FOXP3), which makes IL-10 and TGF-β — shuts the response off","Cross-regulation: <b>IFN-γ suppresses Th2, IL-4 suppresses Th1</b>"],
+ labs:["Break the IL-12 → IFN-γ axis and you get disseminated mycobacteria — see IL-12 receptor deficiency","Break Th17 (STAT3) and you get staphylococcal cold abscesses — see Job syndrome","Break FOXP3 and Tregs never form — IPEX"],
+ buzz:["The cytokine in the room at the time decides the subset","Each subset makes what reinforces itself and blocks its rival","Th1 for intracellular, Th2 for parasites, Th17 for extracellular at mucosa, Treg to stop"],
+ tx:["—"]},
+
+ipex:{n:"IPEX syndrome",alias:"FOXP3 deficiency",k:"dz",p:"th",enz:"FOXP3 — the Treg master transcription factor",inh:"X-linked recessive",hi:1,
+ mech:"FOXP3 is what makes a CD4 cell into a regulatory T cell. Without Tregs there is <b>no peripheral tolerance</b> — the autoreactive clones that escaped thymic deletion are never restrained, so autoimmunity begins in infancy and hits several organs at once.",
+ find:["<b>Immune dysregulation, Polyendocrinopathy, Enteropathy, X-linked</b>","<b>Intractable watery diarrhoea</b> from autoimmune enteropathy, in the first months","<b>Type 1 diabetes in infancy</b> — far earlier than usual","Eczematous dermatitis, thyroiditis, autoimmune cytopenias","Boys; usually fatal in early childhood without transplant"],
+ labs:["Autoantibodies against gut, islet and thyroid antigens","↑ IgE and eosinophilia","Absent or non-functional FOXP3+ Tregs"],
+ buzz:["Neonatal diabetes plus intractable diarrhoea plus eczema in a boy","APS-1 is a failure of central tolerance (AIRE, thymus); IPEX is a failure of peripheral tolerance (FOXP3, Tregs)"],
+ tx:["Immunosuppression; stem cell transplant is the only cure"]},
+
+acutephase:{n:"IL-1, IL-6 and TNF-α — the acute-phase response",k:"reg",p:"acute",enz:"IL-1 · IL-6 · TNF-α",inh:"—",hi:1,
+ mech:"An activated macrophage releases these three together, and between them they produce almost everything we recognize as systemic inflammation: fever at the hypothalamus, a change in what the liver makes, and endothelial activation.",
+ find:["<b>Fever</b> — IL-1 is the endogenous pyrogen; it raises hypothalamic <b>PGE₂</b>, which resets the set point. This is the step aspirin and NSAIDs block","<b>Liver</b> switches production: ↑ CRP, ↑ ferritin, ↑ fibrinogen, ↑ hepcidin, ↑ serum amyloid A; ↓ albumin, ↓ transferrin","<b>↑ Hepcidin</b> is why chronic inflammation causes <b>anaemia of chronic disease</b> — it blocks ferroportin and locks iron inside cells","<b>↑ Fibrinogen</b> is why the ESR rises — it makes red cells stack and settle faster"],
+ labs:["<b>CRP moves fast</b> (hours); <b>ESR moves slowly</b> and lags for weeks","<b>Ferritin is an acute-phase reactant</b>, so a normal ferritin does not exclude iron deficiency during inflammation","Tocilizumab blocks IL-6 and therefore <b>flattens both fever and CRP</b> — infection can be silent"],
+ buzz:["IL-1 is the endogenous pyrogen","Hot T-bone stEAk — IL-1 hot (fever), IL-2 T cells, IL-3 Bone marrow, IL-4 IgE, IL-5 IgA and Eosinophils","Anaemia of chronic disease is a hepcidin problem, not an iron-supply problem","High ferritin can mean inflammation, not iron overload"],
+ tx:["—"]},
+
+sepsistnf:{n:"TNF-α, septic shock and cytokine storm",k:"dz",p:"acute",enz:"TNF-α",inh:"Acquired",hi:1,
+ mech:"In the right amount TNF-α is protective — it walls off infection and maintains granulomas. Released systemically it causes <b>capillary leak and vasodilation</b>, and the same mediator that contains a local infection collapses the circulation when it is everywhere at once.",
+ find:["<b>Warm shock</b>: hypotension with a wide pulse pressure, warm extremities, high cardiac output and low systemic vascular resistance","<b>Capillary leak</b> → oedema, ARDS, third-spacing","<b>Lactic acidosis</b> and multi-organ failure","<b>Cachexia</b> in chronic disease — TNF-α was originally called cachectin","Granulomas <b>depend</b> on TNF-α to stay walled off"],
+ labs:["Lactate, procalcitonin; ↓ SVR on haemodynamic measurement","Cytokine storm also occurs with CAR-T therapy and some infections — tocilizumab is used for it"],
+ buzz:["TNF-α holds granulomas together — which is why blocking it reactivates tuberculosis","Warm shock is distributive; cold shock is cardiogenic or hypovolaemic"],
+ tx:["Source control, fluids, vasopressors, early antibiotics"]},
+
+hlh:{n:"Haemophagocytic lymphohistiocytosis",alias:"HLH · macrophage activation syndrome",k:"dz",p:"acute",enz:"Perforin / granule cytotoxicity — unchecked IFN-γ",inh:"Familial or acquired",hi:0,
+ mech:"Cytotoxic T cells and NK cells normally kill an infected target <b>and then stop</b>. When granule-mediated killing fails, the target persists, T cells keep stimulating, and <b>IFN-γ drives macrophages into an unrestrained feeding frenzy</b>.",
+ find:["Persistent high fever, hepatosplenomegaly, cytopenias in two or more lines","Triggered by EBV and other infections, malignancy, or rheumatic disease (where it is called macrophage activation syndrome)","Familial forms involve perforin, and <b>Chédiak-Higashi</b> reaches its accelerated phase this way"],
+ labs:["<b>↑↑ Ferritin</b>, often in the thousands — the single most useful clue","↑ Triglycerides, <b>↓ fibrinogen</b>, ↑ soluble CD25","<b>Haemophagocytosis</b> on marrow biopsy — macrophages that have eaten blood cells","↓ or absent NK-cell activity"],
+ buzz:["Ferritin in the thousands with fever and cytopenias","High ferritin plus LOW fibrinogen — unusual, since both are acute-phase, and that is the tell"],
+ tx:["Etoposide and dexamethasone; treat the trigger; transplant for familial disease"]},
+
+chemokines:{n:"IL-8 and neutrophil recruitment",k:"reg",p:"acute",enz:"IL-8 (CXCL8)",inh:"—",hi:0,
+ mech:"IL-8 is a <b>chemokine</b> — its job is to tell neutrophils where to go, not to activate them. It sets up the gradient that brings them out of the vessel and into tissue.",
+ find:["The sequence: <b>margination → rolling (selectins) → tight adhesion (integrins) → diapedesis → chemotaxis</b>","<b>IL-8 drives the last step</b>; C5a, LTB₄ and bacterial peptides do the same job","Neutrophils arrive first in acute inflammation, macrophages later"],
+ labs:["<b>Selectin defect → LAD type 2</b>; <b>integrin (CD18) defect → LAD type 1</b>, where neutrophils are made but cannot leave the blood","That is why LAD produces a high neutrophil count and no pus at the same time"],
+ buzz:["IL-8 calls neutrophils; it does not arm them","No pus means they never arrived, not that they were never made"],
+ tx:["—"]},
+
+ifnreg:{n:"Interferons — α/β versus γ",k:"reg",p:"ifn",enz:"IFN-α, IFN-β · IFN-γ",inh:"—",hi:1,
+ mech:"Two different systems with a confusingly similar name. <b>α and β are antiviral</b> and come from any infected cell. <b>γ is immune</b> — it comes from Th1 and NK cells and its job is to activate macrophages.",
+ find:["<b>IFN-α / β</b>: released by a virus-infected cell to warn its <b>neighbours</b>. They induce enzymes that halt protein synthesis and degrade mRNA if that neighbour is later infected — so the virus has nowhere to go","They also ↑ MHC class I, making infected cells easier for CD8 cells to see","<b>IFN-γ</b>: from Th1 and NK cells. ↑ MHC class II, activates macrophages, maintains granulomas, and suppresses Th2"],
+ labs:["The <b>interferon-γ release assay (IGRA)</b> for tuberculosis measures exactly this axis","IFN-γ is the therapy for chronic granulomatous disease and for IL-12 receptor deficiency"],
+ buzz:["Alpha and beta protect the neighbours; gamma activates the macrophage","IFN-γ is the Th1 signature cytokine"],
+ tx:["—"]},
+tnfdrugs:{n:"TNF-α inhibitors",alias:"infliximab · etanercept · adalimumab",k:"drug",p:"biologic",enz:"TNF-α",inh:"—",hi:1,
+ mech:"Monoclonal antibodies against TNF-α, except <b>etanercept</b>, which is a <b>decoy receptor</b> — a TNF receptor fused to an Fc fragment that mops up TNF before it reaches a real receptor.",
+ find:["Rheumatoid arthritis, ankylosing spondylitis, psoriatic arthritis, psoriasis, inflammatory bowel disease","<b>Etanercept does not work for inflammatory bowel disease</b>, unlike the antibodies — a favourite distinction","Infliximab is chimeric, adalimumab fully human, so infliximab is the one that needs concomitant methotrexate to limit antibody formation"],
+ labs:["<b>Screen for latent tuberculosis (PPD or IGRA) before starting</b> — TNF-α maintains granulomas, so blocking it lets walled-off TB escape","Also reactivates <b>histoplasmosis</b> and hepatitis B","Can cause <b>drug-induced lupus</b> and <b>demyelination</b>; avoid in heart failure"],
+ buzz:["Etanercept is a decoy receptor, not an antibody, and it fails in IBD","Always check for latent TB first"],
+ tx:["—"]},
+
+il6drugs:{n:"IL-6 inhibitors",alias:"tocilizumab · sarilumab · siltuximab",k:"drug",p:"biologic",enz:"IL-6 receptor",inh:"—",hi:1,
+ mech:"Blocks the receptor for IL-6, which is the main driver of the hepatic acute-phase response. That is both the therapeutic effect and the biggest safety problem.",
+ find:["Rheumatoid arthritis, giant cell arteritis, juvenile idiopathic arthritis","<b>Cytokine release syndrome</b> after CAR-T therapy — this is the standard treatment","Castleman disease (siltuximab)"],
+ labs:["<b>It abolishes fever and normalizes CRP</b>, so a serious infection can be completely silent — the usual warning signs are gone","↑ Transaminases, ↑ lipids, neutropenia; risk of GI perforation in diverticular disease"],
+ buzz:["Normal CRP on tocilizumab means nothing","The drug for cytokine storm"],
+ tx:["—"]},
+
+il1drugs:{n:"IL-1 inhibitors",alias:"anakinra · canakinumab · rilonacept",k:"drug",p:"biologic",enz:"IL-1",inh:"—",hi:0,
+ mech:"<b>Anakinra</b> is a recombinant version of the natural IL-1 receptor antagonist; <b>canakinumab</b> is an antibody to IL-1β; <b>rilonacept</b> is a decoy receptor.",
+ find:["Gout flares when NSAIDs and colchicine cannot be used","<b>Autoinflammatory syndromes</b>: familial Mediterranean fever, cryopyrin-associated periodic syndromes","Still disease, systemic juvenile idiopathic arthritis","Recurrent pericarditis"],
+ labs:["Injection-site reactions (common with anakinra), neutropenia, infection risk"],
+ buzz:["The drug class for the periodic fever syndromes","IL-1 is the pyrogen, so these drugs are strikingly good at stopping fever"],
+ tx:["—"]},
+
+il17drugs:{n:"IL-17 and IL-12/23 inhibitors",alias:"secukinumab · ixekizumab · ustekinumab",k:"drug",p:"biologic",enz:"IL-17A · the p40 subunit shared by IL-12 and IL-23",inh:"—",hi:1,
+ mech:"<b>Ustekinumab</b> binds the <b>p40 subunit that IL-12 and IL-23 share</b>, so it hits the Th1 and Th17 axes together. <b>Secukinumab</b> and ixekizumab block IL-17A itself, further downstream.",
+ find:["<b>Psoriasis and psoriatic arthritis</b> — the IL-23/Th17 axis is the core of psoriasis","Ankylosing spondylitis; ustekinumab also for Crohn disease"],
+ labs:["<b>Candida infection</b> — Th17 is the axis that defends mucosa against it, which is the same reason Job syndrome and chronic mucocutaneous candidiasis look as they do","<b>IL-17 blockade can worsen inflammatory bowel disease</b> — do not use secukinumab in a patient with IBD","Screen for TB"],
+ buzz:["Ustekinumab hits the shared p40 subunit","Block IL-17 and you get thrush — the pharmacologic echo of Job syndrome"],
+ tx:["—"]},
+
+il4drugs:{n:"IL-4 / IL-13 blockade",alias:"dupilumab",k:"drug",p:"biologic",enz:"IL-4 receptor α — shared by IL-4 and IL-13",inh:"—",hi:1,
+ mech:"IL-4Rα is shared by IL-4 and IL-13, so one antibody takes out both arms of the Th2 response at once.",
+ find:["<b>Atopic dermatitis</b> — the drug that changed its management","Eosinophilic asthma, chronic rhinosinusitis with nasal polyps, eosinophilic oesophagitis","Also mepolizumab and benralizumab against <b>IL-5</b> for eosinophilic asthma"],
+ labs:["<b>Conjunctivitis</b> is the characteristic adverse effect","Transient <b>eosinophilia</b> — the eosinophils cannot enter tissue so they rise in blood","Injection-site reactions"],
+ buzz:["IL-4 and IL-13 share a receptor chain, so one drug blocks both","Conjunctivitis on dupilumab"],
+ tx:["—"]},
+
+igedrugs:{n:"Anti-IgE",alias:"omalizumab",k:"drug",p:"biologic",enz:"Free IgE",inh:"—",hi:1,
+ mech:"Binds the <b>Fc portion of free IgE</b> so it cannot dock onto the FcεRI receptor on mast cells and basophils. Crucially it binds only <b>free</b> IgE, not IgE already on a cell, so it cannot itself trigger degranulation.",
+ find:["Moderate-to-severe <b>allergic asthma</b> with a documented allergen and elevated IgE","Chronic spontaneous urticaria refractory to antihistamines","Used with allergen immunotherapy in some protocols"],
+ labs:["<b>Anaphylaxis can occur after dosing</b> — patients are observed afterwards and carry an adrenaline autoinjector","Total IgE rises on treatment and becomes uninterpretable"],
+ buzz:["Binds free IgE only — which is exactly why it is safe to give","Ironically, an anti-allergy drug that carries an anaphylaxis warning"],
+ tx:["—"]},
+
+il2drugs:{n:"IL-2 directed drugs",alias:"aldesleukin · basiliximab · denileukin",k:"drug",p:"biologic",enz:"IL-2 and its receptor (CD25)",inh:"—",hi:0,
+ mech:"IL-2 is the T-cell growth factor, so it can be given to <b>drive</b> T cells or blocked to <b>suppress</b> them — the same axis used in opposite directions.",
+ find:["<b>Aldesleukin</b> is recombinant IL-2, used in renal cell carcinoma and melanoma to expand T cells","<b>Basiliximab</b> blocks CD25 (the IL-2 receptor α chain) for transplant induction","Denileukin diftitox is IL-2 fused to diphtheria toxin — it delivers the toxin to CD25-bearing cells in cutaneous T-cell lymphoma"],
+ labs:["<b>Aldesleukin causes capillary leak syndrome</b> — hypotension, oedema, pulmonary congestion","Ciclosporin and tacrolimus also work on this axis, by blocking IL-2 transcription"],
+ buzz:["Give IL-2 to expand T cells, block its receptor to prevent rejection","Capillary leak is the dose-limiting toxicity of aldesleukin"],
+ tx:["—"]},
+
+ifndrugs:{n:"Interferons as therapy",k:"drug",p:"biologic",enz:"IFN-α · IFN-β · IFN-γ",inh:"—",hi:1,
+ mech:"Each interferon is used for what it does naturally — α against viruses and some tumours, β to damp CNS inflammation, γ to activate macrophages.",
+ find:["<b>IFN-α</b>: chronic hepatitis B and C (now largely superseded), Kaposi sarcoma, hairy cell leukaemia, malignant melanoma, condyloma","<b>IFN-β</b>: relapsing-remitting multiple sclerosis","<b>IFN-γ</b>: chronic granulomatous disease, and IL-12 receptor deficiency","Note the pairing — the same IFN-γ that is missing in CGD's downstream defence is what you give back"],
+ labs:["<b>Flu-like syndrome</b> in almost everyone — fever, myalgia, malaise, which is just the acute-phase response being switched on deliberately","<b>Depression and suicidality</b> with IFN-α — screen before and during","Myelosuppression, autoimmune thyroiditis"],
+ buzz:["Alpha for viruses and tumours, beta for MS, gamma for CGD","The flu-like syndrome is the mechanism, not a side effect"],
+ tx:["—"]}
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3663,7 +3772,95 @@ MAPS.immune = {
   {a:"daf",b:"c3",p:"complement",e:"Brakes on our own cells",arrow:"inhib",lx:-150,m:["pnh"]}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["hemostasis","Hemostasis"],["immune","Immunity"],["index","Index"]];
+MAPS.cytokine = {
+ t:"Cytokines", sub:"The T-helper fork · the acute-phase trio · interferons · and every biologic pinned to what it blocks",
+ w:3000, h:2040,
+ comps:[
+  {x:190,y:110,w:2620,h:620,l:"The T-helper fork — the cytokine present decides the subset"},
+  {x:190,y:810,w:1600,h:420,l:"Acute phase — one macrophage, three systemic effects"},
+  {x:1870,y:810,w:940,h:420,l:"Interferons"},
+  {x:190,y:1310,w:2620,h:340,l:"Biologics — each pinned to what it blocks"}],
+ panels:[
+  {x:240,y:1730,w:760,h:226,kw:88,t:"The classic interleukins",rows:[
+   ["IL-1","Fever — the endogenous pyrogen"],
+   ["IL-2","T-cell growth and proliferation"],
+   ["IL-3","Bone marrow — acts like GM-CSF"],
+   ["IL-4","IgE class switch; drives Th2"],
+   ["IL-5","IgA class switch; eosinophils"],
+   ["IL-6","Fever plus the hepatic acute-phase proteins"],
+   ["IL-8","Neutrophil chemotaxis — a chemokine"],
+   ["Mnemonic","\"Hot T-bone stEAk\": 1 hot, 2 T cells, 3 Bone marrow, 4 IgE, 5 IgA and Eosinophils"]]},
+  {x:1060,y:1730,w:800,h:226,kw:118,t:"Th subsets side by side",rows:[
+   ["Th1","IL-12 drives it · makes IFN-γ"],
+   ["","Intracellular organisms, granulomas"],
+   ["Th2","IL-4 drives it · makes IL-4, IL-5, IL-13"],
+   ["","Parasites, allergy, IgE, eosinophils"],
+   ["Th17","IL-6 + TGF-β · makes IL-17"],
+   ["","Mucosal neutrophils; the axis lost in Job syndrome"],
+   ["Treg","TGF-β + IL-2 · FOXP3 · makes IL-10"],
+   ["","FOXP3 mutation gives IPEX"]]},
+  {x:1920,y:1730,w:890,h:226,kw:176,t:"Blocking a cytokine has a price",rows:[
+   ["Anti-TNF","Reactivates latent TB — screen before starting"],
+   ["","Also histoplasmosis, demyelination, drug-induced lupus"],
+   ["Anti-IL-6","Abolishes fever and CRP, so infection hides"],
+   ["Anti-IL-17","Candida; can flare inflammatory bowel disease"],
+   ["Anti-IL-1","Injection-site reaction, neutropenia"],
+   ["Dupilumab","Conjunctivitis, transient eosinophilia"],
+   ["Omalizumab","Anaphylaxis — observe after each dose"],
+   ["Aldesleukin","Capillary leak syndrome"]]}],
+ nodes:[
+  {id:"apc",l:"Antigen-presenting cell",x:400,y:330,p:"th",s:"MHC II + costimulation"},
+  {id:"naive",l:"Naive CD4 T cell",x:850,y:330,p:"th",k:"hub",s:"Th0 — uncommitted",m:["thelperreg"]},
+  {id:"th1",l:"Th1",x:1400,y:200,p:"th",s:"IFN-γ · IL-2",m:["il12r"]},
+  {id:"th2",l:"Th2",x:1400,y:340,p:"th",s:"IL-4 · IL-5 · IL-13"},
+  {id:"th17",l:"Th17",x:1400,y:480,p:"th",s:"IL-17 · IL-22",m:["jobsyn"]},
+  {id:"treg",l:"Treg",x:1400,y:620,p:"th",s:"FOXP3 · IL-10 · TGF-β",m:["ipex"]},
+  {id:"th1eff",l:"Macrophage activation",x:2050,y:200,p:"th",s:"intracellular killing · granulomas"},
+  {id:"th2eff",l:"IgE · eosinophils",x:2050,y:340,p:"th",s:"parasites and allergy"},
+  {id:"th17eff",l:"Neutrophils at mucosa",x:2050,y:480,p:"th",s:"skin, gut, lung defence"},
+  {id:"tregeff",l:"Peripheral tolerance",x:2050,y:620,p:"th",s:"switches the response off",m:["ipex"]},
+  {id:"immconn",l:"→ Immunity",x:2600,y:620,p:"th",k:"ghost",go:"immune"},
+  {id:"macro",l:"Macrophage",x:380,y:940,p:"acute",s:"activated by LPS"},
+  {id:"trio",l:"IL-1 · IL-6 · TNF-α",x:900,y:940,p:"acute",k:"hub",s:"the acute-phase trio",m:["acutephase"]},
+  {id:"il8n",l:"IL-8",x:1420,y:940,p:"acute",s:"chemokine — calls neutrophils",m:["chemokines"]},
+  {id:"fever",l:"Fever",x:500,y:1120,p:"acute",s:"hypothalamic PGE₂"},
+  {id:"liver2",l:"Liver acute phase",x:1000,y:1120,p:"acute",s:"CRP · ferritin · hepcidin",m:["acutephase"]},
+  {id:"shock",l:"Septic shock",x:1500,y:1120,p:"acute",s:"capillary leak",m:["sepsistnf"]},
+  {id:"ifnab",l:"IFN-α / β",x:2050,y:940,p:"ifn",s:"from any infected cell",m:["ifnreg"]},
+  {id:"ifng",l:"IFN-γ",x:2550,y:940,p:"ifn",s:"from Th1 and NK cells",m:["ifnreg"]},
+  {id:"antiviral",l:"Antiviral state",x:2050,y:1120,p:"ifn",s:"warns the neighbours"},
+  {id:"macroact",l:"Macrophage activation",x:2550,y:1120,p:"ifn",s:"granulomas · MHC II ↑",m:["hlh"]},
+  {id:"antiil1",l:"IL-1",x:500,y:1430,p:"biologic",s:"anakinra · canakinumab",m:["il1drugs"]},
+  {id:"antiil6",l:"IL-6 receptor",x:1100,y:1430,p:"biologic",s:"tocilizumab",m:["il6drugs"]},
+  {id:"antitnf",l:"TNF-α",x:1700,y:1430,p:"biologic",s:"infliximab · etanercept",m:["tnfdrugs"]},
+  {id:"antiil17",l:"IL-17 · IL-12/23",x:2350,y:1430,p:"biologic",s:"secukinumab · ustekinumab",m:["il17drugs"]},
+  {id:"antiil4",l:"IL-4Rα",x:500,y:1560,p:"biologic",s:"dupilumab",m:["il4drugs"]},
+  {id:"antiige",l:"IgE",x:1100,y:1560,p:"biologic",s:"omalizumab",m:["igedrugs"]},
+  {id:"il2n",l:"IL-2",x:1700,y:1560,p:"biologic",s:"aldesleukin · basiliximab",m:["il2drugs"]},
+  {id:"ifnn",l:"Interferons",x:2350,y:1560,p:"biologic",s:"α viruses · β MS · γ CGD",m:["ifndrugs"]}],
+ edges:[
+  {a:"apc",b:"naive",p:"th",e:"Antigen presented",ly:-46},
+  {a:"naive",b:"th1",p:"th",e:"IL-12",m:["il12r"]},
+  {a:"naive",b:"th2",p:"th",e:"IL-4"},
+  {a:"naive",b:"th17",p:"th",e:"IL-6 + TGF-β",m:["jobsyn"]},
+  {a:"naive",b:"treg",p:"th",e:"TGF-β + IL-2",m:["ipex"]},
+  {a:"th1",b:"th2",p:"th",e:"IFN-γ ⊣ Th2",arrow:"inhib",bend:-70,lx:-92},
+  {a:"th2",b:"th1",p:"th",e:"IL-4 ⊣ Th1",arrow:"inhib",bend:70,lx:92},
+  {a:"th1",b:"th1eff",p:"th",e:"IFN-γ",ly:-40},
+  {a:"th2",b:"th2eff",p:"th",e:"IL-4 · IL-5",ly:-40},
+  {a:"th17",b:"th17eff",p:"th",e:"IL-17 · IL-22",ly:-40},
+  {a:"treg",b:"tregeff",p:"th",e:"IL-10 · TGF-β",ly:-40},
+  {a:"tregeff",b:"immconn",p:"th",dash:1,arrow:"none"},
+  {a:"macro",b:"trio",p:"acute",e:"LPS or tissue damage",ly:-46},
+  {a:"trio",b:"il8n",p:"acute",e:"also releases the chemokine",ly:-46},
+  {a:"trio",b:"fever",p:"acute",e:"IL-1 → PGE₂"},
+  {a:"trio",b:"liver2",p:"acute",e:"acute-phase proteins",m:["acutephase"]},
+  {a:"trio",b:"shock",p:"acute",e:"TNF-α systemically",m:["sepsistnf"]},
+  {a:"ifnab",b:"antiviral",p:"ifn",e:"halts protein synthesis"},
+  {a:"ifng",b:"macroact",p:"ifn",e:"the Th1 effector arm",m:["ifnreg"]}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["index","Index"]];
 
 
 
