@@ -90,8 +90,12 @@ button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
 .btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
 
 /* ── shell ──────────────────────────────────────────── */
-.shell{flex:1;min-height:0;display:grid;grid-template-columns:262px minmax(0,1fr)}
-.rail{border-right:1px solid var(--line);background:var(--surface);overflow-y:auto;padding:18px 0 44px}
+:root{--rail-w:262px}
+:root[data-rail="off"]{--rail-w:0px}
+.shell{flex:1;min-height:0;display:grid;grid-template-columns:var(--rail-w) minmax(0,1fr);transition:grid-template-columns .22s ease}
+@media (prefers-reduced-motion:reduce){.shell{transition:none}}
+.rail{border-right:1px solid var(--line);background:var(--surface);overflow-y:auto;overflow-x:hidden;padding:18px 0 44px}
+:root[data-rail="off"] .rail{border-right:none}
 .rail-sec{padding:0 16px 20px}
 .rail-h{font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin:0 0 9px}
 .rail-sub{margin:0;font-size:12px;line-height:1.5;color:var(--ink-2)}
@@ -211,6 +215,7 @@ svg.map.drag{cursor:grabbing}
 @media (max-width:1000px){
   .shell{grid-template-columns:minmax(0,1fr)}
   .rail{display:none}
+  #railBtn{display:none}
   .drawer{width:100%;max-width:100%;top:auto;height:70%;border-left:none;border-top:1px solid var(--line);border-radius:18px 18px 0 0;
     padding-bottom:calc(36px + env(safe-area-inset-bottom,0px))}
   .hint{display:none}
@@ -256,6 +261,7 @@ body{display:flex;flex-direction:column}
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
         <input id="q" type="search" placeholder="Search disease, enzyme, buzzword…" autocomplete="off" spellcheck="false">
       </div>
+      <button class="btn" id="railBtn" aria-pressed="false" title="Hide the side panel  ( [ )" aria-label="Toggle the side panel">◧</button>
       <button class="btn" id="quizBtn" aria-pressed="false" title="Hide enzyme names — click a chip to reveal">Quiz</button>
       <button class="btn" id="themeBtn" title="Toggle light / dark">◐</button>
     </div>
@@ -4006,6 +4012,14 @@ svg.addEventListener("click",ev=>{
 document.getElementById("zin").onclick=()=>zoomBy(1.25);
 document.getElementById("zout").onclick=()=>zoomBy(1/1.25);
 document.getElementById("zfit").onclick=()=>{state.z=1;state.tx=0;state.ty=0;applyCam();};
+const railBtn=document.getElementById("railBtn");
+function setRail(off,save){
+  document.documentElement.setAttribute("data-rail",off?"off":"on");
+  railBtn.setAttribute("aria-pressed",String(off));
+  railBtn.title=(off?"Show":"Hide")+" the side panel  ( [ )";
+  if(save!==false){ try{localStorage.setItem("mla-rail",off?"off":"on");}catch(e){} }
+}
+railBtn.onclick=()=>setRail(document.documentElement.getAttribute("data-rail")!=="off");
 document.getElementById("quizBtn").onclick=e=>{
   state.quiz=!state.quiz; state.reveal.clear();
   const b=e.currentTarget; b.classList.toggle("on",state.quiz); b.setAttribute("aria-pressed",String(state.quiz));
@@ -4030,6 +4044,7 @@ qInput.addEventListener("keydown",ev=>{
 });
 document.addEventListener("keydown",ev=>{
   if(ev.key==="/"&&document.activeElement!==qInput){ ev.preventDefault(); qInput.focus(); }
+  if(ev.key==="["&&document.activeElement!==qInput){ ev.preventDefault(); railBtn.click(); }
   if(ev.key==="Escape"){ drawer.hidden=true; state.sel=null; }
 });
 
@@ -4037,6 +4052,7 @@ document.addEventListener("keydown",ev=>{
 tabsEl.innerHTML=VIEWS.map(([v,l])=>`<button class="tab" role="tab" data-v="${v}" aria-selected="${v==="core"}">${l}</button>`).join("");
 tabsEl.querySelectorAll(".tab").forEach(t=>t.onclick=()=>setView(t.dataset.v));
 try{const th=localStorage.getItem("mla-theme"); document.documentElement.setAttribute("data-theme",th||"light");}catch(e){document.documentElement.setAttribute("data-theme","light");}
+try{setRail(localStorage.getItem("mla-rail")==="off",false);}catch(e){setRail(false,false);}
 let start="core";
 try{const v=localStorage.getItem("mla-view"); if(v&&VIEWS.some(x=>x[0]===v)) start=v;}catch(e){}
 setView(start);
