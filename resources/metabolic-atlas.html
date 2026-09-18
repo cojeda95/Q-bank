@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 16 pan/zoom maps with 235 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
+<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 17 pan/zoom maps with 257 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Metabolic Lesion Atlas">
-<meta property="og:description" content="16 interactive maps. 235 lesions pinned to the step they break.">
+<meta property="og:description" content="17 interactive maps. 257 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -337,6 +337,10 @@ const PATHS = {
   gasex:{n:"Gas exchange",v:"--p-ppp"},
   o2transport:{n:"Oxygen transport",v:"--p-sugars"},
   alveolus:{n:"Alveolus & interstitium",v:"--p-glycogen"},
+  bcell:{n:"B-cell development",v:"--p-glycolysis"},
+  tcell:{n:"T-cell development",v:"--p-tca"},
+  phago:{n:"Phagocytes & innate",v:"--p-sugars"},
+  complement:{n:"Complement cascade",v:"--p-gluconeo"},
   hemostasis:{n:"Vessel wall & platelets",v:"--p-sugars"},
   coag:{n:"Coagulation cascade",v:"--p-glycolysis"},
   kinin:{n:"Kinin / bradykinin",v:"--p-gluconeo"},
@@ -600,14 +604,14 @@ refsum:{n:"Refsum disease",alias:"Phytanic acid storage disease",k:"dz",p:"faox"
  mech:"Phytanic acid comes entirely from the diet and carries a <b>methyl group on its β-carbon</b>, which physically blocks β-oxidation. The only way to handle it is to remove one carbon by <b>α-oxidation</b> first. Lose that enzyme and dietary phytanic acid accumulates in myelin, retina and heart.",
  find:["<b>Retinitis pigmentosa</b> — night blindness is often the first symptom","<b>Anosmia</b> (early and very characteristic), sensorineural deafness","Cerebellar ataxia, peripheral polyneuropathy","<b>Ichthyosis</b> — dry, scaly skin","Cataracts; <b>cardiac arrhythmia and conduction block</b>, which is what kills"],
  labs:["<b>↑ Serum phytanic acid</b>; VLCFAs are <b>normal</b> — the defect is α-oxidation, not β-oxidation","↑ CSF protein with a normal cell count"],
- buzz:["Retinitis pigmentosa + anosmia + ataxia + ichthyosis","<b>Dietary</b> disease — phytanic acid comes from dairy, beef and fish, not from your own metabolism","Rapid weight loss can mobilize stored phytanic acid and trigger an acute attack"],
+ buzz:["Retinitis pigmentosa + anosmia + ataxia + ichthyosis","Dietary disease — phytanic acid comes from dairy, beef and fish, not from your own metabolism","Rapid weight loss can mobilize stored phytanic acid and trigger an acute attack"],
  tx:["<b>Dietary restriction</b> of phytanic acid (avoid dairy, ruminant fat, certain fish)","<b>Plasmapheresis</b> for acute exacerbations","Avoid fasting and rapid weight loss"]},
 
 xald:{n:"X-linked adrenoleukodystrophy",alias:"ABCD1 · Lorenzo's oil disease",k:"dz",p:"faox",enz:"ABCD1 — peroxisomal membrane VLCFA transporter",inh:"X-linked recessive",hi:1,
  mech:"ABCD1 is the transporter that carries VLCFAs <b>into</b> the peroxisome. Without it they never reach the enzymes that would degrade them, and they accumulate in the two tissues that tolerate it worst: <b>adrenal cortex and CNS white matter</b>.",
  find:["<b>Boys, typically 4–10 years old</b>","<b>Adrenal insufficiency</b> — fatigue, hyperpigmentation, salt craving, hypotension. It often comes <b>before</b> the neurologic disease, so an adrenal crisis can be the presentation","<b>Progressive demyelination</b>: behavioral change and school decline mistaken for ADHD, then spastic quadriparesis, vision and hearing loss, vegetative state","An adult-onset milder form (adrenomyeloneuropathy) causes spastic paraparesis and neuropathy"],
  labs:["<b>↑ VLCFA</b> in plasma — the screening test","Low cortisol with a poor ACTH-stimulation response; ↑ ACTH","MRI: symmetric <b>posterior</b> periventricular white-matter demyelination with contrast enhancement at the advancing edge","Plasmalogens are normal, unlike Zellweger"],
- buzz:["A boy with new behavioral decline <b>and</b> hyperpigmentation","Adrenal failure plus demyelination = check VLCFAs","Now on many newborn screening panels"],
+ buzz:["A boy with new behavioral decline and hyperpigmentation","Adrenal failure plus demyelination = check VLCFAs","Now on many newborn screening panels"],
  tx:["<b>Corticosteroid replacement</b> — treats the adrenal disease but does not stop the demyelination","<b>Hematopoietic stem cell transplant early</b>, before significant white-matter change, is the only therapy that alters the neurologic course","Lorenzo's oil normalizes VLCFA levels but has not changed outcomes in symptomatic disease"]},
 
 catalase:{n:"Catalase & the H₂O₂ chain",k:"reg",p:"antiox",enz:"Catalase (peroxisomal)",inh:"—",hi:1,
@@ -1111,7 +1115,7 @@ b7def:{n:"Biotin (B7) deficiency",k:"dz",p:"watersol",enz:"Carboxylases — pyru
  mech:"Biotin is the CO₂ carrier for every carboxylase, so gluconeogenesis, fatty-acid synthesis and odd-chain fatty-acid catabolism all stall together.",
  find:["Dermatitis, alopecia, enteritis","Lactic acidosis and organic aciduria in the severe inherited form (biotinidase deficiency, on the newborn screen)"],
  labs:["↑ Urinary organic acids"],
- buzz:["Caused by <b>excessive raw egg whites</b> — avidin binds biotin — or prolonged antibiotic use","High-dose biotin supplements interfere with troponin and TSH immunoassays"],
+ buzz:["Caused by excessive raw egg whites — avidin binds biotin — or prolonged antibiotic use","High-dose biotin supplements interfere with troponin and TSH immunoassays"],
  tx:["Oral biotin"]},
 
 b9def:{n:"Folate (B9) deficiency",k:"dz",p:"watersol",enz:"Tetrahydrofolate — one-carbon transfer, dTMP synthesis",inh:"Acquired",hi:1,
@@ -1132,14 +1136,14 @@ b12def:{n:"Cobalamin (B12) deficiency",k:"dz",p:"watersol",enz:"Methionine synth
  mech:"B12 serves only two human enzymes. Losing methionine synthase gives the megaloblastic anemia (through the methyl-folate trap); losing methylmalonyl-CoA mutase lets methylmalonic acid accumulate, which is myelinotoxic. Hepatic stores last years, so deficiency develops slowly.",
  find:["Megaloblastic anemia, glossitis, hypersegmented neutrophils","<b>Subacute combined degeneration</b> — dorsal columns (vibration, proprioception), lateral corticospinal tracts (spasticity), spinocerebellar tracts (ataxia)","Paresthesias, memory loss, irritability"],
  labs:["↓ Serum B12; <b>↑ methylmalonic acid AND ↑ homocysteine</b>","Anti-intrinsic-factor antibodies in pernicious anemia"],
- buzz:["Causes: <b>pernicious anemia</b>, terminal ileum disease or resection (Crohn), <b>Diphyllobothrium latum</b>, vegan diet, chronic metformin or PPI use, nitrous oxide","Neuro signs distinguish it from folate deficiency"],
+ buzz:["Causes: pernicious anemia, terminal ileum disease or resection (Crohn), Diphyllobothrium latum, vegan diet, chronic metformin or PPI use, nitrous oxide","Neuro signs distinguish it from folate deficiency"],
  tx:["Intramuscular or high-dose oral cobalamin; lifelong if pernicious anemia"]},
 
 vitadef:{n:"Vitamin A — deficiency & toxicity",k:"dz",p:"fatsol",enz:"Retinal (vision) · retinoic acid (epithelial differentiation)",inh:"Acquired",hi:1,
  mech:"Retinal is the chromophore of rhodopsin; retinoic acid is a nuclear-receptor ligand that drives epithelial differentiation and mucus production.",
  find:["<b>Deficiency:</b> night blindness, then xerophthalmia and <b>Bitot spots</b>, keratomalacia, corneal ulceration","Dry scaly skin with follicular hyperkeratosis; impaired immunity — worsens measles mortality","<b>Acute toxicity:</b> nausea, vomiting, vertigo, blurred vision, ↑ intracranial pressure","<b>Chronic toxicity:</b> alopecia, dry skin, hepatotoxicity and cirrhosis, pseudotumor cerebri, arthralgia"],
  labs:["↓ Serum retinol; ↑ liver enzymes in chronic excess"],
- buzz:["<b>Teratogenic</b> — isotretinoin requires two forms of contraception and monthly pregnancy tests","All-trans retinoic acid treats acute promyelocytic leukemia, t(15;17) — watch for differentiation syndrome"],
+ buzz:["Teratogenic — isotretinoin requires two forms of contraception and monthly pregnancy tests","All-trans retinoic acid treats acute promyelocytic leukemia, t(15;17) — watch for differentiation syndrome"],
  tx:["Oral vitamin A for deficiency; stop the source in toxicity"]},
 
 vitddef:{n:"Vitamin D — deficiency & toxicity",k:"dz",p:"fatsol",enz:"25-Hydroxylase (liver) · 1α-hydroxylase (kidney)",inh:"Acquired",hi:1,
@@ -1174,7 +1178,7 @@ acetaminophen:{n:"Acetaminophen toxicity",k:"drug",p:"antiox",enz:"NAPQI conjuga
  mech:"At normal doses most acetaminophen is glucuronidated or sulfated, and the small amount converted by CYP2E1 to the reactive metabolite <b>NAPQI</b> is mopped up by glutathione. In overdose the conjugation pathways saturate, glutathione is consumed, and free NAPQI binds hepatocyte proteins — worst in <b>centrilobular (zone III)</b> hepatocytes, where CYP2E1 is concentrated.",
  find:["Stage 1 (0–24 h): nausea, vomiting, or nothing at all — deceptively well","Stage 2 (24–72 h): right upper quadrant pain, ↑ transaminases","Stage 3 (72–96 h): fulminant hepatic failure, encephalopathy, coagulopathy, acidosis","Chronic alcohol use induces CYP2E1 and depletes glutathione, lowering the toxic threshold"],
  labs:["<b>AST and ALT in the thousands</b> with ↑ INR and ↑ bilirubin","Plot the 4-hour level on the <b>Rumack-Matthew nomogram</b>","Glutathione regeneration also needs NADPH from the HMP shunt"],
- buzz:["<b>N-acetylcysteine</b> works by regenerating and substituting for glutathione","Most effective within 8–10 hours, but give it late too"],
+ buzz:["N-acetylcysteine works by regenerating and substituting for glutathione","Most effective within 8–10 hours, but give it late too"],
  tx:["N-acetylcysteine; activated charcoal if within ~4 hours; transplant referral by King's College criteria"]},
 
 zinc:{n:"Zinc deficiency",k:"dz",p:"watersol",enz:"Zinc-finger transcription factors · metalloenzymes",inh:"Acquired / AR (acrodermatitis enteropathica)",hi:0,
@@ -1415,7 +1419,7 @@ adhdrugs:{n:"ADH, its receptors and the drugs",k:"drug",p:"cd",enz:"V2 receptor 
  mech:"ADH acting on V2 receptors inserts aquaporin-2 into the apical membrane of the principal cell, letting water follow the medullary gradient. V1 receptors on vascular smooth muscle mediate vasoconstriction instead.",
  find:["<b>Desmopressin</b> — V2 agonist: central DI, von Willebrand disease, mild hemophilia A, nocturnal enuresis","<b>Conivaptan, tolvaptan</b> — vaptan V2 antagonists: SIADH, hypervolemic hyponatremia, ADPKD","<b>Lithium and demeclocycline</b> block the V2 pathway → nephrogenic DI (demeclocycline was once used to treat SIADH)"],
  labs:["Tolvaptan is hepatotoxic; limit duration","Correct chronic hyponatremia slowly — no more than 8 mEq/L per 24 h"],
- buzz:["Too fast correction of hyponatremia → <b>osmotic demyelination</b> (locked-in syndrome)","Too fast correction of hypernatremia → cerebral edema"],
+ buzz:["Too fast correction of hyponatremia → osmotic demyelination (locked-in syndrome)","Too fast correction of hypernatremia → cerebral edema"],
  tx:["—"]},
 
 di:{n:"Diabetes insipidus",k:"dz",p:"cd",enz:"ADH production (central) or V2 response (nephrogenic)",inh:"Acquired / X-linked",hi:1,
@@ -1471,7 +1475,7 @@ ethyleneglycol:{n:"Ethylene glycol & methanol poisoning",k:"drug",p:"nephron",en
  mech:"Alcohol dehydrogenase converts ethylene glycol to glycolic and then <b>oxalic acid</b>, which precipitates as calcium oxalate in the tubules, and methanol to <b>formic acid</b>, which poisons the retina. The parent alcohols are relatively harmless — the metabolites do the damage, which is why blocking the enzyme works.",
  find:["Ethylene glycol (antifreeze): inebriation, then <b>acute kidney injury</b>, hypocalcemia, tetany","Methanol (windshield fluid, moonshine): <b>visual blurring and blindness</b>, putaminal hemorrhage"],
  labs:["<b>Anion gap metabolic acidosis with an elevated osmolar gap</b>","<b>Envelope-shaped (or needle-shaped) calcium oxalate crystals</b> in urine","Urine may fluoresce under Wood lamp (fluorescein in antifreeze)"],
- buzz:["Envelope-shaped crystals with AKI = ethylene glycol","<b>Fomepizole</b> first line (inhibits alcohol dehydrogenase); ethanol is the backup"],
+ buzz:["Envelope-shaped crystals with AKI = ethylene glycol","Fomepizole first line (inhibits alcohol dehydrogenase); ethanol is the backup"],
  tx:["Fomepizole, sodium bicarbonate, <b>hemodialysis</b>; thiamine and pyridoxine for ethylene glycol, folate for methanol"]},
 
 rhabdo:{n:"Rhabdomyolysis",k:"dz",p:"nephron",enz:"Myoglobin cast nephropathy",inh:"Acquired",hi:1,
@@ -1506,7 +1510,7 @@ postrenal:{n:"Post-renal acute kidney injury",k:"dz",p:"aki",enz:"Obstruction do
  mech:"Obstruction raises pressure retrograde through the tubule into Bowman's space, and that back-pressure opposes filtration. Because one healthy kidney can compensate completely, obstruction only raises creatinine when it is <b>bilateral</b> or in a solitary kidney.",
  find:["<b>Benign prostatic hyperplasia</b> — the most common cause in older men","Bilateral stones; cervical, prostate or bladder cancer; retroperitoneal fibrosis","Neurogenic bladder; anticholinergic drugs causing retention","<b>Complete anuria</b> suggests obstruction (or a vascular catastrophe) — most other causes leave some urine output"],
  labs:["<b>Hydronephrosis on renal ultrasound</b>; a distended bladder on bedside scan","Early on it behaves like pre-renal (FENa < 1%); after prolonged obstruction the tubules are damaged and FENa rises above 2%","May cause a type 4 (hyperkalemic) RTA"],
- buzz:["Older man with anuria — scan the bladder before anything else","<b>Post-obstructive diuresis</b> after relief: massive urine output, watch for hypovolemia and potassium, magnesium and phosphate loss"],
+ buzz:["Older man with anuria — scan the bladder before anything else","Post-obstructive diuresis after relief: massive urine output, watch for hypovolemia and potassium, magnesium and phosphate loss"],
  tx:["Relieve the obstruction — bladder catheter, ureteral stent or percutaneous nephrostomy; then monitor the diuresis closely"]},
 
 /* ── cardiac ────────────────────────────────────────── */
@@ -1570,14 +1574,14 @@ wpw:{n:"Wolff-Parkinson-White syndrome",k:"dz",p:"conduction",enz:"Accessory pat
  mech:"An accessory bundle bypasses the AV node and pre-excites part of the ventricle, so the PR shortens and the QRS begins with a slurred <b>delta wave</b>. The pathway plus the node forms a circuit that can sustain re-entrant tachycardia.",
  find:["Palpitations from paroxysmal SVT","<b>Short PR interval with a delta wave and a widened QRS</b>","If atrial fibrillation conducts down the accessory pathway, the ventricular rate can be lethal"],
  labs:["Associated with Ebstein anomaly"],
- buzz:["Delta wave with a short PR","<b>Never give AV nodal blockers</b> (adenosine, β-blockers, calcium channel blockers, digoxin) in AF with WPW — they push conduction down the accessory pathway → VF"],
+ buzz:["Delta wave with a short PR","Never give AV nodal blockers (adenosine, β-blockers, calcium channel blockers, digoxin) in AF with WPW — they push conduction down the accessory pathway → VF"],
  tx:["AF with WPW: <b>procainamide</b> or ibutilide, or cardioversion. Definitive: catheter ablation of the pathway"]},
 
 longqt:{n:"Long QT syndrome & torsades de pointes",k:"dz",p:"conduction",enz:"Delayed rectifier K⁺ channels (or drugs that block them)",inh:"AD / AR / acquired",hi:1,
  mech:"Slower repolarization lengthens the QT and creates a window for early afterdepolarizations, which trigger a polymorphic ventricular tachycardia that twists around the baseline — <b>torsades de pointes</b>.",
  find:["Syncope, seizures or sudden death, classically with exertion, startle or emotion","<b>Romano-Ward</b>: autosomal dominant, purely cardiac","<b>Jervell and Lange-Nielsen</b>: autosomal recessive, with <b>congenital sensorineural deafness</b>","Acquired: class IA and III antiarrhythmics, macrolides, fluoroquinolones, antipsychotics, ondansetron, methadone, antifungals"],
  labs:["<b>QTc > 500 ms</b> is high risk","<b>Hypokalemia, hypomagnesemia, hypocalcemia</b> all prolong it","Bradycardia worsens it"],
- buzz:["Deafness plus syncope in a child = Jervell and Lange-Nielsen","Torsades treatment is <b>IV magnesium</b>, whatever the magnesium level"],
+ buzz:["Deafness plus syncope in a child = Jervell and Lange-Nielsen","Torsades treatment is IV magnesium, whatever the magnesium level"],
  tx:["Magnesium; correct electrolytes; stop the offending drug; β-blockers and ICD for congenital forms"]},
 
 brugada:{n:"Brugada syndrome",k:"dz",p:"conduction",enz:"SCN5A cardiac Na⁺ channel loss of function",inh:"Autosomal dominant",hi:0,
@@ -1704,7 +1708,7 @@ nrds:{n:"Neonatal respiratory distress syndrome",k:"dz",p:"alveolus",enz:"Surfac
  mech:"Surfactant lowers alveolar surface tension. By Laplace's law (P = 2T/r) small alveoli would otherwise collapse into large ones; without surfactant they do, producing diffuse atelectasis and a massive right-to-left shunt.",
  find:["Preterm infant with tachypnea, grunting, nasal flaring, retractions and cyanosis within hours of birth","Risk: <b>prematurity, maternal diabetes</b> (fetal insulin suppresses surfactant), <b>cesarean without labor</b> (less cortisol surge)","Chest film: diffuse <b>ground-glass</b> reticulogranular opacity with air bronchograms"],
  labs:["<b>Lecithin:sphingomyelin ratio < 1.5</b> in amniotic fluid predicts it (≥ 2.0 is mature)","Surfactant production begins ~week 20 and is adequate by ~week 35"],
- buzz:["Therapy complications: <b>retinopathy of prematurity, bronchopulmonary dysplasia, intraventricular hemorrhage</b>; persistent PDA and necrotizing enterocolitis","Maternal betamethasone before preterm delivery is the key prevention"],
+ buzz:["Therapy complications: retinopathy of prematurity, bronchopulmonary dysplasia, intraventricular hemorrhage; persistent PDA and necrotizing enterocolitis","Maternal betamethasone before preterm delivery is the key prevention"],
  tx:["Antenatal corticosteroids; exogenous surfactant; CPAP and gentle ventilation"]},
 
 ards:{n:"Acute respiratory distress syndrome",k:"dz",p:"alveolus",enz:"Diffuse alveolar damage",inh:"Acquired",hi:1,
@@ -1746,7 +1750,7 @@ altitude:{n:"High-altitude physiology",k:"reg",p:"gasex",enz:"Hypoxic ventilator
  mech:"Barometric pressure falls, so inspired PO₂ falls while the fraction of oxygen stays 21%. Peripheral chemoreceptors drive hyperventilation, which produces a <b>respiratory alkalosis</b> that the kidney then compensates by excreting bicarbonate.",
  find:["Acute: headache, nausea, insomnia, dyspnea — acute mountain sickness","Severe: high-altitude pulmonary edema and cerebral edema","Chronic adaptation: <b>↑ 2,3-BPG</b> (right shift), <b>↑ erythropoietin → polycythemia</b>, ↑ mitochondrial density, chronic hypoxic pulmonary vasoconstriation → pulmonary hypertension"],
  labs:["Hypoxemia with a <b>normal A–a gradient</b> — the alveolus simply has less oxygen to give"],
- buzz:["<b>Acetazolamide</b> prevents and treats it — the bicarbonate diuresis creates a metabolic acidosis that lets the patient keep hyperventilating","Descent is the definitive treatment"],
+ buzz:["Acetazolamide prevents and treats it — the bicarbonate diuresis creates a metabolic acidosis that lets the patient keep hyperventilating","Descent is the definitive treatment"],
  tx:["Acetazolamide, dexamethasone, oxygen, descent; nifedipine for HAPE"]},
 
 
@@ -1892,14 +1896,14 @@ hemophilia:{n:"Hemophilia A and B",alias:"Factor VIII deficiency (A) · Factor I
  mech:"Both factors sit in the intrinsic arm just upstream of factor X, so losing either one cripples thrombin generation. Primary hemostasis is intact — the platelet plug forms normally — which is why bleeding is characteristically <b>delayed and deep</b> rather than immediate and mucosal.",
  find:["<b>Hemarthrosis</b> (the classic finding), deep muscle hematoma, intracranial bleed","Excessive bleeding after circumcision, surgery or dental extraction","<b>A is far more common</b> — factor VIII, ~85% of cases","<b>B is factor IX</b>, called <b>Christmas disease</b> after Stephen Christmas, the first patient reported (1952) — not the holiday","A and B are <b>clinically indistinguishable</b>: same X-linked inheritance, same deep bleeding, same ↑ PTT. Only a factor assay separates them","Affects boys; carrier mothers are usually asymptomatic"],
  labs:["<b>↑ PTT with a normal PT, normal platelet count and normal bleeding time</b>","<b>Mixing study corrects</b> — confirming a factor deficiency rather than an inhibitor","<b>Specific factor assay is the only way to tell A from B</b> — the coagulation panel looks identical"],
- buzz:["Deep bleeding, not mucosal — the opposite of platelet disorders","↑ PTT that corrects on mixing = deficiency; fails to correct = inhibitor","Christmas disease = hemophilia B = factor IX","A and B are X-linked; <b>hemophilia C (factor XI) is autosomal recessive</b>","<b>Desmopressin works in A, not in B</b> — it releases stored VIII, and there is no stored IX"],
+ buzz:["Deep bleeding, not mucosal — the opposite of platelet disorders","↑ PTT that corrects on mixing = deficiency; fails to correct = inhibitor","Christmas disease = hemophilia B = factor IX","A and B are X-linked; hemophilia C (factor XI) is autosomal recessive","Desmopressin works in A, not in B — it releases stored VIII, and there is no stored IX"],
  tx:["Factor VIII or IX concentrate — replace the one that is missing","<b>Desmopressin only helps mild hemophilia A</b>; it releases stored factor VIII from endothelium and does nothing for factor IX","<b>Emicizumab</b> — bispecific antibody that bridges IXa and X, doing factor VIII's job","Avoid NSAIDs and intramuscular injections"]},
 
 factorxi:{n:"Hemophilia C",alias:"Factor XI deficiency · Rosenthal syndrome",k:"dz",p:"coag",enz:"Factor XI",inh:"Autosomal recessive",hi:1,
  mech:"Factor XI sits in the intrinsic arm between XII and IX. Losing it prolongs the PTT like hemophilia A or B, but the bleeding is far milder and far less predictable — because tissue factor can still drive the cascade through the extrinsic route, and factor XI mainly serves to <b>amplify</b> thrombin once clotting is underway.",
  find:["<b>Autosomal recessive — not X-linked</b>. This is the single biggest contrast with hemophilia A and B, and it means girls are affected just as often","Strongly associated with <b>Ashkenazi Jewish ancestry</b>","Bleeding is usually <b>mild and provoked</b>: after surgery, dental extraction or trauma, rather than spontaneously","<b>Spontaneous hemarthrosis is rare</b> — another break from A and B","Bleeding favours tissues rich in fibrinolytic activity: mouth, nose, tonsils, urinary tract"],
  labs:["<b>↑ PTT with a normal PT</b>, normal platelet count and normal bleeding time — indistinguishable from A or B on the panel","Mixing study corrects; factor XI assay confirms","<b>Bleeding severity correlates poorly with the factor XI level</b> — a patient with very low factor XI may barely bleed, and the reverse also happens. You cannot predict risk from the number"],
- buzz:["The hemophilia that is <b>autosomal recessive</b>, so it affects girls too","Ashkenazi Jewish ancestry","Severity does not track the factor level — unique among the hemophilias","Factor XI deficiency bleeds; factor XII deficiency does not bleed at all"],
+ buzz:["The hemophilia that is autosomal recessive, so it affects girls too","Ashkenazi Jewish ancestry","Severity does not track the factor level — unique among the hemophilias","Factor XI deficiency bleeds; factor XII deficiency does not bleed at all"],
  tx:["<b>Fresh frozen plasma</b> — there is no widely available factor XI concentrate in the United States","<b>Antifibrinolytics</b> (tranexamic acid, aminocaproic acid) for dental and mucosal bleeding — often sufficient on their own","Plan ahead for surgery rather than treating reactively"]},
 
 itp:{n:"Immune thrombocytopenic purpura",k:"dz",p:"hemostasis",enz:"Anti-GpIIb/IIIa autoantibodies",inh:"Autoimmune",hi:1,
@@ -1913,7 +1917,7 @@ ttp:{n:"TTP and HUS",k:"dz",p:"hemostasis",enz:"ADAMTS13 (TTP) · Shiga toxin en
  mech:"<b>ADAMTS13</b> normally chops ultra-large vWF multimers down to size. Without it, those giant multimers grab platelets out of flowing blood and form microthrombi throughout small vessels — consuming platelets and shredding red cells as they pass.",
  find:["<b>TTP pentad</b>: fever, <b>microangiopathic hemolytic anemia</b>, <b>thrombocytopenia</b>, <b>neurologic changes</b>, renal failure — the neuro findings dominate","<b>HUS</b>: same microangiopathy but <b>renal failure dominates</b>, classically in a child after bloody diarrhea from Shiga-toxin <i>E. coli</i> O157:H7","Both: no significant coagulopathy — this is platelet consumption, not cascade activation"],
  labs:["<b>Schistocytes</b> on smear, ↑ LDH, ↓ haptoglobin, ↑ indirect bilirubin","<b>↓ Platelets with NORMAL PT and PTT</b> — the key separator from DIC, where both are prolonged","↓ ADAMTS13 activity in TTP"],
- buzz:["Normal coags with schistocytes = TTP/HUS. Prolonged coags with schistocytes = DIC","<b>Do not transfuse platelets in TTP</b> — it fuels the microthrombi","Avoid antibiotics in Shiga-toxin HUS — they can worsen toxin release"],
+ buzz:["Normal coags with schistocytes = TTP/HUS. Prolonged coags with schistocytes = DIC","Do not transfuse platelets in TTP — it fuels the microthrombi","Avoid antibiotics in Shiga-toxin HUS — they can worsen toxin release"],
  tx:["<b>TTP: plasma exchange urgently</b>, plus steroids and caplacizumab. HUS: supportive care and dialysis; eculizumab for atypical HUS"]},
 
 dic:{n:"Disseminated intravascular coagulation",k:"dz",p:"coag",enz:"Systemic activation of the whole cascade",inh:"Acquired",hi:1,
@@ -1976,7 +1980,7 @@ hae:{n:"Hereditary angioedema",k:"dz",p:"kinin",enz:"C1 esterase inhibitor",inh:
  mech:"C1 esterase inhibitor restrains both complement <b>and</b> the contact pathway — it inhibits kallikrein and factor XIIa. Losing it lets kallikrein run unchecked, cleaving HMW kininogen into <b>bradykinin</b>, which makes vessels leak. The swelling is bradykinin-mediated, not histamine-mediated, which is why antihistamines and epinephrine do nothing.",
  find:["Recurrent episodes of <b>non-pitting, non-pruritic swelling without urticaria</b> — face, lips, larynx, extremities","<b>Painful abdominal attacks</b> from bowel wall edema, often mistaken for a surgical abdomen","Triggers: trauma (including dental work), stress, <b>ACE inhibitors</b>","Laryngeal involvement is the cause of death"],
  labs:["<b>↓ C4</b> is the best screening test (chronically consumed); C1 inhibitor level and function confirm","Normal C3, normal IgE"],
- buzz:["<b>ACE inhibitors are contraindicated</b> — ACE is the main enzyme that degrades bradykinin","Swelling with no hives and no itch — that is bradykinin, not histamine"],
+ buzz:["ACE inhibitors are contraindicated — ACE is the main enzyme that degrades bradykinin","Swelling with no hives and no itch — that is bradykinin, not histamine"],
  tx:["Acute: <b>icatibant</b> (bradykinin B2 antagonist), ecallantide (kallikrein inhibitor), C1 inhibitor concentrate, fresh frozen plasma","Prophylaxis: C1 inhibitor, lanadelumab, danazol"]},
 
 coagreg:{n:"PT vs PTT — reading a coagulation panel",k:"reg",p:"coag",enz:"Extrinsic vs intrinsic vs common pathway",inh:"—",hi:1,
@@ -1991,7 +1995,162 @@ liverdz:{n:"Coagulopathy of liver disease",k:"dz",p:"coag",enz:"Hepatic synthesi
  find:["Prolonged PT/INR out of proportion to bleeding risk","Thrombocytopenia from splenic sequestration in portal hypertension","Reduced fibrinogen, and dysfibrinogenemia","<b>Factor VIII is normal or high</b> — because it does not come from the liver; this helps separate liver disease from DIC"],
  labs:["<b>↑ PT first</b> (factor VII), then ↑ PTT as disease advances","<b>Vitamin K does not correct it</b> — unlike dietary deficiency or warfarin, where it does. The hepatocytes cannot synthesize regardless of substrate","Normal factor VIII with low factor V points to liver disease over DIC"],
  buzz:["Give vitamin K once to distinguish: correction means deficiency, no correction means the liver itself","INR is a poor predictor of bleeding in cirrhosis"],
- tx:["Treat the liver disease; FFP or PCC and platelets only for active bleeding or before procedures"]}
+ tx:["Treat the liver disease; FFP or PCC and platelets only for active bleeding or before procedures"]},
+
+/* ── immunity: B cell ───────────────────────────────── */
+bcellreg:{n:"B-cell development — where each defect arrests it",k:"reg",p:"bcell",enz:"VDJ recombination · BTK · CD40L · AID",inh:"—",hi:1,
+ mech:"B cells mature in the <b>bone marrow</b> to the point of making a surface receptor, then finish the job in the <b>periphery</b> after meeting antigen. Each inherited defect stops the line at a specific rung, and the lab pattern tells you which one.",
+ find:["<b>Pro-B → Pre-B</b>: heavy chain rearranges; the pre-B receptor must signal through <b>BTK</b> to go further","<b>Pre-B → Immature</b>: light chain rearranges, surface <b>IgM</b> appears","<b>Immature → Mature naive</b>: adds <b>IgD</b>, leaves the marrow","<b>Germinal centre</b>: antigen plus <b>CD40L from a T cell</b> drives class switching (AID) and somatic hypermutation","<b>Plasma cell</b> secretes; memory B cells persist"],
+ labs:["<b>No B cells at all + no Ig</b> → Bruton (BTK) — arrested before the receptor works","<b>Normal B cells but low Ig</b> → CVID — they are there but cannot differentiate","<b>High IgM, low everything else</b> → class switching failed (CD40L)","<b>Low IgA alone</b> → selective IgA deficiency","Absent tonsils and lymph nodes point to an early arrest, not a late one"],
+ buzz:["Count the B cells first, then the immunoglobulins — the combination names the defect","Recurrent encapsulated-organism infection after ~6 months, when maternal IgG wanes"],
+ tx:["—"]},
+
+xla:{n:"Bruton agammaglobulinemia",alias:"X-linked agammaglobulinemia · BTK",k:"dz",p:"bcell",enz:"Bruton tyrosine kinase (BTK)",inh:"X-linked recessive",hi:1,
+ mech:"BTK carries the signal from the <b>pre-B-cell receptor</b>. Without it the line arrests at the pre-B stage, so <b>no mature B cells are ever made</b> and no immunoglobulin of any class is produced.",
+ find:["<b>Boys</b>, symptomatic at about <b>6 months</b> — exactly when maternal IgG has worn off","Recurrent <b>encapsulated</b> bacterial infection: otitis, sinusitis, pneumonia (<i>S. pneumoniae</i>, <i>H. influenzae</i>)","Also <b>enteroviral</b> meningoencephalitis and <b>Giardia</b>","<b>Absent or tiny tonsils and lymph nodes</b> — no germinal centres to build them"],
+ labs:["<b>↓↓ All immunoglobulin classes</b>","<b>Absent CD19+ B cells</b> in the blood — this is the finding that separates it from CVID","Normal T-cell numbers and function"],
+ buzz:["A boy with no tonsils","Live vaccines are contraindicated — especially oral polio"],
+ tx:["<b>Lifelong IVIG</b>; prompt antibiotics. Avoid live vaccines"]},
+
+cvid:{n:"Common variable immunodeficiency",k:"dz",p:"bcell",enz:"B-cell differentiation into plasma cells",inh:"Variable / mostly sporadic",hi:1,
+ mech:"B cells are made normally but <b>fail to become antibody-secreting plasma cells</b>. Because the block is late, the B cells are present and countable — the antibody simply is not there.",
+ find:["Presents much <b>later than Bruton — usually in the teens to thirties</b>, which is the key clinical separator","Recurrent sinopulmonary infection, and eventually <b>bronchiectasis</b>","<b>↑ Risk of autoimmune disease</b> (ITP, autoimmune haemolysis) and <b>↑ risk of lymphoma</b> and gastric cancer","Chronic <i>Giardia</i>, granulomatous disease"],
+ labs:["<b>↓ IgG, and ↓ IgA or IgM as well</b>","<b>Normal or near-normal B-cell count</b> — the contrast with Bruton","Poor response to vaccination is the functional test"],
+ buzz:["Normal B cells, low antibody, adult onset","Unlike Bruton, these patients get autoimmunity and malignancy"],
+ tx:["IVIG; treat infections promptly; screen for the malignancy and autoimmune complications"]},
+
+igadef:{n:"Selective IgA deficiency",k:"dz",p:"bcell",enz:"IgA class switching",inh:"Variable",hi:1,
+ mech:"The commonest primary immunodeficiency by a wide margin, and usually <b>asymptomatic</b> — the other isotypes compensate at mucosal surfaces. It matters mostly for two things: mucosal infection and transfusion reactions.",
+ find:["<b>The most common primary immunodeficiency</b> (~1 in 600)","Most patients have no symptoms at all","When symptomatic: recurrent sinopulmonary and GI infection, <b>Giardia</b>","Associated with <b>celiac disease</b> and other autoimmune conditions"],
+ labs:["<b>↓ IgA with normal IgG and IgM</b>","<b>Anaphylaxis to blood products</b> — they make anti-IgA antibodies, so give <b>washed</b> or IgA-deficient blood","<b>False-negative celiac serology</b>, because the standard test is an IgA antibody — order the IgG-based test instead"],
+ buzz:["Anaphylaxis after a transfusion in an otherwise healthy person","Check total IgA before trusting a negative celiac screen"],
+ tx:["No immunoglobulin replacement (it would sensitize them further). Treat infections; use washed blood products"]},
+
+hyperigm:{n:"Hyper-IgM syndrome",alias:"CD40 ligand deficiency",k:"dz",p:"bcell",enz:"CD40L on T cells (or CD40 / AID on B cells)",inh:"X-linked recessive (CD40L)",hi:1,
+ mech:"The B cell needs a second signal — <b>CD40L delivered by a helper T cell</b> — before it will class switch. Without it the B cell can only make the isotype it started with, so <b>IgM piles up while IgG, IgA and IgE are never made</b>.",
+ find:["Severe recurrent pyogenic infection from early life","<b><i>Pneumocystis jirovecii</i> pneumonia</b>, <i>Cryptosporidium</i> diarrhoea, CMV — the opportunistic pattern, because CD40L also activates macrophages","Failure to thrive; neutropenia is common"],
+ labs:["<b>↑↑ IgM with ↓ IgG, ↓ IgA, ↓ IgE</b>","Normal B-cell numbers","Failure to mount an IgG response to vaccination"],
+ buzz:["High IgM with everything else low","Pneumocystis in an infant with a normal CD4 count"],
+ tx:["IVIG, <i>Pneumocystis</i> prophylaxis, stem cell transplant"]},
+
+wiskott:{n:"Wiskott-Aldrich syndrome",alias:"WAS protein · WASp",k:"dz",p:"bcell",enz:"WAS protein — actin cytoskeleton remodelling",inh:"X-linked recessive",hi:1,
+ mech:"WASp reorganizes the actin cytoskeleton, which both lymphocytes and platelets depend on to form an immune synapse and to bud properly. Losing it produces a <b>combined</b> picture plus a distinctive platelet defect.",
+ find:["<b>The triad: thrombocytopenia, eczema, recurrent infection</b> — \"WATER\": Wiskott-Aldrich, Thrombocytopenia, Eczema, Recurrent infection","<b>Small platelets</b> with a low count — bleeding, petechiae, bloody diarrhoea in infancy","↑ Risk of autoimmune disease and lymphoma"],
+ labs:["<b>↓ Platelet count with SMALL platelets</b> — the opposite of Bernard-Soulier's giant ones","<b>↓ IgM, normal or ↑ IgG, ↑ IgA and ↑↑ IgE</b> — an odd, memorable pattern","Progressive T-cell decline"],
+ buzz:["Eczema + bleeding + infection in a boy","Tiny platelets, not big ones"],
+ tx:["Stem cell transplant is curative; IVIG, platelet transfusion, eczema care"]},
+/* ── immunity: T cell ───────────────────────────────── */
+tcellreg:{n:"T-cell selection in the thymus",k:"reg",p:"tcell",enz:"Positive selection (cortex) · negative selection (medulla)",inh:"—",hi:1,
+ mech:"A thymocyte has to pass <b>two opposite tests</b>. In the <b>cortex</b> it must bind self-MHC well enough to be useful — fail and it dies by neglect. In the <b>medulla</b> it must <b>not</b> bind self-antigen too strongly — fail and it is deleted. What survives is useful but not autoreactive.",
+ find:["<b>Double negative</b> (CD4− CD8−) → TCR β then α rearrange → <b>double positive</b> (CD4+ CD8+)","<b>Positive selection, cortex</b>: bind MHC I → become CD8; bind MHC II → become CD4","<b>Negative selection, medulla</b>: <b>AIRE</b> forces medullary epithelium to display self-antigens from every tissue, so autoreactive clones can be deleted","Survivors leave as CD4 or CD8 <b>single positive</b> cells"],
+ labs:["No thymus at all → <b>DiGeorge</b>","Cannot express MHC II → no CD4 cells → <b>bare lymphocyte syndrome</b>","Cannot signal through the TCR → no CD8 cells → <b>ZAP-70</b>","AIRE broken → autoreactive clones escape → <b>APS-1</b>"],
+ buzz:["Positive selection is in the cortex, negative in the medulla","AIRE is why the thymus can teach tolerance to tissues it will never see"],
+ tx:["—"]},
+
+digeorge:{n:"DiGeorge syndrome",alias:"22q11.2 deletion · thymic aplasia",k:"dz",p:"tcell",enz:"3rd and 4th pharyngeal pouch development",inh:"Microdeletion (usually de novo)",hi:1,
+ mech:"A <b>22q11.2 microdeletion</b> derails the third and fourth pharyngeal pouches, which is where the <b>thymus and the parathyroids</b> come from. The result is a T-cell defect and hypocalcaemia arriving together, plus the conotruncal cardiac lesions from neural crest involvement.",
+ find:["<b>CATCH-22</b>: Cardiac (conotruncal), Abnormal facies, Thymic aplasia, Cleft palate, Hypocalcaemia, 22q11","<b>Tetany and seizures in a neonate</b> from hypoparathyroidism, often the first sign","Recurrent <b>viral and fungal</b> infection from the T-cell defect","Truncus arteriosus, tetralogy of Fallot, interrupted aortic arch"],
+ labs:["<b>↓ T cells with normal or near-normal B cells</b>","<b>↓ Ca²⁺, ↑ PO₄, ↓ PTH</b> — see the hypoparathyroidism card on the calcium map","<b>Absent thymic shadow</b> on chest radiograph","FISH or microarray for 22q11.2"],
+ buzz:["Neonatal tetany plus a heart murmur plus no thymic shadow","The thymus and the parathyroids share an embryologic origin — that is the whole syndrome"],
+ tx:["Calcium and vitamin D; cardiac surgery; irradiated, CMV-negative blood products; avoid live vaccines if the T-cell defect is severe"]},
+
+scidx:{n:"Severe combined immunodeficiency",alias:"IL-2Rγ chain · JAK3 · RAG1/2",k:"dz",p:"tcell",enz:"Common γ chain of the IL-2 receptor family",inh:"X-linked recessive (most common form)",hi:1,
+ mech:"The <b>common γ chain</b> is shared by the receptors for IL-2, 4, 7, 9, 15 and 21. <b>IL-7 signalling is what drives early lymphocyte survival</b>, so losing that one subunit takes out T cells and NK cells, and the B cells that remain are useless without T-cell help.",
+ find:["<b>Failure to thrive from the first months</b>, chronic diarrhoea, thrush","Infection with anything: <b><i>Candida</i>, <i>Pneumocystis</i>, CMV, RSV, adenovirus</b>","<b>Absent thymic shadow</b>, absent lymph nodes and tonsils","Other causes: <b>ADA deficiency</b> (see the purine map), JAK3, RAG1/2 (no VDJ recombination)"],
+ labs:["<b>↓↓ T cells and NK cells; B cells present but non-functional</b> in the X-linked form","Very low or absent immunoglobulins","On newborn screening as <b>low TRECs</b> (T-cell receptor excision circles)"],
+ buzz:["The \"bubble boy\" disease","Never give live vaccines; always irradiate blood products to prevent graft-versus-host disease","Untreated it is fatal in the first year"],
+ tx:["<b>Stem cell transplant</b>, ideally before infection sets in; gene therapy for some forms; PEG-ADA for the ADA form"]},
+
+aps1:{n:"APS-1 (AIRE deficiency)",alias:"APECED · autoimmune polyendocrine syndrome type 1",k:"dz",p:"tcell",enz:"AIRE — autoimmune regulator",inh:"Autosomal recessive",hi:0,
+ mech:"AIRE makes medullary thymic epithelium express <b>tissue-specific self-antigens</b> — insulin, thyroglobulin and so on — so that T cells reactive to them can be deleted. Without AIRE, negative selection misses those clones and they attack the corresponding organs.",
+ find:["The classic triad: <b>chronic mucocutaneous candidiasis, hypoparathyroidism, and adrenal insufficiency</b>","Candidiasis usually comes first, in childhood","May add type 1 diabetes, hypothyroidism, vitiligo, alopecia, pernicious anaemia"],
+ labs:["Autoantibodies against the affected endocrine organs and against interferons","↓ Ca²⁺ from the hypoparathyroidism; low cortisol with ↑ ACTH"],
+ buzz:["Thrush plus tetany plus adrenal failure in a child","The disease that proves what negative selection is for"],
+ tx:["Hormone replacement for each failed gland; antifungals"]},
+
+blsyn:{n:"Bare lymphocyte syndrome",alias:"MHC class II deficiency",k:"dz",p:"tcell",enz:"MHC class II transcription factors (CIITA, RFX)",inh:"Autosomal recessive",hi:0,
+ mech:"CD4 cells are selected by binding <b>MHC class II</b> in the thymic cortex. If class II is never expressed, positive selection of the CD4 lineage cannot happen, and the antigen presentation that CD4 cells depend on afterwards is missing too.",
+ find:["Severe combined-type infection in infancy: respiratory, GI, opportunistic","Failure to thrive, chronic diarrhoea","Type I (MHC class I deficiency, TAP mutation) is milder — vasculitis and chronic lung disease, with ↓ CD8"],
+ labs:["<b>↓ CD4 count with a normal total lymphocyte count</b>","Absent MHC II on flow cytometry of B cells and monocytes","Low immunoglobulins — no T-cell help"],
+ buzz:["Low CD4 with a negative HIV test","No class II, no CD4 cells"],
+ tx:["Stem cell transplant; IVIG and prophylaxis meanwhile"]},
+
+zap70:{n:"ZAP-70 deficiency",k:"dz",p:"tcell",enz:"ZAP-70 — TCR signal transduction",inh:"Autosomal recessive",hi:0,
+ mech:"ZAP-70 carries the signal from the T-cell receptor inward. CD8 cells cannot complete positive selection without it, and the CD4 cells that do emerge are present but cannot be activated.",
+ find:["Combined immunodeficiency presenting in infancy","Recurrent and opportunistic infection despite a normal-looking lymphocyte count"],
+ labs:["<b>Absent CD8 cells; CD4 cells present but non-functional</b> — a distinctive split","Normal total lymphocyte count can mask it"],
+ buzz:["CD8 gone, CD4 there but useless"],
+ tx:["Stem cell transplant"]},
+
+jobsyn:{n:"Job syndrome (hyper-IgE)",alias:"STAT3 deficiency · autosomal dominant hyper-IgE",k:"dz",p:"tcell",enz:"STAT3 — Th17 differentiation",inh:"Autosomal dominant",hi:1,
+ mech:"STAT3 is required to make <b>Th17</b> cells, and Th17 cells are what recruit neutrophils to skin and mucosa. Without that recruitment the patient forms abscesses that are strikingly <b>\"cold\"</b> — no warmth, no redness, no fever, because the inflammatory response never arrives.",
+ find:["<b>FATED</b>: coarse Facies, <b>cold Abscesses</b> (staphylococcal), retained primary Teeth, <b>↑ IgE</b>, Dermatologic problems (severe eczema)","Recurrent <i>S. aureus</i> skin and lung infection; <b>pneumatoceles</b>","Double rows of teeth because the baby teeth never fall out","Skeletal: scoliosis, fractures after minor trauma, hyperextensible joints"],
+ labs:["<b>↑↑ IgE</b>","<b>Eosinophilia</b>","↓ Th17 cells"],
+ buzz:["Cold staphylococcal abscesses and two rows of teeth","Coarse facial features in a child with terrible eczema"],
+ tx:["Prophylactic antistaphylococcal antibiotics, antifungals, eczema care; drain abscesses"]},
+
+il12r:{n:"IL-12 receptor deficiency",k:"dz",p:"tcell",enz:"IL-12 receptor β1 — Th1 differentiation",inh:"Autosomal recessive",hi:0,
+ mech:"IL-12 from macrophages is the signal that pushes T cells down the <b>Th1</b> path, and Th1 cells make the <b>interferon-γ</b> that activates macrophages to kill intracellular organisms. Break the receptor and macrophages are never switched on.",
+ find:["<b>Disseminated mycobacterial infection</b>, including after routine <b>BCG vaccination</b>","Disseminated <i>Salmonella</i>","Usually presents after the first BCG or environmental mycobacterial exposure"],
+ labs:["<b>↓ Interferon-γ</b> production after stimulation","Otherwise unremarkable counts"],
+ buzz:["Disseminated disease after a BCG vaccine","The Th1 axis: IL-12 → IFN-γ → macrophage activation"],
+ tx:["Interferon-γ; prolonged antimycobacterial therapy"]},
+/* ── immunity: phagocytes & complement ──────────────── */
+lad1:{n:"Leukocyte adhesion deficiency",alias:"LAD type 1 · CD18 / β₂ integrin",k:"dz",p:"phago",enz:"CD18 (LFA-1 integrin β₂ subunit)",inh:"Autosomal recessive",hi:1,
+ mech:"Neutrophils roll along endothelium on selectins, then must <b>firmly adhere</b> via integrins before squeezing out into tissue. CD18 is that integrin. Without it neutrophils are made in huge numbers but <b>can never leave the bloodstream</b> — so the blood count is high and the tissue has none.",
+ find:["<b>Delayed separation of the umbilical cord</b> — beyond about 30 days — is the classic clue","Recurrent skin and mucosal bacterial infection with <b>no pus formation</b>","Poor wound healing, ulcers without inflammation","Severe gingivitis and periodontitis"],
+ labs:["<b>↑↑ Neutrophil count</b> even between infections — they are stuck in the circulation","<b>Absent pus</b> at infected sites","Flow cytometry shows absent CD18"],
+ buzz:["Infection without pus, and a neutrophil count that will not come down","Delayed umbilical cord separation"],
+ tx:["Stem cell transplant; aggressive antibiotics"]},
+
+chediak:{n:"Chédiak-Higashi syndrome",alias:"LYST · lysosomal trafficking regulator",k:"dz",p:"phago",enz:"LYST — lysosomal trafficking regulator",inh:"Autosomal recessive",hi:1,
+ mech:"LYST controls how lysosomes fuse and move. Losing it means the <b>phagosome and lysosome cannot fuse properly</b>, so ingested organisms are never killed, and lysosome-related organelles everywhere else — melanosomes, platelet dense granules, cytotoxic granules — malform into <b>giant granules</b>.",
+ find:["<b>Partial albinism</b> — silvery hair, light skin and eyes","Recurrent pyogenic infection, especially <i>S. aureus</i> and streptococci","<b>Peripheral neuropathy</b> and progressive neurodegeneration","<b>Mild bleeding</b> from defective platelet dense granules","An <b>accelerated phase</b> resembling haemophagocytic lymphohistiocytosis is what usually kills"],
+ labs:["<b>Giant cytoplasmic granules</b> in neutrophils on the smear — the diagnostic finding","Neutropenia, pancytopenia in the accelerated phase","Abnormal platelet aggregation studies"],
+ buzz:["Giant granules plus silvery hair","The trafficking defect explains all four systems at once: infection, albinism, bleeding, neuropathy"],
+ tx:["Stem cell transplant — it corrects the immune and haematologic disease but not the neurologic decline"]},
+
+cgd:{n:"Chronic granulomatous disease",alias:"NADPH oxidase deficiency",k:"dz",p:"phago",enz:"NADPH oxidase (gp91phox and others)",inh:"X-linked (most) or autosomal recessive",hi:1,
+ mech:"The neutrophil's respiratory burst uses <b>NADPH oxidase</b> to convert O₂ into superoxide and then hydrogen peroxide, which is what actually kills the ingested organism. Without it phagocytosis still happens — the killing does not.",
+ find:["Recurrent <b>abscesses</b>: skin, lymph node, liver","Pneumonia, osteomyelitis, and <b>granuloma formation</b> that can obstruct the GI or urinary tract","Onset usually in the first years of life"],
+ labs:["<b>Abnormal dihydrorhodamine (DHR) flow cytometry</b> — the current test","<b>Nitroblue tetrazolium fails to turn blue</b> — the older test, still examined","<b>Catalase-positive organisms cause the disease</b>: <i>S. aureus</i>, <i>Serratia</i>, <i>Nocardia</i>, <i>Burkholderia cepacia</i>, <i>Aspergillus</i> — they destroy the H₂O₂ they generate, so the neutrophil cannot borrow it. See the catalase card on the Lipids map"],
+ buzz:["Negative nitroblue tetrazolium","Catalase-positive organisms only — the catalase-negative ones hand over usable peroxide"],
+ tx:["Prophylactic <b>TMP-SMX and itraconazole</b>, <b>interferon-γ</b>; stem cell transplant for severe disease"]},
+
+mpo:{n:"Myeloperoxidase deficiency",k:"dz",p:"phago",enz:"Myeloperoxidase",inh:"Autosomal recessive",hi:0,
+ mech:"Myeloperoxidase turns H₂O₂ into hypochlorite — bleach — inside the phagolysosome. It is one killing mechanism among several, so losing it is usually much milder than losing the oxidase itself.",
+ find:["<b>Usually asymptomatic</b> — often an incidental finding","When symptomatic, <b><i>Candida</i></b> infection, particularly in diabetics"],
+ labs:["<b>Normal nitroblue tetrazolium and normal DHR</b> — the respiratory burst itself is intact, which separates it from CGD","Absent myeloperoxidase staining on the smear"],
+ buzz:["The NBT is normal here and abnormal in CGD","Candida in a diabetic"],
+ tx:["Usually none; treat candidiasis"]},
+
+complementreg:{n:"The complement cascade",k:"reg",p:"complement",enz:"Classical · alternative · lectin pathways → C3 → MAC",inh:"—",hi:1,
+ mech:"Three different triggers converge on one step. <b>C3 is the hub</b>: everything above it is about how the cascade got started, and everything below it is the shared effector arm.",
+ find:["<b>Classical</b>: C1 binds <b>IgG or IgM</b> already bound to antigen → C4, C2 → C3 convertase","<b>Alternative</b>: spontaneous C3 tickover on microbial surfaces — no antibody needed","<b>Lectin</b>: mannose-binding lectin on microbial sugars","<b>C3b</b> opsonizes; <b>C3a and C5a</b> are anaphylatoxins; <b>C5a</b> also recruits neutrophils","<b>C5b–C9</b> assemble the <b>membrane attack complex</b> and punch holes in the membrane"],
+ labs:["<b>DAF (CD55) and CD59</b> sit on our own cells to stop complement attacking them — lose their GPI anchor and you get PNH","<b>C1 esterase inhibitor</b> restrains both C1 and the kinin pathway — see hereditary angioedema","Low C3 with low C4 → classical activation; low C3 with normal C4 → alternative"],
+ buzz:["\"GM makes classic cars\" — IgG and IgM activate the classical pathway","MAC deficiency means Neisseria; C3 deficiency means everything"],
+ tx:["—"]},
+
+c5c9:{n:"Terminal complement deficiency",alias:"C5–C9 · MAC deficiency",k:"dz",p:"complement",enz:"C5, C6, C7, C8 or C9",inh:"Autosomal recessive",hi:1,
+ mech:"Without the membrane attack complex, complement can still opsonize but cannot lyse. That matters for exactly one group of organisms — <b><i>Neisseria</i></b> — whose thin cell wall makes them uniquely dependent on MAC-mediated lysis for clearance.",
+ find:["<b>Recurrent <i>Neisseria</i> infection</b>: meningococcal meningitis and meningococcaemia, disseminated gonococcal infection","Often otherwise healthy, with the first episode in adolescence","Recurrence, or an unusual meningococcal serogroup, is the clue"],
+ labs:["<b>↓ CH50</b> (tests the whole classical pathway through to MAC) with a normal C3","Individual terminal component levels confirm"],
+ buzz:["Second episode of meningococcal meningitis — check CH50","Only Neisseria, because only Neisseria needs the MAC"],
+ tx:["<b>Meningococcal vaccination</b> (all serogroups including B) and often prophylactic antibiotics","Eculizumab causes an acquired version of this — vaccinate before starting it"]},
+
+c3def:{n:"C3 deficiency",k:"dz",p:"complement",enz:"C3",inh:"Autosomal recessive",hi:0,
+ mech:"C3 is the point all three pathways converge on, so losing it removes <b>opsonization, the anaphylatoxins and the MAC all at once</b>. The infections are therefore far more severe and far broader than in terminal deficiency.",
+ find:["<b>Severe recurrent pyogenic infection</b> from infancy — encapsulated and non-encapsulated alike","Sinopulmonary infection, sepsis, meningitis","<b>↑ Risk of immune-complex disease</b> — glomerulonephritis, lupus-like illness, because complexes are not cleared"],
+ labs:["↓ C3; both CH50 and AH50 abnormal","C4 depends on which pathway is driving"],
+ buzz:["C3 deficiency is much worse than C5–C9 — everything downstream fails","Recurrent pyogenic infection plus immune-complex nephritis"],
+ tx:["Vaccination against encapsulated organisms, prophylactic antibiotics, IVIG"]},
+
+pnh:{n:"Paroxysmal nocturnal haemoglobinuria",alias:"PIGA · loss of CD55 and CD59",k:"dz",p:"complement",enz:"PIGA — GPI anchor synthesis",inh:"Acquired somatic mutation",hi:1,
+ mech:"<b>DAF (CD55)</b> and <b>CD59</b> are the brakes that stop complement attacking our own cells, and both are held on by a <b>GPI anchor</b>. A somatic PIGA mutation in a haematopoietic stem cell means its whole clone loses the anchor — and therefore both brakes — so those red cells are lysed by ambient complement.",
+ find:["<b>Intravascular haemolysis</b>, classically noticed as dark morning urine (\"nocturnal\" — it is actually continuous)","<b>Thrombosis in unusual sites</b>: hepatic (Budd-Chiari), portal, cerebral veins — the leading cause of death","Pancytopenia; association with <b>aplastic anaemia</b> and progression to AML"],
+ labs:["<b>Flow cytometry for CD55 and CD59</b> on red cells and granulocytes — the diagnostic test","↑ LDH, ↓ haptoglobin, <b>haemoglobinuria with haemosiderinuria</b>","The old sucrose lysis and Ham tests are obsolete","Iron deficiency, from urinary iron loss"],
+ buzz:["Dark urine in the morning plus a hepatic vein thrombosis","Complement-mediated, but the defect is on our cells, not in complement"],
+ tx:["<b>Eculizumab</b> or ravulizumab — anti-C5. <b>Vaccinate against meningococcus first</b>, since blocking C5 recreates terminal complement deficiency","Anticoagulation; stem cell transplant is the only cure"]}
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2890,7 +3049,7 @@ MAPS.endocrine = {
   {id:"pctn",l:"Na⁺ reabsorption",x:1420,y:710,p:"raas",s:"proximal tubule"},
   {id:"bp",l:"↑ BP & volume",x:1820,y:470,p:"raas",k:"hub"},
   {id:"anp",l:"ANP / BNP",x:700,y:690,p:"raas",s:"atrial stretch"},
-  {id:"lowca",l:"↓ Serum Ca²⁺",x:300,y:980,p:"calcium"},
+  {id:"lowca",l:"↓ Serum Ca²⁺",x:300,y:980,p:"calcium",m:["digeorge"]},
   {id:"pth",l:"PTH",x:660,y:980,p:"calcium",s:"chief cells",k:"hub",m:["hyperpara1","hyperpara2","hypopara","pha"]},
   {id:"bone",l:"Bone",x:1020,y:850,p:"calcium",s:"osteoclast resorption via RANKL"},
   {id:"kidneyn",l:"Kidney",x:1020,y:980,p:"calcium",s:"↑ Ca²⁺ · ↓ phosphate reabsorption"},
@@ -3408,7 +3567,97 @@ MAPS.hemostasis = {
   {a:"pc",b:"vaviiia",p:"fibrinolysis",e:"Proteolytic cleavage",arrow:"inhib",m:["factorv"]}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["hemostasis","Hemostasis"],["index","Index"]];
+MAPS.immune = {
+ t:"Immunity", sub:"B and T cell development with the arrest point of every immunodeficiency · phagocytes · complement",
+ w:3000, h:1780,
+ comps:[
+  {x:190,y:110,w:2620,h:340,l:"B-cell development — marrow, then the germinal centre"},
+  {x:190,y:530,w:2620,h:420,l:"T-cell development — marrow, then the thymus"},
+  {x:190,y:1030,w:1240,h:340,l:"Phagocytes — roll, adhere, ingest, kill"},
+  {x:1510,y:1030,w:1300,h:340,l:"Complement — three triggers, one hub"}],
+ panels:[
+  {x:240,y:1450,w:820,h:248,kw:132,t:"Hypersensitivity I–IV",rows:[
+   ["Type I","IgE on mast cells · immediate, minutes"],
+   ["","Anaphylaxis, atopy, allergic rhinitis, asthma"],
+   ["Type II","IgG/IgM against a fixed antigen on a cell"],
+   ["","Goodpasture, ITP, rheumatic fever, Graves, AIHA"],
+   ["Type III","Antigen–antibody complexes deposit in tissue"],
+   ["","Serum sickness, SLE, post-strep GN, Arthus"],
+   ["Type IV","T cells, no antibody · delayed 48–72 h"],
+   ["","PPD, contact dermatitis, MS, type 1 diabetes"],
+   ["Mnemonic","ACID — Anaphylactic, Cytotoxic, Immune complex, Delayed"]]},
+  {x:1120,y:1450,w:760,h:204,kw:120,t:"Antibody isotypes",rows:[
+   ["IgG","Most abundant · the only one that crosses the placenta"],
+   ["IgM","Made first · pentamer · the best complement fixer"],
+   ["IgA","Mucosal · dimer with secretory component · breast milk"],
+   ["IgE","Mast cells and eosinophils · parasites and allergy"],
+   ["IgD","Sits on naive B cells · function still unclear"],
+   ["Switching","Needs CD40L from a T cell, plus cytokines"],
+   ["Pattern","↑IgM with the rest low = class switch failed"]]},
+  {x:1940,y:1450,w:870,h:226,kw:178,t:"Which infections point where",rows:[
+   ["No B cells / no Ig","Encapsulated bacteria · Giardia · enterovirus"],
+   ["No T cells","Viruses, fungi, PCP, mycobacteria"],
+   ["C5–C9 (MAC)","Neisseria, and only Neisseria"],
+   ["C3","Severe pyogenic, plus immune-complex nephritis"],
+   ["CGD","Catalase-positive: S. aureus, Serratia, Nocardia,"],
+   ["","Burkholderia, Aspergillus"],
+   ["LAD","No pus at all; delayed umbilical cord separation"],
+   ["Job / STAT3","S. aureus cold abscesses, retained baby teeth"]]}],
+ nodes:[
+  {id:"hsc",l:"Hematopoietic stem cell",x:380,y:260,p:"bcell",k:"hub",s:"bone marrow"},
+  {id:"prob",l:"Pro-B cell",x:750,y:260,p:"bcell",s:"heavy chain rearranging"},
+  {id:"preb",l:"Pre-B cell",x:1120,y:260,p:"bcell",s:"cytoplasmic μ heavy chain",m:["xla"]},
+  {id:"immb",l:"Immature B",x:1490,y:260,p:"bcell",s:"surface IgM"},
+  {id:"matb",l:"Mature naive B",x:1860,y:260,p:"bcell",s:"IgM + IgD · periphery",m:["wiskott"]},
+  {id:"gc",l:"Germinal centre",x:2230,y:260,p:"bcell",s:"class switch · hypermutation",m:["hyperigm","igadef"]},
+  {id:"plasma",l:"Plasma cell",x:2620,y:260,p:"bcell",s:"antibody factory",m:["cvid"]},
+  {id:"prot",l:"Pro-T cell",x:420,y:690,p:"tcell",s:"leaves marrow for the thymus",m:["digeorge"]},
+  {id:"dn",l:"Double negative",x:830,y:690,p:"tcell",s:"CD4− CD8− · cortex",m:["scidx"]},
+  {id:"dp",l:"Double positive",x:1240,y:690,p:"tcell",s:"CD4+ CD8+"},
+  {id:"possel",l:"Positive selection",x:1650,y:690,p:"tcell",s:"cortex — must bind MHC",m:["blsyn"]},
+  {id:"negsel",l:"Negative selection",x:2060,y:690,p:"tcell",s:"medulla — AIRE",m:["aps1"]},
+  {id:"sp",l:"CD4 or CD8 single positive",x:2520,y:690,p:"tcell",k:"hub",s:"to the periphery",m:["zap70"]},
+  {id:"adaconn",l:"→ Purines (ADA)",x:420,y:860,p:"tcell",k:"ghost",go:"nucleo"},
+  {id:"il2rg",l:"IL-2Rγ chain",x:830,y:860,p:"tcell",s:"shared by IL-2, 4, 7, 9, 15, 21",m:["scidx","ada"]},
+  {id:"mhc2",l:"MHC class II",x:1650,y:860,p:"tcell",s:"needed for CD4 selection"},
+  {id:"aire",l:"AIRE",x:2060,y:860,p:"tcell",s:"self-antigen in the medulla",m:["tcellreg"]},
+  {id:"effector",l:"Effector T cells",x:2520,y:860,p:"tcell",s:"Th1 · Th2 · Th17 · Treg",m:["jobsyn","il12r"]},
+  {id:"neut",l:"Neutrophil",x:400,y:1180,p:"phago",s:"rolls, adheres, migrates",m:["lad1"]},
+  {id:"phagoc",l:"Phagocytosis",x:780,y:1180,p:"phago",s:"phagosome + lysosome",m:["chediak"]},
+  {id:"burst",l:"Respiratory burst",x:1160,y:1180,p:"phago",k:"hub",s:"NADPH oxidase → O₂⁻",m:["cgd","catalase","mpo"]},
+  {id:"catconn",l:"→ Catalase & ROS",x:1160,y:1300,p:"phago",k:"ghost",go:"lipid"},
+  {id:"classical",l:"Classical",x:1700,y:1180,p:"complement",s:"IgG or IgM + C1",m:["hae"]},
+  {id:"c3",l:"C3 convertase → C3b",x:2130,y:1180,p:"complement",k:"hub",s:"the hub of all three",m:["c3def","complementreg"]},
+  {id:"mac",l:"MAC (C5b–C9)",x:2560,y:1180,p:"complement",s:"membrane attack complex",m:["c5c9"]},
+  {id:"alt",l:"Alternative + MBL",x:1700,y:1300,p:"complement",s:"no antibody needed"},
+  {id:"daf",l:"DAF / CD59",x:2130,y:1300,p:"complement",s:"protect our own cells",m:["pnh"]}],
+ edges:[
+  {a:"hsc",b:"prob",p:"bcell",e:"Common lymphoid progenitor",ly:-46,m:["bcellreg"]},
+  {a:"prob",b:"preb",p:"bcell",e:"VDJ heavy chain rearrangement",ly:-46},
+  {a:"preb",b:"immb",p:"bcell",e:"BTK signals the pre-B receptor",ly:-46,m:["xla"]},
+  {a:"immb",b:"matb",p:"bcell",e:"Light chain rearranges → IgM + IgD",ly:-46},
+  {a:"matb",b:"gc",p:"bcell",e:"Antigen + CD40L from a T cell",ly:-46,m:["hyperigm"]},
+  {a:"gc",b:"plasma",p:"bcell",e:"Class switch · hypermutation",ly:-46,m:["cvid","igadef"]},
+  {a:"prot",b:"dn",p:"tcell",e:"Seeded into the thymic cortex",ly:-46,m:["digeorge"]},
+  {a:"dn",b:"dp",p:"tcell",e:"TCR β then α rearrange",ly:-46},
+  {a:"dp",b:"possel",p:"tcell",e:"Both CD4 and CD8 expressed",ly:-46},
+  {a:"possel",b:"negsel",p:"tcell",e:"Survive if it binds self-MHC",note:"cortex → medulla",ly:-52,m:["tcellreg"]},
+  {a:"negsel",b:"sp",p:"tcell",e:"Deleted if it binds self too well",ly:-46,m:["aps1"]},
+  {a:"prot",b:"adaconn",p:"tcell",dash:1,arrow:"none"},
+  {a:"il2rg",b:"dn",p:"tcell",e:"IL-7 drives early survival",dash:1,m:["scidx"]},
+  {a:"mhc2",b:"possel",p:"tcell",e:"Binds MHC II → CD4",dash:1,m:["blsyn"]},
+  {a:"aire",b:"negsel",p:"tcell",e:"Displays tissue self-antigen",dash:1},
+  {a:"sp",b:"effector",p:"tcell",dash:1,arrow:"none"},
+  {a:"neut",b:"phagoc",p:"phago",e:"CD18 integrin binds ICAM",ly:-46,m:["lad1"]},
+  {a:"phagoc",b:"burst",p:"phago",e:"Fusion needs LYST",ly:-46,m:["chediak"]},
+  {a:"burst",b:"catconn",p:"phago",dash:1,arrow:"none"},
+  {a:"classical",b:"c3",p:"complement",e:"C1 → C4, C2",ly:-46,m:["hae"]},
+  {a:"alt",b:"c3",p:"complement",e:"Spontaneous C3 tickover",ly:36},
+  {a:"c3",b:"mac",p:"complement",e:"C5 convertase → C5b",ly:-46,m:["c5c9"]},
+  {a:"daf",b:"c3",p:"complement",e:"Brakes on our own cells",arrow:"inhib",lx:-150,m:["pnh"]}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["hemostasis","Hemostasis"],["immune","Immunity"],["index","Index"]];
 
 
 
