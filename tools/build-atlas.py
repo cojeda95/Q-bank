@@ -16,6 +16,58 @@ src = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "atlas-src.html")
 out = pathlib.Path(__file__).resolve().parent.parent / "resources" / "metabolic-atlas.html"
 art = src.read_text(encoding="utf-8")
 
+# ── validation ────────────────────────────────────────────────────────────
+# Two failure modes have shipped before. Both are silent at runtime, so the
+# build refuses rather than warns.
+
+ESCAPED_TAG = re.compile(r"</?(?:b|i|em|strong)>")
+
+def validate(art):
+    """Return a list of problems that should block the build."""
+    problems = []
+    lines = art.split("\n")
+
+    # 1. n / alias / enz / inh / buzz are passed through esc() at render time,
+    #    so any inline markup in them prints as literal "<b>" to the reader.
+    #    mech / find / labs / tx ARE rendered as HTML and keep their emphasis.
+    card = None
+    for ln in lines:
+        m = re.match(r"^([a-z0-9_]+):\{n:\"", ln)
+        if m:
+            card = m.group(1)
+            if ESCAPED_TAG.search(ln):
+                problems.append(
+                    f"{card}: markup in an escaped header field "
+                    f"(n/alias/enz/inh) — it will print as literal tags")
+        elif ln.lstrip().startswith("buzz:[") and ESCAPED_TAG.search(ln):
+            problems.append(
+                f"{card}: markup in buzz — buzz is escaped, so tags show "
+                f"literally in the side rail")
+
+    # 2. A lesion card is invisible unless some node or edge pins it, and a
+    #    pin naming a card that does not exist is a dead click.
+    cards = set(re.findall(r"^([a-z0-9_]+):\{n:\"", art, re.M))
+    pinned = set()
+    for arr in re.findall(r'm:\[([^\]]*)\]', art):
+        pinned.update(re.findall(r'"([a-z0-9_]+)"', arr))
+    for k in sorted(cards - pinned):
+        problems.append(f"{k}: card is defined but pinned to no map — "
+                        f"it will only appear in the Index")
+    for k in sorted(pinned - cards):
+        problems.append(f"{k}: pinned by a map but no such card exists")
+
+    return problems
+
+
+problems = validate(art)
+if problems:
+    print(f"\n  BUILD REFUSED — {len(problems)} problem(s):\n", file=sys.stderr)
+    for pr in problems:
+        print(f"    • {pr}", file=sys.stderr)
+    print("", file=sys.stderr)
+    sys.exit(1)
+
+
 # derive the counts from the artifact itself
 maps  = len(re.findall(r"^MAPS\.", art, re.M))
 cards = len(re.findall(r'^[a-z0-9_]+:\{n:"', art, re.M))

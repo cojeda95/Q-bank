@@ -54,13 +54,22 @@ Edit the standalone, then rebuild:
 The script derives the map and lesion counts from the artifact itself, so the meta tags stay
 honest. Update the matching counts on the atlas card in `index.html` by hand.
 
-Before shipping an atlas change, open it and run the layout audit in the browser console
-(overlapping boxes, text overflowing its node, arrowheads buried under chips, pin fills,
-lesion cards that are defined but pinned nowhere). Two traps that have bitten before:
+The build **refuses** rather than warns if it finds either of the two faults that have
+shipped before, so you cannot deploy them by accident:
 
-- `document.querySelector('svg')` grabs a toolbar icon, not the map. The map is `#svg`.
-- A lesion card is invisible unless some node or edge pins it. Check
-  `Object.keys(LES).filter(k => !LOC[k])` — it must be empty.
+- **Markup in an escaped field.** `n`, `alias`, `enz`, `inh` and `buzz` go through `esc()`
+  at render time, so a `<b>` in any of them prints as literal `<b>` in the side rail and on
+  the card. `mech`, `find`, `labs` and `tx` are rendered as HTML and keep their emphasis.
+  This one shipped once and affected 19 cards before anyone noticed.
+- **Orphan cards and dangling pins.** A lesion card is invisible unless some node or edge
+  pins it, and a pin naming a card that does not exist is a dead click.
+
+Layout is still checked by hand — open the page and run the DOM audit in the console for
+overlapping boxes, text overflowing its node, arrowheads buried under chips and pin fills.
+The trap there: **`document.querySelector('svg')` grabs a toolbar icon, not the map.** The
+map is `#svg`. An audit rooted on the wrong element finds zero nodes and reports "clean" for
+every map, which it silently did for several sessions. Assert the node count is non-zero
+before believing a clean result.
 
 ## Shared code
 
