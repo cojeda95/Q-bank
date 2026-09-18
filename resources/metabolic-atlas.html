@@ -531,9 +531,9 @@ ethanol:{n:"Ethanol metabolism — NADH excess",k:"drug",p:"gluconeo",enz:"Alcoh
  buzz:["Fomepizole inhibits alcohol dehydrogenase — antidote for methanol and ethylene glycol","Disulfiram inhibits aldehyde dehydrogenase → acetaldehyde flush"],
  tx:["Dextrose with thiamine first, volume repletion"]},
 
-f26bp:{n:"Fructose-2,6-bisphosphate switch",alias:"F-2,6-BP — a regulator, NOT the F-1,6-BP on the map",k:"reg",p:"glycolysis",enz:"PFK-2 / fructose-bisphosphatase-2 (one bifunctional enzyme)",inh:"—",hi:1,
+f26bp:{n:"Fructose-2,6-bisphosphate switch",alias:"F-2,6-BP — the regulator · NOT the F-1,6-BP intermediate",k:"reg",p:"glycolysis",enz:"PFK-2 / fructose-bisphosphatase-2 (one bifunctional enzyme)",inh:"—",hi:1,
  mech:"<b>Fed state:</b> insulin activates protein phosphatase → the enzyme is dephosphorylated → PFK-2 active → F-2,6-BP rises → PFK-1 on, FBPase-1 off → glycolysis. <b>Fasting:</b> glucagon → cAMP → PKA phosphorylates it → FBPase-2 active → F-2,6-BP falls → gluconeogenesis.",
- find:["<b>Do not confuse the two fructose bisphosphates.</b> <b>F-1,6-BP</b> is the glycolytic intermediate you see on the map, made by PFK-1. <b>F-2,6-BP</b> is a pure regulator made on a side branch from F-6-P — it is never a step in the pathway and carries no carbon forward","F-2,6-BP is the most potent activator of PFK-1 and inhibitor of fructose-1,6-bisphosphatase","That dual action is why this card is pinned to both arrows of the same step","Prevents a futile cycle between the opposing enzymes"],
+ find:["<b>Do not confuse the two fructose bisphosphates.</b> <b>F-1,6-BP</b> is the glycolytic intermediate — carbon flows through it, F-6-P → F-1,6-BP → DHAP and G3P. <b>F-2,6-BP</b> sits on the side branch: it is made from F-6-P and goes nowhere, carrying no carbon forward. Its only job is to switch the two opposing enzymes","F-2,6-BP is the most potent activator of PFK-1 and inhibitor of fructose-1,6-bisphosphatase","That dual action is why this card is pinned to both arrows of the same step","Prevents a futile cycle between the opposing enzymes"],
  labs:["PFK-1 is also inhibited by ATP and citrate, activated by AMP"],
  buzz:["\"FBPase-2 = Fasting Bisphosphatase\"","Glucagon phosphorylates, insulin dephosphorylates"],tx:["—"]},
 
@@ -2311,6 +2311,7 @@ MAPS.core = {
   {id:"g6p",l:"Glucose-6-P",x:940,y:215,p:"glycolysis",k:"hub"},
   {id:"f6p",l:"Fructose-6-P",x:940,y:320,p:"glycolysis"},
   {id:"f16bp",l:"Fructose-1,6-BP",x:940,y:425,p:"glycolysis"},
+  {id:"f26bpn",l:"Fructose-2,6-BP",x:1320,y:300,p:"glycolysis",s:"regulator, not intermediate",m:["f26bp"]},
   {id:"g3p",l:"Glyceraldehyde-3-P",x:940,y:530,p:"glycolysis"},
   {id:"dhap",l:"DHAP",x:700,y:530,p:"glycolysis"},
   {id:"bpg13",l:"1,3-BPG",x:940,y:625,p:"glycolysis"},
@@ -2372,6 +2373,7 @@ MAPS.core = {
   {a:"glucose",b:"g6p",p:"glycolysis",e:"Hexokinase / glucokinase",rl:1,note:"ATP",lx:-120,ly:-16,m:["hkgk","mody2","hkdef"]},
   {a:"g6p",b:"f6p",p:"glycolysis",e:"Phosphoglucose isomerase",lx:95},
   {a:"f6p",b:"f16bp",p:"glycolysis",e:"Phosphofructokinase-1",rl:1,note:"ATP · committed step",m:["f26bp","tarui"]},
+  {a:"f6p",b:"f26bpn",p:"glycolysis",e:"PFK-2 ⇄ FBPase-2",dash:1,arrow:"both",m:["f26bp"]},
   {a:"f16bp",b:"g3p",p:"glycolysis",e:"Aldolase A",lx:-8},
   {a:"f16bp",b:"dhap",p:"glycolysis",e:"Aldolase A",arrow:"none",dash:1},
   {a:"dhap",b:"g3p",p:"glycolysis",e:"Triose-P isomerase",arrow:"both",ly:34},
