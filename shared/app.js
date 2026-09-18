@@ -17,6 +17,7 @@ const LS_PROGRESS = QUIZ_CONFIG.storageKey + '_progress_v1';
 const LS_ATTEMPTS = QUIZ_CONFIG.storageKey + '_attempts_v1';
 const LS_SETTINGS = QUIZ_CONFIG.storageKey + '_settings_v1';
 const LS_EXAM_SESSION = QUIZ_CONFIG.storageKey + '_examsession_v1';
+const LS_PRACTICE_SESSION = QUIZ_CONFIG.storageKey + '_practicesession_v1';
 const MAX_ATTEMPTS_STORED = 5000;
 
 /* ── localStorage helpers ────────────────────────────────────────────── */
@@ -127,6 +128,44 @@ function loadExamSessionSnapshot() {
 }
 function clearExamSessionSnapshot() {
   localStorage.removeItem(LS_EXAM_SESSION);
+}
+
+/* ── In-progress PRACTICE session snapshot (mirrors the exam one above) ──
+   Solves the exact complaint that motivated this: an accidental refresh (or
+   closed tab) mid-SDL used to lose all progress, forcing a full restart of
+   the batch. Saved on every question render while a practice run is active,
+   keyed by sdlNumber+scoreKey (so only one in-progress practice run is
+   tracked at a time, same single-slot model as the exam snapshot). Cleared
+   as soon as the batch is finished (Finish button) or explicitly discarded. */
+function savePracticeSessionSnapshot() {
+  if (!session || session.mode !== 'practice') return;
+  try {
+    localStorage.setItem(LS_PRACTICE_SESSION, JSON.stringify({
+      sdlNumber: session.sdlNumber,
+      examNumber: session.examNumber,
+      scoreKey: session.scoreKey,
+      isBloom: session.isBloom,
+      questions: session.questions,
+      index: session.index,
+      records: session.records,
+      struck: session.struck || {},
+      savedAt: Date.now(),
+    }));
+  } catch (e) { /* storage full/blocked — resume just won't be offered */ }
+}
+function loadPracticeSessionSnapshot() {
+  try { return JSON.parse(localStorage.getItem(LS_PRACTICE_SESSION)); }
+  catch (e) { return null; }
+}
+function clearPracticeSessionSnapshot() {
+  localStorage.removeItem(LS_PRACTICE_SESSION);
+}
+// Maps a practice scoreKey (`sdl-N`, `sdl-N-b1`, `sdl-N-b2`, `sdl-N-b3`) back
+// to the batch URL segment used to reach it via #practice/<sdl>/<batch> —
+// the same derivation the Retry button already used inline; pulled out here
+// so the new home-screen resume card can reuse it too.
+function batchParamFromScoreKey(scoreKey) {
+  return scoreKey.includes('-b') ? scoreKey.slice(-1) : 'all';
 }
 // Returns an SDL's questions filtered to high-yield-only if that mode is on.
 function visibleQuestions(sdl) {
@@ -249,7 +288,10 @@ function render() {
   } else if (parts[0] === 'practice' && parts[1] && !parts[2]) {
     renderBatchPicker(parseInt(parts[1], 10));
   } else if (parts[0] === 'practice' && parts[1] && parts[2]) {
-    renderPracticeStart(parseInt(parts[1], 10), parts[2]);
+    // A trailing /new segment (used by the Retry/Choose-Different-Batch
+    // buttons) forces a fresh session even if a matching in-progress
+    // snapshot exists — otherwise Retry would just resume the old one.
+    renderPracticeStart(parseInt(parts[1], 10), parts[2], parts[3] === 'new');
   } else if (parts[0] === 'examsetup' && parts[1]) {
     renderExamSetup(parseInt(parts[1], 10));
   } else if (parts[0] === 'final-examsetup') {
@@ -312,10 +354,31 @@ function renderHome() {
     </div>
   ` : '';
 
+  // Same idea as the exam resume card above, but for an in-progress SDL
+  // practice run — this is the direct fix for "I refresh by accident and
+  // have to redo the whole SDL." A refresh alone doesn't even need this card
+  // (the #practice/<sdl>/<batch> hash survives and auto-resumes on its own),
+  // but this covers the closed-tab/came-back-later case, and gives an
+  // explicit Discard so an abandoned run doesn't linger forever.
+  const practiceSnap = loadPracticeSessionSnapshot();
+  const practiceSdl = practiceSnap ? findSdl(practiceSnap.sdlNumber) : null;
+  const practiceResumeHtml = (practiceSnap && practiceSdl) ? `
+    <div class="action-card" id="resumePracticeCard" style="border-color: var(--navy); border-width: 2px;">
+      <span class="icon">▶️</span>
+      <div>
+        <div class="sdl-title">Resume In-Progress Practice</div>
+        <div class="action-label">${escapeHtml(practiceSdl.sdl.title)} — question ${practiceSnap.index + 1} of ${practiceSnap.questions.length}, ${(practiceSnap.records || []).filter(r => r).length} answered
+          <button class="link-btn-inline" id="discardPracticeResumeBtn" style="margin-left:8px; background:none; border:1px solid var(--grey-border, #ccc); border-radius:6px; padding:2px 8px; cursor:pointer; font-size:0.78rem;">Discard</button>
+        </div>
+      </div>
+    </div>
+  ` : '';
+
   main.innerHTML = `
     <h1>${escapeHtml(QUIZ_CONFIG.title)}</h1>
     <p class="subtitle">Choose an exam block to practice by SDL or run a full timed simulation.${settings.hyOnly ? ' <strong>⚡ High-Yield Only Mode is ON.</strong>' : ''}</p>
     ${resumeHtml}
+    ${practiceResumeHtml}
     <div class="exam-grid">${examCards}</div>
 
     ${showFinalExamCard ? `
@@ -381,6 +444,18 @@ function renderHome() {
     e.stopPropagation();
     if (confirm('Discard the in-progress exam? This cannot be undone.')) {
       clearExamSessionSnapshot();
+      renderHome();
+    }
+  });
+  const resumePracticeCard = document.getElementById('resumePracticeCard');
+  if (resumePracticeCard) resumePracticeCard.addEventListener('click', () => {
+    setRoute(`practice/${practiceSnap.sdlNumber}/${batchParamFromScoreKey(practiceSnap.scoreKey)}`);
+  });
+  const discardPracticeResumeBtn = document.getElementById('discardPracticeResumeBtn');
+  if (discardPracticeResumeBtn) discardPracticeResumeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (confirm('Discard the in-progress practice run? This cannot be undone.')) {
+      clearPracticeSessionSnapshot();
       renderHome();
     }
   });
@@ -895,10 +970,48 @@ function renderBatchPicker(sdlNumber) {
 }
 
 /* ── Practice mode (per-SDL, immediate feedback) ─────────────────────── */
-function renderPracticeStart(sdlNumber, batch) {
+function renderPracticeStart(sdlNumber, batch, forceNew) {
   const found = findSdl(sdlNumber);
   if (!found) { renderHome(); return; }
   const { sdl, examNumber } = found;
+
+  // Resume path: if there's an in-progress snapshot for this exact SDL+batch
+  // (saved on every question render — see savePracticeSessionSnapshot),
+  // rebuild the session from it instead of starting over. This is what makes
+  // an accidental refresh (or closed tab, or clicking away and back) land
+  // right back where you left off rather than restarting the batch — the
+  // hash for this route already encodes sdlNumber+batch, so a refresh just
+  // re-runs this same function with the same params. `forceNew` (set by the
+  // Retry / Choose Different Batch buttons via a trailing /new) skips this
+  // and always starts fresh.
+  if (!forceNew) {
+    const snap = loadPracticeSessionSnapshot();
+    if (snap && snap.sdlNumber === sdlNumber && batchParamFromScoreKey(snap.scoreKey) === batch
+        && Array.isArray(snap.questions) && snap.questions.length > 0) {
+      session = {
+        mode: 'practice',
+        sdlNumber: snap.sdlNumber,
+        examNumber: snap.examNumber,
+        scoreKey: snap.scoreKey,
+        isBloom: !!snap.isBloom,
+        questions: snap.questions,
+        index: Math.min(snap.index || 0, snap.questions.length - 1),
+        records: Array.isArray(snap.records) && snap.records.length === snap.questions.length
+          ? snap.records
+          : new Array(snap.questions.length).fill(null),
+        struck: snap.struck || {},
+        pendingLetter: null,
+      };
+      renderPracticeQuestion();
+      return;
+    }
+    // No matching snapshot for this SDL+batch — if a DIFFERENT one is
+    // sitting around (e.g. the last thing you had open before navigating
+    // here fresh), it's now orphaned, so clear it rather than let it
+    // silently resurface the wrong batch later.
+    if (snap) clearPracticeSessionSnapshot();
+  }
+
   const baseQuestions = visibleQuestions(sdl);
 
   const batch1Count = baseQuestions.filter(q => q.batch === 1).length;
@@ -937,12 +1050,14 @@ function renderPracticeStart(sdlNumber, batch) {
     questions,
     index: 0,
     records: new Array(questions.length).fill(null), // {letter, confidence, correct} once answered, per question
+    struck: {},
     pendingLetter: null, // letter chosen but not yet confirmed with a confidence rating (current question only)
   };
   renderPracticeQuestion();
 }
 
 function renderPracticeQuestion() {
+  savePracticeSessionSnapshot();
   const q = session.questions[session.index];
   const total = session.questions.length;
   const flagged = isFlagged(q.id);
@@ -1080,6 +1195,7 @@ function renderPracticeQuestion() {
           renderPracticeQuestion();
         } else {
           recordScore(session.scoreKey, correctSoFar, total);
+          clearPracticeSessionSnapshot();
           renderPracticeComplete();
         }
       });
@@ -1102,7 +1218,7 @@ function renderPracticeComplete() {
       <button class="btn" id="doneBtn">Back to Exam ${session.examNumber}</button>
     </div>
   `;
-  document.getElementById('retryBtn').addEventListener('click', () => setRoute(`practice/${session.sdlNumber}/${session.scoreKey.includes('-b') ? session.scoreKey.slice(-1) : 'all'}`));
+  document.getElementById('retryBtn').addEventListener('click', () => setRoute(`practice/${session.sdlNumber}/${batchParamFromScoreKey(session.scoreKey)}/new`));
   document.getElementById('backBatchBtn').addEventListener('click', () => setRoute(`practice/${session.sdlNumber}`));
   document.getElementById('doneBtn').addEventListener('click', () => setRoute(`exam-sdls/${session.examNumber}`));
 }
