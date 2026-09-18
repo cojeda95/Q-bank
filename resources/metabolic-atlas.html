@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 15 pan/zoom maps with 211 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
+<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 16 pan/zoom maps with 229 diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Metabolic Lesion Atlas">
-<meta property="og:description" content="15 interactive maps. 211 lesions pinned to the step they break.">
+<meta property="og:description" content="16 interactive maps. 229 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -240,6 +240,7 @@ body{display:flex;flex-direction:column}
 .ocom-topbar-inner a:hover{opacity:1;text-decoration:underline}
 </style>
 
+
 </head>
 <body>
 <div class="ocom-topbar"><div class="ocom-topbar-inner"><a href="../index.html">&larr; All Blocks</a><span>Metabolic Lesion Atlas</span></div></div>
@@ -336,6 +337,10 @@ const PATHS = {
   gasex:{n:"Gas exchange",v:"--p-ppp"},
   o2transport:{n:"Oxygen transport",v:"--p-sugars"},
   alveolus:{n:"Alveolus & interstitium",v:"--p-glycogen"},
+  hemostasis:{n:"Vessel wall & platelets",v:"--p-sugars"},
+  coag:{n:"Coagulation cascade",v:"--p-glycolysis"},
+  kinin:{n:"Kinin / bradykinin",v:"--p-gluconeo"},
+  fibrinolysis:{n:"Anticoagulant & fibrinolytic",v:"--p-tca"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -1816,6 +1821,133 @@ hemochrom:{n:"Hemochromatosis & iron regulation",k:"dz",p:"iron",enz:"HFE · hep
  buzz:["Vitamin C increases iron absorption — a real hazard in these patients","Ferroportin is the only way out; hepcidin is the off switch"],
  tx:["<b>Serial phlebotomy</b> is first line; deferoxamine or deferasirox when phlebotomy is not possible; avoid alcohol, raw shellfish and iron/vitamin C supplements"]},
 
+
+/* ── hemostasis ─────────────────────────────────────── */
+endothreg:{n:"The endothelium is actively antithrombotic",k:"reg",p:"hemostasis",enz:"PGI₂ · NO · thrombomodulin · heparan sulfate · tPA",inh:"—",hi:1,
+ mech:"Blood does not clot in a normal vessel because the endothelium <b>works continuously to stop it</b>. Lose that surface — trauma, plaque rupture, inflammation — and the subendothelial collagen underneath is instantly thrombogenic.",
+ find:["<b>PGI₂ and NO</b> — dilate the vessel and inhibit platelet aggregation","<b>Thrombomodulin</b> — binds thrombin and flips it into a protein C activator, turning the main clotting enzyme into an anticoagulant","<b>Heparan sulfate</b> — the endogenous cofactor antithrombin III uses","<b>tPA</b> — continuously releases the enzyme that dissolves fibrin","Endothelium is also the only source of <b>vWF</b> and <b>factor VIII</b> — every other factor comes from the liver"],
+ labs:["Virchow triad: endothelial injury, stasis, hypercoagulability","Aspirin's benefit depends on this asymmetry — see the low-dose aspirin logic on the Eicosanoids map"],
+ buzz:["A healthy vessel wall is not passive — it is an anticoagulant organ","Expose collagen and primary hemostasis starts in seconds"],
+ tx:["—"]},
+
+vwd:{n:"von Willebrand disease",k:"dz",p:"hemostasis",enz:"von Willebrand factor",inh:"Autosomal dominant (type 1 most common)",hi:1,
+ mech:"vWF does two jobs: it <b>bridges subendothelial collagen to platelet GpIb</b> for adhesion, and it <b>carries factor VIII</b> and protects it from degradation. Losing it therefore produces a platelet-type bleeding picture <b>plus</b> a mild factor VIII deficiency — which is why the PTT can be prolonged in what looks like a platelet problem.",
+ find:["<b>The most common inherited bleeding disorder</b> (~1% of people)","Mucocutaneous bleeding: epistaxis, gum bleeding, easy bruising, <b>menorrhagia</b>","Bleeding after dental work or surgery; deep joint bleeds are unusual","Type 3 (near-absent vWF) behaves like moderate hemophilia"],
+ labs:["<b>↑ Bleeding time</b> (or ↑ PFA-100 closure time), <b>normal platelet count</b>","<b>↑ PTT</b> in many patients — because factor VIII is unprotected","<b>Abnormal ristocetin cofactor assay</b> — ristocetin makes vWF bind GpIb, so no agglutination without functional vWF","↓ vWF antigen and activity"],
+ buzz:["Normal platelet count with a long bleeding time","Ristocetin assay is the functional test","Bernard-Soulier also fails ristocetin — but the defect is the receptor, not the ligand"],
+ tx:["<b>Desmopressin (DDAVP)</b> — releases stored vWF from endothelial Weibel-Palade bodies; works in type 1","vWF-containing factor VIII concentrate for type 3 or major surgery; tranexamic acid for mucosal bleeding"]},
+
+bernardsoulier:{n:"Bernard-Soulier syndrome",k:"dz",p:"hemostasis",enz:"GpIb receptor — platelet adhesion",inh:"Autosomal recessive",hi:1,
+ mech:"GpIb is the receptor that binds vWF. Without it the platelet cannot <b>stick to the vessel wall at all</b>, so the very first step of primary hemostasis fails. The same mutation also leaves platelets abnormally large.",
+ find:["Mucocutaneous bleeding from childhood: epistaxis, gingival bleeding, menorrhagia","<b>Giant platelets</b> on smear","<b>Low platelet count</b> — this is the feature that separates it from Glanzmann"],
+ labs:["<b>↑ Bleeding time, ↓ platelet count, large platelets</b>","<b>Abnormal ristocetin</b> test that is <b>not corrected by adding normal plasma</b> — the receptor is missing, not the ligand (in vWD, added plasma supplies vWF and corrects it)","Normal aggregation to ADP and collagen"],
+ buzz:["\"Bernard-Soulier = Big platelets, few of them\"","Ristocetin fails and normal plasma does not rescue it"],
+ tx:["Platelet transfusion for serious bleeding; antifibrinolytics; avoid antiplatelet drugs"]},
+
+glanzmann:{n:"Glanzmann thrombasthenia",k:"dz",p:"hemostasis",enz:"GpIIb/IIIa receptor — platelet aggregation",inh:"Autosomal recessive",hi:1,
+ mech:"GpIIb/IIIa is the receptor that binds <b>fibrinogen</b>, which cross-links one platelet to the next. Platelets adhere normally but cannot link up, so no plug forms. Count and size are normal — only function is lost.",
+ find:["Severe mucocutaneous bleeding despite a completely normal platelet count","Epistaxis, gingival bleeding, menorrhagia, GI bleeding"],
+ labs:["<b>↑ Bleeding time with a NORMAL platelet count and normal platelet size</b>","<b>No aggregation with ADP, collagen, epinephrine or thrombin</b> — but <b>ristocetin agglutination is normal</b>, because that step only needs vWF and GpIb","Blood smear shows platelets that fail to clump"],
+ buzz:["Normal count, normal size, no aggregation — the pure function defect","Ristocetin normal in Glanzmann; abnormal in Bernard-Soulier and vWD","Abciximab is a pharmacologic Glanzmann"],
+ tx:["Platelet transfusion, antifibrinolytics, recombinant factor VIIa in refractory bleeding"]},
+
+hemophilia:{n:"Hemophilia A and B",k:"dz",p:"coag",enz:"Factor VIII (A) · Factor IX (B)",inh:"X-linked recessive",hi:1,
+ mech:"Both factors sit in the intrinsic arm just upstream of factor X, so losing either one cripples thrombin generation. Primary hemostasis is intact — the platelet plug forms normally — which is why bleeding is characteristically <b>delayed and deep</b> rather than immediate and mucosal.",
+ find:["<b>Hemarthrosis</b> (the classic finding), deep muscle hematoma, intracranial bleed","Excessive bleeding after circumcision, surgery or dental extraction","<b>A is far more common</b> (factor VIII, ~85%); B is factor IX (\"Christmas disease\")","Affects boys; carrier mothers are usually asymptomatic"],
+ labs:["<b>↑ PTT with a normal PT, normal platelet count and normal bleeding time</b>","<b>Mixing study corrects</b> — confirming a factor deficiency rather than an inhibitor","Specific factor assay distinguishes A from B"],
+ buzz:["Deep bleeding, not mucosal — the opposite of platelet disorders","↑ PTT that corrects on mixing = deficiency; fails to correct = inhibitor"],
+ tx:["Factor VIII or IX concentrate; desmopressin for mild hemophilia A (releases stored VIII)","<b>Emicizumab</b> — bispecific antibody that bridges IXa and X, doing factor VIII's job","Avoid NSAIDs and intramuscular injections"]},
+
+itp:{n:"Immune thrombocytopenic purpura",k:"dz",p:"hemostasis",enz:"Anti-GpIIb/IIIa autoantibodies",inh:"Autoimmune",hi:1,
+ mech:"IgG against platelet surface glycoproteins tags them for splenic macrophage destruction. Production is fine — the marrow actually compensates with more and larger platelets — but consumption outruns it.",
+ find:["Children: acute, often after a viral illness, usually self-limited","Adults: chronic, more often women; may be secondary to lupus, HIV, HCV, CLL","Petechiae, purpura, mucosal bleeding — no splenomegaly"],
+ labs:["<b>Isolated thrombocytopenia</b> with an otherwise normal blood count and smear","<b>Megakaryocytes increased</b> on marrow (if examined)","Normal PT and PTT — this is purely a platelet problem","A diagnosis of exclusion"],
+ buzz:["Isolated low platelets in a well-looking patient","No schistocytes — that would point to TTP/HUS/DIC"],
+ tx:["Observation if mild; corticosteroids, IVIG (blocks macrophage Fc receptors) for bleeding","Second line: rituximab, thrombopoietin receptor agonists (eltrombopag), splenectomy"]},
+
+ttp:{n:"TTP and HUS",k:"dz",p:"hemostasis",enz:"ADAMTS13 (TTP) · Shiga toxin endothelial injury (HUS)",inh:"Acquired",hi:1,
+ mech:"<b>ADAMTS13</b> normally chops ultra-large vWF multimers down to size. Without it, those giant multimers grab platelets out of flowing blood and form microthrombi throughout small vessels — consuming platelets and shredding red cells as they pass.",
+ find:["<b>TTP pentad</b>: fever, <b>microangiopathic hemolytic anemia</b>, <b>thrombocytopenia</b>, <b>neurologic changes</b>, renal failure — the neuro findings dominate","<b>HUS</b>: same microangiopathy but <b>renal failure dominates</b>, classically in a child after bloody diarrhea from Shiga-toxin <i>E. coli</i> O157:H7","Both: no significant coagulopathy — this is platelet consumption, not cascade activation"],
+ labs:["<b>Schistocytes</b> on smear, ↑ LDH, ↓ haptoglobin, ↑ indirect bilirubin","<b>↓ Platelets with NORMAL PT and PTT</b> — the key separator from DIC, where both are prolonged","↓ ADAMTS13 activity in TTP"],
+ buzz:["Normal coags with schistocytes = TTP/HUS. Prolonged coags with schistocytes = DIC","<b>Do not transfuse platelets in TTP</b> — it fuels the microthrombi","Avoid antibiotics in Shiga-toxin HUS — they can worsen toxin release"],
+ tx:["<b>TTP: plasma exchange urgently</b>, plus steroids and caplacizumab. HUS: supportive care and dialysis; eculizumab for atypical HUS"]},
+
+dic:{n:"Disseminated intravascular coagulation",k:"dz",p:"coag",enz:"Systemic activation of the whole cascade",inh:"Acquired",hi:1,
+ mech:"A massive procoagulant stimulus activates coagulation everywhere at once. Microthrombi form and consume platelets and all the clotting factors, and fibrinolysis ramps up in response — so the patient <b>clots and bleeds simultaneously</b>.",
+ find:["Causes: <b>sepsis</b> (especially gram-negative), obstetric complications (abruption, amniotic fluid embolism), malignancy (especially <b>acute promyelocytic leukemia</b>), massive trauma, burns, snake bite, transfusion reaction","Oozing from IV sites and mucosa alongside ischemic digits and organ failure"],
+ labs:["<b>↓ Platelets, ↑ PT, ↑ PTT, ↓ fibrinogen, ↑↑ D-dimer</b> — everything is abnormal at once","<b>Schistocytes</b> on smear","The prolonged PT and PTT are what separate it from TTP/HUS"],
+ buzz:["Bleeding and clotting at the same time","↑ D-dimer with ↓ fibrinogen is the signature","APL: ATRA treats the leukemia and the DIC together"],
+ tx:["<b>Treat the underlying cause</b> — that is the only definitive therapy","Supportive: platelets, FFP and cryoprecipitate (for fibrinogen) if bleeding"]},
+
+factorv:{n:"Factor V Leiden & hypercoagulable states",k:"dz",p:"fibrinolysis",enz:"Activated protein C · antithrombin III",inh:"Autosomal dominant",hi:1,
+ mech:"Thrombin bound to endothelial <b>thrombomodulin</b> activates protein C, which with protein S inactivates factors <b>Va and VIIIa</b> — the body's own brake on the cascade. Factor V Leiden is a point mutation that makes factor Va <b>resistant to being cleaved</b>, so the brake fails.",
+ find:["<b>The most common inherited hypercoagulable state</b> in people of European descent","Deep vein thrombosis, pulmonary embolism, cerebral and portal vein thrombosis","Risk multiplies with oral contraceptives, pregnancy, surgery, immobility","Others: prothrombin G20210A, antithrombin III deficiency, protein C or S deficiency, antiphospholipid syndrome"],
+ labs:["Activated protein C resistance assay, then genetic confirmation","<b>Protein C or S deficiency → warfarin-induced skin necrosis</b>, because those two have the shortest half-lives and fall first","Antithrombin III deficiency: heparin fails to prolong the PTT as expected"],
+ buzz:["Unprovoked DVT in a young patient with a family history","Warfarin skin necrosis points at protein C or S"],
+ tx:["Anticoagulation for events; duration depends on whether the clot was provoked"]},
+
+p2y12:{n:"P2Y12 inhibitors",k:"drug",p:"hemostasis",enz:"P2Y12 ADP receptor on the platelet",inh:"—",hi:1,
+ mech:"Activated platelets release ADP, which acts back on P2Y12 to amplify activation and to express GpIIb/IIIa on the surface. Blocking that receptor blunts the amplification loop — a completely separate mechanism from aspirin, which is why the two are used together.",
+ find:["<b>Clopidogrel, prasugrel, ticagrelor</b> — with aspirin, this is dual antiplatelet therapy after stenting or ACS","<b>Clopidogrel is a prodrug needing CYP2C19</b> — poor metabolizers get less effect, and PPIs (omeprazole) can blunt it","<b>Prasugrel</b>: more potent, contraindicated with prior stroke or TIA","<b>Ticagrelor</b>: reversible, twice daily, causes dyspnea"],
+ labs:["Bleeding is the main risk; hold before elective surgery","Ticlopidine (older) caused neutropenia and TTP"],
+ buzz:["Aspirin blocks TXA₂, P2Y12 inhibitors block ADP — two different amplifiers of the same plug"],
+ tx:["—"]},
+
+gp2b3a:{n:"GpIIb/IIIa inhibitors",k:"drug",p:"hemostasis",enz:"GpIIb/IIIa fibrinogen receptor",inh:"—",hi:1,
+ mech:"This is the <b>final common step</b> of platelet aggregation — every activation pathway converges on GpIIb/IIIa binding fibrinogen. Blocking it produces a pharmacologic Glanzmann thrombasthenia.",
+ find:["<b>Abciximab</b> (monoclonal antibody fragment), <b>eptifibatide</b>, <b>tirofiban</b>","Used intravenously around percutaneous coronary intervention","Main risks: <b>bleeding and thrombocytopenia</b>"],
+ labs:["Check platelet count within hours of starting abciximab"],
+ buzz:["The drug version of Glanzmann","Blocks the last step, so it works no matter which agonist activated the platelet"],
+ tx:["—"]},
+
+heparin:{n:"Heparin & low-molecular-weight heparin",k:"drug",p:"fibrinolysis",enz:"Antithrombin III",inh:"—",hi:1,
+ mech:"Heparin does not inactivate anything itself — it binds <b>antithrombin III</b> and accelerates its activity roughly a thousandfold. Unfractionated heparin is long enough to bridge antithrombin to thrombin (IIa) and Xa both; LMWH is shorter and mainly potentiates anti-Xa activity.",
+ find:["Immediate onset, so it is the bridge while warfarin takes days to work","<b>Safe in pregnancy</b> — it does not cross the placenta","<b>Heparin-induced thrombocytopenia (HIT)</b>: IgG against heparin-PF4 complexes, platelets drop ~5–10 days in, and the patient paradoxically <b>clots</b>. Stop all heparin and switch to argatroban or bivalirudin — never to warfarin alone"],
+ labs:["Unfractionated heparin monitored by <b>PTT</b>; LMWH usually needs no monitoring (anti-Xa level if renal failure or pregnancy)","<b>Protamine sulfate</b> reverses unfractionated heparin fully, LMWH only partially"],
+ buzz:["Heparin works instantly and is monitored by PTT; warfarin takes days and is monitored by PT/INR","A falling platelet count on day 5 of heparin is HIT until proven otherwise"],
+ tx:["—"]},
+
+doac:{n:"Direct oral anticoagulants",k:"drug",p:"fibrinolysis",enz:"Factor Xa · thrombin (IIa)",inh:"—",hi:1,
+ mech:"Rather than working through antithrombin or vitamin K, these bind the active enzyme directly — either factor Xa or thrombin itself.",
+ find:["<b>Xa inhibitors</b>: rivaroxaban, apixaban, edoxaban (\"-xaban\" = Xa ban)","<b>Direct thrombin inhibitor</b>: dabigatran; also argatroban and bivalirudin intravenously (used in HIT)","No routine monitoring, few food interactions — the practical advantage over warfarin","<b>Contraindicated in mechanical heart valves and severe mitral stenosis</b> — warfarin only"],
+ labs:["Reversal: <b>andexanet alfa</b> for Xa inhibitors, <b>idarucizumab</b> for dabigatran","Renally cleared to varying degrees — dose-adjust or avoid in poor renal function"],
+ buzz:["\"-xaban\" blocks Xa; dabigatran blocks thrombin","Valve patients still get warfarin"],
+ tx:["—"]},
+
+tpa:{n:"Thrombolytics",k:"drug",p:"fibrinolysis",enz:"Plasminogen → plasmin",inh:"—",hi:1,
+ mech:"Tissue plasminogen activator converts plasminogen into <b>plasmin</b>, the enzyme that digests fibrin. It lyses a clot that has already formed — which is why the bleeding risk is far higher than with drugs that merely prevent one.",
+ find:["<b>Alteplase, tenecteplase, reteplase</b>","Uses: acute ischemic stroke within the window, STEMI when PCI is unavailable, massive pulmonary embolism with hemodynamic instability","<b>Absolute contraindications</b>: any prior intracranial hemorrhage, known intracranial malignancy or AVM, ischemic stroke within 3 months, active bleeding, suspected aortic dissection, recent head trauma or intracranial surgery"],
+ labs:["Fibrin degradation products and <b>D-dimer rise</b>","Reverse with aminocaproic acid or tranexamic acid, plus cryoprecipitate for fibrinogen"],
+ buzz:["Thrombolytics dissolve; anticoagulants prevent","The contraindication list is almost entirely about intracranial bleeding"],
+ tx:["—"]},
+
+txadrug:{n:"Antifibrinolytics",k:"drug",p:"fibrinolysis",enz:"Plasminogen activation (lysine analogues)",inh:"—",hi:1,
+ mech:"Tranexamic acid and aminocaproic acid are lysine analogues that occupy plasminogen's lysine-binding sites, so it cannot dock onto fibrin and be converted to plasmin. The clot is protected from being dissolved.",
+ find:["<b>Tranexamic acid</b> — trauma with significant hemorrhage (earlier is better), <b>menorrhagia</b>, dental procedures in hemophilia and vWD, postpartum hemorrhage","<b>Aminocaproic acid</b> — similar, also used to reverse thrombolytic overdose"],
+ labs:["Thrombosis risk in patients already prone to clot; avoid in active DIC with ongoing thrombosis"],
+ buzz:["The mirror image of tPA — one makes plasmin, this blocks it","Very useful in mucosal bleeding from platelet disorders"],
+ tx:["—"]},
+
+hae:{n:"Hereditary angioedema",k:"dz",p:"kinin",enz:"C1 esterase inhibitor",inh:"Autosomal dominant",hi:1,
+ mech:"C1 esterase inhibitor restrains both complement <b>and</b> the contact pathway — it inhibits kallikrein and factor XIIa. Losing it lets kallikrein run unchecked, cleaving HMW kininogen into <b>bradykinin</b>, which makes vessels leak. The swelling is bradykinin-mediated, not histamine-mediated, which is why antihistamines and epinephrine do nothing.",
+ find:["Recurrent episodes of <b>non-pitting, non-pruritic swelling without urticaria</b> — face, lips, larynx, extremities","<b>Painful abdominal attacks</b> from bowel wall edema, often mistaken for a surgical abdomen","Triggers: trauma (including dental work), stress, <b>ACE inhibitors</b>","Laryngeal involvement is the cause of death"],
+ labs:["<b>↓ C4</b> is the best screening test (chronically consumed); C1 inhibitor level and function confirm","Normal C3, normal IgE"],
+ buzz:["<b>ACE inhibitors are contraindicated</b> — ACE is the main enzyme that degrades bradykinin","Swelling with no hives and no itch — that is bradykinin, not histamine"],
+ tx:["Acute: <b>icatibant</b> (bradykinin B2 antagonist), ecallantide (kallikrein inhibitor), C1 inhibitor concentrate, fresh frozen plasma","Prophylaxis: C1 inhibitor, lanadelumab, danazol"]},
+
+coagreg:{n:"PT vs PTT — reading a coagulation panel",k:"reg",p:"coag",enz:"Extrinsic vs intrinsic vs common pathway",inh:"—",hi:1,
+ mech:"The two tests split the cascade. <b>PT</b> measures the extrinsic and common pathways (tissue factor, VII, X, V, II, fibrinogen); <b>PTT</b> measures the intrinsic and common pathways (XII, XI, IX, VIII, X, V, II, fibrinogen). Whichever is abnormal tells you which arm is broken.",
+ find:["<b>↑ PT only</b> → factor VII. Shortest half-life of all the factors, so it is the <b>first to fall</b> in warfarin therapy, liver disease and vitamin K deficiency","<b>↑ PTT only</b> → VIII, IX, XI, XII, or heparin","<b>Both ↑</b> → common pathway (X, V, II, fibrinogen), or a global problem: DIC, liver failure, severe vitamin K deficiency, warfarin overdose","<b>Neither ↑ but the patient bleeds</b> → platelet problem, vWD, factor XIII deficiency, or a vascular cause"],
+ labs:["<b>Mixing study</b>: corrects → factor deficiency. Fails to correct → an inhibitor (antibody, lupus anticoagulant, heparin)","Factor XII deficiency prolongs the PTT but causes <b>no bleeding at all</b>","All factors are made in the liver except <b>VIII and vWF</b>, which come from endothelium"],
+ buzz:["\"PeT the ex-TRINSIC dog\" — PT = extrinsic","Factor VII falls first, so PT/INR moves first on warfarin"],
+ tx:["—"]},
+
+liverdz:{n:"Coagulopathy of liver disease",k:"dz",p:"coag",enz:"Hepatic synthesis of clotting factors",inh:"Acquired",hi:1,
+ mech:"The liver makes every coagulation factor except VIII and vWF, plus the anticoagulants protein C, protein S and antithrombin. Advanced liver disease therefore <b>depletes both sides at once</b> — which is why these patients are not simply 'auto-anticoagulated' and can still thrombose.",
+ find:["Prolonged PT/INR out of proportion to bleeding risk","Thrombocytopenia from splenic sequestration in portal hypertension","Reduced fibrinogen, and dysfibrinogenemia","<b>Factor VIII is normal or high</b> — because it does not come from the liver; this helps separate liver disease from DIC"],
+ labs:["<b>↑ PT first</b> (factor VII), then ↑ PTT as disease advances","<b>Vitamin K does not correct it</b> — unlike dietary deficiency or warfarin, where it does. The hepatocytes cannot synthesize regardless of substrate","Normal factor VIII with low factor V points to liver disease over DIC"],
+ buzz:["Give vitamin K once to distinguish: correction means deficiency, no correction means the liver itself","INR is a poor predictor of bleeding in cirrhosis"],
+ tx:["Treat the liver disease; FFP or PCC and platelets only for active bleeding or before procedures"]}
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1972,7 +2104,7 @@ MAPS.core = {
   {a:"fumarate",b:"malate",p:"tca",e:"Fumarase",bend:40,lx:-52},
   {a:"malate",b:"oaa",p:"tca",e:"Malate dehydrogenase",note:"+ NADH",bend:40,lx:-70},
   {a:"aaAkg",b:"akg",p:"tca",dash:1},
-  {a:"aaSuc",b:"succoa",p:"tca",e:"Propionyl-CoA → methylmalonyl-CoA|carboxylase (biotin) · mutase (B12)",dash:1,lx:44,ly:40,m:["mmacid","organicacid"]},
+  {a:"aaSuc",b:"succoa",p:"tca",e:"Propionyl-CoA → methylmalonyl-CoA|carboxylase (biotin) · mutase (B12)",dash:1,lx:44,ly:70,m:["mmacid","organicacid"]},
   {a:"aaOaa",b:"oaa",p:"tca",dash:1},
   {a:"aaFum",b:"fumarate",p:"tca",dash:1},
   {a:"succoa",b:"hemeconn",p:"neutral",dash:1},
@@ -2175,7 +2307,7 @@ MAPS.nitrogen = {
   {a:"dopa",b:"dopamine",p:"catechol",e:"DOPA decarboxylase (B6)",note:"carbidopa ⊣ in the periphery"},
   {a:"dopamine",b:"ne",p:"catechol",e:"Dopamine β-hydroxylase",note:"vitamin C"},
   {a:"ne",b:"epi",p:"catechol",e:"PNMT",note:"SAM methyl donor · cortisol ⊕"},
-  {a:"trp",b:"niacin",p:"aa",e:"(B6)",m:["hartnup"]},
+  {a:"trp",b:"niacin",p:"aa",e:"(B6)",ly:-32,m:["hartnup"]},
   {a:"trp",b:"serotonin",p:"catechol",e:"Tryptophan hydroxylase (BH4)",m:["hartnup"]},
   {a:"serotonin",b:"melatonin",p:"catechol",e:"SAM methyl donor"},
   {a:"his",b:"histamine",p:"catechol",e:"Histidine decarboxylase (B6)"},
@@ -2721,7 +2853,7 @@ MAPS.endocrine = {
   {a:"anp",b:"renin",p:"raas",e:"⊣ renin & aldosterone",arrow:"inhib",dash:1,lx:-70,m:["natriuretic"]},
   {a:"lowca",b:"pth",p:"calcium",e:"Calcium-sensing receptor",m:["fhh","calciumdrugs"]},
   {a:"pth",b:"bone",p:"calcium",e:"↑ RANKL on osteoblasts",lx:-40,m:["calciumdrugs"]},
-  {a:"pth",b:"kidneyn",p:"calcium",e:"↑ Ca²⁺ (DCT) · ↓ PO₄ (PCT)",lx:-30},
+  {a:"pth",b:"kidneyn",p:"calcium",e:"↑ Ca²⁺ (DCT)|↓ PO₄ (PCT)"},
   {a:"pth",b:"gutn",p:"calcium",e:"↑ 1α-hydroxylase"},
   {a:"gutn",b:"calcitriol2",p:"calcium",e:"activates vitamin D"},
   {a:"bone",b:"serumca",p:"calcium",dash:1},
@@ -3092,13 +3224,106 @@ MAPS.gut = {
   {a:"ifactor",b:"prot",p:"b12",e:"travels to the duodenum"},
   {a:"prot",b:"cubilin",p:"b12",e:"B12 switches to IF"},
   {a:"cubilin",b:"b12abs",p:"b12",e:"receptor-mediated uptake",m:["mmacid"]},
-  {a:"dietfe",b:"dmt1",p:"iron",e:"Fe³⁺ → Fe²⁺ by ferric reductase"},
+  {a:"dietfe",b:"dmt1",p:"iron",e:"Fe³⁺ → Fe²⁺ by ferric reductase",ly:-40},
   {a:"dmt1",b:"ferroportin",p:"iron",e:"across the enterocyte"},
   {a:"ferroportin",b:"transferrin",p:"iron",e:"hephaestin → Fe³⁺"},
   {a:"hepcidin",b:"ferroportin",p:"iron",e:"⊣ degrades ferroportin",arrow:"inhib",dash:1,m:["hemochrom"]}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["index","Index"]];
+MAPS.hemostasis = {
+ t:"Hemostasis", sub:"Endothelium → platelet plug → the cascade the liver builds · every antithrombotic pinned to its receptor or factor",
+ w:3100, h:1820,
+ comps:[
+  {x:190,y:110,w:2720,h:340,l:"Vessel wall & primary hemostasis — the platelet plug"},
+  {x:190,y:530,w:2720,h:520,l:"Secondary hemostasis — the liver builds the cascade"},
+  {x:190,y:1130,w:1280,h:300,l:"Contact activation → the kinin arm"},
+  {x:1550,y:1130,w:1360,h:300,l:"The brakes — anticoagulant & fibrinolytic"}],
+ panels:[
+  {x:240,y:1510,w:820,h:226,kw:178,t:"Reading the coagulation panel",rows:[
+   ["↑ PT only","Factor VII — the shortest half-life"],
+   ["","First to move on warfarin, liver disease, vit K"],
+   ["↑ PTT only","VIII, IX, XI, XII · heparin"],
+   ["Both ↑","Common pathway · DIC · liver failure"],
+   ["Both normal, bleeds","Platelets, vWD, factor XIII, vessel wall"],
+   ["Mixing corrects","Factor deficiency"],
+   ["Mixing fails","Inhibitor — antibody, lupus anticoagulant"],
+   ["Factor XII deficiency","Long PTT, no bleeding at all"]]},
+  {x:1120,y:1510,w:840,h:226,kw:170,t:"Platelet disorders side by side",rows:[
+   ["Bernard-Soulier","GpIb — cannot ADHERE · giant platelets, LOW count"],
+   ["Glanzmann","GpIIb/IIIa — cannot AGGREGATE · normal count and size"],
+   ["von Willebrand","Most common inherited bleeding disorder"],
+   ["","↓ vWF → also ↓ factor VIII, so PTT may rise"],
+   ["Ristocetin","Abnormal in vWD and Bernard-Soulier"],
+   ["","Normal plasma rescues vWD, not Bernard-Soulier"],
+   ["ITP","Anti-GpIIb/IIIa antibodies · isolated low count"],
+   ["TTP / HUS","↓ ADAMTS13 · schistocytes with NORMAL PT and PTT"]]},
+  {x:2020,y:1510,w:700,h:204,kw:152,t:"Antithrombotics by target",rows:[
+   ["Aspirin","COX-1 → no TXA₂ · irreversible"],
+   ["Clopidogrel","P2Y12 ADP receptor"],
+   ["Abciximab","GpIIb/IIIa — a drug-induced Glanzmann"],
+   ["Heparin","Antithrombin III → ⊣ Xa and IIa"],
+   ["Warfarin","Vitamin K epoxide reductase"],
+   ["Rivaroxaban","Direct factor Xa"],
+   ["Dabigatran","Direct thrombin"]]}],
+ nodes:[
+  {id:"endoth",l:"Intact endothelium",x:420,y:260,p:"hemostasis",s:"PGI₂ · NO · thrombomodulin",m:["endothreg"]},
+  {id:"injury",l:"Endothelial injury",x:810,y:260,p:"hemostasis",s:"collagen exposed"},
+  {id:"vwf",l:"von Willebrand factor",x:1200,y:260,p:"hemostasis",s:"collagen ↔ platelet bridge",m:["vwd"]},
+  {id:"adhesion",l:"Platelet adhesion",x:1590,y:260,p:"hemostasis",s:"GpIb receptor",m:["bernardsoulier"]},
+  {id:"activation",l:"Platelet activation",x:1980,y:260,p:"hemostasis",s:"releases ADP + TXA₂",m:["itp"]},
+  {id:"aggregation",l:"Aggregation",x:2370,y:260,p:"hemostasis",s:"GpIIb/IIIa + fibrinogen",m:["glanzmann"]},
+  {id:"plug",l:"Platelet plug",x:2760,y:260,p:"hemostasis",k:"hub",s:"primary hemostasis",m:["ttp"]},
+  {id:"eicoconn",l:"→ Eicosanoids",x:1980,y:400,p:"hemostasis",k:"ghost",go:"eicosanoid"},
+  {id:"xii",l:"Factor XII",x:420,y:660,p:"coag",s:"contact activation — intrinsic"},
+  {id:"xi",l:"Factor XI",x:810,y:660,p:"coag"},
+  {id:"ix",l:"Factor IX",x:1200,y:660,p:"coag",s:"with VIII as cofactor",m:["hemophilia"]},
+  {id:"tf",l:"Tissue factor + VII",x:2100,y:660,p:"coag",s:"extrinsic — measured by PT"},
+  {id:"x",l:"Factor X → Xa",x:1200,y:880,p:"coag",k:"hub",s:"with V — common pathway",m:["coagreg"]},
+  {id:"ii",l:"Prothrombin → Thrombin",x:1700,y:880,p:"coag",s:"II → IIa"},
+  {id:"fibrin",l:"Fibrinogen → Fibrin",x:2200,y:880,p:"coag",s:"I → Ia",m:["dic"]},
+  {id:"xiii",l:"Factor XIII",x:2650,y:880,p:"coag",s:"cross-links the mesh"},
+  {id:"liver",l:"Liver",x:420,y:990,p:"coag",s:"makes every factor except VIII",m:["liverdz"]},
+  {id:"vitk",l:"Vitamin K",x:830,y:990,p:"coag",s:"γ-carboxylates II VII IX X C S",m:["vitkdef","warfarin"]},
+  {id:"vitconn",l:"→ Vitamins",x:1250,y:990,p:"coag",k:"ghost",go:"vitamins"},
+  {id:"xii2",l:"Factor XIIa",x:400,y:1250,p:"kinin",s:"the same contact activation"},
+  {id:"kal",l:"Kallikrein",x:820,y:1250,p:"kinin",s:"from prekallikrein"},
+  {id:"brady",l:"Bradykinin",x:1240,y:1250,p:"kinin",s:"vasodilation · pain · edema",m:["hae"]},
+  {id:"ace",l:"ACE",x:820,y:1370,p:"kinin",s:"degrades bradykinin"},
+  {id:"raasconn",l:"→ RAAS map",x:1240,y:1370,p:"kinin",k:"ghost",go:"endocrine"},
+  {id:"atiii",l:"Antithrombin III",x:1760,y:1250,p:"fibrinolysis",s:"heparin ↑ it 1000×",m:["heparin"]},
+  {id:"pc",l:"Protein C + S",x:2200,y:1250,p:"fibrinolysis",s:"inactivate Va and VIIIa",m:["factorv"]},
+  {id:"plasmin",l:"Plasmin",x:2660,y:1250,p:"fibrinolysis",s:"digests fibrin → D-dimer",m:["tpa"]},
+  {id:"xaiia",l:"Xa · thrombin",x:1760,y:1370,p:"fibrinolysis",s:"DOACs bind these directly",m:["doac"]},
+  {id:"vaviiia",l:"Va · VIIIa",x:2200,y:1370,p:"fibrinolysis",s:"the two cofactors"},
+  {id:"plasminogen",l:"Plasminogen",x:2660,y:1370,p:"fibrinolysis",m:["txadrug"]}],
+ edges:[
+  {a:"endoth",b:"injury",p:"hemostasis",e:"Trauma · plaque rupture",ly:-46},
+  {a:"injury",b:"vwf",p:"hemostasis",e:"vWF binds exposed collagen",ly:-46,m:["vwd"]},
+  {a:"vwf",b:"adhesion",p:"hemostasis",e:"GpIb receptor",note:"ristocetin tests this step",ly:-52,m:["bernardsoulier"]},
+  {a:"adhesion",b:"activation",p:"hemostasis",e:"Shape change · degranulation",ly:-46},
+  {a:"activation",b:"aggregation",p:"hemostasis",e:"ADP → P2Y12 · TXA₂ → COX-1",rl:1,ly:-52,note:"the two amplifier loops",m:["p2y12","aspirin"]},
+  {a:"aggregation",b:"plug",p:"hemostasis",e:"Fibrinogen cross-links",ly:-46,m:["glanzmann","gp2b3a"]},
+  {a:"activation",b:"eicoconn",p:"hemostasis",dash:1,arrow:"none"},
+  {a:"xii",b:"xi",p:"coag",e:"Contact with collagen",ly:-46},
+  {a:"xi",b:"ix",p:"coag",e:"XIa activates IX",ly:-46},
+  {a:"ix",b:"x",p:"coag",e:"IXa + VIIIa (tenase)",lx:120,m:["hemophilia"]},
+  {a:"tf",b:"x",p:"coag",e:"VIIa + tissue factor",note:"the extrinsic shortcut"},
+  {a:"x",b:"ii",p:"coag",e:"Xa + Va (prothrombinase)",ly:-46},
+  {a:"ii",b:"fibrin",p:"coag",e:"Thrombin cleaves fibrinogen",ly:-46},
+  {a:"fibrin",b:"xiii",p:"coag",e:"XIIIa",ly:-46},
+  {a:"liver",b:"vitk",p:"coag",e:"Synthesis",ly:-40},
+  {a:"vitk",b:"x",p:"coag",e:"γ-carboxylation activates them",dash:1,m:["vitkdef","warfarin"]},
+  {a:"vitk",b:"vitconn",p:"coag",dash:1,arrow:"none"},
+  {a:"xii2",b:"kal",p:"kinin",e:"Activates prekallikrein",ly:-46},
+  {a:"kal",b:"brady",p:"kinin",e:"Cleaves HMW kininogen",ly:-46,m:["hae"]},
+  {a:"ace",b:"brady",p:"kinin",e:"ACE inhibitors block this",arrow:"inhib",lx:-40,m:["raasdrugs"]},
+  {a:"brady",b:"raasconn",p:"kinin",dash:1,arrow:"none"},
+  {a:"plasminogen",b:"plasmin",p:"fibrinolysis",e:"tPA · urokinase",m:["tpa","txadrug"]},
+  {a:"atiii",b:"xaiia",p:"fibrinolysis",e:"Inactivates them",arrow:"inhib",m:["heparin"]},
+  {a:"pc",b:"vaviiia",p:"fibrinolysis",e:"Proteolytic cleavage",arrow:"inhib",m:["factorv"]}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["hemostasis","Hemostasis"],["index","Index"]];
 
 
 

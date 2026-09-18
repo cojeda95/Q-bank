@@ -39,6 +39,29 @@ wrong place. Check `echo $QBANK_HUB` first if a sync seems to vanish.
 Pushing to `main` triggers `.github/workflows/static.yml`, which deploys to GitHub Pages in
 about 20-30 seconds. **A commit alone publishes nothing** — it has to be pushed.
 
+## The Metabolic Lesion Atlas
+
+`resources/metabolic-atlas.html` is a **build artifact — never hand-edit it.** It is the
+standalone atlas wrapped in the hub shell: the blue "All Blocks" topbar, the site meta and
+og tags, the mobile safe-area reset and the accent overrides that match the rest of the site.
+Editing the deployed file directly, or copying the standalone over it, silently strips all of
+that and the page loses its navigation.
+
+Edit the standalone, then rebuild:
+
+    python3 tools/build-atlas.py /path/to/standalone.html
+
+The script derives the map and lesion counts from the artifact itself, so the meta tags stay
+honest. Update the matching counts on the atlas card in `index.html` by hand.
+
+Before shipping an atlas change, open it and run the layout audit in the browser console
+(overlapping boxes, text overflowing its node, arrowheads buried under chips, pin fills,
+lesion cards that are defined but pinned nowhere). Two traps that have bitten before:
+
+- `document.querySelector('svg')` grabs a toolbar icon, not the map. The map is `#svg`.
+- A lesion card is invisible unless some node or edge pins it. Check
+  `Object.keys(LES).filter(k => !LOC[k])` — it must be empty.
+
 ## Shared code
 
 `shared/app.js` and `shared/style.css` are used by every block. A change there hits all of
