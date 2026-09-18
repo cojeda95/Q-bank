@@ -2,17 +2,33 @@
 # ship — commit and publish the Question Bank Hub to GitHub Pages.
 #   ./ship "what changed"      commit everything staged/unstaged, then push
 #   ./ship                     push already-made commits
+#
+# A cowork session may be committing to this same repo at the same moment
+# (the OCOM hub paths are symlinks here), so a transient git lock is normal,
+# not an error — retry a few times with a short pause before giving up.
 set -e
 export PATH="$HOME/.local/bin:$PATH"
 cd "$(dirname "$0")"
 
+retry_git() {
+  local n=0 max=6 delay=3
+  until "$@"; do
+    n=$((n+1))
+    if [ $n -ge $max ]; then echo "git command kept failing after $max tries: $*" >&2; return 1; fi
+    if ls .git/*.lock >/dev/null 2>&1 || ls .git/objects/*.lock >/dev/null 2>&1; then
+      echo "  (repo locked — probably the other session committing; retrying in ${delay}s...)"
+    fi
+    sleep $delay
+  done
+}
+
 if [ -n "$1" ]; then
-  git add -A
+  retry_git git add -A
   if git diff --cached --quiet; then
     echo "nothing to commit"
   else
     git diff --cached --stat
-    git commit -q -m "$1"
+    retry_git git commit -q -m "$1"
     echo "committed: $(git log --oneline -1)"
   fi
 fi
@@ -23,9 +39,9 @@ if [ -z "$(git log origin/main..HEAD --oneline 2>/dev/null)" ]; then
 fi
 
 echo "pushing:"; git log origin/main..HEAD --oneline | sed 's/^/  /'
-git fetch -q origin
-git -c rebase.autoStash=true pull --rebase -q origin main
-git push -q origin main
+retry_git git fetch -q origin
+retry_git git -c rebase.autoStash=true pull --rebase -q origin main
+retry_git git push -q origin main
 echo "pushed."
 
 if command -v gh >/dev/null 2>&1; then
