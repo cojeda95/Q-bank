@@ -174,27 +174,65 @@ function visibleQuestions(sdl) {
 }
 
 /* ── Wrong-answer flash ───────────────────────────────────────────────── */
-// A brief translucent-red screen wash plus one randomly-picked meme image,
-// fired once per incorrect submission across every quiz mode (Practice,
-// Flagged Review, Toughest-Questions Review, Exam Simulation with Instant
-// Feedback on). Purely decorative — appended to <body> (not #main) so it
-// survives the immediate innerHTML re-render that reveals the answer, and
-// removes itself after the CSS animation finishes.
+// A translucent-red screen wash plus an iMessage "Echo"-style burst: many copies
+// of BOTH meme images launch from the centre in staggered waves, scatter across
+// the viewport at random angles, sizes and rotations, then fade. Fires once per
+// incorrect submission across every quiz mode (Practice, Flagged Review,
+// Toughest-Questions Review, Exam Simulation with Instant Feedback on).
+// Purely decorative — appended to <body> (not #main) so it survives the
+// immediate innerHTML re-render that reveals the answer, pointer-events:none so
+// it never blocks input, and it removes itself when the animation finishes.
 const WRONG_FLASH_IMAGES = ['../shared/images/wrong-flash-1.png', '../shared/images/wrong-flash-2.png'];
+const WRONG_FLASH_MS = 3000;     // total on-screen time
+const ECHO_WAVES = 5;            // Echo arrives in bursts, not one even spray
+const ECHO_PER_WAVE = 11;
+
+// Warm the cache so the first wrong answer of a session is not the one that
+// misses its own animation window.
+(function preloadWrongFlash() {
+  try { WRONG_FLASH_IMAGES.forEach(src => { const i = new Image(); i.src = src; }); }
+  catch (e) { /* non-fatal */ }
+})();
 
 function triggerWrongFlash() {
   const overlay = document.createElement('div');
   overlay.className = 'wrong-flash-overlay';
+
   const wash = document.createElement('div');
   wash.className = 'wrong-flash-wash';
-  const img = document.createElement('img');
-  img.className = 'wrong-flash-img';
-  img.src = WRONG_FLASH_IMAGES[Math.floor(Math.random() * WRONG_FLASH_IMAGES.length)];
-  img.alt = '';
   overlay.appendChild(wash);
-  overlay.appendChild(img);
+
+  // Honour a reduced-motion preference: keep the wash, skip the swarm.
+  let reduced = false;
+  try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+  if (!reduced) {
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const reach = Math.hypot(vw, vh) / 2;
+    const total = ECHO_WAVES * ECHO_PER_WAVE;
+    for (let i = 0; i < total; i++) {
+      const wave = Math.floor(i / ECHO_PER_WAVE);
+      const img = document.createElement('img');
+      img.className = 'wrong-flash-echo';
+      img.src = WRONG_FLASH_IMAGES[i % WRONG_FLASH_IMAGES.length];   // alternate, so both appear
+      img.alt = '';
+      img.decoding = 'async';
+      const angle = Math.random() * Math.PI * 2;
+      const dist = reach * (0.18 + Math.random() * 0.92);
+      const size = 64 + Math.random() * 104;
+      img.style.setProperty('--dx', (Math.cos(angle) * dist).toFixed(0) + 'px');
+      img.style.setProperty('--dy', (Math.sin(angle) * dist).toFixed(0) + 'px');
+      img.style.setProperty('--rot', (Math.random() * 64 - 32).toFixed(1) + 'deg');
+      img.style.setProperty('--sc', (0.72 + Math.random() * 0.55).toFixed(2));
+      img.style.setProperty('--size', size.toFixed(0) + 'px');
+      img.style.setProperty('--delay', (wave * 0.34 + Math.random() * 0.2).toFixed(2) + 's');
+      img.style.setProperty('--dur', (1.25 + Math.random() * 0.55).toFixed(2) + 's');
+      overlay.appendChild(img);
+    }
+  }
+
   document.body.appendChild(overlay);
-  setTimeout(() => overlay.remove(), 700);
+  setTimeout(() => overlay.remove(), WRONG_FLASH_MS + 250);
 }
 
 /* ── Utilities ────────────────────────────────────────────────────────── */
