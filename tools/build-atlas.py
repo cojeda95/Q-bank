@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Wrap the standalone Metabolic Lesion Atlas in the OCOM Question Hub shell.
+"""Wrap the standalone Lesion Atlas in the OCOM Question Hub shell.
 
 The standalone artifact is authored on its own; this adds the site head
 (meta/og/mobile reset), the blue "All Blocks" topbar and the accent overrides
@@ -102,9 +102,9 @@ head = f"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive metabolic and physiology atlas for COMLEX Level 1 and USMLE Step 1 — {maps} pan/zoom maps with {cards} diseases, drug targets and toxicities pinned to the exact enzyme or transporter they act on.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — {maps} pan/zoom maps with {cards} diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
-<meta property="og:title" content="Metabolic Lesion Atlas">
+<meta property="og:title" content="Lesion Atlas">
 <meta property="og:description" content="{maps} interactive maps. {cards} lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
@@ -114,12 +114,12 @@ body{{margin:0;font:14px/1.5 system-ui,-apple-system,sans-serif;background:#EFEF
 img{{max-width:100%}}
 [hidden]{{display:none!important}}
 </style>
-<title>Metabolic Lesion Atlas — COMLEX 1 / Step 1</title>
+<title>Lesion Atlas — COMLEX 1 / Step 1</title>
 """
 
 TOPBAR = ('<div class="ocom-topbar"><div class="ocom-topbar-inner">'
           '<a href="../index.html">&larr; All Blocks</a>'
-          '<span>Metabolic Lesion Atlas</span></div></div>\n')
+          '<span>Lesion Atlas</span></div></div>\n')
 
 styled = artifact[:last_style_close] + OCOM_CSS + artifact[last_style_close:]
 # the artifact's markup starts right after its stylesheet block
