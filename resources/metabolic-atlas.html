@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 18 pan/zoom maps with 272 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 19 pan/zoom maps with 284 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="18 interactive maps. 272 lesions pinned to the step they break.">
+<meta property="og:description" content="19 interactive maps. 284 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -343,6 +343,9 @@ const PATHS = {
   gasex:{n:"Gas exchange",v:"--p-ppp"},
   o2transport:{n:"Oxygen transport",v:"--p-sugars"},
   alveolus:{n:"Alveolus & interstitium",v:"--p-glycogen"},
+  gonad:{n:"Gonadal determination",v:"--p-ppp"},
+  ducts:{n:"Internal ducts",v:"--p-glycolysis"},
+  extgen:{n:"External genitalia",v:"--p-sugars"},
   th:{n:"T-helper subsets",v:"--p-tca"},
   acute:{n:"Acute phase & innate",v:"--p-sugars"},
   ifn:{n:"Interferons",v:"--p-ppp"},
@@ -2265,7 +2268,91 @@ ifndrugs:{n:"Interferons as therapy",k:"drug",p:"biologic",enz:"IFN-α · IFN-β
  find:["<b>IFN-α</b>: chronic hepatitis B and C (now largely superseded), Kaposi sarcoma, hairy cell leukaemia, malignant melanoma, condyloma","<b>IFN-β</b>: relapsing-remitting multiple sclerosis","<b>IFN-γ</b>: chronic granulomatous disease, and IL-12 receptor deficiency","Note the pairing — the same IFN-γ that is missing in CGD's downstream defence is what you give back"],
  labs:["<b>Flu-like syndrome</b> in almost everyone — fever, myalgia, malaise, which is just the acute-phase response being switched on deliberately","<b>Depression and suicidality</b> with IFN-α — screen before and during","Myelosuppression, autoimmune thyroiditis"],
  buzz:["Alpha for viruses and tumours, beta for MS, gamma for CGD","The flu-like syndrome is the mechanism, not a side effect"],
- tx:["—"]}
+ tx:["—"]},
+
+/* ── sexual differentiation ─────────────────────────── */
+sexdevreg:{n:"How sex differentiation actually runs",k:"reg",p:"gonad",enz:"SRY → AMH + testosterone → DHT",inh:"—",hi:1,
+ mech:"Three decisions in sequence, and each one is <b>made by a different signal</b>. Genetic sex sets gonadal sex, the gonad's secretions set the internal ducts, and DHT sets the external genitalia. A defect anywhere below the first step leaves everything above it normal, which is why the level of the lesion can be read straight off the anatomy.",
+ find:["<b>1. Gonad.</b> <b>SRY</b> on the Y short arm makes testis-determining factor → medullary cords → testis. No SRY → cortical cords → ovary. <b>The ovary is the default</b>","<b>2. Internal ducts.</b> Sertoli cells make <b>AMH</b>, which <b>destroys</b> the paramesonephric (Müllerian) duct. Leydig cells make <b>testosterone</b>, which <b>preserves</b> the mesonephric (Wolffian) duct. Testosterone acts locally and ipsilaterally, so one working testis maintains only its own side","<b>3. External genitalia.</b> Testosterone must be converted by <b>5α-reductase to DHT</b>. DHT virilizes the genital tubercle, folds and swellings. Without it the external anatomy stays female regardless of karyotype","The female pattern needs <b>no hormone at all</b> — it is what happens when nothing acts"],
+ labs:["Read the anatomy backwards to find the level: <b>uterus present</b> means AMH never acted, so either there was no testis or AMH itself failed","<b>Uterus absent but external genitalia female</b> means AMH worked (so a testis existed) and androgen did not — a receptor or 5α-reductase problem","<b>Internal male, external female</b> isolates the step between testosterone and DHT"],
+ buzz:["SRY makes the testis; the testis makes everything else","SEED — Seminal vesicles, Epididymis, Ejaculatory duct, Ductus deferens are the Wolffian derivatives","AMH destroys Müllerian, testosterone rescues Wolffian — one kills, one saves","Female is the default; male is the one that has to be actively built"],
+ tx:["—"]},
+
+swyer:{n:"Swyer syndrome",alias:"46,XY complete gonadal dysgenesis",k:"dz",p:"gonad",enz:"SRY (or downstream SF1, WT1, MAP3K1)",inh:"Usually de novo",hi:1,
+ mech:"The Y chromosome is present but <b>SRY fails</b>, so no testis forms — only a fibrous <b>streak gonad</b>. A streak makes neither AMH nor testosterone, so nothing is destroyed and nothing is preserved: the Müllerian system develops fully and the external genitalia stay female.",
+ find:["<b>46,XY with a completely female phenotype, internal and external — including a uterus</b>","Presents at puberty with <b>primary amenorrhea and absent secondary sexual characteristics</b>, since the streak makes no estrogen either","Normal or tall stature, eunuchoid proportions"],
+ labs:["<b>↑ FSH and ↑ LH with ↓ estradiol</b> — primary gonadal failure","Karyotype 46,XY; pelvic imaging shows a <b>uterus and tubes</b>","The uterus is the finding that separates it from androgen insensitivity, where AMH did act and the uterus is absent"],
+ buzz:["46,XY with a uterus","Streak gonads carry a high risk of gonadoblastoma and dysgerminoma — remove them once the diagnosis is made"],
+ tx:["<b>Prophylactic gonadectomy</b>, then estrogen and progesterone replacement; pregnancy is possible with a donor oocyte"]},
+
+pmds:{n:"Persistent Müllerian duct syndrome",k:"dz",p:"ducts",enz:"AMH or the AMH type II receptor",inh:"Autosomal recessive",hi:0,
+ mech:"Testes form and make testosterone normally, so the Wolffian derivatives and the external genitalia are fully male. Only the <b>AMH arm fails</b>, so the Müllerian duct is never destroyed and a uterus and tubes persist alongside the male structures.",
+ find:["Phenotypically <b>normal male</b> with a <b>uterus and fallopian tubes</b> found incidentally","Usually discovered during surgery for <b>cryptorchidism or inguinal hernia</b> — the hernia sac contains a uterus or tube (\"hernia uteri inguinalis\")","Transverse testicular ectopia: both testes descend on the same side"],
+ labs:["Normal testosterone and normal virilization","AMH may be low (production defect) or normal-to-high (receptor defect)","46,XY karyotype"],
+ buzz:["A uterus found in the hernia sac of an otherwise normal boy","The one defect that isolates the AMH arm and leaves androgen untouched"],
+ tx:["Orchidopexy; Müllerian remnants are removed only if they threaten the vas deferens or blood supply"]},
+
+mrkh:{n:"Müllerian agenesis (MRKH)",alias:"Mayer-Rokitansky-Küster-Hauser",k:"dz",p:"ducts",enz:"Paramesonephric duct development",inh:"Sporadic",hi:1,
+ mech:"A <b>46,XX</b> person with <b>normal ovaries</b> in whom the Müllerian duct simply fails to develop. Ovarian function is untouched, so hormones and secondary sexual characteristics are entirely normal — only the duct derivatives are missing.",
+ find:["<b>Primary amenorrhea with normal breast development and normal pubic hair</b>","Absent uterus and absent upper two-thirds of the vagina; a short blind vaginal pouch","<b>Normal ovaries</b>, so ovulation continues and cyclic pelvic pain can occur","Associated <b>renal anomalies</b> in up to a third (the mesonephros and paramesonephros develop together) and skeletal anomalies"],
+ labs:["<b>Normal FSH, LH, testosterone and estradiol</b> — the hormone panel is unremarkable","Karyotype <b>46,XX</b>; imaging shows absent uterus with present ovaries","<b>The two things it is confused with</b>: androgen insensitivity (46,XY, ↑ testosterone, scant pubic hair) and imperforate hymen (uterus present, cyclic pain with a bulging membrane)"],
+ buzz:["Primary amenorrhea with normal pubic hair and no uterus, in a 46,XX","Second most common cause of primary amenorrhea after gonadal dysgenesis","Always image the kidneys"],
+ tx:["Vaginal dilation or surgical creation of a neovagina; gestational surrogacy or uterine transplant for fertility"]},
+
+mullerianfusion:{n:"Müllerian fusion anomalies",alias:"septate · bicornuate · didelphys",k:"dz",p:"ducts",enz:"Fusion and resorption of the paired ducts",inh:"Sporadic",hi:0,
+ mech:"The uterus is built by <b>fusing two ducts and then resorbing the septum between them</b>. Incomplete fusion or incomplete resorption leaves a spectrum, and the obstetric risk tracks how much septum is left rather than how dramatic the outline looks.",
+ find:["<b>Septate uterus</b> — normal outer contour, a persistent internal septum. <b>The most common, and the worst for pregnancy</b>, because the septum is poorly vascularized: recurrent first-trimester loss","<b>Bicornuate uterus</b> — indented outer contour, two horns; second-trimester loss, malpresentation","<b>Uterus didelphys</b> — complete duplication, two cervices; often the least symptomatic","<b>Unicornuate</b> — one duct fails entirely; associated renal agenesis on that side"],
+ labs:["3D ultrasound or MRI distinguishes septate from bicornuate by the <b>outer fundal contour</b>, which is what determines management","Screen the urinary tract — the ducts develop alongside the mesonephros"],
+ buzz:["Septate looks normal from outside and causes the most miscarriage","Only the septate one is reliably fixed by hysteroscopic resection"],
+ tx:["Hysteroscopic septum resection for septate; most others are managed expectantly"]},
+
+ductremnants:{n:"Duct remnants — what is left behind",k:"reg",p:"ducts",enz:"Vestiges of the regressed duct",inh:"—",hi:0,
+ mech:"Neither duct disappears completely. The remnants are clinically minor but are asked about precisely because naming them tests whether you know which duct is which.",
+ find:["<b>In the male</b> (Müllerian remnants, since AMH destroyed that duct): <b>appendix testis</b> (hydatid of Morgagni) and the <b>prostatic utricle</b>","<b>In the female</b> (Wolffian remnants, since no testosterone preserved that duct): <b>Gartner duct cyst</b> in the lateral vaginal wall, plus the epoophoron and paroophoron","The <b>appendix epididymis</b> is a Wolffian remnant in the male"],
+ labs:["A torsed <b>appendix testis</b> gives the <b>blue dot sign</b> and mimics testicular torsion — but the cremasteric reflex is preserved and flow is normal","A Gartner duct cyst is a smooth lateral vaginal wall cyst, usually incidental"],
+ buzz:["Blue dot sign = torsion of the appendix testis, not the testis","Gartner duct cyst is a Wolffian leftover in a woman"],
+ tx:["Both are usually left alone"]},
+turner:{n:"Turner syndrome",alias:"45,X monosomy",k:"dz",p:"gonad",enz:"Loss of one X — SHOX haploinsufficiency",inh:"Sporadic non-disjunction or mosaicism",hi:1,
+ mech:"Two X chromosomes are needed to <b>maintain</b> an ovary, not to make one. Ovaries form normally and then undergo accelerated atresia in utero, so by birth they are fibrous <b>streak gonads</b>. The Müllerian system is untouched, so the uterus and tubes are normal.",
+ find:["<b>Short stature</b> — the most consistent finding, from SHOX loss","<b>Primary amenorrhea with absent secondary sexual characteristics</b>; a normal uterus is present","<b>Webbed neck</b> from a cystic hygroma, low posterior hairline, shield chest, widely spaced nipples","<b>Bicuspid aortic valve</b> (most common) and <b>coarctation of the aorta</b> — brachial-femoral delay","<b>Horseshoe kidney</b>; lymphedema of the hands and feet in the newborn","Normal intelligence; the classic deficit is in spatial and social processing"],
+ labs:["<b>↑↑ FSH and LH with ↓ estradiol</b> — hypergonadotropic hypogonadism","Karyotype 45,X, or mosaic 45,X/46,XX which is milder","<b>Any Y material present</b> raises gonadoblastoma risk and mandates gonadectomy","Screen with echocardiography and renal ultrasound at diagnosis"],
+ buzz:["Short girl with primary amenorrhea and a normal uterus","Most common cause of primary amenorrhea overall","The commonest karyotype among first-trimester miscarriages"],
+ tx:["Growth hormone for stature, estrogen replacement from the age of puberty, cardiac and renal surveillance"]},
+
+klinefelter:{n:"Klinefelter syndrome",alias:"47,XXY",k:"dz",p:"gonad",enz:"Extra X — seminiferous tubule dysgenesis",inh:"Sporadic non-disjunction",hi:1,
+ mech:"SRY is present so a testis forms and the male pathway runs, but the extra X causes <b>seminiferous tubule dysgenesis</b>. <b>Sertoli cells fail first</b> and Leydig function declines later, so inhibin falls before testosterone does — which is why FSH rises earliest.",
+ find:["<b>Tall stature with long extremities</b> — the disproportion is a useful early clue","<b>Small, firm testes</b>; the single most consistent physical finding","<b>Gynecomastia</b>, sparse body hair, female-pattern fat distribution","<b>Azoospermia and infertility</b> — the commonest cause of primary male hypogonadism","Often diagnosed only during an infertility workup; developmental and language delays are common"],
+ labs:["<b>↑↑ FSH</b> (loss of Sertoli inhibin B, rises first), <b>↑ LH</b>, <b>↓ testosterone</b>, <b>↑ estrogen</b>","Karyotype 47,XXY; a <b>Barr body</b> is present","↑ Risk of breast cancer and of extragonadal germ cell tumors"],
+ buzz:["Tall man with small firm testes and gynecomastia","FSH rises before testosterone falls, because Sertoli cells fail first"],
+ tx:["Testosterone replacement improves virilization, bone density and mood but does not restore fertility; sperm retrieval is sometimes possible"]},
+
+kallmann:{n:"Kallmann syndrome",alias:"hypogonadotropic hypogonadism with anosmia",k:"dz",p:"gonad",enz:"GnRH neuron migration (ANOS1/KAL1, FGFR1)",inh:"X-linked or autosomal",hi:1,
+ mech:"GnRH neurons are born in the <b>olfactory placode</b> and migrate into the hypothalamus alongside the olfactory nerves. If that migration fails, the hypothalamus never gets its GnRH neurons <b>and</b> the olfactory bulbs never form — one embryologic accident produces both findings.",
+ find:["<b>Delayed or absent puberty</b> with <b>anosmia or hyposmia</b>, which patients often have not noticed","Small testes, micropenis, cryptorchidism; primary amenorrhea in females","Eunuchoid proportions; ↓ bone density","Sometimes unilateral renal agenesis, cleft lip/palate, synkinesia"],
+ labs:["<b>↓ GnRH → ↓ FSH, ↓ LH → ↓ testosterone or estradiol</b> — <b>hypo</b>gonadotropic hypogonadism, the mirror image of Turner and Klinefelter","MRI shows absent or hypoplastic <b>olfactory bulbs</b>","Distinguish from constitutional delay, where the axis eventually starts on its own"],
+ buzz:["Delayed puberty plus cannot smell","Low gonadotropins with low sex steroids — everything is low, unlike the primary gonadal failures where FSH and LH are high"],
+ tx:["Testosterone or estrogen for virilization; <b>pulsatile GnRH or gonadotropins</b> when fertility is the goal"]},
+
+antiandrogens:{n:"Antiandrogens",alias:"finasteride · flutamide · spironolactone · danazol",k:"drug",p:"extgen",enz:"5α-reductase · the androgen receptor",inh:"—",hi:1,
+ mech:"The androgen axis can be interrupted at three places, and which one a drug hits determines its effect and its side effects: synthesis, conversion to DHT, or the receptor itself.",
+ find:["<b>Finasteride and dutasteride</b> — 5α-reductase inhibitors. Benign prostatic hyperplasia and male-pattern baldness. They <b>lower PSA by about half</b>, so double the reading when screening","<b>Flutamide, bicalutamide, nilutamide</b> — androgen receptor antagonists for prostate cancer; flutamide is hepatotoxic","<b>Spironolactone</b> — aldosterone antagonist that also blocks the androgen receptor, hence <b>gynecomastia</b>; used deliberately for hirsutism and acne","<b>Ketoconazole</b> — inhibits steroid synthesis broadly","<b>Danazol</b> — a weak partial androgen for endometriosis; causes weight gain, hirsutism and acne"],
+ labs:["Finasteride is <b>teratogenic</b> — it prevents virilization of a male fetus, exactly reproducing 5α-reductase deficiency. Pregnant women should not even handle crushed tablets","Antiandrogens in a male cause gynecomastia by shifting the androgen-to-estrogen balance"],
+ buzz:["Finasteride halves the PSA — double it before interpreting","Spironolactone is the antihypertensive that causes gynecomastia"],
+ tx:["—"]},
+
+gnrhanalogues:{n:"GnRH analogues — pulsatile versus continuous",alias:"leuprolide · goserelin · degarelix",k:"drug",p:"gonad",enz:"The GnRH receptor on the gonadotroph",inh:"—",hi:1,
+ mech:"The pituitary responds to the <b>pattern</b> of GnRH, not just its presence. <b>Pulsatile</b> delivery stimulates LH and FSH release; <b>continuous</b> delivery downregulates the receptor and shuts the axis off after an initial surge. One drug does opposite things depending on how it is given.",
+ find:["<b>Pulsatile</b> — used to induce ovulation or spermatogenesis, as in Kallmann syndrome","<b>Continuous</b> — chemical castration for prostate cancer, endometriosis, uterine fibroids, central precocious puberty","<b>The initial flare</b>: continuous dosing causes a transient testosterone surge over the first week or two that can worsen bone pain or precipitate spinal cord compression in metastatic prostate cancer. Cover it with an antiandrogen such as flutamide","<b>Degarelix</b> is a GnRH <b>antagonist</b>, so it suppresses immediately with no flare"],
+ labs:["Long-term suppression causes hot flashes, ↓ libido and <b>↓ bone mineral density</b>"],
+ buzz:["Pulsatile stimulates, continuous suppresses — the same molecule either way","Cover the flare before starting leuprolide in metastatic prostate cancer"],
+ tx:["—"]},
+
+desdrug:{n:"Diethylstilbestrol exposure",alias:"DES",k:"drug",p:"ducts",enz:"Synthetic nonsteroidal estrogen",inh:"—",hi:1,
+ mech:"Given to pregnant women between the 1940s and 1971 to prevent miscarriage, which it did not do. It disrupts Müllerian development in the exposed <b>fetus</b>, so the harm appears a generation later — the reason it is still examined.",
+ find:["<b>Clear cell adenocarcinoma of the vagina and cervix</b> in exposed daughters, typically presenting in adolescence or the twenties","<b>Vaginal adenosis</b> — glandular epithelium where squamous should be","<b>T-shaped uterine cavity</b>, cervical hood, incompetent cervix → infertility, ectopic pregnancy, preterm birth","Exposed sons: epididymal cysts, cryptorchidism, hypoplastic testes"],
+ labs:["Any vaginal clear cell adenocarcinoma in a young woman should prompt the question about maternal DES"],
+ buzz:["Clear cell adenocarcinoma of the vagina in a young woman","A drug whose adverse effect skipped a generation"],
+ tx:["Surveillance of exposed offspring; the drug itself is long withdrawn"]}
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3862,7 +3949,76 @@ MAPS.cytokine = {
   {a:"ifng",b:"macroact",p:"ifn",e:"the Th1 effector arm",m:["ifnreg"]}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["index","Index"]];
+MAPS.sexdev = {
+ t:"Sexual Differentiation", sub:"SRY → gonad → ducts → external genitalia · read the level of the lesion straight off the anatomy",
+ w:3000, h:1880,
+ comps:[
+  {x:190,y:110,w:2620,h:400,l:"Gonadal sex — SRY decides, and the ovary is the default"},
+  {x:190,y:590,w:2620,h:440,l:"Internal ducts — AMH destroys one, testosterone rescues the other"},
+  {x:190,y:1110,w:2620,h:340,l:"External genitalia — DHT does this, or nothing does"}],
+ panels:[
+  {x:240,y:1530,w:700,h:152,kw:166,t:"Duct remnants",rows:[
+   ["Appendix testis","Müllerian remnant in the male — blue dot sign"],
+   ["Prostatic utricle","Müllerian remnant in the male"],
+   ["Appendix epididymis","Wolffian remnant in the male"],
+   ["Gartner duct cyst","Wolffian remnant, lateral vaginal wall"],
+   ["Epoophoron","Wolffian remnant beside the ovary"]]},
+  {x:1000,y:1530,w:960,h:262,kw:182,t:"Which defect gives which picture",rows:[
+   ["Androgen insensitivity","46,XY · AMH worked → NO uterus · female outside"],
+   ["","↑ testosterone, ↑ LH, scant pubic hair, no virilization"],
+   ["5α-reductase deficiency","46,XY · internal male · female outside at birth"],
+   ["","Virilizes at puberty · ↑ testosterone:DHT ratio"],
+   ["Swyer (46,XY)","No SRY → no AMH, no androgen → UTERUS PRESENT"],
+   ["Persistent Müllerian duct","46,XY normal male WITH a uterus — AMH arm only"],
+   ["MRKH (46,XX)","No uterus, normal ovaries, normal hormones"],
+   ["21-hydroxylase CAH","46,XX · virilized outside, normal inside"],
+   ["Turner (45,X)","Streak ovaries, uterus normal, ↑↑ FSH and LH"]]},
+  {x:2020,y:1530,w:790,h:174,kw:140,t:"Drugs on this axis",rows:[
+   ["Finasteride","5α-reductase — halves PSA; teratogenic"],
+   ["Flutamide","Androgen receptor antagonist — hepatotoxic"],
+   ["Spironolactone","Blocks the receptor too — gynecomastia"],
+   ["Danazol","Weak androgen — endometriosis"],
+   ["Leuprolide","Pulsatile stimulates, continuous suppresses"],
+   ["DES (withdrawn)","Clear cell vaginal cancer in the daughter"]]}],
+ nodes:[
+  {id:"pgc",l:"Primordial germ cells",x:400,y:330,p:"gonad",s:"migrate from the yolk sac"},
+  {id:"bipot",l:"Bipotential gonad",x:850,y:330,p:"gonad",k:"hub",s:"the genital ridge",m:["sexdevreg"]},
+  {id:"testis",l:"Testis",x:1400,y:230,p:"gonad",s:"medullary cords",m:["klinefelter"]},
+  {id:"ovary",l:"Ovary",x:1400,y:430,p:"gonad",s:"cortical cords",m:["turner"]},
+  {id:"sertoli",l:"Sertoli cells",x:1950,y:170,p:"gonad",s:"secrete AMH"},
+  {id:"leydig",l:"Leydig cells",x:1950,y:290,p:"gonad",s:"secrete testosterone",m:["kallmann"]},
+  {id:"ovarysec",l:"No AMH · no androgen",x:1950,y:430,p:"gonad",s:"nothing is secreted"},
+  {id:"steroidconn",l:"→ Steroids",x:2500,y:290,p:"gonad",k:"ghost",go:"steroid"},
+  {id:"amh",l:"AMH from Sertoli",x:420,y:720,p:"ducts",s:"Müllerian inhibiting factor"},
+  {id:"param",l:"Paramesonephric",x:1000,y:720,p:"ducts",k:"hub",s:"the Müllerian duct",m:["mrkh","mullerianfusion"]},
+  {id:"femaleint",l:"Tubes · uterus · upper ⅓ vagina",x:1700,y:720,p:"ducts",s:"persists when AMH is absent",m:["desdrug"]},
+  {id:"caisn",l:"46,XY, no uterus, female outside",x:2350,y:720,p:"ducts",s:"receptor broken, AMH fine",m:["ais"]},
+  {id:"testo",l:"Testosterone from Leydig",x:420,y:900,p:"ducts",s:"acts locally, same side"},
+  {id:"meso",l:"Mesonephric",x:1000,y:900,p:"ducts",k:"hub",s:"the Wolffian duct",m:["ductremnants"]},
+  {id:"maleint",l:"Epididymis · vas · seminal vesicles",x:1700,y:900,p:"ducts",s:"needs testosterone, not DHT"},
+  {id:"swyern",l:"46,XY with a uterus",x:2350,y:900,p:"ducts",s:"no SRY → no AMH, no androgen",m:["swyer"]},
+  {id:"testo2",l:"Testosterone",x:420,y:1260,p:"extgen",s:"from the Leydig cell"},
+  {id:"dht",l:"DHT",x:900,y:1260,p:"extgen",k:"hub",s:"the potent androgen",m:["reductase5a"]},
+  {id:"maleext",l:"Penis · scrotum · prostate",x:1500,y:1260,p:"extgen",s:"requires DHT"},
+  {id:"femaleext",l:"Clitoris · labia · lower ⅔ vagina",x:2250,y:1260,p:"extgen",s:"the default — no androgen needed",m:["cah21","aromatasedef"]},
+  {id:"drugsn",l:"Androgen-axis drugs",x:2250,y:1380,p:"extgen",s:"synthesis · receptor · GnRH",m:["antiandrogens","gnrhanalogues"]}],
+ edges:[
+  {a:"pgc",b:"bipot",p:"gonad",e:"Colonize the genital ridge",ly:-46},
+  {a:"bipot",b:"testis",p:"gonad",e:"SRY → testis-determining factor",m:["sexdevreg","swyer"]},
+  {a:"bipot",b:"ovary",p:"gonad",e:"No SRY — the default path",m:["turner"]},
+  {a:"testis",b:"sertoli",p:"gonad",e:"AMH"},
+  {a:"testis",b:"leydig",p:"gonad",e:"Testosterone"},
+  {a:"ovary",b:"ovarysec",p:"gonad",e:"Nothing is made",ly:-46},
+  {a:"leydig",b:"steroidconn",p:"gonad",dash:1,arrow:"none"},
+  {a:"amh",b:"param",p:"ducts",e:"Destroys it",note:"fails in persistent Müllerian duct syndrome",arrow:"inhib",ly:-52,m:["pmds"]},
+  {a:"param",b:"femaleint",p:"ducts",e:"Persists when AMH never acts",ly:-46,m:["mullerianfusion"]},
+  {a:"testo",b:"meso",p:"ducts",e:"Rescues it",note:"fails in androgen insensitivity",ly:-52,m:["ais"]},
+  {a:"meso",b:"maleint",p:"ducts",e:"SEED — Seminal vesicles, Epididymis, Ejaculatory duct, Ductus deferens",ly:-46},
+  {a:"testo2",b:"dht",p:"extgen",e:"5α-reductase",rl:1,ly:-46,m:["reductase5a","antiandrogens"]},
+  {a:"dht",b:"maleext",p:"extgen",e:"Virilizes the tubercle, folds and swellings",ly:-46}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["index","Index"]];
 
 
 
