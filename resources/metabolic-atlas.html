@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 19 pan/zoom maps with 284 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 20 pan/zoom maps with 297 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="19 interactive maps. 284 lesions pinned to the step they break.">
+<meta property="og:description" content="20 interactive maps. 297 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -343,6 +343,11 @@ const PATHS = {
   gasex:{n:"Gas exchange",v:"--p-ppp"},
   o2transport:{n:"Oxygen transport",v:"--p-sugars"},
   alveolus:{n:"Alveolus & interstitium",v:"--p-glycogen"},
+  hpa:{n:"Adrenal axis",v:"--p-tca"},
+  thyroidax:{n:"Thyroid axis",v:"--p-glycolysis"},
+  gonadax:{n:"Gonadal axis",v:"--p-sugars"},
+  growthax:{n:"GH & prolactin",v:"--p-gluconeo"},
+  postpit:{n:"Posterior pituitary",v:"--p-glycogen"},
   gonad:{n:"Gonadal determination",v:"--p-ppp"},
   ducts:{n:"Internal ducts",v:"--p-glycolysis"},
   extgen:{n:"External genitalia",v:"--p-sugars"},
@@ -2352,7 +2357,98 @@ desdrug:{n:"Diethylstilbestrol exposure",alias:"DES",k:"drug",p:"ducts",enz:"Syn
  find:["<b>Clear cell adenocarcinoma of the vagina and cervix</b> in exposed daughters, typically presenting in adolescence or the twenties","<b>Vaginal adenosis</b> — glandular epithelium where squamous should be","<b>T-shaped uterine cavity</b>, cervical hood, incompetent cervix → infertility, ectopic pregnancy, preterm birth","Exposed sons: epididymal cysts, cryptorchidism, hypoplastic testes"],
  labs:["Any vaginal clear cell adenocarcinoma in a young woman should prompt the question about maternal DES"],
  buzz:["Clear cell adenocarcinoma of the vagina in a young woman","A drug whose adverse effect skipped a generation"],
- tx:["Surveillance of exposed offspring; the drug itself is long withdrawn"]}
+ tx:["Surveillance of exposed offspring; the drug itself is long withdrawn"]},
+
+/* ── hypothalamic–pituitary axes ─────────────────────── */
+axisreg:{n:"Reading an endocrine axis",alias:"primary vs secondary vs tertiary",k:"reg",p:"hpa",enz:"Hypothalamus → pituitary → target gland",inh:"—",hi:1,
+ mech:"Every axis is the same three-step chain with negative feedback from the end product. Because of that feedback, <b>the tropic hormone and the end product move in opposite directions when the problem is in the target gland, and in the same direction when the problem is above it</b>. Two numbers locate the lesion.",
+ find:["<b>Primary</b> = the target gland is broken. End product is low, so feedback is released and the tropic hormone climbs: <b>↓ cortisol with ↑ ACTH</b>, <b>↓ T4 with ↑ TSH</b>","<b>Secondary</b> = the pituitary is broken. Both fall together: <b>↓ cortisol with ↓ ACTH</b>, <b>↓ T4 with ↓ TSH</b>","<b>Tertiary</b> = the hypothalamus is broken. Same direction again, and only a releasing-hormone stimulation test separates it from secondary","<b>Autonomous overproduction by the target gland</b> suppresses the tropic hormone: <b>↑ cortisol with ↓ ACTH</b> means an adrenal tumour; <b>↑ T4 with ↓ TSH</b> means Graves or a toxic nodule","<b>Both high</b> means the driver is above the gland — a pituitary adenoma, or ectopic production"],
+ labs:["The pituitary hormone is the more sensitive marker, which is why <b>TSH is the screening test</b> for thyroid disease rather than T4","One exception worth knowing: <b>prolactin is tonically inhibited</b>, so anything that cuts the stalk raises it while lowering everything else"],
+ buzz:["Opposite directions = the gland. Same direction = the pituitary or above","Check the tropic hormone before you interpret the end product"],
+ tx:["—"]},
+
+cushing:{n:"Cushing syndrome & Cushing disease",k:"dz",p:"hpa",enz:"Cortisol excess — ACTH-dependent or not",inh:"Acquired",hi:1,
+ mech:"Cushing <b>syndrome</b> is the clinical state of cortisol excess from any cause. Cushing <b>disease</b> is specifically a corticotroph adenoma driving it. The workup is entirely about using ACTH and suppressibility to find the source.",
+ find:["Central obesity with thin extremities, <b>moon facies</b>, <b>dorsocervical fat pad</b>, supraclavicular fullness","<b>Wide purple striae</b>, thin skin, easy bruising, poor wound healing","Proximal muscle weakness, osteoporosis, hyperglycaemia, hypertension, immunosuppression","Hyperpigmentation only when ACTH is high, since POMC also yields MSH","<b>The commonest cause overall is exogenous glucocorticoid</b> — and there ACTH is suppressed and the adrenals atrophy"],
+ labs:["Screen with <b>24-hour urinary free cortisol, late-night salivary cortisol, or low-dose dexamethasone suppression</b>","Then measure <b>ACTH</b>. Low → adrenal source. High → pituitary or ectopic","<b>High-dose dexamethasone suppresses a pituitary adenoma but not an ectopic source</b>, because the adenoma retains some feedback sensitivity","Ectopic ACTH (small cell lung cancer, carcinoid) often presents with profound <b>hypokalaemia and metabolic alkalosis</b> and little time to develop the classic body habitus","Inferior petrosal sinus sampling settles ambiguous cases"],
+ buzz:["ACTH first, then dexamethasone — the two tests locate it","High dose suppresses the pituitary, never the ectopic"],
+ tx:["Transsphenoidal resection for Cushing disease; adrenalectomy for an adrenal source; taper exogenous steroid slowly to let the axis recover"]},
+
+addison:{n:"Adrenal insufficiency",alias:"Addison disease · secondary adrenal insufficiency",k:"dz",p:"hpa",enz:"Cortisol ± aldosterone deficiency",inh:"Autoimmune or acquired",hi:1,
+ mech:"Whether aldosterone is also lost is what separates the two levels, and it explains every difference between them. <b>Primary</b> destroys the whole cortex, so mineralocorticoid goes too. <b>Secondary</b> is loss of ACTH only, and the zona glomerulosa keeps working because it answers to angiotensin II, not ACTH.",
+ find:["Fatigue, anorexia, weight loss, nausea, postural dizziness","<b>Hyperpigmentation of skin creases, scars and buccal mucosa</b> — only in primary, where ACTH and therefore MSH are high","<b>Salt craving</b> — only in primary","<b>Adrenal crisis</b>: hypotension refractory to fluids, abdominal pain, fever, shock. Precipitated by illness or surgery in someone not stress-dosed","Causes: autoimmune adrenalitis (commonest in developed countries), tuberculosis worldwide, metastases, <b>Waterhouse-Friderichsen</b> haemorrhage in meningococcaemia"],
+ labs:["<b>Primary: ↓ cortisol, ↑ ACTH, ↓ Na⁺, ↑ K⁺, metabolic acidosis</b>","<b>Secondary: ↓ cortisol, ↓ ACTH, normal K⁺</b>, no hyperpigmentation — the potassium is the quick discriminator","Confirm with a <b>cosyntropin stimulation test</b>","The commonest cause of secondary is <b>abrupt withdrawal of exogenous steroid</b>"],
+ buzz:["Hyperpigmentation and high potassium mean primary","Normal potassium with low cortisol means the problem is the pituitary"],
+ tx:["Hydrocortisone, plus <b>fludrocortisone in primary only</b>. Crisis: IV hydrocortisone, fluids and dextrose immediately — do not wait for confirmation. Stress-dose for illness and surgery"]},
+
+acromegaly:{n:"Acromegaly & gigantism",k:"dz",p:"growthax",enz:"Growth hormone → hepatic IGF-1",inh:"Somatotroph adenoma",hi:1,
+ mech:"Growth hormone does little directly — it acts by driving the liver to make <b>IGF-1</b>, which is the actual growth signal. Excess <b>before</b> the epiphyses close gives linear growth (gigantism); <b>after</b> closure it thickens instead (acromegaly).",
+ find:["Coarsening facial features, <b>frontal bossing, prognathism, widened interdental spaces</b>, macroglossia","Enlarging hands and feet — ring and shoe size changing is the classic history","<b>Carpal tunnel syndrome</b>, deep voice, skin tags, oily skin, sweating","<b>Cardiomyopathy is the leading cause of death</b>; also hypertension, sleep apnoea, colonic polyps","Insulin resistance and diabetes — GH is diabetogenic","Old photographs are diagnostically useful because the change is so gradual"],
+ labs:["<b>Screen with IGF-1</b>, not random GH, which is pulsatile and useless as a single measurement","<b>Confirm with an oral glucose tolerance test: glucose should suppress GH and does not</b>","Then MRI the pituitary"],
+ buzz:["IGF-1 to screen, glucose suppression to confirm","Death is cardiac, not from the mass"],
+ tx:["Transsphenoidal resection first. Medical: <b>octreotide or lanreotide</b> (somatostatin analogues), <b>cabergoline</b>, and <b>pegvisomant</b>, a GH receptor antagonist that normalizes IGF-1 without shrinking the tumour"]},
+
+prolactinoma:{n:"Prolactinoma & hyperprolactinaemia",k:"dz",p:"growthax",enz:"Prolactin — tonically inhibited by dopamine",inh:"Lactotroph adenoma or drug effect",hi:1,
+ mech:"Prolactin is the one anterior pituitary hormone under <b>tonic inhibition</b>: dopamine from the hypothalamus continuously suppresses it. Anything that removes dopamine raises prolactin. High prolactin then <b>suppresses GnRH</b>, which is why the presenting complaint is usually reproductive rather than the breast.",
+ find:["<b>The most common functioning pituitary adenoma</b>","Women: galactorrhoea, oligomenorrhoea or amenorrhoea, infertility — caught early, so usually a microadenoma","Men: ↓ libido, erectile dysfunction, infertility, sometimes gynaecomastia — caught late, so usually a macroadenoma with <b>bitemporal hemianopia</b>","<b>Other causes must be excluded first</b>: pregnancy, hypothyroidism (high TRH also drives prolactin), renal failure, chest wall injury, and above all <b>drugs</b>","<b>Dopamine antagonists</b> — antipsychotics (especially risperidone), metoclopramide — are a very common cause"],
+ labs:["Prolactin level roughly tracks tumour size; a very large tumour with only modest prolactin elevation suggests <b>stalk compression</b> by a non-functioning mass instead","Check TSH and a pregnancy test before imaging","Very high levels can read falsely low by assay saturation — the hook effect; ask for a diluted sample"],
+ buzz:["Treated medically, not surgically — the exception among pituitary tumours","Check the medication list before the MRI","Modest prolactin with a big tumour means stalk effect, not a prolactinoma"],
+ tx:["<b>Cabergoline</b> (preferred) or bromocriptine — dopamine agonists shrink the tumour and normalize prolactin. Surgery only if medical therapy fails or vision is threatened"]},
+
+sheehan:{n:"Sheehan syndrome & pituitary apoplexy",k:"dz",p:"hpa",enz:"Infarction of the anterior pituitary",inh:"Acquired",hi:1,
+ mech:"The anterior pituitary <b>doubles in size during pregnancy</b> without a matching increase in its blood supply, leaving it vulnerable. Postpartum haemorrhage drops perfusion and infarcts it. The posterior lobe has a separate arterial supply and is usually spared.",
+ find:["<b>Failure to lactate</b> is typically the first sign, since prolactin is lost","Then amenorrhoea, loss of pubic and axillary hair, fatigue, hypotension","Panhypopituitarism develops over weeks to months, in the usual order: <b>GH and gonadotropins first, TSH and ACTH later</b>","<b>Pituitary apoplexy</b> is the acute version — sudden severe headache, ophthalmoplegia, visual loss and cardiovascular collapse, usually haemorrhage into an existing adenoma. A neurosurgical emergency"],
+ labs:["Low target hormones with <b>inappropriately low</b> tropic hormones — the secondary pattern across several axes at once","MRI shows an empty or partially empty sella later on","Posterior pituitary function is usually intact, so diabetes insipidus is uncommon"],
+ buzz:["A woman who cannot breastfeed after a postpartum haemorrhage","Apoplexy: give stress-dose hydrocortisone before imaging"],
+ tx:["Replace each deficient hormone. <b>Always give glucocorticoid before thyroid hormone</b> — starting levothyroxine first can precipitate an adrenal crisis by raising metabolic demand"]},
+thyroidreg:{n:"Thyroid hormone — synthesis and transport",k:"reg",p:"thyroidax",enz:"Thyroid peroxidase · 5′-deiodinase",inh:"—",hi:1,
+ mech:"One enzyme does three jobs and is the target of the main drugs. <b>Thyroid peroxidase</b> oxidizes iodide, organifies it onto thyroglobulin tyrosines, and couples them. The gland then secretes mostly <b>T4</b>, which is a prohormone — the active hormone is <b>T3</b>, made peripherally by 5′-deiodinase.",
+ find:["Iodide is trapped by the <b>Na⁺/I⁻ symporter</b>, then oxidized, organified and coupled by <b>thyroid peroxidase</b>","<b>T4 is 90% of output but T3 is 4× more potent</b> — most T3 comes from peripheral conversion, not the gland","<b>Wolff-Chaikoff effect</b>: a large iodide load transiently shuts the gland down. <b>Jod-Basedow</b>: iodine given to a nodular gland causes thyrotoxicosis instead","Reverse T3 is the inactive product, favoured in illness and starvation"],
+ labs:["<b>Only free hormone is active.</b> Anything that raises <b>TBG</b> — pregnancy, oestrogen, OCPs — raises total T4 with a normal free T4 and a normal TSH, and the patient is euthyroid","Anything that lowers TBG — nephrotic syndrome, steroids, androgens — does the reverse","<b>Sick euthyroid</b>: in serious illness, ↓ T3 with ↑ reverse T3 and a normal or low TSH. Do not treat it","Antibodies: <b>anti-TPO</b> in Hashimoto, <b>TSI</b> in Graves"],
+ buzz:["Peroxidase does oxidation, organification and coupling — and propylthiouracil blocks all three","Total T4 changes with TBG; free T4 and TSH do not","Check a TSH before believing any T4"],
+ tx:["—"]},
+
+hypothyroid:{n:"Hypothyroidism & Hashimoto thyroiditis",k:"dz",p:"thyroidax",enz:"Thyroid peroxidase autoantibodies",inh:"Autoimmune",hi:1,
+ mech:"Autoimmune lymphocytic destruction of the gland — the commonest cause where iodine is sufficient. Worldwide, <b>iodine deficiency</b> remains the leading cause.",
+ find:["Fatigue, cold intolerance, weight gain, constipation, dry coarse skin, brittle hair","<b>Delayed relaxation phase of the deep tendon reflexes</b> — the most specific physical sign","Bradycardia, hoarseness, menorrhagia, depression, carpal tunnel, ↑ LDL","<b>Goitre</b>, painless and firm; the gland can later atrophy","<b>Myxoedema coma</b>: hypothermia, hypoventilation, hyponatraemia, altered consciousness, often precipitated by cold or infection","<b>Congenital hypothyroidism</b>: lethargy, poor feeding, umbilical hernia, macroglossia, protruding tongue — untreated it causes irreversible intellectual disability, which is why it is on newborn screening"],
+ labs:["<b>↑ TSH with ↓ free T4</b>. Subclinical disease is ↑ TSH with normal free T4","<b>Anti-TPO antibodies</b> positive; histology shows a lymphocytic infiltrate with germinal centres and <b>Hürthle cells</b>","↑ Risk of <b>B-cell (MALT) lymphoma</b> of the thyroid","Hashimoto can start with a transient thyrotoxic phase (hashitoxicosis) as stored hormone is released"],
+ buzz:["Delayed relaxation of the ankle jerk","Hürthle cells and germinal centres","Treat the TSH, not the symptom"],
+ tx:["<b>Levothyroxine</b>, recheck TSH in 6 weeks. Start low in the elderly and in coronary disease. In coexisting adrenal insufficiency, <b>steroid first</b>"]},
+
+hyperthyroid:{n:"Hyperthyroidism & Graves disease",k:"dz",p:"thyroidax",enz:"TSH receptor stimulating antibody",inh:"Autoimmune",hi:1,
+ mech:"In Graves, an IgG antibody <b>binds and activates the TSH receptor</b>, so the gland is driven continuously and is not suppressible. The same antibody acts on retro-orbital and pretibial fibroblasts, which is why only Graves has the eye and skin findings.",
+ find:["Heat intolerance, weight loss with a good appetite, palpitations, tremor, anxiety, frequent stools","<b>Diffuse non-tender goitre with a bruit</b>","<b>Exophthalmos, lid lag and pretibial myxoedema occur in Graves only</b> — they are antibody-mediated, not caused by the hormone","<b>Atrial fibrillation</b>, especially in the elderly, where the picture can be apathetic rather than hyperkinetic","<b>Thyroid storm</b>: fever, delirium, tachyarrhythmia, vomiting, often after surgery, infection or iodine load. High mortality","Other causes: toxic multinodular goitre, toxic adenoma, subacute (de Quervain) thyroiditis — painful and post-viral, and <b>factitious</b> intake, where thyroglobulin is low"],
+ labs:["<b>↓ TSH with ↑ free T4 and T3</b>","<b>Radioactive iodine uptake</b> separates the causes: diffuse high in Graves, patchy in a multinodular goitre, focal hot nodule in an adenoma, and <b>low uptake in thyroiditis or exogenous hormone</b>","TSI or TRAb positive in Graves"],
+ buzz:["Eye and skin signs mean Graves, because those are antibody effects","Low uptake means the hormone was released or swallowed, not made"],
+ tx:["<b>Methimazole</b> first line; <b>propylthiouracil</b> in the first trimester and in storm, since it also blocks peripheral T4→T3 conversion","β-blocker for symptoms; radioactive iodine or surgery for definitive control","<b>Storm</b>: propylthiouracil, then iodine at least an hour later (Wolff-Chaikoff), β-blocker, and glucocorticoid"]},
+
+craniopharyngioma:{n:"Craniopharyngioma",k:"dz",p:"hpa",enz:"Remnant of Rathke pouch",inh:"Congenital remnant",hi:1,
+ mech:"A tumour arising from surface-ectoderm remnants of <b>Rathke pouch</b>, the same structure that forms the anterior pituitary. It sits above the sella and presses downward and forward.",
+ find:["<b>Bimodal age distribution</b> — children and again after 50","<b>Bitemporal hemianopia</b> from compression of the optic chiasm","Growth failure in children, from GH and then gonadotropin loss","<b>Diabetes insipidus</b> is common, unlike with pituitary adenomas — the suprasellar position reaches the stalk and posterior lobe","Headache, hydrocephalus"],
+ labs:["<b>Calcification on imaging</b> is the classic discriminator from a pituitary adenoma, which does not calcify","Cystic, with fluid described as \"machinery oil\" rich in cholesterol crystals","Histology: adamantinomatous pattern with wet keratin"],
+ buzz:["A calcified suprasellar cystic mass in a child with growth failure","Adenomas do not calcify and rarely cause diabetes insipidus"],
+ tx:["Resection, often with radiotherapy; lifelong hormone replacement is usually needed"]},
+
+men:{n:"Multiple endocrine neoplasia",alias:"MEN 1 · MEN 2A · MEN 2B",k:"dz",p:"hpa",enz:"MEN1 (menin) · RET proto-oncogene",inh:"Autosomal dominant",hi:1,
+ mech:"All three are autosomal dominant. <b>MEN1</b> is a tumour suppressor, <b>MEN2A and 2B are RET</b>, a proto-oncogene — which is why prophylactic thyroidectomy is offered in the RET syndromes and not in MEN 1.",
+ find:["<b>MEN 1 — the 3 Ps</b>: Parathyroid hyperplasia (the commonest and usually first), Pancreatic endocrine tumours (gastrinoma → Zollinger-Ellison, insulinoma), Pituitary adenoma (often prolactinoma)","<b>MEN 2A — the 2 Ps and a C</b>: Parathyroid hyperplasia, Phaeochromocytoma, <b>Medullary thyroid carcinoma</b>","<b>MEN 2B</b>: Medullary thyroid carcinoma, Phaeochromocytoma, <b>mucosal neuromas and a marfanoid habitus</b> — and no parathyroid disease","Medullary carcinoma arises from parafollicular C cells and secretes <b>calcitonin</b>; histology shows sheets of cells in an <b>amyloid</b> stroma"],
+ labs:["Genetic testing: MEN1 sequencing, or RET for 2A and 2B","<b>Always exclude phaeochromocytoma before any surgery</b> in a RET syndrome — operating on an unblocked phaeo can be fatal","Calcitonin and CEA track medullary carcinoma"],
+ buzz:["MEN 1 is a tumour suppressor; MEN 2 is an oncogene","Mucosal neuromas and marfanoid habitus mean 2B","Prophylactic thyroidectomy in RET carriers"],
+ tx:["Prophylactic total thyroidectomy in RET mutation carriers, timing set by the specific codon; resect the other tumours as they arise"]},
+
+pitdrugs:{n:"Drugs acting on the pituitary axes",alias:"cabergoline · octreotide · pegvisomant · metyrapone",k:"drug",p:"growthax",enz:"Dopamine · somatostatin · GH and cortisol pathways",inh:"—",hi:1,
+ mech:"Each drug exploits one of the axis's own control points — the tonic dopamine brake, the somatostatin brake, the GH receptor, or a step in cortisol synthesis.",
+ find:["<b>Cabergoline, bromocriptine</b> — dopamine agonists. First line for prolactinoma, since they shrink the tumour as well as lowering prolactin. Cabergoline is better tolerated; bromocriptine causes more nausea","<b>Octreotide, lanreotide</b> — somatostatin analogues for acromegaly, also carcinoid syndrome and variceal bleeding. Cause gallstones and steatorrhoea","<b>Pegvisomant</b> — GH receptor antagonist; normalizes IGF-1 but does not shrink the tumour, so the mass still needs watching","<b>Ketoconazole, metyrapone, osilodrostat</b> — block cortisol synthesis. Metyrapone blocks 11β-hydroxylase, so <b>11-deoxycortisol accumulates</b>, which is the basis of the old metyrapone stimulation test","<b>Mifepristone</b> — glucocorticoid receptor antagonist, used for the hyperglycaemia of Cushing syndrome"],
+ labs:["Dopamine <b>antagonists</b> do the opposite — antipsychotics and metoclopramide raise prolactin and are a common cause of galactorrhoea and amenorrhoea","Octreotide: monitor for gallstones and for glucose changes"],
+ buzz:["Prolactinoma is the pituitary tumour treated with a pill, not a knife","Pegvisomant fixes the number, not the tumour"],
+ tx:["—"]},
+
+thyroiddrugs:{n:"Thyroid drugs",alias:"levothyroxine · methimazole · propylthiouracil",k:"drug",p:"thyroidax",enz:"Thyroid peroxidase · 5′-deiodinase",inh:"—",hi:1,
+ mech:"The thionamides both block <b>thyroid peroxidase</b>, so they stop new hormone synthesis but do nothing to hormone already stored — which is why the clinical effect takes weeks and why a β-blocker is added for symptoms.",
+ find:["<b>Levothyroxine</b> (T4) for replacement. Take on an empty stomach; calcium, iron and PPIs impair absorption. Overtreatment causes atrial fibrillation and bone loss","<b>Methimazole</b> — first line; longer acting, once daily. <b>Teratogenic in the first trimester</b> (aplasia cutis, choanal atresia)","<b>Propylthiouracil</b> — first trimester of pregnancy and thyroid storm, because it <b>also blocks peripheral T4→T3 conversion</b>. Carries a risk of <b>hepatotoxicity</b>","<b>Agranulocytosis</b> is the shared serious adverse effect — any sore throat or fever on a thionamide needs an urgent white count","Iodine (Lugol, potassium iodide) transiently blocks release via <b>Wolff-Chaikoff</b>; in storm give it <b>after</b> the thionamide or it fuels synthesis"],
+ labs:["Radioactive iodine ablation causes permanent hypothyroidism in most and can worsen Graves ophthalmopathy; it is contraindicated in pregnancy"],
+ buzz:["PTU in Pregnancy's first trimester and in storm; Methimazole for Most other cases","Thionamide plus a sore throat = check the white count today","Give the thionamide before the iodine"],
+ tx:["—"]}
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -4018,7 +4114,103 @@ MAPS.sexdev = {
   {a:"dht",b:"maleext",p:"extgen",e:"Virilizes the tubercle, folds and swellings",ly:-46}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["index","Index"]];
+MAPS.axes = {
+ t:"Endocrine Axes", sub:"Hypothalamus → pituitary → target gland · five axes side by side, and the two numbers that locate any lesion",
+ w:3200, h:1720,
+ comps:[
+  {x:190,y:110,w:2820,h:790,l:"Anterior pituitary — five axes, same three steps"},
+  {x:190,y:980,w:1400,h:300,l:"Posterior pituitary — stored, not made"},
+  {x:1670,y:980,w:1340,h:300,l:"When the gland itself is the problem"}],
+ panels:[
+  {x:240,y:1360,w:900,h:226,kw:178,t:"Two numbers locate the lesion",rows:[
+   ["↓ cortisol · ↑ ACTH","Primary — the adrenal (Addison)"],
+   ["↓ cortisol · ↓ ACTH","Secondary — the pituitary"],
+   ["↑ cortisol · ↓ ACTH","Adrenal tumour making its own"],
+   ["↑ cortisol · ↑ ACTH","Cushing disease, or ectopic ACTH"],
+   ["↓ T4 · ↑ TSH","Primary hypothyroid — Hashimoto"],
+   ["↓ T4 · ↓ TSH","Secondary — the pituitary"],
+   ["↑ T4 · ↓ TSH","Graves or a toxic nodule"],
+   ["↑ T4 · ↑ TSH","TSH-secreting adenoma — rare, but that is the point"]]},
+  {x:1200,y:1360,w:880,h:248,kw:152,t:"Pituitary cell types",rows:[
+   ["Acidophils","GH and prolactin — the two that are NOT tropic"],
+   ["","Somatotroph is the most numerous cell"],
+   ["Basophils","FSH, LH, ACTH, TSH — B-FLAT"],
+   ["Shared α subunit","TSH, LH, FSH and hCG — hence hCG can drive a thyroid"],
+   ["POMC","ACTH, MSH, β-endorphin from one precursor"],
+   ["","Explains hyperpigmentation whenever ACTH is high"],
+   ["Posterior lobe","ADH and oxytocin, made in the hypothalamus"],
+   ["","Neurons, not glandular cells — nothing is synthesized there"],
+   ["Order of loss","GH and gonadotropins go first, ACTH last"]]},
+  {x:2140,y:1360,w:870,h:270,kw:160,t:"Drugs on these axes",rows:[
+   ["Cabergoline","Dopamine agonist — prolactinoma, first line"],
+   ["Octreotide","Somatostatin analogue — acromegaly, carcinoid"],
+   ["Pegvisomant","GH receptor antagonist — fixes IGF-1, not the mass"],
+   ["Metyrapone","11β-hydroxylase — 11-deoxycortisol accumulates"],
+   ["Ketoconazole","Blocks steroid synthesis broadly"],
+   ["Mifepristone","Glucocorticoid receptor antagonist"],
+   ["Levothyroxine","T4 replacement — recheck TSH at 6 weeks"],
+   ["Methimazole","Thyroid peroxidase — most patients"],
+   ["Propylthiouracil","Also blocks T4→T3 — storm, first trimester"],
+   ["Both thionamides","Agranulocytosis — sore throat means check a count"]]}],
+ nodes:[
+  {id:"crh",l:"CRH",x:400,y:230,p:"hpa",s:"hypothalamus"},
+  {id:"cortico",l:"Corticotroph",x:950,y:230,p:"hpa",s:"basophil"},
+  {id:"acthn",l:"ACTH",x:1450,y:230,p:"hpa",s:"POMC also yields MSH"},
+  {id:"adrenaln",l:"Adrenal cortex",x:1980,y:230,p:"hpa",s:"zona fasciculata",m:["zonereg"]},
+  {id:"cortisoln",l:"Cortisol",x:2550,y:230,p:"hpa",k:"hub",s:"feeds back on both",m:["cushing","addison"]},
+  {id:"trh",l:"TRH",x:400,y:370,p:"thyroidax",s:"also drives prolactin"},
+  {id:"thyrotroph",l:"Thyrotroph",x:950,y:370,p:"thyroidax",s:"basophil"},
+  {id:"tshn",l:"TSH",x:1450,y:370,p:"thyroidax",s:"shared α subunit"},
+  {id:"thyroidn",l:"Thyroid follicle",x:1980,y:370,p:"thyroidax",s:"peroxidase does the work",m:["thyroidreg","thyroiddrugs"]},
+  {id:"t3t4",l:"T4 · T3",x:2550,y:370,p:"thyroidax",k:"hub",s:"T3 is the active one",m:["hypothyroid","hyperthyroid"]},
+  {id:"gnrhn",l:"GnRH",x:400,y:510,p:"gonadax",s:"must be pulsatile",m:["kallmann","gnrhanalogues"]},
+  {id:"gonadotroph",l:"Gonadotroph",x:950,y:510,p:"gonadax",s:"basophil"},
+  {id:"lhfsh",l:"LH · FSH",x:1450,y:510,p:"gonadax",s:"shared α subunit"},
+  {id:"gonadn",l:"Gonad",x:1980,y:510,p:"gonadax",s:"testis or ovary",m:["klinefelter","turner"]},
+  {id:"sexster",l:"Testosterone · estradiol",x:2550,y:510,p:"gonadax",s:"inhibin ⊣ FSH separately"},
+  {id:"ghrh",l:"GHRH",x:400,y:650,p:"growthax",s:"somatostatin ⊣ it"},
+  {id:"somatotroph",l:"Somatotroph",x:950,y:650,p:"growthax",s:"acidophil · most numerous"},
+  {id:"ghn",l:"Growth hormone",x:1450,y:650,p:"growthax",s:"pulsatile, mostly at night"},
+  {id:"liver3",l:"Liver",x:1980,y:650,p:"growthax",s:"the actual effector"},
+  {id:"igf1",l:"IGF-1",x:2550,y:650,p:"growthax",k:"hub",s:"somatomedin C",m:["acromegaly"]},
+  {id:"dopa2",l:"Dopamine",x:400,y:790,p:"growthax",s:"the only tonic INHIBITOR"},
+  {id:"lactotroph",l:"Lactotroph",x:950,y:790,p:"growthax",s:"acidophil"},
+  {id:"prln",l:"Prolactin",x:1450,y:790,p:"growthax",s:"⊣ GnRH → amenorrhoea",m:["prolactinoma","pitdrugs"]},
+  {id:"breastn",l:"Breast",x:1980,y:790,p:"growthax",s:"milk production"},
+  {id:"steroidconn2",l:"→ Steroids",x:2550,y:790,p:"hpa",k:"ghost",go:"steroid"},
+  {id:"hypothal2",l:"Hypothalamic nuclei",x:420,y:1110,p:"postpit",s:"supraoptic · paraventricular"},
+  {id:"postpitn",l:"Posterior pituitary",x:950,y:1110,p:"postpit",s:"stores, does not synthesize"},
+  {id:"adhox",l:"ADH · oxytocin",x:1400,y:1110,p:"postpit",s:"down the axon",m:["di","siadh"]},
+  {id:"adenoma",l:"Pituitary adenoma",x:1890,y:1080,p:"hpa",s:"prolactinoma commonest",m:["prolactinoma"]},
+  {id:"masseffect",l:"Mass effect",x:2450,y:1080,p:"hpa",s:"bitemporal hemianopia",m:["craniopharyngioma"]},
+  {id:"infarct",l:"Sheehan · apoplexy",x:1890,y:1210,p:"hpa",s:"the gland infarcts",m:["sheehan"]},
+  {id:"mennode",l:"MEN syndromes",x:2450,y:1210,p:"hpa",s:"MEN1 · RET",m:["men"]}],
+ edges:[
+  {a:"crh",b:"cortico",p:"hpa",e:"Hypophyseal portal system",ly:-46,m:["axisreg"]},
+  {a:"cortico",b:"acthn",p:"hpa",ly:-46},
+  {a:"acthn",b:"adrenaln",p:"hpa",e:"Drives the fasciculata",ly:-46},
+  {a:"adrenaln",b:"cortisoln",p:"hpa",e:"⊣ feeds back on CRH and ACTH",ly:-46,m:["axisreg"]},
+  {a:"trh",b:"thyrotroph",p:"thyroidax",ly:-46},
+  {a:"thyrotroph",b:"tshn",p:"thyroidax",ly:-46},
+  {a:"tshn",b:"thyroidn",p:"thyroidax",e:"Growth and hormone release",ly:-46},
+  {a:"thyroidn",b:"t3t4",p:"thyroidax",e:"⊣ feeds back on TSH",ly:-46,m:["thyroidreg"]},
+  {a:"gnrhn",b:"gonadotroph",p:"gonadax",e:"Pulsatile only",ly:-46,m:["gnrhanalogues"]},
+  {a:"gonadotroph",b:"lhfsh",p:"gonadax",ly:-46},
+  {a:"lhfsh",b:"gonadn",p:"gonadax",ly:-46},
+  {a:"gonadn",b:"sexster",p:"gonadax",e:"⊣ feeds back on both",ly:-46},
+  {a:"ghrh",b:"somatotroph",p:"growthax",ly:-46},
+  {a:"somatotroph",b:"ghn",p:"growthax",ly:-46},
+  {a:"ghn",b:"liver3",p:"growthax",e:"GH acts here, not on bone",ly:-46},
+  {a:"liver3",b:"igf1",p:"growthax",e:"IGF-1 is the growth signal",ly:-46,m:["acromegaly"]},
+  {a:"dopa2",b:"lactotroph",p:"growthax",e:"Tonic inhibition",arrow:"inhib",ly:-46,m:["prolactinoma"]},
+  {a:"lactotroph",b:"prln",p:"growthax",ly:-46},
+  {a:"prln",b:"breastn",p:"growthax",ly:-46},
+  {a:"hypothal2",b:"postpitn",p:"postpit",e:"Axonal transport",ly:-46},
+  {a:"postpitn",b:"adhox",p:"postpit",e:"Released from nerve terminals",ly:-46},
+  {a:"adenoma",b:"masseffect",p:"hpa",e:"Compresses the chiasm",ly:-46}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["index","Index"]];
 
 
 
