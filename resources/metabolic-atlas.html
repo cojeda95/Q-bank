@@ -4348,12 +4348,51 @@ function render(){
   cam=svg.querySelector("#cam");
   fitChips(); fitPanels(); fitComps(); applyCam(); applyFilter(); markSelected();
 }
+/* Text measurement.
+   Every box on every map is sized from measured text, so the measurement has to be
+   right on any engine. Two hazards:
+     - getComputedTextLength() returns advance widths; getBBox() returns ink extent.
+       Either can be the larger, so take both.
+     - some engines omit letter-spacing from BOTH. .comp-l carries .12em, so on those
+       engines the compartment badge came out far too narrow and the label ran past
+       the pill. Detect it once with a probe rather than assuming.
+   Detection runs on the live <svg> so it sees the real font and rendering path. */
+let LS_MISSING = false;
+function detectLetterSpacing(){
+  try{
+    const t=document.createElementNS("http://www.w3.org/2000/svg","text");
+    t.setAttribute("x","-9999"); t.setAttribute("y","-9999");
+    t.setAttribute("class","comp-l");
+    t.textContent="ABCDEFGHIJ";                       // 10 characters
+    svg.appendChild(t);
+    const raw=el=>{ let w=0;
+      try{ w=el.getComputedTextLength()||0; }catch(e){}
+      try{ const b=el.getBBox().width; if(b>w) w=b; }catch(e){}
+      return w; };
+    t.style.letterSpacing="0px"; const a=raw(t);
+    t.style.letterSpacing="5px"; const b=raw(t);
+    svg.removeChild(t);
+    LS_MISSING = (b-a) < 25;                          // ~50px expected when counted
+  }catch(e){ LS_MISSING=false; }
+}
+function textW(t){
+  let w=0;
+  try{ w=t.getComputedTextLength()||0; }catch(e){}
+  try{ const b=t.getBBox().width; if(b>w) w=b; }catch(e){}
+  if(LS_MISSING){
+    try{
+      const ls=parseFloat(getComputedStyle(t).letterSpacing);
+      if(ls>0) w += ls*((t.textContent||"").length);
+    }catch(e){}
+  }
+  return w;
+}
 function fitChips(){
   svg.querySelectorAll(".chipwrap").forEach(g=>{
     const r=g.querySelector("rect.bg"); if(!r) return;
     const cx=+g.dataset.cx, cy=+g.dataset.cy;
     let w=0;
-    g.querySelectorAll(".chip text").forEach(t=>{const L=t.getComputedTextLength(); if(L>w) w=L;});
+    g.querySelectorAll(".chip text").forEach(t=>{const L=textW(t); if(L>w) w=L;});
     w=Math.ceil(w)+20;
     r.setAttribute("x",(cx-w/2).toFixed(1)); r.setAttribute("width",w);
     const bar=g.querySelector(".rl-bar");
@@ -4364,13 +4403,13 @@ function fitChips(){
 function fitComps(){
   svg.querySelectorAll(".comp-tag").forEach(g=>{
     const r=g.querySelector("rect"), t=g.querySelector("text");
-    if(r&&t) r.setAttribute("width",Math.ceil(t.getComputedTextLength())+24);
+    if(r&&t) r.setAttribute("width",Math.ceil(textW(t))+24);
   });
 }
 function fitPanels(){
   svg.querySelectorAll(".panel-c").forEach(g=>{
     const r=g.querySelector("rect"),x=+r.getAttribute("x");let need=+r.getAttribute("width");
-    g.querySelectorAll("text").forEach(t=>{const e=+t.getAttribute("x")+t.getComputedTextLength()+15-x;if(e>need)need=e;});
+    g.querySelectorAll("text").forEach(t=>{const e=+t.getAttribute("x")+textW(t)+15-x;if(e>need)need=e;});
     if(need>+r.getAttribute("width")){const w=Math.ceil(need);r.setAttribute("width",w);
       const l=g.querySelector("line");if(l)l.setAttribute("x2",x+w-15);}
   });
@@ -4601,8 +4640,9 @@ document.addEventListener("keydown",ev=>{
 });
 
 /* ── init ───────────────────────────────────────────── */
+detectLetterSpacing();
 try{ if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{
-  try{ fitChips(); fitPanels(); fitComps(); }catch(e){}
+  try{ detectLetterSpacing(); fitChips(); fitPanels(); fitComps(); }catch(e){}
 }); }catch(e){}
 tabsEl.innerHTML=VIEWS.map(([v,l])=>`<button class="tab" role="tab" data-v="${v}" aria-selected="${v==="core"}">${l}</button>`).join("");
 tabsEl.querySelectorAll(".tab").forEach(t=>t.onclick=()=>setView(t.dataset.v));
