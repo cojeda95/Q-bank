@@ -6,17 +6,75 @@
 # A cowork session may be committing to this same repo at the same moment
 # (the OCOM hub paths are symlinks here), so a transient git lock is normal,
 # not an error — retry a few times with a short pause before giving up.
+#
+# That session has also twice now died mid-operation and left a lock behind
+# that nothing will ever remove, which blocks every later push until someone
+# clears it by hand. So after a failure we will clear a lock, but ONLY one we
+# can prove is abandoned. All four of these must hold:
+#     1. no git process is running at all
+#     2. the lock file is zero bytes (git writes into a lock it is really using)
+#     3. it is older than STALE_AFTER seconds
+#     4. no process holds it open for writing (a read-only handle is Spotlight)
+# Anything short of all four and we leave it alone and keep waiting. Locks are
+# renamed rather than deleted, so a wrong call is still recoverable.
 set -e
 export PATH="$HOME/.local/bin:$PATH"
 cd "$(dirname "$0")"
+
+STALE_AFTER=120        # seconds before an empty, unheld lock counts as abandoned
+
+file_age_secs() {      # portable mtime age (BSD stat, then GNU stat)
+  local m
+  m=$(stat -f %m "$1" 2>/dev/null) || m=$(stat -c %Y "$1" 2>/dev/null) || return 1
+  echo $(( $(date +%s) - m ))
+}
+
+lock_has_writer() {    # 0 = some process holds it for writing
+  command -v lsof >/dev/null 2>&1 || return 1
+  lsof -- "$1" 2>/dev/null | awk 'NR>1 && $4 !~ /r$/ { found=1 } END { exit !found }'
+}
+
+clear_stale_locks() {
+  local cleared=0 lock age
+  if pgrep -x git >/dev/null 2>&1; then
+    echo "  a git process is running — leaving every lock alone"
+    return 1
+  fi
+  for lock in .git/index.lock .git/HEAD.lock .git/config.lock \
+              .git/refs/heads/*.lock .git/objects/*.lock; do
+    [ -e "$lock" ] || continue
+    if [ -s "$lock" ]; then
+      echo "  $lock is not empty — a real operation may own it, leaving it"
+      continue
+    fi
+    age=$(file_age_secs "$lock") || continue
+    if [ "$age" -lt "$STALE_AFTER" ]; then
+      echo "  $lock is only ${age}s old — waiting rather than clearing"
+      continue
+    fi
+    if lock_has_writer "$lock"; then
+      echo "  $lock is open for writing by another process — leaving it"
+      continue
+    fi
+    if mv "$lock" "$lock.stale-$(date +%Y%m%d-%H%M%S)" 2>/dev/null; then
+      echo "  cleared abandoned lock: $lock (empty, ${age}s old, no git process, no writer)"
+      cleared=1
+    fi
+  done
+  [ "$cleared" = 1 ]
+}
+
+# tidy away anything cleared more than a day ago so they do not pile up
+find .git -name '*.lock.stale-*' -mtime +1 -delete 2>/dev/null || true
 
 retry_git() {
   local n=0 max=6 delay=3
   until "$@"; do
     n=$((n+1))
     if [ $n -ge $max ]; then echo "git command kept failing after $max tries: $*" >&2; return 1; fi
-    if ls .git/*.lock >/dev/null 2>&1 || ls .git/objects/*.lock >/dev/null 2>&1; then
+    if ls .git/*.lock .git/objects/*.lock .git/refs/heads/*.lock >/dev/null 2>&1; then
       echo "  (repo locked — probably the other session committing; retrying in ${delay}s...)"
+      clear_stale_locks || true
     fi
     sleep $delay
   done

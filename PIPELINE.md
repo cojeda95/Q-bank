@@ -39,7 +39,26 @@ wrong place. Check `echo $QBANK_HUB` first if a sync seems to vanish.
 Pushing to `main` triggers `.github/workflows/static.yml`, which deploys to GitHub Pages in
 about 20-30 seconds. **A commit alone publishes nothing** — it has to be pushed.
 
-## The Metabolic Lesion Atlas
+### When a push says the repo is locked
+
+A cowork session commits to this same clone, so a brief lock during a push is normal and
+`./ship` just waits it out. Twice now that session has died mid-operation and left a lock
+behind that nothing would ever clear, blocking every later push until it was moved by hand.
+
+`./ship` now clears such a lock itself, but only one it can prove is abandoned — **all four**
+of these must hold, or it leaves it alone and keeps waiting:
+
+1. no `git` process is running at all
+2. the lock file is **zero bytes** (git writes into a lock it is really using)
+3. it is more than `STALE_AFTER` seconds old (120 by default)
+4. nothing holds it open for writing — a read-only handle is Spotlight indexing, not git
+
+Locks are **renamed, never deleted**, so even a wrong call is recoverable, and anything
+cleared more than a day ago is tidied away on the next run. If you see the message about a
+git process running, that is the guard doing its job: wait for the other session rather than
+forcing it.
+
+## The Lesion Atlas
 
 `resources/metabolic-atlas.html` is a **build artifact — never hand-edit it.** It is the
 standalone atlas wrapped in the hub shell: the blue "All Blocks" topbar, the site meta and
