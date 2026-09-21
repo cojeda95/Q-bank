@@ -117,7 +117,9 @@ button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
 
 /* ── map ────────────────────────────────────────────── */
 .mapwrap{position:relative;min-width:0;background:var(--map-bg);overflow:hidden}
-svg.map{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+svg.map{width:100%;height:100%;display:block;touch-action:none;cursor:grab;
+  user-select:none;-webkit-user-select:none;-moz-user-select:none}
+.toolbar,.hint,.tabs,.hdr .brand{user-select:none;-webkit-user-select:none}
 svg.map.drag{cursor:grabbing}
 .toolbar{position:absolute;left:16px;bottom:16px;display:flex;gap:3px;background:var(--surface);
   border:1px solid var(--line);border-radius:12px;padding:5px;box-shadow:var(--shadow);z-index:6}
@@ -4529,12 +4531,15 @@ svg.addEventListener("wheel",ev=>{ev.preventDefault();const p=toVB(ev.clientX,ev
 let drag=null;
 svg.addEventListener("pointerdown",ev=>{
   if(ev.target.closest(".pin,.chip,.node")) return;
+  ev.preventDefault();               // otherwise the drag starts a page-wide text selection
   drag={p:toVB(ev.clientX,ev.clientY),tx:state.tx,ty:state.ty};
   svg.setPointerCapture(ev.pointerId); svg.classList.add("drag");
 });
 svg.addEventListener("pointermove",ev=>{
   if(!drag) return;
   const p=toVB(ev.clientX,ev.clientY);
+  const sel=window.getSelection && window.getSelection();
+  if(sel && !sel.isCollapsed) sel.removeAllRanges();
   state.tx=drag.tx+(p.x-drag.p.x); state.ty=drag.ty+(p.y-drag.p.y); applyCam();
 });
 ["pointerup","pointercancel","pointerleave"].forEach(t=>svg.addEventListener(t,()=>{drag=null;svg.classList.remove("drag");}));
@@ -4596,6 +4601,9 @@ document.addEventListener("keydown",ev=>{
 });
 
 /* ── init ───────────────────────────────────────────── */
+try{ if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{
+  try{ fitChips(); fitPanels(); fitComps(); }catch(e){}
+}); }catch(e){}
 tabsEl.innerHTML=VIEWS.map(([v,l])=>`<button class="tab" role="tab" data-v="${v}" aria-selected="${v==="core"}">${l}</button>`).join("");
 tabsEl.querySelectorAll(".tab").forEach(t=>t.onclick=()=>setView(t.dataset.v));
 try{const th=localStorage.getItem("mla-theme"); document.documentElement.setAttribute("data-theme",th||"light");}catch(e){document.documentElement.setAttribute("data-theme","light");}
