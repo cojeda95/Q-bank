@@ -541,3 +541,56 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   .container { padding: 14px 10px 50px; }
   .q-card { padding: 14px; }
 }
+
+/* ── Wrong-answer flash overlay ──────────────────────────────────────── */
+/* Fires once per incorrect submission across every quiz mode (Practice,
+   Flagged Review, Toughest-Questions Review, and Exam Simulation with
+   Instant Feedback on) via triggerWrongFlash() in app.js. A full-viewport
+   translucent red wash plus a small meme image pop, both purely
+   decorative/self-dismissing — never blocks input (pointer-events: none). */
+.wrong-flash-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrong-flash-wash {
+  position: absolute;
+  inset: 0;
+  background: rgba(192, 57, 43, 0.38); /* var(--red) at low opacity */
+  animation: wrongFlashWash 0.65s ease-out forwards;
+}
+
+.wrong-flash-img {
+  position: relative;
+  max-width: 190px;
+  max-height: 190px;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  animation: wrongFlashImg 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes wrongFlashWash {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes wrongFlashImg {
+  0%   { opacity: 0; transform: scale(0.6); }
+  20%  { opacity: 1; transform: scale(1.08); }
+  30%  { opacity: 1; transform: scale(1); }
+  75%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.92); }
+}
+
+@media (max-width: 480px) {
+  .wrong-flash-img { max-width: 140px; max-height: 140px; }
+}

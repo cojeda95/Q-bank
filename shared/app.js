@@ -173,6 +173,30 @@ function visibleQuestions(sdl) {
   return s.hyOnly ? sdl.questions.filter(q => q.isHighYield) : sdl.questions;
 }
 
+/* ── Wrong-answer flash ───────────────────────────────────────────────── */
+// A brief translucent-red screen wash plus one randomly-picked meme image,
+// fired once per incorrect submission across every quiz mode (Practice,
+// Flagged Review, Toughest-Questions Review, Exam Simulation with Instant
+// Feedback on). Purely decorative — appended to <body> (not #main) so it
+// survives the immediate innerHTML re-render that reveals the answer, and
+// removes itself after the CSS animation finishes.
+const WRONG_FLASH_IMAGES = ['../shared/images/wrong-flash-1.png', '../shared/images/wrong-flash-2.png'];
+
+function triggerWrongFlash() {
+  const overlay = document.createElement('div');
+  overlay.className = 'wrong-flash-overlay';
+  const wash = document.createElement('div');
+  wash.className = 'wrong-flash-wash';
+  const img = document.createElement('img');
+  img.className = 'wrong-flash-img';
+  img.src = WRONG_FLASH_IMAGES[Math.floor(Math.random() * WRONG_FLASH_IMAGES.length)];
+  img.alt = '';
+  overlay.appendChild(wash);
+  overlay.appendChild(img);
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 700);
+}
+
 /* ── Utilities ────────────────────────────────────────────────────────── */
 function escapeHtml(str) {
   if (str == null) return '';
@@ -1155,6 +1179,7 @@ function renderPracticeQuestion() {
     const correct = letter === q.correct;
     session.records[session.index] = { letter, confidence, correct };
     session.pendingLetter = null;
+    if (!correct) triggerWrongFlash();
     logAttempt({
       id: q.id, sdlNumber: session.sdlNumber, sdlTitle: findSdl(session.sdlNumber).sdl.title,
       examNumber: session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
@@ -1436,7 +1461,9 @@ function renderExamQuestion() {
   if (!locked) {
     main.querySelectorAll('.choice').forEach(btn => {
       btn.addEventListener('click', () => {
-        session.answers[session.index] = btn.dataset.letter;
+        const letter = btn.dataset.letter;
+        session.answers[session.index] = letter;
+        if (instantFeedback && letter !== q.correct) triggerWrongFlash();
         renderExamQuestion();
       });
     });
@@ -1767,6 +1794,7 @@ function renderFlaggedQuestion() {
     const correct = letter === q.correct;
     session.records[session.index] = { letter, confidence, correct };
     session.pendingLetter = null;
+    if (!correct) triggerWrongFlash();
     logAttempt({
       id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
       objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
@@ -2005,6 +2033,7 @@ function renderReviewQuestion() {
     const correct = letter === q.correct;
     session.records[session.index] = { letter, confidence, correct };
     session.pendingLetter = null;
+    if (!correct) triggerWrongFlash();
     logAttempt({
       id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
       objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
