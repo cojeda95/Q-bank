@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 20 pan/zoom maps with 297 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 21 pan/zoom maps with 321 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="20 interactive maps. 297 lesions pinned to the step they break.">
+<meta property="og:description" content="21 interactive maps. 321 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -365,6 +365,12 @@ const PATHS = {
   coag:{n:"Coagulation cascade",v:"--p-glycolysis"},
   kinin:{n:"Kinin / bradykinin",v:"--p-gluconeo"},
   fibrinolysis:{n:"Anticoagulant & fibrinolytic",v:"--p-tca"},
+  erythro:{n:"Red cell production",v:"--p-tca"},
+  microcytic:{n:"Microcytic anemia",v:"--p-sugars"},
+  globin:{n:"Globin & hemoglobin",v:"--p-glycolysis"},
+  underprod:{n:"Underproduction · low retic",v:"--p-glycogen"},
+  hemolysis:{n:"Hemolysis · high retic",v:"--p-gluconeo"},
+  macrocytic:{n:"Macrocytic anemia",v:"--p-ppp"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -2450,7 +2456,176 @@ thyroiddrugs:{n:"Thyroid drugs",alias:"levothyroxine · methimazole · propylthi
  find:["<b>Levothyroxine</b> (T4) for replacement. Take on an empty stomach; calcium, iron and PPIs impair absorption. Overtreatment causes atrial fibrillation and bone loss","<b>Methimazole</b> — first line; longer acting, once daily. <b>Teratogenic in the first trimester</b> (aplasia cutis, choanal atresia)","<b>Propylthiouracil</b> — first trimester of pregnancy and thyroid storm, because it <b>also blocks peripheral T4→T3 conversion</b>. Carries a risk of <b>hepatotoxicity</b>","<b>Agranulocytosis</b> is the shared serious adverse effect — any sore throat or fever on a thionamide needs an urgent white count","Iodine (Lugol, potassium iodide) transiently blocks release via <b>Wolff-Chaikoff</b>; in storm give it <b>after</b> the thionamide or it fuels synthesis"],
  labs:["Radioactive iodine ablation causes permanent hypothyroidism in most and can worsen Graves ophthalmopathy; it is contraindicated in pregnancy"],
  buzz:["PTU in Pregnancy's first trimester and in storm; Methimazole for Most other cases","Thionamide plus a sore throat = check the white count today","Give the thionamide before the iodine"],
- tx:["—"]}
+ tx:["—"]},
+
+/* ── red cell & anemia ─────────────────────────────── */
+anemiaapproach:{n:"Classifying anemia — MCV first",k:"reg",p:"erythro",enz:"Mean corpuscular volume · reticulocyte index",inh:"—",hi:1,
+ mech:"Anemia is a number, not a diagnosis. The <b>MCV</b> sorts it by mechanism. <b>Microcytic</b> means hemoglobin synthesis failed — the erythroblast keeps dividing until enough Hb accumulates to stop it, so it overshoots into a small cell. <b>Macrocytic</b> means DNA synthesis failed while the cytoplasm kept growing. <b>Normocytic</b> means the cells are built correctly but there are too few, and the <b>reticulocyte index</b> then says whether the marrow is failing to make them or racing to replace them.",
+ find:["Microcytic (&lt;80 fL): iron deficiency, anemia of chronic disease, thalassemia, lead, sideroblastic — <b>TAILS</b>","Normocytic (80–100) with low reticulocytes: aplastic anemia, chronic kidney disease, early chronic disease or early iron deficiency","Normocytic with high reticulocytes: hemolysis or acute blood loss","Macrocytic (&gt;100): B12 or folate deficiency, orotic aciduria, antimetabolite drugs, alcohol, liver disease, hypothyroidism"],
+ labs:["Corrected reticulocyte count = retic % × (Hct ÷ 45); above 2% means the marrow is responding","<b>RDW</b> rises in iron deficiency (old and new cells mixed) and stays normal in thalassemia trait","<b>Mentzer index</b> = MCV ÷ RBC count: under 13 favors thalassemia, over 13 iron deficiency"],
+ buzz:["TAILS — Thalassemia, Anemia of chronic disease, Iron deficiency, Lead, Sideroblastic","Hemoglobin short means small cells; DNA short means big cells"],
+ tx:["Treat the cause the classification points to"]},
+
+reticindex:{n:"Reticulocytes & the corrected index",k:"reg",p:"erythro",enz:"Erythropoietin-driven marrow output",inh:"—",hi:1,
+ mech:"A reticulocyte is a newly released red cell that still carries residual ribosomal RNA, which a supravital stain shows as a blue reticular mesh. It spends about a day in the blood before maturing, so the count is a real-time readout of marrow output. Because the raw percentage rises artificially whenever the hematocrit falls, it must be <b>corrected</b> before it can separate a failing marrow from one working hard against destruction.",
+ find:["Index <b>above 2%</b>: the marrow is responding — hemolysis or blood loss","Index <b>below 2%</b>: the marrow is failing to respond — underproduction","Polychromasia on the smear marks the same young cells"],
+ labs:["Corrected retic = retic % × (patient Hct ÷ 45)","Reticulocyte production index divides again by the maturation time (about 2 days at a hematocrit of 25%), because stressed marrow releases cells early"],
+ buzz:["The reticulocyte count separates underproduction from destruction","Correct it for the hematocrit before trusting it"],
+ tx:["—"]},
+
+ida:{n:"Iron deficiency anemia",k:"dz",p:"microcytic",enz:"Iron supply to ferrochelatase",inh:"Acquired",hi:1,
+ mech:"The last step of heme synthesis inserts Fe²⁺ into protoporphyrin. Without iron no heme, and without heme no hemoglobin, so erythroblasts keep dividing and release small, pale cells. Stores fall first (ferritin), then serum iron, and only then does the anemia appear. The liver responds by making more <b>transferrin</b>, so TIBC rises — the single most useful discriminator from anemia of chronic disease.",
+ find:["Fatigue, pallor, exertional dyspnea; <b>pica</b>, especially for ice (pagophagia)","<b>Koilonychia</b> (spoon nails), angular cheilitis, atrophic glossitis","<b>Plummer-Vinson syndrome</b>: iron deficiency, esophageal webs and dysphagia — a risk for squamous cell carcinoma","Cause in an adult man or a postmenopausal woman is <b>colorectal cancer until proven otherwise</b>; also menstruation, pregnancy, hookworm, celiac disease, gastrectomy"],
+ labs:["<b>↓ Ferritin</b> (the first and most specific change), ↓ serum iron, <b>↑ TIBC</b>, ↓ transferrin saturation","Microcytic, hypochromic cells with widened central pallor; <b>↑ RDW</b>; ↑ free erythrocyte protoporphyrin","Reactive thrombocytosis is common"],
+ buzz:["Microcytic anemia with a high TIBC","Iron deficiency in an older adult means a GI workup","Ferritin falls first"],
+ tx:["Oral ferrous sulfate, taken with vitamin C and apart from antacids and calcium; IV iron for malabsorption or intolerance; find and treat the source of loss"]},
+
+acd:{n:"Anemia of chronic disease",alias:"Anemia of inflammation",k:"dz",p:"microcytic",enz:"Hepcidin → ferroportin",inh:"Acquired",hi:1,
+ mech:"Inflammation drives <b>IL-6</b>, which makes the liver release <b>hepcidin</b>. Hepcidin binds and degrades <b>ferroportin</b>, the only iron exporter, so iron is locked inside macrophages and enterocytes — plentiful in the body but unavailable to the marrow. It is probably an antimicrobial strategy that starves pathogens of iron. Cytokines also blunt the EPO response. It begins normocytic and turns microcytic only if it persists.",
+ find:["Rheumatoid arthritis, SLE, chronic infection, inflammatory bowel disease, malignancy, chronic kidney disease","Usually mild (Hb 9–11 g/dL), stable, and not the patient's main complaint"],
+ labs:["<b>↑ Ferritin</b> (stored iron, and an acute phase reactant), <b>↓ TIBC</b>, ↓ serum iron, normal or ↓ saturation","Normocytic early, microcytic late; ↑ free erythrocyte protoporphyrin","Marrow iron stain shows abundant iron inside macrophages"],
+ buzz:["Microcytic anemia with a high ferritin and a low TIBC","Iron is present but locked away by hepcidin"],
+ tx:["Treat the underlying disease; EPO in chronic kidney disease or cancer; iron does not help unless deficiency coexists"]},
+
+alphathal:{n:"α-Thalassemia",k:"dz",p:"globin",enz:"HBA1 and HBA2 — α-globin, chromosome 16",inh:"Autosomal recessive",hi:1,
+ mech:"There are <b>four α-globin genes</b>, two on each chromosome 16, and α-thalassemia is usually a <b>gene deletion</b>, so severity simply counts the missing genes. With too few α chains, the surplus partner chains pair with each other: <b>β₄ (HbH)</b> after birth and <b>γ₄ (Hb Bart's)</b> in the fetus. These tetramers bind oxygen so tightly they deliver almost none, and they precipitate and damage the cell.",
+ find:["1 gene deleted (−α/αα): silent carrier, clinically normal","2 genes deleted: <b>α-thalassemia trait</b>, a mild microcytic anemia. <b>Cis</b> (−−/αα, Asian ancestry) can produce hydrops in offspring; <b>trans</b> (−α/−α, African ancestry) cannot","3 genes deleted: <b>HbH disease</b> — moderate hemolytic anemia, splenomegaly","4 genes deleted: <b>Hb Bart's</b> — hydrops fetalis, death in utero"],
+ labs:["Microcytosis with a <b>normal RDW</b> and normal iron studies; Mentzer index under 13","HbH inclusions (golf-ball cells) on brilliant cresyl blue stain","Electrophoresis is normal in trait, so diagnosis needs DNA testing"],
+ buzz:["α-thalassemia is a deletion — count the missing genes from 1 to 4","HbH is β4, Hb Bart's is γ4","Cis deletion in Asian ancestry, trans in African ancestry"],
+ tx:["Trait: none, and do not give iron. HbH disease: folate, transfusion in crises, avoid oxidant drugs. Genetic counseling"]},
+
+betathal:{n:"β-Thalassemia",k:"dz",p:"globin",enz:"HBB — β-globin, chromosome 11",inh:"Autosomal recessive",hi:1,
+ mech:"Most β-thalassemia comes from <b>point mutations</b> — often splice-site or promoter mutations — in the single β gene on each chromosome 11. <b>β⁰</b> alleles make no chain and <b>β⁺</b> alleles make too little. Unpaired α chains cannot form tetramers and <b>precipitate inside erythroblasts</b>, killing them in the marrow: <b>ineffective erythropoiesis</b>. The body compensates with HbF (α₂γ₂) and HbA2 (α₂δ₂), which is why symptoms appear only around 6 months, when fetal γ chains switch off.",
+ find:["<b>Minor</b> (one abnormal allele): usually an asymptomatic mild microcytic anemia","<b>Major</b> (β⁰/β⁰, Cooley anemia): severe anemia from about 6 months, transfusion-dependent","Marrow expansion: <b>crew-cut</b> skull on X-ray and <b>chipmunk facies</b>; extramedullary hematopoiesis with hepatosplenomegaly","Iron overload from transfusion plus increased absorption → heart failure, the leading cause of death; aplastic crisis with parvovirus B19"],
+ labs:["Minor: <b>↑ HbA2</b> (above 3.5%), mildly ↑ HbF","Major: markedly ↑ HbF with little or no HbA","Microcytic <b>target cells</b>, basophilic stippling, nucleated red cells; iron studies normal or ↑"],
+ buzz:["β-thalassemia is a point mutation — minor raises HbA2","Crew-cut skull and chipmunk facies","Symptoms start at 6 months, when HbF falls"],
+ tx:["Major: chronic transfusion with <b>iron chelation</b> (deferoxamine, deferasirox, deferiprone), folate, splenectomy for hypersplenism; stem cell transplant or gene therapy is curative. Minor: no treatment — and no iron"]},
+
+hbtypes:{n:"Hemoglobin types & the fetal switch",k:"reg",p:"globin",enz:"Globin clusters — α on chr 16, β-like on chr 11",inh:"—",hi:1,
+ mech:"Every hemoglobin is a tetramer of two α-like and two β-like chains. The β-like genes on chromosome 11 switch on in developmental order: ε in the embryo, <b>γ</b> in the fetus, then <b>β</b> after birth. <b>HbF (α₂γ₂)</b> binds 2,3-BPG poorly, so it has a higher oxygen affinity than HbA and pulls oxygen across the placenta. The γ-to-β switch is largely complete by 6 months, which is why β-chain disorders — β-thalassemia and sickle cell disease — stay silent at birth.",
+ find:["<b>HbA</b> (α₂β₂) makes up 95–98% of adult hemoglobin; <b>HbA2</b> (α₂δ₂) 2–3%; <b>HbF</b> (α₂γ₂) under 1% in adults","Abnormal tetramers in α-thalassemia: <b>HbH</b> (β₄) and <b>Hb Bart's</b> (γ₄)","Point variants of β-globin: <b>HbS</b> (Glu6Val) and <b>HbC</b> (Glu6Lys)"],
+ labs:["Electrophoresis or HPLC separates the types; toward the anode, A runs fastest, then F, S and C","HbF is raised by <b>hydroxyurea</b>, the basis of its use in sickle cell disease"],
+ buzz:["HbF is α2γ2 and binds 2,3-BPG poorly — left-shifted","β-globin disorders are silent until about 6 months","Electrophoresis from fastest to slowest: A Fat Santa Claus — A, F, S, C"],
+ tx:["—"]},
+
+ironrx:{n:"Iron replacement & chelation",alias:"ferrous sulfate · deferoxamine · deferasirox · deferiprone",k:"drug",p:"microcytic",enz:"Oral and IV iron · iron chelators",inh:"—",hi:1,
+ mech:"Oral iron is absorbed as Fe²⁺ in the duodenum, so vitamin C, which keeps it reduced, helps, while antacids, calcium, tea and PPIs hinder it. Reticulocytes rise within a week, hemoglobin over weeks, and stores refill over months. Because the body cannot excrete iron, patients given repeated transfusions — thalassemia major, sickle cell disease — accumulate it and need <b>chelators</b> that carry it out in urine or stool.",
+ find:["<b>Ferrous sulfate</b>: nausea, constipation, <b>black stools</b> that are guaiac negative, unlike melena","IV iron (iron sucrose, ferric carboxymaltose) for malabsorption, intolerance or chronic kidney disease","<b>Acute iron poisoning</b> in children: vomiting and GI bleeding, then metabolic acidosis and hepatic necrosis — treat with <b>deferoxamine</b>"],
+ labs:["Response: reticulocytosis in 5–10 days","Chelator toxicity: <b>deferiprone → agranulocytosis</b>; deferasirox → renal and hepatic injury; deferoxamine → hearing and vision loss"],
+ buzz:["Iron is absorbed as Fe2+ — vitamin C helps, antacids hurt","Deferoxamine for acute iron overdose","Deferiprone causes agranulocytosis"],
+ tx:["—"]},
+
+aplastic:{n:"Aplastic anemia",k:"dz",p:"underprod",enz:"Hematopoietic stem cells",inh:"Acquired (most) · inherited (Fanconi)",hi:1,
+ mech:"The stem cell pool is destroyed — most often by <b>autoreactive cytotoxic T cells</b> — so every lineage falls together and the marrow empties into fat. Platelets and neutrophils live days rather than the red cell's 120, so bleeding and infection usually announce the disease before the anemia does.",
+ find:["<b>Pancytopenia</b>: fatigue, mucosal bleeding and petechiae, recurrent infection","<b>No splenomegaly</b> and no lymphadenopathy — either points elsewhere","Causes: idiopathic autoimmune (most); drugs — <b>chloramphenicol</b>, benzene, carbamazepine, alkylating agents, antithyroid drugs; viruses — parvovirus B19, EBV, HIV, seronegative hepatitis; radiation; Fanconi anemia","Associated PNH clones; progression to myelodysplasia or AML"],
+ labs:["Marrow biopsy: <b>hypocellular, fat-filled</b> marrow with no malignant infiltrate","Normocytic or mildly macrocytic, <b>↓ reticulocytes</b>"],
+ buzz:["Pancytopenia with an empty, fatty marrow","Chloramphenicol and benzene","No splenomegaly"],
+ tx:["Remove the cause; immunosuppression with antithymocyte globulin, cyclosporine and eltrombopag; stem cell transplant in the young"]},
+
+dba:{n:"Diamond-Blackfan anemia",alias:"Congenital pure red cell aplasia",k:"dz",p:"underprod",enz:"Ribosomal protein genes (RPS19)",inh:"Autosomal dominant (most)",hi:0,
+ mech:"A defective ribosomal protein makes erythroid progenitors especially vulnerable to p53-driven apoptosis, so the <b>red cell line alone</b> fails in infancy while white cells and platelets are spared.",
+ find:["Severe anemia in the first year of life","Congenital anomalies in about half: <b>triphalangeal thumbs</b>, craniofacial anomalies, short stature","Raised lifetime risk of AML and solid tumors"],
+ labs:["Macrocytic anemia with <b>↓ reticulocytes</b>; normal white cells and platelets","↑ HbF and ↑ erythrocyte adenosine deaminase","Marrow lacks erythroid precursors alone"],
+ buzz:["Red cells alone fail in an infant with a triphalangeal thumb","Contrast Fanconi: every line fails, with absent thumbs and radii"],
+ tx:["Corticosteroids; chronic transfusion with chelation; stem cell transplant"]},
+
+parvo:{n:"Parvovirus B19 aplastic crisis",k:"dz",p:"underprod",enz:"P antigen (globoside) on erythroid progenitors",inh:"Acquired",hi:1,
+ mech:"Parvovirus B19 enters erythroid progenitors through the <b>P antigen</b> and kills them, halting red cell production for about a week. A healthy person barely notices, because red cells live 120 days. A patient whose red cells survive only days — <b>sickle cell disease, hereditary spherocytosis, thalassemia</b> — has no reserve and drops into a profound anemia.",
+ find:["Sudden severe anemia with pallor and fatigue in a patient with a known hemolytic anemia","Children: <b>erythema infectiosum</b> (fifth disease) — the slapped-cheek rash","Adults: symmetric polyarthritis of the small joints","Pregnancy: <b>hydrops fetalis</b>; immunocompromised hosts: chronic pure red cell aplasia"],
+ labs:["<b>Reticulocytes near zero</b> — the key separator from a hemolytic or sequestration crisis","Giant pronormoblasts in the marrow; B19 PCR or IgM"],
+ buzz:["A hemolytic patient whose reticulocytes suddenly drop to zero","Slapped cheek in a child, hydrops in a fetus"],
+ tx:["Transfusion through the crisis; IVIG for chronic infection in the immunocompromised"]},
+
+ckdanemia:{n:"Anemia of chronic kidney disease",k:"dz",p:"underprod",enz:"Erythropoietin from peritubular fibroblasts",inh:"Acquired",hi:1,
+ mech:"EPO is made by <b>peritubular interstitial fibroblasts</b> of the renal cortex in response to hypoxia, sensed through HIF. As functioning kidney mass is lost, EPO falls and the marrow receives no drive — a normocytic, hypoproliferative anemia. Uremic toxins shorten red cell survival, and inflammation adds hepcidin-driven iron sequestration.",
+ find:["Normocytic anemia that deepens as the GFR falls","Fatigue and worsening left ventricular hypertrophy"],
+ labs:["Normocytic, <b>↓ reticulocytes</b>; EPO inappropriately low for the degree of anemia","Burr cells (echinocytes) in uremia","Check iron studies — coexisting iron deficiency is common"],
+ buzz:["No EPO, no drive — normocytic with low reticulocytes","Replete iron before starting an ESA"],
+ tx:["Erythropoiesis-stimulating agents; IV iron; HIF prolyl hydroxylase inhibitors such as daprodustat"]},
+
+esa:{n:"Erythropoietin & ESAs",alias:"epoetin alfa · darbepoetin",k:"drug",p:"underprod",enz:"EPO receptor — JAK2-STAT5 on erythroid progenitors",inh:"—",hi:1,
+ mech:"Recombinant EPO binds the EPO receptor on CFU-E progenitors and signals through <b>JAK2</b> to prevent their apoptosis, raising red cell output. It works only when iron is available, so stores must be replete first.",
+ find:["Uses: anemia of chronic kidney disease, chemotherapy-induced anemia, zidovudine-treated HIV, reducing transfusion needs","Abused by endurance athletes as blood doping"],
+ labs:["Target Hb no higher than about 11 g/dL — higher targets raise the risk of stroke, MI and thrombosis","Rare <b>pure red cell aplasia</b> from anti-EPO antibodies","Hypertension is the commonest adverse effect"],
+ buzz:["Hypertension and thrombosis at high hemoglobin targets","Replete iron before starting"],
+ tx:["—"]},
+
+myelophthisic:{n:"Myelophthisic anemia",k:"dz",p:"underprod",enz:"Marrow space",inh:"Acquired",hi:0,
+ mech:"The marrow is physically replaced — by metastatic cancer, fibrosis, granulomas or storage cells — so hematopoiesis is crowded out and immature cells are squeezed into the blood early.",
+ find:["Causes: metastatic breast, prostate and lung cancer; myelofibrosis; miliary tuberculosis; Gaucher disease","Extramedullary hematopoiesis with splenomegaly"],
+ labs:["<b>Leukoerythroblastic</b> smear — nucleated red cells and immature granulocytes","<b>Teardrop cells</b> (dacrocytes); a dry tap on marrow aspiration"],
+ buzz:["Teardrop cells and a leukoerythroblastic smear","Dry tap"],
+ tx:["Treat the infiltrating process"]},
+
+hs:{n:"Hereditary spherocytosis",k:"dz",p:"hemolysis",enz:"Spectrin · ankyrin · band 3 · protein 4.2",inh:"Autosomal dominant (most)",hi:1,
+ mech:"A defect in the proteins that tether the lipid bilayer to the spectrin skeleton lets the cell shed membrane in small vesicles as it circulates. Losing surface area without losing volume turns the disc into a <b>sphere</b> — the least deformable shape — which cannot squeeze through the splenic cords and is eaten by splenic macrophages.",
+ find:["Anemia, <b>jaundice</b> and <b>splenomegaly</b>; pigment gallstones even in childhood","Aplastic crisis with parvovirus B19","Often a family history"],
+ labs:["<b>Spherocytes</b> without central pallor; <b>↑ MCHC</b>; ↑ RDW","<b>Eosin-5-maleimide (EMA) binding</b> ↓ on flow cytometry — the preferred test; ↑ osmotic fragility","<b>Coombs negative</b> — separates it from warm AIHA, which also makes spherocytes","Howell-Jolly bodies after splenectomy"],
+ buzz:["Spherocytes with a high MCHC and a negative Coombs test","Splenectomy cures the anemia but not the spherocytes"],
+ tx:["Folate; splenectomy for significant hemolysis, vaccinating first against encapsulated organisms; cholecystectomy for stones"]},
+
+sickle:{n:"Sickle cell disease",alias:"HbSS",k:"dz",p:"globin",enz:"β-globin — Glu6Val (HbS)",inh:"Autosomal recessive",hi:1,
+ mech:"One point mutation replaces glutamate with <b>valine</b> at position 6 of β-globin. Deoxygenated HbS exposes that hydrophobic valine, and the molecules <b>polymerize</b> into long fibers that bend the cell into a sickle. Hypoxia, dehydration and acidosis all promote sickling; HbF prevents it. Rigid sickled cells occlude small vessels (<b>vaso-occlusion</b>) and are destroyed both in the spleen and in the circulation.",
+ find:["<b>Vaso-occlusive pain crises</b>; <b>dactylitis</b> (swollen hands and feet) is often the first sign, from about 6 months","<b>Acute chest syndrome</b> — the leading cause of death in adults; stroke in children","<b>Autosplenectomy</b> → sepsis from encapsulated organisms (S. pneumoniae, H. influenzae); <b>Salmonella</b> osteomyelitis","Splenic sequestration crisis in young children; aplastic crisis with parvovirus B19","Priapism, avascular necrosis of the femoral head, renal papillary necrosis, pigment gallstones, leg ulcers"],
+ labs:["Sickle cells and target cells; <b>Howell-Jolly bodies</b> once the spleen has infarcted","Electrophoresis: HbS with no HbA","Crew-cut skull from marrow expansion"],
+ buzz:["Glu to Val at position 6 of β-globin","Salmonella osteomyelitis and encapsulated organisms","Heterozygotes are protected against falciparum malaria"],
+ tx:["<b>Hydroxyurea</b> raises HbF; penicillin prophylaxis to age 5 plus pneumococcal vaccination; hydration, oxygen and opioids for crises; exchange transfusion for acute chest syndrome or stroke; transcranial Doppler screening; L-glutamine and crizanlizumab; stem cell transplant or gene therapy is curative"]},
+
+sickletrait:{n:"Sickle cell trait",alias:"HbAS",k:"dz",p:"globin",enz:"One β-globin allele Glu6Val",inh:"Heterozygous carrier",hi:1,
+ mech:"With about 40% HbS and 60% HbA, cells sickle only under extreme conditions. The one place those conditions are routine is the <b>renal medulla</b> — hypoxic, acidic and hypertonic — so the kidney is where trait shows itself.",
+ find:["Usually asymptomatic; protection against severe falciparum malaria","<b>Hyposthenuria</b> (an inability to concentrate urine) and painless <b>hematuria</b> from renal papillary necrosis","<b>Renal medullary carcinoma</b> — rare and aggressive, in young patients","Exertional rhabdomyolysis and sudden death under extreme exertion with dehydration"],
+ labs:["Electrophoresis: more HbA than HbS","Normal blood count and smear"],
+ buzz:["Hematuria or renal medullary carcinoma in a young patient with sickle trait","The renal medulla is the one place trait sickles"],
+ tx:["No treatment; genetic counseling; hydration during intense exertion"]},
+
+hbc:{n:"Hemoglobin C disease",k:"dz",p:"globin",enz:"β-globin — Glu6Lys (HbC)",inh:"Autosomal recessive",hi:0,
+ mech:"Glutamate is replaced by <b>lysine</b> at position 6 of β-globin. HbC does not polymerize like HbS but crystallizes in dehydrated cells, producing a mild extravascular hemolysis. Compound heterozygotes (<b>HbSC</b>) have a milder sickling disease than HbSS, but more retinopathy and avascular necrosis.",
+ find:["Mild chronic hemolytic anemia with splenomegaly","HbSC: fewer crises than HbSS, but proliferative retinopathy and avascular necrosis"],
+ labs:["Bar-shaped <b>HbC crystals</b> and <b>target cells</b> on the smear","Electrophoresis: HbC migrates slowest"],
+ buzz:["Glu to Lys at position 6 — Lysine makes crystals","Target cells and HbC crystals"],
+ tx:["Usually none; folate"]},
+
+warmaiha:{n:"Warm autoimmune hemolytic anemia",k:"dz",p:"hemolysis",enz:"IgG against red cell surface antigens (often Rh)",inh:"Acquired",hi:1,
+ mech:"<b>IgG</b> autoantibodies coat red cells at body temperature. Splenic macrophages carry Fc receptors and nibble away the antibody-coated membrane, so the cell loses surface area, becomes a <b>spherocyte</b> and is removed — an <b>extravascular</b> hemolysis.",
+ find:["Causes: idiopathic, <b>SLE</b>, <b>CLL</b> and other lymphomas, drugs (<b>α-methyldopa</b>, penicillin, cephalosporins)","Anemia, jaundice and splenomegaly","Evans syndrome when immune thrombocytopenia coexists"],
+ labs:["<b>Direct Coombs (DAT) positive</b> for IgG, with or without C3","<b>Spherocytes</b>, ↑ reticulocytes, ↑ LDH, ↑ indirect bilirubin, ↓ haptoglobin"],
+ buzz:["Warm is IgG, extravascular, and makes spherocytes","Coombs-positive spherocytes — think SLE, CLL, methyldopa"],
+ tx:["Glucocorticoids first; rituximab; splenectomy; stop any offending drug"]},
+
+coldaiha:{n:"Cold agglutinin disease",k:"dz",p:"hemolysis",enz:"IgM against the I antigen — fixes complement",inh:"Acquired",hi:1,
+ mech:"<b>IgM</b> autoantibodies bind red cells in the cool peripheral circulation and, being pentameric, <b>agglutinate</b> them and fix <b>complement</b>. As the blood rewarms the IgM falls off but C3b stays behind, so cells are cleared by liver macrophages — or lysed in the vessel if complement runs to completion.",
+ find:["Causes: <b>Mycoplasma pneumoniae</b> (anti-I), <b>infectious mononucleosis</b> (anti-i), lymphoproliferative disorders such as Waldenström macroglobulinemia","<b>Acrocyanosis</b> — painful blue fingers, ears and nose in the cold"],
+ labs:["<b>Direct Coombs positive for C3 alone</b>","Red cell agglutination on the smear; a spuriously high MCV on the automated count","High cold agglutinin titer"],
+ buzz:["Cold is IgM and complement — Mycoplasma and mono","Blue fingers in the cold with a C3-only Coombs"],
+ tx:["Keep the patient warm; treat the cause; rituximab; <b>steroids work poorly</b>; sutimlimab (anti-C1s)"]},
+
+hdfn:{n:"Hemolytic disease of the fetus & newborn",alias:"Rh and ABO alloimmunization",k:"dz",p:"hemolysis",enz:"Maternal IgG against fetal red cell antigens",inh:"Acquired (alloimmune)",hi:1,
+ mech:"Only <b>IgG</b> crosses the placenta. An <b>Rh-negative</b> mother exposed to Rh-positive fetal cells at an earlier delivery makes anti-D IgG, which crosses in the <b>next</b> Rh-positive pregnancy and destroys the fetus's red cells. <b>ABO</b> incompatibility — a type O mother with an A or B baby — can occur in the <b>first</b> pregnancy, because type O mothers already carry IgG anti-A and anti-B, but it is mild because fetal A and B antigens are weakly expressed.",
+ find:["Rh: severe fetal anemia, <b>hydrops fetalis</b>, kernicterus; worse with each affected pregnancy","ABO: mild jaundice in the first days of life, even in a first pregnancy"],
+ labs:["Direct Coombs positive on the infant's cells (only weakly in ABO)","↑ Unconjugated bilirubin; middle cerebral artery Doppler to detect fetal anemia in Rh disease"],
+ buzz:["Rh disease hits the second pregnancy; ABO can hit the first","Anti-D immune globulin at 28 weeks and within 72 hours of delivery"],
+ tx:["Prevent with <b>anti-D immune globulin (RhoGAM)</b>; phototherapy, exchange transfusion or intrauterine transfusion"]},
+
+transfusion:{n:"Hemolytic transfusion reactions",k:"dz",p:"hemolysis",enz:"Recipient antibodies against donor red cell antigens",inh:"Acquired",hi:1,
+ mech:"If the recipient already has antibodies to antigens on the donor's red cells, those cells are destroyed. Preformed <b>IgM anti-A or anti-B</b> after an ABO mismatch fixes complement and lyses cells in the vessel within minutes. An <b>anamnestic IgG</b> response to a minor antigen (Kidd, Duffy, Rh) primed by an earlier exposure takes days and clears the cells in the spleen.",
+ find:["<b>Acute (ABO)</b>, within minutes: fever, chills, flank pain, hypotension, hemoglobinuria, DIC and renal failure — almost always a clerical error","<b>Delayed</b>, 3–10 days later: falling Hb, jaundice, a newly positive antibody screen","Contrast: febrile non-hemolytic (cytokines — prevented by leukoreduction); anaphylaxis in <b>IgA deficiency</b> (anti-IgA); TRALI (donor antibodies against recipient neutrophils)"],
+ labs:["Direct Coombs positive; ↑ LDH and bilirubin, ↓ haptoglobin","Acute: hemoglobinemia and hemoglobinuria"],
+ buzz:["Flank pain and hemoglobinuria minutes into a transfusion — stop it","Anaphylaxis to blood products means IgA deficiency"],
+ tx:["Stop the transfusion immediately; IV fluids to protect the kidneys; supportive care for DIC"]},
+
+hemolysislabs:{n:"Intravascular vs extravascular hemolysis",k:"reg",p:"hemolysis",enz:"Splenic and hepatic macrophages vs the vessel lumen",inh:"—",hi:1,
+ mech:"Where a red cell dies decides what the labs show. <b>Extravascular</b> hemolysis happens inside macrophages, which break heme down to bilirubin, so unconjugated bilirubin rises and the spleen enlarges, but little free hemoglobin reaches the plasma. <b>Intravascular</b> hemolysis releases hemoglobin into the blood, where it uses up <b>haptoglobin</b>, spills into the urine, and is reabsorbed by tubular cells that store its iron as <b>hemosiderin</b>.",
+ find:["Extravascular: hereditary spherocytosis, sickle cell disease, warm AIHA, pyruvate kinase deficiency, thalassemia","Intravascular: PNH, a G6PD crisis, microangiopathy (TTP, HUS, DIC), mechanical heart valves, acute ABO transfusion reaction, malaria, cold agglutinins in part"],
+ labs:["Both: ↑ LDH, ↑ reticulocytes, ↑ unconjugated bilirubin","Intravascular adds <b>↓↓ haptoglobin</b>, hemoglobinemia, <b>hemoglobinuria</b> and urine hemosiderin","Extravascular adds splenomegaly and pigment gallstones"],
+ buzz:["Hemoglobinuria with an undetectable haptoglobin means intravascular","Splenomegaly with jaundice means extravascular"],
+ tx:["—"]},
+
+nonmegalo:{n:"Non-megaloblastic macrocytosis",k:"dz",p:"macrocytic",enz:"Red cell membrane lipid · reticulocyte size",inh:"Acquired",hi:0,
+ mech:"Large red cells without a DNA-synthesis defect. Extra membrane cholesterol and phospholipid from liver disease or alcohol, or simply a flood of large young reticulocytes after hemolysis or bleeding, raise the MCV — but nuclei mature normally, so there are no hypersegmented neutrophils.",
+ find:["<b>Alcohol use</b> (the commonest cause), liver disease, hypothyroidism","Reticulocytosis after hemolysis or hemorrhage","Myelodysplastic syndrome gives a dysplastic, not megaloblastic, macrocytosis"],
+ labs:["MCV usually 100–110 with round macrocytes; <b>no hypersegmented neutrophils</b>","Normal B12, folate and methylmalonic acid"],
+ buzz:["Macrocytosis without hypersegmented neutrophils","Alcohol is the commonest cause"],
+ tx:["Treat the cause"]}
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2557,7 +2732,7 @@ MAPS.core = {
  edges:[
   {a:"glucose",b:"g6p",p:"glycolysis",e:"Hexokinase / glucokinase",rl:1,note:"ATP",lx:-120,ly:-16,m:["hkgk","mody2","hkdef"]},
   {a:"g6p",b:"f6p",p:"glycolysis",e:"Phosphoglucose isomerase",lx:95},
-  {a:"f6p",b:"f16bp",p:"glycolysis",e:"Phosphofructokinase-1",rl:1,note:"ATP · committed step",m:["f26bp","tarui"]},
+  {a:"f6p",b:"f16bp",p:"glycolysis",e:"Phosphofructokinase-1",rl:1,note:"ATP · committed step",lx:20,ly:-8,m:["f26bp","tarui"]},
   {a:"f6p",b:"f26bpn",p:"glycolysis",e:"PFK-2 ⇄ FBPase-2",dash:1,arrow:"both",m:["f26bp"]},
   {a:"f16bp",b:"g3p",p:"glycolysis",e:"Aldolase A",lx:-8},
   {a:"f16bp",b:"dhap",p:"glycolysis",e:"Aldolase A",arrow:"none",dash:1},
@@ -2568,9 +2743,9 @@ MAPS.core = {
   {a:"pg3",b:"pg2",p:"glycolysis",e:"Phosphoglycerate mutase",lx:85},
   {a:"pg2",b:"pep",p:"glycolysis",e:"Enolase",lx:70,m:["fluoride"]},
   {a:"pep",b:"pyr",p:"glycolysis",e:"Pyruvate kinase",rl:1,lx:95,note:"ATP",m:["pkdef"]},
-  {a:"pyr",b:"lactate",p:"glycolysis",e:"Lactate dehydrogenase",arrow:"both",lx:-40,ly:-74,note:"NADH → NAD⁺",m:["ethanol"]},
-  {a:"pyr",b:"alanine",p:"glycolysis",e:"ALT (B6)",arrow:"both",lx:-70,bend:-70,m:["lacticmech"]},
-  {a:"f16bp",b:"f6p",p:"gluconeo",e:"Fructose-1,6-bisphosphatase",rl:1,bend:-340,dash:1,m:["f26bp"]},
+  {a:"pyr",b:"lactate",p:"glycolysis",e:"Lactate dehydrogenase",arrow:"both",lx:-8,ly:-34,note:"NADH → NAD⁺",m:["ethanol"]},
+  {a:"pyr",b:"alanine",p:"glycolysis",e:"ALT (B6)",arrow:"both",lx:-74,bend:-240,ly:12,m:["lacticmech"]},
+  {a:"f16bp",b:"f6p",p:"gluconeo",e:"Fructose-1,6-bisphosphatase",rl:1,bend:-340,dash:1,lx:24,m:["f26bp"]},
   {a:"g6p",b:"glucose",p:"gluconeo",e:"Glucose-6-phosphatase|ER lumen — liver, kidney, gut",lx:90,bend:-150,dash:1,m:["vongierke"]},
   {a:"pyr",b:"oaa",p:"gluconeo",e:"Pyruvate carboxylase|biotin · ATP · acetyl-CoA ⊕",lx:-30,ly:56,bend:-70,dash:1,m:["pyrcarb"]},
   {a:"oaa",b:"pep",p:"gluconeo",e:"PEPCK|GTP",bend:-55,dash:1,lx:40},
@@ -2602,19 +2777,19 @@ MAPS.core = {
   {a:"oaa",b:"citrate",p:"tca",e:"Citrate synthase",lx:-30,bend:40},
   {a:"citrate",b:"citconn",p:"neutral",e:"Citrate shuttle",dash:1},
   {a:"citrate",b:"isocitrate",p:"tca",e:"Aconitase",bend:40,m:["fluoroacetate"]},
-  {a:"isocitrate",b:"akg",p:"tca",e:"Isocitrate dehydrogenase",rl:1,note:"+ NADH · CO₂",bend:40,lx:88,m:["idhmut"]},
-  {a:"akg",b:"succoa",p:"tca",e:"α-Ketoglutarate dehydrogenase|TPP · lipoate · CoA · FAD · NAD⁺",note:"+ NADH · CO₂",bend:40,lx:150,m:["thiamine","arsenic"]},
+  {a:"isocitrate",b:"akg",p:"tca",e:"Isocitrate dehydrogenase",rl:1,note:"+ NADH · CO₂",bend:40,lx:4,ly:12,m:["idhmut"]},
+  {a:"akg",b:"succoa",p:"tca",e:"α-Ketoglutarate dehydrogenase|TPP · lipoate · CoA · FAD · NAD⁺",note:"+ NADH · CO₂",bend:40,lx:6,ly:-20,m:["thiamine","arsenic"]},
   {a:"succoa",b:"succinate",p:"tca",e:"Succinyl-CoA synthetase",note:"+ GTP",bend:40,lx:60,ly:34},
-  {a:"succinate",b:"fumarate",p:"tca",e:"Succinate dehydrogenase = complex II",note:"+ FADH₂",bend:40,ly:52,m:["sdhmut"]},
+  {a:"succinate",b:"fumarate",p:"tca",e:"Succinate dehydrogenase = complex II",note:"+ FADH₂",bend:40,ly:52,lx:20,m:["sdhmut"]},
   {a:"fumarate",b:"malate",p:"tca",e:"Fumarase",bend:40},
   {a:"malate",b:"oaa",p:"tca",e:"Malate dehydrogenase",note:"+ NADH",bend:40,ly:30},
   {a:"aaAkg",b:"akg",p:"tca",dash:1},
-  {a:"aaSuc",b:"succoa",p:"tca",e:"Propionyl-CoA → methylmalonyl-CoA|carboxylase (biotin) · mutase (B12)",dash:1,lx:44,ly:70,m:["mmacid","organicacid"]},
+  {a:"aaSuc",b:"succoa",p:"tca",e:"Propionyl-CoA → methylmalonyl-CoA|carboxylase (biotin) · mutase (B12)",dash:1,lx:12,ly:-38,m:["mmacid","organicacid"]},
   {a:"aaOaa",b:"oaa",p:"tca",dash:1},
   {a:"aaFum",b:"fumarate",p:"tca",dash:1},
   {a:"succoa",b:"hemeconn",p:"neutral",dash:1},
   {a:"malate",b:"nadh",p:"etc",dash:1,arrow:"none"},
-  {a:"succinate",b:"fadh2",p:"etc",dash:1,arrow:"none"},
+  {a:"succinate",b:"fadh2",p:"etc",dash:1,arrow:"none",bend:-90},
   {a:"nadh",b:"ci",p:"etc",e:"2 e⁻",ly:-2},
   {a:"fadh2",b:"cii",p:"etc",e:"2 e⁻",ly:-16},
   {a:"ci",b:"q",p:"etc"},{a:"cii",b:"q",p:"etc"},{a:"q",b:"ciii",p:"etc"},
@@ -2820,7 +2995,7 @@ MAPS.nitrogen = {
   {a:"ornithine",b:"carbp",p:"urea",e:"Ornithine translocase",bend:35,lx:-40,dash:1},
   {a:"phe",b:"tyr",p:"catechol",e:"Phenylalanine hydroxylase|tetrahydrobiopterin (BH4)",rl:1,lx:-96,m:["pku"]},
   {a:"tyr",b:"thyroxine",p:"catechol",e:"Thyroid peroxidase",dash:1},
-  {a:"tyr",b:"homogent",p:"aa",e:"(via p-hydroxyphenylpyruvate)",ly:-32},
+  {a:"tyr",b:"homogent",p:"aa",e:"(via p-hydroxyphenylpyruvate)",ly:-36,lx:68},
   {a:"homogent",b:"fumaroacet",p:"aa",e:"Homogentisate oxidase",ly:-32,m:["alkapton","tyrosinemia"]},
   {a:"tyr",b:"dopa",p:"catechol",e:"Tyrosine hydroxylase",rl:1,note:"BH4 · rate-limiting for catecholamines"},
   {a:"dopa",b:"melanin",p:"catechol",e:"Tyrosinase",m:["albinism"]},
@@ -2917,8 +3092,8 @@ MAPS.nucleo = {
   {a:"proto9",b:"heme",p:"heme",e:"Ferrochelatase + Fe²⁺",m:["lead"]},
   {a:"heme",b:"ala",p:"heme",e:"Heme ⊣ ALA synthase",arrow:"inhib",dash:1,bend:-340},
   {a:"heme",b:"biliverdin",p:"bili",e:"Heme oxygenase",lx:70,ly:-40,note:"the body's only source of endogenous CO",m:["cohb"]},
-  {a:"heme",b:"methbn",p:"heme",e:"Oxidant stress: Fe²⁺ → Fe³⁺",lx:-120,m:["methb"]},
-  {a:"methbn",b:"heme",p:"heme",e:"Cytochrome b5 reductase (NADH)|methylene blue route needs NADPH",bend:-110,lx:-20,ly:40,m:["methb","g6pd"]},
+  {a:"heme",b:"methbn",p:"heme",e:"Oxidant stress: Fe²⁺ → Fe³⁺",lx:-120,ly:-36,m:["methb"]},
+  {a:"methbn",b:"heme",p:"heme",e:"Cytochrome b5 reductase (NADH)|methylene blue route needs NADPH",bend:-110,ly:6,m:["methb","g6pd"]},
   {a:"heme",b:"o2conn",p:"o2transport",dash:1},
   {a:"biliverdin",b:"ucb",p:"bili",e:"Biliverdin reductase",ly:-34},
   {a:"ucb",b:"cb",p:"bili",e:"UDP-glucuronosyltransferase (UGT1A1)",ly:-42,m:["bilirubin"]},
@@ -3083,7 +3258,7 @@ MAPS.lysosome = {
   {a:"galactocer",b:"ceramide",p:"sphingo",e:"β-Galactocerebrosidase",m:["krabbe"]},
   {a:"glucocer",b:"ceramide",p:"sphingo",e:"β-Glucocerebrosidase",m:["gaucher"]},
   {a:"sphingomyelin",b:"ceramide",p:"sphingo",e:"Sphingomyelinase",m:["niemannpick"]},
-  {a:"ceramide",b:"sphingosine",p:"sphingo",e:"Ceramidase",lx:-76,m:["farber"]},
+  {a:"ceramide",b:"sphingosine",p:"sphingo",e:"Ceramidase",m:["farber"]},
   {a:"gag",b:"desulf",p:"gag",e:"Iduronate-2-sulfatase",m:["hunter"]},
   {a:"desulf",b:"gagfrag",p:"gag",e:"α-L-Iduronidase",m:["hurler"]},
   {a:"lysenz",b:"lysotarget",p:"traffic",e:"Mannose-6-P tag added in Golgi",lx:-118,m:["icell"]},
@@ -3296,9 +3471,9 @@ MAPS.cellcycle = {
   {id:"hr",l:"Homologous recombination",x:1980,y:820,p:"repair",s:"double-strand breaks · S and G2",m:["brca"]}],
  edges:[
   {a:"g0",b:"g1",p:"cellcycle",e:"Growth factors, mitogens",lx:-20},
-  {a:"g1",b:"sph",p:"cellcycle",e:"G1/S restriction point",note:"the commitment step",ly:34,m:["rb","p53"]},
+  {a:"g1",b:"sph",p:"cellcycle",e:"G1/S restriction point",note:"the commitment step",ly:-42,lx:-4,m:["rb","p53"]},
   {a:"sph",b:"g2ph",p:"cellcycle",e:"DNA replicated 2n → 4n",ly:58},
-  {a:"g2ph",b:"mph",p:"cellcycle",e:"G2/M checkpoint",note:"ATM / ATR → CHK1, CHK2",ly:34,m:["ataxia"]},
+  {a:"g2ph",b:"mph",p:"cellcycle",e:"G2/M checkpoint",note:"ATM / ATR → CHK1, CHK2",ly:-42,m:["ataxia"]},
   {a:"mph",b:"g1",p:"cellcycle",e:"Spindle checkpoint · APC/C",bend:200,dash:1},
   {a:"growth",b:"cyclind",p:"cellcycle",e:"RAS / MAP kinase"},
   {a:"cyclind",b:"rbn",p:"cellcycle",e:"Phosphorylates Rb",m:["cdk46"]},
@@ -3733,7 +3908,7 @@ MAPS.gut = {
  edges:[
   {a:"mouth",b:"duod",p:"gut",e:"Pepsin, then bicarbonate + enzymes",ly:-46,m:["pancins"]},
   {a:"duod",b:"jej",p:"gut",e:"Villi lengthen, surface peaks",ly:-46,m:["malabs"]},
-  {a:"jej",b:"ile",p:"gut",e:"Brush-border disaccharidases",ly:-46,m:["lactose"]},
+  {a:"jej",b:"ile",p:"gut",e:"Brush-border disaccharidases",ly:-52,m:["lactose"]},
   {a:"ile",b:"colon",p:"gut",e:"Ileocecal valve",ly:-46,m:["bileacid"]},
   {a:"lipase",b:"micelle",p:"fat",e:"Triglyceride → FFA + monoglyceride",ly:-62},
   {a:"micelle",b:"entero",p:"fat",e:"Crosses the brush border"},
@@ -3939,7 +4114,7 @@ MAPS.immune = {
   {a:"preb",b:"immb",p:"bcell",e:"BTK signals the pre-B receptor",ly:-46,m:["xla"]},
   {a:"immb",b:"matb",p:"bcell",e:"Light chain rearranges → IgM + IgD",ly:-46},
   {a:"matb",b:"gc",p:"bcell",e:"Antigen + CD40L from a T cell",ly:-46,m:["hyperigm"]},
-  {a:"gc",b:"plasma",p:"bcell",e:"Class switch · hypermutation",ly:-46,m:["cvid","igadef"]},
+  {a:"gc",b:"plasma",p:"bcell",e:"Class switch · hypermutation",ly:-52,m:["cvid","igadef"]},
   {a:"prot",b:"dn",p:"tcell",e:"Seeded into the thymic cortex",ly:-46,m:["digeorge"]},
   {a:"dn",b:"dp",p:"tcell",e:"TCR β then α rearrange",ly:-46},
   {a:"dp",b:"possel",p:"tcell",e:"Both CD4 and CD8 expressed",ly:-46},
@@ -4212,7 +4387,124 @@ MAPS.axes = {
   {a:"adenoma",b:"masseffect",p:"hpa",e:"Compresses the chiasm",ly:-46}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["index","Index"]];
+MAPS.rbc = {
+ t:"Red Cell & Anemia", sub:"Read the MCV first, then the reticulocyte count · each lesion is pinned to the branch where the red cell goes wrong",
+ w:3360, h:2800,
+ comps:[
+  {x:640,y:110,w:2620,h:650,l:"Microcytic — hemoglobin is short, so the precursor divides once more"},
+  {x:640,y:830,w:2620,h:1000,l:"Normocytic — built correctly, too few; the reticulocyte count says why"},
+  {x:640,y:1910,w:2620,h:420,l:"Macrocytic — DNA synthesis lags behind a growing cytoplasm"}],
+ panels:[
+  {x:640,y:2420,w:640,h:220,kw:170,t:"Iron studies — the microcytic workup",rows:[
+   ["","Ferritin · TIBC · serum iron · saturation"],
+   ["Iron deficiency","↓ · ↑ · ↓ · ↓↓"],
+   ["Chronic disease","↑ · ↓ · ↓ · normal or ↓"],
+   ["Thalassemia trait","all normal · RBC count high"],
+   ["Sideroblastic · lead","↑ · normal or ↓ · ↑ · ↑"],
+   ["Hemochromatosis","↑ · ↓ · ↑ · ↑↑"],
+   ["Pregnancy · OCP","TIBC ↑ from estrogen, iron normal"]]},
+  {x:1320,y:2420,w:600,h:240,kw:92,t:"Hemoglobins",rows:[
+   ["HbA","α₂β₂ — 95–98% of adult hemoglobin"],
+   ["HbA2","α₂δ₂ — 2–3%; ↑ in β-thalassemia minor"],
+   ["HbF","α₂γ₂ — binds 2,3-BPG poorly; ↑ by hydroxyurea"],
+   ["HbH","β₄ — three α genes lost"],
+   ["Hb Bart's","γ₄ — all four α genes lost; hydrops"],
+   ["HbS","β Glu6Val — polymerizes when deoxygenated"],
+   ["HbC","β Glu6Lys — crystals and target cells"],
+   ["Switch","γ → β after birth, largely done by 6 months"]]},
+  {x:1960,y:2420,w:660,h:330,kw:188,t:"Smear findings",rows:[
+   ["Target cells","HbC · Asplenia · Liver disease · Thalassemia — HALT"],
+   ["Spherocytes","Hereditary spherocytosis · warm AIHA"],
+   ["Schistocytes","TTP · HUS · DIC · mechanical valve"],
+   ["Bite cells · Heinz bodies","G6PD deficiency"],
+   ["Basophilic stippling","Lead · thalassemia · sideroblastic"],
+   ["Ringed sideroblasts","Sideroblastic anemia — Prussian blue"],
+   ["Howell-Jolly bodies","Asplenia — sickle cell autosplenectomy"],
+   ["Teardrop cells","Myelofibrosis · myelophthisis"],
+   ["Echinocytes (burr)","Pyruvate kinase deficiency · uremia"],
+   ["Acanthocytes (spur)","Liver disease · abetalipoproteinemia"],
+   ["Hypersegmented PMNs","B12 or folate deficiency"],
+   ["Macro-ovalocytes","Megaloblastic anemia"]]},
+  {x:2660,y:2420,w:600,h:220,kw:150,t:"Hemolysis — where it happens",rows:[
+   ["Extravascular","spleen and liver macrophages"],
+   ["","↑ indirect bilirubin · splenomegaly · gallstones"],
+   ["","HS · sickle · warm AIHA · PK · thalassemia"],
+   ["Intravascular","inside the vessel"],
+   ["","↓↓ haptoglobin · hemoglobinuria · hemosiderinuria"],
+   ["","PNH · G6PD · MAHA · ABO reaction · malaria"],
+   ["Both","↑ LDH · ↑ reticulocytes · ↑ indirect bilirubin"]]}],
+ nodes:[
+  {id:"anemia",l:"Anemia",x:240,y:1230,p:"erythro",k:"hub",s:"↓ Hb · read the MCV first",m:["anemiaapproach"]},
+  {id:"micro",l:"Microcytic",x:820,y:435,p:"microcytic",k:"hub",s:"MCV under 80"},
+  {id:"normo",l:"Normocytic",x:820,y:1230,p:"erythro",k:"hub",s:"MCV 80–100",m:["reticindex"]},
+  {id:"macro",l:"Macrocytic",x:820,y:2120,p:"macrocytic",k:"hub",s:"MCV over 100"},
+  {id:"ironin",l:"Iron absorbed",x:1300,y:280,p:"iron",s:"duodenum · Fe²⁺ via DMT1",m:["ida","ironrx"]},
+  {id:"ironmarrow",l:"Iron delivered to marrow",x:1900,y:280,p:"iron",s:"transferrin → erythroblast"},
+  {id:"hemesyn",l:"Heme assembled",x:2480,y:280,p:"heme",s:"protoporphyrin + Fe²⁺ · mitochondrion"},
+  {id:"hemeconn",l:"→ Heme synthesis",x:2480,y:410,p:"heme",k:"ghost",go:"nucleo"},
+  {id:"globgenes",l:"Globin genes",x:1300,y:620,p:"globin",s:"α on chr 16 · β on chr 11"},
+  {id:"globinmade",l:"Globin chains paired",x:2200,y:620,p:"globin",s:"2 α + 2 β = HbA"},
+  {id:"hb",l:"Hemoglobin",x:3060,y:450,p:"globin",k:"hub",s:"4 heme + 4 globin chains",m:["hbtypes"]},
+  {id:"lowretic",l:"Reticulocytes low",x:1330,y:1010,p:"underprod",s:"the marrow is not keeping up"},
+  {id:"highretic",l:"Reticulocytes high",x:1330,y:1560,p:"hemolysis",s:"cells destroyed or lost",m:["hemolysislabs"]},
+  {id:"stemfail",l:"Stem cells fail",x:2000,y:920,p:"underprod",s:"all three lineages fall",m:["aplastic","fanconi"]},
+  {id:"redfail",l:"Red line fails",x:2000,y:1020,p:"underprod",s:"erythroid progenitors only",m:["dba","parvo"]},
+  {id:"nodrive",l:"No EPO drive",x:2000,y:1120,p:"underprod",s:"chronic kidney disease",m:["ckdanemia","esa"]},
+  {id:"infiltrate",l:"Marrow crowded out",x:2000,y:1220,p:"underprod",s:"myelophthisis · teardrops",m:["myelophthisic"]},
+  {id:"nephconn",l:"→ Nephron",x:2620,y:1120,p:"underprod",k:"ghost",go:"nephron"},
+  {id:"intrinsic",l:"Intrinsic",x:2000,y:1440,p:"hemolysis",s:"the red cell itself is defective"},
+  {id:"extrinsic",l:"Extrinsic",x:2000,y:1710,p:"hemolysis",s:"a normal cell in a hostile place"},
+  {id:"membrane",l:"Membrane",x:2700,y:1340,p:"hemolysis",s:"spectrin · ankyrin · GPI anchor",m:["hs","pnh"]},
+  {id:"enzyme",l:"Enzyme",x:2700,y:1440,p:"hemolysis",s:"glycolysis · HMP shunt",m:["g6pd","pkdef","hkdef"]},
+  {id:"hbvariant",l:"Hemoglobin variant",x:2700,y:1540,p:"globin",s:"abnormal β-globin",m:["sickle","sickletrait","hbc"]},
+  {id:"immune",l:"Antibody",x:2700,y:1660,p:"hemolysis",s:"auto · allo · transfusion",m:["warmaiha","coldaiha","hdfn","transfusion"]},
+  {id:"shear",l:"Shear",x:2700,y:1760,p:"hemolysis",s:"microangiopathy · valves",m:["ttp","dic"]},
+  {id:"hemoconn",l:"→ Hemostasis",x:3120,y:1760,p:"hemolysis",k:"ghost",go:"hemostasis"},
+  {id:"megalo",l:"Megaloblastic",x:1380,y:2030,p:"macrocytic",s:"DNA lags · hypersegmented neutrophils"},
+  {id:"nonmeg",l:"Non-megaloblastic",x:1380,y:2250,p:"macrocytic",s:"normal nuclei · extra membrane lipid",m:["nonmegalo"]},
+  {id:"b12n",l:"B12 deficiency",x:2100,y:1990,p:"macrocytic",s:"↑ MMA · neurologic signs",m:["b12def"]},
+  {id:"folaten",l:"Folate deficiency",x:2100,y:2090,p:"macrocytic",s:"normal MMA · no neurologic signs",m:["b9def"]},
+  {id:"pyrn",l:"Pyrimidine block",x:2100,y:2190,p:"macrocytic",s:"orotic aciduria · antimetabolites",m:["oroticaciduria","nucdrugs"]},
+  {id:"vitconn",l:"→ Vitamins",x:2760,y:2040,p:"macrocytic",k:"ghost",go:"vitamins"},
+  {id:"nucconn",l:"→ Heme & Nucleotides",x:2760,y:2190,p:"macrocytic",k:"ghost",go:"nucleo"}],
+ edges:[
+  {a:"anemia",b:"micro",p:"erythro",e:"Hemoglobin synthesis fails"},
+  {a:"anemia",b:"normo",p:"erythro",e:"Too few, built correctly"},
+  {a:"anemia",b:"macro",p:"erythro",e:"DNA synthesis fails"},
+  {a:"micro",b:"ironin",p:"microcytic",e:"Heme is short",dash:1},
+  {a:"micro",b:"globgenes",p:"microcytic",e:"Globin is short",dash:1},
+  {a:"ironin",b:"ironmarrow",p:"iron",e:"Ferroportin → transferrin",note:"hepcidin shuts ferroportin in inflammation",ly:-54,m:["acd","hemochrom"]},
+  {a:"ironmarrow",b:"hemesyn",p:"heme",e:"ALA synthase … ferrochelatase",ly:-54,m:["sidero","lead"]},
+  {a:"hemesyn",b:"hb",p:"heme"},
+  {a:"hemesyn",b:"hemeconn",p:"heme",dash:1,arrow:"none"},
+  {a:"globgenes",b:"globinmade",p:"globin",e:"Transcribe · splice · translate",ly:-54,m:["alphathal","betathal"]},
+  {a:"globinmade",b:"hb",p:"globin"},
+  {a:"normo",b:"lowretic",p:"underprod",e:"Corrected retic under 2%"},
+  {a:"normo",b:"highretic",p:"hemolysis",e:"Corrected retic over 2%"},
+  {a:"lowretic",b:"stemfail",p:"underprod"},
+  {a:"lowretic",b:"redfail",p:"underprod"},
+  {a:"lowretic",b:"nodrive",p:"underprod"},
+  {a:"lowretic",b:"infiltrate",p:"underprod"},
+  {a:"nodrive",b:"nephconn",p:"underprod",dash:1,arrow:"none"},
+  {a:"highretic",b:"intrinsic",p:"hemolysis",e:"Mostly inherited"},
+  {a:"highretic",b:"extrinsic",p:"hemolysis",e:"Acquired"},
+  {a:"intrinsic",b:"membrane",p:"hemolysis"},
+  {a:"intrinsic",b:"enzyme",p:"hemolysis"},
+  {a:"intrinsic",b:"hbvariant",p:"globin"},
+  {a:"extrinsic",b:"immune",p:"hemolysis"},
+  {a:"extrinsic",b:"shear",p:"hemolysis"},
+  {a:"shear",b:"hemoconn",p:"hemolysis",dash:1,arrow:"none"},
+  {a:"macro",b:"megalo",p:"macrocytic"},
+  {a:"macro",b:"nonmeg",p:"macrocytic"},
+  {a:"megalo",b:"b12n",p:"macrocytic"},
+  {a:"megalo",b:"folaten",p:"macrocytic"},
+  {a:"megalo",b:"pyrn",p:"macrocytic"},
+  {a:"b12n",b:"vitconn",p:"macrocytic",dash:1,arrow:"none"},
+  {a:"folaten",b:"vitconn",p:"macrocytic",dash:1,arrow:"none"},
+  {a:"pyrn",b:"nucconn",p:"macrocytic",dash:1,arrow:"none"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["index","Index"]];
 
 
 
@@ -4469,7 +4761,10 @@ function flashPins(id,center){
   }
 }
 function gotoLes(id){
-  const loc=(LOC[id]||[])[0];
+  /* A card pinned on several maps must not pull the reader off the map they are
+     already on. Stay put if it lives here; otherwise go to its first home. */
+  const locs=LOC[id]||[];
+  const loc=locs.find(l=>l.v===state.view)||locs[0];
   if(loc&&loc.v!==state.view) setView(loc.v);
   openLes(id,true);
 }
@@ -4536,7 +4831,7 @@ function renderIndex(){
       <span class="t">${esc(L.n)}</span><span class="e">${esc(L.enz||"")}</span>
       ${L.buzz&&L.buzz[0]?`<span class="b">${esc(L.buzz[0])}</span>`:""}</button></li>`;}).join("")}</ul></section>`).join("");
   idxWrap.innerHTML=`<div class="idx-intro"><h2>Every lesion on one page</h2>
-    <p>${ids.length} entries across the four maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p></div>
+    <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p></div>
     ${cards||`<p class="empty">Nothing matches “${esc(state.q)}”.</p>`}`;
   idxWrap.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
 }
