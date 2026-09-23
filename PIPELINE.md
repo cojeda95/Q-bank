@@ -99,6 +99,22 @@ runtime, so the build **refuses** rather than warns:
   `tools/atlas-homes.json` snapshots every card's home; if a build moves one, it stops and
   names it. Rebuild with `--accept-homes` only if the move is intended.
 
+### Where a pin goes
+
+A pin marks the step where a disease or drug **acts**. A drug's *side effect* goes on the
+off-target mechanism that causes it, never on the drug's therapeutic target. The first
+Antimicrobials map broke this — Long QT sat on the macrolide ribosome step (macrolides
+prolong QT by blocking cardiac hERG channels, and clindamycin, which shares that step, does
+not prolong QT at all). Those maps now carry a "Side effects — where they actually come
+from" section with one node per real mechanism (hERG block, proximal tubule injury, MAO
+inhibition, aldehyde dehydrogenase, UGT1A1, …) listing every drug that shares it.
+
+### Topics in the top bar
+
+The top bar shows broad topics (`TOPICS`, defined right after `VIEWS`); choosing one shows
+its maps in a row beneath. A new map needs a `VIEWS` entry **and** a place in exactly one
+topic — the build refuses a map that is in no topic or in two.
+
 ### Links from the question bank
 
 The build also writes `resources/atlas-terms.js`: each card's name, alias and its curated

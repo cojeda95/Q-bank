@@ -23,6 +23,16 @@
   Object.keys(MAPS).forEach(v=>{ if(!viewIds.includes(v)) err(`map "${v}" is defined but has no tab in VIEWS — unreachable`); });
   viewIds.forEach(v=>{ if(v!=="index"&&!has(MAPS,v)) err(`VIEWS has a "${v}" tab but no MAPS.${v}`); });
   Object.keys(LES).forEach(id=>{ if(viewIds.includes(id)) err(`card id "${id}" is also a view id — #${id} links would be ambiguous`); });
+  /* the top bar groups views into topics; each view must sit in exactly one */
+  if(typeof TOPICS!=="undefined"){
+    const inTopic={};
+    TOPICS.forEach(([t,l,vs])=>vs.forEach(v=>{
+      if(!viewIds.includes(v)) err(`topic "${t}" lists "${v}", which is not a view`);
+      if(inTopic[v]) err(`view "${v}" is in two topics ("${inTopic[v]}" and "${t}")`);
+      inTopic[v]=t;
+    }));
+    viewIds.forEach(v=>{ if(!inTopic[v]) err(`view "${v}" is in no topic — it has no button in the top bar`); });
+  }
 
   /* ── cards ─────────────────────────────────────────── */
   const TAGS=["b","i","em","strong","sup","sub"];

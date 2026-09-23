@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 25 pan/zoom maps with 402 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 26 pan/zoom maps with 427 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="25 interactive maps. 402 lesions pinned to the step they break.">
+<meta property="og:description" content="26 interactive maps. 427 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -216,6 +216,13 @@ svg.map.drag{cursor:grabbing}
 .idxrow .b{font-size:12px;color:var(--ink-2);display:block;margin-top:3px}
 .empty{padding:44px 10px;text-align:center;color:var(--ink-3);font-size:13.5px}
 
+/* ── topic bar and its map row ────────────────────── */
+.subbar{flex-basis:100%;order:5;display:flex;min-width:0;margin:-4px 0 -2px}
+.subtabs{display:flex;gap:5px;overflow-x:auto;max-width:100%;scrollbar-width:none;padding:1px}
+.subtabs::-webkit-scrollbar{display:none}
+.subtabs .tab{padding:4px 12px;border-radius:99px;font-size:12px;border:1px solid var(--line-2);background:var(--surface-2)}
+.subtabs .tab[aria-selected="true"]{background:var(--accent-soft);color:var(--accent);border-color:transparent;box-shadow:none}
+
 /* ── quiz menu · pin quiz · share link ─────────────── */
 .qwrap{position:relative}
 .qmenu{position:absolute;right:0;top:calc(100% + 6px);width:244px;background:var(--surface);border:1px solid var(--line);
@@ -291,7 +298,7 @@ body{display:flex;flex-direction:column}
       <h1>Lesion Atlas</h1>
       <span class="sub">COMLEX 1 &middot; USMLE Step 1</span>
     </div>
-    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="tabs topics" role="tablist" id="topics" aria-label="Topics"></div>
     <div class="hdr-right">
       <div class="search">
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
@@ -308,6 +315,7 @@ body{display:flex;flex-direction:column}
       </div>
       <button class="btn" id="themeBtn" title="Toggle light / dark">◐</button>
     </div>
+    <div class="subbar" id="subbar" hidden><div class="subtabs" role="tablist" id="tabs" aria-label="Maps in this topic"></div></div>
   </header>
 
   <div class="shell">
@@ -436,6 +444,12 @@ const PATHS = {
   dnafolate:{n:"DNA, RNA & folate",v:"--p-sugars"},
   mycobact:{n:"Mycobacteria",v:"--p-glycogen"},
   fungal:{n:"Fungal targets",v:"--p-ppp"},
+  toxicity:{n:"Side-effect mechanisms",v:"--p-etc"},
+  hivcycle:{n:"HIV life cycle",v:"--p-glycolysis"},
+  herpes:{n:"Herpesviruses",v:"--p-sugars"},
+  influenza:{n:"Influenza",v:"--p-tca"},
+  hepatitis:{n:"Hepatitis B and C",v:"--p-gluconeo"},
+  rnaother:{n:"Other RNA viruses",v:"--p-ppp"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -601,7 +615,7 @@ uncoupler:{n:"Uncoupling agents",k:"drug",p:"etc",enz:"Inner mitochondrial membr
 
 mito:{n:"Mitochondrial myopathies",alias:"MELAS · MERRF · LHON",k:"dz",p:"etc",q:["melas", "merrf", "mitochondrial myopathy", "leber hereditary optic neuropathy"],enz:"mtDNA-encoded ETC subunits and tRNAs",inh:"Maternal (mitochondrial)",hi:1,
  mech:"mtDNA is inherited only from the oocyte. Mutant and wild-type genomes segregate randomly at cell division (heteroplasmy), so severity varies between tissues and between siblings; high-energy tissues — muscle, brain, optic nerve — cross the threshold first.",
- find:["MELAS: stroke-like episodes not respecting vascular territories, lactic acidosis, seizures, short stature","MERRF: myoclonic epilepsy + ataxia","LHON: subacute bilateral central vision loss in young men"],
+ find:["MELAS: stroke-like episodes not respecting vascular territories, lactic acidosis, seizures, short stature","MERRF: myoclonic epilepsy + ataxia","LHON: subacute bilateral central vision loss in young men","Acquired look-alike: <b>NRTIs</b> (zidovudine; older stavudine and didanosine) inhibit mitochondrial DNA polymerase γ — myopathy, lactic acidosis, neuropathy"],
  labs:["<b>Ragged red fibers</b> on modified Gomori trichrome muscle biopsy","↑ Serum and CSF lactate"],
  buzz:["Affected mother → all children at risk; affected father → none","Variable expressivity from heteroplasmy"],tx:["Supportive; avoid valproate and metformin"]},
 
@@ -609,7 +623,7 @@ ethanol:{n:"Ethanol metabolism — NADH excess",k:"drug",p:"gluconeo",q:["alcoho
  mech:"Both oxidations generate NADH, driving the NADH:NAD⁺ ratio up. Excess NADH pushes pyruvate → lactate and oxaloacetate → malate, stripping gluconeogenesis of its substrates, and diverts acetyl-CoA into ketones and fatty-acid synthesis.",
  find:["Fasting hypoglycemia in a binge drinker who hasn't eaten","Hepatic steatosis (macrovesicular fatty change)","Alcoholic ketoacidosis with a normal or low glucose"],
  labs:["↑ Lactate → anion-gap acidosis; lactate competes with urate for renal excretion → <b>hyperuricemia / gout flare</b>","AST:ALT ratio > 2:1","↑ β-Hydroxybutyrate (may make nitroprusside ketone test falsely negative)"],
- buzz:["Fomepizole inhibits alcohol dehydrogenase — antidote for methanol and ethylene glycol","Disulfiram inhibits aldehyde dehydrogenase → acetaldehyde flush"],
+ buzz:["Fomepizole inhibits alcohol dehydrogenase — antidote for methanol and ethylene glycol","Disulfiram inhibits aldehyde dehydrogenase → acetaldehyde flush; metronidazole and cefotetan cause a similar reaction"],
  tx:["Dextrose with thiamine first, volume repletion"]},
 
 f26bp:{n:"Fructose-2,6-bisphosphate switch",alias:"F-2,6-BP — the regulator · NOT the F-1,6-BP intermediate",k:"reg",p:"glycolysis",enz:"PFK-2 / fructose-bisphosphatase-2 (one bifunctional enzyme)",inh:"—",hi:1,
@@ -924,7 +938,7 @@ sidero:{n:"Sideroblastic anemia",k:"dz",p:"heme",enz:"δ-ALA synthase (rate-limi
 bilirubin:{n:"Hereditary hyperbilirubinemias",alias:"Gilbert · Crigler-Najjar · Dubin-Johnson · Rotor",k:"dz",p:"bili",enz:"UDP-glucuronosyltransferase (UGT1A1) · MRP2 transporter",inh:"AR (Gilbert often AR)",hi:1,
  mech:"Unconjugated bilirubin is lipid-soluble, albumin-bound and neurotoxic; conjugation by UGT makes it water-soluble for biliary excretion via MRP2.",
  find:["<b>Gilbert</b>: mildly ↓ UGT activity; asymptomatic jaundice with fasting, illness, stress, exertion — benign","<b>Crigler-Najjar I</b>: absent UGT; kernicterus in the neonate, fatal untreated","<b>Crigler-Najjar II</b>: markedly reduced UGT; responds to phenobarbital (enzyme induction)","<b>Dubin-Johnson</b>: defective MRP2 excretion; conjugated hyperbilirubinemia, grossly <b>black liver</b>","<b>Rotor</b>: impaired hepatic uptake/storage; conjugated, liver NOT black"],
- labs:["Unconjugated: Gilbert, Crigler-Najjar; Conjugated: Dubin-Johnson, Rotor","Otherwise normal LFTs in all four"],
+ labs:["Unconjugated: Gilbert, Crigler-Najjar; Conjugated: Dubin-Johnson, Rotor","Otherwise normal LFTs in all four","<b>Atazanavir</b> (and indinavir) inhibit UGT1A1 — a harmless, Gilbert-like unconjugated hyperbilirubinemia"],
  buzz:["Jaundice only when the patient skips meals or gets sick = Gilbert","Black liver = Dubin-Johnson"],
  tx:["Gilbert / Rotor: none. CN-I: phototherapy, exchange transfusion, liver transplant. CN-II: phenobarbital"]},
 
@@ -944,7 +958,7 @@ ada:{n:"Adenosine deaminase deficiency",k:"dz",p:"purine",enz:"Adenosine deamina
 
 gout:{n:"Gout & urate-lowering therapy",k:"drug",p:"purine",q:["gout", "gouty arthritis", "allopurinol", "febuxostat", "colchicine", "probenecid", "hyperuricemia", "monosodium urate", "rasburicase", "pegloticase"],enz:"Xanthine oxidase · URAT1 · urate oxidase",inh:"—",hi:1,
  mech:"Uric acid is the end product of purine degradation in humans, who lack urate oxidase. Underexcretion (90%) or overproduction (10%) supersaturates synovial fluid, and monosodium urate crystals trigger an IL-1β-driven neutrophilic arthritis.",
- find:["Sudden exquisitely painful monoarthritis, classically first MTP joint (<b>podagra</b>), often at night","Tophi; urate nephrolithiasis","Triggers: alcohol (especially beer), red meat, seafood, thiazide and loop diuretics, cyclosporine, low-dose aspirin"],
+ find:["Sudden exquisitely painful monoarthritis, classically first MTP joint (<b>podagra</b>), often at night","Tophi; urate nephrolithiasis","Triggers: alcohol (especially beer), red meat, seafood, thiazide and loop diuretics, cyclosporine, low-dose aspirin, and the antituberculous drugs <b>pyrazinamide</b> and ethambutol, which cut renal urate excretion"],
  labs:["<b>Needle-shaped, negatively birefringent</b> crystals — <b>yellow when parallel</b> to the polarizer","Serum urate may be normal during the acute attack"],
  buzz:["Allopurinol / febuxostat = xanthine oxidase inhibitors","Allopurinol ↑ toxicity of azathioprine and 6-MP — reduce the dose","Probenecid blocks URAT1 reabsorption; rasburicase is recombinant urate oxidase for tumor lysis"],
  tx:["Acute: NSAIDs, colchicine, glucocorticoids. Chronic: allopurinol (start after the flare settles, with prophylaxis)"]},
@@ -1557,7 +1571,7 @@ ain:{n:"Acute interstitial nephritis",k:"dz",p:"nephron",enz:"Drug-induced hyper
 
 nephrotoxdrugs:{n:"Nephrotoxins worth memorizing",k:"drug",p:"nephron",enz:"Tubular epithelium · interstitium · vasculature",inh:"—",hi:1,
  mech:"Each agent injures a predictable part of the nephron, so the pattern of injury names the drug.",
- find:["<b>Aminoglycosides</b> — proximal ATN, classically <b>non-oliguric</b>; also ototoxic","<b>Cisplatin</b> — ATN plus <b>magnesium wasting</b>; amifostine and saline are protective","<b>Amphotericin B</b> — distal RTA with K⁺ and Mg²⁺ wasting; liposomal form is less toxic","<b>Vancomycin</b> — ATN, worse with piperacillin-tazobactam","<b>Contrast</b> — vasoconstriction plus direct toxicity, 24–48 h after the study; prevent with isotonic saline","<b>Calcineurin inhibitors</b> — afferent vasoconstriction, chronic interstitial fibrosis","<b>Acyclovir, sulfonamides, methotrexate, indinavir</b> — crystal nephropathy; hydrate and alkalinize"],
+ find:["<b>Aminoglycosides</b> — proximal ATN, classically <b>non-oliguric</b>; also ototoxic","<b>Cisplatin</b> — ATN plus <b>magnesium wasting</b>; amifostine and saline are protective","<b>Amphotericin B</b> — distal RTA with K⁺ and Mg²⁺ wasting; liposomal form is less toxic","<b>Vancomycin</b> — ATN, worse with piperacillin-tazobactam","<b>Contrast</b> — vasoconstriction plus direct toxicity, 24–48 h after the study; prevent with isotonic saline","<b>Calcineurin inhibitors</b> — afferent vasoconstriction, chronic interstitial fibrosis","<b>Acyclovir, sulfonamides, methotrexate, indinavir</b> — crystal nephropathy; hydrate and alkalinize","<b>Tenofovir (TDF), cidofovir, foscarnet</b> — proximal tubular injury; tenofovir can cause Fanconi syndrome · <b>polymyxins</b> — ATN"],
  labs:["Lithium: nephrogenic DI and chronic tubulointerstitial nephritis","Heavy metals (lead, mercury, cadmium) → Fanconi syndrome"],
  buzz:["Non-oliguric AKI on day 5–7 of gentamicin","Hypomagnesemia after cisplatin"],
  tx:["—"]},
@@ -1578,7 +1592,7 @@ rhabdo:{n:"Rhabdomyolysis",k:"dz",p:"nephron",enz:"Myoglobin cast nephropathy",i
 
 stones:{n:"Kidney stones",k:"dz",p:"cd",enz:"Urinary supersaturation and pH",inh:"Acquired",hi:1,
  mech:"Stone type is decided by what is supersaturated and at what urine pH it precipitates — which is why the same patient's chemistry predicts the crystal.",
- find:["<b>Calcium oxalate (~80%)</b> — radiopaque, envelope or dumbbell crystals. Risk: hypercalciuria, hyperoxaluria (Crohn disease, gastric bypass, vitamin C excess), low citrate. Treat with <b>thiazides</b> and citrate","<b>Struvite / ammonium magnesium phosphate</b> — <b>urease-producing organisms</b> (Proteus, Klebsiella, Staphylococcus saprophyticus) alkalinize the urine. <b>Staghorn calculi</b>, coffin-lid crystals","<b>Uric acid</b> — <b>radiolucent</b>, rhomboid crystals, forms in <b>acidic</b> urine. Gout, tumor lysis, chronic diarrhea. Treat by alkalinizing urine + allopurinol","<b>Cystine</b> — hexagonal crystals, staghorn possible, from <b>cystinuria</b>; positive cyanide-nitroprusside test"],
+ find:["<b>Calcium oxalate (~80%)</b> — radiopaque, envelope or dumbbell crystals. Risk: hypercalciuria, hyperoxaluria (Crohn disease, gastric bypass, vitamin C excess), low citrate. Treat with <b>thiazides</b> and citrate","<b>Struvite / ammonium magnesium phosphate</b> — <b>urease-producing organisms</b> (Proteus, Klebsiella, Staphylococcus saprophyticus) alkalinize the urine. <b>Staghorn calculi</b>, coffin-lid crystals","<b>Uric acid</b> — <b>radiolucent</b>, rhomboid crystals, forms in <b>acidic</b> urine. Gout, tumor lysis, chronic diarrhea. Treat by alkalinizing urine + allopurinol","<b>Cystine</b> — hexagonal crystals, staghorn possible, from <b>cystinuria</b>; positive cyanide-nitroprusside test","<b>Drug crystals</b> — acyclovir, indinavir, atazanavir, sulfonamides, triamterene; prevent with hydration"],
  labs:["Non-contrast helical CT is the imaging test of choice","Uric acid stones are the ones you can dissolve medically"],
  buzz:["Staghorn = struvite (or cystine)","Radiolucent stone = uric acid"],
  tx:["Hydration and pain control; tamsulosin for passage; lithotripsy or ureteroscopy for large stones; treat the underlying chemistry"]},
@@ -3261,7 +3275,183 @@ fungalwall:{n:"Echinocandins, terbinafine & flucytosine",k:"drug",p:"fungal",enz
  find:["<b>Caspofungin, micafungin, anidulafungin</b> (IV): invasive candidiasis, refractory aspergillosis — few side effects; histamine-release flushing","<b>Terbinafine</b> (oral): <b>onychomycosis</b> and dermatophytes — hepatotoxicity, taste disturbance","<b>Flucytosine</b>: with amphotericin B for cryptococcal meningitis — marrow suppression","<b>Griseofulvin</b> binds dermatophyte microtubules (tinea capitis) — teratogen, CYP inducer, <b>can precipitate acute porphyria</b>"],
  labs:["Echinocandins reach the CSF and urine poorly"],
  buzz:["-fungins break the wall","Terbinafine for toenails"],
- tx:["—"],q:["echinocandin","echinocandins","caspofungin","micafungin","terbinafine","flucytosine","griseofulvin","onychomycosis"]}
+ tx:["—"],q:["echinocandin","echinocandins","caspofungin","micafungin","terbinafine","flucytosine","griseofulvin","onychomycosis"]},
+
+/* ── antivirals ─────────────────────────────────────── */
+hiv:{n:"HIV infection & AIDS",k:"dz",p:"hivcycle",enz:"CD4⁺ T cells · CCR5 / CXCR4 co-receptors",inh:"Sexual · blood · perinatal",hi:1,
+ mech:"HIV's gp120 binds <b>CD4</b> and then a co-receptor — <b>CCR5</b> early in infection, <b>CXCR4</b> later — so it infects helper T cells, macrophages and dendritic cells. Reverse transcriptase copies its RNA into DNA with many errors, integrase inserts that DNA into the host genome, and the latent reservoir this creates is why treatment controls the virus but does not cure it. CD4 counts fall over years until opportunistic infections appear.",
+ find:["Acute retroviral syndrome 2–4 weeks after exposure: mononucleosis-like fever, rash, lymphadenopathy, pharyngitis","Years of clinical latency, then <b>AIDS</b>: CD4 below 200/mm³ or an AIDS-defining illness","Opportunistic infections by CD4: below 200 Pneumocystis; below 100 toxoplasmosis, cryptococcus, histoplasmosis; below 50 CMV retinitis, MAC","Homozygous <b>CCR5 Δ32</b> deletion protects against CCR5-tropic virus"],
+ labs:["Screen with a 4th-generation antigen–antibody (p24) immunoassay, confirm with an HIV-1/HIV-2 differentiation assay; viral load if acute infection is suspected","Follow CD4 count and viral load; genotype for resistance before starting therapy","Infants of HIV-positive mothers: PCR, since maternal IgG crosses the placenta"],
+ buzz:["CD4 below 200 = AIDS","CCR5 Δ32 homozygotes resist infection"],
+ tx:["Antiretroviral therapy for everyone: usually two NRTIs plus an integrase inhibitor","PrEP (tenofovir-emtricitabine, or long-acting cabotegravir); post-exposure prophylaxis within 72 hours","TMP-SMX below CD4 200 (Pneumocystis) and below 100 (toxoplasmosis)"],q:["hiv","hiv infection","aids","acquired immunodeficiency syndrome","human immunodeficiency virus","antiretroviral therapy","antiretroviral","pre exposure prophylaxis","post exposure prophylaxis"]},
+
+nrti:{n:"NRTIs — nucleoside reverse transcriptase inhibitors",k:"drug",p:"hivcycle",enz:"HIV reverse transcriptase (active site)",inh:"—",hi:1,
+ mech:"NRTIs are nucleoside or nucleotide analogues that host kinases phosphorylate to the triphosphate. Reverse transcriptase builds them into the growing viral DNA, and because they <b>lack a 3′-OH</b>, the chain stops. Tenofovir is a nucleotide, already carrying one phosphate.",
+ find:["<b>Tenofovir</b> (TDF, TAF), <b>emtricitabine</b>, <b>lamivudine</b>, <b>abacavir</b>, <b>zidovudine</b> — the backbone of nearly every regimen; tenofovir-emtricitabine is also PrEP","<b>Abacavir</b>: fatal hypersensitivity in <b>HLA-B*57:01</b> carriers — test first","<b>Tenofovir disoproxil (TDF)</b>: proximal tubulopathy (Fanconi syndrome) and bone loss; tenofovir alafenamide (TAF) much less","<b>Zidovudine</b>: marrow suppression with macrocytic anemia, myopathy; still used to prevent perinatal transmission","Class effect, worst with older drugs: <b>lactic acidosis</b> and hepatic steatosis from mitochondrial DNA polymerase γ inhibition; neuropathy and pancreatitis (stavudine, didanosine)"],
+ labs:["Lamivudine, emtricitabine and tenofovir also suppress hepatitis B — stopping them can flare it"],
+ buzz:["Abacavir: test HLA-B*57:01 first","Zidovudine: anemia · tenofovir: kidney and bone"],
+ tx:["—"],q:["nrti","nrtis","nucleoside reverse transcriptase inhibitor","nucleoside reverse transcriptase inhibitors","tenofovir","emtricitabine","lamivudine","abacavir","zidovudine","hla b 57 01","hla b5701"]},
+
+nnrti:{n:"NNRTIs — non-nucleoside reverse transcriptase inhibitors",k:"drug",p:"hivcycle",enz:"HIV-1 reverse transcriptase (allosteric pocket)",inh:"—",hi:1,
+ mech:"NNRTIs bind a pocket near, not at, the active site of reverse transcriptase and lock it in an inactive shape. They need no phosphorylation, do not work against HIV-2, and one mutation can confer resistance to the whole class.",
+ find:["<b>Efavirenz</b>: vivid dreams, dizziness, depression and other neuropsychiatric effects; rash","<b>Nevirapine</b>: severe hepatotoxicity and rash, including Stevens-Johnson syndrome","<b>Rilpivirine</b>, <b>doravirine</b>, etravirine: better tolerated; rilpivirine needs food and stomach acid (no PPIs)","Induce and inhibit CYP450 enzymes — many interactions"],
+ labs:["No activity against HIV-2"],
+ buzz:["Efavirenz: vivid dreams","Nevirapine: liver and rash"],
+ tx:["—"],q:["nnrti","nnrtis","non nucleoside reverse transcriptase inhibitor","non nucleoside reverse transcriptase inhibitors","efavirenz","nevirapine","rilpivirine","doravirine","etravirine"]},
+
+insti:{n:"Integrase inhibitors (-tegravir)",k:"drug",p:"hivcycle",enz:"HIV integrase (strand transfer)",inh:"—",hi:1,
+ mech:"Integrase inserts the viral DNA into a host chromosome — the step that makes infection permanent in that cell. Integrase strand-transfer inhibitors block the insertion. Potent and well tolerated, they anchor most first-line regimens.",
+ find:["<b>Bictegravir</b>, <b>dolutegravir</b>, raltegravir, elvitegravir; long-acting injectable <b>cabotegravir</b> (with rilpivirine for treatment, alone for PrEP)","Adverse: weight gain, insomnia, headache; raised creatine kinase (raltegravir); dolutegravir raises creatinine by blocking its secretion, not by injuring the kidney","Absorption blocked by polyvalent cations — antacids, calcium, iron"],
+ labs:["Elvitegravir needs a booster (cobicistat)"],
+ buzz:["-tegravir blocks integration","Separate from antacids and iron"],
+ tx:["—"],q:["integrase inhibitor","integrase inhibitors","integrase strand transfer inhibitor","dolutegravir","bictegravir","raltegravir","elvitegravir","cabotegravir"]},
+
+hivpi:{n:"HIV protease inhibitors (-navir)",k:"drug",p:"hivcycle",enz:"HIV aspartyl protease (Gag-Pol cleavage)",inh:"—",hi:1,
+ mech:"New virions bud with Gag and Gag-Pol still joined; the viral protease must cut them apart to make a mature, infectious particle. Protease inhibitors leave virions immature and non-infectious. Nearly all are given with a <b>booster</b> — low-dose ritonavir or cobicistat, which inhibit CYP3A4 so the protease inhibitor lasts longer.",
+ find:["<b>Darunavir</b>, <b>atazanavir</b>, lopinavir, indinavir, ritonavir","Metabolic: <b>hyperglycemia and insulin resistance</b>, dyslipidemia, lipodystrophy, GI upset","<b>Atazanavir</b>: indirect hyperbilirubinemia (UGT1A1 inhibition) and stones · <b>indinavir</b>: nephrolithiasis","<b>Ritonavir and cobicistat</b> inhibit CYP3A4 — dangerous with some statins and benzodiazepines; rifampin instead lowers protease inhibitor levels"],
+ labs:["Nirmatrelvir for COVID-19 is paired with ritonavir for the same boosting reason"],
+ buzz:["-navir: protease","Ritonavir boosts the others through CYP3A4"],
+ tx:["—"],q:["hiv protease inhibitor","hiv protease inhibitors","darunavir","atazanavir","lopinavir","indinavir","ritonavir","cobicistat"]},
+
+entryinh:{n:"HIV entry inhibitors",k:"drug",p:"hivcycle",enz:"CCR5 · gp41 · CD4 · gp120",inh:"—",
+ mech:"Entry has three targetable steps: gp120 binding CD4, gp120 binding the co-receptor, and gp41 refolding to fuse the membranes. Each has a drug, used mainly for resistant virus.",
+ find:["<b>Maraviroc</b>: CCR5 antagonist — needs a <b>tropism assay</b> first and fails against CXCR4-tropic virus; hepatotoxicity","<b>Enfuvirtide</b>: binds gp41 and blocks fusion; injected, with injection-site reactions","<b>Ibalizumab</b> (anti-CD4 monoclonal) and <b>fostemsavir</b> (gp120 attachment): heavily treated patients with resistant virus"],
+ labs:["Lenacapavir, a capsid inhibitor injected twice a year, acts later — at uncoating and assembly"],
+ buzz:["Maraviroc: check tropism first","Enfuvirtide: gp41 fusion"],
+ tx:["—"],q:["maraviroc","enfuvirtide","ibalizumab","fostemsavir","entry inhibitor","fusion inhibitor","ccr5 antagonist","lenacapavir"]},
+
+hsvvzv:{n:"Herpes simplex & varicella-zoster",k:"dz",p:"herpes",enz:"Latent virus in sensory ganglia",inh:"Contact · respiratory (VZV)",hi:1,
+ mech:"HSV-1, HSV-2 and VZV infect skin or mucosa, travel up sensory nerves and stay <b>latent in sensory ganglia</b> — trigeminal for HSV-1, sacral for HSV-2, dorsal root and cranial nerve ganglia for VZV — then reactivate along the same nerve.",
+ find:["<b>HSV-1</b>: gingivostomatitis, herpes labialis, keratitis, <b>temporal lobe encephalitis</b> — hemorrhagic, the commonest sporadic viral encephalitis","<b>HSV-2</b>: genital herpes, neonatal herpes from the birth canal, aseptic meningitis","<b>VZV</b>: chickenpox; reactivation as <b>shingles</b> in one dermatome — zoster ophthalmicus in V1 (vesicles on the nose tip), Ramsay Hunt syndrome from the geniculate ganglion","Tzanck smear: multinucleated giant cells; Cowdry A intranuclear inclusions"],
+ labs:["PCR of lesion fluid or CSF; in encephalitis, temporal lobe changes on MRI and a lymphocytic CSF with red cells"],
+ buzz:["Temporal lobe encephalitis = HSV-1 — start IV acyclovir","Vesicles in one dermatome = zoster"],
+ tx:["Acyclovir, valacyclovir or famciclovir; IV acyclovir for encephalitis and neonatal disease","Recombinant zoster vaccine from age 50; live varicella vaccine in childhood"],q:["herpes simplex","herpes simplex virus","hsv 1","hsv 2","hsv encephalitis","herpes zoster","varicella zoster","varicella","shingles","zoster ophthalmicus","ramsay hunt","herpes labialis","genital herpes","postherpetic neuralgia"]},
+
+cmv:{n:"Cytomegalovirus disease",k:"dz",p:"herpes",enz:"Latent in monocytes and other cells",inh:"Body fluids · transplacental · transplant",hi:1,
+ mech:"CMV is a herpesvirus that stays latent after a usually silent first infection. Disease comes from reactivation when cell-mediated immunity fails — advanced HIV, transplantation — or from infection of a fetus.",
+ find:["<b>Congenital</b> (the commonest congenital infection): sensorineural hearing loss, periventricular calcifications, microcephaly, chorioretinitis, blueberry-muffin rash","<b>AIDS with CD4 below 50</b>: retinitis with hemorrhages and exudates, esophagitis with linear ulcers, colitis","<b>Transplant</b>: pneumonitis, colitis, graft dysfunction","Mononucleosis-like illness with a <b>heterophile-negative</b> test"],
+ labs:["<b>Owl's eye</b> intranuclear inclusions","PCR viral load; biopsy for end-organ disease"],
+ buzz:["Owl's eye inclusions","CMV retinitis at CD4 below 50"],
+ tx:["Ganciclovir or valganciclovir; foscarnet or cidofovir for resistant virus","Letermovir or valganciclovir as prophylaxis after transplant"],q:["cytomegalovirus","cmv","cmv retinitis","congenital cmv","owls eye"]},
+
+acyclovir:{n:"Acyclovir, valacyclovir & famciclovir",k:"drug",p:"herpes",enz:"Viral thymidine kinase → viral DNA polymerase",inh:"—",hi:1,
+ mech:"Acyclovir is a guanosine analogue that only <b>viral thymidine kinase</b> phosphorylates efficiently, so it is activated only in HSV- or VZV-infected cells. Host kinases add the next two phosphates, and acyclovir triphosphate inhibits the viral DNA polymerase and ends the chain. Valacyclovir is an oral prodrug with better absorption; famciclovir becomes penciclovir.",
+ find:["HSV and VZV: genital and oral herpes, zoster, encephalitis (IV), neonatal herpes; suppression of recurrences","Weak against CMV, which lacks the thymidine kinase — use ganciclovir","Adverse: <b>crystal nephropathy</b> with IV doses (hydrate), neurotoxicity in kidney failure; otherwise very safe"],
+ labs:["Resistance: thymidine kinase–deficient mutants, mostly in the immunocompromised — switch to foscarnet or cidofovir"],
+ buzz:["Needs viral thymidine kinase — works only in infected cells","IV acyclovir for HSV encephalitis; keep the patient hydrated"],
+ tx:["—"],q:["acyclovir","valacyclovir","famciclovir","penciclovir"]},
+
+ganciclovir:{n:"Ganciclovir & valganciclovir",k:"drug",p:"herpes",enz:"CMV UL97 kinase → viral DNA polymerase",inh:"—",hi:1,
+ mech:"Ganciclovir is a guanosine analogue that CMV's own <b>UL97 kinase</b> phosphorylates first; host kinases finish the job, and the triphosphate inhibits the viral DNA polymerase. It is more toxic to host cells than acyclovir. Valganciclovir is the oral prodrug.",
+ find:["CMV retinitis, colitis and pneumonitis; prophylaxis and pre-emptive treatment in transplant recipients","Adverse: <b>marrow suppression</b> — leukopenia, neutropenia, thrombocytopenia; kidney toxicity; teratogenic","<b>Letermovir</b>, a CMV terminase inhibitor without marrow toxicity, is now used for prophylaxis after stem cell transplant"],
+ labs:["Resistance: UL97 kinase mutations, or mutations in the viral DNA polymerase (UL54) — then foscarnet or cidofovir"],
+ buzz:["Ganciclovir: CMV, marrow suppression","UL97 adds the first phosphate"],
+ tx:["—"],q:["ganciclovir","valganciclovir","letermovir"]},
+
+foscarnet:{n:"Foscarnet & cidofovir",k:"drug",p:"herpes",enz:"Viral DNA polymerase — no viral kinase needed",inh:"—",hi:1,
+ mech:"Both skip the viral kinase step, so they work against thymidine kinase– and UL97-mutant virus. <b>Foscarnet</b> is a pyrophosphate analogue that binds the polymerase's pyrophosphate site directly. <b>Cidofovir</b> is a nucleotide analogue activated by host kinases.",
+ find:["Ganciclovir-resistant CMV and acyclovir-resistant HSV; foscarnet also for HHV-6","<b>Foscarnet</b>: nephrotoxicity; it <b>chelates calcium and magnesium</b> — hypocalcemia, hypomagnesemia, seizures, paresthesias","<b>Cidofovir</b>: nephrotoxicity (give probenecid and saline), neutropenia; its long half-life allows weekly dosing"],
+ labs:["Monitor creatinine and electrolytes closely"],
+ buzz:["Foscarnet: pyrophosphate analogue, low calcium and magnesium","Both bypass viral kinases"],
+ tx:["—"],q:["foscarnet","cidofovir"]},
+
+avresist:{n:"How viruses resist antivirals",k:"reg",p:"herpes",enz:"Activating kinases · polymerases · target proteins",inh:"—",
+ mech:"Viruses copy themselves with error-prone polymerases in enormous numbers, so drug-resistant variants exist before treatment starts and a single drug selects them. Where the resistance arises follows from how the drug works.",
+ find:["<b>HSV</b>: thymidine kinase–deficient or altered mutants resist acyclovir → foscarnet or cidofovir","<b>CMV</b>: UL97 kinase mutations resist ganciclovir → foscarnet or cidofovir","<b>HIV</b>: reverse transcriptase, protease and integrase mutations — why regimens combine drugs and are chosen by genotype","<b>Influenza</b>: M2 mutations made amantadine obsolete; the H275Y neuraminidase mutation resists oseltamivir"],
+ labs:["Genotype HIV before starting or changing therapy"],
+ buzz:["Acyclovir-resistant HSV: foscarnet","Combination therapy so no single mutation wins"],
+ tx:["—"],q:["antiviral resistance","acyclovir resistant","ganciclovir resistant"]},
+
+flu:{n:"Influenza",k:"dz",p:"influenza",enz:"Hemagglutinin · neuraminidase",inh:"Respiratory droplets",hi:1,
+ mech:"An orthomyxovirus with a segmented, negative-sense RNA genome. <b>Hemagglutinin</b> binds sialic acid to enter cells and <b>neuraminidase</b> cuts sialic acid to release new virions. Point mutations in these proteins cause <b>antigenic drift</b> and yearly epidemics; exchange of whole segments between strains causes <b>antigenic shift</b> and pandemics.",
+ find:["Abrupt fever, myalgia, headache and cough; most dangerous in the elderly, pregnancy, infancy and chronic illness","Complications: viral pneumonia; secondary bacterial pneumonia (<b>S. aureus</b>, pneumococcus, H. influenzae); myositis","<b>Reye syndrome</b> with aspirin in children"],
+ labs:["Rapid antigen test or RT-PCR of a nasopharyngeal swab"],
+ buzz:["Drift = epidemics · shift = pandemics","S. aureus pneumonia after influenza"],
+ tx:["Oseltamivir or baloxavir within 48 hours, or at any point if hospitalized or at high risk","Yearly vaccine: inactivated by injection, or live attenuated intranasal"],q:["influenza","influenza virus","antigenic drift","antigenic shift","hemagglutinin"]},
+
+nai:{n:"Neuraminidase inhibitors",k:"drug",p:"influenza",enz:"Influenza neuraminidase (A and B)",inh:"—",hi:1,
+ mech:"New influenza virions stay stuck to sialic acid on the cell that made them until neuraminidase cleaves it. Blocking neuraminidase traps them, so infection spreads more slowly.",
+ find:["<b>Oseltamivir</b> (oral), <b>zanamivir</b> (inhaled — can cause bronchospasm, avoid in asthma and COPD), <b>peramivir</b> (IV)","Influenza A and B: started within 48 hours, shortens illness by about a day; also post-exposure prophylaxis","Oseltamivir: nausea, vomiting; rare neuropsychiatric events in children"],
+ labs:["Resistance through the H275Y neuraminidase mutation"],
+ buzz:["Oseltamivir: start within 48 hours","Zanamivir is inhaled — not in asthma"],
+ tx:["—"],q:["oseltamivir","zanamivir","peramivir","neuraminidase inhibitor","neuraminidase inhibitors","neuraminidase"]},
+
+baloxavir:{n:"Baloxavir",k:"drug",p:"influenza",enz:"Cap-dependent endonuclease (PA subunit)",inh:"—",
+ mech:"Influenza makes its mRNA by <b>cap-snatching</b>: its PA endonuclease cuts the 5′ caps off host mRNAs to prime viral transcription. Baloxavir blocks the endonuclease, so viral mRNA is not made.",
+ find:["A single oral dose for uncomplicated influenza A and B within 48 hours; also post-exposure prophylaxis","Resistance appears readily, especially in children (PA I38T)","Do not take with dairy, antacids, or supplements containing calcium, iron or magnesium"],
+ labs:["Acts earlier in the cycle than the neuraminidase inhibitors"],
+ buzz:["One dose, cap-snatching blocked"],
+ tx:["—"],q:["baloxavir","cap snatching","cap dependent endonuclease"]},
+
+m2inh:{n:"Amantadine & rimantadine",k:"drug",p:"influenza",enz:"Influenza A M2 proton channel",inh:"—",
+ mech:"The M2 channel lets protons into the virion inside the endosome, which frees the viral genome. Amantadine and rimantadine block it — influenza A only, since influenza B has no M2.",
+ find:["No longer used for influenza: nearly all circulating influenza A is resistant (S31N)","Amantadine survives as a <b>Parkinson disease</b> drug, through separate NMDA-blocking and dopamine-releasing effects — for dyskinesias; livedo reticularis, ankle edema","Anticholinergic effects, confusion and hallucinations in the elderly"],
+ labs:["Renally cleared — lower the dose in kidney disease"],
+ buzz:["M2 blockers: influenza A only, and resistance is universal","Amantadine lives on for Parkinson dyskinesia"],
+ tx:["—"],q:["amantadine","rimantadine","m2 ion channel","m2 inhibitor"]},
+
+hbv:{n:"Hepatitis B",k:"dz",p:"hepatitis",enz:"HBV reverse transcriptase · cccDNA",inh:"Blood · sexual · perinatal",hi:1,
+ mech:"HBV is a partly double-stranded <b>DNA</b> virus that replicates through an RNA intermediate using its own reverse transcriptase. Its genome persists in hepatocyte nuclei as <b>covalently closed circular DNA (cccDNA)</b>, which drugs do not clear — so treatment suppresses rather than cures. Liver injury comes from the immune attack on infected cells.",
+ find:["Acute: serum sickness–like prodrome (arthralgia, rash), then jaundice; rarely fulminant","Becomes chronic in about 90% of infected newborns but under 5% of infected adults","Cirrhosis and <b>hepatocellular carcinoma</b>, even without cirrhosis; <b>polyarteritis nodosa</b>, membranous nephropathy","Hepatitis D needs HBsAg to replicate"],
+ labs:["<b>HBsAg</b>: current infection · <b>anti-HBs</b>: immunity · <b>anti-HBc IgM</b>: acute infection, and the only marker in the window period · <b>HBeAg</b>: high infectivity","Vaccinated: anti-HBs alone · resolved infection: anti-HBs plus anti-HBc IgG"],
+ buzz:["Anti-HBc IgM is the window-period marker","HBeAg = highly infectious"],
+ tx:["Tenofovir or entecavir for chronic active disease; pegylated interferon in selected patients","Vaccine (HBsAg); newborns of HBsAg-positive mothers get vaccine plus hepatitis B immune globulin within 12 hours"],q:["hepatitis b","hbv","hbsag","anti hbs","anti hbc","hbeag","hepatitis b surface antigen","hepatitis b virus"]},
+
+hcv:{n:"Hepatitis C",k:"dz",p:"hepatitis",enz:"NS3/4A protease · NS5A · NS5B polymerase",inh:"Blood — injection drug use",hi:1,
+ mech:"HCV is a positive-sense RNA flavivirus whose error-prone polymerase lets it escape antibodies, so most infections become chronic. Unlike HBV it has no DNA stage and no nuclear reservoir — which is why direct-acting antivirals can <b>cure</b> it.",
+ find:["Acute infection is usually silent; about 75–85% become chronic","Cirrhosis and hepatocellular carcinoma","Extrahepatic: <b>mixed cryoglobulinemia</b>, membranoproliferative glomerulonephritis, porphyria cutanea tarda, lichen planus, B-cell lymphoma"],
+ labs:["Screen with anti-HCV antibody; confirm active infection with HCV RNA","Cure = sustained virologic response: RNA undetectable 12 weeks after treatment"],
+ buzz:["Cryoglobulinemia or porphyria cutanea tarda: think hepatitis C","Cured by 8–12 weeks of pills"],
+ tx:["Pan-genotypic direct-acting antivirals: sofosbuvir-velpatasvir or glecaprevir-pibrentasvir","No vaccine"],q:["hepatitis c","hcv","hepatitis c virus","cryoglobulinemia","sustained virologic response"]},
+
+ns3:{n:"NS3/4A protease inhibitors (-previr)",k:"drug",p:"hepatitis",enz:"HCV NS3/4A serine protease",inh:"—",
+ mech:"HCV is translated as one long polyprotein, and the NS3/4A serine protease cuts it into working viral proteins. Blocking the protease stops replication.",
+ find:["<b>Glecaprevir</b> (with pibrentasvir), <b>grazoprevir</b>, <b>voxilaprevir</b>","Contraindicated in decompensated cirrhosis (Child-Pugh B or C) — hepatotoxicity","Drug interactions; any HCV direct-acting antiviral can reactivate hepatitis B in coinfected patients"],
+ labs:["Always part of a combination"],
+ buzz:["-previr: protease","Not in decompensated cirrhosis"],
+ tx:["—"],q:["glecaprevir","grazoprevir","voxilaprevir","ns3 4a"]},
+
+ns5a:{n:"NS5A inhibitors (-asvir)",k:"drug",p:"hepatitis",enz:"HCV NS5A replication complex",inh:"—",
+ mech:"NS5A has no enzyme activity of its own but is essential for building the replication complex and assembling virions. The -asvir drugs block it at picomolar concentrations.",
+ find:["<b>Velpatasvir</b>, <b>ledipasvir</b>, <b>pibrentasvir</b>, elbasvir","Paired with sofosbuvir (ledipasvir, velpatasvir) or glecaprevir (pibrentasvir)","Well tolerated — headache, fatigue; ledipasvir needs stomach acid for absorption"],
+ labs:["NS5A resistance variants are tested before treatment in some settings"],
+ buzz:["-asvir: NS5A"],
+ tx:["—"],q:["ledipasvir","velpatasvir","pibrentasvir","elbasvir","ns5a"]},
+
+sofosbuvir:{n:"Sofosbuvir & NS5B inhibitors (-buvir)",k:"drug",p:"hepatitis",enz:"HCV NS5B RNA-dependent RNA polymerase",inh:"—",hi:1,
+ mech:"Sofosbuvir is a nucleotide prodrug activated in hepatocytes to a uridine analogue triphosphate. NS5B builds it into the new RNA strand and the chain stops. It has a high barrier to resistance and is the backbone of most HCV regimens.",
+ find:["With velpatasvir (pan-genotypic) or ledipasvir, for 8–12 weeks","Adverse: fatigue, headache","<b>Severe bradycardia with amiodarone</b> — avoid the combination"],
+ labs:["Dasabuvir, a non-nucleoside NS5B inhibitor, belonged to older regimens"],
+ buzz:["-buvir: polymerase","Sofosbuvir plus amiodarone: bradycardia"],
+ tx:["—"],q:["sofosbuvir","ns5b","dasabuvir","direct acting antiviral","direct acting antivirals"]},
+
+hbvdrugs:{n:"Hepatitis B antivirals",k:"drug",p:"hepatitis",enz:"HBV reverse transcriptase",inh:"—",hi:1,
+ mech:"HBV copies its pregenomic RNA back into DNA with a reverse transcriptase, so nucleoside and nucleotide analogues that stop reverse transcription suppress it. None removes the cccDNA reservoir, so treatment is usually long-term.",
+ find:["First line: <b>tenofovir</b> (TDF or TAF) or <b>entecavir</b> — high barrier to resistance","<b>Lamivudine</b>: cheap, but resistance develops quickly","Stopping therapy can cause a severe hepatitis flare; with HIV coinfection use a regimen active against both, such as tenofovir with emtricitabine","Pegylated interferon-α: a finite course in selected patients; flu-like symptoms, depression, cytopenias"],
+ labs:["Monitor HBV DNA, ALT and kidney function on tenofovir"],
+ buzz:["Tenofovir and entecavir suppress HBV; cccDNA remains","Never lamivudine alone in someone with HIV"],
+ tx:["—"],q:["entecavir","hepatitis b treatment"]},
+
+ribavirin:{n:"Ribavirin",k:"drug",p:"rnaother",enz:"IMP dehydrogenase (host) · viral RNA polymerase",inh:"—",hi:1,
+ mech:"Ribavirin is a guanosine analogue that inhibits host <b>IMP dehydrogenase</b>, depleting GTP, and is built into viral RNA by viral polymerases, causing lethal mutations. Broad but weak, it is now mostly an add-on.",
+ find:["RSV in severely immunocompromised patients (inhaled), some hepatitis C regimens, Lassa and other hemorrhagic fevers","<b>Hemolytic anemia</b>, dose-related — it accumulates in red cells and depletes their ATP","<b>Highly teratogenic</b> — both partners avoid pregnancy for 6 months after treatment"],
+ labs:["Monitor hemoglobin"],
+ buzz:["Ribavirin: hemolytic anemia, teratogen","IMP dehydrogenase — the same target as mycophenolate"],
+ tx:["—"],q:["ribavirin"]},
+
+covidav:{n:"COVID-19 antivirals",k:"drug",p:"rnaother",enz:"SARS-CoV-2 RNA polymerase · main (3CL) protease",inh:"—",
+ mech:"The same two targets as HIV and hepatitis C, in a coronavirus. <b>Remdesivir</b> is an adenosine analogue that the viral RNA-dependent RNA polymerase incorporates, stalling synthesis. <b>Nirmatrelvir</b> blocks the main (3CL) protease that cuts the viral polyproteins and is given with <b>ritonavir</b> as a CYP3A4 booster. <b>Molnupiravir</b> causes lethal mutagenesis.",
+ find:["Nirmatrelvir-ritonavir: high-risk outpatients within 5 days of symptoms — check for <b>ritonavir interactions</b> (statins, tacrolimus, amiodarone, some anticoagulants); altered taste, rebound symptoms","Remdesivir: IV, for hospitalized or high-risk outpatients; raised liver enzymes","Molnupiravir: less effective; not in pregnancy"],
+ labs:["Review the full medication list before prescribing nirmatrelvir-ritonavir"],
+ buzz:["Ritonavir boosts, and interacts","Remdesivir: RNA polymerase"],
+ tx:["—"],q:["remdesivir","nirmatrelvir","paxlovid","molnupiravir","covid 19","sars cov 2"]},
+
+rsvab:{n:"RSV monoclonal antibodies",k:"drug",p:"rnaother",enz:"RSV fusion (F) protein",inh:"—",
+ mech:"RSV enters airway cells by refolding its <b>F (fusion) protein</b>. Monoclonal antibodies against F give passive immunity through the RSV season — they prevent infection, they do not treat it.",
+ find:["<b>Nirsevimab</b>: one dose for infants entering their first RSV season, and high-risk toddlers in their second","<b>Palivizumab</b>: the older monthly option for high-risk infants — prematurity, chronic lung disease, congenital heart disease","Alternatives: maternal RSV vaccine late in pregnancy; RSV vaccines for older adults"],
+ labs:["RSV is the commonest cause of bronchiolitis and pneumonia in infants"],
+ buzz:["Nirsevimab and palivizumab prevent, not treat","They target the RSV F protein"],
+ tx:["—"],q:["palivizumab","nirsevimab","rsv","respiratory syncytial virus","bronchiolitis"]}
 
 };
 
@@ -5393,16 +5583,17 @@ MAPS.neurotx = {
 };
 
 MAPS.abx = {
- t:"Antimicrobials by Target", sub:"Build the wall, read the message, copy the DNA · each drug is pinned to the step it jams",
- w:3500, h:2440,
+ t:"Antimicrobials by Target", sub:"Build the wall, read the message, copy the DNA · each drug is pinned to the step it jams, and each side effect to the off-target mechanism that causes it",
+ w:3500, h:3060,
  comps:[
   {x:160,y:110,w:3180,h:560,l:"Cell wall — built inside, cross-linked outside"},
   {x:160,y:750,w:1520,h:700,l:"Ribosome — 30S and 50S"},
   {x:1760,y:750,w:1580,h:700,l:"DNA, RNA and folate"},
   {x:160,y:1530,w:1520,h:420,l:"Mycobacteria — a waxy wall"},
-  {x:1760,y:1530,w:1580,h:420,l:"Fungi — ergosterol and β-glucan"}],
+  {x:1760,y:1530,w:1580,h:420,l:"Fungi — ergosterol and β-glucan"},
+  {x:160,y:2030,w:3180,h:540,l:"Side effects — where they actually come from"}],
  panels:[
-  {x:160,y:2030,w:1100,h:310,kw:150,t:"Toxicities that are the question",rows:[
+  {x:160,y:2650,w:1100,h:310,kw:150,t:"Toxicities that are the question",rows:[
    ["Aminoglycosides","kidney, inner ear, neuromuscular junction"],
    ["Vancomycin","infusion flushing, kidney"],
    ["Chloramphenicol","aplastic anemia, gray baby"],
@@ -5414,13 +5605,13 @@ MAPS.abx = {
    ["Metronidazole","disulfiram-like reaction, metallic taste"],
    ["Isoniazid","liver, B6 neuropathy, lupus"],
    ["Amphotericin B","kidney, K⁺ and Mg²⁺ wasting, rigors"]]},
-  {x:1300,y:2030,w:960,h:180,kw:130,t:"Ribosome shorthand",rows:[
+  {x:1300,y:2650,w:960,h:180,kw:130,t:"Ribosome shorthand",rows:[
    ["30S","Buy AT 30 — aminoglycosides, tetracyclines"],
    ["50S","CCEL at 50 — chloramphenicol, clindamycin, erythromycin, linezolid"],
    ["Bactericidal","aminoglycosides are the exception"],
    ["Bacteriostatic","the rest (linezolid kills streptococci)"],
    ["Why it works","bacterial 70S = 30S + 50S; human 80S = 40S + 60S"]]},
-  {x:2300,y:2030,w:1040,h:230,kw:210,t:"Who covers what",rows:[
+  {x:2300,y:2650,w:1040,h:230,kw:210,t:"Who covers what",rows:[
    ["Anaerobes above the diaphragm","clindamycin"],
    ["Anaerobes below the diaphragm","metronidazole"],
    ["Never anaerobes","aminoglycosides, aztreonam"],
@@ -5437,28 +5628,37 @@ MAPS.abx = {
   {id:"resist",l:"Resistance",x:1610,y:520,p:"cellwall",s:"β-lactamase · PBP2a · D-Ala-D-Lac",m:["abxresistance"]},
   {id:"membrane",l:"Cell membrane",x:2830,y:520,p:"membrane",s:"daptomycin · polymyxins",m:["membranedrugs"]},
   {id:"s30",l:"30S subunit",x:420,y:960,p:"ribosome30",k:"hub",s:"reads the codon"},
-  {id:"s30a",l:"Initiation · misreading",x:940,y:880,p:"ribosome30",s:"bactericidal",m:["aminoglycosides","nephrotoxdrugs"]},
-  {id:"s30b",l:"A site — tRNA docking",x:940,y:1030,p:"ribosome30",s:"bacteriostatic",m:["tetracyclines","fanconisyn"]},
+  {id:"s30a",l:"Initiation · misreading",x:940,y:880,p:"ribosome30",s:"bactericidal",m:["aminoglycosides"]},
+  {id:"s30b",l:"A site — tRNA docking",x:940,y:1030,p:"ribosome30",s:"bacteriostatic",m:["tetracyclines"]},
   {id:"s50",l:"50S subunit",x:420,y:1260,p:"ribosome50",k:"hub",s:"makes the peptide bond"},
-  {id:"s50a",l:"Peptidyltransferase",x:940,y:1160,p:"ribosome50",m:["chloramphenicol","aplastic"]},
-  {id:"s50b",l:"Translocation",x:940,y:1270,p:"ribosome50",s:"23S rRNA",m:["macrolides","clindamycin","longqt"]},
-  {id:"s50c",l:"Initiation complex",x:940,y:1380,p:"ribosome50",s:"23S rRNA — oxazolidinones",m:["linezolid","serotoninsyndrome"]},
+  {id:"s50a",l:"Peptidyltransferase",x:940,y:1160,p:"ribosome50",m:["chloramphenicol"]},
+  {id:"s50b",l:"Translocation",x:940,y:1270,p:"ribosome50",s:"23S rRNA",m:["macrolides","clindamycin"]},
+  {id:"s50c",l:"Initiation complex",x:940,y:1380,p:"ribosome50",s:"23S rRNA — oxazolidinones",m:["linezolid"]},
   {id:"cdiffn",l:"Colon flora lost",x:1430,y:1270,p:"ribosome50",s:"C. difficile blooms",m:["cdiff"]},
   {id:"paba",l:"PABA + pteridine",x:2020,y:890,p:"dnafolate"},
   {id:"dhf",l:"Dihydrofolate",x:2560,y:890,p:"dnafolate"},
   {id:"thf",l:"Tetrahydrofolate",x:3090,y:890,p:"dnafolate",s:"one-carbon carrier"},
   {id:"dnan",l:"Bacterial DNA",x:2560,y:1110,p:"dnafolate",k:"hub"},
   {id:"gyrase",l:"DNA gyrase · topo IV",x:2020,y:1110,p:"dnafolate",s:"unwinds supercoils",m:["fluoroquinolones"]},
-  {id:"radicals",l:"Radicals break DNA",x:2020,y:1310,p:"dnafolate",s:"only anaerobes activate it",m:["metronidazole","ethanol"]},
+  {id:"radicals",l:"Radicals break DNA",x:2020,y:1310,p:"dnafolate",s:"only anaerobes activate it",m:["metronidazole"]},
   {id:"rnap",l:"RNA polymerase",x:3090,y:1110,p:"dnafolate",s:"DNA-dependent",m:["rifamycins"]},
-  {id:"mycolic",l:"Mycolic acids",x:560,y:1690,p:"mycobact",s:"InhA — isoniazid, activated by KatG",m:["tbdrugs","b6"]},
+  {id:"mycolic",l:"Mycolic acids",x:560,y:1690,p:"mycobact",s:"InhA — isoniazid, activated by KatG",m:["tbdrugs"]},
   {id:"arabino",l:"Arabinogalactan",x:1260,y:1690,p:"mycobact",s:"arabinosyltransferase — ethambutol"},
-  {id:"macroph",l:"Inside acidic macrophages",x:560,y:1850,p:"mycobact",s:"pyrazinamide works here",m:["gout"]},
+  {id:"macroph",l:"Inside acidic macrophages",x:560,y:1850,p:"mycobact",s:"pyrazinamide works here"},
   {id:"rnaptb",l:"RNA polymerase",x:1260,y:1850,p:"mycobact",s:"rifampin — never alone",m:["rifamycins"]},
   {id:"squalene",l:"Squalene",x:2020,y:1690,p:"fungal"},
   {id:"lanost",l:"Lanosterol",x:2560,y:1690,p:"fungal"},
   {id:"ergo",l:"Ergosterol in the membrane",x:3080,y:1690,p:"fungal",k:"hub",m:["amphotericin"]},
-  {id:"glucan",l:"β-glucan cell wall",x:2560,y:1860,p:"fungal",s:"β-(1,3)-D-glucan synthase",m:["fungalwall"]}],
+  {id:"glucan",l:"β-glucan cell wall",x:2560,y:1860,p:"fungal",s:"β-(1,3)-D-glucan synthase",m:["fungalwall"]},
+  {id:"herg",l:"Cardiac hERG K⁺ channel block",x:640,y:2200,p:"toxicity",s:"macrolides · fluoroquinolones · azoles",m:["longqt"]},
+  {id:"tubule",l:"Proximal tubule injury",x:1750,y:2200,p:"toxicity",s:"aminoglycosides · amphotericin B · polymyxins · vancomycin",m:["nephrotoxdrugs"]},
+  {id:"oldtet",l:"Degraded tetracycline",x:2860,y:2200,p:"toxicity",s:"an expired drug injures the proximal tubule",m:["fanconisyn"]},
+  {id:"maob",l:"MAO inhibition",x:640,y:2330,p:"toxicity",s:"linezolid is a weak, reversible MAO inhibitor",m:["serotoninsyndrome"]},
+  {id:"aldh",l:"Aldehyde dehydrogenase block",x:1750,y:2330,p:"toxicity",s:"metronidazole · cefotetan",m:["ethanol"]},
+  {id:"pyridox",l:"Pyridoxine depletion",x:2860,y:2330,p:"toxicity",s:"isoniazid binds vitamin B6",m:["b6"]},
+  {id:"urate",l:"Renal urate excretion falls",x:640,y:2460,p:"toxicity",s:"pyrazinamide · ethambutol",m:["gout"]},
+  {id:"oxid",l:"Red-cell oxidant stress",x:1750,y:2460,p:"toxicity",s:"sulfonamides · dapsone · primaquine · nitrofurantoin",m:["g6pd"]},
+  {id:"mitorib",l:"Mitochondrial ribosomes in marrow",x:2860,y:2460,p:"toxicity",s:"chloramphenicol — dose-related suppression",m:["aplastic"]}],
  edges:[
   {a:"precursor",b:"lipid2",p:"cellwall",e:"Fosfomycin · cycloserine block earlier",ly:-46},
   {a:"lipid2",b:"transgly",p:"cellwall",e:"Bacitracin stops carrier recycling",ly:-46},
@@ -5470,7 +5670,7 @@ MAPS.abx = {
   {a:"s50",b:"s50b",p:"ribosome50"},
   {a:"s50",b:"s50c",p:"ribosome50"},
   {a:"s50b",b:"cdiffn",p:"ribosome50",e:"Kills the gut's anaerobes"},
-  {a:"paba",b:"dhf",p:"dnafolate",e:"Dihydropteroate synthase",ly:-46,m:["sulfonamides","g6pd"]},
+  {a:"paba",b:"dhf",p:"dnafolate",e:"Dihydropteroate synthase",ly:-46,m:["sulfonamides"]},
   {a:"dhf",b:"thf",p:"dnafolate",e:"Dihydrofolate reductase",ly:-46,m:["sulfonamides","b9def"]},
   {a:"thf",b:"dnan",p:"dnafolate",e:"Thymidine and purines"},
   {a:"gyrase",b:"dnan",p:"dnafolate",e:"Relieves supercoiling",ly:-46},
@@ -5480,7 +5680,116 @@ MAPS.abx = {
   {a:"lanost",b:"ergo",p:"fungal",e:"14α-demethylase (CYP51)",ly:-46,m:["azoles"]}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["index","Index"]];
+MAPS.antiviral = {
+ t:"Antivirals by Target", sub:"Every antiviral blocks a step the virus needs and the host does not · side effects are pinned to the off-target mechanism that causes them",
+ w:3500, h:3600,
+ comps:[
+  {x:160,y:110,w:3180,h:520,l:"HIV — every step of the life cycle has a drug"},
+  {x:160,y:710,w:3180,h:520,l:"Herpesviruses — a viral kinase decides where the drug works"},
+  {x:160,y:1310,w:3180,h:360,l:"Influenza — enter, uncoat, copy, escape"},
+  {x:160,y:1750,w:3180,h:520,l:"Hepatitis B and C — one is suppressed, the other cured"},
+  {x:160,y:2350,w:3180,h:300,l:"Other RNA viruses — polymerase and protease again"},
+  {x:160,y:2730,w:3180,h:460,l:"Side effects — where they actually come from"}],
+ panels:[
+  {x:160,y:3270,w:1000,h:230,kw:190,t:"Hepatitis B serology",rows:[
+   ["","HBsAg · anti-HBs · anti-HBc · HBeAg"],
+   ["Acute infection","+ · – · IgM · usually +"],
+   ["Window period","– · – · IgM · –"],
+   ["Resolved infection","– · + · IgG · –"],
+   ["Chronic, high infectivity","+ · – · IgG · +"],
+   ["Chronic, low infectivity","+ · – · IgG · –"],
+   ["Vaccinated","– · + · – · –"]]},
+  {x:1200,y:3270,w:1160,h:230,kw:110,t:"HIV drug classes at a glance",rows:[
+   ["NRTIs","tenofovir, emtricitabine, lamivudine, abacavir, zidovudine — chain terminators"],
+   ["NNRTIs","efavirenz, rilpivirine, doravirine — allosteric; rash, liver, vivid dreams"],
+   ["Integrase","-tegravir — first line; weight gain; separate from antacids"],
+   ["Protease","-navir with ritonavir or cobicistat — metabolic effects, CYP3A4"],
+   ["Entry","maraviroc (CCR5 — check tropism), enfuvirtide (gp41)"],
+   ["Capsid","lenacapavir — injected twice a year"],
+   ["Regimen","two NRTIs plus an integrase inhibitor for most patients"]]},
+  {x:2400,y:3270,w:940,h:230,kw:120,t:"Which drug for which virus",rows:[
+   ["HSV · VZV","acyclovir, valacyclovir, famciclovir"],
+   ["CMV","ganciclovir, valganciclovir; foscarnet, cidofovir; letermovir"],
+   ["Influenza","oseltamivir, zanamivir, peramivir, baloxavir"],
+   ["Hepatitis B","tenofovir, entecavir; peginterferon"],
+   ["Hepatitis C","sofosbuvir-velpatasvir, glecaprevir-pibrentasvir"],
+   ["RSV","nirsevimab or palivizumab to prevent; ribavirin rarely"],
+   ["SARS-CoV-2","nirmatrelvir-ritonavir, remdesivir"]]}],
+ nodes:[
+  {id:"hivv",l:"HIV virion",x:380,y:300,p:"hivcycle",k:"hub",s:"gp120 · RNA · reverse transcriptase",m:["hiv"]},
+  {id:"attach",l:"CD4, then CCR5 or CXCR4",x:900,y:300,p:"hivcycle",s:"gp120 attaches"},
+  {id:"fusion",l:"gp41 fusion",x:1380,y:300,p:"hivcycle",s:"membranes merge"},
+  {id:"rtn",l:"Reverse transcription",x:1860,y:300,p:"hivcycle",s:"RNA → DNA, error-prone",m:["nrti","nnrti"]},
+  {id:"integ",l:"Integration",x:2340,y:300,p:"hivcycle",s:"viral DNA into the host genome",m:["insti"]},
+  {id:"protn",l:"Protease matures virions",x:2860,y:300,p:"hivcycle",s:"Gag-Pol cut apart",m:["hivpi"]},
+  {id:"hsvn",l:"HSV · VZV",x:380,y:850,p:"herpes",k:"hub",s:"latent in sensory ganglia",m:["hsvvzv"]},
+  {id:"cmvn",l:"CMV",x:380,y:1080,p:"herpes",k:"hub",s:"latent in monocytes",m:["cmv"]},
+  {id:"tk",l:"Viral thymidine kinase",x:980,y:850,p:"herpes",s:"adds the first phosphate",m:["acyclovir"]},
+  {id:"ul97",l:"CMV UL97 kinase",x:980,y:1080,p:"herpes",s:"adds the first phosphate",m:["ganciclovir"]},
+  {id:"hostk",l:"Host kinases",x:1600,y:965,p:"herpes",s:"→ triphosphate"},
+  {id:"dnapol",l:"Viral DNA polymerase",x:2220,y:965,p:"herpes",k:"hub",s:"chain termination",m:["foscarnet"]},
+  {id:"resist",l:"Resistance",x:2900,y:965,p:"herpes",s:"kinase and polymerase mutants",m:["avresist"]},
+  {id:"ha",l:"Hemagglutinin binds sialic acid",x:430,y:1500,p:"influenza",m:["flu"]},
+  {id:"m2",l:"M2 channel uncoats the virion",x:1080,y:1500,p:"influenza",s:"influenza A",m:["m2inh"]},
+  {id:"pa",l:"PA endonuclease snatches caps",x:1740,y:1500,p:"influenza",m:["baloxavir"]},
+  {id:"rdrp",l:"Viral RNA polymerase",x:2380,y:1500,p:"influenza"},
+  {id:"na",l:"Neuraminidase releases virions",x:3000,y:1500,p:"influenza",m:["nai"]},
+  {id:"hcvn",l:"HCV",x:380,y:1890,p:"hepatitis",k:"hub",s:"RNA — no nuclear reservoir",m:["hcv"]},
+  {id:"ns3n",l:"NS3/4A protease cuts the polyprotein",x:1040,y:1890,p:"hepatitis",m:["ns3"]},
+  {id:"ns5an",l:"NS5A replication complex",x:1740,y:1890,p:"hepatitis",m:["ns5a"]},
+  {id:"ns5bn",l:"NS5B RNA polymerase",x:2400,y:1890,p:"hepatitis",m:["sofosbuvir"]},
+  {id:"hbvn",l:"HBV",x:380,y:2120,p:"hepatitis",k:"hub",s:"DNA virus with a reverse transcriptase",m:["hbv"]},
+  {id:"cccdna",l:"cccDNA in the nucleus",x:1040,y:2120,p:"hepatitis",s:"the reservoir no drug clears"},
+  {id:"hbvrt",l:"HBV reverse transcriptase",x:1740,y:2120,p:"hepatitis",s:"pregenomic RNA → DNA",m:["hbvdrugs"]},
+  {id:"ifnhost",l:"Host antiviral state",x:2400,y:2120,p:"hepatitis",s:"interferon-α",m:["ifndrugs"]},
+  {id:"impdh",l:"Host IMP dehydrogenase",x:560,y:2500,p:"rnaother",s:"GTP depletion",m:["ribavirin","nucdrugs"]},
+  {id:"sars",l:"SARS-CoV-2 polymerase and 3CL protease",x:1560,y:2500,p:"rnaother",m:["covidav"]},
+  {id:"rsvf",l:"RSV fusion (F) protein",x:2640,y:2500,p:"rnaother",m:["rsvab"]},
+  {id:"polg",l:"Mitochondrial DNA polymerase γ",x:640,y:2870,p:"toxicity",s:"NRTIs — lactic acidosis, neuropathy, myopathy",m:["mito"]},
+  {id:"tubule2",l:"Proximal tubule injury",x:1750,y:2870,p:"toxicity",s:"tenofovir (TDF) · cidofovir · foscarnet",m:["nephrotoxdrugs","fanconisyn"]},
+  {id:"crystals",l:"Drug crystals in the urine",x:2860,y:2870,p:"toxicity",s:"acyclovir · indinavir · atazanavir",m:["stones"]},
+  {id:"ugt",l:"UGT1A1 inhibition",x:640,y:3000,p:"toxicity",s:"atazanavir — harmless indirect bilirubin rise",m:["bilirubin"]},
+  {id:"marrow",l:"Marrow suppression",x:1750,y:3000,p:"toxicity",s:"ganciclovir · valganciclovir · zidovudine"},
+  {id:"cyp3a4",l:"CYP3A4 inhibition",x:2860,y:3000,p:"toxicity",s:"ritonavir · cobicistat boost other drugs"},
+  {id:"chelate",l:"Calcium and magnesium chelated",x:640,y:3130,p:"toxicity",s:"foscarnet — seizures, paresthesias"},
+  {id:"rbcatp",l:"Red-cell ATP depletion",x:1750,y:3130,p:"toxicity",s:"ribavirin — hemolytic anemia"}],
+ edges:[
+  {a:"hivv",b:"attach",p:"hivcycle",e:"Binds its target cell",ly:-46},
+  {a:"attach",b:"fusion",p:"hivcycle",e:"Co-receptor engaged",ly:-46,m:["entryinh"]},
+  {a:"fusion",b:"rtn",p:"hivcycle",e:"Capsid uncoats",ly:-46},
+  {a:"rtn",b:"integ",p:"hivcycle",e:"DNA enters the nucleus",ly:-46},
+  {a:"integ",b:"protn",p:"hivcycle",e:"Transcribed, translated, budded",ly:-46},
+  {a:"hsvn",b:"tk",p:"herpes",e:"Only infected cells activate the drug",ly:-46},
+  {a:"cmvn",b:"ul97",p:"herpes",e:"CMV lacks thymidine kinase",ly:-46},
+  {a:"tk",b:"hostk",p:"herpes"},
+  {a:"ul97",b:"hostk",p:"herpes"},
+  {a:"hostk",b:"dnapol",p:"herpes",e:"Triphosphate ends the chain",ly:-46},
+  {a:"ha",b:"m2",p:"influenza",e:"Endocytosis",ly:-46},
+  {a:"m2",b:"pa",p:"influenza",e:"Genome enters the nucleus",ly:-46},
+  {a:"pa",b:"rdrp",p:"influenza",e:"Capped primers for viral mRNA",ly:-46},
+  {a:"rdrp",b:"na",p:"influenza",e:"New virions bud",ly:-46},
+  {a:"hcvn",b:"ns3n",p:"hepatitis",e:"One long polyprotein",ly:-46},
+  {a:"ns3n",b:"ns5an",p:"hepatitis",e:"Proteins released",ly:-46},
+  {a:"ns5an",b:"ns5bn",p:"hepatitis",e:"Complex assembled",ly:-46},
+  {a:"hbvn",b:"cccdna",p:"hepatitis",e:"Genome repaired in the nucleus",ly:-46},
+  {a:"cccdna",b:"hbvrt",p:"hepatitis",e:"Pregenomic RNA",ly:-46}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["index","Index"]];
+/* The top bar shows these broad topics; choosing one shows its maps in a row
+   beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
+const TOPICS = [
+  ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","nucleo","collagen","vitamins","cellcycle"]],
+  ["cardio","Cardiac",["cardiac"]],
+  ["pulmo","Pulmonary",["pulm"]],
+  ["renal","Renal",["nephron","endocrine"]],
+  ["gi","GI",["gut"]],
+  ["heme","Heme",["rbc","hemostasis"]],
+  ["immuno","Immunology",["immune","cytokine","eicosanoid"]],
+  ["endo","Endocrine",["axes","pancreas","sexdev"]],
+  ["neuro","Neuro",["neurotx","ans"]],
+  ["id","Infectious",["abx","antiviral"]],
+  ["idx","Index",["index"]]];
 
 
 
@@ -6001,6 +6310,25 @@ function renderIndex(){
   idxWrap.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
 }
 
+/* ── navigation: broad topics, then the maps inside the chosen one ── */
+const topicsEl=document.getElementById("topics"), subbar=document.getElementById("subbar");
+const TOPIC_OF={}; TOPICS.forEach(([t,,vs])=>vs.forEach(v=>{ TOPIC_OF[v]=t; }));
+const lastInTopic={};
+function renderNav(){
+  const t=TOPIC_OF[state.view]; lastInTopic[t]=state.view;
+  topicsEl.innerHTML=TOPICS.map(([id,l])=>`<button class="tab" role="tab" data-t="${id}" aria-selected="${id===t}">${esc(l)}</button>`).join("");
+  topicsEl.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+    const vs=TOPICS.find(x=>x[0]===b.dataset.t)[2];
+    setView(lastInTopic[b.dataset.t]||vs[0]);
+  });
+  const vs=(TOPICS.find(x=>x[0]===t)||[0,0,[]])[2];
+  subbar.hidden=vs.length<2;
+  tabsEl.innerHTML=vs.map(v=>`<button class="tab" role="tab" data-v="${v}" aria-selected="${v===state.view}">${esc((VIEWS.find(x=>x[0]===v)||[v,v])[1])}</button>`).join("");
+  tabsEl.querySelectorAll(".tab").forEach(b=>b.onclick=()=>setView(b.dataset.v));
+  [topicsEl,tabsEl].forEach(el=>{ const cur=el.querySelector('[aria-selected="true"]');
+    if(cur) el.scrollLeft=Math.max(0,cur.offsetLeft-el.clientWidth/2+cur.offsetWidth/2); });
+}
+
 /* ── views & camera ─────────────────────────────────── */
 function setView(v){
   state.view=v; state.filter=null; state.z=1; state.tx=0; state.ty=0;
@@ -6008,7 +6336,7 @@ function setView(v){
   svg.hidden=isIdx; idxWrap.hidden=!isIdx;
   document.querySelector(".toolbar").hidden=isIdx;
   document.querySelector(".hint").hidden=isIdx;
-  tabsEl.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",String(t.dataset.v===v)));
+  renderNav();
   if(isIdx) renderIndex(); else render();
   renderRail(); updateScore(); writeHash();
   try{localStorage.setItem("mla-view",v);}catch(e){}
@@ -6147,8 +6475,7 @@ detectLetterSpacing();
 try{ if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{
   try{ detectLetterSpacing(); fitChips(); fitPanels(); fitComps(); }catch(e){}
 }); }catch(e){}
-tabsEl.innerHTML=VIEWS.map(([v,l])=>`<button class="tab" role="tab" data-v="${v}" aria-selected="${v==="core"}">${l}</button>`).join("");
-tabsEl.querySelectorAll(".tab").forEach(t=>t.onclick=()=>setView(t.dataset.v));
+
 try{const th=localStorage.getItem("mla-theme"); document.documentElement.setAttribute("data-theme",th||"light");}catch(e){document.documentElement.setAttribute("data-theme","light");}
 try{setRail(localStorage.getItem("mla-rail")==="off",false);}catch(e){setRail(false,false);}
 try{ if(matchMedia("(pointer:coarse)").matches) document.getElementById("hint").textContent="drag to pan · pinch to zoom · tap any pin"; }catch(e){}
