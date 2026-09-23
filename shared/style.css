@@ -413,6 +413,14 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 .info-block.boardprep { background: var(--purple-bg); color: #4a148c; }
 .info-block.xref { background: var(--blue-bg); color: #1565c0; font-style: italic; font-size: 0.85rem; }
 .info-block b { display: block; margin-bottom: 4px; }
+.info-block.atlas { background: #eef4ef; color: #24493a; }
+.info-block.atlas .atlas-link { display: inline-flex; align-items: center; gap: 7px; margin: 3px 8px 3px 0; padding: 5px 12px;
+  border-radius: 999px; background: #fff; border: 1px solid #cfe0d4; color: #24493a; text-decoration: none; font-weight: 600; font-size: 0.86rem; }
+.info-block.atlas .atlas-link:hover { border-color: #24493a; }
+.info-block.atlas .atlas-link::after { content: "\2197"; font-weight: 400; opacity: .6; }
+.info-block.atlas .dot { width: 8px; height: 8px; border-radius: 50%; background: #42539e; flex: none; }
+.info-block.atlas .k-dz .dot { background: #be3a4b; }
+.info-block.atlas .k-drug .dot { background: #c05a21; }
 
 .next-row {
   display: flex;

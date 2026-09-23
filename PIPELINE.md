@@ -66,29 +66,68 @@ og tags, the mobile safe-area reset and the accent overrides that match the rest
 Editing the deployed file directly, or copying the standalone over it, silently strips all of
 that and the page loses its navigation.
 
-Edit the standalone, then rebuild:
+The standalone source lives in the repo at **`tools/atlas-src.html`** — edit that, then rebuild:
 
-    python3 tools/build-atlas.py /path/to/standalone.html
+    python3 tools/build-atlas.py
+
+(Before 2026-09-22 the source lived only in a Claude session's temporary scratchpad, which a
+reboot or a new session loses. Keep it in the repo.)
 
 The script derives the map and lesion counts from the artifact itself, so the meta tags stay
 honest. Update the matching counts on the atlas card in `index.html` by hand.
 
-The build **refuses** rather than warns if it finds either of the two faults that have
-shipped before, so you cannot deploy them by accident:
+### What the build refuses
+
+Every check below is a fault that shipped, or nearly shipped, before. They are silent at
+runtime, so the build **refuses** rather than warns:
 
 - **Markup in an escaped field.** `n`, `alias`, `enz`, `inh` and `buzz` go through `esc()`
-  at render time, so a `<b>` in any of them prints as literal `<b>` in the side rail and on
-  the card. `mech`, `find`, `labs` and `tx` are rendered as HTML and keep their emphasis.
-  This one shipped once and affected 19 cards before anyone noticed.
-- **Orphan cards and dangling pins.** A lesion card is invisible unless some node or edge
-  pins it, and a pin naming a card that does not exist is a dead click.
+  at render time, so a `<b>` in any of them prints as literal `<b>`. `mech`, `find`, `labs`
+  and `tx` are rendered as HTML and keep their emphasis.
+- **Orphan cards and dangling pins.** A card is invisible unless some node or edge pins it,
+  and a pin naming a card that does not exist is a dead click.
+- **Duplicate keys.** A JavaScript object keeps the *last* of two identical keys without a
+  word, so a pasted-in duplicate card, map or pathway silently replaces the original.
+- **Broken wiring**, found by `tools/atlas-check.js`, which the build runs under
+  JavaScriptCore (`jsc`, built into macOS — no Node needed) against the real data: edges
+  that end at a missing node, duplicate node ids, unknown pathway keys, ghost nodes that
+  point at a missing map, maps with no tab, nodes or boxes off the canvas, unbalanced or
+  stray tags in the HTML fields.
+- **A card's first home moving.** A card pinned on several maps opens on its first home
+  (the earliest map in `MAPS` definition order) from the Index and from `#card` links —
+  including every question-bank link. **Define new maps last**, just before `const VIEWS`.
+  `tools/atlas-homes.json` snapshots every card's home; if a build moves one, it stops and
+  names it. Rebuild with `--accept-homes` only if the move is intended.
 
-Layout is still checked by hand — open the page and run the DOM audit in the console for
-overlapping boxes, text overflowing its node, arrowheads buried under chips and pin fills.
-The trap there: **`document.querySelector('svg')` grabs a toolbar icon, not the map.** The
-map is `#svg`. An audit rooted on the wrong element finds zero nodes and reports "clean" for
-every map, which it silently did for several sessions. Assert the node count is non-zero
-before believing a clean result.
+### Links from the question bank
+
+The build also writes `resources/atlas-terms.js`: each card's name, alias and its curated
+`q:[...]` terms, normalized. `shared/app.js` loads it and, after a question is answered,
+links the cards whose terms appear as a whole phrase in the correct answer or the first
+sentence of the explanation. Later sentences and the board-prep note were tested and left
+out — they mostly discuss wrong choices and differentials and linked the wrong cards.
+When a card should be reachable from questions, give it a `q` list of the phrases questions
+actually use (drug names, "beta blocker", "schizophrenia") and avoid broad words
+("parasympathetic", "chorea", "seizures") that appear in unrelated questions. The
+normalizer exists twice — `atlas_norm()` in the build and `atlasNorm()` in `app.js` — so
+change both together.
+
+Deep links work anywhere: `metabolic-atlas.html#abx` opens a map,
+`#abx/vancomycin` a card on that map, `#vancomycin` a card on its first home.
+
+### Layout
+
+Layout is still checked in the browser. Serve the repo (`python3 -m http.server`), open the
+atlas, and load the auditor from the console:
+
+    (0,eval)(await (await fetch('/tools/atlas-audit.js')).text()); __auditAll()
+
+It reports overlapping boxes, text overflowing its node, arrowheads buried under chips,
+labels sitting nearer another edge than their own, pin fills and off-canvas items, for every
+map in both themes. The trap: **`document.querySelector('svg')` grabs a toolbar icon, not
+the map.** The map is `#svg`. An audit rooted on the wrong element finds zero nodes and
+reports "clean" for every map, which it silently did for several sessions — the auditor now
+refuses a zero-node result.
 
 ## Shared code
 

@@ -20,6 +20,66 @@ const LS_EXAM_SESSION = QUIZ_CONFIG.storageKey + '_examsession_v1';
 const LS_PRACTICE_SESSION = QUIZ_CONFIG.storageKey + '_practicesession_v1';
 const MAX_ATTEMPTS_STORED = 5000;
 
+/* ── Lesion Atlas links ─────────────────────────────────────────────────
+   resources/atlas-terms.js (written by tools/build-atlas.py) lists every atlas
+   card with its name and curated match terms, already normalized by the same
+   rules as atlasNorm() below — keep the two in step. Once a question is
+   answered, a card is linked when one of its terms appears as a whole phrase in
+   the correct answer or the first sentence of the explanation — the part that
+   explains the answer. Later sentences and the board-prep note were tested and
+   left out: they mostly discuss the wrong choices and differentials, and linked
+   the wrong cards. The file loads lazily; if it is missing, questions simply
+   show no atlas links. */
+const APP_SRC = (document.currentScript && document.currentScript.src) || '';
+const ATLAS_URL = APP_SRC ? new URL('../resources/metabolic-atlas.html', APP_SRC).href : '';
+let ATLAS_INDEX = null;
+(function loadAtlasTerms() {
+  if (!APP_SRC) return;
+  const s = document.createElement('script');
+  s.src = new URL('../resources/atlas-terms.js', APP_SRC).href;
+  s.async = true;
+  s.onload = () => {
+    const d = window.ATLAS_TERMS;
+    if (d && Array.isArray(d.cards)) ATLAS_INDEX = d.cards.map(([id, n, k, t]) => ({ id, n, k, t }));
+  };
+  document.head.appendChild(s);
+})();
+const ATLAS_GREEK = { 'α': ' alpha ', 'β': ' beta ', 'γ': ' gamma ', 'δ': ' delta ', 'κ': ' kappa ', 'ε': ' epsilon ', 'μ': ' mu ' };
+const ATLAS_DIGITS = { '₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9',
+  '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁺':'+','⁻':'-' };
+function atlasNorm(t) {
+  return String(t || '').toLowerCase()
+    .replace(/[αβγδκεμ]/g, c => ATLAS_GREEK[c])
+    .replace(/[₀-₉⁰¹²³⁴-⁹⁺⁻]/g, c => ATLAS_DIGITS[c] || c)
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/['’‘`]/g, '')
+    .replace(/[‐‑‒–—―\-\/]/g, ' ')
+    .replace(/[^a-z0-9+ ]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+function atlasLinksFor(q) {
+  if (!ATLAS_INDEX || !q) return [];
+  const lead = (String(q.explanation || '').match(/[^.!?]+[.!?]+/g) || [q.explanation || ''])[0];
+  const zones = [q.choices && q.choices[q.correct], lead];
+  const found = new Map();
+  zones.forEach((z, zone) => {
+    if (!z) return;
+    const text = ' ' + atlasNorm(z) + ' ';
+    for (const c of ATLAS_INDEX) {
+      if (found.has(c.id)) continue;
+      const hit = c.t.find(t => text.includes(' ' + t + ' ') || text.includes(' ' + t + 's ') || text.includes(' ' + t + 'es '));
+      if (hit) found.set(c.id, { c, zone, len: hit.length });
+    }
+  });
+  return [...found.values()].sort((a, b) => a.zone - b.zone || b.len - a.len).slice(0, 3).map(x => x.c);
+}
+function atlasLinksHtml(q) {
+  const cards = atlasLinksFor(q);
+  if (!cards.length || !ATLAS_URL) return '';
+  return `<div class="info-block atlas"><b>On the Lesion Atlas</b>${cards.map(c =>
+    `<a class="atlas-link k-${c.k}" href="${ATLAS_URL}#${encodeURIComponent(c.id)}" target="_blank" rel="noopener"><span class="dot"></span>${escapeHtml(c.n)}</a>`).join('')}</div>`;
+}
+
 /* ── localStorage helpers ────────────────────────────────────────────── */
 function loadFlags() {
   try { return JSON.parse(localStorage.getItem(LS_FLAGS)) || {}; }
@@ -1169,6 +1229,7 @@ function renderPracticeQuestion() {
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
+      ${atlasLinksHtml(q)}
     `;
   }
 
@@ -1458,6 +1519,7 @@ function renderExamQuestion() {
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
+      ${atlasLinksHtml(q)}
     `;
   }
 
@@ -1663,6 +1725,7 @@ function renderExamResults() {
         <div class="correct-answer">Correct answer: ${q.correct} — ${escapeHtml(q.choices[q.correct])}</div>
         <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
         ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
+        ${atlasLinksHtml(q)}
       </div>
     `).join('');
 
@@ -1784,6 +1847,7 @@ function renderFlaggedQuestion() {
       </div>
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
+      ${atlasLinksHtml(q)}
     `;
   }
 
@@ -2024,6 +2088,7 @@ function renderReviewQuestion() {
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
+      ${atlasLinksHtml(q)}
     `;
   }
 
