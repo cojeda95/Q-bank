@@ -164,3 +164,24 @@ refuses a zero-node result.
 `shared/app.js` and `shared/style.css` are used by every block. A change there hits all of
 them at once, so test more than one block. Each block folder holds only its `index.html`
 (which sets `window.QUIZ_CONFIG`) and its own `data.js`.
+
+### Final exam presets
+
+A block can add one-click Final Exam presets that follow a real exam's announced
+distribution. They go in that block's `QUIZ_CONFIG.finalPresets` in its `index.html`,
+not in `app.js`, so other blocks are unaffected:
+
+    finalPresets: [{
+      id: 'williams',                       // score-history key: final-preset-williams
+      name: "Dr. Williams' Distribution",
+      source: 'where the numbers came from', // shown as the card's tooltip
+      perSdl: { 1: [2, 3], 2: [2, 3], 3: [1, 2], 4: [5, 6] }
+    }]
+
+`perSdl` maps an exam number to the [min, max] questions drawn from **each** SDL in that
+exam; every run picks a count in the range per SDL, and exams left out contribute nothing.
+The card appears under Final Exam Simulation on the block's home page (one click, timed at
+1.5 min per question) and at the top of the Final Exam page (using that page's timer
+setting). Runs are scored and trended separately from the custom final. Psych's preset
+comes from the course email of 2026-09-24; its Exams 1-4 are
+weekly exams, so week N is Exam N.

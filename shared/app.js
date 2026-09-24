@@ -171,6 +171,7 @@ function saveExamSessionSnapshot() {
     localStorage.setItem(LS_EXAM_SESSION, JSON.stringify({
       examNumber: session.examNumber,
       isFinal: !!session.isFinal,
+      presetId: session.presetId || null,
       timed: session.timed,
       totalSeconds: session.totalSeconds,
       deadlineAt: session.deadlineAt || null,
@@ -469,7 +470,7 @@ function renderHome() {
       <span class="icon">▶️</span>
       <div>
         <div class="sdl-title">Resume In-Progress Exam</div>
-        <div class="action-label">${resumeSnap.isFinal ? 'Final Exam Simulation' : `Exam ${resumeSnap.examNumber} Simulation`} — question ${resumeSnap.index + 1} of ${resumeSnap.questions.length}, ${resumeSnap.answers.filter(a => a !== null).length} answered${resumeSnap.timed ? (resumeSnap.deadlineAt - Date.now() <= 0 ? ' · time expired' : ` · ${formatTime((resumeSnap.deadlineAt - Date.now()) / 1000)} left`) : ' · untimed'}
+        <div class="action-label">${escapeHtml(examSessionLabel(resumeSnap))} — question ${resumeSnap.index + 1} of ${resumeSnap.questions.length}, ${resumeSnap.answers.filter(a => a !== null).length} answered${resumeSnap.timed ? (resumeSnap.deadlineAt - Date.now() <= 0 ? ' · time expired' : ` · ${formatTime((resumeSnap.deadlineAt - Date.now()) / 1000)} left`) : ' · untimed'}
           <button class="link-btn-inline" id="discardResumeBtn" style="margin-left:8px; background:none; border:1px solid var(--grey-border, #ccc); border-radius:6px; padding:2px 8px; cursor:pointer; font-size:0.78rem;">Discard</button>
         </div>
       </div>
@@ -511,6 +512,7 @@ function renderHome() {
         <div class="action-label">Cumulative — 50% Exam ${lastExamNumber()}, 50% pooled from every earlier exam block</div>
       </div>
     </div>
+    ${finalPresetCardsHtml(`timed at 1.5 min each${settings.examInstantFeedback ? ' · 📝 Instant Feedback is ON' : ''}`)}
     ` : ''}
 
     <div class="section-label">Study Tools</div>
@@ -559,6 +561,12 @@ function renderHome() {
   });
   const finalExamCard = document.getElementById('finalExamCard');
   if (finalExamCard) finalExamCard.addEventListener('click', () => setRoute('final-examsetup'));
+  main.querySelectorAll('.final-preset-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const preset = findFinalPreset(card.dataset.preset);
+      if (preset) startFinalPreset(preset);
+    });
+  });
   const resumeExamCard = document.getElementById('resumeExamCard');
   if (resumeExamCard) resumeExamCard.addEventListener('click', () => setRoute('resume-exam'));
   const discardResumeBtn = document.getElementById('discardResumeBtn');
@@ -878,6 +886,105 @@ function lastExamNumber() {
   return Math.max(...DATA.exams.map(e => e.examNumber));
 }
 
+/* ── Final Exam presets (one click, configured per block) ──────────────────
+   A block can publish its real final's announced distribution in
+   QUIZ_CONFIG.finalPresets. `perSdl` maps an exam number to the [min, max]
+   questions drawn from EACH of that exam's SDLs, e.g. { 1: [2, 3], 4: [5, 6] };
+   every run picks a count inside the range per SDL, so repeated runs vary the
+   way an "approximately 2-3 per SDL" exam does. Exams missing from perSdl
+   contribute nothing, and blocks without presets see no change at all. */
+function finalPresets() {
+  const list = Array.isArray(QUIZ_CONFIG.finalPresets) ? QUIZ_CONFIG.finalPresets : [];
+  return list.filter(p => p && p.id && p.name && p.perSdl && DATA.exams.some(e => presetRange(p, e.examNumber)));
+}
+function findFinalPreset(id) {
+  return finalPresets().find(p => p.id === id) || null;
+}
+function presetRange(preset, examNumber) {
+  const r = preset.perSdl[examNumber];
+  if (!Array.isArray(r) || r.length !== 2 || !r.every(Number.isFinite)) return null;
+  return [Math.max(0, Math.min(r[0], r[1])), Math.max(0, r[0], r[1])];
+}
+// e.g. "2–3 per SDL from Exams 1–2 · 1–2 per SDL from Exam 3 · 5–6 per SDL from Exam 4"
+function presetSummary(preset) {
+  const groups = [];
+  DATA.exams.slice().sort((a, b) => a.examNumber - b.examNumber).forEach(e => {
+    const r = presetRange(preset, e.examNumber);
+    if (!r) return;
+    const key = r[0] === r[1] ? `${r[0]}` : `${r[0]}–${r[1]}`;
+    const last = groups[groups.length - 1];
+    if (last && last.key === key && last.exams[last.exams.length - 1] === e.examNumber - 1) last.exams.push(e.examNumber);
+    else groups.push({ key, exams: [e.examNumber] });
+  });
+  return groups.map(g => `${g.key} per SDL from ${g.exams.length > 1 ? `Exams ${g.exams[0]}–${g.exams[g.exams.length - 1]}` : `Exam ${g.exams[0]}`}`).join(' · ');
+}
+// [fewest, most] questions a run can hold, capped by what each SDL actually has
+// under the current filters (High-Yield Only Mode can shrink an SDL's pool).
+function presetCountRange(preset) {
+  let lo = 0, hi = 0;
+  DATA.exams.forEach(e => {
+    const r = presetRange(preset, e.examNumber);
+    if (!r) return;
+    const pool = allQuestionsForExam(e.examNumber);
+    e.sdls.forEach(sdl => {
+      const n = pool.filter(q => q.sdlNumber === sdl.sdlNumber).length;
+      lo += Math.min(r[0], n);
+      hi += Math.min(r[1], n);
+    });
+  });
+  return [lo, hi];
+}
+function buildPresetExamQuestions(preset) {
+  const finalExam = lastExamNumber();
+  let chosen = [];
+  DATA.exams.forEach(e => {
+    const r = presetRange(preset, e.examNumber);
+    if (!r) return;
+    const pool = allQuestionsForExam(e.examNumber);
+    e.sdls.forEach(sdl => {
+      const want = r[0] + Math.floor(Math.random() * (r[1] - r[0] + 1));
+      const picked = shuffle(pool.filter(q => q.sdlNumber === sdl.sdlNumber)).slice(0, want);
+      chosen = chosen.concat(picked.map(q => Object.assign({}, q, {
+        sourceExamNumber: e.examNumber,
+        sourceTag: e.examNumber === finalExam ? 'current' : 'prior',
+      })));
+    });
+  });
+  return shuffle(chosen);
+}
+function startFinalPreset(preset, { timed = true, secondsPerQuestion = 90 } = {}) {
+  if (loadExamSessionSnapshot() && !confirm('Start a new exam? The exam you have in progress will be discarded.')) return;
+  const questions = buildPresetExamQuestions(preset);
+  if (questions.length === 0) {
+    alert(`No questions match ${preset.name} with the current settings.`);
+    return;
+  }
+  beginExamSession(lastExamNumber(), questions, { isFinal: true, presetId: preset.id, timed, secondsPerQuestion });
+}
+// Title for an exam session or a saved snapshot of one.
+function examSessionLabel(s) {
+  const preset = s.presetId ? findFinalPreset(s.presetId) : null;
+  if (s.presetId) return `Final Exam — ${preset ? preset.name : 'Preset'}`;
+  return s.isFinal ? 'Final Exam Simulation' : `Exam ${s.examNumber} Simulation`;
+}
+function examScoreKey(s) {
+  if (s.presetId) return `final-preset-${s.presetId}`;
+  return s.isFinal ? 'final-exam' : `exam-${s.examNumber}`;
+}
+function finalPresetCardsHtml(note) {
+  return finalPresets().map(p => {
+    const [lo, hi] = presetCountRange(p);
+    return `
+    <div class="action-card final-preset-card" data-preset="${escapeHtml(p.id)}"${p.source ? ` title="${escapeHtml(p.source)}"` : ''}>
+      <span class="icon">&#128203;</span>
+      <div>
+        <div class="sdl-title">${escapeHtml(p.name)}</div>
+        <div class="action-label">One click: ${escapeHtml(presetSummary(p))} · ${lo === hi ? lo : `${lo}–${hi}`} questions, ${note}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function renderFinalExamSetup() {
   const examNumber = lastExamNumber();
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
@@ -908,6 +1015,10 @@ function renderFinalExamSetup() {
     <button class="back-link" id="backHome">&larr; Home</button>
     <h1>Final Exam Simulation</h1>
     <p class="subtitle">Cumulative structure: ~50% Exam ${examNumber} (the most recent week's material), ~50% pooled from every week before it (${priorRangeLabel}) — not weighted toward just the last exam.</p>
+    ${finalPresets().length ? `
+    <div class="section-label">One-Click Presets</div>
+    ${finalPresetCardsHtml('using the timer setting below')}
+    <div class="section-label">Custom Mix</div>` : ''}
     <div class="setup-card">
 
       <div class="setup-row">
@@ -1004,6 +1115,14 @@ function renderFinalExamSetup() {
 
   pctSlider.addEventListener('input', () => {
     pctReadout.textContent = `${pctSlider.value}% Exam ${examNumber} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
+  });
+  main.querySelectorAll('.final-preset-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const preset = findFinalPreset(card.dataset.preset);
+      if (!preset) return;
+      const { timed, minutesPerQuestion } = currentSettings();
+      startFinalPreset(preset, { timed, secondsPerQuestion: minutesPerQuestion * 60 });
+    });
   });
   document.querySelectorAll('input[name="batchMode"]').forEach(radio => {
     radio.addEventListener('change', updatePoolHint);
@@ -1364,10 +1483,11 @@ function renderExamSimStart(examNumber) {
 }
 
 /* Shared by the default (100% current exam), Custom Exam Builder's
-   weighted/batch-filtered simulations, and Final Exam mode. `isFinal` just
-   changes labeling/back-navigation/score-key — the question composition
-   itself is already handled by the caller (buildCustomExamQuestions). */
-function beginExamSession(examNumber, questions, { isFinal, timed = true, secondsPerQuestion = 90 } = {}) {
+   weighted/batch-filtered simulations, Final Exam mode and its one-click presets.
+   `isFinal` and `presetId` just change labeling/back-navigation/score-key — the
+   question composition itself is already handled by the caller
+   (buildCustomExamQuestions or buildPresetExamQuestions). */
+function beginExamSession(examNumber, questions, { isFinal, presetId = null, timed = true, secondsPerQuestion = 90 } = {}) {
   const totalSeconds = timed ? questions.length * secondsPerQuestion : null;
   const deadlineAt = timed ? Date.now() + totalSeconds * 1000 : null;
 
@@ -1375,6 +1495,7 @@ function beginExamSession(examNumber, questions, { isFinal, timed = true, second
     mode: 'exam',
     examNumber,
     isFinal: !!isFinal,
+    presetId,
     questions,
     index: 0,
     answers: new Array(questions.length).fill(null), // letter chosen, or null
@@ -1414,6 +1535,7 @@ function resumeExamSession() {
     mode: 'exam',
     examNumber: snap.examNumber,
     isFinal: !!snap.isFinal,
+    presetId: snap.presetId || null,
     questions: snap.questions,
     index: Math.min(snap.index || 0, snap.questions.length - 1),
     answers: snap.answers,
@@ -1527,7 +1649,7 @@ function renderExamQuestion() {
 
   main.innerHTML = `
     <div class="quiz-header">
-      <span class="quiz-progress">${session.isFinal ? 'Final Exam Simulation' : `Exam ${session.examNumber} Simulation`} — Question ${session.index + 1} of ${total}${instantFeedback ? ' · 📝 Instant Feedback' : ''}</span>
+      <span class="quiz-progress">${escapeHtml(examSessionLabel(session))} — Question ${session.index + 1} of ${total}${instantFeedback ? ' · 📝 Instant Feedback' : ''}</span>
       <span id="examTimer" class="timer">${session.timed ? formatTime(session.remainingSeconds) : 'Untimed'}</span>
     </div>
     <div class="quiz-header">
@@ -1626,7 +1748,7 @@ function finishExamSim(timeExpired) {
     if (isCorrect) byObjective[objKey].correct++;
   });
 
-  recordScore(session.isFinal ? 'final-exam' : `exam-${session.examNumber}`, correctCount, total);
+  recordScore(examScoreKey(session), correctCount, total);
 
   // Log every question in this simulation to the attempts history (no confidence
   // rating is collected in timed exam mode — that's reserved for practice/review).
@@ -1730,7 +1852,7 @@ function renderExamResults() {
     `).join('');
 
   main.innerHTML = `
-    <h1>${session.isFinal ? 'Final Exam Results' : `Exam ${session.examNumber} Simulation Results`}</h1>
+    <h1>${session.presetId ? escapeHtml(examSessionLabel(session).replace(/^Final Exam/, 'Final Exam Results')) : session.isFinal ? 'Final Exam Results' : `Exam ${session.examNumber} Simulation Results`}</h1>
     ${session.timeExpired ? '<p class="subtitle">Time expired — exam auto-submitted.</p>' : ''}
     <div class="result-summary">
       <div class="big-pct">${pct}%</div>
@@ -2235,7 +2357,8 @@ function renderAnalytics() {
     : trendKeys.sort().map(key => {
         const h = progress[key].history;
         const pcts = h.map(e => Math.round((e.correct / e.total) * 100));
-        const label = key === 'final-exam' ? 'Final Exam' : key.replace(/^exam-/, 'Exam ');
+        const presetId = key.startsWith('final-preset-') ? key.slice('final-preset-'.length) : null;
+        const label = presetId ? examSessionLabel({ presetId }) : key === 'final-exam' ? 'Final Exam' : key.replace(/^exam-/, 'Exam ');
         return `
           <div style="display:flex; align-items:center; gap:16px; margin-bottom:10px; flex-wrap:wrap;">
             <div style="min-width:100px; font-weight:700; color:var(--navy); font-size:0.92rem;">${escapeHtml(label)}</div>

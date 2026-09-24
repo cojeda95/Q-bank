@@ -22,7 +22,19 @@
     <p>Client-side only — all progress is stored in this browser via localStorage.</p>
   </footer>
 </div>
-<script>window.QUIZ_CONFIG = { title: 'Psychiatry Block Question Bank', storageKey: 'psych' };</script>
+<script>window.QUIZ_CONFIG = {
+  title: 'Psychiatry Block Question Bank',
+  storageKey: 'psych',
+  // One-click Final Exam presets (shared/app.js, finalPresets). perSdl maps an exam
+  // number to the [min, max] questions drawn from EACH of its SDLs; every run picks a
+  // count in that range per SDL. Psych's exams are weekly, so week N is Exam N.
+  finalPresets: [{
+    id: 'williams',
+    name: "Dr. Williams' Distribution",
+    source: "Course email: approximately 2-3 MCQs from each SDL in weeks 1 & 2, 1-2 from each of week 3's SDLs, and 5-6 per SDL from the 4th and final week.",
+    perSdl: { 1: [2, 3], 2: [2, 3], 3: [1, 2], 4: [5, 6] }
+  }]
+};</script>
 <script src="data.js"></script>
 <script src="../shared/app.js"></script>
 </body>
