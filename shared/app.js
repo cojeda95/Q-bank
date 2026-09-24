@@ -18,6 +18,9 @@ const LS_ATTEMPTS = QUIZ_CONFIG.storageKey + '_attempts_v1';
 const LS_SETTINGS = QUIZ_CONFIG.storageKey + '_settings_v1';
 const LS_EXAM_SESSION = QUIZ_CONFIG.storageKey + '_examsession_v1';
 const LS_PRACTICE_SESSION = QUIZ_CONFIG.storageKey + '_practicesession_v1';
+// Site-wide, not per block: turning the wrong-answer flash off in one block
+// turns it off everywhere.
+const LS_WRONG_FLASH = 'qbank_wrongflash_v1';
 const MAX_ATTEMPTS_STORED = 5000;
 
 /* ── Lesion Atlas links ─────────────────────────────────────────────────
@@ -160,6 +163,15 @@ function loadSettings() {
 function saveSettings(s) {
   localStorage.setItem(LS_SETTINGS, JSON.stringify(s));
 }
+// On unless the user has switched it off.
+function wrongFlashEnabled() {
+  try { return localStorage.getItem(LS_WRONG_FLASH) !== 'off'; }
+  catch (e) { return true; }
+}
+function setWrongFlashEnabled(on) {
+  try { localStorage.setItem(LS_WRONG_FLASH, on ? 'on' : 'off'); }
+  catch (e) { /* non-fatal */ }
+}
 
 /* ── In-progress exam session snapshot (powers "Resume" on the home screen) ─
    Saved on every question transition/answer while an exam simulation is in
@@ -256,6 +268,7 @@ const ECHO_PER_WAVE = 11;
 })();
 
 function triggerWrongFlash() {
+  if (!wrongFlashEnabled()) return;
   const overlay = document.createElement('div');
   overlay.className = 'wrong-flash-overlay';
 
@@ -554,6 +567,10 @@ function renderHome() {
       <input type="checkbox" id="instantFeedbackToggle" ${settings.examInstantFeedback ? 'checked' : ''}>
       <span>📝 Show Answers After Each Question (Exam Simulation) — reveal correct/incorrect + explanation right after you answer, same as Practice mode, instead of waiting until you submit the whole exam</span>
     </label>
+    <label class="radio-option" style="cursor:pointer; margin-top:8px;">
+      <input type="checkbox" id="wrongFlashToggle" ${wrongFlashEnabled() ? 'checked' : ''}>
+      <span>💥 Wrong-Answer Flash — red screen flash and image burst when you miss a question (applies to every block)</span>
+    </label>
   `;
 
   main.querySelectorAll('.exam-card').forEach(card => {
@@ -604,6 +621,9 @@ function renderHome() {
     s.examInstantFeedback = e.target.checked;
     saveSettings(s);
     renderHome();
+  });
+  document.getElementById('wrongFlashToggle').addEventListener('change', (e) => {
+    setWrongFlashEnabled(e.target.checked);
   });
 }
 
