@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Changed questions across Exam 3 and 4, metabolic map turned into a multi-system diagram thingy now',
+  text: 'Added a "Dr. Williams final exam mode based on the email of the SDL split; added more maps to lesion atlas"
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '9/17/26',
+  date: '9/24/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
