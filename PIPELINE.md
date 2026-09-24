@@ -128,6 +128,20 @@ actually use (drug names, "beta blocker", "schizophrenia") and avoid broad words
 normalizer exists twice — `atlas_norm()` in the build and `atlasNorm()` in `app.js` — so
 change both together.
 
+Two traps found when the neuro, bone, reproduction and bacteria maps were added:
+
+- **Parentheses in a card name become a term** when they hold capitals, so
+  "Oculomotor (CN III) palsy" linked every question that mentioned CN III. Put an
+  abbreviation in `alias` ("CN III palsy") instead.
+- **Acronyms that mean something else elsewhere**: "egfr" is also eGFR (kidney function),
+  "ctla 4" appears in every abatacept question, "gnas" covers pseudohypoparathyroidism as
+  well as McCune-Albright, "jak2" is ordinary growth-hormone signaling. Use the specific
+  phrase ("egfr mutation", "anti ctla 4", "jak2 v617f").
+
+After adding cards, count which questions in every block would link to them (serve the
+repo, open any block, call `atlasLinksFor(q)` over its `data.js`) and read the terms
+behind the biggest counts.
+
 Deep links work anywhere: `metabolic-atlas.html#abx` opens a map,
 `#abx/vancomycin` a card on that map, `#vancomycin` a card on its first home.
 
