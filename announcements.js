@@ -15,7 +15,7 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Added a "Dr. Williams final exam mode based on the email of the SDL split; added more maps to lesion atlas"
+  text: 'Added a Dr. Williams final exam mode based on the email of the SDL split; added more maps to lesion atlas"
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
   date: '9/24/26',
 };
