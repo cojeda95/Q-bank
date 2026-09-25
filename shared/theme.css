@@ -1,0 +1,91 @@
+/* Site-wide dark theme — paired with shared/theme.js, which sets
+   <html data-theme="dark|light">. Pages keep their own light palette in their :root;
+   this file adds the few colour tokens they were missing (light values identical to
+   what the pages used before) and redefines the whole palette for dark. Dark applies
+   on screen only, so printing — the study sheet — stays light. */
+:root {
+  --text: #222;
+  --text-strong: #333;
+  --text-muted: #888;
+  --text-faint: #999;
+  --text-fainter: #aaa;
+  --topbar-bg: var(--navy);
+  --navy-fill: var(--navy);
+  --surface-hover: #f5f8fb;
+  --input-bg: #fff;
+  --track: #e0e0e0;
+  --track-soft: #eee;
+  --explain-bg: #f5f5f5;
+  --struck-bg: #f4f4f4;
+  --amber-bg: #fff8e1;
+  --amber-line: #f0dca0;
+  --amber-ink: #6b5400;
+  --purple-ink: #4a148c;
+  --blue-ink: #1565c0;
+  --atlas-bg: #eef4ef;
+  --atlas-ink: #24493a;
+  --atlas-line: #cfe0d4;
+  --atlas-reg: #42539e;
+  --atlas-dz: #be3a4b;
+  --atlas-drug: #c05a21;
+  color-scheme: light;
+}
+
+@media screen {
+  :root[data-theme="dark"] {
+    --bg: #15171a;
+    --card-bg: #1e2126;
+    --grey-border: #343941;
+    --grey-text: #a7acb5;
+    --text: #e4e6ea;
+    --text-strong: #f1f2f4;
+    --text-muted: #8b9099;
+    --text-faint: #7f848d;
+    --text-fainter: #6f747c;
+    --navy: #86b6e8;          /* headings, links, borders, bars */
+    --navy-fill: #2b5d8e;     /* filled buttons */
+    --navy-dark: #234d77;     /* filled-button hover */
+    --topbar-bg: #1b2a3b;
+    --green: #6fc492;
+    --green-bg: #1c3326;
+    --red: #f07c86;
+    --red-bg: #3b1f24;
+    --sky-bg: #1d2d3e;
+    --purple: #c7a1ec;
+    --purple-bg: #2a2236;
+    --purple-ink: #dcc1f7;
+    --blue-bg: #1a2a3d;
+    --blue-ink: #8fc3f7;
+    --star-gold: #e3bb4d;
+    --surface-hover: #252b33;
+    --input-bg: #23272d;
+    --track: #343941;
+    --track-soft: #343941;
+    --explain-bg: #252a30;
+    --struck-bg: #1a1c20;
+    --amber-bg: #342b18;
+    --amber-line: #5d4a23;
+    --amber-ink: #f0d58a;
+    --atlas-bg: #1c2923;
+    --atlas-ink: #8fd3b4;
+    --atlas-line: #35503f;
+    --atlas-reg: #94a2f2;
+    --atlas-dz: #ee7386;
+    --atlas-drug: #ee9556;
+    color-scheme: dark;
+  }
+}
+
+/* ◐ toggle that theme.js adds to the right end of every top bar */
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
+.theme-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.6);
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 1rem;
+  line-height: 1.2;
+  cursor: pointer;
+}
+.theme-btn:hover { background: rgba(255,255,255,0.15); }

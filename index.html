@@ -15,9 +15,9 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--bg); color: #222; }
-  .topbar { background: var(--navy); color: #fff; padding: 14px 16px; }
-  .topbar-inner { max-width: 800px; margin: 0 auto; font-weight: 700; font-size: 1.1rem; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
+  .topbar { background: var(--topbar-bg); color: #fff; padding: 14px 16px; }
+  .topbar-inner { max-width: 800px; margin: 0 auto; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .container { max-width: 800px; margin: 0 auto; padding: 30px 16px 60px; }
   h1 { font-size: 1.5rem; color: var(--navy); margin: 8px 0 4px; }
   p.subtitle { color: var(--grey-text); margin-top: 0; }
@@ -36,13 +36,13 @@
   .block-card.disabled { opacity: 0.5; pointer-events: none; }
   .block-title { font-weight: 700; font-size: 1.15rem; color: var(--navy); }
   .block-desc { font-size: 0.9rem; color: var(--grey-text); margin-top: 4px; }
-  .footer { text-align: center; padding: 20px; font-size: 0.8rem; color: #999; }
+  .footer { text-align: center; padding: 20px; font-size: 0.8rem; color: var(--text-faint); }
 
   .section-label {
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #999;
+    color: var(--text-faint);
     margin: 32px 0 10px;
   }
   .sync-card {
@@ -56,7 +56,7 @@
   .sync-pin { font-weight: 700; font-size: 1.15rem; letter-spacing: 0.12em; color: var(--navy); }
   .sync-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
   .sync-btn {
-    background: var(--navy);
+    background: var(--navy-fill);
     color: #fff;
     border: none;
     padding: 9px 16px;
@@ -65,7 +65,7 @@
     cursor: pointer;
   }
   .sync-btn:hover { background: var(--navy-dark); }
-  .sync-btn.secondary { background: #fff; color: var(--navy); border: 1px solid var(--navy); }
+  .sync-btn.secondary { background: var(--input-bg); color: var(--navy); border: 1px solid var(--navy); }
   .sync-enter-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
   .sync-pin-input {
     border: 1px solid var(--grey-border);
@@ -75,6 +75,8 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     width: 140px;
+    background: var(--input-bg);
+    color: var(--text);
   }
   .sync-status { font-size: 0.85rem; color: var(--grey-text); margin-top: 10px; min-height: 1.2em; }
 
@@ -82,18 +84,20 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    background: #fff8e1;
-    border: 1px solid #f0dca0;
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-line);
     border-radius: 10px;
     padding: 12px 14px;
     margin: 18px 0 0;
     font-size: 0.92rem;
     line-height: 1.45;
-    color: #6b5400;
+    color: var(--amber-ink);
   }
   .announce-banner .announce-icon { flex-shrink: 0; font-size: 1.05rem; line-height: 1.3; }
   .announce-banner .announce-date { font-weight: 700; margin-right: 6px; }
 </style>
+<link rel="stylesheet" href="shared/theme.css">
+<script src="shared/theme.js"></script>
 </head>
 <body>
   <div class="topbar"><div class="topbar-inner">OCOM Question Hub</div></div>

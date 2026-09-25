@@ -165,6 +165,23 @@ refuses a zero-node result.
 them at once, so test more than one block. Each block folder holds only its `index.html`
 (which sets `window.QUIZ_CONFIG`) and its own `data.js`.
 
+### Dark mode
+
+`shared/theme.js` and `shared/theme.css` give every page a ◐ light/dark toggle in its top
+bar. The choice is saved under the Lesion Atlas's key (`mla-theme`), so one switch covers
+the hub, every block, Live Session, the OMM explorer and the atlas; light is the default.
+Every page needs both in its `<head>`, after its own stylesheet — a new block's
+`index.html` included:
+
+    <link rel="stylesheet" href="../shared/theme.css">
+    <script src="../shared/theme.js"></script>
+
+Colours in page CSS must come from the variables (`--text`, `--card-bg`, `--input-bg`,
+`--navy`, `--navy-fill` for filled buttons, and so on — the full list is at the top of
+`theme.css`), never hard-coded hex, or they will not change in dark mode. White text on the
+top bar and on filled buttons is the exception. Dark applies on screen only, so printing
+stays light.
+
 ### Final exam presets
 
 A block can add one-click Final Exam presets that follow a real exam's announced
