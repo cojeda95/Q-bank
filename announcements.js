@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Added a Dr Williams final exam mode based on the email of the SDL split also added more maps to lesion atlas',
+  text: 'Dr. williams final exam split, site-wide dark mode support, more atlas stuff',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '9/24/26',
+  date: '9/25/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
