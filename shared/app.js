@@ -460,7 +460,7 @@ function renderHome() {
     return `
       <div class="exam-card" data-exam="${e.examNumber}">
         <div class="exam-num">Exam ${e.examNumber}</div>
-        <div class="exam-label">${e.sdls.length} SDLs · ${qCount} questions</div>
+        <div class="exam-label">${e.sdls.length} SDLs · ${qCount ? `${qCount} questions` : 'questions coming soon'}</div>
       </div>`;
   }).join('');
 
@@ -475,7 +475,9 @@ function renderHome() {
 
   const settings = loadSettings();
 
-  const showFinalExamCard = DATA.exams.length > 1;
+  // A block can be published as a skeleton (every SDL titled, no questions yet),
+  // so the final needs questions in the last exam, not just more than one exam.
+  const showFinalExamCard = DATA.exams.length > 1 && allQuestionsForExam(lastExamNumber()).length > 0;
 
   const resumeSnap = loadExamSessionSnapshot();
   const resumeHtml = resumeSnap ? `
@@ -662,6 +664,13 @@ function renderExamSdlList(examNumber) {
     const visible = visibleQuestions(sdl);
     const regularCount = visible.filter(q => q.batch !== 3).length;
     const bloomCount = visible.filter(q => q.batch === 3).length;
+    if (!sdl.questions.length) return `
+      <div class="sdl-row pending">
+        <div>
+          <div class="sdl-title">${escapeHtml(sdl.title)}</div>
+          <div class="sdl-meta">Questions coming soon</div>
+        </div>
+      </div>`;
     const scoreHtml = best
       ? `<div class="sdl-score">${escapeHtml(best.label)} — Last: ${best.score.last.correct}/${best.score.last.total}${best.score.best.correct === best.score.last.correct && best.score.best.total === best.score.last.total ? '' : ` · Best: ${best.score.best.correct}/${best.score.best.total}`}</div>`
       : `<div class="sdl-score none">Not attempted</div>`;
@@ -678,21 +687,22 @@ function renderExamSdlList(examNumber) {
   main.innerHTML = `
     <button class="back-link" id="backHome">&larr; All Exams</button>
     <h1>Exam ${examNumber}</h1>
-    <p class="subtitle">${exam.sdls.length} SDLs · ${totalQ} total questions${settings.hyOnly ? ' · <strong>⚡ High-Yield Only Mode is ON</strong>' : ''}</p>
-    <div class="action-card" id="fullSimCard">
+    <p class="subtitle">${exam.sdls.length} SDLs · ${totalQ ? `${totalQ} total questions` : 'questions coming soon'}${settings.hyOnly ? ' · <strong>⚡ High-Yield Only Mode is ON</strong>' : ''}</p>
+    ${totalQ ? `<div class="action-card" id="fullSimCard">
       <span class="icon">&#9201;</span>
       <div>
         <div class="sdl-title">Full Exam Simulation</div>
         <div class="action-label">All ${totalQ} questions, timed (~${estMinutes} min budget)${settings.examInstantFeedback ? ' · 📝 Instant Feedback is ON' : ', no immediate answer reveal'}</div>
       </div>
-    </div>
+    </div>` : ''}
     <div class="section-label">Practice by SDL</div>
     <div class="sdl-list">${rows}</div>
   `;
 
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
-  document.getElementById('fullSimCard').addEventListener('click', () => setRoute(`examsetup/${examNumber}`));
-  main.querySelectorAll('.sdl-row').forEach(row => {
+  const fullSimCard = document.getElementById('fullSimCard');
+  if (fullSimCard) fullSimCard.addEventListener('click', () => setRoute(`examsetup/${examNumber}`));
+  main.querySelectorAll('.sdl-row:not(.pending)').forEach(row => {
     row.addEventListener('click', () => setRoute(`practice/${row.dataset.sdl}`));
   });
 }
@@ -1296,7 +1306,7 @@ function renderPracticeStart(sdlNumber, batch, forceNew) {
     main.innerHTML = `
       <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
       <h1>${escapeHtml(sdl.title)}</h1>
-      <p class="empty-state">No questions match the current filters (High-Yield Only Mode is likely on). Turn it off on the Home screen, or pick a different batch.</p>
+      <p class="empty-state">${sdl.questions.length ? 'No questions match the current filters (High-Yield Only Mode is likely on). Turn it off on the Home screen, or pick a different batch.' : 'Questions for this SDL are coming soon.'}</p>
     `;
     document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
     return;

@@ -36,6 +36,7 @@ const BLOCKS = [
   { key: 'pulm', label: 'Pulmonology' },
   { key: 'ortho', label: 'Orthopedics' },
   { key: 'rheum', label: 'Rheumatology' },
+  { key: 'nephro', label: 'Nephrology/Urology' },
 ];
 
 const POLL_MS = 2000;
@@ -184,6 +185,7 @@ function flattenSdls(quizData) {
   const sdls = [];
   (quizData.exams || []).forEach(exam => {
     (exam.sdls || []).forEach(sdl => {
+      if (!(sdl.questions || []).length) return; // skeleton SDL — titled, no questions yet
       sdls.push({ examNumber: exam.examNumber, sdlNumber: sdl.sdlNumber, title: sdl.title, questions: sdl.questions || [] });
     });
   });
@@ -329,6 +331,10 @@ function batchLabel(b) {
 function renderSdlPicker() {
   const container = document.getElementById('sdlPicker');
   if (!container) return;
+  if (!state.sdls.length) {
+    container.innerHTML = `<p class="live-status">This block has no questions yet — they'll show up here as SDLs are added.</p>`;
+    return;
+  }
   const selected = state.selectedBatches || [];
   const examNumbers = Array.from(new Set(state.sdls.map(s => s.examNumber))).sort((a, b) => a - b);
   const examCounts = {};

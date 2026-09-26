@@ -214,6 +214,9 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   white-space: nowrap;
 }
 .sdl-row .sdl-score.none { color: var(--text-fainter); font-weight: 400; }
+.sdl-row.pending { cursor: default; background: transparent; border-style: dashed; }
+.sdl-row.pending:hover { box-shadow: none; }
+.sdl-row.pending .sdl-title { color: var(--text-muted); font-weight: 500; }
 
 .sdl-row.bloom-row {
   border-color: var(--purple);
