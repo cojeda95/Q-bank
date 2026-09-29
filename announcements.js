@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Dr. williams final exam split, site-wide dark mode support, more atlas stuff',
+  text: 'Nephro block fully pushed, minor changes for exams 2-3 still being refined',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '9/25/26',
+  date: '9/29/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
