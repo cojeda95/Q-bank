@@ -36,16 +36,21 @@ const MAX_ATTEMPTS_STORED = 5000;
 const APP_SRC = (document.currentScript && document.currentScript.src) || '';
 const ATLAS_URL = APP_SRC ? new URL('../resources/metabolic-atlas.html', APP_SRC).href : '';
 let ATLAS_INDEX = null;
+let ATLAS_READY = Promise.resolve();   // settles once atlas-terms.js has loaded (or failed)
 (function loadAtlasTerms() {
   if (!APP_SRC) return;
-  const s = document.createElement('script');
-  s.src = new URL('../resources/atlas-terms.js', APP_SRC).href;
-  s.async = true;
-  s.onload = () => {
-    const d = window.ATLAS_TERMS;
-    if (d && Array.isArray(d.cards)) ATLAS_INDEX = d.cards.map(([id, n, k, t]) => ({ id, n, k, t }));
-  };
-  document.head.appendChild(s);
+  ATLAS_READY = new Promise(resolve => {
+    const s = document.createElement('script');
+    s.src = new URL('../resources/atlas-terms.js', APP_SRC).href;
+    s.async = true;
+    s.onload = () => {
+      const d = window.ATLAS_TERMS;
+      if (d && Array.isArray(d.cards)) ATLAS_INDEX = d.cards.map(([id, n, k, t]) => ({ id, n, k, t }));
+      resolve();
+    };
+    s.onerror = resolve;
+    document.head.appendChild(s);
+  });
 })();
 const ATLAS_GREEK = { 'α': ' alpha ', 'β': ' beta ', 'γ': ' gamma ', 'δ': ' delta ', 'κ': ' kappa ', 'ε': ' epsilon ', 'μ': ' mu ' };
 const ATLAS_DIGITS = { '₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9',
@@ -446,6 +451,8 @@ function render() {
     renderAnalytics();
   } else if (parts[0] === 'studysheet') {
     renderStudySheet();
+  } else if (parts[0] === 'atlas' && parts[1]) {
+    renderAtlasPractice(decodeURIComponent(parts[1]));
   } else {
     renderHome();
   }
@@ -2141,6 +2148,48 @@ function renderReviewQueue() {
     pendingLetter: null,
   };
   renderReviewQuestion();
+}
+
+/* ── Practice from an atlas card ───────────────────────────────────────
+   The atlas's "Practice" buttons open #atlas/<card id>. This block's questions
+   that link to that card — by exactly the rule that shows atlas links under an
+   answered question (atlasLinksFor) — run as a review-style session.
+   tools/build-atlas.py counts them the same way for the buttons. */
+function atlasPracticeQuestions(id) {
+  const out = [];
+  DATA.exams.forEach(e => e.sdls.forEach(sdl => sdl.questions.forEach(q => {
+    if (atlasLinksFor(q).some(c => c.id === id)) {
+      out.push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title, examNumber: e.examNumber }));
+    }
+  })));
+  return out;
+}
+function renderAtlasPractice(id) {
+  const route = window.location.hash;
+  main.innerHTML = `<p class="loading">Finding questions…</p>`;
+  ATLAS_READY.then(() => {
+    if (window.location.hash !== route) return;   // navigated away while loading
+    const card = ATLAS_INDEX && ATLAS_INDEX.find(c => c.id === id);
+    const qs = card ? atlasPracticeQuestions(id) : [];
+    if (!qs.length) {
+      main.innerHTML = `
+        <button class="back-link" id="backHome">&larr; Home</button>
+        <h1>${card ? escapeHtml(card.n) : 'Atlas practice'}</h1>
+        <p class="empty-state">No questions in this block link to that atlas card yet.${ATLAS_URL && card ? ` <a href="${ATLAS_URL}#${encodeURIComponent(id)}">Back to the card</a>` : ''}</p>
+      `;
+      document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+      return;
+    }
+    session = {
+      mode: 'review',
+      queueLabel: 'Atlas — ' + card.n,
+      questions: shuffle(qs),
+      index: 0,
+      records: new Array(qs.length).fill(null),
+      pendingLetter: null,
+    };
+    renderReviewQuestion();
+  });
 }
 
 /* ── Toughest Questions (item-level, this browser's own attempts only) ──

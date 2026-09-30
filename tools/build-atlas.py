@@ -12,7 +12,9 @@ after every atlas edit:
 Counts in the meta and og tags are derived from the artifact, so they never
 drift from what the page actually contains. It also writes
 resources/atlas-terms.js, which the question bank uses to link each answered
-question to the matching atlas card.
+question to the matching atlas card, and resources/atlas-practice.js, which
+counts those questions per card and block for the cards' Practice buttons —
+re-run it after syncing new questions so the counts stay current.
 """
 import json, re, shutil, subprocess, sys, tempfile, pathlib
 
@@ -23,6 +25,7 @@ ACCEPT_HOMES = "--accept-homes" in sys.argv
 src = pathlib.Path(args[0]) if args else TOOLS / "atlas-src.html"
 out = ROOT / "resources" / "metabolic-atlas.html"
 TERMS_OUT = ROOT / "resources" / "atlas-terms.js"
+PRACTICE_OUT = ROOT / "resources" / "atlas-practice.js"
 HOMES = TOOLS / "atlas-homes.json"
 art = src.read_text(encoding="utf-8")
 
@@ -188,6 +191,7 @@ img{{max-width:100%}}
 [hidden]{{display:none!important}}
 </style>
 <title>Lesion Atlas — COMLEX 1 / Step 1</title>
+<script src="atlas-practice.js"></script>
 """
 
 TOPBAR = ('<div class="ocom-topbar"><div class="ocom-topbar-inner">'
@@ -262,3 +266,72 @@ TERMS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. [id, nam
                                                         ensure_ascii=False, separators=(",", ":")) + ";\n",
                      encoding="utf-8")
 print(f"built {TERMS_OUT.relative_to(ROOT)}  —  {sum(len(r[3]) for r in rows)} link terms for {len(rows)} cards")
+
+
+# ── practice index: how many Q-bank questions link to each card ─────────────
+# The same rule as atlasLinksFor() in shared/app.js — a term as a whole phrase
+# (or with -s/-es) in the correct answer or the first explanation sentence,
+# earlier zone first, then longer term, top 3 cards per question — so the count
+# on a card's button matches what #atlas/<id> finds when it runs in the block.
+
+SHORT = {"psych": "Psych", "neuro": "Neuro", "endocrine": "Endocrine", "eent": "EENT", "pulm": "Pulm",
+         "ortho": "Ortho", "rheum": "Rheum", "nephro": "Nephro", "gi": "GI"}
+hub = (ROOT / "index.html").read_text(encoding="utf-8")
+blocks = []
+for b in re.findall(r'href="([a-z0-9_-]+)/index\.html"', hub):
+    if b not in [x[0] for x in blocks] and (ROOT / b / "data.js").exists():
+        blocks.append((b, SHORT.get(b, b.capitalize())))
+
+by_first = {}
+for ci, (cid, _, _, terms) in enumerate(rows):
+    for t in terms:
+        by_first.setdefault(t.split(" ")[0], set()).add(ci)
+
+def first_hit(terms, text):
+    for t in terms:
+        if f" {t} " in text or f" {t}s " in text or f" {t}es " in text:
+            return t
+    return None
+
+def links_for(q):
+    expl = str(q.get("explanation") or "")
+    lead = (re.findall(r"[^.!?]+[.!?]+", expl) or [expl])[0]
+    zones = [(q.get("choices") or {}).get(q.get("correct")), lead]
+    found = {}
+    for zone, z in enumerate(zones):
+        if not z:
+            continue
+        text = " " + atlas_norm(z) + " "
+        words = set(text.split())
+        cand = set()
+        for w in words:
+            for key in (w, w[:-1] if w.endswith("s") else None, w[:-2] if w.endswith("es") else None):
+                if key and key in by_first:
+                    cand |= by_first[key]
+        for ci in sorted(cand):
+            cid = rows[ci][0]
+            if cid in found:
+                continue
+            hit = first_hit(rows[ci][3], text)
+            if hit:
+                found[cid] = (zone, len(hit), ci)
+    return [cid for cid, _ in sorted(found.items(), key=lambda kv: (kv[1][0], -kv[1][1], kv[1][2]))[:3]]
+
+counts = {}
+nq = 0
+for bi, (b, _) in enumerate(blocks):
+    raw = (ROOT / b / "data.js").read_text(encoding="utf-8")
+    data = json.loads(raw[raw.index("=") + 1:].strip().rstrip(";"))
+    for ex in data["exams"]:
+        for sdl in ex["sdls"]:
+            for q in sdl["questions"]:
+                nq += 1
+                for cid in links_for(q):
+                    counts.setdefault(cid, {}).setdefault(bi, 0)
+                    counts[cid][bi] += 1
+PRACTICE_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. cards: id -> [[block index, questions]] */\n"
+                        "window.ATLAS_PRACTICE=" + json.dumps(
+                            {"blocks": [list(b) for b in blocks],
+                             "cards": {cid: sorted(v.items(), key=lambda kv: -kv[1]) for cid, v in sorted(counts.items())}},
+                            ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+print(f"built {PRACTICE_OUT.relative_to(ROOT)}  —  {len(counts)} cards with practice questions from {nq} questions in {len(blocks)} blocks")

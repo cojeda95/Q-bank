@@ -142,6 +142,25 @@ After adding cards, count which questions in every block would link to them (ser
 repo, open any block, call `atlasLinksFor(q)` over its `data.js`) and read the terms
 behind the biggest counts.
 
+### Practice buttons on atlas cards
+
+Links also run the other way. The build writes `resources/atlas-practice.js`: for every
+card, how many questions in each block link to it, counted by a Python copy of
+`atlasLinksFor()` (the same zones, the same top-3 rule). Each card's drawer shows a
+**Practice** section with one button per block ("Rheum · 30"); a button opens
+`<block>/index.html#atlas/<card id>`, where `app.js` finds those questions with
+`atlasLinksFor()` itself and runs them as a review session. The counts only refresh when
+the build runs, so **re-run `python3 tools/build-atlas.py` after syncing new questions**
+and ship `resources/atlas-practice.js` with them — a stale count is harmless (the session
+always uses the live questions) but reads wrong. Blocks are discovered from the hub's
+block links; give a new block a short label in `SHORT` in the build. The standalone
+`tools/atlas-src.html` has no practice file, so it shows no Practice section.
+
+If `atlas_norm()`/`atlasNorm()` or the linking rule changes, change the build's
+`links_for()` too; the check is to count per card in every block in the browser and
+compare with `atlas-practice.js` — they matched exactly (0 of 8 blocks off) when this
+was added.
+
 Deep links work anywhere: `metabolic-atlas.html#abx` opens a map,
 `#abx/vancomycin` a card on that map, `#vancomycin` a card on its first home.
 

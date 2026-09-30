@@ -16,6 +16,7 @@ img{max-width:100%}
 [hidden]{display:none!important}
 </style>
 <title>Lesion Atlas — COMLEX 1 / Step 1</title>
+<script src="atlas-practice.js"></script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap">
 <style>
@@ -193,6 +194,11 @@ svg.map.drag{cursor:grabbing}
 .mechbox p{font-size:13px}
 .buzz{display:flex;flex-wrap:wrap;gap:6px}
 .bz{font-size:12px;font-weight:500;padding:5px 11px;border-radius:8px;background:var(--accent-soft);color:var(--accent)}
+.practice{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.practice .pqlead{width:100%;margin:0 0 2px;font-size:12.5px;color:var(--ink-2)}
+.pqb{font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:9px;background:var(--accent);color:var(--surface);text-decoration:none;white-space:nowrap}
+.pqb:hover{filter:brightness(1.08)}
+.pqb span{font-weight:500;opacity:.85}
 .related{display:flex;flex-direction:column;gap:1px}
 .rel{text-align:left;width:100%;padding:7px 10px;border-radius:9px;font-size:12.5px;color:var(--ink-2);display:flex;gap:9px;align-items:center}
 .rel:hover{background:var(--surface-2);color:var(--ink)}
@@ -14895,6 +14901,18 @@ function markSelected(){
 /* ── drawer ─────────────────────────────────────────── */
 const sec=(t,inner)=>inner?`<div class="fsec"><h4>${t}</h4>${inner}</div>`:"";
 const ul=a=>(a&&a.length)?`<ul>${a.map(x=>`<li>${x}</li>`).join("")}</ul>`:"";
+/* Practice buttons: only on the question-bank site, where tools/build-atlas.py
+   writes atlas-practice.js next to this page. Each button opens that block's
+   question bank on #atlas/<id>, which runs the questions linked to this card. */
+function practiceHtml(id){
+  const P=window.ATLAS_PRACTICE, rows=P&&P.cards&&P.cards[id];
+  if(!rows||!rows.length) return "";
+  const total=rows.reduce((s,r)=>s+r[1],0);
+  return sec("Practice",`<div class="practice"><p class="pqlead">${total} question${total===1?"":"s"} in the question bank test this</p>${rows.map(([b,n])=>{
+    const [dir,label]=P.blocks[b];
+    return `<a class="pqb" href="../${encodeURIComponent(dir)}/index.html#atlas/${encodeURIComponent(id)}" target="_blank" rel="noopener">${esc(label)} <span>· ${n}</span></a>`;
+  }).join("")}</div>`);
+}
 function openLes(id,center,pick){
   const L=LES[id]; if(!L) return;
   state.sel=id; drawer.hidden=false;
@@ -14917,6 +14935,7 @@ function openLes(id,center,pick){
    </div>
    <div class="dbody">
      ${res}
+     ${pick===undefined?practiceHtml(id):""}
      ${L.enz?sec("Enzyme / step",`<p><b>${esc(L.enz)}</b></p>`):""}
      ${L.mech?sec("Mechanism",`<div class="mechbox"><p>${L.mech}</p></div>`):""}
      ${sec("Presentation",ul(L.find))}
