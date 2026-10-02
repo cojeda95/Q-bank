@@ -221,3 +221,23 @@ The card appears under Final Exam Simulation on the block's home page (one click
 setting). Runs are scored and trended separately from the custom final. Psych's preset
 comes from the course email of 2026-09-24; its Exams 1-4 are
 weekly exams, so week N is Exam N.
+
+### Objective splits
+
+A block can also add an exam that covers every objective of one exam once. It goes in
+that block's `QUIZ_CONFIG.splitPresets`:
+
+    splitPresets: [{
+      id: 'moorjani',        // route #split/moorjani, score-history key: split-moorjani
+      name: 'Moorjani Split',
+      exam: 1,               // which exam's SDLs to cover
+      perObjective: 1,       // random questions drawn from each objective (default 1)
+      extra: 3               // more random questions from the rest of that exam (default 0)
+    }]
+
+Each run takes the objective questions in SDL and objective order, then puts the extras
+last. The card appears on the block's home page and on that exam's SDL list, and opens a
+page with the timer setting and a per-SDL count of what a run draws. Bloom Batch is left
+out as everywhere else, but High-Yield Only Mode is ignored: the split's size is set by
+the objective count, and some objectives have no high-yield questions. Nephro's Moorjani
+Split covers Exam 1 (SDLs 1-12, 47 objectives), so a run is 47 + 3 = 50 questions.

@@ -189,6 +189,7 @@ function saveExamSessionSnapshot() {
       examNumber: session.examNumber,
       isFinal: !!session.isFinal,
       presetId: session.presetId || null,
+      splitId: session.splitId || null,
       timed: session.timed,
       totalSeconds: session.totalSeconds,
       deadlineAt: session.deadlineAt || null,
@@ -437,6 +438,8 @@ function render() {
     renderExamSetup(parseInt(parts[1], 10));
   } else if (parts[0] === 'final-examsetup') {
     renderFinalExamSetup();
+  } else if (parts[0] === 'split' && parts[1]) {
+    renderSplitSetup(decodeURIComponent(parts[1]));
   } else if (parts[0] === 'resume-exam') {
     resumeExamSession();
   } else if (parts[0] === 'exam' && parts[1]) {
@@ -525,6 +528,7 @@ function renderHome() {
     ${resumeHtml}
     ${practiceResumeHtml}
     <div class="exam-grid">${examCards}</div>
+    ${splitCardsHtml()}
 
     ${showFinalExamCard ? `
     <div class="action-card" id="finalExamCard">
@@ -585,6 +589,7 @@ function renderHome() {
   main.querySelectorAll('.exam-card').forEach(card => {
     card.addEventListener('click', () => setRoute(`exam-sdls/${card.dataset.exam}`));
   });
+  bindSplitCards();
   const finalExamCard = document.getElementById('finalExamCard');
   if (finalExamCard) finalExamCard.addEventListener('click', () => setRoute('final-examsetup'));
   main.querySelectorAll('.final-preset-card').forEach(card => {
@@ -702,6 +707,7 @@ function renderExamSdlList(examNumber) {
         <div class="action-label">All ${totalQ} questions, timed (~${estMinutes} min budget)${settings.examInstantFeedback ? ' · 📝 Instant Feedback is ON' : ', no immediate answer reveal'}</div>
       </div>
     </div>` : ''}
+    ${splitCardsHtml(examNumber)}
     <div class="section-label">Practice by SDL</div>
     <div class="sdl-list">${rows}</div>
   `;
@@ -709,6 +715,7 @@ function renderExamSdlList(examNumber) {
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
   const fullSimCard = document.getElementById('fullSimCard');
   if (fullSimCard) fullSimCard.addEventListener('click', () => setRoute(`examsetup/${examNumber}`));
+  bindSplitCards();
   main.querySelectorAll('.sdl-row:not(.pending)').forEach(row => {
     row.addEventListener('click', () => setRoute(`practice/${row.dataset.sdl}`));
   });
@@ -1000,11 +1007,16 @@ function startFinalPreset(preset, { timed = true, secondsPerQuestion = 90 } = {}
 }
 // Title for an exam session or a saved snapshot of one.
 function examSessionLabel(s) {
+  if (s.splitId) {
+    const split = findSplitPreset(s.splitId);
+    return split ? split.name : 'Objective Split';
+  }
   const preset = s.presetId ? findFinalPreset(s.presetId) : null;
   if (s.presetId) return `Final Exam — ${preset ? preset.name : 'Preset'}`;
   return s.isFinal ? 'Final Exam Simulation' : `Exam ${s.examNumber} Simulation`;
 }
 function examScoreKey(s) {
+  if (s.splitId) return `split-${s.splitId}`;
   if (s.presetId) return `final-preset-${s.presetId}`;
   return s.isFinal ? 'final-exam' : `exam-${s.examNumber}`;
 }
@@ -1020,6 +1032,180 @@ function finalPresetCardsHtml(note) {
       </div>
     </div>`;
   }).join('');
+}
+
+/* ── Objective splits (every objective once, configured per block) ────────
+   A block can publish an exam that samples each learning objective of one exam
+   in QUIZ_CONFIG.splitPresets: { id, name, exam, perObjective (default 1),
+   extra (default 0) }. Every run draws `perObjective` random questions from
+   each objective of each SDL in `exam`, in SDL then objective order, and puts
+   `extra` more at the end, drawn at random from the rest of that exam's pool.
+   Bloom Batch is left out as everywhere else, but High-Yield Only Mode is
+   ignored: the split's size is set by the objective count, and some objectives
+   have no high-yield questions at all. Blocks without splits see no change. */
+function splitPresets() {
+  const list = Array.isArray(QUIZ_CONFIG.splitPresets) ? QUIZ_CONFIG.splitPresets : [];
+  return list.filter(p => p && p.id && p.name && DATA.exams.some(e => e.examNumber === p.exam));
+}
+function findSplitPreset(id) {
+  return splitPresets().find(p => p.id === id) || null;
+}
+function splitPerObjective(preset) {
+  return Number.isFinite(preset.perObjective) && preset.perObjective >= 1 ? Math.floor(preset.perObjective) : 1;
+}
+function splitExtra(preset) {
+  return Number.isFinite(preset.extra) && preset.extra > 0 ? Math.floor(preset.extra) : 0;
+}
+// One group per objective that has questions: { sdl, objective, questions }.
+function splitObjectiveGroups(preset) {
+  const exam = DATA.exams.find(e => e.examNumber === preset.exam);
+  if (!exam) return [];
+  const groups = [];
+  exam.sdls.slice().sort((a, b) => a.sdlNumber - b.sdlNumber).forEach(sdl => {
+    const byObjective = new Map();
+    sdl.questions.forEach(q => {
+      if (q.batch === 3) return;
+      if (!byObjective.has(q.objective)) byObjective.set(q.objective, []);
+      byObjective.get(q.objective).push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title }));
+    });
+    Array.from(byObjective.keys()).sort((a, b) => a - b).forEach(objective => {
+      groups.push({ sdl, objective, questions: byObjective.get(objective) });
+    });
+  });
+  return groups;
+}
+// How many objectives the split covers, and how many questions a run holds.
+function splitCounts(preset) {
+  const groups = splitObjectiveGroups(preset);
+  const per = splitPerObjective(preset);
+  const core = groups.reduce((s, g) => s + Math.min(per, g.questions.length), 0);
+  const pool = groups.reduce((s, g) => s + g.questions.length, 0);
+  const extra = Math.min(splitExtra(preset), pool - core);
+  return { objectives: groups.length, core, extra, total: core + extra };
+}
+function buildSplitQuestions(preset) {
+  const per = splitPerObjective(preset);
+  const core = [], rest = [];
+  splitObjectiveGroups(preset).forEach(g => {
+    const picked = shuffle(g.questions);
+    core.push(...picked.slice(0, per));
+    rest.push(...picked.slice(per));
+  });
+  return core.concat(shuffle(rest).slice(0, splitExtra(preset)));
+}
+function startSplit(preset, { timed = true, secondsPerQuestion = 90 } = {}) {
+  if (loadExamSessionSnapshot() && !confirm('Start a new exam? The exam you have in progress will be discarded.')) return;
+  const questions = buildSplitQuestions(preset);
+  if (questions.length === 0) {
+    alert(`No questions are available for ${preset.name}.`);
+    return;
+  }
+  beginExamSession(preset.exam, questions, { splitId: preset.id, timed, secondsPerQuestion });
+}
+// e.g. "1 question from each of Exam 1's 47 objectives + 3 random · 50 questions"
+function splitSummary(preset) {
+  const per = splitPerObjective(preset);
+  const { objectives, extra, total } = splitCounts(preset);
+  return `${per} question${per === 1 ? '' : 's'} from each of Exam ${preset.exam}'s ${objectives} objectives${extra ? ` + ${extra} random` : ''} · ${total} questions`;
+}
+// Cards for the home screen, or for one exam's SDL list when examNumber is given.
+function splitCardsHtml(examNumber) {
+  return splitPresets().filter(p => examNumber == null || p.exam === examNumber).map(p => {
+    const score = getScore(`split-${p.id}`);
+    return `
+    <div class="action-card split-card" data-split="${escapeHtml(p.id)}">
+      <span class="icon">&#127919;</span>
+      <div>
+        <div class="sdl-title">${escapeHtml(p.name)}</div>
+        <div class="action-label">${escapeHtml(splitSummary(p))}${score ? ` · Last: ${score.last.correct}/${score.last.total}` : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function bindSplitCards() {
+  main.querySelectorAll('.split-card').forEach(card => {
+    card.addEventListener('click', () => setRoute(`split/${encodeURIComponent(card.dataset.split)}`));
+  });
+}
+
+function renderSplitSetup(id) {
+  const preset = findSplitPreset(id);
+  if (!preset) { renderHome(); return; }
+  const per = splitPerObjective(preset);
+  const { objectives, core, extra, total } = splitCounts(preset);
+  const settings = loadSettings();
+  const score = getScore(`split-${preset.id}`);
+
+  const bySdl = new Map(); // sdlNumber -> { title, objectives, questions }
+  splitObjectiveGroups(preset).forEach(g => {
+    const row = bySdl.get(g.sdl.sdlNumber) || { title: g.sdl.title, objectives: 0, questions: 0 };
+    row.objectives++;
+    row.questions += Math.min(per, g.questions.length);
+    bySdl.set(g.sdl.sdlNumber, row);
+  });
+  const rows = Array.from(bySdl.values())
+    .map(r => `<tr><td>${escapeHtml(r.title)}</td><td>${r.objectives}</td><td>${r.questions}</td></tr>`)
+    .join('');
+  const extraPositions = extra === 1 ? `question ${total}` : `questions ${core + 1}–${total}`;
+
+  main.innerHTML = `
+    <button class="back-link" id="backHome">&larr; Home</button>
+    <h1>${escapeHtml(preset.name)}</h1>
+    <p class="subtitle">Every objective in Exam ${preset.exam}: ${per} random question${per === 1 ? '' : 's'} from each of its ${objectives} objectives, in SDL order (${core} questions)${extra ? `, then ${extra} more picked at random from the rest of Exam ${preset.exam} as ${extraPositions}` : ''}. ${total} questions in all, drawn fresh every run.</p>
+    ${score ? `<p class="setup-hint">Last run: ${score.last.correct}/${score.last.total}${score.best.correct === score.last.correct && score.best.total === score.last.total ? '' : ` · Best: ${score.best.correct}/${score.best.total}`}</p>` : ''}
+    ${settings.hyOnly ? '<p class="setup-hint">⚡ High-Yield Only Mode does not apply here: this split always covers every objective, including those with no high-yield questions.</p>' : ''}
+    <div class="setup-card">
+      <div class="setup-row">
+        <div class="setup-label-row"><label>Timer</label></div>
+        <label class="radio-option" style="cursor:pointer;">
+          <input type="checkbox" id="timerToggle" checked>
+          <span>&#9201; Timed — default 1.5 min per question</span>
+        </label>
+        <div id="timerMinutesRow" style="margin-top:8px;">
+          <div class="setup-label-row">
+            <label for="minutesPerQInput">Minutes per question</label>
+            <span id="timerReadout" class="setup-readout"></span>
+          </div>
+          <input type="number" id="minutesPerQInput" class="number-input" min="0.5" max="30" step="0.5" value="1.5">
+        </div>
+        ${settings.examInstantFeedback ? '<div class="setup-hint">📝 Instant Feedback is ON — answers are revealed after each question.</div>' : ''}
+      </div>
+      <button class="btn" id="startSplitBtn" style="width:100%; margin-top:10px;">Start ${escapeHtml(preset.name)}</button>
+    </div>
+
+    <div class="section-label">What Each Run Draws</div>
+    <table class="breakdown-table">
+      <thead><tr><th>SDL</th><th>Objectives</th><th>Questions</th></tr></thead>
+      <tbody>
+        ${rows}
+        ${extra ? `<tr><td>Random extras from any Exam ${preset.exam} SDL</td><td>—</td><td>${extra}</td></tr>` : ''}
+        <tr><td><b>Total</b></td><td><b>${objectives}</b></td><td><b>${total}</b></td></tr>
+      </tbody>
+    </table>
+  `;
+
+  document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+  const timerToggle = document.getElementById('timerToggle');
+  const minutesPerQInput = document.getElementById('minutesPerQInput');
+  const timerMinutesRow = document.getElementById('timerMinutesRow');
+  const timerReadout = document.getElementById('timerReadout');
+
+  function updateTimerReadout() {
+    const timed = timerToggle.checked;
+    timerMinutesRow.style.opacity = timed ? '1' : '0.45';
+    minutesPerQInput.disabled = !timed;
+    if (!timed) { timerReadout.textContent = 'No time limit'; return; }
+    const minutesPerQ = Number(minutesPerQInput.value) || 1.5;
+    timerReadout.textContent = `~${Math.round(total * minutesPerQ)} min total`;
+  }
+  timerToggle.addEventListener('change', updateTimerReadout);
+  minutesPerQInput.addEventListener('input', updateTimerReadout);
+  updateTimerReadout();
+
+  document.getElementById('startSplitBtn').addEventListener('click', () => {
+    const minutesPerQuestion = Number(minutesPerQInput.value) || 1.5;
+    startSplit(preset, { timed: timerToggle.checked, secondsPerQuestion: minutesPerQuestion * 60 });
+  });
 }
 
 function renderFinalExamSetup() {
@@ -1521,10 +1707,10 @@ function renderExamSimStart(examNumber) {
 
 /* Shared by the default (100% current exam), Custom Exam Builder's
    weighted/batch-filtered simulations, Final Exam mode and its one-click presets.
-   `isFinal` and `presetId` just change labeling/back-navigation/score-key — the
-   question composition itself is already handled by the caller
-   (buildCustomExamQuestions or buildPresetExamQuestions). */
-function beginExamSession(examNumber, questions, { isFinal, presetId = null, timed = true, secondsPerQuestion = 90 } = {}) {
+   `isFinal`, `presetId` and `splitId` just change labeling/back-navigation/score-key —
+   the question composition itself is already handled by the caller
+   (buildCustomExamQuestions, buildPresetExamQuestions or buildSplitQuestions). */
+function beginExamSession(examNumber, questions, { isFinal, presetId = null, splitId = null, timed = true, secondsPerQuestion = 90 } = {}) {
   const totalSeconds = timed ? questions.length * secondsPerQuestion : null;
   const deadlineAt = timed ? Date.now() + totalSeconds * 1000 : null;
 
@@ -1533,6 +1719,7 @@ function beginExamSession(examNumber, questions, { isFinal, presetId = null, tim
     examNumber,
     isFinal: !!isFinal,
     presetId,
+    splitId,
     questions,
     index: 0,
     answers: new Array(questions.length).fill(null), // letter chosen, or null
@@ -1573,6 +1760,7 @@ function resumeExamSession() {
     examNumber: snap.examNumber,
     isFinal: !!snap.isFinal,
     presetId: snap.presetId || null,
+    splitId: snap.splitId || null,
     questions: snap.questions,
     index: Math.min(snap.index || 0, snap.questions.length - 1),
     answers: snap.answers,
@@ -1889,7 +2077,7 @@ function renderExamResults() {
     `).join('');
 
   main.innerHTML = `
-    <h1>${session.presetId ? escapeHtml(examSessionLabel(session).replace(/^Final Exam/, 'Final Exam Results')) : session.isFinal ? 'Final Exam Results' : `Exam ${session.examNumber} Simulation Results`}</h1>
+    <h1>${session.splitId ? `${escapeHtml(examSessionLabel(session))} Results` : session.presetId ? escapeHtml(examSessionLabel(session).replace(/^Final Exam/, 'Final Exam Results')) : session.isFinal ? 'Final Exam Results' : `Exam ${session.examNumber} Simulation Results`}</h1>
     ${session.timeExpired ? '<p class="subtitle">Time expired — exam auto-submitted.</p>' : ''}
     <div class="result-summary">
       <div class="big-pct">${pct}%</div>
@@ -1916,10 +2104,11 @@ function renderExamResults() {
     ${missedHtml}
 
     <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
-      <button class="btn" id="doneBtn">${session.isFinal ? 'Back to Home' : `Back to Exam ${session.examNumber}`}</button>
+      <button class="btn" id="doneBtn">${session.splitId ? `Back to ${escapeHtml(examSessionLabel(session))}` : session.isFinal ? 'Back to Home' : `Back to Exam ${session.examNumber}`}</button>
     </div>
   `;
-  document.getElementById('doneBtn').addEventListener('click', () => setRoute(session.isFinal ? '' : `exam-sdls/${session.examNumber}`));
+  document.getElementById('doneBtn').addEventListener('click', () => setRoute(
+    session.splitId ? `split/${encodeURIComponent(session.splitId)}` : session.isFinal ? '' : `exam-sdls/${session.examNumber}`));
 }
 
 /* ── Review Flagged Questions ─────────────────────────────────────────── */
@@ -2437,7 +2626,8 @@ function renderAnalytics() {
         const h = progress[key].history;
         const pcts = h.map(e => Math.round((e.correct / e.total) * 100));
         const presetId = key.startsWith('final-preset-') ? key.slice('final-preset-'.length) : null;
-        const label = presetId ? examSessionLabel({ presetId }) : key === 'final-exam' ? 'Final Exam' : key.replace(/^exam-/, 'Exam ');
+        const splitId = key.startsWith('split-') ? key.slice('split-'.length) : null;
+        const label = splitId ? examSessionLabel({ splitId }) : presetId ? examSessionLabel({ presetId }) : key === 'final-exam' ? 'Final Exam' : key.replace(/^exam-/, 'Exam ');
         return `
           <div style="display:flex; align-items:center; gap:16px; margin-bottom:10px; flex-wrap:wrap;">
             <div style="min-width:100px; font-weight:700; color:var(--navy); font-size:0.92rem;">${escapeHtml(label)}</div>

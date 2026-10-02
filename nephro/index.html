@@ -27,7 +27,17 @@
 <script>window.QUIZ_CONFIG = {
   title: 'Nephrology/Urology/Men\'s Health Block Question Bank',
   storageKey: 'nephro',
-  finalPresets: []
+  finalPresets: [],
+  // Objective splits (shared/app.js, splitPresets): perObjective random questions from
+  // every objective of every SDL in `exam`, then `extra` random ones from the rest of it.
+  // Exam 1 (SDLs 1-12) has 47 objectives, so this runs 47 + 3 = 50 questions.
+  splitPresets: [{
+    id: 'moorjani',
+    name: 'Moorjani Split',
+    exam: 1,
+    perObjective: 1,
+    extra: 3
+  }]
 };</script>
 <script src="data.js"></script>
 <script src="../shared/app.js"></script>
