@@ -236,8 +236,10 @@ that block's `QUIZ_CONFIG.splitPresets`:
     }]
 
 Each run takes the objective questions in SDL and objective order, then puts the extras
-last. The card appears on the block's home page and on that exam's SDL list, and opens a
-page with the timer setting and a per-SDL count of what a run draws. Bloom Batch is left
+last. The card appears on the block's home page and on that exam's SDL list, where it opens
+a page with the timer setting and a per-SDL count of what a run draws. It also sits under
+One-Click Presets on that exam's simulation setup page (Full Exam Simulation), where one
+click starts it with that page's timer setting. Bloom Batch is left
 out as everywhere else, but High-Yield Only Mode is ignored: the split's size is set by
 the objective count, and some objectives have no high-yield questions. Nephro's Moorjani
 Split covers Exam 1 (SDLs 1-12, 47 objectives), so a run is 47 + 3 = 50 questions.

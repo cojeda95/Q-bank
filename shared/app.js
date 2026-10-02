@@ -737,11 +737,16 @@ function renderExamSetup(examNumber) {
   const defaultPct = 70;
   const defaultBatch = 'mix';
   const defaultTotal = currentAllCount;
+  const splitCards = splitCardsHtml(examNumber, 'using the timer setting below');
 
   main.innerHTML = `
     <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
     <h1>Build a Practice Exam</h1>
     <p class="subtitle">Mirror the real exam's structure, or customize the mix.</p>
+    ${splitCards ? `
+    <div class="section-label">One-Click Presets</div>
+    ${splitCards}
+    <div class="section-label">Custom Mix</div>` : ''}
     <div class="setup-card">
 
       ${hasPrior ? `
@@ -847,6 +852,15 @@ function renderExamSetup(examNumber) {
       pctReadout.textContent = `${pctSlider.value}% Exam ${examNumber} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
     });
   }
+  // A split card here starts right away, using this page's timer setting.
+  main.querySelectorAll('.split-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const preset = findSplitPreset(card.dataset.split);
+      if (!preset) return;
+      const { timed, minutesPerQuestion } = currentSettings();
+      startSplit(preset, { timed, secondsPerQuestion: minutesPerQuestion * 60 });
+    });
+  });
   document.querySelectorAll('input[name="batchMode"]').forEach(radio => {
     radio.addEventListener('change', updatePoolHint);
   });
@@ -1108,8 +1122,9 @@ function splitSummary(preset) {
   const { objectives, extra, total } = splitCounts(preset);
   return `${per} question${per === 1 ? '' : 's'} from each of Exam ${preset.exam}'s ${objectives} objectives${extra ? ` + ${extra} random` : ''} · ${total} questions`;
 }
-// Cards for the home screen, or for one exam's SDL list when examNumber is given.
-function splitCardsHtml(examNumber) {
+// Cards for the home screen, or for one exam's pages when examNumber is given.
+// `note` is appended to the label, e.g. on the exam setup page.
+function splitCardsHtml(examNumber, note) {
   return splitPresets().filter(p => examNumber == null || p.exam === examNumber).map(p => {
     const score = getScore(`split-${p.id}`);
     return `
@@ -1117,7 +1132,7 @@ function splitCardsHtml(examNumber) {
       <span class="icon">&#127919;</span>
       <div>
         <div class="sdl-title">${escapeHtml(p.name)}</div>
-        <div class="action-label">${escapeHtml(splitSummary(p))}${score ? ` · Last: ${score.last.correct}/${score.last.total}` : ''}</div>
+        <div class="action-label">${escapeHtml(splitSummary(p))}${note ? `, ${note}` : ''}${score ? ` · Last: ${score.last.correct}/${score.last.total}` : ''}</div>
       </div>
     </div>`;
   }).join('');
