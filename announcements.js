@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Nephro block fully pushed, minor changes for exams 2-3 still being refined',
+  text: 'Moorjani split added for Exam 1 for Nephro based on email',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '9/29/26',
+  date: '10/2/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
