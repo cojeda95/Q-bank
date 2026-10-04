@@ -15,7 +15,7 @@
  */
 
 const ANNOUNCEMENT = {
-  text: "last 3 questions on SDL 11 re-written due to OBJ mismatch',
+  text: 'last 3 questions on SDL 11 re-written due to OBJ mismatch',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
   date: '10/4/26',
 };
