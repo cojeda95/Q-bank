@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Moorjani split added for Exam 1 for Nephro based on email',
+  text: 'Ignore last 3 questions on SDL 11, error in objectives',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '10/2/26',
+  date: '10/4/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
