@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'last 3 questions on SDL 11 re-written due to OBJ mismatch',
+  text: 'Added OMM Midterm questions, Nephro exam 2 questions final revisions pushed, exams 3 and 4 still under review',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '10/4/26',
+  date: '10/5/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
