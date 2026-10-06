@@ -275,7 +275,7 @@ print(f"built {TERMS_OUT.relative_to(ROOT)}  —  {sum(len(r[3]) for r in rows)}
 # on a card's button matches what #atlas/<id> finds when it runs in the block.
 
 SHORT = {"psych": "Psych", "neuro": "Neuro", "endocrine": "Endocrine", "eent": "EENT", "pulm": "Pulm",
-         "ortho": "Ortho", "rheum": "Rheum", "nephro": "Nephro", "gi": "GI"}
+         "ortho": "Ortho", "rheum": "Rheum", "nephro": "Nephro", "gi": "GI", "omm": "OMM"}
 hub = (ROOT / "index.html").read_text(encoding="utf-8")
 blocks = []
 for b in re.findall(r'href="([a-z0-9_-]+)/index\.html"', hub):
