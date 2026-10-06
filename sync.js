@@ -42,6 +42,7 @@ const SUFFIXES = ['flags_v1', 'progress_v1', 'attempts_v1', 'settings_v1'];
 const LS_PIN = 'qbank_sync_pin';
 const LS_LAST_SYNC = 'qbank_sync_last';
 const MAX_ATTEMPTS_STORED = 5000;
+const MAX_SCORE_HISTORY = 20; // same cap as recordScore() in shared/app.js
 // Firestore rejects a document over 1,048,576 bytes. Stay below it with room
 // for the document name and per-field overhead it also counts.
 const DOC_BYTE_BUDGET = 1000000;
@@ -71,6 +72,22 @@ function mergeFlags(a, b) {
   return Object.assign({}, a || {}, b || {});
 }
 
+// A score's `history` is its run list behind Analytics' Score Trend chart.
+// Both sides' runs are kept, oldest first, so a sync never shortens it.
+function mergeScoreHistory(a, b) {
+  const seen = new Set();
+  return (a || []).concat(b || [])
+    .filter(r => {
+      if (!r) return false;
+      const k = `${r.date}|${r.correct}|${r.total}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    })
+    .sort((x, y) => (Date.parse(x.date) || 0) - (Date.parse(y.date) || 0))
+    .slice(-MAX_SCORE_HISTORY);
+}
+
 function mergeProgress(a, b) {
   const out = Object.assign({}, a || {});
   Object.keys(b || {}).forEach(key => {
@@ -83,6 +100,8 @@ function mergeProgress(a, b) {
     }
     const ratio = (s) => (s && s.total) ? s.correct / s.total : -1;
     if (ratio(rb.best) > ratio(ra.best)) merged.best = rb.best;
+    const history = mergeScoreHistory(ra.history, rb.history);
+    if (history.length) merged.history = history;
     out[key] = merged;
   });
   return out;
@@ -353,7 +372,7 @@ function initSyncUI() {
 // Exposed on window: used by index.html's inline boot script, and handy for testing/debugging.
 window.pushToCloud = pushToCloud;
 window.pullFromCloud = pullFromCloud;
-window.__syncInternals = { mergeFlags, mergeProgress, mergeAttempts, mergeBlobs, readLocalBlob, cloudBlockBlob, fetchRemoteBlob };
+window.__syncInternals = { mergeFlags, mergeProgress, mergeScoreHistory, mergeAttempts, mergeBlobs, readLocalBlob, cloudBlockBlob, fetchRemoteBlob };
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initSyncUI);
