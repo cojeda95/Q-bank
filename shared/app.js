@@ -391,6 +391,25 @@ function findQuestionById(id) {
   return null;
 }
 
+// Answers synced from another device arrive without their SDL title and
+// objective text (sync.js leaves them out of the cloud copy to stay under
+// Firestore's document size limit), so Analytics looks them up here.
+function sdlTitleFor(sdlNumber) {
+  const found = findSdl(sdlNumber);
+  return found ? found.sdl.title : `SDL ${sdlNumber}`;
+}
+let OBJECTIVE_LABELS = null; // "sdlNumber-objective" -> objectiveLabel, built on first use
+function objectiveLabelFor(sdlNumber, objective) {
+  if (!OBJECTIVE_LABELS) {
+    OBJECTIVE_LABELS = new Map();
+    DATA.exams.forEach(e => e.sdls.forEach(sdl => sdl.questions.forEach(q => {
+      const key = `${sdl.sdlNumber}-${q.objective}`;
+      if (q.objectiveLabel && !OBJECTIVE_LABELS.has(key)) OBJECTIVE_LABELS.set(key, q.objectiveLabel);
+    })));
+  }
+  return OBJECTIVE_LABELS.get(`${sdlNumber}-${objective}`) || '';
+}
+
 // Tiny dependency-free sparkline — just enough to show a score trend inline.
 function sparklineSvg(values, width, height) {
   width = width || 130; height = height || 30;
@@ -2611,12 +2630,12 @@ function renderAnalytics() {
   attempts.forEach(a => {
     if (a.correct) totalCorrect++;
 
-    if (!bySdl[a.sdlNumber]) bySdl[a.sdlNumber] = { correct: 0, total: 0, title: a.sdlTitle || `SDL ${a.sdlNumber}`, sdlNumber: a.sdlNumber };
+    if (!bySdl[a.sdlNumber]) bySdl[a.sdlNumber] = { correct: 0, total: 0, title: a.sdlTitle || sdlTitleFor(a.sdlNumber), sdlNumber: a.sdlNumber };
     bySdl[a.sdlNumber].total++;
     if (a.correct) bySdl[a.sdlNumber].correct++;
 
     const objKey = `${a.sdlNumber}-${a.objective}`;
-    if (!byObjective[objKey]) byObjective[objKey] = { correct: 0, total: 0, sdlNumber: a.sdlNumber, objective: a.objective, label: a.objectiveLabel };
+    if (!byObjective[objKey]) byObjective[objKey] = { correct: 0, total: 0, sdlNumber: a.sdlNumber, objective: a.objective, label: a.objectiveLabel || objectiveLabelFor(a.sdlNumber, a.objective) };
     byObjective[objKey].total++;
     if (a.correct) byObjective[objKey].correct++;
 
