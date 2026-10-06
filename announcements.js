@@ -15,7 +15,7 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Added OMM Midterm questions, Nephro exam 2 questions final revisions pushed, exams 3 and 4 still under review; new atlas maps pushed',
+  text: 'Added OMM Midterm questions, Neprho exams 3 and 4 still under review; new atlas maps pushed, fixed PIN-sync error',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
   date: '10/6/26',
 };
