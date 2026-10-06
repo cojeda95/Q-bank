@@ -243,3 +243,27 @@ click starts it with that page's timer setting. Bloom Batch is left
 out as everywhere else, but High-Yield Only Mode is ignored: the split's size is set by
 the objective count, and some objectives have no high-yield questions. Nephro's Moorjani
 Split covers Exam 1 (SDLs 1-12, 47 objectives), so a run is 47 + 3 = 50 questions.
+
+## Cross-device sync
+
+`sync.js` (on the hub page) syncs every block's flags, scores, answers and settings through
+Cloud Firestore, keyed by a 6-character PIN; there are no accounts. Push and Pull both merge
+the device and the cloud first, so neither loses progress.
+
+**One document per block**: `syncs/{PIN}_{block}`, e.g. `syncs/MGVMZA_nephro`. Firestore
+rejects any document over 1 MiB. Until October 2026 everything lived in one document per
+PIN, `syncs/{PIN}`, and since each answer carried its full objective text, a PIN filled up
+after roughly 2,800 answers across all blocks and every Push failed with "exceeds the
+maximum allowed size". Now:
+
+- the cloud copy of each answer leaves out `sdlTitle` and `objectiveLabel`. Analytics in
+  `shared/app.js` looks them up from `data.js` (`sdlTitleFor`, `objectiveLabelFor`), so
+  answers pulled from another device still show their text. A block at the 5,000-answer
+  cap is about 0.75 MB.
+- if a block's document would still pass the limit, its oldest answers are left out of
+  the cloud copy (never off the device that logged them) rather than the push failing.
+- the old `syncs/{PIN}` document is still read and merged on every sync. Once a push has
+  written every block, it is emptied to a `_migratedAt` marker. A device still running an
+  older cached `sync.js` can write it again; the next push folds that back in.
+
+A new block needs its storage key in `BLOCK_KEYS` in `sync.js`, or its progress won't sync.

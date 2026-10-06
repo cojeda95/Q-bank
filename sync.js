@@ -3,10 +3,23 @@
  * sync.js — PIN-based cross-device sync for the OCOM Question Hub.
  *
  * No accounts, no login. A PIN is just a shared "room code": whoever has it
- * can read/write the same small cloud document. That document holds every
- * block's localStorage progress (flags, scores, attempts, settings), synced
- * across all 6 blocks in one action since they all share this origin's
- * localStorage already.
+ * can read/write the same cloud documents. They hold every block's
+ * localStorage progress (flags, scores, attempts, settings), synced across
+ * all blocks in one action since they all share this origin's localStorage
+ * already.
+ *
+ * Layout: one document per block, syncs/{PIN}_{block}. Firestore caps a
+ * document at 1 MiB. The first version kept everything in one document,
+ * syncs/{PIN}, and with every answer carrying its objective text that filled
+ * up after roughly 2,800 answers across all blocks (first hit in Oct 2026).
+ * Now each block has its own document, and the cloud copy of each answer
+ * leaves out its SDL title and objective text, which the question bank
+ * looks up from data.js instead; a block at MAX_ATTEMPTS_STORED answers stays
+ * well under the cap. The old syncs/{PIN} document is still read and merged
+ * in, so nothing in it is lost, and once a push has written every block's
+ * document it is emptied to a marker. A device still running an older copy
+ * of this script may write it again; the next push from this one folds that
+ * back in.
  *
  * Storage: Cloud Firestore, accessed directly via its REST API (no SDK load,
  * stays consistent with the rest of this site being plain vanilla JS).
@@ -29,6 +42,9 @@ const SUFFIXES = ['flags_v1', 'progress_v1', 'attempts_v1', 'settings_v1'];
 const LS_PIN = 'qbank_sync_pin';
 const LS_LAST_SYNC = 'qbank_sync_last';
 const MAX_ATTEMPTS_STORED = 5000;
+// Firestore rejects a document over 1,048,576 bytes. Stay below it with room
+// for the document name and per-field overhead it also counts.
+const DOC_BYTE_BUDGET = 1000000;
 
 function allSyncKeys() {
   const keys = [];
@@ -114,9 +130,51 @@ function writeBlobToLocal(blob) {
   Object.keys(blob).forEach(k => localStorage.setItem(k, blob[k]));
 }
 
+// ---- Cloud copy of one block ----
+function blockDocId(pin, block) {
+  return `${pin}_${block}`;
+}
+
+function isEmptyBlock(blob, block) {
+  return SUFFIXES.every(s => {
+    const v = safeParse(blob[`${block}_${s}`], null);
+    return v == null || (Array.isArray(v) ? v.length === 0 : Object.keys(v).length === 0);
+  });
+}
+
+function utf8Bytes(str) {
+  return new TextEncoder().encode(str).length;
+}
+
+// One block's keys from a merged blob, as they are stored in the cloud: each
+// answer without its SDL title and objective text, and if the document would
+// still be too big, without its oldest answers (they stay on the devices that
+// logged them). Returns null when the block has nothing to store.
+function cloudBlockBlob(blob, block) {
+  if (isEmptyBlock(blob, block)) return null;
+  const out = {};
+  SUFFIXES.forEach(s => {
+    const k = `${block}_${s}`;
+    if (blob[k] !== undefined) out[k] = blob[k];
+  });
+  const aKey = `${block}_attempts_v1`;
+  let attempts = safeParse(out[aKey], []).map(a => {
+    const { sdlTitle, objectiveLabel, ...rest } = a;
+    return rest;
+  });
+  out[aKey] = JSON.stringify(attempts);
+  const size = () => Object.keys(out).reduce((n, k) => n + utf8Bytes(k) + 1 + utf8Bytes(out[k]) + 1, 0);
+  while (size() > DOC_BYTE_BUDGET && attempts.length) {
+    attempts = attempts.slice(Math.max(1, Math.ceil(attempts.length / 10)));
+    out[aKey] = JSON.stringify(attempts);
+  }
+  if (size() > DOC_BYTE_BUDGET) throw new Error(`${block} progress is too large to sync`);
+  return out;
+}
+
 // ---- Firestore REST helpers ----
-function docUrl(pin) {
-  return `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/syncs/${encodeURIComponent(pin)}?key=${FIREBASE_CONFIG.apiKey}`;
+function docUrl(docId) {
+  return `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/syncs/${encodeURIComponent(docId)}?key=${FIREBASE_CONFIG.apiKey}`;
 }
 
 function toFirestoreFields(blob) {
@@ -136,19 +194,18 @@ function fromFirestoreFields(doc) {
   return blob;
 }
 
-async function fetchRemoteBlob(pin) {
-  const res = await fetch(docUrl(pin));
-  if (res.status === 404) return {}; // no cloud data yet for this PIN
+async function fetchDoc(docId) {
+  const res = await fetch(docUrl(docId));
+  if (res.status === 404) return null; // nothing stored there yet
   if (!res.ok) throw new Error(`Cloud fetch failed (HTTP ${res.status})`);
-  const doc = await res.json();
-  return fromFirestoreFields(doc);
+  return res.json();
 }
 
-async function writeRemoteBlob(pin, blob) {
-  const res = await fetch(docUrl(pin), {
+async function patchDoc(docId, body) {
+  const res = await fetch(docUrl(docId), {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(toFirestoreFields(blob)),
+    body: JSON.stringify(body),
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
@@ -156,19 +213,42 @@ async function writeRemoteBlob(pin, blob) {
   }
 }
 
+// Everything stored for a PIN: every block's document, merged over the old
+// single document. `hasLegacyData` says whether the old document still holds
+// progress, so a push knows to empty it.
+async function fetchRemoteBlob(pin) {
+  const [legacyDoc, ...blockDocs] = await Promise.all(
+    [fetchDoc(pin)].concat(BLOCK_KEYS.map(b => fetchDoc(blockDocId(pin, b)))));
+  const legacy = fromFirestoreFields(legacyDoc);
+  const current = Object.assign({}, ...blockDocs.map(fromFirestoreFields));
+  return { blob: mergeBlobs(legacy, current), hasLegacyData: Object.keys(legacy).length > 0 };
+}
+
+async function writeRemoteBlob(pin, blob, clearLegacy) {
+  await Promise.all(BLOCK_KEYS.map(block => {
+    const data = cloudBlockBlob(blob, block);
+    return data ? patchDoc(blockDocId(pin, block), toFirestoreFields(data)) : null;
+  }));
+  // Only after every block is safely stored: the old document now holds
+  // nothing they don't, so empty it to stay out of the way.
+  if (clearLegacy) {
+    await patchDoc(pin, { fields: { _migratedAt: { timestampValue: new Date().toISOString() } } });
+  }
+}
+
 // ---- Public actions ----
 async function pushToCloud(pin) {
   const local = readLocalBlob();
   const remote = await fetchRemoteBlob(pin);
-  const merged = mergeBlobs(local, remote);
-  await writeRemoteBlob(pin, merged);
+  const merged = mergeBlobs(local, remote.blob);
+  await writeRemoteBlob(pin, merged, remote.hasLegacyData);
   return merged;
 }
 
 async function pullFromCloud(pin) {
   const remote = await fetchRemoteBlob(pin);
   const local = readLocalBlob();
-  const merged = mergeBlobs(local, remote);
+  const merged = mergeBlobs(local, remote.blob);
   writeBlobToLocal(merged);
   return merged;
 }
@@ -273,7 +353,7 @@ function initSyncUI() {
 // Exposed on window: used by index.html's inline boot script, and handy for testing/debugging.
 window.pushToCloud = pushToCloud;
 window.pullFromCloud = pullFromCloud;
-window.__syncInternals = { mergeFlags, mergeProgress, mergeAttempts, mergeBlobs, readLocalBlob };
+window.__syncInternals = { mergeFlags, mergeProgress, mergeAttempts, mergeBlobs, readLocalBlob, cloudBlockBlob, fetchRemoteBlob };
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initSyncUI);
