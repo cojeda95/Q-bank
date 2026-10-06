@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Added OMM Midterm questions, Nephro exam 2 questions final revisions pushed, exams 3 and 4 still under review',
+  text: 'Added OMM Midterm questions, Nephro exam 2 questions final revisions pushed, exams 3 and 4 still under review; new atlas maps pushed',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '10/5/26',
+  date: '10/6/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
