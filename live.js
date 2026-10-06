@@ -37,6 +37,7 @@ const BLOCKS = [
   { key: 'ortho', label: 'Orthopedics' },
   { key: 'rheum', label: 'Rheumatology' },
   { key: 'nephro', label: 'Nephrology/Urology' },
+  { key: 'omm', label: 'OMM III' },
 ];
 
 const POLL_MS = 2000;
