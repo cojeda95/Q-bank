@@ -56,6 +56,12 @@ def validate(art):
             problems.append(
                 f"{card}: markup in buzz — buzz is escaped, so tags show "
                 f"literally in the side rail")
+        elif ln.lstrip().startswith("ref:["):
+            if ESCAPED_TAG.search(ln):
+                problems.append(f"{card}: markup in ref — references are escaped")
+            for pm, doi in re.findall(r'pmid:"([^"]*)",doi:"([^"]*)"', ln):
+                if not re.fullmatch(r"\d{6,9}", pm) or not doi.startswith("10."):
+                    problems.append(f"{card}: malformed reference (pmid {pm!r}, doi {doi!r})")
 
     # 2. A lesion card is invisible unless some node or edge pins it, and a
     #    pin naming a card that does not exist is a dead click.
