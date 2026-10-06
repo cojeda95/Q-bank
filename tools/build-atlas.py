@@ -40,7 +40,7 @@ def validate(art):
     problems = []
     lines = art.split("\n")
 
-    # 1. n / alias / enz / inh / buzz are passed through esc() at render time,
+    # 1. n / alias / enz / inh / gen / buzz are passed through esc() at render time,
     #    so any inline markup in them prints as literal "<b>" to the reader.
     #    mech / find / labs / tx ARE rendered as HTML and keep their emphasis.
     card = None
@@ -51,7 +51,7 @@ def validate(art):
             if ESCAPED_TAG.search(ln):
                 problems.append(
                     f"{card}: markup in an escaped header field "
-                    f"(n/alias/enz/inh) — it will print as literal tags")
+                    f"(n/alias/enz/inh/gen) — it will print as literal tags")
         elif ln.lstrip().startswith("buzz:[") and ESCAPED_TAG.search(ln):
             problems.append(
                 f"{card}: markup in buzz — buzz is escaped, so tags show "
