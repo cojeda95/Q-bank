@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 82 pan/zoom maps with 1225 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 83 pan/zoom maps with 1240 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="82 interactive maps. 1225 lesions pinned to the step they break.">
+<meta property="og:description" content="83 interactive maps. 1240 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -721,6 +721,11 @@ const PATHS = {
   chabd:{n:"Abdominal points",v:"--p-glycolysis"},
   chpelvis:{n:"Kidney, bladder & pelvic points",v:"--p-gluconeo"},
   chlimb:{n:"Limb & nervous system points",v:"--p-glycogen"},
+  szclass:{n:"Seizure types and mimics",v:"--p-glycolysis"},
+  szdrug:{n:"Where anticonvulsants act",v:"--p-tca"},
+  szstat:{n:"Status epilepticus",v:"--p-gluconeo"},
+  hdprim:{n:"Primary headache and facial pain",v:"--p-ppp"},
+  hdsec:{n:"Secondary headache",v:"--p-glycogen"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -3278,14 +3283,14 @@ antiepileptics:{n:"Antiepileptic drugs",k:"drug",p:"channels",enz:"Na⁺ channel
  find:["<b>Phenytoin</b>: gingival hyperplasia, hirsutism, nystagmus, ataxia, teratogen (fetal hydantoin syndrome), zero-order kinetics, CYP inducer, megaloblastic anemia","<b>Carbamazepine</b>: agranulocytosis, aplastic anemia, SIADH, <b>SJS with HLA-B*1502</b>, CYP inducer; first line for trigeminal neuralgia","<b>Valproate</b>: hepatotoxicity, pancreatitis, <b>neural tube defects</b>, tremor, weight gain · <b>lamotrigine</b>: SJS — titrate slowly","<b>Topiramate</b>: kidney stones, weight loss, word-finding difficulty, angle closure · <b>levetiracetam</b>: irritability, mood change"],
  labs:["Enzyme inducers (phenytoin, carbamazepine, phenobarbital) weaken oral contraceptives and warfarin"],
  buzz:["Phenytoin: gums, hair, nystagmus","Carbamazepine: SIADH and agranulocytosis"],
- tx:["—"],q:["antiepileptic","antiepileptics","antiepileptic drug","anticonvulsant","anticonvulsants","phenytoin","fosphenytoin","carbamazepine","valproate","valproic acid","lamotrigine","levetiracetam","topiramate","ethosuximide","gabapentin","pregabalin","oxcarbazepine"]},
+ tx:["—"],q:["antiepileptic","antiepileptics","antiepileptic drug","anticonvulsant","anticonvulsants"]},
 
 epilepsyreg:{n:"Seizure types & the drug for each",k:"reg",p:"channels",enz:"Thalamocortical circuits · T-type Ca²⁺",inh:"—",hi:1,
  mech:"Focal seizures start in one area; generalized seizures involve both hemispheres from the outset. <b>Absence seizures</b> are driven by thalamic <b>T-type calcium channels</b> generating 3-Hz rhythms — which is why ethosuximide treats them alone, and why some Na⁺-channel drugs make them worse.",
  find:["<b>Absence</b>: brief staring spells many times a day, 3-Hz spike-and-wave, provoked by hyperventilation → <b>ethosuximide</b> (valproate if there are also tonic-clonic seizures)","<b>Focal</b>, with or without impaired awareness or spread → carbamazepine, lamotrigine, levetiracetam","<b>Generalized tonic-clonic</b> → valproate, levetiracetam, lamotrigine","<b>Status epilepticus</b> (5 minutes or more) → <b>lorazepam</b> first, then fosphenytoin, levetiracetam or valproate","<b>Eclampsia</b> → magnesium sulfate · <b>infantile spasms</b> → ACTH or vigabatrin · <b>trigeminal neuralgia</b> → carbamazepine"],
  labs:["Prolactin rises after a generalized seizure, not after a psychogenic one","First seizure: glucose, sodium, calcium, toxicology, brain imaging"],
  buzz:["Absence: ethosuximide","Status epilepticus: lorazepam first"],
- tx:["—"],q:["absence seizure","absence seizures","status epilepticus","epilepsy","focal seizure","focal seizures","generalized tonic clonic","infantile spasms","trigeminal neuralgia"]},
+ tx:["—"],q:["status epilepticus","epilepsy","infantile spasms"]},
 
 /* ── endocrine pancreas & diabetes ──────────────────── */
 t1dm:{n:"Type 1 diabetes mellitus",k:"dz",p:"dm",enz:"β cells destroyed — absolute insulin deficiency",inh:"Autoimmune",gen:"Polygenic — 50% identical-twin concordance · HLA-DR3/DR4",hi:1,
@@ -9338,7 +9343,113 @@ chapmanpt:{n:"Chapman reflex points",alias:"neurolymphatic nodules",k:"reg",p:"c
  find:["Small (2–3 mm), pea- or 'BB shot'-like, edematous nodules — painful without radiation when acute, possibly painless when chronic","Anterior points mostly lie in the <b>intercostal spaces</b>; posterior points near the <b>transverse processes</b> or intertransverse spaces","Palpate the anterior point first, then confirm the viscerosomatic origin at the related posterior point","Treat anterior points first, then posterior","Hypertension study: treating the posterior adrenal points (T11–T12) lowered aldosterone but not blood pressure"],
  labs:["Charts differ: the lab chart uses intertransverse spaces, Osmosis single transverse processes"],
  buzz:["Tender pea-sized nodule in the 2nd intercostal space beside the sternum = heart"],
- tx:["Anterior then posterior"],q:["chapman reflex points","chapman reflex point","chapmans reflex points","chapman points","chapman point","chapmans point","neurolymphatic"]}
+ tx:["Anterior then posterior"],q:["chapman reflex points","chapman reflex point","chapmans reflex points","chapman points","chapman point","chapmans point","neurolymphatic"]},
+
+/* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
+seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",hi:1,
+ mech:"A seizure is synchronized, high-frequency firing of a population of neurons. It runs in three phases: <b>aura</b> (the early part — odd smells or tastes), <b>ictal</b> (first symptom to end of seizure activity) and <b>postictal</b> (gradual recovery to baseline). <b>Epilepsy</b> is a disorder of recurrent, <b>unprovoked</b> seizures.",
+ find:["Focal seizures start in one area; generalized seizures are diffuse","Causes by age — children < 18: genetic, infection (febrile), trauma, congenital, metabolic","Adults 18–65: tumor, trauma, stroke, infection","Over 65: stroke, tumor, trauma, metabolic, infection","Febrile seizures are not epilepsy"],
+ labs:["—"],
+ buzz:["Aura → ictal → postictal"],
+ tx:["—"],q:["postictal","unprovoked seizures","postictal phase"]},
+
+focalseiz:{n:"Focal seizures",alias:"simple and complex partial",k:"dz",p:"szclass",enz:"Start in one area — most often the medial temporal lobe",inh:"—",hi:1,
+ mech:"Focal seizures begin in a single area of the brain, most commonly the <b>medial temporal lobe</b>. They are split by whether consciousness is kept, and they can spread to become secondarily generalized tonic-clonic seizures.",
+ find:["<b>Focal aware</b> (formerly simple partial): consciousness intact; motor, sensory, autonomic or psychic symptoms","<b>Focal impaired awareness</b> (formerly complex partial): impaired consciousness, <b>automatisms</b>","May secondarily generalize"],
+ labs:["—"],
+ buzz:["Odd smell, then lip smacking and staring, then confusion"],
+ tx:["Narrow spectrum: phenytoin, carbamazepine, gabapentinoids","Broad spectrum: valproate, lamotrigine, levetiracetam, topiramate"],q:["focal seizure","focal seizures","focal impaired awareness","focal aware","complex partial","simple partial","automatisms"]},
+
+absence:{n:"Absence seizures",alias:"petit mal",k:"dz",p:"szclass",enz:"Thalamic T-type Ca²⁺ channels · 3 Hz spike-and-wave",inh:"Childhood",hi:1,
+ mech:"Generalized seizures of brief blank staring with <b>3 Hz spike-and-wave</b> discharges on EEG. They usually begin in childhood (childhood absence epilepsy starts at 4–10 years) and mostly remit by age 12.",
+ find:["Short (usually ~10 seconds), frequent episodes of blank stare; automatisms possible","<b>No postictal confusion</b>","Triggered by <b>hyperventilation</b>"],
+ labs:["EEG: 3 Hz spike-and-wave"],
+ buzz:["Child staring off many times a day, worse when hyperventilating"],
+ tx:["<b>Ethosuximide</b> (absence only — blocks T-type Ca²⁺ channels)","Valproate covers absence and other generalized seizures"],q:["absence seizure","absence seizures","petit mal","spike and wave","childhood absence epilepsy"]},
+
+gtc:{n:"Generalized tonic-clonic & other generalized seizures",alias:"grand mal · tonic · myoclonic · atonic",k:"dz",p:"szclass",enz:"Diffuse from the onset",inh:"—",hi:1,
+ mech:"Generalized seizures involve the brain diffusely from the start.",
+ find:["<b>Tonic-clonic</b> (grand mal): alternating stiffening and movement, <b>postictal confusion</b>, urinary incontinence, <b>tongue biting</b>","<b>Tonic</b>: stiffening","<b>Myoclonic</b>: quick, repetitive jerks; no loss of consciousness or postictal confusion","<b>Atonic</b>: 'drop' seizures — falls to the floor; often mistaken for fainting","Absence seizures are also generalized"],
+ labs:["—"],
+ buzz:["Bit her tongue, wet herself, confused afterward"],
+ tx:["Broad-spectrum drugs: valproate, lamotrigine, levetiracetam, topiramate"],q:["generalized tonic clonic","tonic clonic","grand mal","myoclonic seizure","myoclonic seizures","atonic seizure","atonic seizures","generalized seizure","generalized seizures"]},
+
+febrileseiz:{n:"Febrile seizures",k:"dz",p:"szclass",enz:"Seizure provoked by fever in a young child",inh:"Infection in childhood · roseola (HHV-6)",hi:1,
+ mech:"A seizure triggered by fever. It is provoked, so it is <b>not epilepsy</b>; it is benign and usually self-limiting.",
+ find:["Infection is a leading cause of seizures in children","Roseola (HHV-6) can present with febrile seizures after days of high fever"],
+ labs:["—"],
+ buzz:["Toddler seizes with a high fever, then is fine"],
+ tx:["Acetaminophen or ibuprofen for comfort — they do not prevent future febrile seizures"],q:["febrile seizure","febrile seizures"]},
+
+pnes:{n:"Psychogenic nonepileptic events",alias:"functional seizures",k:"dz",p:"szclass",enz:"Seizure-like events without epileptic discharges",inh:"Psychiatric disorders, substance use · female",hi:1,
+ mech:"Episodes that resemble syncope or tonic-clonic seizures but have no epileptic EEG correlate.",
+ find:["Prolonged (> 1 minute) syncopal or tonic-clonic-like episodes","<b>No postictal phase</b>, no autonomic disturbance, no tongue biting","Often witnessed, with vocalizations and a preceding aura"],
+ labs:["<b>Normal video EEG</b> during an event"],
+ buzz:["Long thrashing episode with eyes shut and no postictal confusion"],
+ tx:["—"],q:["psychogenic nonepileptic","nonepileptic seizures","psychogenic seizures","functional seizures","pseudoseizures"]},
+
+phenytoin:{n:"Phenytoin & fosphenytoin",k:"drug",p:"szdrug",enz:"Blocks voltage-gated Na⁺ channels",inh:"—",hi:1,
+ mech:"Holds Na⁺ channels inactivated. A narrow-spectrum drug for focal seizures. Its elimination saturates — <b>zero-order (capacity-limited) kinetics</b>. Fosphenytoin is the IV prodrug used in status epilepticus.",
+ find:["Common: sedation, dizziness, diplopia, <b>gingival hypertrophy</b> (folate helps prevent it), rash, <b>hirsutism</b>, CYP450 induction","Rare but serious: SJS, DRESS, hepatotoxicity, neuropathy, osteoporosis, folate depletion","Teratogen: <b>fetal hydantoin syndrome</b>"],
+ labs:["Zero-order (capacity-limited) elimination, like ethanol and high-dose aspirin"],
+ buzz:["Gums, hair, double vision"],
+ tx:["IV fosphenytoin after a benzodiazepine in status epilepticus"],q:["phenytoin","fosphenytoin","gingival hyperplasia","gingival hypertrophy","fetal hydantoin syndrome"]},
+
+carbamazepine:{n:"Carbamazepine",k:"drug",p:"szdrug",enz:"Blocks voltage-gated Na⁺ channels",inh:"—",hi:1,
+ mech:"A narrow-spectrum Na⁺-channel blocker for focal seizures, and first-line for trigeminal neuralgia (with oxcarbazepine). Also a mood stabilizer in bipolar disorder.",
+ find:["Common: sedation, dizziness, diplopia, vomiting, diarrhea, <b>SIADH</b>, rash, CYP450 induction","Rare but serious: SJS, DRESS, hepatotoxicity, <b>agranulocytosis, aplastic anemia</b>, folate depletion, teratogenicity"],
+ labs:["Check blood counts — agranulocytosis and aplastic anemia"],
+ buzz:["Trigeminal neuralgia drug that causes SIADH and agranulocytosis"],
+ tx:["—"],q:["carbamazepine","oxcarbazepine"]},
+
+valproate:{n:"Valproate",alias:"valproic acid",k:"drug",p:"szdrug",enz:"Blocks Na⁺ and Ca²⁺ channels · blocks GABA transaminase",inh:"—",hi:1,
+ mech:"Broad spectrum for focal and generalized seizures (including absence). It blocks Na⁺ and Ca²⁺ channels and inhibits GABA transaminase, so GABA builds up. Also used for migraine prophylaxis and as a <b>mood stabilizer</b> in bipolar disorder.",
+ find:["Common: sedation, dizziness, vomiting, <b>weight gain, hair loss</b>, easy bruising, CYP450 <b>inhibition</b>","Rare but serious: <b>hepatotoxicity, pancreatitis</b>, teratogenicity — the highest risk of all anticonvulsants","First-trimester exposure: <b>neural tube defects</b> (spina bifida)"],
+ labs:["—"],
+ buzz:["Broad spectrum, but liver, pancreas and neural tube"],
+ tx:["—"],q:["valproate","valproic acid","divalproex"]},
+
+lamotrigine:{n:"Lamotrigine",k:"drug",p:"szdrug",enz:"Blocks voltage-gated Na⁺ channels",inh:"—",hi:1,
+ mech:"A broad-spectrum Na⁺-channel blocker for focal and generalized seizures, and a mood stabilizer in bipolar disorder.",
+ find:["Common: sedation, dizziness, <b>rash</b>","Rare but serious: <b>SJS</b>, DRESS"],
+ labs:["—"],
+ buzz:["New rash on lamotrigine → think SJS"],
+ tx:["—"],q:["lamotrigine"]},
+
+levetiracetam:{n:"Levetiracetam",k:"drug",p:"szdrug",enz:"Blocks synaptic vesicle protein 2A (SV2A)",inh:"—",hi:1,
+ mech:"Binds SV2A on synaptic vesicles and reduces glutamate release. Broad spectrum.",
+ find:["Common: sedation, dizziness, fatigue","Rare but serious: <b>neuropsychiatric</b> effects (eg, psychosis)"],
+ labs:["—"],
+ buzz:["SV2A — and mood or psychotic symptoms"],
+ tx:["—"],q:["levetiracetam","sv2a"]},
+
+topiramate:{n:"Topiramate",k:"drug",p:"szdrug",enz:"Blocks Na⁺ channels · potentiates GABA-A",inh:"—",hi:1,
+ mech:"Broad spectrum, acting on Na⁺ channels and GABA-A receptors. Also used for migraine prophylaxis.",
+ find:["Common: sedation, dizziness, mood disturbance (depression), <b>weight loss</b>, paresthesia","Rare but serious: <b>kidney stones</b>, <b>angle-closure glaucoma</b>"],
+ labs:["—"],
+ buzz:["Weight loss, kidney stones, glaucoma"],
+ tx:["—"],q:["topiramate"]},
+
+ethosuximide:{n:"Ethosuximide",k:"drug",p:"szdrug",enz:"Blocks T-type Ca²⁺ channels (thalamus)",inh:"—",hi:1,
+ mech:"Blocks the T-type Ca²⁺ channels behind the thalamocortical 3 Hz rhythm. Narrow spectrum: <b>absence seizures only</b>.",
+ find:["Adverse: sedation, dizziness, vomiting"],
+ labs:["—"],
+ buzz:["Absence seizure → ethosuximide"],
+ tx:["—"],q:["ethosuximide"]},
+
+gabapentinoids:{n:"Gabapentin & pregabalin",alias:"gabapentinoids",k:"drug",p:"szdrug",enz:"Block voltage-gated Ca²⁺ channels",inh:"—",hi:1,
+ mech:"Narrow-spectrum anticonvulsants for focal seizures that act on voltage-gated Ca²⁺ channels; more often used for <b>neuropathic pain</b>.",
+ find:["Uses: neuropathic pain (postherpetic neuralgia, painful diabetic neuropathy), anxiety; pregabalin for fibromyalgia","Adverse: sedation, dizziness, ataxia, weight gain"],
+ labs:["—"],
+ buzz:["Shingles pain that lingers → gabapentin"],
+ tx:["—"],q:["gabapentin","pregabalin"]},
+
+headacheapproach:{n:"Primary vs secondary headache",k:"reg",p:"hdsec",enz:"Pain from irritated intra- or extracranial structures",inh:"—",hi:1,
+ mech:"Headache comes from irritation of intra- or extracranial structures such as the meninges and blood vessels. <b>Primary</b> headaches are the disorders themselves; <b>secondary</b> headaches are symptoms of something else.",
+ find:["Primary: <b>tension-type, migraine, cluster</b>","Secondary: <b>medication overuse</b>, meningitis, subarachnoid hemorrhage, hydrocephalus, neoplasia, giant cell arteritis","Tension: bilateral, > 30 min (typically 4–6 h), steady and bandlike, no aura · the most common primary headache","Migraine: unilateral, 4–72 h, pulsating with nausea, photo- or phonophobia, ± aura","Cluster: unilateral periorbital, 15 min–3 h, repetitive, with autonomic symptoms; more common in males"],
+ labs:["—"],
+ buzz:["POUND = migraine"],
+ tx:["—"],q:["secondary headache","primary headache","medication overuse headache"]}
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -18990,7 +19101,113 @@ MAPS.chapman = {
   {a:"pl4",b:"ol4",p:"chlimb"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ethics","Ethics & Safety"],["index","Index"]];
+MAPS.seizhead = {
+ t:"Seizures & Headache", sub:"Focal vs generalized and the mimics · each anticonvulsant pinned to the channel it blocks · status epilepticus · primary vs secondary headache",
+ w:3300, h:1846,
+ comps:[
+  {x:140,y:110,w:3020,h:350,l:"What kind of seizure?"},
+  {x:140,y:540,w:3020,h:350,l:"Where the anticonvulsants act"},
+  {x:140,y:970,w:3020,h:110,l:"When it won't stop"},
+  {x:140,y:1160,w:3020,h:350,l:"Headache — primary vs secondary"}],
+ panels:[
+  {x:140,y:1590,w:1480,h:196,kw:170,t:"Drug by seizure type (First Aid)",rows:[
+   ["Focal (narrow)","phenytoin, carbamazepine, gabapentinoids"],
+   ["Absence only","ethosuximide"],
+   ["Broad spectrum","valproate, lamotrigine, levetiracetam, topiramate"],
+   ["Status epilepticus","benzodiazepine first, then fosphenytoin"]]},
+  {x:1680,y:1590,w:1480,h:196,kw:170,t:"Signature toxicities",rows:[
+   ["Phenytoin","gingival hypertrophy, hirsutism, zero-order kinetics"],
+   ["Carbamazepine","SIADH, agranulocytosis, aplastic anemia"],
+   ["Valproate","hepatotoxicity, pancreatitis, neural tube defects"],
+   ["Lamotrigine","SJS"],
+   ["Topiramate","kidney stones, angle-closure glaucoma, weight loss"],
+   ["Levetiracetam","psychosis, mood change"]]}],
+ nodes:[
+  {id:"s1",l:"Focal",x:1020,y:170,p:"szclass",s:"one area · usually medial temporal",m:["focalseiz"]},
+  {id:"s2",l:"Focal aware",x:1620,y:170,p:"szclass",s:"consciousness intact",m:["focalseiz"]},
+  {id:"s3",l:"Focal impaired awareness",x:2220,y:170,p:"szclass",s:"automatisms",m:["focalseiz"]},
+  {id:"s4",l:"Secondarily generalized",x:2820,y:170,p:"szclass"},
+  {id:"s0",l:"Seizure",x:420,y:290,p:"szclass",s:"aura → ictal → postictal",m:["seizure"]},
+  {id:"s5",l:"Generalized",x:1020,y:250,p:"szclass",s:"diffuse from the onset",m:["gtc"]},
+  {id:"s6",l:"Tonic-clonic",x:1620,y:250,p:"szclass",s:"postictal confusion · tongue biting · incontinence",m:["gtc"]},
+  {id:"s7",l:"Tonic · myoclonic · atonic",x:2220,y:250,p:"szclass",s:"stiffening · jerks · drop seizures",m:["gtc"]},
+  {id:"s8",l:"Absence",x:1620,y:330,p:"szclass",s:"3 Hz spike-and-wave · no postictal phase",m:["absence"]},
+  {id:"s9",l:"Mimics",x:1020,y:410,p:"szclass",s:"not epilepsy"},
+  {id:"s10",l:"Febrile seizure",x:1620,y:410,p:"szclass",s:"provoked · benign",m:["febrileseiz"]},
+  {id:"s11",l:"Psychogenic nonepileptic events",x:2220,y:410,p:"szclass",s:"no postictal phase · normal video EEG",m:["pnes", "conversion"]},
+  {id:"s12",l:"Syncope",x:2820,y:410,p:"szclass",s:"atonic seizures get mistaken for it",m:["syncope"]},
+  {id:"d0",l:"Action potential",x:420,y:600,p:"szdrug",s:"excitatory neuron"},
+  {id:"d1",l:"Voltage-gated Na⁺ channel",x:1020,y:600,p:"szdrug",s:"depolarization"},
+  {id:"d2",l:"Voltage-gated Ca²⁺ channel",x:2220,y:600,p:"szdrug",s:"triggers release · T-type in the thalamus"},
+  {id:"d3",l:"Glutamate vesicle release",x:2820,y:600,p:"szdrug",s:"SV2A"},
+  {id:"b1",l:"Phenytoin · carbamazepine",x:720,y:680,p:"szdrug",s:"narrow — focal",m:["phenytoin", "carbamazepine"]},
+  {id:"b2",l:"Lamotrigine · topiramate · valproate",x:1320,y:680,p:"szdrug",s:"broad",m:["lamotrigine", "topiramate", "valproate"]},
+  {id:"b3",l:"Ethosuximide · gabapentinoids",x:2220,y:680,p:"szdrug",s:"absence only · focal, neuropathic pain",m:["ethosuximide", "gabapentinoids"]},
+  {id:"b4",l:"Levetiracetam",x:2820,y:680,p:"szdrug",s:"broad",m:["levetiracetam"]},
+  {id:"g0",l:"GABA from inhibitory neurons",x:420,y:760,p:"szdrug"},
+  {id:"g1",l:"GABA-A receptor — Cl⁻ in",x:1020,y:760,p:"szdrug",s:"hyperpolarizes"},
+  {id:"g2",l:"Benzodiazepines · barbiturates",x:1620,y:760,p:"szdrug",s:"frequency vs duration of opening · + topiramate",m:["benzos"]},
+  {id:"g3",l:"GABA transaminase",x:420,y:840,p:"szdrug",s:"breaks GABA down"},
+  {id:"g4",l:"Valproate",x:1020,y:840,p:"szdrug",s:"blocks it → GABA builds up",m:["valproate"]},
+  {id:"t0",l:"Status epilepticus",x:420,y:1030,p:"szstat",s:"≥ 5 min or no recovery between",m:["statusepi"]},
+  {id:"t1",l:"Benzodiazepine",x:1020,y:1030,p:"szstat",s:"lorazepam · diazepam · midazolam",m:["benzos"]},
+  {id:"t2",l:"IV fosphenytoin",x:1620,y:1030,p:"szstat",m:["phenytoin", "epilepsyreg"]},
+  {id:"h1",l:"Primary",x:1020,y:1220,p:"hdprim",s:"the headache is the disease",m:["headacheapproach"]},
+  {id:"h2",l:"Tension-type",x:1620,y:1220,p:"hdprim",s:"bilateral, bandlike · NSAIDs · TCA prophylaxis",m:["tensionha"]},
+  {id:"h3",l:"Migraine",x:2220,y:1220,p:"hdprim",s:"POUND · triptans, DHE · prophylaxis",m:["migraine", "serodrugs"]},
+  {id:"h4",l:"Cluster",x:2820,y:1220,p:"hdprim",s:"periorbital + autonomic · O₂, sumatriptan · verapamil",m:["clusterha", "horner"]},
+  {id:"h0",l:"Headache",x:420,y:1300,p:"hdsec"},
+  {id:"h5",l:"Facial pain",x:1020,y:1300,p:"hdprim"},
+  {id:"h6",l:"Trigeminal neuralgia",x:1620,y:1300,p:"hdprim",s:"CN V vascular loop · carbamazepine",m:["trigeminal", "carbamazepine"]},
+  {id:"h7",l:"Secondary",x:1020,y:1380,p:"hdsec",s:"a symptom of something else",m:["headacheapproach"]},
+  {id:"h8",l:"Meningitis",x:1620,y:1380,p:"hdsec",m:["bactmening"]},
+  {id:"h9",l:"Subarachnoid hemorrhage",x:2220,y:1380,p:"hdsec",s:"worst headache of my life",m:["sah"]},
+  {id:"h10",l:"Giant cell arteritis",x:2820,y:1380,p:"hdsec",m:["gca"]},
+  {id:"h11",l:"Hydrocephalus · IIH",x:1620,y:1460,p:"hdsec",m:["hydroceph", "iih"]},
+  {id:"h12",l:"Brain tumor",x:2220,y:1460,p:"hdsec",m:["gbm", "meningioma"]},
+  {id:"h13",l:"Medication overuse",x:2820,y:1460,p:"hdsec"}],
+ edges:[
+  {a:"s0",b:"s1",p:"szclass"},
+  {a:"s0",b:"s5",p:"szclass"},
+  {a:"s0",b:"s9",p:"szclass"},
+  {a:"s1",b:"s2",p:"szclass",arrow:"none",dash:true},
+  {a:"s2",b:"s3",p:"szclass",arrow:"none",dash:true},
+  {a:"s3",b:"s4",p:"szclass"},
+  {a:"s4",b:"s6",p:"szclass",dash:true},
+  {a:"s5",b:"s6",p:"szclass"},
+  {a:"s6",b:"s7",p:"szclass",arrow:"none",dash:true},
+  {a:"s5",b:"s8",p:"szclass"},
+  {a:"s9",b:"s10",p:"szclass",arrow:"none",dash:true},
+  {a:"s10",b:"s11",p:"szclass",arrow:"none",dash:true},
+  {a:"s11",b:"s12",p:"szclass",arrow:"none",dash:true},
+  {a:"d0",b:"d1",p:"szdrug"},
+  {a:"d1",b:"d2",p:"szdrug"},
+  {a:"d2",b:"d3",p:"szdrug"},
+  {a:"b1",b:"d1",p:"szdrug",arrow:"inhib"},
+  {a:"b2",b:"d1",p:"szdrug",arrow:"inhib"},
+  {a:"b3",b:"d2",p:"szdrug",arrow:"inhib"},
+  {a:"b4",b:"d3",p:"szdrug",arrow:"inhib"},
+  {a:"g0",b:"g1",p:"szdrug"},
+  {a:"g2",b:"g1",p:"szdrug"},
+  {a:"g0",b:"g3",p:"szdrug",arrow:"none",dash:true},
+  {a:"g4",b:"g3",p:"szdrug",arrow:"inhib"},
+  {a:"t0",b:"t1",p:"szstat"},
+  {a:"t1",b:"t2",p:"szstat"},
+  {a:"h0",b:"h1",p:"hdsec"},
+  {a:"h0",b:"h5",p:"hdsec"},
+  {a:"h0",b:"h7",p:"hdsec"},
+  {a:"h1",b:"h2",p:"hdprim"},
+  {a:"h2",b:"h3",p:"hdprim",arrow:"none",dash:true},
+  {a:"h3",b:"h4",p:"hdprim",arrow:"none",dash:true},
+  {a:"h5",b:"h6",p:"hdprim"},
+  {a:"h7",b:"h8",p:"hdsec"},
+  {a:"h8",b:"h9",p:"hdsec",arrow:"none",dash:true},
+  {a:"h9",b:"h10",p:"hdsec",arrow:"none",dash:true},
+  {a:"h11",b:"h12",p:"hdsec",arrow:"none",dash:true},
+  {a:"h12",b:"h13",p:"hdsec",arrow:"none",dash:true}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -19003,7 +19220,7 @@ const TOPICS = [
   ["immuno","Immunology",["immune","hypimm","cytokine","eicosanoid","transplant"]],
   ["endo","Endocrine",["axes","rclass","pancreas"]],
   ["devrepro","Repro & Development",["sexdev","repro","obgyn","malerepro","embryo"]],
-  ["neuro","Neuro",["neurotx","ans","spine","stroke","basal","neuroer"]],
+  ["neuro","Neuro",["neurotx","ans","spine","stroke","basal","neuroer","seizhead"]],
   ["behav","Psych & Behavior",["psychdx","psychsom","substance","sleepdev"]],
   ["eent","EENT",["eyecn","ent"]],
   ["msk","Musculoskeletal",["muscle","bone","arthritis","derm","plexus"]],
