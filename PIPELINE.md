@@ -93,6 +93,9 @@ runtime, so the build **refuses** rather than warns:
   that end at a missing node, duplicate node ids, unknown pathway keys, ghost nodes that
   point at a missing map, maps with no tab, nodes or boxes off the canvas, unbalanced or
   stray tags in the HTML fields.
+- **An unknown source.** Every `src` entry must start with a known textbook or course
+  name (`KNOWN_SRC` in the build — Robbins, Katzung, … `OCOM OMM`, `OCOM Ortho`,
+  `OCOM Psych`, `Osmosis`). Add a new course's prefix there when its first card ships.
 - **A card's first home moving.** A card pinned on several maps opens on its first home
   (the earliest map in `MAPS` definition order) from the Index and from `#card` links —
   including every question-bank link. **Define new maps last**, just before `const VIEWS`.
@@ -125,7 +128,7 @@ worth announcing gets a line in `WHATSNEW` the same way.
 A map can carry `plots:[{x,y,w,h,kind,t}]` — a schematic graph drawn by the engine, with a
 row of variants (tap a chip to shift the curve). The kinds live in `PLOTS` in
 `tools/atlas-src.html` (`pvloop`, `starling`, `odc`, `lungpv`, `glucose`, `doseresp`, `elim`, `mm`,
-`lb`, `flowvol`, `cofunc`);
+`lb`, `flowvol`, `cofunc`, and the action potentials `apnerve`, `apcond`, `apnodal`, `apventric`);
 `tools/atlas-check.js` keeps the same list and refuses an unknown kind or a plot off the
 canvas. Every graph says on its face that it is schematic; its caption carries the sourced
 facts, so check each caption against the map's sources like any card line.
@@ -136,6 +139,14 @@ caption (wrapped by `wrapWords`) and a legend. The chosen variant's curves get d
 colours from `PSER` and their `lab` becomes the legend entry — label curves through `lab`,
 not by placing text on the chart. Marker labels (`marks`, `drop`, `corners`, `x`/`y` lines)
 carry a surface-coloured halo and flip to the left near the right edge.
+
+A variant can also carry `bands: [[x0, x1, label]]` — shaded, numbered time windows drawn
+behind the curves (alternate bands a shade darker), used for the phases of an action
+potential — and `key: [[label, text]]`, rows under the caption with the label in a circle,
+used to say which ions move through which channels in each numbered phase. Smooth curves
+through a few keypoints come from `mono()`, a monotone cubic (Fritsch–Carlson), so a curve
+never overshoots between points; the nerve, SA-node and ventricular shapes are built that
+way (`AP_NERVE`, `nodal()`, `ventric()`). The key text is a sourced claim like any card line.
 
 ### Search abbreviations
 
@@ -177,6 +188,11 @@ that holds one of its linked cards — the Practice rule again — scored on you
 the rest follow by that block's question count in `atlas-practice.js`. The block is read
 from the page's folder name, which must match the block's first entry in `blocks` of
 `atlas-practice.js` (the build takes it from the hub's block links).
+
+A map you have missed questions on also gets **Redo N missed**, which opens
+`#atlasmap/<map id>/missed`: the same linked questions, filtered to the ones whose latest
+try was wrong (`onlyMissed` in `shared/app.js`). `#atlas/<card id>/missed` does the same
+for one card. Both show an empty state when nothing is missed.
 
 ### Taking the reader to a pin
 
@@ -254,6 +270,15 @@ and ship `resources/atlas-practice.js` with them — a stale count is harmless (
 always uses the live questions) but reads wrong. Blocks are discovered from the hub's
 block links; give a new block a short label in `SHORT` in the build. The standalone
 `tools/atlas-src.html` has no practice file, so it shows no Practice section.
+
+The build also writes `resources/atlas-qlinks.js` (`window.ATLAS_QLINKS`): for every card,
+the ids of the questions linked to it, per block. The atlas reads it with each block's
+`<folder>_attempts_v1` on this device (`qbRecord` in `tools/atlas-src.html`) to show
+**Your record** in the card's Practice section — "X of N right on your latest try" — a
+per-block "a/b right" on each button, and **Redo n missed** linking to
+`<block>/index.html#atlas/<card id>/missed`. The ids go stale the same way the counts do,
+so ship `atlas-qlinks.js` with every rebuild. It is in `CORE` in `sw.js` and in the hub's
+atlas file lists (Save all, the atlas tile's Save button and its offline check).
 
 If `atlas_norm()`/`atlasNorm()` or the linking rule changes, change the build's
 `links_for()` too; the check is to count per card in every block in the browser and
@@ -376,6 +401,21 @@ online. Online size comes from a `HEAD` request — the size half of GitHub Page
 changes for every file on every deploy. An edit that keeps a file's byte size identical is
 not flagged. The same script fills the summary line under Save all, and reruns after a
 save. It has its own copy of `CACHE` too.
+
+Each tile also gets a **Save offline** button (`saveBtn` in the hub's script) when the block
+is not saved or a newer version is online, and the device is online. It caches that block's
+`index.html` and `data.js` (or the atlas files) plus `SHARED` — the hub, `shared/` and the
+two atlas link files every block page loads — then re-runs the status check, so the chip
+turns to *Saved offline* without saving every block.
+
+**Continue where you left off.** Every block page records where you are (`rememberPlace`
+at the end of `render()` in `shared/app.js`) under `qhub-last` in localStorage: the block
+folder, its title, the hash and a readable label (the SDL title, "Exam N", review modes, or
+"Atlas practice: <card or map>"). The hub's Continue card (`showContinue`) shows it with
+how long ago it was, adds "question i of n" from `<folder>_practicesession_v1` when the saved
+session matches, and links back to `<folder>/index.html<hash>`. It checks the folder against
+the hub's tiles and the hash against a pattern before using either, and stays hidden when
+nothing is saved.
 
 ## Cross-device sync
 

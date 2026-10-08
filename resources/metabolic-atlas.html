@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 137 pan/zoom maps with 1665 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 143 pan/zoom maps with 1708 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="137 interactive maps. 1665 lesions pinned to the step they break.">
+<meta property="og:description" content="143 interactive maps. 1708 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -17,6 +17,7 @@ img{max-width:100%}
 </style>
 <title>Lesion Atlas — COMLEX 1 / Step 1</title>
 <script src="atlas-practice.js"></script>
+<script src="atlas-qlinks.js" defer></script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap">
 <style>
@@ -247,6 +248,14 @@ svg.map.drag{cursor:grabbing}
 .plot-c .ph{paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
 .plot-c .pgrid{stroke:var(--line-2);stroke-width:1}
 .plot-c .pdiv{stroke:var(--line-2);stroke-width:1}
+.practice .pqrec{margin:2px 0 8px;font-size:13px;color:var(--ink-2)}
+.practice .pqb.miss{background:var(--surface);border:1px solid var(--bad);color:var(--bad)}
+.plot-c .pband{fill:var(--accent);opacity:.05}
+.plot-c .pband.alt{opacity:.12}
+.plot-c .pbnum{font-family:var(--font-ui);font-size:12px;font-weight:700;fill:var(--ink-2);text-anchor:middle}
+.plot-c .pkcirc{fill:var(--surface);stroke:var(--accent);stroke-width:1.6}
+.plot-c .pkn{font-family:var(--font-ui);font-size:10.5px;font-weight:700;fill:var(--accent);text-anchor:middle}
+.plot-c .pkey{font-family:var(--font-ui);font-size:12.5px;fill:var(--ink-2)}
 .plot-c .pnote{font-family:var(--font-ui);font-size:10.5px;fill:var(--ink-3);font-style:italic}
 .plot-c .pax{stroke:var(--ink-3);stroke-width:1.4}
 .plot-c .pmark{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:4 4}
@@ -1222,6 +1231,24 @@ const PATHS = {
   naclear:{n:"Clearance & markers",v:"--p-glycolysis"},
   nabal:{n:"Sodium balance",v:"--p-tca"},
   naobst:{n:"Obstruction",v:"--p-gluconeo"},
+  synrel:{n:"Release",v:"--p-glycolysis"},
+  synrec:{n:"Receptors & potentials",v:"--p-tca"},
+  synnt:{n:"Transmitters & clearance",v:"--p-gluconeo"},
+  mccortex:{n:"Cortex & corticofugal fibers",v:"--p-glycolysis"},
+  mcbs:{n:"Brainstem pathways",v:"--p-tca"},
+  mclmn:{n:"Lower motor neuron",v:"--p-gluconeo"},
+  neinet:{n:"The NEI network",v:"--p-glycolysis"},
+  neiomt:{n:"How OMT helps",v:"--p-tca"},
+  neians:{n:"Autonomic layout",v:"--p-gluconeo"},
+  okknee:{n:"Knee",v:"--p-glycolysis"},
+  okhip:{n:"Hip",v:"--p-tca"},
+  okhand:{n:"Elbow, wrist & hand",v:"--p-gluconeo"},
+  okdisl:{n:"Dislocations",v:"--p-sugars"},
+  riUpper:{n:"Upper airway",v:"--p-glycolysis"},
+  riLower:{n:"Lungs",v:"--p-tca"},
+  pdx:{n:"Diagnosis",v:"--p-glycolysis"},
+  ptx:{n:"Treatment",v:"--p-tca"},
+  peth:{n:"Law & ethics",v:"--p-gluconeo"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -5307,7 +5334,7 @@ spneumo:{n:"Streptococcus pneumoniae",alias:"Pneumococcus",k:"dz",p:"streps",enz
  labs:["α-hemolytic, catalase −, optochin sensitive, bile soluble; urinary antigen"],
  buzz:["Lancet-shaped diplococci","Rusty sputum","Meningitis, otitis, pneumonia, sinusitis"],
  src:["Robbins ch 8 — Infectious diseases","Robbins ch 15 — The lung","Katzung ch 51 — Clinical Use of Antimicrobial Agents"],
- tx:["Ceftriaxone; add vancomycin for possibly penicillin-resistant meningitis; resistant strains have altered PBPs","Vaccines: conjugate (PCV13, PCV15, PCV20) and polysaccharide (PPSV23)"],q:["streptococcus pneumoniae","s pneumoniae","pneumococcus","pneumococcal","optochin"]},
+ tx:["Ceftriaxone; add vancomycin for possibly penicillin-resistant meningitis; resistant strains have altered PBPs","Vaccines: conjugate (PCV13, PCV15, PCV20) and polysaccharide (PPSV23)"],q:["streptococcus pneumoniae","s pneumoniae","pneumococcus","pneumococcal","optochin","=lancet shaped gram positive diplococci"]},
 
 viridans:{n:"Viridans streptococci",alias:"S. mutans · S. sanguinis · S. mitis",k:"dz",p:"streps",enz:"Dextrans that stick to fibrin–platelet clumps",inh:"Normal mouth flora",fa:"134",
  mech:"α-hemolytic mouth streptococci that resist optochin. S. mutans makes dextran from sucrose and causes <b>dental caries</b>; S. sanguinis sticks to fibrin–platelet deposits on damaged valves.",
@@ -9757,7 +9784,7 @@ overuse:{n:"Hand & elbow overuse injuries",alias:"De Quervain · Dupuytren · te
  labs:["—"],
  buzz:["New mother with pain at the base of the thumb lifting her baby"],
  src:["Moore ch 3 — Upper Limb"],
- tx:["—"],q:["de quervain tenosynovitis","de quervain","finkelstein test","lateral epicondylitis","tennis elbow","medial epicondylitis","golfers elbow","dupuytren contracture","dupuytren"]},
+ tx:["—"],q:["de quervain tenosynovitis","de quervain","finkelstein test","lateral epicondylitis","tennis elbow","medial epicondylitis","golfers elbow","dupuytren contracture","dupuytren","=ecrb","=extensor carpi radialis brevis","=angiofibroblastic","=first dorsal compartment","=finkelstein maneuver"]},
 
 compartment:{n:"Compartment syndrome",k:"dz",p:"bpjoint",enz:"Pressure in a closed fascial compartment",inh:"Long-bone (tibia) fracture, reperfusion, crush, venom",fa:"465",hi:1,
  mech:"Rising pressure inside a fascial compartment first blocks venous outflow, then collapses arterioles — muscle and nerve become ischemic and necrotic, releasing myoglobin.",
@@ -10684,7 +10711,7 @@ minors:{n:"Consent for minors",k:"reg",p:"etdecide",enz:"Under 18 — parental c
  labs:["—"],
  buzz:["16-year-old asking for contraception — no parental consent needed"],
  src:["Kaplan & Sadock ch 28 — Forensic and Legal Issues"],
- tx:["—"],q:["consent for minors","emancipated minor","emancipated","assent","parental consent"]},
+ tx:["—"],q:["consent for minors","emancipated minor","emancipated","assent","parental consent","=substance use or dependence treatment","=consent to the pregnancy related care"]},
 
 advdir:{n:"Advance directives & DNR",k:"reg",p:"etend",enz:"Instructions for a time the patient can't decide",inh:"—",fa:"268",hi:1,
  mech:"An advance directive records what the patient wants before capacity is lost. Details vary by state.",
@@ -10810,7 +10837,7 @@ sympathicotonia:{n:"Sustained sympathetic tone",alias:"sympathicotonia",k:"reg",
  labs:["—"],
  buzz:["Constipation, urinary retention and sweating together"],
  src:["OCOM OMM — OMS2 written midterm study guide","Foundations of Osteopathic Medicine ch 72 — Osteopathic Considerations in Pulmonology","Foundations of Osteopathic Medicine ch 6 — Autonomic Nervous System"],
- tx:["Rib raising and paraspinal inhibition at the involved levels","Abdominal ganglion inhibition for the gut"],q:["sympathicotonia","sympathetic hyperactivity","sustained sympathetic tone","hypersympathetic"]},
+ tx:["Rib raising and paraspinal inhibition at the involved levels","Abdominal ganglion inhibition for the gut"],q:["sympathicotonia","sympathetic hyperactivity","sustained sympathetic tone","hypersympathetic","=trigone contraction","=retention from trigone"]},
 
 vagusomm:{n:"Vagal reflexes — OA, C1, C2",alias:"cranial parasympathetics",k:"reg",p:"vpara",enz:"CN X (plus CN III, VII, IX in the head)",inh:"—",hi:1,
  mech:"The vagus carries parasympathetic outflow to the heart, lungs, trachea, esophagus, stomach, liver, gallbladder, pancreas, spleen, kidneys, small intestine, ascending colon and <b>proximal two-thirds of the transverse colon</b>. Vagal afferent irritation shows up as tissue texture change at the <b>occipitoatlantal joint, C1 and C2</b>.",
@@ -14312,6 +14339,355 @@ obstructuro:{n:"Obstructive uropathy — what happens to the kidney",k:"dz",p:"n
  src:["Robbins ch 20 — The kidney"],
  tx:["Relieve the obstruction early; replace losses during the post-obstructive diuresis"],q:["urinary tract obstruction","=urinary obstruction","obstructive uropathy","post obstructive diuresis","postobstructive diuresis","impaired concentrating ability","bilateral partial obstruction","complete bilateral obstruction","filtrate diffuses back","renal ultrasonography","renal colic"]},
 
+/* ── synaptic transmission · motor control · neuroendocrine-immune (OMM) · knee, hip & hand workups · respiratory infections · depression care & forensic psychiatry (m28) ─── */
+chemsynapse:{n:"Chemical synapse — how a transmitter is released",k:"reg",p:"synrel",enz:"Calcium in, vesicle fuses, transmitter out",inh:"—",fa:"130, 136",hi:1,
+ mech:"At a chemical synapse the presynaptic terminal is separated from the postsynaptic cell by a <b>synaptic cleft</b> about 200–300 Å (20–30 nm) wide. Vesicles move to the <b>active zones</b> and are primed. An arriving action potential opens <b>voltage-gated Ca²⁺ channels</b>; the Ca²⁺ that enters triggers the docking proteins to fuse the vesicle with the plasma membrane, releasing transmitter into the cleft, where it diffuses to receptors on the target cell.",
+ find:["<b>Docking (SNARE) proteins</b>: SNAP-25 and syntaxin sit preassembled on the terminal membrane; on the vesicle, <b>synaptobrevin</b> binds them and <b>synaptotagmin</b> senses the rise in Ca²⁺ — the trigger for fusion","No Ca²⁺ entry → no release, even though the terminal still depolarizes (Lambert-Eaton: antibodies to the voltage-gated Ca²⁺ channels)","<b>Tetanus and botulinum toxins</b> are proteases that cleave SNARE proteins: botulinum blocks ACh release at the neuromuscular junction (flaccid paralysis); tetanus blocks release from inhibitory Renshaw-type interneurons (spastic paralysis)","The signal ends when transmitter is taken back up, broken down by an enzyme in the cleft or on the target, or diffuses away"],
+ labs:["—"],
+ buzz:["Ca²⁺ → synaptotagmin → SNARE fusion","Botulinum and tetanus cut SNAREs"],
+ src:["Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System","Guyton ch 46 — Organization of the Nervous System, Basic Functions of Synapses and Neurotransmitters"],
+ tx:["—"],q:["chemical synapse","active zone","synaptotagmin","snare complex","snare proteins","synaptobrevin","syntaxin","snap 25","=vesicle fusion","=neurotransmitter release","docking proteins","synaptic vesicle","synaptic vesicles","across the narrow synaptic cleft"]},
+
+rectypes:{n:"Ionotropic vs metabotropic receptors",k:"reg",p:"synrec",enz:"Fast channels vs slow second messengers",inh:"—",fa:"235, 237",hi:1,
+ mech:"Transmitter receptors work in one of two ways. <b>Ionotropic</b> receptors are ligand-gated ion channels: the binding site is part of the same protein that forms the pore, so they open within milliseconds. <b>Metabotropic</b> receptors are G protein–coupled: binding activates a G protein or enzyme that makes a diffusible <b>second messenger</b>, giving slower, amplified and longer-lasting effects.",
+ find:["Acetylcholine acts on both: <b>nicotinic</b> receptors are ligand-gated cation channels (N<sub>N</sub> in autonomic ganglia and the adrenal medulla, N<sub>M</sub> at the neuromuscular junction); <b>muscarinic</b> receptors are G protein–coupled","Glutamate: AMPA, NMDA and kainate (ionotropic) and mGluR (metabotropic) receptors","β₁-adrenergic receptors are metabotropic: G<sub>s</sub> → adenylyl cyclase → cAMP → protein kinase A — an indirect effect, not a channel of their own","Drug effects can lag: SSRIs block reuptake at once, but their clinical benefit appears over days to weeks as transmitter stores and pre- and postsynaptic receptors adjust"],
+ labs:["—"],
+ buzz:["Ionotropic = fast channel","Metabotropic = G protein + second messenger"],
+ src:["Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System","Guyton ch 46 — Organization of the Nervous System, Basic Functions of Synapses and Neurotransmitters"],
+ tx:["—"],q:["=ionotropic","=metabotropic","ligand gated ion channel","ligand gated channel","ligand gated cation channel","=g protein coupled receptor","=g protein coupled receptors","=second messenger","=second messengers","ionotropic receptor","metabotropic receptor"]},
+
+psps:{n:"Postsynaptic potentials & summation",k:"reg",p:"synrec",enz:"Add up enough EPSPs to reach threshold",inh:"—",hi:1,
+ mech:"An <b>EPSP</b> moves the membrane toward threshold — typically Na⁺ entering through a cation channel. An <b>IPSP</b> moves it away — Cl⁻ entering (GABA<sub>A</sub>, glycine) or K⁺ leaving. One terminal gives an EPSP of only about 0.5–1 mV, far short of the 10–20 mV needed to fire the neuron, so inputs must summate.",
+ find:["<b>Spatial summation</b>: EPSPs from many terminals at different places on the neuron add at the same time","<b>Temporal summation</b>: one terminal firing repeatedly — the channels open for only 1–2 ms but each potential lasts up to about 15 ms, so successive potentials overlap and add","Loss of glycine IPSPs on spinal motor neurons (strychnine, tetanus toxin) removes inhibition → hyperexcitable motor neurons, spasms and rigidity","Excess EPSPs in cortex (too much excitation or too little inhibition) → seizures"],
+ labs:["—"],
+ buzz:["EPSP = toward threshold · IPSP = away","Spatial = many terminals · temporal = one terminal, rapid fire"],
+ src:["Guyton ch 46 — Organization of the Nervous System, Basic Functions of Synapses and Neurotransmitters","Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System"],
+ tx:["—"],q:["excitatory postsynaptic potential","inhibitory postsynaptic potential","epsp","epsps","ipsp","ipsps","temporal summation","spatial summation","postsynaptic potential","postsynaptic potentials"]},
+
+ntclasses:{n:"Neurotransmitter classes",k:"reg",p:"synnt",enz:"Amino acids, amines, peptides, gases & lipids",inh:"—",fa:"505",hi:1,
+ mech:"Most synapses use one of four <b>small-molecule</b> transmitters — glutamate, GABA, glycine or acetylcholine — and are tuned by modulators: the <b>biogenic amines</b> (monoamines) dopamine, norepinephrine, epinephrine and serotonin, plus histamine, and the <b>neuropeptides</b>. Some signals, such as <b>nitric oxide</b> and the endorphins, diffuse from the neuron as they are made.",
+ find:["<b>Amino acids</b>: glutamate (main excitatory), GABA (main inhibitory in the brain), glycine (inhibitory in the cord and brainstem)","<b>Catecholamines</b> are made from tyrosine (dopamine → norepinephrine → epinephrine); serotonin from tryptophan; histamine from histidine","<b>Nitric oxide</b>: made on demand, not stored in vesicles and not taken back up — it ends by diffusion and chemical breakdown","<b>Endocannabinoids</b> (anandamide, 2-arachidonoylglycerol): made in the postsynaptic cell when Ca²⁺ rises, diffuse <b>backward</b> to presynaptic CB1 receptors and suppress release (retrograde signaling); blocking their breakdown (FAAH) prolongs that suppression"],
+ labs:["—"],
+ buzz:["Glutamate excites, GABA and glycine inhibit","Endocannabinoids travel backward"],
+ src:["Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System","Guyton ch 46 — Organization of the Nervous System, Basic Functions of Synapses and Neurotransmitters"],
+ tx:["—"],q:["=biogenic amines","=biogenic amine","monoamines","monoamine class","neuropeptides","small molecule transmitters","=endocannabinoid","=endocannabinoids","anandamide","retrograde signaling","retrograde messenger","=cb1 receptor","=cb1 receptors","faah"]},
+
+ntclear:{n:"Ending the signal — reuptake & breakdown",k:"reg",p:"synnt",enz:"Transporters, enzymes or diffusion",inh:"—",hi:1,
+ mech:"A transmitter’s action ends in one of three ways: <b>reuptake</b> by a membrane transporter into the terminal or glia, <b>enzymatic breakdown</b> in the cleft, or <b>diffusion</b> away.",
+ find:["<b>Monoamines</b>: reuptake by the Na⁺/Cl⁻-coupled transporters <b>DAT</b> (dopamine), <b>NET</b> (norepinephrine) and <b>SERT</b> (serotonin) — the targets of SSRIs, SNRIs, TCAs and cocaine","<b>GABA</b>: GAT transporters · <b>glycine</b>: GlyT1 and GlyT2 on glia and terminals · <b>glutamate</b>: excitatory amino acid transporters (EAAT) on the target cell and surrounding astrocytes — not enzymes","<b>Acetylcholine</b>: hydrolyzed in the cleft by acetylcholinesterase; the choline is taken back by the high-affinity choline transporter (ChT) for resynthesis — blocking ChT gradually depletes ACh stores","<b>Nitric oxide</b> and neuropeptides: diffusion and degradation; no reuptake"],
+ labs:["—"],
+ buzz:["Amines → reuptake · ACh → esterase · NO → diffusion"],
+ src:["Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System"],
+ tx:["—"],q:["glyt1","glyt2","glycine transporters","choline transporter","high affinity choline transporter","eaat","excitatory amino acid transporter","dat net and sert","acetylcholinesterase located in the synaptic cleft","not stored in vesicles or cleared"]},
+
+synapsedx:{n:"Drugs & toxins at the synapse — localize the step",k:"reg",p:"synnt",enz:"Release, cleft or receptor?",inh:"—",fa:"130, 235",hi:1,
+ mech:"A synaptic disorder is worked out in steps: which synapse and transmitter (neuromuscular junction, autonomic target or central pathway); which step fails or is overdriven — presynaptic release, clearance from the cleft, or the postsynaptic receptor; and the net result — too much or too little excitation or inhibition at that site.",
+ find:["<b>Release</b>: Lambert-Eaton (Ca²⁺ channel antibodies) · botulinum (SNARE cleavage at the NMJ) · tetanus (SNARE cleavage in inhibitory interneurons)","<b>Cleft</b>: organophosphates and cholinesterase inhibitors (ACh accumulates) · reuptake blockers (SSRIs, cocaine)","<b>Receptor</b>: myasthenia gravis (antibodies to nicotinic receptors) · neuromuscular blockers · strychnine (glycine receptors)","Net effect read at the site: too little ACh at the NMJ → weakness; too little inhibition in the cord → spasms; too much cortical excitation → seizures"],
+ labs:["—"],
+ buzz:["Which synapse → which step → which net effect"],
+ src:["Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System","Guyton ch 46 — Organization of the Nervous System, Basic Functions of Synapses and Neurotransmitters"],
+ tx:["—"],q:["presynaptic release machinery","synaptic cleft clearance","=synaptic transmission","which synapse"]},
+
+motorunit:{n:"Motor units, α & γ motor neurons",k:"reg",p:"mclmn",enz:"The final common pathway",inh:"—",fa:"461",hi:1,
+ mech:"Lower motor neurons in the anterior horn and cranial nerve motor nuclei are the <b>final common path</b>: every descending pathway and spinal reflex acts through them. <b>α motor neurons</b> are large, fast-conducting cells whose axons supply ordinary <b>extrafusal</b> fibers that generate force. <b>γ motor neurons</b> supply the <b>intrafusal</b> fibers of muscle spindles and set spindle sensitivity.",
+ find:["<b>Size principle</b>: an excitatory input depolarizes small motor neurons most, so small, slow, fatigue-resistant units are recruited first and large, fast units last — force is graded smoothly","<b>α–γ coactivation</b>: during voluntary contraction γ fibers fire with α fibers so the spindle stays taut and keeps signaling as the muscle shortens (the gamma loop maintains stretch reflexes and tone)","Spindle intrafusal fibers: nuclear bag and nuclear chain · Ia (primary) endings signal length and its rate of change · II (secondary, flower-spray) endings, mainly on chain fibers, signal static length","Lower motor neuron damage: flaccid paralysis followed by atrophy, with fibrillations or fasciculations (involuntary contractions of one motor unit or a group)"],
+ labs:["—"],
+ buzz:["Small units first","α = force · γ = spindle tension"],
+ src:["Fundamental Neuroscience ch 24 — Motor System I: Peripheral Sensory, Brainstem, and Spinal Influence on Anterior Horn Neurons","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Guyton ch 55 — Spinal Cord Motor Functions; The Cord Reflexes"],
+ tx:["—"],q:["=alpha motor neuron","=alpha motor neurons","=gamma motor neuron","=gamma motor neurons","=extrafusal","=intrafusal","size principle","hennemans size principle","alpha gamma coactivation","gamma loop","nuclear chain","nuclear bag","motor unit","motor units","final common pathway","final common path","=fasciculations and muscle atrophy"]},
+
+spinalcirc:{n:"Spinal interneurons — Renshaw cells & withdrawal reflexes",k:"reg",p:"mclmn",enz:"Circuits built into the cord",inh:"—",hi:1,
+ mech:"Most descending and reflex input reaches motor neurons through spinal interneurons. <b>Renshaw cells</b>, small inhibitory neurons in the anterior horn, receive collaterals from a motor neuron’s axon just after it leaves the cell body and inhibit the surrounding motor neurons — <b>lateral inhibition</b> that focuses, or sharpens, the motor signal.",
+ find:["<b>Flexor (withdrawal) reflex</b>: a noxious skin stimulus → interneuron pool (three- or four-neuron or longer circuits) → flexion of the limb, reciprocal inhibition of its extensors and afterdischarge","<b>Crossed extensor reflex</b>: commissural interneurons cross the midline so the opposite limb extends to bear weight","<b>Propriospinal fibers</b>, more than half the fibers running up and down the cord, link one segment with others — coordinating the limbs","The withdrawal reflex is completed within the cord, so it persists below a cord lesion; repeated stimulation weakens it (fatigue of the interneuron synapses)"],
+ labs:["—"],
+ buzz:["Renshaw cell: axon collateral → inhibits neighboring motor neurons"],
+ src:["Guyton ch 55 — Spinal Cord Motor Functions; The Cord Reflexes","Fundamental Neuroscience ch 24 — Motor System I: Peripheral Sensory, Brainstem, and Spinal Influence on Anterior Horn Neurons"],
+ tx:["—"],q:["renshaw","renshaw cell","renshaw cells","recurrent inhibition","flexor withdrawal","withdrawal reflex","flexor reflex","crossed extensor","crossed extension","propriospinal","commissural interneurons","=spinal interneurons"]},
+
+bsmotor:{n:"Brainstem motor pathways — vestibulospinal, reticulospinal & tectospinal",k:"reg",p:"mcbs",enz:"Posture and balance from below the cortex",inh:"—",fa:"524",hi:1,
+ mech:"Brainstem pathways control posture, balance and orienting movements. The <b>lateral vestibulospinal tract</b> (lateral vestibular nucleus) descends <b>ipsilaterally</b> through the whole cord and excites antigravity <b>extensors</b>. The <b>medial vestibulospinal tract</b> (medial and inferior vestibular nuclei) descends <b>bilaterally</b> in the medial longitudinal fasciculus to cervical levels — head and neck position.",
+ find:["<b>Reticulospinal tracts</b> (pontine and medullary) adjust tone and posture; the <b>rubrospinal tract</b> from the red nucleus is small in humans","<b>Tectospinal fibers</b>: the deep layers of the superior colliculus subserve gaze changes and send crossed fibers to the cervical cord — part of the tectobulbospinal system, minor in humans","Unchecked vestibulospinal drive to extensors underlies decerebrate posturing when the lesion is below the red nucleus"],
+ labs:["—"],
+ buzz:["Lateral vestibulospinal = ipsilateral extensors"],
+ src:["Fundamental Neuroscience ch 24 — Motor System I: Peripheral Sensory, Brainstem, and Spinal Influence on Anterior Horn Neurons","Fundamental Neuroscience ch 13 — The Midbrain"],
+ tx:["—"],q:["lateral vestibulospinal","medial vestibulospinal","vestibulospinal","=reticulospinal","tectospinal","tectobulbospinal","=rubrospinal","antigravity extensor","antigravity extensors"]},
+
+motorcortex:{n:"Motor cortical areas — primary, premotor & supplementary",k:"reg",p:"mccortex",enz:"Plan, then execute",inh:"—",fa:"513",hi:1,
+ mech:"Corticospinal fibers arise from six cortical regions. The largest share (about 31%) comes from <b>Brodmann area 4</b>, the <b>primary motor cortex</b> in the posterior precentral gyrus and the anterior paracentral gyrus; about 29% from area 6 (premotor and supplementary motor cortex); and about 40% from the parietal lobe, including the postcentral gyrus.",
+ find:["<b>Somatotopy</b> (the motor homunculus): leg and foot medially in the anterior paracentral lobule; hand, then face and mouth progressively laterally — areas are sized by fine motor control, not body area","<b>Premotor cortex</b> (lateral area 6) and <b>supplementary motor area</b> (medial area 6) plan and sequence movement; the SMA is especially involved in complex and bimanual movements","Infarcts of premotor or supplementary cortex give <b>apraxia</b> — trouble performing learned voluntary actions despite no paralysis, spasticity or change in tone","Primary motor cortex lesions give contralateral weakness of the represented body part (ACA: leg; MCA: face and arm)"],
+ labs:["—"],
+ buzz:["Leg medial, face lateral","Area 6 lesion → apraxia, not weakness"],
+ src:["Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Guyton ch 56 — Cortical and Brain Stem Control of Motor Function"],
+ tx:["—"],q:["=motor cortex","primary motor cortex","brodmann area 4","premotor cortex","premotor area","supplementary motor area","supplementary motor cortex","motor homunculus","precentral gyrus","paracentral","=apraxia"]},
+
+cstsomato:{n:"Corticospinal somatotopy — capsule, crus & pyramid",k:"reg",p:"mccortex",enz:"Where the leg fibers run",inh:"—",hi:1,
+ mech:"Corticospinal axons converge through the corona radiata into the <b>posterior limb of the internal capsule</b>, somatotopically arranged in about its caudal half: fibers to upper cord levels lie rostral and those to lumbosacral (leg) levels lie caudal. In the <b>middle third of the crus cerebri</b> arm fibers lie medial to leg fibers; the axons then break into bundles in the basilar pons and gather again as the <b>pyramid</b>.",
+ find:["Most cross in the <b>motor (pyramidal) decussation</b> and descend as the lateral corticospinal tract — so left motor cortex controls the right side of the body","In the internal capsule corticospinal axons lie close to corticostriatal, corticothalamic and corticoreticular fibers, so an ischemic capsular lesion can damage several motor systems at once","At the decussation arm fibers cross rostral to leg fibers, so a small lesion there can weaken one arm and the opposite leg"],
+ labs:["—"],
+ buzz:["Capsule: leg fibers caudal · crus: leg lateral"],
+ src:["Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement"],
+ tx:["—"],q:["corticospinal somatotopy","=posterior limb of the internal capsule","middle third of the crus","corona radiata","corticofugal","corticofugal systems","positioned most laterally within the cerebral peduncle","=lumbosacral levels","caudal half of the posterior limb"]},
+
+corticonuc:{n:"Corticonuclear (corticobulbar) projections",k:"reg",p:"mccortex",enz:"Most cranial nerve nuclei get both hemispheres",inh:"—",fa:"546",hi:1,
+ mech:"Corticonuclear fibers from the face area of motor cortex reach the motor nuclei of cranial nerves V, VII and XII, the nucleus ambiguus (IX, X) and the accessory nucleus (XI); axons to the trigeminal motor nuclei end on interneurons beside the nuclei. Most of these nuclei receive input from <b>both</b> hemispheres, so a one-sided upper motor neuron lesion leaves little deficit.",
+ find:["<b>Facial nucleus</b>: the upper face is controlled about equally by both hemispheres, the <b>lower face mainly by the contralateral</b> hemisphere — a central (UMN) facial palsy spares the forehead","<b>Hypoglossal nucleus</b>: genioglossus is driven mainly from the contralateral cortex — a UMN lesion deviates the tongue away from the lesion (toward the weak side); an LMN lesion deviates it toward the lesion","<b>Trigeminal motor nucleus</b>: nearly equal input from both hemispheres — a unilateral lesion gives no discernible jaw weakness · <b>nucleus ambiguus</b>: mostly bilateral, but palate and uvula neurons get mainly contralateral input, so the uvula deviates toward the lesion (away from the weak side) on saying “ah”","Pattern: face, tongue and limb weakness all on one side with a forehead-sparing face = lesion in the opposite hemisphere or its capsule"],
+ labs:["—"],
+ buzz:["Lower face: contralateral · upper face: bilateral"],
+ src:["Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement"],
+ tx:["—"],q:["=corticonuclear","=corticobulbar","corticonuclear fibers","corticobulbar fibers","forehead sparing","central facial palsy","upper motor neuron facial","hand muscles receive mostly contralateral","near equal bilateral input","bilateral cortical input","toward the strong side"]},
+
+neinetwork:{n:"The neuro-endocrine-immune network & allostatic load",k:"reg",p:"neinet",enz:"One network, shared signals",inh:"—",hi:1,
+ mech:"The nervous, endocrine and immune systems work as a single, integrated <b>neuro-endocrine-immune (NEI)</b> network linked by shared signaling molecules and feedback loops. Injured or chronically restricted somatic structures send a continuous stream of nociceptive input up the spinothalamic, spinoreticular and spinohypothalamic tracts to the hypothalamus, pituitary and locus coeruleus.",
+ find:["The response: the hypothalamus and pituitary drive the adrenals to make more <b>cortisol</b>, and sympathetic activity rises (<b>sympathicotonia</b>)","Sustained cortisol and sympathetic tone suppress adaptive immunity, promote local inflammatory hypersensitivity and raise <b>allostatic load</b> — the cumulative physiological wear and tear of chronic stress — impairing healing and metabolic balance","Persistent nociceptive input also facilitates spinal segments (Korr’s neurologic lens): reflex spasm, restricted motion, histochemical inflammation and altered visceral function","Addressing pain and somatic dysfunction de-escalates HPA activation: less cortisol, less sympathetic tone, lower allostatic load"],
+ labs:["—"],
+ buzz:["Pain → hypothalamus → cortisol + sympathetic tone","Allostatic load = wear and tear of chronic stress"],
+ src:["OCOM OMM — SDL 13 lecture: Neuroendocrine/Immune I"],
+ tx:["—"],q:["neuro endocrine immune","nei network","allostatic load","allostasis","hpa axis activation","neuroendocrine stress","spinohypothalamic","single integrated network","one integrated network","shared signaling molecules","input reaches the hypothalamus","nociceptive signals ascend to the hypothalamus"]},
+
+omthomeo:{n:"How OMT supports homeostasis — glands, fluids & autonomic balance",k:"reg",p:"neiomt",enz:"Free the vessels, nerves and lymphatics",inh:"—",hi:1,
+ mech:"Because the body is a unit, reducing somatic dysfunction lowers systemic stress and restores fluid dynamics through three routes described in the course.",
+ find:["<b>Blood flow to glands and organs</b>: nerves and vessels pass through muscular planes and narrow intervertebral foramina; contractions, adhesions and fascial traction compress them, causing local ischemia — releasing them restores arterial delivery and trophic nerve function","<b>Edema and lymph</b>: veins and lymphatics have the <b>lowest pressures</b> in the circulation, so they are compressed first when fascial tension rises → obstructed drainage, interstitial fluid accumulation and retained acidic metabolites; treating the tension decongests them","<b>Autonomic balance</b>: facilitated thoracic segments keep sympathetic pathways firing (vasoconstriction, high blood pressure, tachycardia, slow gut); treating them reduces afferent barrage, spinal facilitation and HPA activation, restoring sympathetic–parasympathetic balance"],
+ labs:["—"],
+ buzz:["Lowest pressure (veins, lymph) collapses first"],
+ src:["OCOM OMM — SDL 13 lecture: Neuroendocrine/Immune I"],
+ tx:["—"],q:["lowest fluid pressures","lowest pressures","muscular planes","micro impingement","trophic function","nerves of nourishment","obstructive lymphedema","restore autonomic balance"]},
+
+immunehomeo:{n:"The immune system in homeostasis — mediators, lymph & spleen",k:"reg",p:"neinet",enz:"Healing signals that can turn into a pain cycle",inh:"—",hi:1,
+ mech:"Tissue injury or sustained somatic tension triggers local release of inflammatory mediators — interleukins, substance P, calcitonin gene-related peptide (CGRP), histamine and prostaglandins. They are needed for healing, but if they accumulate they keep stimulating nociceptors, lowering the threshold for irritation and starting a self-perpetuating cycle of pain, inflammation, muscle contraction and structural restriction.",
+ find:["<b>Lymphatic–immune axis</b>: immune cells, antigens and debris are cleared through low-pressure lymphatics; where mechanical tension compresses them, immune surveillance is obstructed and fluid congests","<b>Spleen</b>: filters damaged blood cells, stores erythrocytes and leukocytes and acts as an immune hub — the splenic pump has been shown to raise circulating leukocytes and reticulocytes and the blood’s phagocytic and bacteriolytic capacity","Hence manual techniques such as the <b>splenic pump</b> to support immune regulation and help the body fight systemic infection"],
+ labs:["—"],
+ buzz:["Mediators heal, but chronic accumulation sensitizes"],
+ src:["OCOM OMM — SDL 13 lecture: Neuroendocrine/Immune I"],
+ tx:["—"],q:["inflammatory neuropeptides","lymphatic immune axis","immune surveillance","phagocytic and bacteriolytic"]},
+
+neiaging:{n:"Aging of the immune & endocrine systems",k:"reg",p:"neinet",enz:"Shrinking reserve",inh:"—",hi:1,
+ mech:"With normal aging the immune and endocrine systems lose functional reserve (<b>homeostenosis</b>), leaving older adults less able to absorb a stressor.",
+ find:["<b>T cells</b>: CD8 T-cell function and general T-cell competence decline — more infections, malignancy and reactivation of latent pathogens","<b>B cells</b>: primary and secondary antibody responses fall — vaccines work less well","<b>Autoantibodies</b> increase — more autoimmune disease and chronic, poorly regulated inflammation","<b>Endocrine</b>: impaired glucose tolerance and insulin resistance (diabetes); falling estrogen (bone loss, coronary disease); rising PTH with low vitamin D (sarcopenia); <b>occult hypothyroidism</b> becomes more common — hypoactive reflexes, fatigue, weight change and cognitive slowing that can mimic dementia","The adrenals lie inside the perirenal fascia above the kidneys and move with the diaphragm; with chronic anxiety or stress the region can feel tighter and less mobile"],
+ labs:["—"],
+ buzz:["Older adults: weaker T and B cells, more autoantibodies"],
+ src:["OCOM OMM — SDL 13 lecture: Neuroendocrine/Immune I"],
+ tx:["—"],q:["cd8 t cell","cd8 t cells","t cell competence","antibody responses decline","production of autoantibodies","occult hypothyroidism","perirenal fascia","vaccine effectiveness"]},
+
+ansomm:{n:"Sympathetic & parasympathetic — layout for the osteopath",k:"reg",p:"neians",enz:"Thoracolumbar vs craniosacral",inh:"—",hi:1,
+ mech:"The autonomic divisions act less as opponents than as <b>cooperative, complementary partners</b> that maintain homeostasis. The <b>sympathetic</b> (thoracolumbar) division leaves the cord from <b>T1 to L2</b>: preganglionic fibers pass through white rami to the bilateral chain ganglia, synapse, and return to spinal nerves by gray rami. It manages external stress — “fight or flight”.",
+ find:["The <b>parasympathetic</b> (craniosacral) division starts in the nuclei of CN III, VII, IX and X and in S2–S4; its ganglia lie <b>close to or within</b> the target organs; it runs rest, digestion, excretion, pupillary constriction and slowing of the heart","The <b>vagus</b> supplies the heart, lungs, trachea, liver, gallbladder, esophagus, stomach, pancreas, spleen, kidneys, small bowel, ascending colon and proximal two-thirds of the transverse colon; the <b>sacral</b> outflow (nervi erigentes) the distal colon, rectum, bladder and pelvic organs","There is <b>no parasympathetic supply to the extremities</b>","Somatic dysfunction can hold segmentally related sympathetic pathways in constant, inappropriate stimulation (sympathicotonia)"],
+ labs:["—"],
+ buzz:["No parasympathetics to the limbs","Vagus ends at the proximal ⅔ of the transverse colon"],
+ src:["OCOM OMM — SDL 13 lecture: Neuroendocrine/Immune I","OCOM OMM — SDL 14 lecture: Neuroendocrine/Immune II"],
+ tx:["—"],q:["cooperative complementary","complementary partners","no parasympathetic innervation","white rami","gray rami","parasympathetic ganglia","heart lungs stomach and most of the gut","vagus nerve supplies extensive parasympathetic"]},
+
+autolevels:{n:"Autonomic levels — the course table",k:"reg",p:"neians",enz:"Which segment supplies which organ",inh:"—",hi:1,
+ mech:"The course maps each organ to its sympathetic levels (thoracolumbar outflow T1–L2) and its parasympathetic supply.",
+ find:["Head and neck <b>T1–T5</b> · heart <b>T1–T5</b> (ventricles T1–T3, atria T4–T5, heaviest nociceptive input at T4) · lungs T1–T5 (or T2–T6) · esophagus <b>T2–T6</b> (T4–T6)","Stomach T5–T9 and liver, gallbladder, spleen, pancreas T5–T9 (T6–T10) — celiac ganglion · small bowel T9–T11 — superior mesenteric","Kidneys, ureters and gonads T10–T11 · ascending and proximal two-thirds of the transverse colon T10–T11 · distal transverse, descending, sigmoid colon and rectum T12–L2 — inferior mesenteric","Bladder, uterus, prostate and pelvic organs <b>T12–L2</b> through the inferior hypogastric plexus","Parasympathetic: vagal irritation shows up as tissue changes at OA, C1 and C2; sacral (S2–S4) irritation around the sacrum"],
+ labs:["—"],
+ buzz:["Heart: ventricles T1–3, atria T4–5"],
+ src:["OCOM OMM — SDL 14 lecture: Neuroendocrine/Immune II"],
+ tx:["—"],q:["ventricular representation","atrial representation","inferior hypogastric plexus","sympathetic innervation mapping","mapping of sympathetic","proximal two thirds of the transverse colon","thoracolumbar outflow","=t1 to l2","=t2 to t6"]},
+
+reflexhist:{n:"Reflex research — Burns to Beal",k:"reg",p:"neians",enz:"How viscerosomatic reflexes were proven",inh:"—",hi:1,
+ mech:"Osteopathic reflex concepts rest on more than a century of observation and experiment.",
+ find:["<b>Thomas Brown (1838)</b>: “spinal irritation” of a viscus from a displaced vertebra · <b>John Hilton (1863)</b>: “sympathies” — segmental tender points with visceral pain","<b>Louisa Burns, DO (1907)</b>: animal experiments — stimulating the pericardium and myocardium contracted the 2nd–6th intercostal and paraspinal muscles (T2–T5); deep paravertebral stimulation caused visceral vasoconstriction and changed heart rate and blood pressure","<b>Chapman and Owens (1930s)</b>: Chapman’s reflex points — tender, nodular soft-tissue masses reflecting visceral-autonomic-lymphatic disturbance","<b>Denslow, Korr and Krems (1947)</b>: facilitated segments show chronic reflex hyperexcitability with altered sudomotor and vasomotor activity","<b>Myron Beal, DO (1980s)</b>: validated palpatory testing — visceral disease produces segmentally related paraspinal changes · <b>Nicholas et al. (1985)</b>: acute MI shows left T1–T5 dysfunction and warmer paraspinal skin"],
+ labs:["—"],
+ buzz:["Burns 1907: pericardium → T2–T5 spasm"],
+ src:["OCOM OMM — SDL 14 lecture: Neuroendocrine/Immune II"],
+ tx:["—"],q:["myron beal","denslow","thomas brown","john hilton","=chapman and owens","nicholas et al","palpatory testing"]},
+
+kneeflow:{n:"Knee pain workflow — five questions",k:"reg",p:"okknee",enz:"Trauma, danger, arthritis, nerve, then the pain generator",inh:"—",hi:1,
+ mech:"The course works up knee pain with history, examination and studies to answer five questions in order: (1) Is the pain related to <b>trauma</b>? (2) Is a <b>dangerous medical condition</b> the cause — fracture, dislocation, infection, vascular injury? (3) Is <b>osteoarthritis or another arthritis</b> the cause? (4) Is <b>nerve pathology</b> such as radiculopathy the cause? (5) Is the pain <b>localized</b>, and if so which structure is the pain generator?",
+ find:["History: onset, location, severity, aggravating and relieving factors, functional limits; prior trauma, fracture, dislocation or surgery; family history · Examination: range of motion, bony prominences, tenderness, crepitus, effusion","X-ray views: <b>weight-bearing AP</b> (joint space under load) · <b>weight-bearing flexed PA (Rosenberg, notch view)</b> · <b>Merchant (sunrise, subpatellar) view</b> for the patellofemoral joint · lateral (least helpful)","<b>MRI</b> only when the case is complex, soft-tissue injury must be excluded, or cartilage integrity will change management · ultrasound for effusion","Hip disease can present as thigh or knee pain without hip pain — the course gets hip X-rays even in children presenting with knee pain"],
+ labs:["—"],
+ buzz:["Trauma → danger → arthritis → nerve → pain generator"],
+ src:["OCOM Ortho — SDL 4 lecture & reading: Knee pain and injury (Martin; Practical Office Orthopedics ch 1)","OCOM Ortho — SDL 5 lecture & reading: Hip and thigh pain and injury (Martin; The Patient History ch 55)"],
+ tx:["—"],q:["knee pain workflow","pain generator","merchant view","sunrise view","subpatellar view","rosenberg view","notch view","weight bearing x ray","weight bearing ap","weight bearing radiograph","directed physical examination","when the clinical case is complex","soft tissue injuries need to be excluded","dangerous medical condition"]},
+
+kneeoa:{n:"Knee osteoarthritis — diagnosis & OARSI care",k:"dz",p:"okknee",enz:"A clinical diagnosis; exercise and education first",inh:"—",fa:"472",hi:1,
+ mech:"Knee osteoarthritis is diagnosed <b>clinically</b>. The NICE criteria: persistent activity-related pain in one or a few joints, age 45 or older, and morning stiffness lasting <b>30 minutes or less</b>, without features of an inflammatory arthritis.",
+ find:["Primary symptoms pain, stiffness and loss of motion; secondary weakness and poor balance","<b>Weight-bearing X-ray</b> is the imaging gold standard (joint-space narrowing under load); MRI only for complex cases, suspected soft-tissue injury or when cartilage status changes management","OARSI functional tests: 30-second chair stand, 40-meter fast-paced walk, stair climb, 6-minute walk","<b>OARSI core treatment for every patient</b> (Level 1A, high consensus): arthritis education plus a <b>structured land-based exercise program</b> — strengthening, cardio, balance or neuromuscular work, or mind-body exercise (tai chi, yoga) — with or without dietary weight management"],
+ labs:["—"],
+ buzz:["Morning stiffness ≤ 30 min, age ≥ 45"],
+ src:["OCOM Ortho — SDL 4 lecture & reading: Knee pain and injury (Martin; Practical Office Orthopedics ch 1)","Robbins ch 26 — Bones, joints, and soft tissue tumors"],
+ tx:["OARSI core: arthritis education + structured land-based exercise ± dietary weight management"],q:["knee osteoarthritis","oarsi","land based exercise","arthritis education","structured land based","nice criteria","morning stiffness lasting 30 minutes","30 second chair","6 minute walk"]},
+
+pfpsrehab:{n:"Patellofemoral pain syndrome — biomechanics & rehab",k:"dz",p:"okknee",enz:"Anterior knee pain from a valgus knee",inh:"—",fa:"466",hi:1,
+ mech:"Patellofemoral syndrome (“chondromalacia patella”, “runner’s knee”) is extremely common — <b>25–40% of all knee problems</b> seen in clinic. It is usually overuse, sometimes a fall onto a flexed knee.",
+ find:["Presents with pain anywhere across the anterior knee, ± crepitus, pain with patellofemoral compression and with a single-leg squat","<b>Dynamic knee valgus</b> in single-leg movement tasks is a potentially modifiable factor (cited in the course) — part of the faulty biomechanics that therapy corrects","Imaging: X-ray including the Merchant (sunrise) view; MRI if needed","Treatment: physical therapy to correct biomechanics — <b>quadriceps strengthening, hamstring flexibility, posterior hip strengthening</b>"],
+ labs:["—"],
+ buzz:["Weak hips → valgus knee → patellofemoral pain"],
+ src:["OCOM Ortho — SDL 4 lecture & reading: Knee pain and injury (Martin; Practical Office Orthopedics ch 1)"],
+ tx:["Physical therapy: quadriceps, hamstring flexibility, posterior hip strengthening"],q:["patellofemoral pain syndrome","dynamic knee valgus","dynamic valgus","runners knee","chondromalacia","patellofemoral joint","hip abductors","posterior hip strengthening","quadriceps strengthening","=between 25 and 40"]},
+
+pcllcl:{n:"PCL & LCL injuries",k:"dz",p:"okknee",enz:"Usually braced, unless multiligament or avulsion",inh:"—",fa:"454, 464",hi:1,
+ mech:"<b>PCL</b> injuries are relatively uncommon (rugby, wrestling, football, hockey, car crashes) and follow a fall onto a flexed knee with the ankle plantarflexed or forced hyperflexion. <b>LCL</b> injuries are about 8% of knee injuries and <b>87% are multiligamentous</b>; the mechanism is a varus force ± hyperextension, often with the posterolateral corner.",
+ find:["PCL: posterolateral pain and swelling, posterior sag, positive <b>posterior drawer</b> — grade 1 up to 5 mm, grade 2 5–10 mm, grade 3 > 10 mm · X-rays to rule out fracture, MRI","PCL treatment: usually <b>non-operative if isolated</b> — bracing and physical therapy; surgery for a bony avulsion or multiligamentous injury","LCL grades: 1 tenderness without laxity · 2 laxity 5–10 mm with a solid end point · 3 laxity > 10 mm, no end point · arcuate sign on X-ray = posterolateral corner injury; varus stress view at 20° flexion","LCL treatment: conservative — hinged knee brace and physical therapy; surgical consult if unstable, complete or mid-portion tears, associated injuries, or symptoms past 4–6 weeks"],
+ labs:["—"],
+ buzz:["Isolated PCL or grade 2 LCL → brace + PT"],
+ src:["OCOM Ortho — SDL 4 lecture & reading: Knee pain and injury (Martin; Practical Office Orthopedics ch 1)","Moore ch 7 — Lower Limb"],
+ tx:["—"],q:["pcl tear","pcl injury","lcl tear","lcl injury","lateral collateral ligament","posterior sag","posterior drawer","posterolateral corner","arcuate sign","hinged knee brace","multiligamentous"]},
+
+hipflow:{n:"Hip pain workflow — and where hip pain hides",k:"reg",p:"okhip",enz:"Image the hip, even for knee pain",inh:"—",fa:"466",hi:1,
+ mech:"Hip pain follows the same five questions as the knee: trauma? a dangerous medical condition (infection, malignancy, fracture)? osteoarthritis or another arthritis? nerve pathology? localized, and if so which structure? <b>Hip X-rays almost always augment the history and examination</b> — including children who present with knee pain.",
+ find:["Hip disease often refers pain to the thigh and knee without groin pain","<b>Hip osteoarthritis</b>: restricted motion, especially <b>internal rotation</b> first, with external rotation lost at end stage; pain with active and passive motion; usually unilateral","Lateral (“trochanteric bursitis”) pain in runners is usually <b>gluteus medius tendinopathy</b> — worse with single-leg squat, dynamic knee valgus","<b>Snapping hip</b> (iliopsoas syndrome): pain and snapping in the medial groin or thigh — acute eccentric injury or repeated hip flexion and external rotation in dancers, gymnasts, runners","Hip fracture: 100–315 per 100,000; intertrochanteric and femoral neck most common in women and those over 65"],
+ labs:["—"],
+ buzz:["Hip OA loses internal rotation first"],
+ src:["OCOM Ortho — SDL 5 lecture & reading: Hip and thigh pain and injury (Martin; The Patient History ch 55)"],
+ tx:["—"],q:["hip pain workflow","hip x rays","hip x ray","snapping hip","iliopsoas tendon","gluteus medius tendinopathy","trochanteric bursitis","hip osteoarthritis","internal rotation is lost","internal rotation is restricted","refers pain to the thigh and knee","dangerous medical condition such as infection"]},
+
+septichip:{n:"Septic hip vs transient synovitis — Kocher criteria",k:"dz",p:"okhip",enz:"The child who won’t bear weight",inh:"—",fa:"474",hi:1,
+ mech:"A <b>septic hip</b> is infection of the femoroacetabular joint: fever, malaise, vomiting, pain with motion, loss of motion, swelling, warmth. X-ray may show joint-space loss or widening with effusion; MRI or ultrasound shows a nonspecific effusion — <b>aspiration</b> and fluid analysis make the diagnosis.",
+ find:["<b>Modified Kocher criteria</b>: non-weight-bearing · ESR > 40 mm/h · temperature > 101.3 °F · WBC > 12,000/mm³ (· CRP > 2.0 mg/dL)","Risk of septic arthritis by number of criteria: 0 → < 0.2% · 1 → 3% · 2 → 40% · 3 → 93% · 4 → <b>99.6%</b>","Pitfalls: young children cannot describe symptoms; <b>transient synovitis</b> looks similar but is afebrile with a normal ESR and WBC","Workup: WBC, ESR and CRP for the Kocher score, hip X-ray, and aspiration with fluid analysis"],
+ labs:["—"],
+ buzz:["4 of 4 Kocher criteria ≈ 99.6% septic"],
+ src:["OCOM Ortho — SDL 5 lecture & reading: Hip and thigh pain and injury (Martin; The Patient History ch 55)"],
+ tx:["Urgent surgical aspiration and lavage plus IV antibiotics"],q:["septic hip","kocher criteria","modified kocher","transient synovitis","septic arthritis of the hip","femoroacetabular joint"]},
+
+avnarco:{n:"Avascular necrosis of the hip — ARCO staging",k:"reg",p:"okhip",enz:"Catch it before collapse",inh:"—",fa:"469",hi:1,
+ mech:"In avascular necrosis of the femoral head, <b>MRI has near 100% sensitivity</b> and detects disease while plain films are still normal; CT is not favored in children. The ARCO criteria stage hip AVN.",
+ find:["<b>Pre-collapse</b> — stage I: normal radiograph, abnormal MRI · stage II: no crescent sign, but sclerosis, osteolysis or focal osteoporosis on X-ray","<b>Collapse</b> — stage III: subchondral fracture, fracture through the necrotic segment and/or flattening of the head (IIIA depression ≤ 2 mm, IIIB > 2 mm) · stage IV: osteoarthritis — joint-space narrowing and acetabular change","Treatment: no clearly superior plan — the goal is to <b>preserve the joint</b>; if it cannot be preserved, bone grafting, osteotomy or arthroplasty"],
+ labs:["—"],
+ buzz:["Stage I: X-ray normal, MRI abnormal"],
+ src:["OCOM Ortho — SDL 5 lecture & reading: Hip and thigh pain and injury (Martin; The Patient History ch 55)","Robbins ch 26 — Bones, joints, and soft tissue tumors"],
+ tx:["Reduce activity, analgesics/NSAIDs, bisphosphonates, physical therapy; graft, osteotomy or arthroplasty if the joint cannot be saved"],q:["arco","arco stage","arco criteria","crescent sign","core decompression","pre collapse","femoral head avn"]},
+
+fingertendon:{n:"Mallet & jersey finger",k:"dz",p:"okhand",enz:"Can’t extend the tip vs can’t flex the tip",inh:"—",hi:1,
+ mech:"<b>Mallet finger</b>, the most common finger tendon injury, follows forced flexion of an actively extended fingertip — the extensor tendon tears from the distal phalanx (± a small dorsal avulsion fragment). The patient cannot actively extend the DIP joint, with normal passive motion. <b>Jersey finger</b> is avulsion of the <b>flexor digitorum profundus</b> from the distal phalanx by forced extension of a flexed DIP (grabbing a jersey) — the patient cannot actively flex the DIP.",
+ find:["Mallet: splint the <b>DIP in full extension continuously for at least 6 weeks</b>, leaving the PIP free; operative treatment is usually not needed · a fracture involving <b>more than one-third of the joint surface</b> → orthopedics","Jersey: the <b>ring finger</b> in about 75%; X-ray for an avulsion fragment, MRI if unclear; splint with PIP and DIP in mild flexion and refer every case","<b>Leddy-Packer</b> classification by how far the FDP retracts: type 1 retracts into the palm and loses its blood supply — repair within 7–10 days; type 2 retracts to the PIP level; delayed or retracted tendons do worse"],
+ labs:["—"],
+ buzz:["Mallet = extensor, splint 6 weeks","Jersey = FDP, ring finger, refer"],
+ src:["OCOM Ortho — SDL 14–15 lecture & readings: Elbow, wrist and hand pain and injury (Martin; Atlas of Emergency Medicine)","OCOM Ortho — SDL 25 readings: Joint dislocations (Current Diagnosis & Treatment in Orthopedics ch 2, 11)"],
+ tx:["—"],q:["mallet finger","jersey finger","flexor digitorum profundus avulsion","fdp avulsion","leddy","leddy packer","terminal extensor tendon","dip extension splint","stack splint","extensor tendon injury"]},
+
+thumbucl:{n:"Gamekeeper’s (skier’s) thumb & the Stener lesion",k:"dz",p:"okhand",enz:"A torn thumb UCL that cannot heal on its own",inh:"—",hi:1,
+ mech:"Forced radial deviation (abduction) and hyperextension of the thumb MCP joint ruptures the <b>ulnar collateral ligament</b> — “skier’s thumb” (acute, partial tears most often from skiing; complete tears from falls) or “gamekeeper’s thumb” (chronic degeneration). Pain and swelling sit over the ulnar side of the MCP; X-ray may show an avulsion fragment.",
+ find:["Stress test in extension and 30° flexion against the other thumb: more than 30–40° radial angulation (or no firm end point) means a complete rupture","<b>Stener lesion</b>: when the UCL tears from the proximal phalanx, the <b>adductor pollicis aponeurosis</b> becomes interposed between ligament and bone, so it cannot heal with closed treatment — MRI shows it; surgical repair","Partial tear: thumb spica splint about 3–4 weeks, then range of motion · complete tears, large or displaced fragments, instability or a Stener lesion → hand surgery (repair within about 1 week)"],
+ labs:["—"],
+ buzz:["Stener = adductor aponeurosis in the way"],
+ src:["OCOM Ortho — SDL 14–15 lecture & readings: Elbow, wrist and hand pain and injury (Martin; Atlas of Emergency Medicine)","OCOM Ortho — SDL 25 readings: Joint dislocations (Current Diagnosis & Treatment in Orthopedics ch 2, 11)"],
+ tx:["Thumb spica splint for partial tears; surgical repair for complete tears and Stener lesions"],q:["gamekeepers thumb","skiers thumb","stener lesion","stener","ulnar collateral ligament of the thumb","thumb ucl","adductor pollicis aponeurosis","adductor aponeurosis","thumb spica","accessory collateral ligament","proper ucl laxity"]},
+
+triggerfinger:{n:"Trigger finger",k:"dz",p:"okhand",enz:"A tendon that catches at the A1 pulley",inh:"—",hi:1,
+ mech:"Trigger finger is <b>stenosing flexor tenosynovitis</b>: the flexor tendon catches on its pulley as it glides — usually the <b>A1 pulley at the MCP joint</b>, which thickens, often with a fibrous nodule on the tendon.",
+ find:["About 2% of people; most common in women in their 40s–50s; may affect several fingers or both hands","More common with diabetes, rheumatoid arthritis and crystal deposition disease","Treatment: NSAIDs, splinting, corticosteroid injection; surgery is rare"],
+ labs:["—"],
+ buzz:["A1 pulley at the MCP"],
+ src:["OCOM Ortho — SDL 14–15 lecture & readings: Elbow, wrist and hand pain and injury (Martin; Atlas of Emergency Medicine)"],
+ tx:["NSAIDs, splint, steroid injection; release surgery if refractory"],q:["trigger finger","stenosing flexor tenosynovitis","a1 pulley","trigger thumb"]},
+
+dislocs:{n:"Finger, knee & ankle dislocations — what not to miss",k:"dz",p:"okdisl",enz:"Check the vessel, the tendon and the syndesmosis",inh:"—",hi:1,
+ mech:"Dislocations are reduced promptly, but each joint has an associated injury that decides the outcome.",
+ find:["<b>Knee dislocation</b>: classified by the direction the <b>tibia</b> displaces (anterior, posterior, lateral, medial, rotatory); complete dislocation requires extensive ligament injury; measure the <b>ankle-brachial index in every case — below 0.9 is abnormal</b> → CT angiography; intimal tears can present more than 48 hours later; reduce promptly by axial traction","<b>Volar PIP dislocation</b> (unusual): the proximal phalanx condyle can buttonhole between the central slip and lateral bands — after reduction splint in extension 3–6 weeks so the extensor mechanism heals","<b>Ankle syndesmosis</b>: a tibiofibular clear space <b>greater than 6 mm</b> on X-ray is the most reliable sign of syndesmotic injury","<b>Elbow</b>: coronoid fractures with dislocation affect stability; most coronoid fractures without radial-head involvement can be treated with immobilization"],
+ labs:["—"],
+ buzz:["Knee dislocation: ABI < 0.9 → CTA"],
+ src:["OCOM Ortho — SDL 25 readings: Joint dislocations (Current Diagnosis & Treatment in Orthopedics ch 2, 11)"],
+ tx:["—"],q:["knee dislocation","ankle brachial index","abi below 0 9","tibiofibular clear space","syndesmotic injury","volar pip dislocation","central slip","lateral bands","coronoid process fracture","coronoid fracture"]},
+
+lungdefense:{n:"Lung host defenses — and how they fail",k:"reg",p:"riLower",enz:"Mucus, cilia, macrophages, neutrophils",inh:"—",fa:"680",hi:1,
+ mech:"Inhaled microbes are normally trapped in the mucous blanket and swept up the <b>mucociliary escalator</b>; organisms reaching the alveoli are phagocytosed by <b>alveolar macrophages</b>, which can also carry them up onto the escalator or recruit <b>neutrophils</b>; complement and antibody add opsonization. Pneumonia follows when these local defenses fail or systemic resistance falls.",
+ find:["<b>Lost cough reflex</b> (coma, anesthesia, neuromuscular disease, drugs, chest pain) → aspiration of gastric contents","<b>Mucociliary dysfunction</b>: cigarette smoke, hot or corrosive gases, viral infection, immotile cilia","<b>Retained secretions</b>: cystic fibrosis, bronchial obstruction · <b>impaired macrophages</b>: alcohol, tobacco smoke, anoxia, oxygen toxicity · pulmonary congestion and edema","<b>Viral damage</b> to the ciliated epithelium opens the way for <b>secondary bacterial pneumonia</b> — S aureus after influenza or measles is the classic example","Innate sensing (shown in M pneumoniae infection): the <b>MyD88/NF-κB</b> pathway drives proinflammatory gene expression in macrophages, and the NLRP3 inflammasome releases IL-1β"],
+ labs:["—"],
+ buzz:["Smoking paralyzes the escalator","Flu → staph pneumonia"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["—"],q:["mucociliary escalator","=mucociliary clearance","mucociliary apparatus","host defenses","lung defense","alveolar macrophage function","secondary bacterial pneumonia","myd88","toll like receptor signaling","bronchociliary"],
+ ref:[{a:"Segovia JA, Chang TH, Winter VT, et al.",t:"NLRP3 is a critical regulator of inflammation and innate immune cell response during Mycoplasma pneumoniae infection",j:"Infect Immun",y:2017,pmid:"29061706",doi:"10.1128/IAI.00548-17"}]},
+
+lobarstages:{n:"Stages of lobar pneumonia — congestion to resolution",k:"reg",p:"riLower",enz:"Congestion → red → gray → resolution",inh:"—",fa:"702",hi:1,
+ mech:"Lobar pneumonia (classically S pneumoniae) consolidates a whole lobe and passes through four classic stages.",
+ find:["<b>Congestion</b> (days 1–2): heavy, boggy, red lung — vascular engorgement, intra-alveolar edema fluid with a few neutrophils and many bacteria","<b>Red hepatization</b> (days 3–4): massive confluent exudate — neutrophils, red cells and fibrin fill the alveoli; the lobe is red, firm and airless, liver-like","<b>Gray hepatization</b> (days 5–7): red cells disintegrate while a fibrinosuppurative exudate persists — grayish-brown","<b>Resolution</b> (day 8+): the exudate is enzymatically digested and resorbed, ingested by macrophages, coughed up or organized by fibroblasts","<b>Bronchopneumonia</b> instead is patchy, centered on bronchioles; exudate spreads between alveoli through the <b>pores of Kohn</b>"],
+ labs:["—"],
+ buzz:["Red = RBCs + neutrophils + fibrin · gray = RBCs broken down"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["—"],q:["red hepatization","gray hepatization","grey hepatization","congestion stage","four stages","resolution stage","fibrinosuppurative exudate"]},
+
+lungabscess:{n:"Lung abscess & aspiration",k:"dz",p:"riLower",enz:"Right-sided, single, anaerobic",inh:"—",fa:"188, 702",hi:1,
+ mech:"A lung abscess is a localized area of suppurative necrosis. <b>Aspiration</b> of infected material is the most frequent cause — during altered consciousness (alcohol, seizures, anesthesia, coma) with a depressed cough or gag reflex. Because the <b>right main bronchus is more vertical</b> and in line with the trachea, aspiration abscesses are usually <b>right-sided and single</b>.",
+ find:["Oral anaerobes — <b>Bacteroides, Fusobacterium, Peptococcus</b> (and Prevotella, Peptostreptococcus) — are the <b>exclusive isolates in about 60%</b>; mixed aerobic and anaerobic infection is common","Other causes: necrotizing pneumonia (S aureus, Klebsiella, S pyogenes, type 3 pneumococcus), septic emboli, bronchial obstruction by tumor or foreign body","Clindamycin covers anaerobes above the diaphragm"],
+ labs:["—"],
+ buzz:["Aspiration → right lung → anaerobes"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Antibiotics with anaerobic coverage (e.g., clindamycin); drain if needed"],q:["lung abscess","aspiration abscess","oral anaerobes","anaerobic organisms","peptococcus","right main bronchus","necrotizing pneumonia","aspiration of oral"]},
+
+mycolab:{n:"Mycoplasma biology & lab diagnosis",k:"reg",p:"riLower",enz:"No wall, slow to grow, sticks with P1",inh:"—",fa:"148",hi:1,
+ mech:"Mycoplasmas are the <b>smallest self-replicating organisms capable of cell-free existence</b>. They have <b>no peptidoglycan cell wall</b> (the genes are absent) — so they are pleomorphic, invisible on Gram stain and untouched by β-lactams — and their triple-layered membrane needs <b>sterols</b>, supplied by serum in culture media.",
+ find:["<b>Attachment</b>: the <b>P1 adhesin</b> (170 kDa) concentrated in the tip attachment organelle binds respiratory epithelium — protecting the organism from mucociliary clearance; antibodies to P1 block attachment","<b>Damage</b>: cilia deteriorate and epithelial cells become vacuolated and exfoliate · the <b>CARDS toxin</b> is an ADP-ribosylating, vacuolating toxin that drives inflammation (NLRP3 inflammasome, IL-1β)","<b>Culture</b>: slow (6-hour generation time), on enriched sterol media such as SP4; colonies rarely exceed 100 µm and need a stereomicroscope","<b>Serology</b>: test IgM and IgG on paired sera 2–3 weeks apart (a fourfold rise = current or recent infection); adults with repeated infections may skip IgM and mount only IgG, and IgM can persist for months","<b>Cold agglutinins</b>: IgM cross-reacting with red-cell antigens (molecular mimicry) → cold hemolytic anemia","Volunteer vaccines (formalin-inactivated) were disappointing and none is in use; macrolides, tetracyclines or fluoroquinolones treat it"],
+ labs:["—"],
+ buzz:["No cell wall → no Gram stain, no β-lactams","P1 adhesin · CARDS toxin · cold agglutinins"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Macrolide, tetracycline or fluoroquinolone"],q:["p1 adhesin","attachment organelle","cards toxin","=cold agglutinin","=cold agglutinins","smallest free living","lacks a cell wall","lacks a rigid cell wall","sterol supplemented","paired serology","fried egg","=serum supplemented media","smallest known free living","prior m pneumoniae infections","igg responses on reinfection","no visible bacteria","persistence of m pneumoniae","no vaccine currently exists to prevent m"],
+ ref:[{a:"Waites KB, Talkington DF",t:"Mycoplasma pneumoniae and its role as a human pathogen",j:"Clin Microbiol Rev",y:2004,pmid:"15489344",doi:"10.1128/CMR.17.4.697-728.2004"},{a:"Segovia JA, Chang TH, Winter VT, et al.",t:"NLRP3 is a critical regulator of inflammation and innate immune cell response during Mycoplasma pneumoniae infection",j:"Infect Immun",y:2017,pmid:"29061706",doi:"10.1128/IAI.00548-17"}]},
+
+pneumocarriage:{n:"Pneumococcal carriage & serotype replacement",k:"reg",p:"riLower",enz:"Most carriers never get sick",inh:"—",fa:"125, 134",hi:1,
+ mech:"S pneumoniae (gram-positive, lancet-shaped diplococci) is the most common cause of community-acquired acute pneumonia, yet it is part of the endogenous flora in about 20% of adults — so organisms on a sputum Gram stain can give a false positive.",
+ find:["Disease follows when a carried strain invades: otitis media, sinusitis, pneumonia, bacteremia, meningitis","Blood cultures are more specific than sputum but less sensitive — only 20–30% are positive early in the illness","<b>Polysaccharide vaccine</b> (PPSV23): a polysaccharide antigen alone cannot be presented to T cells · <b>conjugate vaccines</b> (PCV13, PCV15, PCV20) link it to a carrier protein, which enhances immunogenicity","<b>Serotype replacement</b>: conjugate vaccines clear vaccine serotypes from the nasopharynx and non-vaccine serotypes take over carriage almost completely; disease from them rises too, though less"],
+ labs:["—"],
+ buzz:["PCV removes vaccine types → others move in"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["—"],q:["serotype replacement","=nasopharyngeal carriage","non vaccine serotypes","blood culture obtained before antibiotic","=carrier state persisting","polysaccharide antigens elicit"],
+ ref:[{a:"Weinberger DM, Malley R, Lipsitch M",t:"Serotype replacement in disease after pneumococcal vaccination",j:"Lancet",y:2011,pmid:"21492929",doi:"10.1016/S0140-6736(10)62225-8"}]},
+
+deepneck:{n:"Peritonsillar abscess & deep neck spread",k:"dz",p:"riUpper",enz:"Hot-potato voice; watch the mediastinum",inh:"—",fa:"691",hi:1,
+ mech:"A <b>peritonsillar abscess</b> is pus between the tonsillar capsule and the pharyngeal constrictor muscle, closely tied to a preceding acute tonsillitis; incidence peaks in young adult life (15–19 years).",
+ find:["Organisms: aspirates grow a mix of aerobes and anaerobes, but only <b>group A streptococcus</b> and <b>Fusobacterium necrophorum</b> have substantial evidence as pathogens — together recovered in under half of cases","Treatment: surgical <b>drainage</b> — needle aspiration, incision, or acute tonsillectomy — plus antibiotics","<b>Spread</b>: the retropharyngeal space runs from the skull base and opens inferiorly into the <b>superior mediastinum</b>, and the carotid sheath also communicates with the mediastinum — so neck infection can descend","Complications: <b>descending mediastinitis</b> (the most frequently reported), para- and retropharyngeal abscess, necrotizing fasciitis, Lemierre syndrome, airway obstruction; overall mortality 10% in reported complicated cases"],
+ labs:["—"],
+ buzz:["Peritonsillar pus → drain it; neck infection can fall into the mediastinum"],
+ src:["Moore ch 8 — Neck","Robbins ch 16 — Head and neck"],
+ tx:["Needle aspiration or incision and drainage + antibiotics"],q:["peritonsillar abscess","quinsy","=retropharyngeal space","=retropharyngeal abscess","parapharyngeal abscess","descending mediastinitis","descending necrotizing mediastinitis","deep neck infection","alar fascia","lemierre"],
+ ref:[{a:"Long B, Gottlieb M",t:"Managing peritonsillar abscess",j:"Ann Emerg Med",y:2023,pmid:"36669912",doi:"10.1016/j.annemergmed.2022.10.023"},{a:"Klug TE, Greve T, Hentze M",t:"Complications of peritonsillar abscess",j:"Ann Clin Microbiol Antimicrob",y:2020,pmid:"32731900",doi:"10.1186/s12941-020-00375-x"}]},
+
+depspec:{n:"Depression specifiers & secondary depression",k:"reg",p:"pdx",enz:"Melancholic, atypical, seasonal, peripartum — or a medical cause",inh:"—",hi:1,
+ mech:"DSM specifiers describe the shape of a depressive episode. <b>With melancholic features</b>: loss of pleasure or of reactivity to pleasure plus severe despair, morning worsening, early waking, psychomotor change, weight loss and excessive guilt. <b>Atypical features</b>: reversed neurovegetative signs — overeating, weight gain and sleeping longer.",
+ find:["<b>Peripartum (postpartum) onset</b>: onset within 4 weeks of delivery; postpartum disorders often include psychotic symptoms · <b>seasonal pattern</b>: episodes in a particular season, most often winter — these patients may respond preferentially to light therapy","<b>Children and adolescents</b>: school phobia and clinging in children; in adolescents poor schoolwork, substance use, antisocial behavior, truancy or running away may be the presentation, without reported sadness","<b>Rule out a medical or drug cause</b> first: steroidal contraceptives, interferon, vincristine and vinblastine and other drugs; hypo- or hyperthyroidism, hyperparathyroidism, Addison and Cushing, diabetes; neurologic disease such as stroke; infections (test depressed adolescents for mononucleosis)"],
+ labs:["—"],
+ buzz:["Melancholic = no pleasure, worse in the morning, guilt","Atypical = eats and sleeps more"],
+ src:["Kaplan & Sadock ch 7 — Depressive Disorders"],
+ tx:["—"],q:["melancholic features","with melancholic features","seasonal pattern","postpartum onset","secondary depressive","substance medication induced depressive","depressive disorder due to another medical condition","reversed neurovegetative","academic decline and hypersomnia","first 4 weeks after delivery"]},
+
+pmdd:{n:"Premenstrual syndrome & premenstrual dysphoric disorder",k:"dz",p:"pdx",enz:"Luteal symptoms that vanish with menses",inh:"—",fa:"593",hi:1,
+ mech:"Premenstrual disorders — up to 12% of women — are psychiatric or somatic symptoms in the <b>luteal phase</b> that impair function and <b>resolve shortly after menses</b>. ACOG defines <b>PMS</b> as at least one affective and one somatic symptom causing dysfunction, cyclical and recurring in two cycles of prospective recording. The APA’s <b>PMDD</b> needs <b>at least five symptoms</b> in the final week before menses, including at least one marked affective symptom (lability, irritability, depressed mood or anxiety), improving within days of menses and minimal the week after.",
+ find:["Diagnosis rests on <b>prospective daily symptom ratings over at least two cycles</b> (Daily Record of Severity of Problems) — recall overstates cyclicity; rule out thyroid disease and other mimics","Mechanism: women with PMDD have normal estrogen and progesterone levels but appear <b>more sensitive to normal cyclical changes</b>; the hormones alter serotonin, GABA and dopamine signaling and the renin-angiotensin-aldosterone system (bloating); symptoms recur with cyclical progestogens and improve when GnRH analogues suppress the cycle","Monozygotic twin studies suggest a genetic component, but no gene has been identified"],
+ labs:["—"],
+ buzz:["PMDD: ≥ 5 symptoms, ≥ 1 affective, gone the week after menses"],
+ src:["OCOM Psych — SDL 12 reading: Premenstrual syndrome and premenstrual dysphoric disorder (Am Fam Physician 2016)","Kaplan & Sadock ch 7 — Depressive Disorders"],
+ tx:["SSRIs first line for severe symptoms; combined oral contraceptives; calcium 1,000–1,200 mg/day for PMS"],q:["premenstrual dysphoric disorder","pmdd","premenstrual syndrome","pms","premenstrual dysphoria","luteal phase symptoms","daily record of severity of problems","prospective daily","cyclical hormone","=at least 5 total symptoms","cyclical changes in estrogen","which cyclical sex hormone changes","no specific causative gene"]},
+
+deptx:{n:"Treating depression — setting, duration & psychotherapy",k:"reg",p:"ptx",enz:"Hospitalize? How long? Which therapy?",inh:"—",hi:1,
+ mech:"The first decision is whether to hospitalize. <b>Definite indications</b>: risk of suicide or homicide, a grossly reduced ability to get food and shelter, and the need for diagnostic procedures; <b>rapidly progressing symptoms</b> and a <b>rupture of the patient’s support system</b> are also indications. Milder depression can be treated in the office with frequent visits.",
+ find:["<b>Duration</b>: continue antidepressants for at least <b>6 months or the length of a previous episode, whichever is greater</b>; a trial counts as failed only after 4–5 weeks at the maximum dose","<b>Stopping</b>: taper over <b>1 to 2 weeks</b>, depending on the drug’s half-life","<b>Maintenance (prophylaxis)</b>: recommended when episodes come less than about 2½ years apart, or when previous episodes were severe (serious suicidal ideation, major loss of function)","<b>Psychotherapies with the best evidence</b>: cognitive therapy, <b>interpersonal therapy</b> (Klerman — one or two current interpersonal problems rooted in earlier relationships) and behavior therapy; <b>family therapy</b> when the disorder jeopardizes a marriage or family or the family maintains it","<b>Seasonal pattern</b> → light therapy · sleep deprivation can speed antidepressant response"],
+ labs:["—"],
+ buzz:["≥ 6 months or the last episode’s length","Taper over 1–2 weeks"],
+ src:["Kaplan & Sadock ch 7 — Depressive Disorders","Kaplan & Sadock ch 23 — Psychotherapy"],
+ tx:["—"],q:["indications for hospitalization","definite indications","rupture of the patients natural support","whichever is greater","prophylactic treatment","interpersonal therapy","family therapy","light therapy","tapered gradually","dose tapering","prophylactic ongoing maintenance"]},
+
+cogbeh:{n:"Cognitive & behavioral therapies",k:"reg",p:"ptx",enz:"Change the thoughts, change the behavior",inh:"—",hi:1,
+ mech:"<b>Cognitive therapy</b> (Beck) explains depression by the <b>cognitive triad</b> — negative thoughts about the <b>self, the world and the future</b>. Its four processes: <b>eliciting automatic thoughts</b> (cognitive distortions between an event and the emotional reaction — e.g., with a thought record), <b>testing</b> them for accuracy and alternatives, <b>identifying maladaptive underlying assumptions</b> (the rule-like beliefs behind recurring thoughts), and testing those assumptions.",
+ find:["<b>Behavioral activation</b>: depression persists because healthy behavior goes unreinforced while depressed behavior is reinforced (sympathy, avoided duties) — so schedule rewarding activity","<b>Systematic desensitization</b>: relaxation paired with a graded hierarchy of feared stimuli · <b>graded exposure</b> in vivo up the hierarchy","<b>Flooding (implosion)</b>: in vivo exposure with <b>no hierarchy</b> — escape reinforces anxiety, so the patient stays until it fades","<b>Applied tension</b> for blood-injury phobia: tensing arm, leg and trunk muscles for 10–15 s counteracts the fainting response (the opposite of relaxation); headache is an adverse effect — reduce the intensity and frequency"],
+ labs:["—"],
+ buzz:["Triad: self, world, future","Flooding = no hierarchy"],
+ src:["Kaplan & Sadock ch 23 — Psychotherapy"],
+ tx:["—"],q:["cognitive triad","automatic thoughts","automatic thought","thought record","maladaptive underlying assumption","maladaptive assumption","maladaptive core assumption","behavioral activation","=flooding","implosion","applied tension","=graded exposure","testing automatic thoughts","eliciting automatic thoughts"]},
+
+briefdyn:{n:"Brief psychodynamic psychotherapies",k:"reg",p:"ptx",enz:"Short, focused, for motivated patients",inh:"—",hi:1,
+ mech:"Brief dynamic therapies (Malan, Mann, Davanloo, Sifneos) treat a focal conflict in a limited number of sessions and select patients carefully — high motivation and psychological mindedness are recurring requirements.",
+ find:["<b>Malan</b> (Tavistock brief focal psychotherapy): assess the capacity to think in emotional terms, face disturbing material and respond to interpretation; <b>high motivation invariably correlated with success</b>; contraindications include serious suicide attempts, substance dependence and chronic alcohol abuse","<b>Sifneos</b> (short-term anxiety-provoking psychotherapy): a circumscribed chief complaint, one meaningful give-and-take relationship in childhood, flexible interaction with the evaluator, above-average psychological sophistication, a specific psychodynamic formulation <b>centering on an oedipal focus</b>, and a contract to work on it","Contraindications across dynamic therapies include absence of suffering, poor impulse control and dishonesty"],
+ labs:["—"],
+ buzz:["Sifneos: circumscribed complaint + oedipal focus"],
+ src:["Kaplan & Sadock ch 23 — Psychotherapy"],
+ tx:["—"],q:["sifneos","malan","davanloo","brief focal psychotherapy","short term anxiety provoking","brief psychodynamic","psychological mindedness","oedipal","dishonesty and poor impulse control"]},
+
+forensic:{n:"Forensic psychiatry — commitment, the duty to protect & malpractice",k:"reg",p:"peth",enz:"When the law steps in",inh:"—",hi:1,
+ mech:"All states allow <b>involuntary hospitalization</b> when a patient is a <b>danger to self or others</b>; some also when the patient <b>cannot care for himself or herself</b> (parens patriae). Hospitalized patients keep rights — including the <b>least restrictive environment</b> and the right to refuse procedures without informed consent.",
+ find:["<b>Tarasoff</b>: mental health professionals have a <b>duty to protect</b> identifiable, endangered third parties from imminent threats made by their patients — options include voluntary or involuntary hospitalization, warning the victim, <b>notifying the police</b>, adjusting medication and seeing the patient more often; a warning alone is usually insufficient","<b>Malpractice</b> is a tort of negligence; with suicide, courts ask whether it was <b>foreseeable</b> — a deliberately vague, common-sense legal standard, not a clinical one","<b>Seclusion and restraint</b>: to prevent clear, imminent harm or major disruption; contraindicated in extremely unstable medical or psychiatric conditions without close supervision; choose the least restrictive effective option","<b>Minors</b>: parental consent is needed except in emergencies and for conditions minors may consent to by statute — sexually transmitted disease, pregnancy, substance and alcohol use, contagious disease"],
+ labs:["—"],
+ buzz:["Duty to protect, not just to warn"],
+ src:["Kaplan & Sadock ch 28 — Forensic and Legal Issues"],
+ tx:["—"],q:["involuntary hospitalization","civil commitment","parens patriae","least restrictive","least restrictive alternative","foreseeability","seclusion and restraint","malpractice","right to refuse treatment","protective measures proportionate"]},
+
+psyethics:{n:"Psychiatric ethics — paternalism, honesty & boundaries",k:"reg",p:"peth",enz:"Beneficence vs autonomy",inh:"—",hi:1,
+ mech:"Paternalism is using the psychiatrist’s judgment about the best course for the patient. <b>Weak paternalism</b>: acting beneficently when the patient’s impaired faculties prevent an autonomous choice. <b>Strong paternalism</b>: acting beneficently despite intact autonomy — justified only rarely, e.g., to prevent substantial harm.",
+ find:["<b>Deception</b> includes misleading by what is written or left out of the chart, even when each statement is literally true","<b>Sexual relationships with patients are unethical</b> and also criminal; the APA bars sex with current or former patients","<b>Competence</b> is task-specific: physicians give opinions on it, but only a judge’s ruling makes it a legal finding — a mental disorder alone does not make a patient incompetent"],
+ labs:["—"],
+ buzz:["Weak paternalism = impaired autonomy"],
+ src:["Kaplan & Sadock ch 27 — Ethics and Professionalism","Kaplan & Sadock ch 28 — Forensic and Legal Issues"],
+ tx:["—"],q:["weak paternalism","strong paternalism","paternalism","sexual boundary violations","boundary violation","capacity is clinical","competence is legal","sex with a current or former patient","unethical since apa"]},
+
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
  mech:"A seizure is synchronized, high-frequency firing of a population of neurons. It runs in three phases: <b>aura</b> (the early part — odd smells or tastes), <b>ictal</b> (first symptom to end of seizure activity) and <b>postictal</b> (gradual recovery to baseline). <b>Epilepsy</b> is a disorder of recurrent, <b>unprovoked</b> seizures.",
@@ -15730,7 +16106,7 @@ MAPS.nephron = {
 
 MAPS.cardiac = {
  t:"Cardiac", sub:"Conduction system and the ECG · action potential phases with the antiarrhythmic classes · contraction and cardiac output",
- w:2500, h:1740,
+ w:2500, h:2338,
  fa:"289–290, 295, 297–298, 303, 308, 311, 313, 323, 326–328, 459",
  src:["Robbins ch 12 — The heart","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 13 — Drugs Used in Heart Failure","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves","Costanzo ch 4 — Cardiovascular physiology"],
  comps:[
@@ -15764,6 +16140,9 @@ MAPS.cardiac = {
    ["Inspiration","Right-sided murmurs louder"],
    ["Expiration","Left-sided murmurs louder"],
    ["Hand grip","↑ Afterload: MR, AR, VSD louder"]]}],
+ plots:[
+  {x:240,y:1716,w:1070,h:560,kind:"apnodal",t:"Pacemaker (SA node) action potential"},
+  {x:1370,y:1716,w:1070,h:560,kind:"apventric",t:"Ventricular myocyte action potential"}],
  nodes:[
   {id:"sa",l:"SA node",x:350,y:250,p:"conduction",s:"60–100/min · the pacemaker"},
   {id:"atria",l:"Atria",x:700,y:250,p:"conduction",s:"P wave"},
@@ -27559,7 +27938,7 @@ MAPS.sxams = {
 
 MAPS.membrane = {
  t:"Membrane Potentials & Nerve Conduction", sub:"Ion gradients set the resting potential · Na⁺ in, then K⁺ out makes the action potential · diameter and myelin set the speed · and what happens when channels are blocked or myelin is lost",
- w:3300, h:1280,
+ w:3300, h:1854,
  fa:"246, 503–504",
  src:["Costanzo ch 1 — Cellular physiology","Guyton ch 5 — Membrane Potentials and Action Potentials","Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function","Costanzo ch 3 — Neurophysiology"],
  comps:[
@@ -27580,6 +27959,9 @@ MAPS.membrane = {
    ["Aδ","fast pain, temperature · myelinated"],
    ["B","preganglionic autonomic"],
    ["C","slow pain · unmyelinated, slowest"]]}],
+ plots:[
+  {x:140,y:1272,w:1480,h:520,kind:"apnerve",t:"Nerve action potential — ions and channels"},
+  {x:1680,y:1272,w:1480,h:520,kind:"apcond",t:"Na⁺ and K⁺ conductance during the spike"}],
  nodes:[
   {id:"i1",l:"Nernst equation",x:420,y:170,p:"mpion",k:"hub",s:"a concentration ratio becomes a voltage",m:["eqpot"]},
   {id:"i2",l:"Na⁺/K⁺-ATPase",x:1020,y:170,p:"mpion",s:"3 Na⁺ out, 2 K⁺ in · keeps the gradients",m:["nakpump"]},
@@ -28582,25 +28964,385 @@ MAPS.renalna = {
   {a:"o1",b:"o2",p:"naobst"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["index","Index"]];
+MAPS.synapse = {
+ t:"Synaptic Transmission & Receptors", sub:"How calcium releases a transmitter · fast ionotropic and slow metabotropic receptors · EPSPs, IPSPs and summation · the transmitter classes and how each signal is ended · and how to localize a drug or toxin to its step",
+ w:3300, h:1032,
+ fa:"130, 136, 235, 505",
+ src:["Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System", "Guyton ch 46 — Organization of the Nervous System, Basic Functions of Synapses and Neurotransmitters"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Release from the terminal"},
+  {x:140,y:290,w:3020,h:200,l:"Receptors and postsynaptic potentials"},
+  {x:140,y:550,w:3020,h:200,l:"Transmitters and how each signal ends"}],
+ panels:[
+  {x:140,y:810,w:1480,h:160,kw:222,t:"How each signal ends",rows:[
+   ["Dopamine, NE, serotonin","reuptake by DAT, NET, SERT"],
+   ["GABA · glycine","GAT · GlyT1 and GlyT2"],
+   ["Glutamate","EAAT transporters on neurons and astrocytes"],
+   ["Acetylcholine","acetylcholinesterase; choline taken back by ChT"],
+   ["Nitric oxide, peptides","diffusion and breakdown"]]},
+  {x:1680,y:810,w:1480,h:160,kw:187,t:"Which step does it hit?",rows:[
+   ["Lambert-Eaton","presynaptic voltage-gated Ca²⁺ channels"],
+   ["Botulinum · tetanus","SNARE proteins (release)"],
+   ["Organophosphates","acetylcholinesterase (cleft)"],
+   ["Myasthenia gravis","nicotinic ACh receptor"],
+   ["SSRIs · cocaine","reuptake transporters"]]}],
+ nodes:[
+  {id:"r1",l:"Action potential reaches the terminal",x:420,y:170,p:"synrel",s:"depolarizes the active zone",m:["chemsynapse"]},
+  {id:"r2",l:"Voltage-gated Ca²⁺ channels",x:1020,y:170,p:"synrel",s:"Ca²⁺ in — Lambert-Eaton blocks",m:["chemsynapse","lems"]},
+  {id:"r3",l:"Synaptotagmin & SNAREs",x:1620,y:170,p:"synrel",k:"hub",s:"synaptobrevin · syntaxin · SNAP-25",m:["chemsynapse"]},
+  {id:"r4",l:"Botulinum & tetanus toxins",x:2220,y:170,p:"synrel",s:"proteases that cut SNAREs",m:["botulinum","tetanus"]},
+  {id:"r5",l:"Diffusion across the cleft",x:2820,y:170,p:"synrel",s:"200–300 Å",m:["chemsynapse"]},
+  {id:"c1",l:"Ionotropic receptors",x:420,y:350,p:"synrec",k:"hub",s:"ligand-gated channels · fast",m:["rectypes"]},
+  {id:"c2",l:"Metabotropic receptors",x:1020,y:350,p:"synrec",s:"G protein · second messengers · slow",m:["rectypes"]},
+  {id:"c3",l:"Nicotinic vs muscarinic",x:1620,y:350,p:"synrec",s:"one transmitter, two receptor types",m:["rectypes","ansreg"]},
+  {id:"c4",l:"Glutamate receptors",x:2220,y:350,p:"synrec",s:"AMPA · NMDA · kainate · mGluR",m:["rectypes","nmdadrugs"]},
+  {id:"c5",l:"Myasthenia gravis",x:2820,y:350,p:"synrec",s:"antibodies to nicotinic receptors",m:["mg"]},
+  {id:"c6",l:"EPSP",x:420,y:430,p:"synrec",s:"Na⁺ in · toward threshold",m:["psps"]},
+  {id:"c7",l:"IPSP",x:1020,y:430,p:"synrec",s:"Cl⁻ in or K⁺ out · away from threshold",m:["psps"]},
+  {id:"c8",l:"Spatial vs temporal summation",x:1620,y:430,p:"synrec",s:"many terminals vs repeated firing",m:["psps"]},
+  {id:"c9",l:"Glycine loss → spasm",x:2220,y:430,p:"synrec",s:"strychnine · tetanus",m:["psps","tetanus"]},
+  {id:"c10",l:"Too much excitation",x:2820,y:430,p:"synrec",s:"seizures",m:["psps","antiepileptics"]},
+  {id:"n1",l:"Amino acids",x:420,y:610,p:"synnt",k:"hub",s:"glutamate excites · GABA, glycine inhibit",m:["ntclasses"]},
+  {id:"n2",l:"Biogenic amines",x:1020,y:610,p:"synnt",s:"dopamine · norepinephrine · serotonin · histamine",m:["ntclasses"]},
+  {id:"n3",l:"Nitric oxide",x:1620,y:610,p:"synnt",s:"made on demand, diffuses away",m:["ntclasses"]},
+  {id:"n4",l:"Endocannabinoids",x:2220,y:610,p:"synnt",s:"retrograde to CB1",m:["ntclasses"]},
+  {id:"n5",l:"Neuropeptides",x:2820,y:610,p:"synnt",s:"modulators",m:["ntclasses"]},
+  {id:"n6",l:"DAT · NET · SERT",x:420,y:690,p:"synnt",s:"reuptake transporters",m:["ntclear","ssri"]},
+  {id:"n7",l:"Acetylcholinesterase",x:1020,y:690,p:"synnt",s:"hydrolysis in the cleft",m:["ntclear","achei","organophosphate"]},
+  {id:"n8",l:"Choline transporter",x:1620,y:690,p:"synnt",s:"recycles choline",m:["ntclear"]},
+  {id:"n9",l:"Localize the step",x:2220,y:690,p:"synnt",k:"hub",s:"release · cleft · receptor",m:["synapsedx"]},
+  {id:"nx1",l:"→ Neurotransmitters & Psychopharmacology",x:2820,y:690,p:"neutral",k:"ghost",go:"neurotx"}],
+ edges:[
+  {a:"r1",b:"r2",p:"synrel"},
+  {a:"r2",b:"r3",p:"synrel"},
+  {a:"r3",b:"r4",p:"synrel"},
+  {a:"c1",b:"c2",p:"synrec"},
+  {a:"c6",b:"c7",p:"synrec"},
+  {a:"c7",b:"c8",p:"synrec"},
+  {a:"n6",b:"n7",p:"synnt"},
+  {a:"n7",b:"n8",p:"synnt"}]
+};
+
+MAPS.motorctl = {
+ t:"Motor Control — Cortex to Muscle", sub:"Motor cortex areas and the homunculus · where corticospinal and corticonuclear fibers run · the brainstem pathways for posture · and the motor unit, spinal reflex circuits and lower motor neuron at the end of every pathway",
+ w:3300, h:1032,
+ fa:"461, 503, 513, 524, 546",
+ src:["Fundamental Neuroscience ch 24 — Motor System I: Peripheral Sensory, Brainstem, and Spinal Influence on Anterior Horn Neurons", "Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement", "Guyton ch 55 — Spinal Cord Motor Functions; The Cord Reflexes", "Guyton ch 56 — Cortical and Brain Stem Control of Motor Function"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Motor cortex and the corticofugal pathways"},
+  {x:140,y:370,w:3020,h:120,l:"Brainstem pathways for posture"},
+  {x:140,y:550,w:3020,h:200,l:"The lower motor neuron and spinal circuits"}],
+ panels:[
+  {x:140,y:810,w:1480,h:160,kw:162,t:"Where corticospinal fibers run",rows:[
+   ["Cortex","area 4 (~31%), area 6, parietal lobe (~40%)"],
+   ["Internal capsule","caudal half of the posterior limb · leg fibers caudal"],
+   ["Midbrain","middle third of the crus cerebri · arm medial, leg lateral"],
+   ["Pons → medulla","bundles in the basilar pons → pyramid"],
+   ["Decussation","most cross → lateral corticospinal tract"]]},
+  {x:1680,y:810,w:1480,h:138,kw:256,t:"Corticonuclear laterality",rows:[
+   ["Upper face","both hemispheres about equally"],
+   ["Lower face","mainly the opposite hemisphere"],
+   ["Genioglossus (XII)","mainly the opposite hemisphere"],
+   ["Jaw (V) · palate (ambiguus)","substantial input from both sides"]]}],
+ nodes:[
+  {id:"k1",l:"Primary motor cortex",x:420,y:170,p:"mccortex",k:"hub",s:"area 4 · ~31% of corticospinal fibers",m:["motorcortex"]},
+  {id:"k2",l:"Motor homunculus",x:1020,y:170,p:"mccortex",s:"leg medial · face lateral",m:["motorcortex"]},
+  {id:"k3",l:"Premotor & supplementary areas",x:1620,y:170,p:"mccortex",s:"area 6 · planning, bimanual",m:["motorcortex"]},
+  {id:"k4",l:"Apraxia",x:2220,y:170,p:"mccortex",s:"no paralysis, no spasticity",m:["motorcortex"]},
+  {id:"k5",l:"ACA vs MCA weakness",x:2820,y:170,p:"mccortex",s:"leg vs face and arm",m:["motorcortex","acastroke","mcastroke"]},
+  {id:"k6",l:"Internal capsule",x:420,y:250,p:"mccortex",s:"posterior limb · leg fibers caudal",m:["cstsomato"]},
+  {id:"k7",l:"Crus cerebri",x:1020,y:250,p:"mccortex",s:"middle third · arm medial, leg lateral",m:["cstsomato"]},
+  {id:"k8",l:"Pyramid & decussation",x:1620,y:250,p:"mccortex",s:"most fibers cross",m:["cstsomato","csttract"]},
+  {id:"k9",l:"Corticonuclear fibers",x:2220,y:250,p:"mccortex",k:"hub",s:"most nuclei get both hemispheres",m:["corticonuc"]},
+  {id:"k10",l:"Central facial palsy",x:2820,y:250,p:"mccortex",s:"forehead spared",m:["corticonuc","bell"]},
+  {id:"b1",l:"Lateral vestibulospinal",x:420,y:430,p:"mcbs",k:"hub",s:"ipsilateral extensors",m:["bsmotor"]},
+  {id:"b2",l:"Medial vestibulospinal",x:1020,y:430,p:"mcbs",s:"bilateral · head and neck",m:["bsmotor"]},
+  {id:"b3",l:"Reticulospinal & rubrospinal",x:1620,y:430,p:"mcbs",s:"tone and posture",m:["bsmotor"]},
+  {id:"b4",l:"Tectospinal",x:2220,y:430,p:"mcbs",s:"gaze changes · minor in humans",m:["bsmotor"]},
+  {id:"b5",l:"Decorticate vs decerebrate",x:2820,y:430,p:"mcbs",s:"above vs below the red nucleus",m:["posturing"]},
+  {id:"l1",l:"Final common pathway",x:420,y:610,p:"mclmn",k:"hub",s:"anterior horn cell",m:["motorunit"]},
+  {id:"l2",l:"Size principle",x:1020,y:610,p:"mclmn",s:"small units first",m:["motorunit"]},
+  {id:"l3",l:"α–γ coactivation",x:1620,y:610,p:"mclmn",s:"keeps the spindle taut",m:["motorunit"]},
+  {id:"l4",l:"Spindle & tendon organ",x:2220,y:610,p:"mclmn",s:"Ia · II · Ib",m:["stretchrec","motorunit"]},
+  {id:"l5",l:"Fasciculations · fibrillations",x:2820,y:610,p:"mclmn",s:"denervation",m:["motorunit","umnlmn"]},
+  {id:"l6",l:"Renshaw cells",x:420,y:690,p:"mclmn",s:"lateral inhibition · sharpens the signal",m:["spinalcirc"]},
+  {id:"l7",l:"Withdrawal & crossed extension",x:1020,y:690,p:"mclmn",s:"polysynaptic",m:["spinalcirc"]},
+  {id:"l8",l:"Propriospinal fibers",x:1620,y:690,p:"mclmn",s:"segment to segment",m:["spinalcirc"]},
+  {id:"l9",l:"UMN vs LMN signs",x:2220,y:690,p:"mclmn",s:"localize the lesion",m:["umnlmn","weakloc"]},
+  {id:"l10",l:"ALS · polio · SMA",x:2820,y:690,p:"mclmn",s:"anterior horn disease",m:["als","polio","sma"]}],
+ edges:[
+  {a:"k1",b:"k2",p:"mccortex"},
+  {a:"k2",b:"k3",p:"mccortex"},
+  {a:"k3",b:"k4",p:"mccortex"},
+  {a:"k6",b:"k7",p:"mccortex"},
+  {a:"k7",b:"k8",p:"mccortex"},
+  {a:"k9",b:"k10",p:"mccortex"},
+  {a:"b1",b:"b2",p:"mcbs"},
+  {a:"l1",b:"l2",p:"mclmn"},
+  {a:"l2",b:"l3",p:"mclmn"},
+  {a:"l6",b:"l7",p:"mclmn"}]
+};
+
+MAPS.neiomm = {
+ t:"Neuroendocrine-Immune & Autonomic Balance (OMM)", sub:"One neuro-endocrine-immune network: pain drives cortisol and sympathetic tone · inflammatory mediators, lymph and the spleen · aging of immune and endocrine reserve · the autonomic layout and level table · and how OMT restores balance",
+ w:3300, h:1032,
+ fa:"",
+ src:["OCOM OMM — SDL 13 lecture: Neuroendocrine/Immune I", "OCOM OMM — SDL 14 lecture: Neuroendocrine/Immune II"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"The neuro-endocrine-immune network"},
+  {x:140,y:370,w:3020,h:120,l:"How OMT supports homeostasis"},
+  {x:140,y:550,w:3020,h:200,l:"Autonomic layout and the reflexes"}],
+ panels:[
+  {x:140,y:810,w:1480,h:160,kw:400,t:"Sympathetic levels (course table)",rows:[
+   ["Head & neck · heart · lungs","T1–T5 (lungs T2–T6)"],
+   ["Esophagus","T2–T6"],
+   ["Stomach · liver, GB, spleen, pancreas","T5–T9 · celiac"],
+   ["Small bowel · kidneys, gonads · right colon","T9–T11 · T10–T11 · superior mesenteric"],
+   ["Left colon, rectum · bladder, uterus, prostate","T12–L2 · inferior mesenteric · inferior hypogastric"]]},
+  {x:1680,y:810,w:1480,h:138,kw:120,t:"Stress, by system",rows:[
+   ["Nervous","nociceptive barrage → facilitation, sympathicotonia"],
+   ["Endocrine","HPA axis → cortisol"],
+   ["Immune","adaptive immunity suppressed; local inflammation"],
+   ["Overall","allostatic load rises"]]}],
+ nodes:[
+  {id:"e1",l:"One integrated network",x:420,y:170,p:"neinet",k:"hub",s:"shared signals, feedback loops",m:["neinetwork"]},
+  {id:"e2",l:"Pain → hypothalamus → cortisol",x:1020,y:170,p:"neinet",s:"and sympathetic tone",m:["neinetwork","cortisolact"]},
+  {id:"e3",l:"Allostatic load",x:1620,y:170,p:"neinet",s:"wear and tear of chronic stress",m:["neinetwork"]},
+  {id:"e4",l:"Facilitated segments",x:2220,y:170,p:"neinet",s:"Korr’s neurologic lens",m:["facilitation"]},
+  {id:"e5",l:"Sympathicotonia",x:2820,y:170,p:"neinet",s:"organ-by-organ effects",m:["sympathicotonia"]},
+  {id:"e6",l:"Inflammatory mediators",x:420,y:250,p:"neinet",s:"substance P · CGRP · prostaglandins",m:["immunehomeo"]},
+  {id:"e7",l:"Lymphatic–immune axis",x:1020,y:250,p:"neinet",s:"compressed lymphatics, poor surveillance",m:["immunehomeo","lymphpump"]},
+  {id:"e8",l:"Splenic pump",x:1620,y:250,p:"neinet",s:"↑ leukocytes and reticulocytes",m:["immunehomeo"]},
+  {id:"e9",l:"Immune aging",x:2220,y:250,p:"neinet",s:"CD8 decline · fewer antibodies · more autoantibodies",m:["neiaging"]},
+  {id:"e10",l:"Endocrine aging",x:2820,y:250,p:"neinet",s:"occult hypothyroidism · insulin resistance",m:["neiaging"]},
+  {id:"o1",l:"Blood flow to glands",x:420,y:430,p:"neiomt",k:"hub",s:"free vessels and nerves",m:["omthomeo"]},
+  {id:"o2",l:"Veins & lymph collapse first",x:1020,y:430,p:"neiomt",s:"lowest pressures",m:["omthomeo"]},
+  {id:"o3",l:"Restore autonomic balance",x:1620,y:430,p:"neiomt",s:"less facilitation, less cortisol",m:["omthomeo"]},
+  {id:"o4",l:"The five models",x:2220,y:430,p:"neiomt",s:"treatment lenses",m:["fivemodels"]},
+  {id:"ox1",l:"→ OMT Techniques",x:2820,y:430,p:"neutral",k:"ghost",go:"omt"},
+  {id:"a1",l:"Sympathetic T1–L2",x:420,y:610,p:"neians",k:"hub",s:"white rami → chain → gray rami",m:["ansomm"]},
+  {id:"a2",l:"Parasympathetic III, VII, IX, X · S2–S4",x:1020,y:610,p:"neians",s:"ganglia at the organ",m:["ansomm","pelvicsplanch"]},
+  {id:"a3",l:"Vagal reach",x:1620,y:610,p:"neians",s:"to the proximal ⅔ of the transverse colon",m:["ansomm","vagusomm"]},
+  {id:"a4",l:"The level table",x:2220,y:610,p:"neians",s:"organ by segment",m:["autolevels"]},
+  {id:"a5",l:"Heart T1–T5",x:2820,y:610,p:"neians",s:"ventricles T1–3 · atria T4–5",m:["autolevels","omheart"]},
+  {id:"a6",l:"Viscerosomatic reflex",x:420,y:690,p:"neians",s:"organ → paraspinal changes",m:["vsreflex"]},
+  {id:"a7",l:"Somatovisceral reflex",x:1020,y:690,p:"neians",s:"spine → organ",m:["somatovisc"]},
+  {id:"a8",l:"Viscerovisceral reflex",x:1620,y:690,p:"neians",s:"organ → organ",m:["viscvisc"]},
+  {id:"a9",l:"Reflex research",x:2220,y:690,p:"neians",s:"Burns 1907 → Beal 1980s",m:["reflexhist"]},
+  {id:"a10",l:"Chapman reflex points",x:2820,y:690,p:"neians",s:"tender nodules",m:["chapmanpt"]}],
+ edges:[
+  {a:"e1",b:"e2",p:"neinet"},
+  {a:"e2",b:"e3",p:"neinet"},
+  {a:"e6",b:"e7",p:"neinet"},
+  {a:"e9",b:"e10",p:"neinet"},
+  {a:"o1",b:"o2",p:"neiomt"},
+  {a:"a1",b:"a2",p:"neians"},
+  {a:"a2",b:"a3",p:"neians"},
+  {a:"a4",b:"a5",p:"neians"},
+  {a:"a6",b:"a7",p:"neians"},
+  {a:"a7",b:"a8",p:"neians"}]
+};
+
+MAPS.orthowork = {
+ t:"Knee, Hip & Hand Workups", sub:"The five-question workflow for knee and hip pain · osteoarthritis and patellofemoral pain · ligament and tendon injuries of the knee, finger and thumb · the septic hip and AVN staging · and the dislocations with something not to miss",
+ w:3300, h:1270,
+ fa:"454, 464, 466, 469, 472, 474",
+ src:["OCOM Ortho — SDL 4 lecture & reading: Knee pain and injury (Martin; Practical Office Orthopedics ch 1)", "OCOM Ortho — SDL 5 lecture & reading: Hip and thigh pain and injury (Martin; The Patient History ch 55)", "OCOM Ortho — SDL 14–15 lecture & readings: Elbow, wrist and hand pain and injury (Martin; Atlas of Emergency Medicine)", "OCOM Ortho — SDL 25 readings: Joint dislocations (Current Diagnosis & Treatment in Orthopedics ch 2, 11)", "Robbins ch 26 — Bones, joints, and soft tissue tumors", "Moore ch 7 — Lower Limb"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Knee"},
+  {x:140,y:370,w:3020,h:200,l:"Hip"},
+  {x:140,y:630,w:3020,h:200,l:"Elbow, wrist and hand"},
+  {x:140,y:890,w:3020,h:120,l:"Dislocations — what not to miss"}],
+ panels:[
+  {x:140,y:1070,w:1480,h:138,kw:120,t:"Modified Kocher criteria (septic hip)",rows:[
+   ["Criteria","non-weight-bearing · ESR > 40 · T > 101.3 °F · WBC > 12,000"],
+   ["0 criteria","< 0.2% septic"],
+   ["1 · 2","3% · 40%"],
+   ["3 · 4","93% · 99.6%"]]},
+  {x:1680,y:1070,w:1480,h:116,kw:120,t:"Ligament laxity grades (LCL, PCL)",rows:[
+   ["Grade 1","tender, no laxity (PCL: up to 5 mm)"],
+   ["Grade 2","5–10 mm with a solid end point"],
+   ["Grade 3","> 10 mm, no end point"]]}],
+ nodes:[
+  {id:"k1",l:"Five-question workflow",x:420,y:170,p:"okknee",k:"hub",s:"trauma → danger → arthritis → nerve → generator",m:["kneeflow"]},
+  {id:"k2",l:"X-ray views",x:1020,y:170,p:"okknee",s:"weight-bearing AP · Rosenberg · Merchant",m:["kneeflow"]},
+  {id:"k3",l:"When to get an MRI",x:1620,y:170,p:"okknee",s:"complex · soft tissue · cartilage",m:["kneeflow"]},
+  {id:"k4",l:"Knee osteoarthritis",x:2220,y:170,p:"okknee",s:"stiffness ≤ 30 min · age ≥ 45",m:["kneeoa"]},
+  {id:"k5",l:"OARSI core care",x:2820,y:170,p:"okknee",s:"education + land-based exercise",m:["kneeoa"]},
+  {id:"k6",l:"Patellofemoral pain",x:420,y:250,p:"okknee",s:"25–40% of knee visits",m:["pfpsrehab","patellofemoral"]},
+  {id:"k7",l:"Dynamic knee valgus",x:1020,y:250,p:"okknee",s:"weak hip abductors",m:["pfpsrehab"]},
+  {id:"k8",l:"PCL & LCL injuries",x:1620,y:250,p:"okknee",s:"isolated → brace + PT",m:["pcllcl"]},
+  {id:"k9",l:"ACL · MCL · menisci",x:2220,y:250,p:"okknee",s:"unhappy triad",m:["kneeinj"]},
+  {id:"k10",l:"Knee dislocation",x:2820,y:250,p:"okknee",s:"check the ABI",m:["dislocs"]},
+  {id:"h1",l:"Hip workflow",x:420,y:430,p:"okhip",k:"hub",s:"X-ray the hip — even for knee pain",m:["hipflow"]},
+  {id:"h2",l:"Hip osteoarthritis",x:1020,y:430,p:"okhip",s:"internal rotation lost first",m:["hipflow","oa"]},
+  {id:"h3",l:"Gluteus medius tendinopathy",x:1620,y:430,p:"okhip",s:"lateral hip pain",m:["hipflow"]},
+  {id:"h4",l:"Snapping hip",x:2220,y:430,p:"okhip",s:"iliopsoas",m:["hipflow"]},
+  {id:"h5",l:"Meralgia paresthetica",x:2820,y:430,p:"okhip",s:"lateral femoral cutaneous nerve",m:["meralgia"]},
+  {id:"h6",l:"Septic hip",x:420,y:510,p:"okhip",k:"hub",s:"aspirate the joint",m:["septichip"]},
+  {id:"h7",l:"Kocher criteria",x:1020,y:510,p:"okhip",s:"4 of 4 ≈ 99.6%",m:["septichip"]},
+  {id:"h8",l:"Transient synovitis",x:1620,y:510,p:"okhip",s:"afebrile, normal labs",m:["septichip"]},
+  {id:"h9",l:"AVN — ARCO stages",x:2220,y:510,p:"okhip",s:"MRI before X-ray changes",m:["avnarco","avn"]},
+  {id:"h10",l:"Hip fractures",x:2820,y:510,p:"okhip",s:"femoral neck · intertrochanteric",m:["hipfx"]},
+  {id:"w1",l:"Lateral epicondylitis",x:420,y:690,p:"okhand",s:"ECRB · eccentric overload",m:["overuse"]},
+  {id:"w2",l:"De Quervain",x:1020,y:690,p:"okhand",s:"Finkelstein test",m:["overuse"]},
+  {id:"w3",l:"Trigger finger",x:1620,y:690,p:"okhand",s:"A1 pulley",m:["triggerfinger"]},
+  {id:"w4",l:"Carpal tunnel syndrome",x:2220,y:690,p:"okhand",s:"median nerve",m:["carpaltunnel"]},
+  {id:"w5",l:"Scaphoid fracture",x:2820,y:690,p:"okhand",s:"snuffbox",m:["wristinj"]},
+  {id:"w6",l:"Mallet finger",x:420,y:770,p:"okhand",k:"hub",s:"splint the DIP 6 weeks",m:["fingertendon"]},
+  {id:"w7",l:"Jersey finger",x:1020,y:770,p:"okhand",s:"FDP · ring finger · refer",m:["fingertendon"]},
+  {id:"w8",l:"Leddy-Packer types",x:1620,y:770,p:"okhand",s:"how far the FDP retracts",m:["fingertendon"]},
+  {id:"w9",l:"Gamekeeper’s thumb",x:2220,y:770,p:"okhand",s:"thumb UCL",m:["thumbucl"]},
+  {id:"w10",l:"Stener lesion",x:2820,y:770,p:"okhand",s:"adductor aponeurosis in the way",m:["thumbucl"]},
+  {id:"d1",l:"Knee dislocation",x:420,y:950,p:"okdisl",k:"hub",s:"ABI < 0.9 → CT angiography",m:["dislocs"]},
+  {id:"d2",l:"Volar PIP dislocation",x:1020,y:950,p:"okdisl",s:"central slip · splint in extension",m:["dislocs"]},
+  {id:"d3",l:"Ankle syndesmosis",x:1620,y:950,p:"okdisl",s:"clear space > 6 mm",m:["dislocs","anklefx"]},
+  {id:"d4",l:"Elbow · coronoid",x:2220,y:950,p:"okdisl",s:"stability",m:["dislocs","elbowinj"]},
+  {id:"d5",l:"Shoulder dislocation",x:2820,y:950,p:"okdisl",s:"axillary nerve",m:["shoulderdisloc"]}],
+ edges:[
+  {a:"k1",b:"k2",p:"okknee"},
+  {a:"k2",b:"k3",p:"okknee"},
+  {a:"k4",b:"k5",p:"okknee"},
+  {a:"k6",b:"k7",p:"okknee"},
+  {a:"h1",b:"h2",p:"okhip"},
+  {a:"h6",b:"h7",p:"okhip"},
+  {a:"h7",b:"h8",p:"okhip"},
+  {a:"w6",b:"w7",p:"okhand"},
+  {a:"w7",b:"w8",p:"okhand"},
+  {a:"w9",b:"w10",p:"okhand"}]
+};
+
+MAPS.respinf = {
+ t:"Respiratory Infections by Site", sub:"Upper airway infections and how they spread into the neck and mediastinum · the lung’s defenses and how they fail · the stages of lobar pneumonia, aspiration and abscess · pneumococcal carriage and vaccines · and Mycoplasma in the lab",
+ w:3300, h:910,
+ fa:"125, 134, 148, 188, 680, 691, 702",
+ src:["Robbins ch 15 — The lung", "Robbins ch 16 — Head and neck", "Moore ch 8 — Neck"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Upper airway and neck"},
+  {x:140,y:370,w:3020,h:280,l:"Lungs"}],
+ panels:[
+  {x:140,y:710,w:1480,h:138,kw:265,t:"Lobar pneumonia stages",rows:[
+   ["Congestion · days 1–2","engorged vessels, edema, bacteria"],
+   ["Red hepatization · days 3–4","neutrophils, RBCs, fibrin fill alveoli"],
+   ["Gray hepatization · days 5–7","RBCs break down; fibrinosuppurative exudate"],
+   ["Resolution · day 8+","exudate digested and cleared"]]},
+  {x:1680,y:710,w:1480,h:138,kw:170,t:"Mycoplasma in the lab",rows:[
+   ["Gram stain","nothing — no cell wall"],
+   ["Culture","sterol-supplemented media, weeks, tiny colonies"],
+   ["Serology","paired IgM and IgG 2–3 weeks apart"],
+   ["Reinfected adults","may show only IgG"]]}],
+ nodes:[
+  {id:"u1",l:"Otitis media",x:420,y:170,p:"riUpper",s:"Eustachian tube · S pneumoniae, H flu",m:["otitismedia"]},
+  {id:"u2",l:"Rhinosinusitis",x:1020,y:170,p:"riUpper",s:"viral, then bacterial",m:["sinusitis"]},
+  {id:"u3",l:"Pharyngitis & tonsillitis",x:1620,y:170,p:"riUpper",s:"group A strep",m:["pharyngitis"]},
+  {id:"u4",l:"Peritonsillar abscess",x:2220,y:170,p:"riUpper",k:"hub",s:"drain + antibiotics",m:["deepneck"]},
+  {id:"u5",l:"Retropharyngeal → mediastinum",x:2820,y:170,p:"riUpper",s:"descending mediastinitis",m:["deepneck"]},
+  {id:"u6",l:"Epiglottitis",x:420,y:250,p:"riUpper",s:"H influenzae type b",m:["epiglottitis"]},
+  {id:"u7",l:"Croup",x:1020,y:250,p:"riUpper",s:"parainfluenza",m:["parainfl"]},
+  {id:"u8",l:"Influenza",x:1620,y:250,p:"riUpper",s:"opens the door for bacteria",m:["flu"]},
+  {id:"u9",l:"Diphtheria",x:2220,y:250,p:"riUpper",s:"pseudomembrane",m:["diphtheria"]},
+  {id:"ux1",l:"→ Ear, Nose & Throat",x:2820,y:250,p:"neutral",k:"ghost",go:"ent"},
+  {id:"l1",l:"Lung host defenses",x:420,y:430,p:"riLower",k:"hub",s:"escalator · macrophages · neutrophils",m:["lungdefense"]},
+  {id:"l2",l:"Mucociliary failure",x:1020,y:430,p:"riLower",s:"smoke · viruses · immotile cilia",m:["lungdefense"]},
+  {id:"l3",l:"Secondary bacterial pneumonia",x:1620,y:430,p:"riLower",s:"S aureus after flu",m:["lungdefense","saureus"]},
+  {id:"l4",l:"Stages of lobar pneumonia",x:2220,y:430,p:"riLower",s:"congestion → red → gray → resolution",m:["lobarstages"]},
+  {id:"l5",l:"Bronchopneumonia",x:2820,y:430,p:"riLower",s:"patchy · pores of Kohn",m:["lobarstages","pneumonia"]},
+  {id:"l6",l:"Lung abscess",x:420,y:510,p:"riLower",s:"oral anaerobes",m:["lungabscess"]},
+  {id:"l7",l:"Aspiration → right lung",x:1020,y:510,p:"riLower",s:"more vertical bronchus",m:["lungabscess"]},
+  {id:"l8",l:"Pneumococcus",x:1620,y:510,p:"riLower",s:"lobar pneumonia, otitis, meningitis",m:["spneumo"]},
+  {id:"l9",l:"Carriage & serotype replacement",x:2220,y:510,p:"riLower",s:"conjugate vs polysaccharide vaccine",m:["pneumocarriage","vxconj"]},
+  {id:"l10",l:"Likely organism by age",x:2820,y:510,p:"riLower",s:"community vs hospital",m:["pnacauses"]},
+  {id:"l11",l:"Mycoplasma pneumonia",x:420,y:590,p:"riLower",s:"walking pneumonia",m:["mycoplasma"]},
+  {id:"l12",l:"P1 adhesin & CARDS toxin",x:1020,y:590,p:"riLower",s:"attach, then damage cilia",m:["mycolab"]},
+  {id:"l13",l:"Lab diagnosis",x:1620,y:590,p:"riLower",s:"sterol media · paired serology",m:["mycolab"]},
+  {id:"l14",l:"Cold agglutinins",x:2220,y:590,p:"riLower",s:"IgM hemolysis",m:["mycolab","coldaiha"]},
+  {id:"l15",l:"Legionella · Klebsiella",x:2820,y:590,p:"riLower",s:"other lobar causes",m:["legionella","klebsiella"]}],
+ edges:[
+  {a:"u1",b:"u2",p:"riUpper"},
+  {a:"u4",b:"u5",p:"riUpper"},
+  {a:"l1",b:"l2",p:"riLower"},
+  {a:"l2",b:"l3",p:"riLower"},
+  {a:"l4",b:"l5",p:"riLower"},
+  {a:"l6",b:"l7",p:"riLower"},
+  {a:"l8",b:"l9",p:"riLower"},
+  {a:"l11",b:"l12",p:"riLower"},
+  {a:"l12",b:"l13",p:"riLower"}]
+};
+
+MAPS.psychtx = {
+ t:"Depression Care, Psychotherapy & Forensic Psychiatry", sub:"Depression specifiers, secondary causes and PMDD · where to treat, how long to continue and how to stop · cognitive, behavioral and brief dynamic therapies · and commitment, the duty to protect, restraint and professional ethics",
+ w:3300, h:1010,
+ fa:"593",
+ src:["Kaplan & Sadock ch 7 — Depressive Disorders", "Kaplan & Sadock ch 23 — Psychotherapy", "Kaplan & Sadock ch 27 — Ethics and Professionalism", "Kaplan & Sadock ch 28 — Forensic and Legal Issues", "OCOM Psych — SDL 12 reading: Premenstrual syndrome and premenstrual dysphoric disorder (Am Fam Physician 2016)"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Which depression"},
+  {x:140,y:290,w:3020,h:200,l:"Treatment"},
+  {x:140,y:550,w:3020,h:200,l:"Law and ethics"}],
+ panels:[
+  {x:140,y:810,w:1480,h:116,kw:120,t:"PMS vs PMDD",rows:[
+   ["PMS (ACOG)","≥ 1 affective + ≥ 1 somatic symptom, cyclical"],
+   ["PMDD (APA)","≥ 5 symptoms, ≥ 1 marked affective, week before menses"],
+   ["Both","resolve after menses · 2 cycles of prospective ratings"]]},
+  {x:1680,y:810,w:1480,h:138,kw:127,t:"An antidepressant course",rows:[
+   ["Trial","4–5 weeks at the maximum dose before calling it failed"],
+   ["Continuation","≥ 6 months or the previous episode’s length"],
+   ["Stopping","taper over 1–2 weeks"],
+   ["Maintenance","episodes < ~2½ years apart or severe"]]}],
+ nodes:[
+  {id:"d1",l:"Major depressive disorder",x:420,y:170,p:"pdx",k:"hub",s:"the core syndrome",m:["mdd"]},
+  {id:"d2",l:"Specifiers",x:1020,y:170,p:"pdx",s:"melancholic · atypical · seasonal",m:["depspec"]},
+  {id:"d3",l:"Secondary depression",x:1620,y:170,p:"pdx",s:"drugs · thyroid · stroke",m:["depspec"]},
+  {id:"d4",l:"PMDD vs PMS",x:2220,y:170,p:"pdx",s:"luteal, gone after menses",m:["pmdd"]},
+  {id:"d5",l:"Peripartum onset",x:2820,y:170,p:"pdx",s:"within 4 weeks of delivery",m:["peripartum","depspec"]},
+  {id:"t1",l:"Hospitalize?",x:420,y:350,p:"ptx",k:"hub",s:"suicide · homicide · can’t care for self",m:["deptx"]},
+  {id:"t2",l:"Continue ≥ 6 months",x:1020,y:350,p:"ptx",s:"or the last episode’s length",m:["deptx"]},
+  {id:"t3",l:"Taper over 1–2 weeks",x:1620,y:350,p:"ptx",s:"by half-life",m:["deptx"]},
+  {id:"t4",l:"Maintenance treatment",x:2220,y:350,p:"ptx",s:"frequent or severe episodes",m:["deptx"]},
+  {id:"t5",l:"SSRIs",x:2820,y:350,p:"ptx",s:"first-line drugs",m:["ssri"]},
+  {id:"t6",l:"Cognitive therapy",x:420,y:430,p:"ptx",s:"triad · automatic thoughts",m:["cogbeh"]},
+  {id:"t7",l:"Behavioral activation",x:1020,y:430,p:"ptx",s:"restore reinforcement",m:["cogbeh"]},
+  {id:"t8",l:"Exposure & flooding",x:1620,y:430,p:"ptx",s:"phobias",m:["cogbeh","phobia"]},
+  {id:"t9",l:"Brief dynamic therapy",x:2220,y:430,p:"ptx",s:"Malan · Sifneos",m:["briefdyn"]},
+  {id:"t10",l:"ECT",x:2820,y:430,p:"ptx",s:"severe or psychotic depression",m:["ect"]},
+  {id:"e1",l:"Involuntary hospitalization",x:420,y:610,p:"peth",k:"hub",s:"danger to self or others",m:["forensic"]},
+  {id:"e2",l:"Duty to protect (Tarasoff)",x:1020,y:610,p:"peth",s:"warn, notify police, hospitalize",m:["forensic","confid"]},
+  {id:"e3",l:"Seclusion & restraint",x:1620,y:610,p:"peth",s:"least restrictive option",m:["forensic"]},
+  {id:"e4",l:"Minors’ consent",x:2220,y:610,p:"peth",s:"STIs · pregnancy · substance use",m:["forensic","minors"]},
+  {id:"e5",l:"Capacity vs competence",x:2820,y:610,p:"peth",s:"clinical vs legal",m:["capacity","psyethics"]},
+  {id:"e6",l:"Weak vs strong paternalism",x:420,y:690,p:"peth",s:"impaired vs intact autonomy",m:["psyethics"]},
+  {id:"e7",l:"Boundaries",x:1020,y:690,p:"peth",s:"no sex with patients",m:["psyethics"]},
+  {id:"e8",l:"Malpractice & foreseeability",x:1620,y:690,p:"peth",s:"negligence",m:["forensic"]},
+  {id:"e9",l:"Suicide risk",x:2220,y:690,p:"peth",s:"assess and document",m:["suicide"]},
+  {id:"ex1",l:"→ Ethics & Safety",x:2820,y:690,p:"neutral",k:"ghost",go:"ethics"}],
+ edges:[
+  {a:"d2",b:"d3",p:"pdx"},
+  {a:"t1",b:"t2",p:"ptx"},
+  {a:"t2",b:"t3",p:"ptx"},
+  {a:"t3",b:"t4",p:"ptx"},
+  {a:"t6",b:"t7",p:"ptx"},
+  {a:"e1",b:"e2",p:"peth"},
+  {a:"e6",b:"e7",p:"peth"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
   ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","iemlab","nucleo","collagen","vitamins","cellcycle","cellbio","molbio","signal","genetics"]],
   ["path","Pathology",["genpath","neoplasia","thromboemb"]],
   ["cardio","Cardiac",["cardiac","cardcycle","valves","ihd","chd","vasc","vascshock","htnrx","rhythm"]],
-  ["pulmo","Pulmonary",["pulm","lungmech","gasx","lungdz","respdrug"]],
+  ["pulmo","Pulmonary",["pulm","lungmech","gasx","lungdz","respinf","respdrug"]],
   ["renal","Renal",["nephron","renalphys","renalna","urineconc","histoembryo","glom","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","liver","gitract","abdanat"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","tumark"]],
   ["immuno","Immunology",["immune","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
   ["endo","Endocrine",["axes","hormones","rclass","pancreas"]],
   ["devrepro","Repro & Development",["sexdev","repro","obgyn","malerepro","embryo"]],
-  ["neuro","Neuro",["neurotx","ans","membrane","spine","brainstem","chemvisc","weakness","stroke","brainreg","basal","neuroer","seizhead"]],
-  ["behav","Psych & Behavior",["psychmse","psychdx","psychsom","substance","sleepdev"]],
+  ["neuro","Neuro",["neurotx","synapse","ans","membrane","spine","brainstem","chemvisc","motorctl","weakness","stroke","brainreg","basal","neuroer","seizhead"]],
+  ["behav","Psych & Behavior",["psychmse","psychdx","psychtx","psychsom","substance","sleepdev"]],
   ["eent","EENT",["eyecn","vision","ent","hearing","larynx"]],
-  ["msk","Musculoskeletal",["muscle","bone","bonehisto","arthritis","derm","plexus","orthoinj","sportsortho"]],
-  ["omm","OMM",["vsomatic","chapman","omt","chestomt","ommmech","janda","cranial","jones"]],
+  ["msk","Musculoskeletal",["muscle","bone","bonehisto","arthritis","derm","plexus","orthoinj","sportsortho","orthowork"]],
+  ["omm","OMM",["vsomatic","neiomm","chapman","omt","chestomt","ommmech","janda","cranial","jones"]],
   ["id","Infectious",["microlab","abx","antiviral","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
   ["pharm","Pharm",["pkpd","cyp","adr","aging","tox","environ","anesth","pain"]],
   ["stats","Biostats & Ethics",["biostats","ethics"]],
@@ -28830,7 +29572,94 @@ function cofuncCurves(cmax,msfp,r){
   let best=0,d=1e9; for(let v=-2;v<=10;v+=0.01){ const k=Math.abs(card(v)-vasc(v)); if(k<d){ d=k; best=v; } }
   return [{pts:curve(card,-2,10),lab:"Cardiac function (cardiac output)"},{pts:curve(vasc,-2,10),lab:"Vascular function (venous return)"},{marks:[[best,card(best),"operating point"],[msfp,0,"mean systemic pressure"]]}];
 }
+/* monotone cubic through key points (Fritsch–Carlson): smooth, and never overshoots a
+   plateau or a peak — used for the action-potential shapes */
+function mono(kp,n=24){
+  const k=kp.length, d=[], m=[];
+  for(let i=0;i<k-1;i++) d.push((kp[i+1][1]-kp[i][1])/(kp[i+1][0]-kp[i][0]));
+  m[0]=d[0]; m[k-1]=d[k-2];
+  for(let i=1;i<k-1;i++) m[i]=d[i-1]*d[i]<=0?0:(d[i-1]+d[i])/2;
+  for(let i=0;i<k-1;i++){ if(d[i]===0){ m[i]=0; m[i+1]=0; continue; }
+    const a=m[i]/d[i], b=m[i+1]/d[i], h=a*a+b*b; if(h>9){ const t=3/Math.sqrt(h); m[i]=t*a*d[i]; m[i+1]=t*b*d[i]; } }
+  const out=[];
+  for(let i=0;i<k-1;i++){ const [x0,y0]=kp[i],[x1,y1]=kp[i+1], h=x1-x0;
+    for(let j=(i?1:0);j<=n;j++){ const t=j/n, t2=t*t, t3=t2*t;
+      out.push([x0+h*t,(2*t3-3*t2+1)*y0+(t3-2*t2+t)*h*m[i]+(-2*t3+3*t2)*y1+(t3-t2)*h*m[i+1]]); } }
+  return out;
+}
+/* nerve action potential (ms, mV) */
+const AP_NERVE=[[0,-70],[1,-70],[1.2,-56],[1.55,35],[1.75,18],[2.4,-62],[2.75,-84],[3.2,-81],[4.2,-71],[6,-70]];
+/* SA-node cycles: maximum diastolic potential, threshold and phase-4 duration (s) set the rate */
+function nodal(mdp,thr,d4,end=1.7){
+  const kp=[]; let t=0;
+  while(t<end){ kp.push([t,mdp]); kp.push([t+d4*0.55,mdp+(thr-mdp)*0.4]); kp.push([t+d4*0.88,mdp+(thr-mdp)*0.78]); kp.push([t+d4,thr]); kp.push([t+d4+0.08,8]);
+    kp.push([t+d4+0.14,2]); kp.push([t+d4+0.25,mdp+4]); t+=d4+0.28; }
+  const pts=mono(kp.filter((p,i,a)=>!i||p[0]>a[i-1][0]),12).filter(p=>p[0]<=end);
+  return pts;
+}
+function nodalBands(d4){ return [[0,d4,"4"],[d4,d4+0.08,"0"],[d4+0.08,d4+0.28,"3"]]; }
+/* ventricular myocyte (ms, mV): up = upstroke time, rep = when phase 3 ends */
+function ventric(up,rep){ return mono([[0,-85],[40,-85],[40+up,25],[47+up,6],[60+up,9],[90,4],[rep-110,-3],[rep-55,-24],[rep-15,-76],[rep,-84],[rep+15,-85],[450,-85]],16); }
 const PLOTS={
+  apnerve:{xl:"Time (ms)",yl:"Membrane potential (mV)",xr:[0,6],yr:[-100,50],xt:[0,1,2,3,4,5,6],yt:[-80,-40,0,40],zero:true,vars:[
+    {l:"Phases & ions",cap:"A nerve action potential: Na⁺ in, then K⁺ out — each ion moving down its electrochemical gradient through voltage-gated channels.",
+     bands:[[0,1,"1"],[1,1.2,"2"],[1.2,1.55,"3"],[1.55,2.75,"4"],[2.75,3.9,"5"],[3.9,6,"6"]],
+     key:[["1","Rest ≈ −70 mV: K⁺ leaks out through K⁺ channels; the Na⁺/K⁺ pump (3 Na⁺ out, 2 K⁺ in) keeps the gradients"],
+          ["2","A stimulus depolarizes the membrane to threshold"],
+          ["3","Upstroke: voltage-gated Na⁺ channel activation gates open — Na⁺ rushes in"],
+          ["4","Repolarization: Na⁺ inactivation gates close; voltage-gated K⁺ channels open — K⁺ out"],
+          ["5","Afterhyperpolarization: K⁺ channels stay open — undershoot toward the K⁺ equilibrium potential"],
+          ["6","K⁺ channels close; back to rest"]],
+     d:()=>[{pts:mono(AP_NERVE),lab:"Membrane potential"},{y:-56,lab:"threshold"}]},
+    {l:"Refractory periods",cap:"Why a second spike cannot follow immediately.",
+     bands:[[1.2,2.75,"A"],[2.75,3.9,"R"]],
+     key:[["A","Absolute refractory period: the Na⁺ inactivation gates are closed — no stimulus can fire another action potential"],
+          ["R","Relative refractory period: K⁺ channels still open and the membrane hyperpolarized — only a stronger stimulus fires"]],
+     d:()=>[{pts:mono(AP_NERVE),lab:"Membrane potential"},{y:-56,lab:"threshold"}]}]},
+  apcond:{xl:"Time (ms)",yl:"Membrane conductance (relative)",xr:[0,6],yr:[0,105],xt:[0,1,2,3,4,5,6],yt:[],vars:[
+    {l:"Na⁺ and K⁺ conductance",cap:"The channels behind the action potential on the left — the same time axis.",
+     bands:[[1.2,1.75,"1"],[1.75,3.9,"2"]],
+     key:[["1","Na⁺ conductance rises first, steeply and briefly: activation gates open, then inactivation gates close within about a millisecond"],
+          ["2","K⁺ conductance rises more slowly and lasts longer — it repolarizes the membrane and, still high, causes the afterhyperpolarization"]],
+     d:()=>[{pts:mono([[0,1],[1.15,2],[1.35,55],[1.5,100],[1.75,35],[2.2,5],[2.7,1],[6,1]]),lab:"Na⁺ — voltage-gated Na⁺ channels"},
+            {pts:mono([[0,3],[1.3,4],[1.9,38],[2.4,60],[2.9,40],[3.7,12],[4.6,4],[6,3]]),lab:"K⁺ — voltage-gated K⁺ channels"}]}]},
+  apnodal:{xl:"Time (s)",yl:"Membrane potential (mV)",xr:[0,1.7],yr:[-80,30],xt:[0,0.4,0.8,1.2,1.6],yt:[-60,-40,-20,0,20],ref:true,zero:true,vars:[
+    {l:"SA node",cap:"Pacemaker cells have no stable rest: phase 4 drifts up to threshold by itself. Its slope sets the heart rate.",
+     bands:nodalBands(0.45),
+     key:[["4","Slow diastolic depolarization: I_f, the funny current (HCN channels, mostly Na⁺ in, switched on by repolarization), then T-type Ca²⁺ in"],
+          ["0","Upstroke: L-type Ca²⁺ channels — Ca²⁺ in, slower than a Na⁺ upstroke"],
+          ["3","Repolarization: Ca²⁺ channels close; K⁺ out through delayed-rectifier K⁺ channels (I_K)"],
+          ["·","No phase 1 or plateau"]],
+     d:()=>[{pts:nodal(-60,-40,0.45),lab:"SA node"},{y:-40,lab:"threshold"}]},
+    {l:"Sympathetic (β₁)",cap:"Sympathetic stimulation (norepinephrine on β₁ receptors) speeds the heart.",
+     bands:nodalBands(0.27),
+     key:[["4","↑ I_f and ↑ Ca²⁺ current → steeper phase 4, threshold reached sooner"],["→","Faster rate"]],
+     d:()=>[{pts:nodal(-60,-43,0.27),lab:"Sympathetic"}]},
+    {l:"Vagal (ACh)",cap:"Vagal stimulation (acetylcholine on M₂ receptors) slows the heart three ways.",
+     bands:nodalBands(0.72),
+     key:[["4","↓ I_f → flatter phase 4"],["K⁺","↑ K⁺ current (I_K-ACh) → more negative maximum diastolic potential"],["Ca²⁺","↓ Ca²⁺ current → higher threshold"],["→","Slower rate"]],
+     d:()=>[{pts:nodal(-67,-36,0.72),lab:"Vagal"}]},
+    {l:"Ivabradine",cap:"Ivabradine blocks I_f (HCN channels).",
+     bands:nodalBands(0.68),
+     key:[["4","Flatter phase 4 → slower rate, with no change in contractility"]],
+     d:()=>[{pts:nodal(-60,-40,0.68),lab:"Ivabradine"}]}]},
+  apventric:{xl:"Time (ms)",yl:"Membrane potential (mV)",xr:[0,450],yr:[-100,40],xt:[0,100,200,300,400],yt:[-80,-40,0,40],ref:true,zero:true,vars:[
+    {l:"Ventricular myocyte",cap:"Working myocardium fires with Na⁺ and holds a Ca²⁺ plateau — a long refractory period, so cardiac muscle cannot tetanize.",
+     bands:[[0,40,"4"],[40,48,"0"],[48,72,"1"],[72,190,"2"],[190,300,"3"],[300,450,"4"]],
+     key:[["0","Upstroke: fast voltage-gated Na⁺ channels — Na⁺ in"],
+          ["1","Initial repolarization: Na⁺ inactivation gates close; K⁺ out"],
+          ["2","Plateau: Ca²⁺ in through L-type channels balances K⁺ out; the Ca²⁺ triggers Ca²⁺-induced Ca²⁺ release from the SR"],
+          ["3","Repolarization: Ca²⁺ channels close; K⁺ out through delayed-rectifier K⁺ channels"],
+          ["4","Rest ≈ −85 mV: high K⁺ permeability"]],
+     d:()=>[{pts:ventric(8,300),lab:"Ventricular myocyte"}]},
+    {l:"Class I — Na⁺ block",cap:"Class I antiarrhythmics block fast Na⁺ channels.",
+     bands:[[40,62,"0"]],
+     key:[["0","Slower phase 0 upstroke (less Na⁺ in) → slower conduction · IA also lengthens the action potential, IB shortens it, IC leaves it about the same"]],
+     d:()=>[{pts:ventric(22,300),lab:"Class I"}]},
+    {l:"Class III — K⁺ block",cap:"Class III antiarrhythmics (amiodarone, sotalol, dofetilide) block K⁺ channels.",
+     bands:[[190,360,"3"]],
+     key:[["3","Slower repolarization → longer action potential and refractory period → longer QT interval"]],
+     d:()=>[{pts:ventric(8,360),lab:"Class III"}]}]},
   pvloop:{xl:"Left ventricular volume (mL)",yl:"LV pressure (mm Hg)",xr:[0,200],yr:[0,200],xt:[0,50,100,150,200],yt:[0,50,100,150,200],ref:true,vars:[
     {l:"Normal",cap:"One beat: MC mitral closes → isovolumetric contraction → AO aortic opens → ejection → AC aortic closes → isovolumetric relaxation → MO mitral opens → filling. Width = stroke volume.",d:()=>[pvLoop({edv:120,esv:50,edp:8,po:80,pk:125,pc:100})]},
     {l:"↑ Preload",cap:"↑ Preload → ↑ EDV → ↑ stroke volume; the loop widens to the right.",d:()=>[pvLoop({edv:150,esv:50,edp:12,po:80,pk:128,pc:100})]},
@@ -28921,6 +29750,9 @@ function plotSVG(p,i){
     if(c.pts){ s+=`<path class="${cls}" d="${path(c.close?c.pts:clipTop(c.pts),c.close)}"${colored?` style="stroke:${PSER[n%PSER.length]}"`:""}/>`; n++; }
     if(c.x!=null) s+=`<line class="pmark" x1="${X(c.x)}" y1="${T}" x2="${X(c.x)}" y2="${B}"/>`+lab(X(c.x),T+16,c.lab,6,0);
     if(c.y!=null) s+=`<line class="pmark" x1="${L}" y1="${Y(c.y)}" x2="${R}" y2="${Y(c.y)}"/>`+lab(L,Y(c.y),c.lab,8,-7); }); };
+  /* shaded, labeled phases behind the curves (action potentials) */
+  (V.bands||[]).forEach(([a,b,t],j)=>{ const xa=X(Math.max(a,K.xr[0])), xb=X(Math.min(b,K.xr[1]));
+    s+=`<rect class="pband${j%2?" alt":""}" x="${xa.toFixed(1)}" y="${T}" width="${Math.max(0,xb-xa).toFixed(1)}" height="${B-T}"/><text class="pbnum" x="${((xa+xb)/2).toFixed(1)}" y="${T+16}">${esc(t)}</text>`; });
   if(K.all) K.vars.forEach((v,j)=>{ if(j!==vi) draw(v.d(),"pother",false); });
   else if(K.ref&&vi>0) draw(K.vars[0].d(),"pref",false);
   const cur=V.d(); draw(cur,"pcur",true);
@@ -28940,6 +29772,10 @@ function plotSVG(p,i){
     cx+=w+8; });
   let ty=cy+26+28;
   wrapWords(V.cap,Math.floor(colW/6.9)).forEach(line=>{ s+=`<text class="pcap" x="${x0}" y="${ty}">${esc(line)}</text>`; ty+=19; });
+  /* key: what each numbered phase is — the ions moving and the channels open */
+  if(V.key){ ty+=8;
+    V.key.forEach(([k,t])=>{ s+=`<circle class="pkcirc" cx="${x0+10}" cy="${ty-4.5}" r="10"/><text class="pkn" x="${x0+10}" y="${ty-0.5}">${esc(k)}</text>`;
+      wrapWords(t,Math.floor((colW-30)/6.7)).forEach(line=>{ s+=`<text class="pkey" x="${x0+28}" y="${ty}">${esc(line)}</text>`; ty+=18; }); ty+=6; }); }
   const leg=[]; let ci=0;
   cur.forEach(c=>{ if(c.pts){ leg.push({cls:"pcur",col:PSER[ci%PSER.length],t:c.lab||V.l}); ci++; } });
   if(K.ref&&vi>0) leg.push({cls:"pref",t:K.vars[0].l+" (for comparison)"});
@@ -29133,13 +29969,30 @@ const ul=a=>(a&&a.length)?`<ul>${a.map(x=>`<li>${x}</li>`).join("")}</ul>`:"";
 /* Practice buttons: only on the question-bank site, where tools/build-atlas.py
    writes atlas-practice.js next to this page. Each button opens that block's
    question bank on #atlas/<id>, which runs the questions linked to this card. */
+/* Your record on this card: the questions linked to it in each block (atlas-qlinks.js,
+   from the build) checked against that block's attempt log on this device
+   ('<folder>_attempts_v1'), latest try per question — the same rule as the block home's
+   "Maps for this block". Misses get a Redo link (#atlas/<id>/missed in that block). */
+function qbRecord(id){
+  const Q=window.ATLAS_QLINKS, rows=Q&&Q.cards&&Q.cards[id];
+  if(!rows) return null;
+  const per={}; let n=0, ok=0;
+  rows.forEach(([b,ids])=>{ const dir=Q.blocks[b][0]; let list=[];
+    try{ list=JSON.parse(localStorage.getItem(dir+"_attempts_v1"))||[]; }catch(e){ list=[]; }
+    const last={}; (Array.isArray(list)?list:[]).forEach(a=>{ if(a&&a.id!=null) last[a.id]=a; });
+    let bn=0, bok=0; ids.forEach(q=>{ if(last[q]){ bn++; if(last[q].correct) bok++; } });
+    if(bn){ per[dir]=[bn,bok]; n+=bn; ok+=bok; } });
+  return n?{n,ok,per}:null;
+}
 function practiceHtml(id){
   const P=window.ATLAS_PRACTICE, rows=P&&P.cards&&P.cards[id];
   if(!rows||!rows.length) return "";
-  const total=rows.reduce((s,r)=>s+r[1],0);
-  return sec("Practice",`<div class="practice"><p class="pqlead">${total} question${total===1?"":"s"} in the question bank test this</p>${rows.map(([b,n])=>{
-    const [dir,label]=P.blocks[b];
-    return `<a class="pqb" href="../${encodeURIComponent(dir)}/index.html#atlas/${encodeURIComponent(id)}" target="_blank" rel="noopener">${esc(label)} <span>· ${n}</span></a>`;
+  const total=rows.reduce((s,r)=>s+r[1],0), rec=qbRecord(id);
+  const recHtml=rec?`<p class="pqrec">Your record: <b>${rec.ok} of ${rec.n}</b> right on your latest try (${Math.round(100*rec.ok/rec.n)}%)</p>`:"";
+  return sec("Practice",`<div class="practice"><p class="pqlead">${total} question${total===1?"":"s"} in the question bank test this</p>${recHtml}${rows.map(([b,n])=>{
+    const [dir,label]=P.blocks[b], r=rec&&rec.per[dir], miss=r?r[0]-r[1]:0;
+    return `<a class="pqb" href="../${encodeURIComponent(dir)}/index.html#atlas/${encodeURIComponent(id)}" target="_blank" rel="noopener">${esc(label)} <span>· ${n}${r?` · ${r[1]}/${r[0]} right`:""}</span></a>`+
+      (miss?`<a class="pqb miss" href="../${encodeURIComponent(dir)}/index.html#atlas/${encodeURIComponent(id)}/missed" target="_blank" rel="noopener">Redo ${miss} missed</a>`:"");
   }).join("")}</div>`);
 }
 /* every question-bank question linked to any card on the map, per block — the block
@@ -30240,8 +31093,12 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   cranial:"2026-10-08",jones:"2026-10-08",sxabdpain:"2026-10-08",sxdiarrhea:"2026-10-08",sxurine:"2026-10-08",sxams:"2026-10-08",
   membrane:"2026-10-08",urineconc:"2026-10-08",hearing:"2026-10-08",vision:"2026-10-08",larynx:"2026-10-08",
   sportsortho:"2026-10-08",gasx:"2026-10-08",bonehisto:"2026-10-08",hormones:"2026-10-08",psychmse:"2026-10-08",
-  janda:"2026-10-08",chestomt:"2026-10-08",histoembryo:"2026-10-08",brainstem:"2026-10-08",chemvisc:"2026-10-08",renalna:"2026-10-08"};
+  janda:"2026-10-08",chestomt:"2026-10-08",histoembryo:"2026-10-08",brainstem:"2026-10-08",chemvisc:"2026-10-08",renalna:"2026-10-08",
+  synapse:"2026-10-08",motorctl:"2026-10-08",neiomm:"2026-10-08",orthowork:"2026-10-08",respinf:"2026-10-08",psychtx:"2026-10-08"};
 const WHATSNEW=[
+  ["2026-10-08","New maps: <b>Synaptic Transmission &amp; Receptors</b> and <b>Motor Control — Cortex to Muscle</b> (Neuro), <b>Neuroendocrine-Immune &amp; Autonomic Balance</b> (OMM), <b>Knee, Hip &amp; Hand Workups</b> (MSK), <b>Respiratory Infections by Site</b> (Pulmonary) and <b>Depression Care, Psychotherapy &amp; Forensic Psychiatry</b> (Psych)."],
+  ["2026-10-08","New graphs: the nerve action potential and Na⁺/K⁺ conductances on <b>Membrane Potentials</b>, and the pacemaker and ventricular action potentials on <b>Cardiac</b> — each phase labeled with the ions moving and the channels open."],
+  ["2026-10-08","From the question bank: <b>Redo misses</b> on each map in Maps for this block, and the atlas card now shows your record on its questions."],
   ["2026-10-08","New maps: <b>Muscle Imbalance &amp; Rehab (Janda)</b> and <b>OMT for the Chest &amp; Viscera</b> (OMM), <b>Brainstem Levels &amp; Cross-Sections</b> and <b>Visceral Sensation, Smell &amp; Taste</b> (Neuro), <b>Sodium Balance, Clearance &amp; Obstruction</b> and <b>Lung &amp; Kidney Histology and Embryology</b> (Renal)."],
   ["2026-10-08","From the question bank: after a miss, a table gives the atlas card for every answer choice, and <b>Maps for this block</b> shows your accuracy on each map, weakest first."],
   ["2026-10-08","From the question bank: a missed question now also shows the atlas card for the answer you picked, with a <b>Compare</b> button that opens it beside the correct card here."],

@@ -663,12 +663,41 @@ function render() {
   } else if (parts[0] === 'studysheet') {
     renderStudySheet();
   } else if (parts[0] === 'atlas' && parts[1]) {
-    renderAtlasPractice(decodeURIComponent(parts[1]));
+    renderAtlasPractice(decodeURIComponent(parts[1]), parts[2] === 'missed');
   } else if (parts[0] === 'atlasmap' && parts[1]) {
-    renderAtlasMapPractice(decodeURIComponent(parts[1]));
+    renderAtlasMapPractice(decodeURIComponent(parts[1]), parts[2] === 'missed');
   } else {
     renderHome();
   }
+  rememberPlace(parts);
+}
+
+/* "Continue where you left off" on the hub: the last place you were in a block is kept on
+   this device ('qhub-last': block folder and title, the hash, a label, the time). The hub
+   reads it — and, for SDL practice, that block's saved session — to link straight back. */
+function rememberPlace(parts) {
+  const save = label => { try { localStorage.setItem('qhub-last', JSON.stringify({ dir: blockDirName(), title: QUIZ_CONFIG.title,
+    hash: window.location.hash, label, at: Date.now() })); } catch (e) {} };
+  if (parts[0] === 'practice' && parts[1] && parts[2]) {
+    const f = findSdl(parseInt(parts[1], 10)); if (f) save(f.sdl.title);
+  } else if (parts[0] === 'exam-sdls' && parts[1]) save('Exam ' + parts[1] + ' — SDL list');
+  else if (parts[0] === 'review') save('Review: missed & flagged');
+  else if (parts[0] === 'flagged') save('Flagged questions');
+  else if (parts[0] === 'toughest') save('Toughest questions');
+  else if ((parts[0] === 'atlas' || parts[0] === 'atlasmap') && parts[1]) {
+    const id = decodeURIComponent(parts[1]), route = window.location.hash, miss = parts[2] === 'missed' ? ' — your misses' : '';
+    ATLAS_READY.then(() => {
+      if (window.location.hash !== route) return;
+      const name = parts[0] === 'atlasmap' ? (ATLAS_MAPS && ATLAS_MAPS[id] ? ATLAS_MAPS[id][0] : id)
+        : ((ATLAS_INDEX && (ATLAS_INDEX.find(c => c.id === id) || {}).n) || id);
+      save('Atlas practice: ' + name + miss);
+    });
+  }
+}
+/* Questions you got wrong on your latest try, from a list of linked questions. */
+function onlyMissed(qs) {
+  const last = lastAttemptMap();
+  return qs.filter(q => last[q.id] && !last[q.id].correct);
 }
 
 homeBtn.addEventListener('click', () => setRoute(''));
@@ -742,6 +771,7 @@ function fillAtlasMapsHome() {
       return `<li class="amap-row">
         <a class="amap-name" href="${ATLAS_URL}#${encodeURIComponent(id)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[id][0])}</a>
         ${chip}<span class="amap-n">${n} question${n === 1 ? '' : 's'}</span>
+        ${a && a.n > a.ok ? `<a class="amap-go amap-miss" href="#atlasmap/${encodeURIComponent(id)}/missed" title="Run only the questions you missed on your latest try">Redo ${a.n - a.ok} missed</a>` : ''}
         <a class="amap-go" href="#atlasmap/${encodeURIComponent(id)}">Practice</a></li>`;
     };
     const anyRanked = rows.some(r => ranked(r[0]));
@@ -2682,13 +2712,24 @@ function atlasPracticeQuestions(id) {
   })));
   return out;
 }
-function renderAtlasPractice(id) {
+function renderAtlasPractice(id, missedOnly) {
   const route = window.location.hash;
   main.innerHTML = `<p class="loading">Finding questions…</p>`;
   ATLAS_READY.then(() => {
     if (window.location.hash !== route) return;   // navigated away while loading
     const card = ATLAS_INDEX && ATLAS_INDEX.find(c => c.id === id);
-    const qs = card ? atlasPracticeQuestions(id) : [];
+    let qs = card ? atlasPracticeQuestions(id) : [];
+    if (missedOnly && qs.length) {
+      qs = onlyMissed(qs);
+      if (!qs.length) {
+        main.innerHTML = `
+          <button class="back-link" id="backHome">&larr; Home</button>
+          <h1>${escapeHtml(card.n)}</h1>
+          <p class="empty-state">No misses left on this card — your latest try on each of its questions was right.</p>`;
+        document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+        return;
+      }
+    }
     if (!qs.length) {
       main.innerHTML = `
         <button class="back-link" id="backHome">&larr; Home</button>
@@ -2700,7 +2741,7 @@ function renderAtlasPractice(id) {
     }
     session = {
       mode: 'review',
-      queueLabel: 'Atlas — ' + card.n,
+      queueLabel: 'Atlas — ' + card.n + (missedOnly ? ' · your misses' : ''),
       questions: shuffle(qs),
       index: 0,
       records: new Array(qs.length).fill(null),
@@ -2714,7 +2755,7 @@ function renderAtlasPractice(id) {
    "Practice this map" opens #atlasmap/<map id>: every question in this block that
    links to any card pinned on that map (atlas-terms.js lists each map's cards).
    tools/build-atlas.py counts them the same way for the map's buttons. */
-function renderAtlasMapPractice(mapId) {
+function renderAtlasMapPractice(mapId, missedOnly) {
   const route = window.location.hash;
   main.innerHTML = `<p class="loading">Finding questions…</p>`;
   ATLAS_READY.then(() => {
@@ -2727,6 +2768,18 @@ function renderAtlasMapPractice(mapId) {
         qs.push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title, examNumber: e.examNumber }));
       }
     })));
+    if (missedOnly && qs.length) {
+      const miss = onlyMissed(qs);
+      if (!miss.length) {
+        main.innerHTML = `
+          <button class="back-link" id="backHome">&larr; Home</button>
+          <h1>${escapeHtml(entry[0])}</h1>
+          <p class="empty-state">No misses left on this map — your latest try on each of its questions was right.</p>`;
+        document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+        return;
+      }
+      qs.length = 0; miss.forEach(q => qs.push(q));
+    }
     if (!qs.length) {
       main.innerHTML = `
         <button class="back-link" id="backHome">&larr; Home</button>
@@ -2738,7 +2791,7 @@ function renderAtlasMapPractice(mapId) {
     }
     session = {
       mode: 'review',
-      queueLabel: 'Atlas — ' + entry[0],
+      queueLabel: 'Atlas — ' + entry[0] + (missedOnly ? ' · your misses' : ''),
       questions: shuffle(qs),
       index: 0,
       records: new Array(qs.length).fill(null),

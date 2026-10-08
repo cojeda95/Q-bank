@@ -26,6 +26,7 @@ src = pathlib.Path(args[0]) if args else TOOLS / "atlas-src.html"
 out = ROOT / "resources" / "metabolic-atlas.html"
 TERMS_OUT = ROOT / "resources" / "atlas-terms.js"
 PRACTICE_OUT = ROOT / "resources" / "atlas-practice.js"
+QLINKS_OUT = ROOT / "resources" / "atlas-qlinks.js"
 HOMES = TOOLS / "atlas-homes.json"
 art = src.read_text(encoding="utf-8")
 
@@ -37,7 +38,7 @@ ESCAPED_TAG = re.compile(r"</?(?:b|i|em|strong)>")
 KNOWN_SRC = re.compile(r"(Robbins|Katzung|Guyton|Costanzo|Kaplan & Sadock|Marks|Langman|Moore|Pawlina|"
                        r"Fundamental Neuroscience|Foundations of Osteopathic Medicine|Atlas of Osteopathic Techniques|"
                        r"Somatic Dysfunction in Osteopathic Family Medicine|An Osteopathic Approach to Diagnosis and Treatment|DeGowin|"
-                       r"OCOM OMM|Osmosis) ")
+                       r"OCOM OMM|OCOM Ortho|OCOM Psych|Osmosis) ")
 
 def validate(art):
     """Return a list of problems that should block the build."""
@@ -212,6 +213,7 @@ img{{max-width:100%}}
 </style>
 <title>Lesion Atlas — COMLEX 1 / Step 1</title>
 <script src="atlas-practice.js"></script>
+<script src="atlas-qlinks.js" defer></script>
 """
 
 TOPBAR = ('<div class="ocom-topbar"><div class="ocom-topbar-inner">'
@@ -360,6 +362,7 @@ def links_for(q):
     return [cid for cid, _ in sorted(found.items(), key=lambda kv: (kv[1][0], -kv[1][1], kv[1][2]))[:3]]
 
 counts = {}
+qlinks = {}       # card id -> block index -> question ids linked to it (the atlas card's "Your record")
 map_counts = {}   # map id -> block index -> questions linked to any card on that map (each question once)
 maps_of = {}
 for mid, (_, ids) in map_cards.items():
@@ -377,6 +380,8 @@ for bi, (b, _) in enumerate(blocks):
                 for cid in links_for(q):
                     counts.setdefault(cid, {}).setdefault(bi, 0)
                     counts[cid][bi] += 1
+                    if q.get("id"):
+                        qlinks.setdefault(cid, {}).setdefault(bi, []).append(q["id"])
                     hit_maps |= maps_of.get(cid, set())
                 for mid in hit_maps:
                     map_counts.setdefault(mid, {}).setdefault(bi, 0)
@@ -387,4 +392,10 @@ PRACTICE_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. cards
                              "cards": {cid: sorted(v.items(), key=lambda kv: -kv[1]) for cid, v in sorted(counts.items())},
                              "maps": {mid: sorted(v.items(), key=lambda kv: -kv[1]) for mid, v in sorted(map_counts.items())}},
                             ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+QLINKS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. card id -> [[block index, [question ids]]]: the atlas card's 'Your record' reads each block's attempt log for these */\n"
+                      "window.ATLAS_QLINKS=" + json.dumps(
+                          {"blocks": [list(b) for b in blocks],
+                           "cards": {cid: sorted(v.items()) for cid, v in sorted(qlinks.items())}},
+                          ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+print(f"built {QLINKS_OUT.relative_to(ROOT)}  —  question ids for {len(qlinks)} cards ({QLINKS_OUT.stat().st_size // 1024} KB)")
 print(f"built {PRACTICE_OUT.relative_to(ROOT)}  —  {len(counts)} cards and {len(map_counts)} maps with practice questions from {nq} questions in {len(blocks)} blocks")

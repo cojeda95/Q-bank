@@ -163,6 +163,7 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 .amap-acc.lo { color: var(--red); } .amap-acc.mid { color: var(--amber-ink); } .amap-acc.hi { color: var(--green); }
 .amap-go { flex: none; font-size: 0.82rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--atlas-line); background: var(--input-bg); color: var(--atlas-ink); text-decoration: none; }
 .amap-go:hover { border-color: var(--atlas-ink); }
+.amap-go.amap-miss { color: var(--red); border-color: var(--red); background: var(--card-bg); }
 .amap-more { margin-top: 8px; }
 .amap-more summary { cursor: pointer; font-size: 0.86rem; color: var(--atlas-ink); font-weight: 600; padding: 4px 2px; }
 .amap-more .amap-list { margin-top: 6px; }

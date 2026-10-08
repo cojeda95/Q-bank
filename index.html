@@ -115,6 +115,15 @@
   .bm.saved { color: var(--green); border-color: currentColor; }
   .bm.newer { color: var(--amber-ink); border-color: var(--amber-line); background: var(--amber-bg); }
   .bm.unsaved { color: var(--text-faint); }
+  .bm.savebtn { cursor: pointer; color: var(--navy); border-color: var(--navy); background: var(--card-bg); }
+  .bm.savebtn:hover, .bm.savebtn:focus-visible { background: var(--navy); color: #fff; outline: none; }
+  .bm.savebtn[aria-disabled="true"] { opacity: .6; cursor: default; }
+  /* Continue where you left off (script at the end) */
+  .continue-card { display: flex; align-items: center; gap: 14px; margin-top: 18px; border: 2px solid var(--navy); }
+  .continue-card[hidden] { display: none; }
+  .continue-card .cc-icon { font-size: 1.3rem; flex: none; }
+  .continue-card .cc-text { flex: 1; min-width: 0; }
+  .continue-card .cc-text > span { display: block; }
 </style>
 <link rel="stylesheet" href="shared/theme.css">
 <script src="shared/theme.js"></script>
@@ -125,10 +134,14 @@
     <h1>Choose a Block</h1>
     <p class="subtitle">Practice questions and full exam simulations, organized by block. New blocks get added here as the semester goes on.</p>
     <div id="announceBanner"></div>
+    <a class="block-card continue-card" id="continueCard" href="#" hidden>
+      <span class="cc-icon">▶️</span>
+      <span class="cc-text"><span class="block-title">Continue where you left off</span><span class="block-desc" id="continueDesc"></span></span>
+    </a>
     <div class="block-grid">
       <a class="block-card featured" href="resources/metabolic-atlas.html">
         <div class="block-title">🗺️ Lesion Atlas</div>
-        <div class="block-desc">137 interactive maps &middot; 1,665 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
+        <div class="block-desc">143 interactive maps &middot; 1,708 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
         <div class="block-due" id="atlasDue" hidden></div>
       </a>
     </div>
@@ -266,7 +279,7 @@
     btn.addEventListener('click', function () {
       var urls = ['./', 'index.html', 'announcements.js', 'sync.js', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
         'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png',
-        'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js'];
+        'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js'];
       Array.prototype.forEach.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]'), function (a) {
         var dir = a.getAttribute('href').replace(/index\.html$/, '');
         urls.push(dir + 'index.html', dir + 'data.js');
@@ -339,6 +352,29 @@
     }
     progress();
     window.addEventListener('storage', function (e) { if (e.key && /_attempts_v1$/.test(e.key)) progress(); });
+
+    /* Continue where you left off: the last place you were in any block ('qhub-last', written
+       by shared/app.js), with your position when it was an SDL practice run in progress. */
+    function ago(t) { var m = Math.round((Date.now() - t) / 60000);
+      return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' d ago'; }
+    function showContinue() {
+      var card = document.getElementById('continueCard'), desc = document.getElementById('continueDesc'), L = null;
+      if (!card) return;
+      try { L = JSON.parse(localStorage.getItem('qhub-last') || 'null'); } catch (e) { L = null; }
+      var ok = L && L.dir && /^[a-z0-9_-]+$/i.test(L.dir) && typeof L.hash === 'string' && /^#[\w\-\/%.]*$/.test(L.hash) &&
+        blocks.some(function (a) { return a.getAttribute('href') === L.dir + '/index.html'; });
+      if (!ok) { card.hidden = true; return; }
+      var where = '';
+      var m = L.hash.match(/^#practice\/(\d+)\//);
+      if (m) { var snap = null; try { snap = JSON.parse(localStorage.getItem(L.dir + '_practicesession_v1') || 'null'); } catch (e) {}
+        if (snap && String(snap.sdlNumber) === m[1] && Array.isArray(snap.questions)) where = ' · question ' + (snap.index + 1) + ' of ' + snap.questions.length; }
+      card.href = L.dir + '/index.html' + L.hash;
+      desc.textContent = (L.title || L.dir) + ' — ' + (L.label || 'last screen') + where + ' · ' + ago(L.at || Date.now());
+      card.hidden = false;
+    }
+    showContinue();
+    window.addEventListener('pageshow', showContinue);
+    window.addEventListener('storage', function (e) { if (e.key === 'qhub-last') showContinue(); });
     window.addEventListener('pageshow', progress);
 
     if (!('caches' in window) || !window.fetch) return;
@@ -367,6 +403,34 @@
         });
       }, Promise.resolve()).then(function () { return st; });
     }
+    /* Save one block (or the atlas) for offline use: its own files plus the shared files it
+       needs, into the same cache — without saving everything. */
+    var SHARED = ['./', 'index.html', 'announcements.js', 'sync.js', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
+      'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png', 'resources/atlas-terms.js', 'resources/atlas-practice.js'];
+    function saveBtn(a, files, show, label) {
+      var m = meta(a), el = m.querySelector('[data-k="save"]');
+      if (!show || !navigator.onLine) { if (el) el.remove(); return; }
+      if (!el) {
+        el = document.createElement('span'); el.setAttribute('data-k', 'save'); el.className = 'bm savebtn';
+        el.setAttribute('role', 'button'); el.tabIndex = 0; m.appendChild(el);
+        var go = function (e) {
+          e.preventDefault(); e.stopPropagation();
+          if (el.getAttribute('aria-disabled') === 'true') return;
+          el.setAttribute('aria-disabled', 'true'); el.textContent = 'Saving…';
+          var urls = SHARED.concat(el._files);
+          caches.open(CACHE).then(function (cache) {
+            return Promise.all(urls.map(function (u) {
+              var url = abs(u);
+              return fetch(url, { cache: 'reload' }).then(function (res) { if (!res.ok) throw new Error(res.status); return cache.put(url, res); });
+            }));
+          }).then(function () { el.remove(); run(); }, function () { el.removeAttribute('aria-disabled'); el.textContent = 'Retry save'; });
+        };
+        el.addEventListener('click', go);
+        el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') go(e); });
+      }
+      el._files = files; el.textContent = label;
+      el.title = label === 'Update' ? 'Download the newer version of this block to this device' : 'Save just this block on this device so it works without signal';
+    }
     var running = null;
     function run() {
       if (running) return running;
@@ -376,7 +440,7 @@
           var dir = a.getAttribute('href').replace(/index\.html$/, '');
           return [a, [dir + 'index.html', dir + 'data.js']];
         });
-        if (atlas) jobs.push([atlas, ['resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js']]);
+        if (atlas) jobs.push([atlas, ['resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js']]);
         var res = [];
         return jobs.reduce(function (p, j) {
           return p.then(function () { return check(cache, j[1], online); }).then(function (st) {
@@ -384,6 +448,7 @@
             chip(j[0], 'off', st.saved ? (st.newer ? 'newer' : 'saved') : 'unsaved',
               st.saved ? (st.newer ? '↻ Newer version online' : '✓ Saved offline') : 'Not saved offline',
               st.newer ? 'The copy saved on this device is older than the one online — Save again (Use Offline, below) to update it' : '');
+            saveBtn(j[0], j[1], !st.saved || st.newer, st.newer ? 'Update' : 'Save offline');
           });
         }, Promise.resolve()).then(function () { return check(cache, ['shared/app.js', 'shared/style.css'], online); }).then(function (core) {
           if (!detail) return;
