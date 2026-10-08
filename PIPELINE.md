@@ -124,10 +124,25 @@ worth announcing gets a line in `WHATSNEW` the same way.
 
 A map can carry `plots:[{x,y,w,h,kind,t}]` — a schematic graph drawn by the engine, with a
 row of variants (tap a chip to shift the curve). The kinds live in `PLOTS` in
-`tools/atlas-src.html` (`pvloop`, `starling`, `odc`, `lungpv`, `glucose`);
+`tools/atlas-src.html` (`pvloop`, `starling`, `odc`, `lungpv`, `glucose`, `doseresp`, `elim`, `mm`,
+`lb`, `flowvol`, `cofunc`);
 `tools/atlas-check.js` keeps the same list and refuses an unknown kind or a plot off the
 canvas. Every graph says on its face that it is schematic; its caption carries the sourced
 facts, so check each caption against the map's sources like any card line.
+
+### Search abbreviations
+
+`ABBR` in `tools/atlas-src.html` holds First Aid 2025's abbreviation list (pp. 747–757),
+kept only where some card uses the meaning (the m23 batch script built it). A search that
+is exactly one of them ("mi", "dka") matches the abbreviation as a whole word or any of its
+meanings. Where First Aid defines an abbreviation differently from common use (RA = right
+atrium), the list follows First Aid; add entries by hand only with a source.
+
+### Per-device switches
+
+`mla-hy` (High-yield only), `mla-hideknown`, `mla-seen` (New marks), `mla-streak`
+(Daily mix: last finished day and streak length) and `mla-review` live in localStorage on
+each device and are not synced; `mla-progress` (with `known` and `star`) syncs by PIN.
 
 ### Links from the question bank
 
