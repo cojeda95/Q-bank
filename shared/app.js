@@ -82,7 +82,7 @@ function atlasNorm(t) {
 function atlasLinksFor(q) {
   if (!ATLAS_INDEX || !q) return [];
   const lead = (String(q.explanation || '').match(/[^.!?]+[.!?]+/g) || [q.explanation || ''])[0];
-  const zones = [q.choices && q.choices[q.correct], lead];
+  const zones = [q.choices && choiceText(q, q.correct), lead];
   const found = new Map();
   zones.forEach((z, zone) => {
     if (!z) return;
@@ -337,6 +337,55 @@ function escapeHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+/* ── Grid ("matrix") answer choices — PROTOTYPE ─────────────────────────
+   Optional, backward-compatible: a question with
+     grid: { headers: ['Serum Na⁺', 'Urine osmolality', 'ECF volume'] }
+   stores each choice as an array of cell values, one per header
+     choices: { A: ['↓', '↑', 'normal'], B: [...], ... }
+   and is drawn as aligned rows under one header row. Questions without `grid`
+   (every existing one) render exactly as before. Anything that needs plain text
+   (results lists, study sheet, atlas matching, live sessions) goes through
+   choiceText(), which joins the cells with ' / '. */
+function isGridQ(q) {
+  return !!(q && q.grid && Array.isArray(q.grid.headers) && q.grid.headers.length);
+}
+// Header i as plain text (drops soft hyphens, which only mark where a long header may break).
+function gridHeaderText(q, i) {
+  return String(q.grid.headers[i] == null ? '' : q.grid.headers[i]).replace(/\u00AD/g, '');
+}
+function choiceCells(q, letter) {
+  const v = q && q.choices ? q.choices[letter] : null;
+  if (Array.isArray(v)) return v.map(c => (c == null ? '' : String(c)));
+  return v == null ? [] : String(v).split(' / ');
+}
+// Plain-text form of a choice. withHeaders: "Serum Na⁺ ↓ · Urine osmolality ↑ · …"
+function choiceText(q, letter, withHeaders) {
+  const v = q && q.choices ? q.choices[letter] : null;
+  if (!Array.isArray(v)) return v == null ? '' : String(v);
+  if (withHeaders && isGridQ(q)) return v.map((c, i) => `${gridHeaderText(q, i)} ${c}`.trim()).join(' · ');
+  return v.join(' / ');
+}
+function choiceBodyHtml(q, letter) {
+  if (!isGridQ(q)) return `<span>${escapeHtml(choiceText(q, letter))}</span>`;
+  const cells = choiceCells(q, letter);
+  const label = q.grid.headers.map((h, i) => `${gridHeaderText(q, i)}: ${cells[i] || ''}`).join('; ');
+  return `<span class="grid-cells" aria-label="${escapeHtml(label)}">${q.grid.headers.map((h, i) =>
+    `<span class="grid-cell">${escapeHtml(cells[i] || '')}</span>`).join('')}</span>`;
+}
+// Header row drawn above the choices; withStrike reserves the 🚫 column so cells line up.
+function gridHeaderHtml(q, withStrike) {
+  if (!isGridQ(q)) return '';
+  return `<div class="choice-row grid-head" aria-hidden="true">
+      <div class="grid-head-row"><span class="letter"></span><span class="grid-cells">${q.grid.headers.map(h =>
+        `<span class="grid-cell">${escapeHtml(h)}</span>`).join('')}</span></div>${withStrike ? '<span class="strike-spacer"></span>' : ''}
+    </div>`;
+}
+function choiceListOpen(q) {
+  return isGridQ(q)
+    ? `<div class="choice-list grid-choices" style="--grid-cols:${q.grid.headers.length}">`
+    : '<div class="choice-list">';
 }
 
 function shuffle(arr) {
@@ -1597,7 +1646,7 @@ function renderPracticeQuestion() {
     const strikeBtn = !answered ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
     return `<div class="choice-row">
       <button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
-        <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
+        <span class="letter">${letter}.</span>${choiceBodyHtml(q, letter)}
       </button>${strikeBtn}
     </div>`;
   }).join('');
@@ -1644,7 +1693,7 @@ function renderPracticeQuestion() {
         <button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button>
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
-      <div class="choice-list">${choicesHtml}</div>
+      ${choiceListOpen(q)}${gridHeaderHtml(q, !answered)}${choicesHtml}</div>
       ${confidenceHtml}
       ${feedbackHtml}
       <div class="next-row" style="justify-content: space-between;">
@@ -1903,7 +1952,7 @@ function renderExamQuestion() {
     const strikeBtn = !locked ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
     return `<div class="choice-row">
       <button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
-        <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
+        <span class="letter">${letter}.</span>${choiceBodyHtml(q, letter)}
       </button>${strikeBtn}
     </div>`;
   }).join('');
@@ -1940,7 +1989,7 @@ function renderExamQuestion() {
         <button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for later'}</button>
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
-      <div class="choice-list">${choicesHtml}</div>
+      ${choiceListOpen(q)}${gridHeaderHtml(q, !locked)}${choicesHtml}</div>
       ${feedbackHtml}
       <div class="next-row" style="justify-content: space-between;">
         <button class="btn secondary" id="prevBtn" ${session.index === 0 ? 'disabled' : ''}>Previous</button>
@@ -2120,8 +2169,8 @@ function renderExamResults() {
     : missed.map(({ q, given }) => `
       <div class="missed-item">
         <div class="missed-stem">${escapeHtml(q.stem)} ${isFlagged(q.id) ? '<span class="flagged-tag">&#9733; flagged</span>' : ''}</div>
-        <div class="your-answer">Your answer: ${given ? `${given} — ${escapeHtml(q.choices[given])}` : '(no answer)'}</div>
-        <div class="correct-answer">Correct answer: ${q.correct} — ${escapeHtml(q.choices[q.correct])}</div>
+        <div class="your-answer">Your answer: ${given ? `${given} — ${escapeHtml(choiceText(q, given, true))}` : '(no answer)'}</div>
+        <div class="correct-answer">Correct answer: ${q.correct} — ${escapeHtml(choiceText(q, q.correct, true))}</div>
         <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
         ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
         ${atlasLinksHtml(q)}
@@ -2222,7 +2271,7 @@ function renderFlaggedQuestion() {
     const strikeBtn = !answered ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
     return `<div class="choice-row">
       <button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
-        <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
+        <span class="letter">${letter}.</span>${choiceBodyHtml(q, letter)}
       </button>${strikeBtn}
     </div>`;
   }).join('');
@@ -2267,7 +2316,7 @@ function renderFlaggedQuestion() {
         <button class="flag-btn flagged" id="flagBtn">&#9733; Flagged</button>
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
-      <div class="choice-list">${choicesHtml}</div>
+      ${choiceListOpen(q)}${gridHeaderHtml(q, !answered)}${choicesHtml}</div>
       ${confidenceHtml}
       ${feedbackHtml}
       <div class="next-row" style="justify-content: space-between;">
@@ -2504,7 +2553,7 @@ function renderReviewQuestion() {
     const strikeBtn = !answered ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
     return `<div class="choice-row">
       <button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
-        <span class="letter">${letter}.</span><span>${escapeHtml(q.choices[letter])}</span>
+        <span class="letter">${letter}.</span>${choiceBodyHtml(q, letter)}
       </button>${strikeBtn}
     </div>`;
   }).join('');
@@ -2550,7 +2599,7 @@ function renderReviewQuestion() {
         <button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button>
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
-      <div class="choice-list">${choicesHtml}</div>
+      ${choiceListOpen(q)}${gridHeaderHtml(q, !answered)}${choicesHtml}</div>
       ${confidenceHtml}
       ${feedbackHtml}
       <div class="next-row" style="justify-content: space-between;">
@@ -2820,7 +2869,7 @@ function renderStudySheet() {
     <div class="sheet-item">
       <div class="sheet-meta">${escapeHtml(q.sdlTitle)} · Objective ${q.objective ?? ''}${q.isHighYield ? ' · ⚡ High Yield' : ''}${flags[q.id] ? ' · ★ Flagged' : ''}</div>
       <div class="sheet-stem"><b>${i + 1}.</b> ${escapeHtml(q.stem)}</div>
-      <div class="sheet-answer">Correct answer: ${q.correct} — ${escapeHtml(q.choices[q.correct])}</div>
+      <div class="sheet-answer">Correct answer: ${q.correct} — ${escapeHtml(choiceText(q, q.correct, true))}</div>
       <div class="sheet-explanation">${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="sheet-boardprep"><b>Board Prep:</b> ${escapeHtml(q.boardPrep)}</div>` : ''}
     </div>

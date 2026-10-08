@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Nephro — Grid-choice prototype (demo)</title>
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/theme.css">
+<script src="../shared/theme.js"></script>
+</head>
+<body>
+<!-- PROTOTYPE (branch grid-choices-prototype): grid/"matrix" answer choices. Not linked from the
+     hub; its questions live in grid-demo-data.js (built by the pipeline's
+     blocks/nephro/grid_demo/build_demo.py), never in data.js, so block counts, the atlas
+     practice index and Live Session are unaffected. Separate storageKey: progress here never
+     mixes with the real Nephro bank. -->
+<div id="app">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="link-btn" style="text-decoration:none; display:inline-block;">&larr; Nephro</a>
+      <span class="brand">Grid-choice demo</span>
+      <button id="homeBtn" class="link-btn" hidden>Home</button>
+    </div>
+  </header>
+  <main id="main" class="container">
+    <p class="loading">Loading question bank…</p>
+  </main>
+  <footer class="footer">
+    <p>Prototype: 4 grid ("matrix") questions. Client-side only — progress is stored in this browser via localStorage, separately from the Nephro bank.</p>
+  </footer>
+</div>
+<script>window.QUIZ_CONFIG = {
+  title: 'Nephro — Grid-choice prototype (demo)',
+  storageKey: 'nephro_griddemo',
+  finalPresets: []
+};</script>
+<script src="grid-demo-data.js"></script>
+<script src="../shared/app.js"></script>
+</body>
+</html>

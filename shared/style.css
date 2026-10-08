@@ -401,6 +401,45 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 .strike-btn:hover { border-color: var(--navy); color: var(--navy); background: var(--surface-hover); }
 .strike-btn.active { border-color: var(--navy-dark); background: var(--navy-dark); color: #fff; }
 
+/* ── Grid ("matrix") answer choices — PROTOTYPE ──────────────────────────
+   app.js isGridQ(): question.grid.headers + array choices. Every row (and the
+   header row above them) uses the same fixed letter column and equal-width cell
+   columns, so values line up under their headers at any width. --grid-cols is
+   set inline from the header count. */
+.grid-choices .choice { align-items: center; }
+.grid-choices .letter { flex: 0 0 1.5rem; }   /* rem, not em: the header row uses a smaller font */
+.grid-cells {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: calc(var(--grid-cols, 3) * 11rem);   /* keep columns compact on wide screens */
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols, 3), minmax(0, 1fr));
+}
+.grid-cell { padding: 0 10px; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; }
+.grid-choices .choice .grid-cell { font-size: 1.05rem; }
+.grid-cell:first-child { padding-left: 0; }
+.grid-cell + .grid-cell { border-left: 1px solid var(--grey-border); }
+.grid-head { margin-bottom: -2px; }
+.grid-head-row {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 2px 12px 0;
+  border: 1px solid transparent;   /* same box as .choice so the columns line up */
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text-strong);
+}
+.grid-head-row .grid-cell + .grid-cell { border-left-color: transparent; }
+.strike-spacer { flex: 0 0 36px; }
+@media (max-width: 480px) {
+  .grid-choices .choice { padding: 10px 8px; gap: 6px; }
+  .grid-head-row { padding: 2px 8px 0; gap: 6px; font-size: 0.72rem; }
+  .grid-cell { padding: 0 5px; }
+}
+
 .feedback-banner {
   margin-top: 16px;
   padding: 10px 14px;

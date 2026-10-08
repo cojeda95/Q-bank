@@ -163,6 +163,26 @@ function esc(str) {
   return d.innerHTML;
 }
 
+// Grid ("matrix") answer choices — PROTOTYPE, same schema as shared/app.js:
+// question.grid.headers + choices as arrays of cell values. Plain questions are untouched.
+function isGridQ(q) {
+  return !!(q && q.grid && Array.isArray(q.grid.headers) && q.grid.headers.length);
+}
+function choiceHtml(q, letter) {
+  const v = q.choices[letter];
+  if (!isGridQ(q)) return esc(Array.isArray(v) ? v.join(' / ') : v);
+  const cells = Array.isArray(v) ? v : String(v == null ? '' : v).split(' / ');
+  return `<span class="grid-cells">${q.grid.headers.map((h, i) => `<span class="grid-cell">${esc(cells[i])}</span>`).join('')}</span>`;
+}
+// tail: extra px reserved on the right (host tally bar + count) so columns line up.
+function gridHeadHtml(q, tail) {
+  if (!isGridQ(q)) return '';
+  return `<div class="grid-head-row" aria-hidden="true"><span class="letter"></span><span class="choice-text"><span class="grid-cells">${q.grid.headers.map(h => `<span class="grid-cell">${esc(h)}</span>`).join('')}</span></span>${tail ? `<span style="flex:0 0 ${tail}px"></span>` : ''}</div>`;
+}
+function choiceListOpen(q) {
+  return isGridQ(q) ? `<div class="choice-list grid-choices" style="--grid-cols:${q.grid.headers.length}">` : '<div class="choice-list">';
+}
+
 let loadedBlockKey = null;
 function loadBlockData(blockKey) {
   return new Promise((resolve, reject) => {
@@ -671,7 +691,8 @@ function renderHostRoom() {
           <button class="link-btn-inline" id="endEarlyBtn">⏹ End Early</button>
         </div>
         <h2 class="q-stem">${esc(q ? q.stem : '(question not found)')}</h2>
-        <div class="choice-list">
+        ${q ? choiceListOpen(q) : '<div class="choice-list">'}
+          ${q ? gridHeadHtml(q, s.revealed ? 112 : 0) : ''}
           ${q ? Object.keys(q.choices).sort().map(letter => {
             const count = tally[letter] || 0;
             const pct = Math.round((count / maxTally) * 100);
@@ -679,7 +700,7 @@ function renderHostRoom() {
             return `
               <div class="choice host-choice ${isCorrect ? 'correct' : ''}">
                 <span class="letter">${letter}.</span>
-                <span class="choice-text">${esc(q.choices[letter])}</span>
+                <span class="choice-text">${choiceHtml(q, letter)}</span>
                 ${s.revealed ? `
                   <span class="tally-bar-wrap"><span class="tally-bar" style="width:${count ? pct : 0}%"></span></span>
                   <span class="tally-count">${count}</span>
@@ -937,7 +958,8 @@ function renderJoinRoom() {
       <div class="live-card">
         <div class="host-meta">Room ${state.code} &middot; Question ${s.currentIndex + 1} of ${s.questionIds.length}</div>
         <h2 class="q-stem">${esc(q ? q.stem : '')}</h2>
-        <div class="choice-list">
+        ${q ? choiceListOpen(q) : '<div class="choice-list">'}
+          ${q ? gridHeadHtml(q, 0) : ''}
           ${q ? Object.keys(q.choices).sort().map(letter => {
             let cls = 'choice';
             if (mine === letter) cls += ' selected';
@@ -949,7 +971,7 @@ function renderJoinRoom() {
             return `
               <button class="${cls}" data-letter="${letter}" ${s.revealed ? 'disabled' : ''}>
                 <span class="letter">${letter}.</span>
-                <span>${esc(q.choices[letter])}</span>
+                ${isGridQ(q) ? `<span class="choice-text">${choiceHtml(q, letter)}</span>` : `<span>${choiceHtml(q, letter)}</span>`}
               </button>
             `;
           }).join('') : ''}

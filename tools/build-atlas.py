@@ -316,7 +316,10 @@ def first_hit(terms, text):
 def links_for(q):
     expl = str(q.get("explanation") or "")
     lead = (re.findall(r"[^.!?]+[.!?]+", expl) or [expl])[0]
-    zones = [(q.get("choices") or {}).get(q.get("correct")), lead]
+    ans = (q.get("choices") or {}).get(q.get("correct"))
+    if isinstance(ans, list):   # grid ("matrix") choice, PROTOTYPE: cells joined, as choiceText() in app.js
+        ans = " / ".join(str(c) for c in ans)
+    zones = [ans, lead]
     found = {}
     for zone, z in enumerate(zones):
         if not z:

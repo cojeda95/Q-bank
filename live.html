@@ -83,6 +83,18 @@
   .tally-bar { display: block; height: 100%; background: var(--navy); }
   .tally-count { width: 22px; text-align: right; font-weight: 700; color: var(--grey-text); flex-shrink: 0; }
 
+  /* Grid ("matrix") answer choices — PROTOTYPE (live.js isGridQ) */
+  .grid-choices .choice .letter, .grid-head-row .letter { flex: 0 0 1.5rem; }
+  .grid-cells { display: grid; grid-template-columns: repeat(var(--grid-cols, 3), minmax(0, 1fr)); min-width: 0; }
+  .grid-cell { padding: 0 10px; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; }
+  .grid-cell:first-child { padding-left: 0; }
+  .grid-cell + .grid-cell { border-left: 1px solid var(--grey-border); }
+  .grid-head-row { display: flex; align-items: flex-end; gap: 10px; padding: 0 12px; border: 1px solid transparent; font-size: 0.82rem; font-weight: 700; line-height: 1.25; }
+  .grid-head-row .choice-text { flex: 1; min-width: 0; }
+  .grid-head-row .grid-cell + .grid-cell { border-left-color: transparent; }
+  .grid-choices .choice-text { min-width: 0; }
+  @media (max-width: 480px) { .grid-cell { padding: 0 6px; } .grid-head-row { font-size: 0.74rem; } }
+
   .feedback-banner { margin-top: 14px; padding: 10px 14px; border-radius: 8px; font-weight: 700; }
   .feedback-banner.correct { background: var(--green-bg); color: var(--green); }
   .feedback-banner.incorrect { background: var(--red-bg); color: var(--red); }
