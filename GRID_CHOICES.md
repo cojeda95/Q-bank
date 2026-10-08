@@ -25,6 +25,8 @@ hyphen (`\u00AD`) in a header marks where a long word may break on a phone; it i
   dark mode are the existing code paths.
 - `shared/style.css` — `.grid-choices`, `.grid-cells` (CSS grid, equal columns, `--grid-cols` set
   inline), `.grid-head-row`, `.strike-spacer`; phone tweaks under `max-width: 480px`.
+  Arrow-only cells (`↑ ↓ ↔ ↑↑ ↓↓`) are wrapped in `.grid-arrow` and drawn large and bold (1.75rem,
+  1.6rem on phones); `normal` and short text values keep the regular cell size.
 - `live.js` / `live.html` — same rendering for host (with tally bars) and participant views.
 - `tools/build-atlas.py` — joins array choices before matching atlas terms.
 
@@ -35,4 +37,6 @@ hyphen (`\u00AD`) in a header marks where a long word may break on a phone; it i
 `<block>/data.js`), cross-device sync and Live Session never see it.
 
 Pipeline side (schema for `questions_sdlNN.js`, checker rules): `/workspace/pipeline/rules/PIPELINE_README.md`,
-section "Grid (matrix) choices — PROTOTYPE".
+section "Grid (matrix) choices — PROTOTYPE". Grid explanations refer to rows by letter
+("Choice A (↓ serum osmolality, ↓ urine osmolality, ↓ urine Na⁺) is …"), never by a bare `↓ / ↓ / ↓`;
+the site never reorders choices, so the letters in the data are the letters the student sees.

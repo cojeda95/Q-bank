@@ -93,6 +93,9 @@
   .grid-head-row .choice-text { flex: 1; min-width: 0; }
   .grid-head-row .grid-cell + .grid-cell { border-left-color: transparent; }
   .grid-choices .choice-text { min-width: 0; }
+  .grid-arrow { display: inline-block; font-size: 1.75rem; font-weight: 700; line-height: 1; letter-spacing: -0.06em; vertical-align: middle; font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "DejaVu Sans", system-ui, sans-serif; font-variant-emoji: text; -webkit-text-stroke: 0.5px currentColor; }
+  .grid-cell.is-arrow { display: flex; align-items: center; min-height: 1.75rem; }
+  @media (max-width: 480px) { .grid-arrow { font-size: 1.6rem; } }
   @media (max-width: 480px) { .grid-cell { padding: 0 6px; } .grid-head-row { font-size: 0.74rem; } }
 
   .feedback-banner { margin-top: 14px; padding: 10px 14px; border-radius: 8px; font-weight: 700; }

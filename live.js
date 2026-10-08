@@ -172,7 +172,14 @@ function choiceHtml(q, letter) {
   const v = q.choices[letter];
   if (!isGridQ(q)) return esc(Array.isArray(v) ? v.join(' / ') : v);
   const cells = Array.isArray(v) ? v : String(v == null ? '' : v).split(' / ');
-  return `<span class="grid-cells">${q.grid.headers.map((h, i) => `<span class="grid-cell">${esc(cells[i])}</span>`).join('')}</span>`;
+  return `<span class="grid-cells">${q.grid.headers.map((h, i) => gridCellHtml(cells[i])).join('')}</span>`;
+}
+// Arrow-only cells get .grid-arrow (drawn large); 'normal'/short text keep the regular size.
+function gridCellHtml(c) {
+  const t = String(c == null ? '' : c).trim();
+  return /^[↑↓↔]{1,2}$/.test(t)
+    ? `<span class="grid-cell is-arrow"><span class="grid-arrow">${t}</span></span>`
+    : `<span class="grid-cell">${esc(t)}</span>`;
 }
 // tail: extra px reserved on the right (host tally bar + count) so columns line up.
 function gridHeadHtml(q, tail) {

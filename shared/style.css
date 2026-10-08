@@ -433,11 +433,27 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   color: var(--text-strong);
 }
 .grid-head-row .grid-cell + .grid-cell { border-left-color: transparent; }
+/* Arrow-only cells (↑ ↓ ↔ ↑↑ ↓↓): large, heavy glyphs so the pattern reads at a
+   glance. line-height 1 keeps row height close to a text row; colour inherits, so
+   selected / correct / incorrect / dark-mode states apply unchanged. */
+.grid-arrow {
+  display: inline-block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  vertical-align: middle;
+  font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "DejaVu Sans", system-ui, sans-serif;
+  font-variant-emoji: text;   /* keep ↔ as a text glyph, never an emoji */
+  -webkit-text-stroke: 0.5px currentColor;   /* thicken thin system arrows */
+}
+.grid-choices .choice .grid-cell.is-arrow { display: flex; align-items: center; min-height: 1.75rem; }
 .strike-spacer { flex: 0 0 36px; }
 @media (max-width: 480px) {
   .grid-choices .choice { padding: 10px 8px; gap: 6px; }
   .grid-head-row { padding: 2px 8px 0; gap: 6px; font-size: 0.72rem; }
   .grid-cell { padding: 0 5px; }
+  .grid-arrow { font-size: 1.6rem; }
 }
 
 .feedback-banner {

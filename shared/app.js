@@ -372,7 +372,15 @@ function choiceBodyHtml(q, letter) {
   const cells = choiceCells(q, letter);
   const label = q.grid.headers.map((h, i) => `${gridHeaderText(q, i)}: ${cells[i] || ''}`).join('; ');
   return `<span class="grid-cells" aria-label="${escapeHtml(label)}">${q.grid.headers.map((h, i) =>
-    `<span class="grid-cell">${escapeHtml(cells[i] || '')}</span>`).join('')}</span>`;
+    gridCellHtml(cells[i])).join('')}</span>`;
+}
+// One cell. Arrow-only cells (↑ ↓ ↔ ↑↑ ↓↓) get .grid-arrow so the arrow is drawn
+// large; 'normal' and short text values keep the regular cell size.
+function gridCellHtml(c) {
+  const t = String(c == null ? '' : c).trim();
+  return /^[↑↓↔]{1,2}$/.test(t)
+    ? `<span class="grid-cell is-arrow"><span class="grid-arrow">${t}</span></span>`
+    : `<span class="grid-cell">${escapeHtml(t)}</span>`;
 }
 // Header row drawn above the choices; withStrike reserves the 🚫 column so cells line up.
 function gridHeaderHtml(q, withStrike) {
