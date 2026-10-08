@@ -54,6 +54,16 @@ html, body {
 .brand {
   font-weight: 700;
   font-size: 1.1rem;
+  /* Phone header: the title may shrink and wrap (as a last resort mid-word), while the
+     "← All Blocks" link and the Home/◐ group keep their size inside the viewport. */
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.topbar-inner > .link-btn, .topbar-actions { flex-shrink: 0; }
+@media (max-width: 480px) {
+  .topbar-inner { padding: 12px; gap: 8px; }
+  .brand { font-size: 1rem; }
+  .topbar .link-btn { padding: 6px 10px; }
 }
 
 .link-btn {
@@ -120,6 +130,9 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   color: var(--grey-text);
   margin-top: 4px;
 }
+/* Trial counts on a home exam card (kept out of the card's question total). */
+.exam-card .exam-label.exam-trial { margin-top: 2px; font-size: 0.78rem; }
+.exam-card .nowrap { white-space: nowrap; }
 
 .action-card {
   display: flex;

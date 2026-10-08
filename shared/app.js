@@ -571,11 +571,18 @@ homeBtn.addEventListener('click', () => setRoute(''));
 /* ── Home screen ──────────────────────────────────────────────────────── */
 function renderHome() {
   const examCards = DATA.exams.map(e => {
-    const qCount = e.sdls.reduce((s, sdl) => s + sdl.questions.length, 0);
+    // Regular bank only (trial batches are opt-in, as in the SDL list); trial counts follow.
+    const all = e.sdls.flatMap(sdl => sdl.questions);
+    const qCount = all.filter(q => !isTrialQ(q)).length;
+    const trialMeta = TRIAL_KEYS.map(b => {
+      const n = all.filter(q => q.batch === b).length;
+      return n ? `<span class="nowrap">${TRIAL_BATCHES[b].icon} ${n} ${escapeHtml(TRIAL_BATCHES[b].listLabel)}</span>` : '';
+    }).filter(Boolean).join(' · ');
     return `
       <div class="exam-card" data-exam="${e.examNumber}">
         <div class="exam-num">Exam ${e.examNumber}</div>
         <div class="exam-label">${e.sdls.length} SDLs · ${qCount ? `${qCount} questions` : 'questions coming soon'}</div>
+        ${qCount && trialMeta ? `<div class="exam-label exam-trial">${trialMeta}</div>` : ''}
       </div>`;
   }).join('');
 

@@ -455,7 +455,8 @@ function renderSdlPicker() {
       const sel = (state.selectedBatches || []).slice();
       state.sdls.forEach((s, i) => {
         if (s.examNumber !== en) return;
-        Array.from(new Set(s.questions.map(q => q.batch))).forEach(b => {
+        // Regular batches only: trial batches (>= 3) stay out of whole-exam pools.
+        Array.from(new Set(s.questions.map(q => q.batch))).filter(b => b < 3).forEach(b => {
           const key = `${i}-${b}`;
           if (!sel.includes(key)) sel.push(key);
         });
