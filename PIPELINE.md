@@ -141,8 +141,24 @@ atrium), the list follows First Aid; add entries by hand only with a source.
 ### Per-device switches
 
 `mla-hy` (High-yield only), `mla-hideknown`, `mla-seen` (New marks), `mla-streak`
-(Daily mix: last finished day and streak length) and `mla-review` live in localStorage on
-each device and are not synced; `mla-progress` (with `known` and `star`) syncs by PIN.
+(Daily mix: last finished day and streak length), `mla-text` (Aa text size), `mla-mini`
+(overview map turned off) and `mla-review` live in localStorage on each device and are not
+synced; `mla-progress` (with `known` and `star`) syncs by PIN.
+
+### Taking the reader to a pin
+
+`flashPins` → `centerOn` is the one path every search result, link and "Same pathway"
+button uses. A pin on a node sits inside the node's own `translate()`, so its position is
+read with `pinXY` (the transform chain up to the camera), never from the pin's transform
+attribute — that mistake centred most searches near the map's top-left corner. `centerOn`
+centres in `clearRect()` (the map left of the card panel on a wide screen, above the bottom
+sheet on a phone) and zooms until pins are readable (`readScale`, larger with the Aa text
+size). Several pins of one card on a map are framed together when they fit. The overview
+map (`drawMini`/`miniView`, top right) appears only while zoomed in.
+
+Text size (Aa) scales the card panel, side panel, Index, walk and quiz bars with CSS `zoom`.
+Map labels do not scale: node boxes are sized from character counts, and enlarging the text
+inside them collided on ten maps at +15% (115 findings at +30%) in the layout audit.
 
 ### Links from the question bank
 

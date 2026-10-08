@@ -36,7 +36,7 @@ art = src.read_text(encoding="utf-8")
 ESCAPED_TAG = re.compile(r"</?(?:b|i|em|strong)>")
 KNOWN_SRC = re.compile(r"(Robbins|Katzung|Guyton|Costanzo|Kaplan & Sadock|Marks|Langman|Moore|Pawlina|"
                        r"Fundamental Neuroscience|Foundations of Osteopathic Medicine|Atlas of Osteopathic Techniques|"
-                       r"Somatic Dysfunction in Osteopathic Family Medicine|An Osteopathic Approach to Diagnosis and Treatment|"
+                       r"Somatic Dysfunction in Osteopathic Family Medicine|An Osteopathic Approach to Diagnosis and Treatment|DeGowin|"
                        r"OCOM OMM|Osmosis) ")
 
 def validate(art):

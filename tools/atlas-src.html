@@ -141,6 +141,19 @@ svg.map.drag{cursor:grabbing}
 .tbtn.wide{width:auto;padding:0 12px;font-size:12px;font-weight:500}
 #zsrc{display:none}
 :root[data-rail="off"] #zsrc{display:grid}
+.minimap{position:absolute;right:16px;top:14px;z-index:6;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:6px;box-shadow:var(--shadow);line-height:0}
+.minimap svg{display:block;cursor:pointer;touch-action:none}
+.drawer:not([hidden]) ~ .minimap{right:calc(min(404px,92%) + 16px)}
+.mm-c{fill:var(--surface-2);stroke:var(--line);stroke-width:8}
+.mm-p{fill:var(--surface-3)}
+.mm-n{opacity:.8}
+.mm-g{fill:none;stroke:var(--ink-3);stroke-width:6}
+.mm-pins circle{fill:var(--accent);stroke:var(--surface);stroke-width:10}
+.mm-v{fill:color-mix(in srgb,var(--accent) 12%,transparent);stroke:var(--accent);stroke-width:1.6}
+.mmx{position:absolute;top:-9px;right:-9px;width:20px;height:20px;border-radius:50%;background:var(--surface);border:1px solid var(--line);
+  color:var(--ink-3);font-size:13px;line-height:1;display:grid;place-items:center;box-shadow:var(--shadow)}
+.mmx:hover{color:var(--ink)}
 .hint{position:absolute;right:16px;bottom:16px;font-size:11px;color:var(--ink-3);
   background:var(--surface);border:1px solid var(--line-2);border-radius:9px;padding:6px 11px;z-index:5;pointer-events:none;box-shadow:var(--shadow)}
 
@@ -175,6 +188,12 @@ svg.map.drag{cursor:grabbing}
 .panel-c text.pk{font-family:var(--font-ui);font-size:11px;font-weight:600;fill:var(--ink-3)}
 .dim{opacity:.12}
 .flash .pshape{animation:pulse 1.2s ease-out 3;stroke:var(--ink)}
+.pin .selhalo{fill:color-mix(in srgb,var(--accent) 20%,transparent);stroke:var(--accent);stroke-width:2;pointer-events:none}
+.locator{pointer-events:none}
+.locator circle{fill:none;stroke:var(--accent);stroke-width:3;transform-box:fill-box;transform-origin:center;opacity:0;animation:locin 1.15s cubic-bezier(.2,.7,.3,1) 2}
+.locator .loc2{animation-delay:.38s}
+@keyframes locin{0%{transform:scale(1);opacity:0}18%{opacity:.95}100%{transform:scale(.32);opacity:0}}
+@media (prefers-reduced-motion:reduce){.locator circle{animation:none;transform:scale(.42);opacity:.9}}
 @keyframes pulse{0%{stroke-width:0;stroke-opacity:0}45%{stroke-width:8;stroke-opacity:.45}100%{stroke-width:0;stroke-opacity:0}}
 @media (prefers-reduced-motion:reduce){.flash .pshape{animation:none;stroke:var(--ink);stroke-width:3}}
 
@@ -354,6 +373,12 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 .qopt span{display:block;font-size:11.5px;font-weight:400;color:var(--ink-3)}
 .qopt:hover{background:var(--surface-2)}
 .qopt[aria-checked="true"]::before{content:"✓";position:absolute;left:11px;top:8px;color:var(--accent);font-weight:700}
+.tmenu{width:216px}
+.tnote{margin:6px 10px 4px;font-size:11px;line-height:1.4;color:var(--ink-3)}
+.tm-theme{display:none;border-top:1px solid var(--line-2);border-radius:0 0 9px 9px;margin-top:4px}
+@media (max-width:620px){ .tm-theme{display:block} #themeBtn{display:none} }
+:root{--ts:1}
+.drawer > *,.rail > *,.indexwrap > *,.walk > *,.qscore > *{zoom:var(--ts)}
 .qscore{position:absolute;left:16px;top:14px;z-index:6;display:flex;align-items:center;gap:9px;flex-wrap:wrap;max-width:calc(100% - 32px);
   background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:5px 5px 5px 12px;box-shadow:var(--shadow);font-size:12px;color:var(--ink-2)}
 .qscore b{color:var(--ink);font-variant-numeric:tabular-nums}
@@ -379,7 +404,7 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 .pqres button{padding:6px 11px;border-radius:8px;background:var(--surface);border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink)}
 .dlink{position:absolute;top:13px;right:45px;height:28px;padding:0 9px;border-radius:9px;font-size:11.5px;font-weight:500;color:var(--ink-3);display:flex;align-items:center;gap:5px}
 .dlink:hover{background:var(--surface-2);color:var(--ink)}
-.dacts{position:absolute;top:13px;right:45px;display:flex;gap:2px}
+.dacts{float:right;margin:-5px 30px 4px 10px;display:flex;gap:2px}
 .dacts .dlink{position:static;text-decoration:none}
 .drawer .rsrc li,.drawer .rsrc-b{font-size:13px}
 .pagehits{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
@@ -428,6 +453,7 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 
 /* ── responsive ─────────────────────────────────────── */
 @media (max-width:1000px){
+  .drawer:not([hidden]) ~ .minimap,.qscore:not([hidden]) ~ .minimap{display:none}
   #zsrc{display:grid}
   .shell{grid-template-columns:minmax(0,1fr)}
   .rail{display:none}
@@ -473,6 +499,17 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
           <button class="qopt" role="menuitemradio" data-q="due" aria-checked="false">Due cards<span id="qduen">Every card due for review, across all maps</span></button>
         </div>
       </div>
+      <div class="qwrap">
+        <button class="btn" id="textBtn" aria-haspopup="menu" aria-expanded="false" title="Text size" aria-label="Text size">Aa</button>
+        <div class="qmenu tmenu" id="tmenu" role="menu" hidden>
+          <button class="qopt" role="menuitemradio" data-ts="0.9" aria-checked="false">Smaller</button>
+          <button class="qopt" role="menuitemradio" data-ts="1" aria-checked="true">Default</button>
+          <button class="qopt" role="menuitemradio" data-ts="1.15" aria-checked="false">Larger</button>
+          <button class="qopt" role="menuitemradio" data-ts="1.3" aria-checked="false">Largest</button>
+          <p class="tnote">Cards, the side panel and the Index. On a map, sets how close the atlas zooms when it takes you to a pin.</p>
+          <button class="qopt tm-theme" role="menuitem" id="tmTheme">Light / dark</button>
+        </div>
+      </div>
       <button class="btn" id="themeBtn" title="Toggle light / dark">◐</button>
     </div>
     <div class="subbar" id="subbar" hidden><div class="subtabs" role="tablist" id="tabs" aria-label="Maps in this topic"></div></div>
@@ -489,12 +526,14 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
         <button class="tbtn wide" id="zwalk" title="Walk through this map one section at a time (← → keys)">Walk</button>
         <button class="tbtn wide" id="zsrc" title="This map’s progress, weak spots and sources">Info</button>
         <button class="tbtn wide" id="zprint" title="Print this map with a one-page summary of its cards">Print</button>
+        <button class="tbtn wide" id="zmini" title="Show the overview map in the corner (m)" hidden>Overview</button>
       </div>
       <div class="qscore" id="qscore" hidden></div>
       <div class="walk" id="walk" hidden></div>
       <div class="hint" id="hint">drag to pan · scroll to zoom · click any pin · ? for shortcuts</div>
       <div class="indexwrap" id="indexwrap" hidden></div>
       <aside class="drawer" id="drawer" hidden></aside>
+      <div class="minimap" id="minimap" hidden><svg id="mmsvg" aria-hidden="true"></svg><button class="mmx" id="mmx" title="Hide the overview (m)" aria-label="Hide the overview map">×</button></div>
     </div>
   </div>
 </div>
@@ -1043,6 +1082,38 @@ const PATHS = {
   jaunun:{n:"Unconjugated",v:"--p-glycolysis"},
   jauncell:{n:"Mixed — liver",v:"--p-tca"},
   jaunobs:{n:"Conjugated — obstruction",v:"--p-sugars"},
+  crprm:{n:"Primary respiratory mechanism",v:"--p-glycolysis"},
+  crsbs:{n:"Flexion & extension",v:"--p-tca"},
+  crstrain:{n:"Strain patterns",v:"--p-gluconeo"},
+  crtech:{n:"Cranial techniques",v:"--p-sugars"},
+  crsafe:{n:"Cranial safety",v:"--p-ppp"},
+  csmeth:{n:"Counterstrain method",v:"--p-etc"},
+  cscerv:{n:"Cervical points",v:"--p-glycolysis"},
+  csthor:{n:"Thoracic & rib points",v:"--p-tca"},
+  cslumb:{n:"Lumbar, pelvic & sacral points",v:"--p-gluconeo"},
+  cslimb:{n:"Extremity points",v:"--p-sugars"},
+  abruq:{n:"Right upper quadrant",v:"--p-glycolysis"},
+  abepi:{n:"Epigastrium",v:"--p-tca"},
+  ablow:{n:"Lower quadrants & pelvis",v:"--p-gluconeo"},
+  abflank:{n:"Flank, groin & bladder",v:"--p-sugars"},
+  abdiff:{n:"Diffuse abdominal pain",v:"--p-ppp"},
+  dxapp:{n:"Sorting diarrhea",v:"--p-etc"},
+  dxsec:{n:"Secretory diarrhea",v:"--p-glycolysis"},
+  dxosm:{n:"Osmotic diarrhea",v:"--p-tca"},
+  dxmal:{n:"Malabsorption",v:"--p-gluconeo"},
+  dxinf:{n:"Inflammatory diarrhea",v:"--p-ppp"},
+  dxtox:{n:"Food poisoning & other causes",v:"--p-sugars"},
+  huapp:{n:"Reading the urine",v:"--p-etc"},
+  hunephritic:{n:"Nephritic",v:"--p-glycolysis"},
+  hunephrotic:{n:"Nephrotic",v:"--p-tca"},
+  hukid:{n:"Kidney, outside the glomerulus",v:"--p-gluconeo"},
+  hutract:{n:"Bladder, prostate & urethra",v:"--p-sugars"},
+  hupig:{n:"Red urine, no red cells",v:"--p-ppp"},
+  amapp:{n:"Delirium or dementia",v:"--p-etc"},
+  ammet:{n:"Metabolic causes",v:"--p-glycolysis"},
+  amtox:{n:"Drugs & toxins",v:"--p-tca"},
+  amstruct:{n:"Structural causes",v:"--p-gluconeo"},
+  aminf:{n:"Infection, seizure & temperature",v:"--p-ppp"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -12710,6 +12781,297 @@ biliaryatresia:{n:"Biliary atresia",k:"dz",p:"jaunobs",enz:"Bile ducts obliterat
  buzz:["Newborn jaundice past 2 weeks with pale stools"],
  src:["Robbins ch 18 — Liver and gallbladder"],
  tx:["—"],q:["biliary atresia"]},
+
+/* ── cranial osteopathy · counterstrain points · abdominal pain · diarrhea · hematuria · altered mental status (m24) ─── */
+prm:{n:"Primary respiratory mechanism",alias:"PRM",k:"reg",p:"crprm",enz:"Five involuntary, interdependent motions",inh:"—",hi:1,
+ mech:"Sutherland’s model of an inherent, involuntary rhythm, separate from breathing with the diaphragm. <b>Primary</b> because it concerns the internal tissue respiration of the central nervous system; <b>respiratory</b> because it drives the interchange of fluids needed for metabolism in every cell; <b>mechanism</b> because its parts work together as one unit.",
+ find:["The five components (ECOP): (1) inherent motility of the brain and spinal cord, (2) fluctuation of the cerebrospinal fluid, (3) mobility of the intracranial and intraspinal membranes, (4) articular mobility of the cranial bones, (5) involuntary mobility of the sacrum between the ilia, interdependent with motion at the sphenobasilar synchondrosis","Osteopathic cranial manipulative medicine (OCMM) — called osteopathy in the cranial field (OCF) until ECOP renamed it in 2014 — diagnoses and treats using the primary respiratory mechanism and balanced membranous tension","The pattern of cranial bone motion is thought to follow the bevels of the sutures and the attachments of the dura","Trauma, disease and other pathology can alter the motion"],
+ labs:["Palpated as the cranial rhythmic impulse (CRI)"],
+ buzz:["Five parts: brain and cord, CSF, membranes, cranial bones, sacrum"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["primary respiratory mechanism","osteopathy in the cranial field","osteopathic cranial manipulative medicine","cranial osteopathy"]},
+
+cri:{n:"Cranial rhythmic impulse",alias:"CRI",k:"reg",p:"crprm",enz:"The palpable rhythm of the primary respiratory mechanism",inh:"—",hi:1,
+ mech:"The biphasic fluctuation palpated in the cranial bones. It may be related to the Traube-Hering-Mayer oscillations of arterial pressure — about 0.1 Hz, or 6 cycles a minute — which reflect sympathetic vasomotor tone.",
+ find:["Most commonly reported rate: 8–14 cycles per minute; experienced practitioners have reported a lower 2–7 cycles per minute","Palpable anywhere in the body — used in cranial treatment and in balanced ligamentous tension (ligamentous articular strain)","Rate and amplitude can change with disease (eg, fever)","Assessed for amplitude, rate and regularity, and for which bones move less than the rest"],
+ labs:["Holding the breath helps separate it from breathing; full breaths in and out enlarge its amplitude"],
+ buzz:["CRI about 8–14 cycles a minute","Traube-Hering-Mayer oscillation"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine","OCOM OMM — OMS2 written midterm study guide"],
+ tx:["—"],q:["cranial rhythmic impulse","traube hering mayer"]},
+
+rtm:{n:"Reciprocal tension membrane & core link",k:"reg",p:"crprm",enz:"Dura linking the skull to the sacrum",inh:"—",hi:1,
+ mech:"The internal dural reflections — falx cerebri, falx cerebelli and tentorium cerebelli — and the spinal dura form the reciprocal tension membrane. The dural tube runs from the foramen magnum to the second sacral segment (the core link), so the cranium and sacrum move together: the craniosacral mechanism.",
+ find:["The sacrum moves about its superior transverse (respiratory) axis during the cycle","SBS flexion goes with the sacral base moving posterior (counternutation); SBS extension with the sacral base moving anterior (nutation)","Watch the terms: in gross sacral mechanics a base-anterior motion is called flexion, but in craniosacral terms flexion is base-posterior","At the pterion (over the middle meningeal artery) the bones overlap alphabetically from inner to outer table: frontal, parietal, sphenoid, temporal"],
+ labs:["Sacral hold: palm cradles the apex, fingertips at the base, median sacral crest between the third and fourth fingers"],
+ buzz:["Core link: foramen magnum to S2"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["reciprocal tension membrane","core link","craniosacral mechanism"]},
+
+sbsflexext:{n:"SBS flexion & extension",k:"reg",p:"crsbs",enz:"Motion named at the sphenobasilar synchondrosis",inh:"—",hi:1,
+ mech:"Cranial motion is named for what happens at the sphenobasilar synchondrosis (SBS), where the sphenoid meets the occiput just below the sella turcica. The sphenoid and occiput rotate in opposite directions about two parallel transverse axes — one through the body of the sphenoid, one at the level of the foramen magnum.",
+ find:["<b>Flexion</b>: the basisphenoid and basiocciput rise while the occipital squama and the greater wings of the sphenoid drop · paired bones externally rotate · the skull widens and shortens front to back","<b>Extension</b>: the reverse — paired bones internally rotate; the skull narrows and lengthens front to back","Midline bones (sphenoid, occiput, ethmoid, vomer) flex and extend; paired bones (temporals, parietals, innominates) externally and internally rotate","Inhalation favors SBS flexion and external rotation; exhalation favors extension and internal rotation","Foot dorsiflexion enhances SBS flexion; plantar flexion enhances extension","Flexion or extension held fixed is one of the physiologic dysfunctions"],
+ labs:["Vault hold in flexion: the coronal diameter widens; anteroposterior diameter and height decrease"],
+ buzz:["Flexion = external rotation = a wider, shorter skull"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["sphenobasilar synchondrosis","sbs flexion","sbs extension","sphenobasilar flexion","sphenobasilar extension"]},
+
+sbstorsion:{n:"SBS torsion",k:"dz",p:"crstrain",enz:"Physiologic · anteroposterior axis",inh:"—",hi:1,
+ mech:"The sphenoid and occiput rotate in opposite directions about an anteroposterior axis, twisting the SBS.",
+ find:["Named for the side of the elevated greater wing of the sphenoid","Right torsion: the right greater wing rises and rotates left while the right occipital squama drops into the hand and rotates right","Physiologic, like side bending/rotation and fixed flexion or extension"],
+ labs:["Read with the vault hold"],
+ buzz:["Torsion is named for the high greater wing"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["sbs torsion","sphenobasilar torsion","cranial torsion"]},
+
+sbssbr:{n:"SBS side bending/rotation",k:"dz",p:"crstrain",enz:"Physiologic · two vertical axes plus an anteroposterior axis",inh:"—",hi:1,
+ mech:"Side bending and rotation occur together. For side bending, the sphenoid and occiput rotate in opposite directions about two parallel vertical axes (through the body of the sphenoid and through the foramen magnum), bringing the SBS together on one side (concave) and apart on the other (convex). For rotation, both turn the same way about an anteroposterior axis, dropping inferiorly on the convex side.",
+ find:["Named for the side of the convexity","Left side bending/rotation: the left hand feels drawn down as it spreads; the right hand feels drawn up as it narrows"],
+ labs:["Read with the vault hold"],
+ buzz:["Named for the convex, low side"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["sbs side bending","sphenobasilar side bending"]},
+
+sbscompress:{n:"SBS compression",k:"dz",p:"crstrain",enz:"Nonphysiologic · no motion",inh:"—",hi:1,
+ mech:"The basisphenoid and basiocciput are forced together and SBS motion is lost.",
+ find:["Causes: trauma to the back or front of the head, or circumferential compression beyond the tissues’ resilience, as during birth","Feels rock hard, like a bowling ball, void of motion","Nonphysiologic strains (compression, vertical, lateral) follow head or birth trauma, dental procedures, musculoskeletal stress from below and postural problems"],
+ labs:["Read with the vault hold"],
+ buzz:["Bowling-ball skull = SBS compression"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["sbs compression","sphenobasilar compression"]},
+
+sbsvertical:{n:"SBS vertical strain",k:"dz",p:"crstrain",enz:"Nonphysiologic · parallel transverse axes",inh:"—",hi:1,
+ mech:"The sphenoid and occiput rotate in the same direction about parallel transverse axes, shearing the SBS up or down.",
+ find:["Named for the position of the basisphenoid relative to the basiocciput","Superior vertical strain: basisphenoid elevated — the greater wings feel as if they move inferiorly","Inferior vertical strain: basisphenoid depressed — the greater wings feel as if they move superiorly"],
+ labs:["Read with the vault hold"],
+ buzz:["Superior strain: the wings feel low"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["vertical strain","superior vertical strain","inferior vertical strain"]},
+
+sbslateral:{n:"SBS lateral strain",k:"dz",p:"crstrain",enz:"Nonphysiologic · parallel vertical axes",inh:"—",hi:1,
+ mech:"The sphenoid and occiput rotate in the same direction — both clockwise or both counterclockwise — about two parallel vertical axes, a lateral shear at the SBS.",
+ find:["Named for the direction the basisphenoid deviates relative to the occiput","Under a vault hold the head feels like a parallelogram","Right lateral strain: the index fingers (greater wings) move left and the little fingers (occiput) move right; the right fingers drift slightly anterior, the left slightly posterior"],
+ labs:["Read with the vault hold"],
+ buzz:["Parallelogram head = lateral strain"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["lateral strain","sbs lateral strain"]},
+
+vaulthold:{n:"Vault hold & fronto-occipital hold",k:"reg",p:"crtech",enz:"Reading the cranial rhythmic impulse",inh:"—",hi:1,
+ mech:"Diagnostic holds that read the primary respiratory mechanism in the cranium — its amplitude, rate and regularity — and which bones, if any, move differently.",
+ find:["<b>Vault hold</b> (seated at the head, forearms on the table as a fulcrum): index fingers on the greater wings of the sphenoid, middle fingers on the zygomatic processes of the temporal bones, ring fingers on the mastoid processes, little fingers on the occipital squama; thumbs touch each other, not the head","<b>Fronto-occipital hold</b>: the caudad hand under the occipital squama, the cephalad hand across the frontal bone with thumb and middle finger on the greater wings — for the cranial base and SBS","Flexion/external rotation: coronal diameter widens, anteroposterior diameter and height decrease · extension/internal rotation: the opposite"],
+ labs:["Note amplitude, rate and regularity, and any bone that moves differently"],
+ buzz:["Index on the sphenoid, little finger on the occiput"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["vault hold","fronto occipital hold"]},
+
+ocmmtech:{n:"Cranial technique types",k:"reg",p:"crtech",enz:"Direct, indirect, exaggeration, disengagement",inh:"—",hi:0,
+ mech:"Cranial treatment can move a dysfunction toward its restrictive barrier or away from it, and uses the body’s own forces to complete the release.",
+ find:["<b>Direct</b>: toward the barrier with a light, held force until release — mostly articular problems; infants and children before the sutures develop","<b>Indirect</b>: toward ease until the tensions balance (balanced membranous tension) while the CRI is monitored — best when the key problem is membranous","<b>Exaggeration</b>: toward ease, then an activating force at the ease barrier · <b>disengagement</b>: opening or separating a suture with traction or compression","Styles: inherent force through the primary respiratory mechanism (the major method), respiratory assistance (holding the breath at full inhalation or exhalation), distal activation from the sacrum or feet, and still point"],
+ labs:["Release: softening and warmth, or a slight move toward ease and back to balance"],
+ buzz:["Indirect cranial work → balanced membranous tension"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["balanced membranous tension"]},
+
+cv4:{n:"CV4 — compression of the fourth ventricle",k:"reg",p:"crtech",enz:"Still point technique",inh:"—",hi:1,
+ mech:"The physician follows the occiput into extension, then resists its return to flexion until the fluctuation stops — a still point — and holds until the cranial rhythmic impulse returns. It aims to enhance the motion and amplitude of the CRI and the flow of cerebrospinal fluid; treatment of ill patients often starts here.",
+ find:["Fingers cradle the occipital squama; thenar eminences posteromedial to the occipitomastoid sutures","Thenar eminences on the mastoid processes would externally rotate both temporal bones — extreme untoward reactions","The occiput is not forced into extension; it is kept from moving into flexion","Held 15 seconds to a few minutes; release feels like softening and warmth over the occiput","Can be done from the sacrum when touching the head is contraindicated, as in acute head trauma","In heart failure: amplifies Traube-Hering oscillations and baroreceptor responsiveness, helping fluid movement and autonomic balance"],
+ labs:["Patients often call it comfortable, calming and relaxing"],
+ buzz:["Still point","Thenar eminences medial to the occipitomastoid sutures — never on the mastoids"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine","OCOM OMM — OMS2 written midterm study guide"],
+ tx:["—"],q:["cv4","cv 4","compression of the fourth ventricle","still point"]},
+
+vspread:{n:"V-spread & sutural spread",k:"reg",p:"crtech",enz:"Direction of fluid",inh:"—",hi:0,
+ mech:"Both use the fluctuation of the cerebrospinal fluid, rather than muscular force, to release a restricted suture.",
+ find:["<b>V-spread</b> (interparietal sutural opening): crossed thumbs just anterior and superior to lambda push the parietals apart while the fingers encourage external rotation; repeat every 1–2 cm forward to bregma — frees the sagittal suture and helps drain the superior sagittal sinus","<b>Sutural spread</b>: two fingers straddle the restricted suture (eg, occipitomastoid); a finger opposite it sends the lightest impulse, a fluid wave, toward it until the suture spreads and the wave no longer returns","Inherent force is most evident in the V-spread"],
+ labs:["Retest the CRI at the suture"],
+ buzz:["Direction of fluid: the impulse starts opposite the suture"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["v spread","direction of fluid","sutural spread"]},
+
+venoussinus:{n:"Venous sinus drainage",k:"reg",p:"crtech",enz:"Intracranial venous outflow",inh:"—",hi:1,
+ mech:"Works on the dural membranes that form the venous sinuses to increase intracranial venous drainage.",
+ find:["Treat thoracic outlet, cervical and occipitoatlantal somatic dysfunction first so the sinuses can drain","Sequence: transverse sinus (finger pads along the superior nuchal line) → confluence of sinuses (a middle finger on the inion) → occipital sinus (midline from the inion to the suboccipital tissues) → superior sagittal sinus (crossed thumbs from lambda to bregma) → metopic suture on the frontal bone","Minimal pressure — the weight of the head is enough — held until each side softens"],
+ labs:["Retest the CRI, especially the fluid fluctuation"],
+ buzz:["Open the thoracic outlet before draining the head"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["venous sinus drainage","venous sinus technique"]},
+
+condylar:{n:"Condylar & occipitoatlantal decompression",k:"reg",p:"crtech",enz:"Hypoglossal canal · OA joint",inh:"—",hi:0,
+ mech:"Fingers at the base of the occiput, as far caudad as soft tissue and C1 allow, apply a gentle cephalad and lateral force until release — balancing the reciprocal tension membrane at the hypoglossal canal so cranial nerve XII can function normally.",
+ find:["Usually done before occipitoatlantal decompression","OA decompression: middle fingers against the posterior arches of the atlas push caudad while the patient tucks the chin (a nod at the OA joint, without flexing the neck) and holds deep inspirations","Targets OA dysfunction in which the occiput has rotated on its anteroposterior axis and the condyles sit out of line in the atlas facets"],
+ labs:["Retest the CRI at the basiocciput and OA motion"],
+ buzz:["Condylar decompression → cranial nerve XII"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["condylar decompression","occipital condylar decompression"]},
+
+craniallifts:{n:"Frontal lift, parietal lift & temporal rocking",k:"reg",p:"crtech",enz:"Freeing one bone at a time",inh:"—",hi:0,
+ mech:"Bone-specific techniques that free a bone’s sutural and dural connections and help balance membranous tension.",
+ find:["<b>Frontal lift</b>: hypothenar eminences on the lateral angles of the frontal bone press medially (internal rotation) to disengage it from the parietals, then lift anteriorly — for frontoparietal or frontonasal compression","<b>Parietal lift</b>: fingertips just above the parietal-squamous sutures, thumbs crossed above (not touching) the sagittal suture; pressing thumb against thumb internally rotates the parietals, then the hands lift cephalad until fullness (external rotation)","<b>Unilateral temporal rocking</b>: for a temporal bone held in external or internal rotation — in the flexion phase, medial pressure on the mastoid and a lift of the zygomatic arch encourage external rotation; in extension, resist internal rotation (or the reverse)"],
+ labs:["Retest the CRI at that bone"],
+ buzz:["Lifts: press medially first, then lift"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["frontal lift","parietal lift","temporal rocking"]},
+
+ocmmsafety:{n:"Cranial OMT — indications & contraindications",k:"reg",p:"crsafe",enz:"Gentle, but not for everyone",inh:"—",hi:1,
+ mech:"Cranial treatment is gentle, but contact in the wrong place or with too much pressure can provoke symptoms, and some conditions rule it out.",
+ find:["<b>Indications</b>: headache, whiplash, post-concussive syndrome and traumatic brain injury, vertigo and tinnitus, cranial neuropathy or entrapment, trigeminal neuralgia, Bell palsy, otitis media with effusion, temporomandibular dysfunction, sinusitis, colic, plagiocephaly, feeding difficulties","<b>Absolute contraindications</b>: no consent, no somatic dysfunction, acute intracranial bleeding, acute skull fracture, certain seizure states","<b>Relative</b>: coagulopathy, a space-occupying lesion in the cranium, raised intracranial pressure","Adverse effects are few — headache, vertigo, tinnitus, nausea and vomiting, bradycardia — usually from a beginner’s wrong hold or too much pressure, eg, at the occipitomastoid suture"],
+ labs:["End treatment only once the primary respiratory mechanism is present"],
+ buzz:["Acute skull fracture or intracranial bleed: no cranial treatment"],
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine"],
+ tx:["—"],q:["cranial contraindications"]},
+
+csmethod:{n:"Counterstrain points — finding & treating one",k:"reg",p:"csmeth",enz:"The classic counterstrain sequence",inh:"—",hi:1,
+ mech:"The patient is passively placed in the position of greatest comfort while the physician monitors the counterstrain (tender) point, held 90 seconds, then returned slowly to neutral — an indirect technique.",
+ find:["The point: discrete, about 1 cm across or less (most acute part ~3 mm), exquisitely tender, nonradiating, with a tense, almost edematous feel — in fascia, muscle, tendon or ligament, often near a bony attachment","Probe with firm on/off pressure — enough to blanch the nail bed, not enough to hurt healthy tissue; no circular rubbing","Several points: treat the most tender first; in a row, the middle one first; proximal before distal","Call the tenderness 10 (or a dollar), then position until it is gone — at least 70% less","Hold 90 seconds with the finger on the point (ribs too — the old 120 seconds is no longer needed), or stop when the tissue releases","Return slowly through the path of least resistance with the patient passive; recheck the point and the rest of the dysfunction","Anterior points need flexion, posterior points extension; midline points mostly flexion or extension; the more lateral, the more side bending and rotation"],
+ labs:["Soreness for 24–48 hours can follow, more often if more than six points are treated in one visit — fluids and ice; 3-day intervals are appropriate"],
+ buzz:["Fold over the point, 90 seconds, at least 70% better","Anterior points flex, posterior points extend"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques"],
+ tx:["—"],q:["counterstrain point","counterstrain technique"]},
+
+csmech:{n:"Why counterstrain points form",k:"reg",p:"csmeth",enz:"Spindle, metabolism and ligament reflexes",inh:"—",hi:0,
+ mech:"Three overlapping explanations account for counterstrain points and for why passive shortening relieves them.",
+ find:["<b>Proprioceptive</b>: a muscle suddenly lengthened contracts protectively; its opponent is then suddenly stretched and may contract too, and the altered spindle and motor neuron activity can outlast the injury — shortening the strained muscle quiets it","<b>Sustained abnormal metabolism</b>: injury alters local position and microcirculation — ischemia, poor waste removal, more proinflammatory cytokines and sensitized nerve endings, felt as edema and tenderness; positioning improves circulation","<b>Impaired ligamentomuscular reflex</b>: a strained ligament reflexively inhibits muscles that would strain it further and stimulates those that unload it","Jones: anterior points are painless until probed and go with spinal dysfunction and posterior pain; posterior points tend to sit where the patient hurts","A point usually lies on the open-facet (stretched) side: a C5 FSRRR dysfunction tends to give a left-sided point"],
+ labs:["—"],
+ buzz:["Anterior points made counterstrain work — posterior points alone helped about half of Jones’s patients"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques"],
+ tx:["—"],q:["muscle spindle theory of counterstrain"]},
+
+csac:{n:"Anterior cervical counterstrain points",alias:"AC1–AC8",k:"reg",p:"cscerv",enz:"Mostly flexion, side bend and rotate away",inh:"—",hi:1,
+ mech:"Points on the front and side of the neck for cervical dysfunction. Most are treated in flexion with side bending and rotation away; AC1 needs mainly rotation, and AC7 side bends toward.",
+ find:["<b>AC1</b>: posterior ramus of the mandible at the earlobe, or the C1 transverse process between the ramus and the mastoid → marked rotation away (fine-tune with slight flexion and side bending away) · may give frontal or migraine headache, blurred vision, TMJ-like pain","<b>AC2–AC6</b>: anterolateral tips of the transverse processes → flex to the level, side bend and rotate away (F Sa Ra)","<b>AC7</b>: posterosuperior clavicle at the clavicular head of the sternocleidomastoid → flex to C7, side bend toward, rotate away (F St Ra)","<b>AC8</b>: superior medial clavicle at the sternal head of the sternocleidomastoid → less flexion than AC7, side bend and rotate away"],
+ labs:["Shorthand: F flexion, E extension, S side bending, R rotation; t toward, a away; capitals mean more"],
+ buzz:["AC7 is the one that side bends toward"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques"],
+ tx:["—"],q:["anterior cervical counterstrain","anterior cervical tender point"]},
+
+cspc:{n:"Posterior cervical counterstrain points",alias:"PC1–PC8",k:"reg",p:"cscerv",enz:"Mostly extension, side bend and rotate away",inh:"—",hi:1,
+ mech:"Points on the back of the neck and the inferior nuchal line. Most are treated in extension with side bending and rotation away — except PC1 inion and PC3, which need flexion.",
+ find:["<b>PC1 inion</b>: inferior nuchal line beside the inion → flexion of the occipitoatlantal joint (fine-tune side bending toward, rotation away) · suboccipital pain, frontal or periorbital headache","<b>PC1 and PC2 occiput</b>: on the inferior nuchal line (splenius capitis, rectus capitis, semispinalis capitis near the greater occipital nerve) → OA extension with mild compression, slight side bending and rotation away","<b>PC2 midline</b>: superior tip of the C2 spinous process → extension","<b>PC3</b>: inferior tip of the C2 spinous process → flex, side bend and rotate away — the exception","<b>PC4–PC8</b>: inferior tip of the spinous process above (PC4 under C3), or the lateral articular processes → extend to the level, side bend and rotate away"],
+ labs:["—"],
+ buzz:["Posterior points extend — except PC1 inion and PC3, which flex"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques"],
+ tx:["—"],q:["posterior cervical counterstrain","posterior cervical tender point"]},
+
+csat:{n:"Anterior thoracic counterstrain points",alias:"AT1–AT12",k:"reg",p:"csthor",enz:"Flexion",inh:"—",hi:1,
+ mech:"Midline points on the sternum and points in the rectus abdominis for thoracic dysfunction — all treated mainly in flexion.",
+ find:["<b>AT1–AT2</b>: the suprasternal notch and the angle of Louis · <b>AT3–AT6</b>: on the sternum at the matching costal level → flex to the level, fine-tune with side bending and rotation","<b>AT7–AT9</b>: in the rectus abdominis between the xiphoid and the umbilicus (AT7 at the xiphoid tip or a quarter of the way, AT8 halfway, AT9 three-quarters) → seated: flex, side bend toward, rotate away","<b>AT10–AT11</b>: between the umbilicus and the pubic symphysis (a quarter and halfway) · <b>AT12</b>: anterosuperior iliac crest at the midaxillary line → supine with hips and knees flexed, flex to the level, knees (pelvis) toward the point"],
+ labs:["—"],
+ buzz:["Sternum and rectus abdominis points: flex"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques"],
+ tx:["—"],q:["anterior thoracic counterstrain","anterior thoracic tender point"]},
+
+cspt:{n:"Posterior thoracic counterstrain points",alias:"PT1–PT12",k:"reg",p:"csthor",enz:"Extension",inh:"—",hi:1,
+ mech:"Points at the spinous and transverse processes of the thoracic spine, treated prone in extension.",
+ find:["<b>Midline</b>: inferior tip of the spinous process → extend to the level with minimal side bending or rotation; avoid extending the OA joint and neck · central back tenderness, flattened kyphosis","<b>Spinous process (lateral)</b>: inferolateral tip of the deviated spinous process — the vertebra is rotated the other way → extend, side bend and rotate away","<b>Transverse process</b>: posterolateral transverse process → extend, side bend away, rotate toward"],
+ labs:["—"],
+ buzz:["Transverse process points rotate toward"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques"],
+ tx:["—"],q:["posterior thoracic counterstrain","posterior thoracic tender point"]},
+
+csrib:{n:"Rib counterstrain points — depressed vs elevated ribs",alias:"AR1–AR10 · PR1–PR10",k:"reg",p:"csthor",enz:"Anterior = depressed (exhaled) · posterior = elevated",inh:"—",hi:1,
+ mech:"Jones called ribs with anterior points depressed (exhaled) and ribs with posterior points elevated.",
+ find:["<b>AR1</b>: below the clavicle on the first chondrosternal joint · <b>AR2</b>: top of rib 2 at the midclavicular line → supine: flex the head and neck to the rib, side bend and rotate toward · anterior chest pain from coughing, sneezing or forward head carriage","<b>AR3–AR10</b>: on the rib at the anterior axillary line → seated: flex, side bend and rotate toward","<b>PR1</b>: posterosuperior rib 1 just lateral to the costotransverse joint → seated: extend, side bend away, rotate toward · pain at the cervicothoracic junction","<b>PR2–PR10</b>: posterosuperior rib angles → seated: flex, side bend and rotate away"],
+ labs:["Ribs are held 90 seconds like everything else"],
+ buzz:["Anterior rib points: depressed ribs — everything toward","Posterior rib points: elevated ribs — away"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques"],
+ tx:["—"],q:["anterior rib counterstrain","posterior rib counterstrain"]},
+
+csal:{n:"Anterior lumbar counterstrain points",alias:"AL1–AL5",k:"reg",p:"cslumb",enz:"Supine · hips and knees flexed",inh:"—",hi:1,
+ mech:"Points around the front of the pelvis that reflect lumbar dysfunction. The patient lies supine with hips and knees flexed to shorten the tissues; swinging the ankles and knees adds side bending and rotation.",
+ find:["<b>AL1</b>: medial to the ASIS → flex to L1, ankles and knees toward the point (F St Ra)","<b>AL2</b>: medial to the AIIS · <b>AL3</b>: lateral to the AIIS · <b>AL4</b>: inferior to the AIIS → flex, ankles and knees away (F Sa Rt)","<b>AL5</b>: anterosuperior pubic ramus just lateral to the symphysis → flex, ankles away, knees toward","The physician stands on the side of the point for AL1 and AL5, the opposite side for AL2–AL4"],
+ labs:["—"],
+ buzz:["AL1 at the ASIS, AL2–AL4 around the AIIS, AL5 on the pubic ramus"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques","OCOM OMM — OMS2 written midterm study guide"],
+ tx:["—"],q:["anterior lumbar counterstrain","anterior lumbar tender point"]},
+
+cspl:{n:"Posterior lumbar & quadratus lumborum counterstrain points",alias:"PL1–PL5",k:"reg",p:"cslumb",enz:"Prone · extension",inh:"—",hi:1,
+ mech:"Points beside the lumbar spinous and transverse processes and along the quadratus lumborum, treated prone in extension.",
+ find:["<b>PL1–PL5</b>: inferolateral tip of the deviated spinous process, or the posterolateral transverse process → prone: extend by lifting the leg or ASIS on the side of the point (e-E St Ra) · low back pain at the point","<b>Quadratus lumborum</b>: under rib 12, at the lateral tips of the lumbar transverse processes, or on top of the iliac crest → hip extension, abduction and external rotation; may need side bending toward"],
+ labs:["—"],
+ buzz:["Posterior lumbar points: prone, lift the leg"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques","OCOM OMM — OMS2 written midterm study guide"],
+ tx:["—"],q:["posterior lumbar counterstrain","posterior lumbar tender point","quadratus lumborum tender point"]},
+
+csantpelvis:{n:"Psoas, iliacus & anterior pelvic counterstrain points",k:"reg",p:"cslumb",enz:"Marked hip flexion",inh:"—",hi:1,
+ mech:"Deep abdominal and groin points for psoas, iliacus and pelvic dysfunction — all treated with marked hip flexion.",
+ find:["<b>Psoas</b>: two-thirds of the way from the ASIS to the midline, pressing deep and posterior → marked bilateral hip flexion, side bend the lumbar spine toward, perhaps external rotation · thoracolumbar, anterior hip, thigh or groin pain","<b>Iliacus</b>: one-third of the way from the ASIS to the midline, deep and posterolateral → marked bilateral hip flexion and external rotation with the knees flexed","<b>Low ilium</b>: top of the iliopectineal eminence (psoas minor) → marked ipsilateral hip flexion","<b>Inguinal</b>: lateral pubic tubercle (pectineus, inguinal ligament) → both thighs flexed, the other thigh crossed over, slight internal rotation"],
+ labs:["—"],
+ buzz:["Psoas two-thirds, iliacus one-third — from the ASIS toward the midline"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques","OCOM OMM — OMS2 written midterm study guide"],
+ tx:["—"],q:["psoas tender point","iliacus tender point","psoas counterstrain"]},
+
+cspostpelvis:{n:"Piriformis & posterior pelvic counterstrain points",k:"reg",p:"cslumb",enz:"Hip extension — except piriformis and lower pole L5",inh:"—",hi:1,
+ mech:"Points around the PSIS, the gluteus medius and the piriformis. Most are treated prone with hip extension; piriformis and lower pole L5 need hip flexion.",
+ find:["<b>Piriformis</b>: midway between the lower lateral sacrum (ILA) and the greater trochanter, near the sciatic notch → prone, leg off the table: marked hip flexion and abduction, fine-tune rotation · buttock and posterior thigh pain (sciatic neuritis)","<b>Upper pole L5</b>: superomedial PSIS → hip extension with adduction · <b>lower pole L5</b>: just below the PSIS → hip flexed 90°, slight internal rotation and adduction","<b>High ilium sacroiliac</b>: 2–3 cm lateral to the PSIS → hip extension, abduction, external rotation · <b>high ilium flare-out</b>: lateral ILA or coccyx → extension and adduction","<b>PL3 and PL4 lateral (gluteus medius)</b>: upper outer gluteus medius at the level of the PSIS → hip extension, abduction, slight external rotation"],
+ labs:["—"],
+ buzz:["Piriformis: flex and abduct the hip with the leg hanging off the table"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques","OCOM OMM — OMS2 written midterm study guide"],
+ tx:["—"],q:["piriformis tender point","piriformis counterstrain"]},
+
+cssacral:{n:"Sacral counterstrain points",alias:"PS1–PS5",k:"reg",p:"cslumb",enz:"Pressure on the sacrum, not positioning",inh:"—",hi:0,
+ mech:"Sacral points are treated prone by pressing on part of the sacrum to rotate it, rather than by moving a limb.",
+ find:["<b>PS1</b>: medial to the PSIS at S1 (sacral base) → press posterior-to-anterior on the opposite ILA (rotation about the oblique axis)","<b>PS2–PS4</b>: midline at the matching sacral level → PS2: press on the apex (extends the sacrum); PS4: press on the base (flexes it); PS3: either — rotation about the transverse axis","<b>PS5</b>: just medial and superior to the ILA → press on the opposite sacral base"],
+ labs:["—"],
+ buzz:["Press diagonally opposite the point"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques"],
+ tx:["—"],q:["sacral counterstrain","sacral tender point"]},
+
+csue:{n:"Shoulder & arm counterstrain points",k:"reg",p:"cslimb",enz:"Shorten the muscle that holds the point",inh:"—",hi:0,
+ mech:"Upper extremity points sit in the muscles of the scapula, shoulder and elbow; the limb is positioned to shorten that muscle.",
+ find:["<b>Supraspinatus</b>: belly of the muscle → shoulder flexion, abduction, marked external rotation","<b>Infraspinatus</b>: below the scapular spine → shoulder flexion to 90–135° with abduction, fine-tune rotation","<b>Levator scapulae</b>: superior medial border of the scapula → glide the scapula up and in (or marked internal rotation with traction)","<b>Subscapularis</b>: anterolateral border of the scapula → shoulder extension and internal rotation · <b>rhomboids</b>: medial border → extension and adduction","<b>Long head of biceps</b>: bicipital groove → elbow and shoulder flexion, abduction, internal rotation · <b>short head/coracobrachialis</b>: below the coracoid → the same with adduction","<b>Radial head</b>: elbow extended, forearm supinated · <b>medial epicondyle</b>: elbow flexion and pronation"],
+ labs:["—"],
+ buzz:["Supraspinatus: flex, abduct, externally rotate"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques"],
+ tx:["—"],q:["supraspinatus tender point"]},
+
+csle:{n:"Hip, knee & ankle counterstrain points",k:"reg",p:"cslimb",enz:"Shorten the muscle or unload the ligament",inh:"—",hi:0,
+ mech:"Lower extremity points sit in the hip muscles, hamstrings, menisci, cruciates and ankle; the limb is positioned to shorten or unload the tissue.",
+ find:["<b>Tensor fasciae latae</b> (lateral trochanter): just below the iliac crest → hip abduction, slight flexion · lateral hip or thigh pain · <b>iliotibial band</b>: below the greater trochanter → moderate abduction","<b>Lateral hamstring</b> (biceps femoris): mid posterior thigh → knee flexion with external rotation of the tibia","<b>Menisci</b>: on the joint line → moderate knee flexion with tibial rotation (lateral: slight abduction; medial: internal rotation, slight adduction)","<b>Cruciates</b>: in the popliteal fossa → a pillow under the distal femur and a shear — ACL: push the proximal tibia posteriorly; PCL: push the distal femur posteriorly","<b>Gastrocnemius</b>: proximal calf → marked plantar flexion with knee flexion · <b>medial ankle</b>: inversion · <b>lateral ankle</b> (sinus tarsi): eversion"],
+ labs:["—"],
+ buzz:["ACL point: push the tibia back · PCL point: push the femur back"],
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques"],
+ tx:["—"],q:["tensor fasciae latae tender point"]},
+
+abdpainapproach:{n:"Approach to abdominal pain",k:"reg",p:"abdiff",enz:"Start with where it hurts",inh:"—",fa:"152, 170, 175, 181, 306, 351, 353, 387, 389, 390, 392, 393, 397, 403, 404, 405, 425, 428, 430, 617, 619, 658, 663",hi:1,
+ mech:"Pain from a distended or inflamed organ starts vague and central — in appendicitis, periumbilical through T8–T10 visceral afferents — and localizes once the inflammation reaches the parietal peritoneum. The map sorts the causes by where the pain sits, then by the clue that names each one.",
+ find:["<b>Right upper quadrant</b>: biliary colic and cholecystitis (Murphy sign, pain to the right shoulder), cholangitis (fever, jaundice, RUQ pain), hepatitis, Budd-Chiari, amebic liver abscess, Fitz-Hugh–Curtis perihepatitis","<b>Epigastric</b>: peptic ulcer, gastritis, acute pancreatitis (epigastric pain radiating to the back), pancreatic cancer, GERD","<b>Right lower quadrant</b>: appendicitis, terminal ileal Crohn disease, Meckel diverticulum, ectopic pregnancy, adnexal torsion, Yersinia (pseudoappendicitis)","<b>Left lower quadrant</b>: diverticulitis (fever, leukocytosis), sigmoid volvulus, colonic ischemia","<b>Flank to groin</b>: kidney stone (colicky, with hematuria), pyelonephritis (fever, costovertebral angle tenderness)","<b>Diffuse</b>: acute mesenteric ischemia (pain out of proportion to the exam), bowel obstruction, ruptured AAA (pulsatile mass, back pain, hypotension) — and systemic causes: DKA, adrenal crisis, acute intermittent porphyria, lead colic, sickle cell crisis"],
+ labs:["Positive pregnancy test + pain + empty uterus = ectopic pregnancy","Lipase over 3× normal with epigastric pain = pancreatitis"],
+ buzz:["Pain out of proportion to the exam = mesenteric ischemia","Navel pain that moves to the right lower quadrant = appendicitis"],
+ src:["Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder"],
+ tx:["—"],q:["approach to abdominal pain"]},
+
+adnexaltorsion:{n:"Adnexal torsion & ovarian cysts",k:"dz",p:"ablow",enz:"Ovary and tube twist on their ligaments",inh:"—",fa:"643, 663, 719",hi:1,
+ mech:"The ovary and fallopian tube twist around the infundibulopelvic and ovarian ligaments. Venous and lymphatic outflow block first while arterial inflow continues, so the ovary swells until the arterial supply is cut off too — necrosis and hemorrhage.",
+ find:["Sudden abdominal pain, often intermittent and nonradiating, with nausea and vomiting","In adolescents the ovary usually holds a benign functional cyst or teratoma — and up to 46% of torsions involve an ovary with no mass at all","Functional cysts: follicular (a follicle fails to rupture — the most common ovarian mass in young females; may make estrogen) and corpus luteal (fails to involute; may make progesterone) — usually resolve, but can rupture, bleed or lead to torsion","Theca lutein cysts: hCG overstimulation, often bilateral — hydatidiform mole, choriocarcinoma"],
+ labs:["No clinical or imaging finding confirms torsion before surgery; Doppler flow alone should not decide"],
+ buzz:["Sudden one-sided pelvic pain with vomiting in a woman with an ovarian cyst"],
+ src:["Robbins ch 22 — The female genital tract"],
+ tx:["Prompt laparoscopy: untwist and keep the ovary, even one that looks dark"],q:["adnexal torsion","ovarian torsion","follicular cyst","corpus luteal cyst","theca lutein cyst"],
+ ref:[{a:"ACOG Committee on Adolescent Health Care",t:"Adnexal Torsion in Adolescents: ACOG Committee Opinion No. 783",j:"Obstet Gynecol",y:2019,pmid:"31348225",doi:"10.1097/AOG.0000000000003373"}]},
+
+diarrheaapproach:{n:"Approach to diarrhea",k:"reg",p:"dxapp",enz:"Watery, bloody or fatty — and does fasting stop it?",inh:"—",fa:"79, 130, 133, 136, 142, 143, 152, 175, 357, 382, 388, 404, 407",hi:1,
+ mech:"Diarrhea is more stool mass, frequency or fluidity — typically over 200 g a day. Painful, bloody, small-volume diarrhea is dysentery. Four mechanisms: secretory, osmotic, malabsorptive and exudative.",
+ find:["<b>Secretory</b>: isotonic stool that persists during fasting — cholera, enterotoxigenic E coli, VIPoma, carcinoid","<b>Osmotic</b>: unabsorbed solutes pull water in (lactase deficiency, osmotic laxatives); stool more than 50 mOsm more concentrated than plasma; stops with fasting","<b>Malabsorptive</b>: generalized failure of nutrient absorption with steatorrhea; relieved by fasting — celiac disease, pancreatic insufficiency, bile acid loss, Whipple disease, Giardia","<b>Exudative</b> (inflammatory): purulent, often bloody stools that continue during fasting — Shigella, Campylobacter, Salmonella, Shiga toxin–producing E coli, Entamoeba, C difficile, inflammatory bowel disease","Vomiting within hours of a meal points to a preformed toxin: S aureus (2–6 hours), B cereus (1–5 hours, reheated rice)","Bloody means invasive; watery means a toxin or the small bowel"],
+ labs:["↑ Stool osmotic gap in osmotic diarrhea (lactose intolerance)","D-xylose test: abnormal in mucosal disease (celiac), normal in pancreatic insufficiency"],
+ buzz:["Diarrhea that continues while fasting = secretory (or exudative)","Stops with fasting = osmotic or malabsorptive"],
+ src:["Robbins ch 17 — The gastrointestinal tract"],
+ tx:["—"],q:["approach to diarrhea","secretory diarrhea","osmotic diarrhea","exudative diarrhea"]},
+
+hematuriaapproach:{n:"Approach to hematuria & proteinuria",k:"reg",p:"huapp",enz:"Read the urine: casts, red cell shape, protein",inh:"—",fa:"112, 428, 465, 566, 612, 613, 616, 617, 619, 624",hi:1,
+ mech:"Casts mean the red or white cells came from the glomeruli or tubules; blood without casts comes from elsewhere in the urinary tract — a stone, a bladder tumor. Glomerular inflammation (nephritic) bleeds; podocyte injury (nephrotic) leaks protein.",
+ find:["<b>Nephritic</b>: hematuria with RBC casts and dysmorphic red cells, ↓ GFR (oliguria, azotemia), hypertension, proteinuria usually under 3.5 g/day — postinfectious GN, IgA nephropathy, Alport syndrome, Goodpasture syndrome, MPGN","<b>Nephrotic</b>: proteinuria over 3.5 g/day, frothy urine, edema, hypoalbuminemia, hyperlipidemia, fatty casts (Maltese cross) — FSGS, minimal change disease, membranous nephropathy, amyloidosis, diabetic nephropathy","<b>Both</b> (nephritic-nephrotic): most often diffuse proliferative GN (lupus) and MPGN","<b>Blood without casts</b>: bladder cancer (painless, older smoker), kidney stones (colicky flank pain); pyuria without casts in cystitis","<b>Other casts</b>: WBC casts — pyelonephritis, interstitial nephritis, transplant rejection · muddy brown granular — acute tubular necrosis · waxy — chronic kidney disease · hyaline — nonspecific","<b>Heme-positive dipstick with no red cells</b>: myoglobin (rhabdomyolysis) or hemoglobin (intravascular hemolysis — transfusion reaction, G6PD deficiency, PNH)","Asymptomatic hematuria or proteinuria usually reflects mild glomerular disease"],
+ labs:["Casts are built on Tamm-Horsfall mucoprotein (uromodulin) secreted by tubular cells","Painless hematuria in bladder cancer: cystoscopy and urine cytology"],
+ buzz:["Casts = glomerulus or tubule; no casts = stone, tumor or bladder","Painless hematuria in a smoker = bladder cancer until proven otherwise"],
+ src:["Robbins ch 20 — The kidney","Robbins ch 21 — The lower urinary tract and male genital system"],
+ tx:["—"],q:["approach to hematuria"]},
+
+amsapproach:{n:"Approach to altered mental status",k:"reg",p:"amapp",enz:"Delirium first — then find the cause",inh:"—",fa:"64, 239, 240, 345, 346, 351, 353, 357, 399, 528, 530, 534, 543, 575, 587, 592, 689",hi:1,
+ mech:"Anyone less than fully alert must be assumed to have an organic brain disorder until proven otherwise. Delirium — an acute, fluctuating disturbance of attention and arousal — is the most common form of altered mental status in hospitalized patients; it is usually reversible and secondary to another illness, a drug or withdrawal.",
+ find:["<b>Level of consciousness</b>: alert, lethargic, stuporous, comatose — points on a continuum that can fluctuate","<b>Attention</b> is the hallmark deficit of confusional states: digit span (seven is normal, four or fewer abnormal), serial 7s, spelling WORLD backward","<b>Delirium vs dementia</b>: delirium is acute and waxes and wanes, with ↓ attention and arousal and often visual hallucinations; dementia is a decline in memory and executive function with intact consciousness","<b>Metabolic</b>: hypoglycemia, DKA or hyperosmolar state, sodium and calcium disorders, uremia, liver disease, hypoxia or hypoventilation, Wernicke encephalopathy, thyroid storm, myxedema, adrenal crisis","<b>Drugs</b>: intoxication or withdrawal — alcohol, narcotics, sedatives, steroids, salicylates, digitalis, anticholinergics; serotonin syndrome, neuroleptic malignant syndrome, lithium, carbon monoxide","<b>Structural</b>: subdural (older adult, fluctuating), epidural (lucid interval), subarachnoid hemorrhage, stroke, herniation","<b>Infection, seizure, temperature</b>: meningitis, HSV encephalitis, urinary infection, sepsis, a postictal state, heat stroke, hypothermia","Most patients have both predisposing (eg, prior cognitive impairment) and precipitating (eg, urinary tract infection) factors"],
+ labs:["EEG in delirium: diffuse background slowing","Look for the cause: glucose, electrolytes, urinalysis, oxygenation and the medication list"],
+ buzz:["Inattention is the core of delirium","Visual hallucinations suggest delirium; auditory suggest schizophrenia"],
+ src:["DeGowin ch 15 — The Mental Status, Psychiatric, and Social Evaluations","Kaplan & Sadock ch 3 — Neurocognitive Disorders"],
+ tx:["Treat the cause; reorient (clock, calendar), protect sleep, keep the mind engaged; avoid restraints, anticholinergics, benzodiazepines and opioids; antipsychotics only as needed"],q:["approach to altered mental status","altered mental status","acute confusional state"],
+ ref:[{a:"Wilson JE, Mart MF, Cunningham C, et al.",t:"Delirium",j:"Nat Rev Dis Primers",y:2020,pmid:"33184265",doi:"10.1038/s41572-020-00223-4"}]},
 
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
@@ -25535,7 +25897,415 @@ MAPS.sxjaundice = {
   {a:"j0",b:"j1",p:"jaunun"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["index","Index"]];
+MAPS.cranial = {
+ t:"Cranial Osteopathy (OCMM)", sub:"The primary respiratory mechanism and its rhythm · flexion and extension at the sphenobasilar synchondrosis · the strain patterns and how each is named · the techniques, when to use them and when not to",
+ w:3300, h:1450,
+ fa:"",
+ src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine","OCOM OMM — OMS2 written midterm study guide"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"The primary respiratory mechanism"},
+  {x:140,y:310,w:3020,h:140,l:"Flexion & extension at the sphenobasilar synchondrosis"},
+  {x:140,y:510,w:3020,h:200,l:"Strain patterns"},
+  {x:140,y:770,w:3020,h:200,l:"Techniques"},
+  {x:140,y:1030,w:3020,h:140,l:"Indications & safety"}],
+ panels:[
+  {x:140,y:1230,w:1480,h:160,kw:290,t:"Naming the strains",rows:[
+   ["Torsion","side of the high greater wing"],
+   ["Side bending/rotation","side of the convexity"],
+   ["Vertical strain","basisphenoid up or down"],
+   ["Lateral strain","basisphenoid deviated left or right"],
+   ["Compression","no motion at all"]]},
+  {x:1680,y:1230,w:1480,h:160,kw:220,t:"Flexion vs extension",rows:[
+   ["Midline bones","flex · extend"],
+   ["Paired bones","externally rotate · internally rotate"],
+   ["Skull","wider and shorter · narrower and longer"],
+   ["Sacral base","moves posterior · moves anterior"],
+   ["Favored by","inhalation, dorsiflexion · exhalation, plantar flexion"]]}],
+ nodes:[
+  {id:"p1",l:"Primary respiratory mechanism",x:420,y:170,p:"crprm",k:"hub",s:"five involuntary, interdependent motions",m:["prm"]},
+  {id:"p2",l:"Cranial rhythmic impulse",x:1020,y:170,p:"crprm",s:"8–14 cycles a minute · palpable anywhere",m:["cri"]},
+  {id:"p3",l:"Reciprocal tension membrane",x:1620,y:170,p:"crprm",s:"falx cerebri, falx cerebelli, tentorium",m:["rtm"]},
+  {id:"p4",l:"Core link",x:2220,y:170,p:"crprm",s:"dural tube from the foramen magnum to S2",m:["rtm"]},
+  {id:"px1",l:"→ Spine, Ribs & Pelvis",x:2820,y:170,p:"neutral",k:"ghost",go:"ommmech"},
+  {id:"f1",l:"SBS flexion",x:420,y:370,p:"crsbs",s:"midline bones flex · paired bones rotate out",m:["sbsflexext"]},
+  {id:"f2",l:"SBS extension",x:1020,y:370,p:"crsbs",s:"midline bones extend · paired bones rotate in",m:["sbsflexext"]},
+  {id:"f3",l:"Shape of the skull",x:1620,y:370,p:"crsbs",s:"flexion: wider and shorter front to back",m:["sbsflexext"]},
+  {id:"f4",l:"Sacrum",x:2220,y:370,p:"crsbs",s:"SBS flexion → sacral base moves posterior",m:["rtm"]},
+  {id:"f5",l:"Breathing & feet",x:2820,y:370,p:"crsbs",s:"inhalation and dorsiflexion favor flexion",m:["sbsflexext"]},
+  {id:"s0",l:"Physiologic strains",x:420,y:570,p:"crstrain",k:"hub",s:"torsion · side bending/rotation · fixed flexion or extension"},
+  {id:"s1",l:"Torsion",x:1020,y:570,p:"crstrain",s:"anteroposterior axis · the high greater wing names it",m:["sbstorsion"]},
+  {id:"s2",l:"Side bending/rotation",x:1620,y:570,p:"crstrain",s:"named for the convex side",m:["sbssbr"]},
+  {id:"s3",l:"Fixed flexion or extension",x:2220,y:570,p:"crstrain",s:"held in one phase",m:["sbsflexext"]},
+  {id:"s4",l:"Vault hold",x:2820,y:570,p:"crtech",s:"index on the sphenoid · little finger on the occiput",m:["vaulthold"]},
+  {id:"s5",l:"Nonphysiologic strains",x:420,y:650,p:"crstrain",k:"hub",s:"head, birth or dental trauma"},
+  {id:"s6",l:"Compression",x:1020,y:650,p:"crstrain",s:"a bowling ball — no motion",m:["sbscompress"]},
+  {id:"s7",l:"Vertical strain",x:1620,y:650,p:"crstrain",s:"basisphenoid up or down",m:["sbsvertical"]},
+  {id:"s8",l:"Lateral strain",x:2220,y:650,p:"crstrain",s:"a parallelogram · basisphenoid left or right",m:["sbslateral"]},
+  {id:"t1",l:"CV4",x:420,y:830,p:"crtech",s:"resist flexion until a still point",m:["cv4"]},
+  {id:"t2",l:"Venous sinus drainage",x:1020,y:830,p:"crtech",s:"open the thoracic outlet first",m:["venoussinus"]},
+  {id:"t3",l:"V-spread · sutural spread",x:1620,y:830,p:"crtech",s:"a fluid wave from the opposite side",m:["vspread"]},
+  {id:"t4",l:"Condylar decompression",x:2220,y:830,p:"crtech",s:"hypoglossal canal · cranial nerve XII",m:["condylar"]},
+  {id:"t5",l:"OA decompression",x:2820,y:830,p:"crtech",s:"caudad pressure on the atlas, chin tucked",m:["condylar","subocc"]},
+  {id:"t6",l:"Frontal & parietal lifts",x:420,y:910,p:"crtech",s:"press medially, then lift",m:["craniallifts"]},
+  {id:"t7",l:"Temporal rocking",x:1020,y:910,p:"crtech",s:"a temporal bone held in rotation",m:["craniallifts"]},
+  {id:"t8",l:"Technique types",x:1620,y:910,p:"crtech",s:"direct · indirect · exaggeration · disengagement",m:["ocmmtech"]},
+  {id:"t9",l:"Sacral hold",x:2220,y:910,p:"crtech",s:"palm under the sacrum, following its motion",m:["rtm"]},
+  {id:"tx1",l:"→ OMT — Techniques, Targets & Safety",x:2820,y:910,p:"neutral",k:"ghost",go:"omt"},
+  {id:"i1",l:"Indications",x:420,y:1090,p:"crsafe",s:"headache · concussion · otitis media · colic",m:["ocmmsafety"]},
+  {id:"i2",l:"Absolute contraindications",x:1020,y:1090,p:"crsafe",s:"acute skull fracture · intracranial bleed",m:["ocmmsafety"]},
+  {id:"i3",l:"Relative contraindications",x:1620,y:1090,p:"crsafe",s:"coagulopathy · mass · ↑ intracranial pressure",m:["ocmmsafety"]},
+  {id:"i4",l:"Adverse effects",x:2220,y:1090,p:"crsafe",s:"headache · vertigo · nausea · bradycardia",m:["ocmmsafety"]},
+  {id:"i5",l:"Any OMT",x:2820,y:1090,p:"crsafe",s:"general contraindications",m:["omtcontra"]}],
+ edges:[
+  {a:"p1",b:"p2",p:"crprm"},
+  {a:"p3",b:"p4",p:"crprm",arrow:"none",dash:true},
+  {a:"f1",b:"f2",p:"crsbs",arrow:"both",dash:true}]
+};
+
+MAPS.jones = {
+ t:"Counterstrain Tender Points", sub:"Find the point, call it 10, fold the tissue over it until it is at least 70% better, hold 90 seconds, return slowly · anterior points flex, posterior points extend · region by region, with the classic position for each",
+ w:3300, h:1650,
+ fa:"",
+ src:["Atlas of Osteopathic Techniques ch 9 — Counterstrain Techniques","OCOM OMM — OMS2 written midterm study guide"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"The method"},
+  {x:140,y:310,w:3020,h:200,l:"Cervical — anterior, then posterior"},
+  {x:140,y:570,w:3020,h:200,l:"Thoracic & ribs"},
+  {x:140,y:830,w:3020,h:280,l:"Lumbar, pelvis & sacrum"},
+  {x:140,y:1170,w:3020,h:200,l:"Extremities — shoulder and arm, then hip, knee and ankle"}],
+ panels:[
+  {x:140,y:1430,w:1480,h:160,kw:230,t:"Shorthand (Yates & Glover)",rows:[
+   ["F · E","flexion · extension"],
+   ["S · R","side bending · rotation"],
+   ["t · a","toward · away from the point"],
+   ["Capital vs lower case","more vs less of that motion"],
+   ["Abd · Add · ER · IR","abduction, adduction, rotation of a limb"]]},
+  {x:1680,y:1430,w:1480,h:160,kw:230,t:"Rules of thumb",rows:[
+   ["Anterior point","flexion"],
+   ["Posterior point","extension"],
+   ["Midline point","mostly flexion or extension"],
+   ["Lateral point","more side bending and rotation"],
+   ["Exceptions","PC1 inion and PC3 flex · AC7 side bends toward"]]}],
+ nodes:[
+  {id:"m1",l:"Counterstrain",x:420,y:170,p:"csmeth",k:"hub",s:"indirect · position of ease",m:["counterstrain"]},
+  {id:"m2",l:"Find the point",x:1020,y:170,p:"csmeth",s:"1 cm or less · press to blanch the nail bed",m:["csmethod"]},
+  {id:"m3",l:"Position",x:1620,y:170,p:"csmeth",s:"until at least 70% less tender",m:["csmethod"]},
+  {id:"m4",l:"Hold 90 seconds",x:2220,y:170,p:"csmeth",s:"then return slowly, the patient passive",m:["csmethod"]},
+  {id:"m5",l:"Why points form",x:2820,y:170,p:"csmeth",s:"spindle · metabolism · ligament reflex",m:["csmech"]},
+  {id:"c1",l:"AC1",x:420,y:370,p:"cscerv",s:"mandibular ramus or C1 transverse process → rotate away",m:["csac"]},
+  {id:"c2",l:"AC2–AC6",x:1020,y:370,p:"cscerv",s:"anterior transverse processes → F Sa Ra",m:["csac"]},
+  {id:"c3",l:"AC7",x:1620,y:370,p:"cscerv",s:"clavicular head of SCM → F St Ra",m:["csac"]},
+  {id:"c4",l:"AC8",x:2220,y:370,p:"cscerv",s:"sternal head of SCM → less flexion, Sa Ra",m:["csac"]},
+  {id:"cx1",l:"→ Spine, Ribs & Pelvis",x:2820,y:370,p:"neutral",k:"ghost",go:"ommmech"},
+  {id:"c6",l:"PC1 inion",x:420,y:450,p:"cscerv",s:"beside the inion → flexion",m:["cspc"]},
+  {id:"c7",l:"PC1–PC2 occiput",x:1020,y:450,p:"cscerv",s:"inferior nuchal line → extension",m:["cspc"]},
+  {id:"c8",l:"PC3",x:1620,y:450,p:"cscerv",s:"under the C2 spinous process → flexion",m:["cspc"]},
+  {id:"c9",l:"PC4–PC8",x:2220,y:450,p:"cscerv",s:"spinous tips, articular processes → E Sa Ra",m:["cspc"]},
+  {id:"t1",l:"AT1–AT6",x:420,y:630,p:"csthor",s:"on the sternum → flexion",m:["csat"]},
+  {id:"t2",l:"AT7–AT12",x:1020,y:630,p:"csthor",s:"rectus abdominis → flex, side bend toward",m:["csat"]},
+  {id:"t3",l:"PT midline",x:1620,y:630,p:"csthor",s:"spinous tip → extension",m:["cspt"]},
+  {id:"t4",l:"PT spinous · transverse",x:2220,y:630,p:"csthor",s:"E Sa Ra · transverse process E Sa Rt",m:["cspt"]},
+  {id:"r1",l:"AR1–AR2",x:420,y:710,p:"csthor",s:"depressed ribs → supine, flex, St Rt",m:["csrib"]},
+  {id:"r2",l:"AR3–AR10",x:1020,y:710,p:"csthor",s:"anterior axillary line → seated, toward",m:["csrib"]},
+  {id:"r3",l:"PR1",x:1620,y:710,p:"csthor",s:"elevated rib 1 → extend, Sa Rt",m:["csrib"]},
+  {id:"r4",l:"PR2–PR10",x:2220,y:710,p:"csthor",s:"rib angles → flex, Sa Ra",m:["csrib"]},
+  {id:"l1",l:"AL1",x:420,y:890,p:"cslumb",s:"medial to the ASIS → F St Ra",m:["csal"]},
+  {id:"l2",l:"AL2–AL4",x:1020,y:890,p:"cslumb",s:"around the AIIS → F Sa Rt",m:["csal"]},
+  {id:"l3",l:"AL5",x:1620,y:890,p:"cslumb",s:"pubic ramus → flex, knees toward",m:["csal"]},
+  {id:"l4",l:"PL1–PL5",x:2220,y:890,p:"cslumb",s:"prone, lift the leg → extension",m:["cspl"]},
+  {id:"l5",l:"Quadratus lumborum",x:2820,y:890,p:"cslumb",s:"rib 12 · iliac crest → E Abd ER",m:["cspl"]},
+  {id:"l6",l:"Psoas",x:420,y:970,p:"cslumb",s:"two-thirds from the ASIS → hips flexed",m:["csantpelvis","psoassyn"]},
+  {id:"l7",l:"Iliacus",x:1020,y:970,p:"cslumb",s:"one-third from the ASIS → flex, rotate out",m:["csantpelvis"]},
+  {id:"l8",l:"Low ilium · inguinal",x:1620,y:970,p:"cslumb",s:"iliopectineal eminence · pubic tubercle",m:["csantpelvis"]},
+  {id:"l9",l:"Piriformis",x:2220,y:970,p:"cslumb",s:"sacrum to trochanter → F Abd ER",m:["cspostpelvis"]},
+  {id:"l10",l:"PSIS points",x:2820,y:970,p:"cslumb",s:"upper pole L5 · high ilium → extension",m:["cspostpelvis"]},
+  {id:"l11",l:"Gluteus medius",x:420,y:1050,p:"cslumb",s:"PL3–PL4 lateral → E Abd er",m:["cspostpelvis"]},
+  {id:"l12",l:"Lower pole L5",x:1020,y:1050,p:"cslumb",s:"below the PSIS → hip flexed 90°",m:["cspostpelvis"]},
+  {id:"l13",l:"PS1 · PS5",x:1620,y:1050,p:"cslumb",s:"press the diagonally opposite corner",m:["cssacral"]},
+  {id:"l14",l:"PS2–PS4",x:2220,y:1050,p:"cslumb",s:"midline → press the apex or the base",m:["cssacral"]},
+  {id:"lx1",l:"→ OMT — Techniques, Targets & Safety",x:2820,y:1050,p:"neutral",k:"ghost",go:"omt"},
+  {id:"e1",l:"Supraspinatus",x:420,y:1230,p:"cslimb",s:"flex, abduct, rotate out",m:["csue"]},
+  {id:"e2",l:"Infraspinatus",x:1020,y:1230,p:"cslimb",s:"flex 90–135°, abduct",m:["csue"]},
+  {id:"e3",l:"Levator scapulae",x:1620,y:1230,p:"cslimb",s:"glide the scapula up and in",m:["csue"]},
+  {id:"e4",l:"Biceps",x:2220,y:1230,p:"cslimb",s:"bicipital groove → flex, abduct",m:["csue"]},
+  {id:"e5",l:"Elbow",x:2820,y:1230,p:"cslimb",s:"radial head · medial epicondyle",m:["csue"]},
+  {id:"e6",l:"Tensor fasciae latae · IT band",x:420,y:1310,p:"cslimb",s:"abduct the hip",m:["csle"]},
+  {id:"e7",l:"Hamstrings",x:1020,y:1310,p:"cslimb",s:"knee flexion",m:["csle"]},
+  {id:"e8",l:"Menisci",x:1620,y:1310,p:"cslimb",s:"joint line → flexion with rotation",m:["csle"]},
+  {id:"e9",l:"Cruciates",x:2220,y:1310,p:"cslimb",s:"ACL: tibia back · PCL: femur back",m:["csle"]},
+  {id:"e10",l:"Ankle",x:2820,y:1310,p:"cslimb",s:"medial: invert · lateral: evert",m:["csle"]}],
+ edges:[
+  {a:"m1",b:"m2",p:"csmeth"},
+  {a:"m2",b:"m3",p:"csmeth"},
+  {a:"m3",b:"m4",p:"csmeth"}]
+};
+
+MAPS.sxabdpain = {
+ t:"Abdominal Pain", sub:"Start with where it hurts — right upper quadrant, epigastrium, lower quadrants and pelvis, flank and groin, or everywhere — then let the telltale clue name the cause",
+ w:3300, h:1540,
+ fa:"152, 170, 181, 306, 351, 353, 377, 387, 390, 392–393, 397, 403–405, 425, 428, 430, 463, 617, 619, 658, 663, 669",
+ src:["Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Right upper quadrant"},
+  {x:140,y:370,w:3020,h:140,l:"Epigastrium"},
+  {x:140,y:570,w:3020,h:200,l:"Lower quadrants & pelvis — right, then left"},
+  {x:140,y:830,w:3020,h:140,l:"Flank, groin & bladder"},
+  {x:140,y:1030,w:3020,h:200,l:"Diffuse — the emergencies, then the systemic causes"}],
+ panels:[
+  {x:140,y:1290,w:1480,h:182,kw:330,t:"Telltale signs",rows:[
+   ["Murphy sign","cholecystitis"],
+   ["McBurney point · Rovsing sign","appendicitis"],
+   ["Pain out of proportion to the exam","mesenteric ischemia"],
+   ["Pain boring through to the back","pancreatitis"],
+   ["Pulsatile mass + hypotension","ruptured AAA"],
+   ["Psoas sign","appendicitis · psoas abscess"]]},
+  {x:1680,y:1290,w:1480,h:160,kw:290,t:"Don’t miss",rows:[
+   ["Ruptured AAA","older smoker · back pain · shock"],
+   ["Ectopic pregnancy","positive hCG · empty uterus"],
+   ["Mesenteric ischemia","atrial fibrillation · soft abdomen"],
+   ["Perforated ulcer","free air under the diaphragm"],
+   ["Torsion","testis or adnexa — sudden pain"]]}],
+ nodes:[
+  {id:"a0",l:"Approach",x:420,y:170,p:"abdiff",k:"hub",s:"where it hurts, then the clue",m:["abdpainapproach"]},
+  {id:"a1",l:"Biliary colic · cholecystitis",x:1020,y:170,p:"abruq",s:"Murphy sign · pain to the right shoulder",m:["cholecystitis","gallstones"]},
+  {id:"a2",l:"Acute cholangitis",x:1620,y:170,p:"abruq",s:"fever · jaundice · RUQ pain",m:["cholangitis"]},
+  {id:"a3",l:"Hepatitis",x:2220,y:170,p:"abruq",s:"jaundice · RUQ pain · ↑ ALT",m:["hav","hbv"]},
+  {id:"a4",l:"Budd-Chiari",x:2820,y:170,p:"abruq",s:"painful hepatomegaly · ascites · no JVD",m:["buddchiari"]},
+  {id:"a5",l:"Amebic liver abscess",x:1020,y:250,p:"abruq",s:"anchovy-paste exudate · RUQ pain",m:["entamoeba"]},
+  {id:"a6",l:"Fitz-Hugh–Curtis",x:1620,y:250,p:"abruq",s:"PID with perihepatitis",m:["pid"]},
+  {id:"ax1",l:"→ Liver, Gallbladder & Pancreas",x:2220,y:250,p:"neutral",k:"ghost",go:"liver"},
+  {id:"ax2",l:"→ Jaundice",x:2820,y:250,p:"neutral",k:"ghost",go:"sxjaundice"},
+  {id:"e1",l:"Peptic ulcer",x:420,y:430,p:"abepi",s:"duodenal better with meals · gastric worse",m:["pud"]},
+  {id:"e2",l:"Gastritis",x:1020,y:430,p:"abepi",s:"NSAIDs · alcohol · H pylori",m:["gastritis"]},
+  {id:"e3",l:"Acute pancreatitis",x:1620,y:430,p:"abepi",s:"pain to the back · lipase over 3×",m:["acutepanc"]},
+  {id:"e4",l:"Pancreatic cancer",x:2220,y:430,p:"abepi",s:"pain to the back · weight loss",m:["pancca"]},
+  {id:"e5",l:"GERD",x:2820,y:430,p:"abepi",s:"heartburn · regurgitation",m:["gerd"]},
+  {id:"l1",l:"Appendicitis",x:420,y:630,p:"ablow",s:"periumbilical, then McBurney point",m:["appendicitis"]},
+  {id:"l2",l:"Crohn disease",x:1020,y:630,p:"ablow",s:"terminal ileum · skip lesions",m:["crohn"]},
+  {id:"l3",l:"Meckel diverticulum",x:1620,y:630,p:"ablow",s:"child · RLQ pain or painless bleeding",m:["meckel"]},
+  {id:"l4",l:"Ectopic pregnancy",x:2220,y:630,p:"ablow",s:"positive hCG · empty uterus",m:["ectopic"]},
+  {id:"l5",l:"Adnexal torsion",x:2820,y:630,p:"ablow",s:"sudden pain with vomiting · ovarian cyst",m:["adnexaltorsion"]},
+  {id:"l6",l:"Diverticulitis",x:420,y:710,p:"ablow",s:"LLQ pain · fever · older adult",m:["diverticular"]},
+  {id:"l7",l:"Sigmoid volvulus",x:1020,y:710,p:"ablow",s:"coffee bean sign · older adult",m:["volvulus"]},
+  {id:"l8",l:"Colonic ischemia",x:1620,y:710,p:"ablow",s:"crampy pain, then hematochezia",m:["mesenteric"]},
+  {id:"l9",l:"Pelvic inflammatory disease",x:2220,y:710,p:"ablow",s:"cervical motion tenderness",m:["pid"]},
+  {id:"l10",l:"Endometriosis",x:2820,y:710,p:"ablow",s:"painful periods · painful sex",m:["endometriosis"]},
+  {id:"g1",l:"Kidney stone",x:420,y:890,p:"abflank",s:"colicky flank pain to the groin · hematuria",m:["stones"]},
+  {id:"g2",l:"Pyelonephritis",x:1020,y:890,p:"abflank",s:"fever · costovertebral angle tenderness",m:["pyelo"]},
+  {id:"g3",l:"Cystitis",x:1620,y:890,p:"abflank",s:"suprapubic pain · dysuria",m:["cystitis"]},
+  {id:"g4",l:"Testicular torsion",x:2220,y:890,p:"abflank",s:"sudden scrotal pain · no cremasteric reflex",m:["torsion"]},
+  {id:"g5",l:"Hernia",x:2820,y:890,p:"abflank",s:"groin bulge · femoral most likely to strangulate",m:["hernias"]},
+  {id:"d1",l:"Mesenteric ischemia",x:420,y:1090,p:"abdiff",s:"pain out of proportion · atrial fibrillation",m:["mesenteric"]},
+  {id:"d2",l:"Bowel obstruction",x:1020,y:1090,p:"abdiff",s:"vomiting · distension · air-fluid levels",m:["sbo"]},
+  {id:"d3",l:"Ruptured AAA",x:1620,y:1090,p:"abdiff",s:"pulsatile mass · back pain · hypotension",m:["aaa"]},
+  {id:"d4",l:"Intussusception",x:2220,y:1090,p:"abdiff",s:"infant · currant jelly stool",m:["intussusception"]},
+  {id:"d5",l:"Perforated ulcer",x:2820,y:1090,p:"abdiff",s:"free air under the diaphragm",m:["pud"]},
+  {id:"d6",l:"DKA",x:420,y:1170,p:"abdiff",s:"abdominal pain · Kussmaul breathing",m:["dka"]},
+  {id:"d7",l:"Adrenal crisis",x:1020,y:1170,p:"abdiff",s:"abdominal pain · vomiting · shock",m:["addison"]},
+  {id:"d8",l:"Acute intermittent porphyria",x:1620,y:1170,p:"abdiff",s:"painful abdomen · port wine–colored urine",m:["aip"]},
+  {id:"d9",l:"Lead poisoning",x:2220,y:1170,p:"abdiff",s:"abdominal colic · wrist drop",m:["lead"]},
+  {id:"d10",l:"Sickle cell crisis",x:2820,y:1170,p:"abdiff",s:"vaso-occlusive pain",m:["sickle"]}],
+ edges:[
+  {a:"a0",b:"a1",p:"abruq"}]
+};
+
+MAPS.sxdiarrhea = {
+ t:"Diarrhea", sub:"Watery, fatty or bloody — and does it stop when the patient fasts? · secretory, osmotic, malabsorptive and inflammatory causes, then food poisoning and the rest",
+ w:3300, h:1550,
+ fa:"79, 133, 136, 142–143, 152, 164–165, 175, 357, 388–389",
+ src:["Robbins ch 17 — The gastrointestinal tract"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Watery — secretory (keeps going when fasting)"},
+  {x:140,y:370,w:3020,h:140,l:"Watery — osmotic (stops when fasting)"},
+  {x:140,y:570,w:3020,h:200,l:"Fatty — malabsorption"},
+  {x:140,y:830,w:3020,h:200,l:"Bloody — inflammatory (dysentery)"},
+  {x:140,y:1090,w:3020,h:200,l:"Food poisoning, viruses & other causes"}],
+ panels:[
+  {x:140,y:1350,w:1480,h:138,kw:220,t:"Four mechanisms",rows:[
+   ["Secretory","isotonic stool · persists when fasting"],
+   ["Osmotic","osmotic gap · stops when fasting"],
+   ["Malabsorptive","steatorrhea · stops when fasting"],
+   ["Exudative","pus and blood · persists when fasting"]]},
+  {x:1680,y:1350,w:1480,h:138,kw:260,t:"Timing is a clue",rows:[
+   ["1–6 hours, vomiting","S aureus · B cereus (reheated rice)"],
+   ["8–18 hours, watery","B cereus (meat, sauces) · C perfringens"],
+   ["Days to weeks after antibiotics","C difficile"],
+   ["After camping","Giardia"]]}],
+ nodes:[
+  {id:"s0",l:"Approach",x:420,y:170,p:"dxapp",k:"hub",s:"watery, fatty or bloody?",m:["diarrheaapproach","diarrheabugs"]},
+  {id:"s1",l:"Cholera",x:1020,y:170,p:"dxsec",s:"rice-water stool · liters a day",m:["vibrio"]},
+  {id:"s2",l:"Traveler’s diarrhea",x:1620,y:170,p:"dxsec",s:"enterotoxigenic E coli",m:["etectox"]},
+  {id:"s3",l:"VIPoma",x:2220,y:170,p:"dxsec",s:"watery diarrhea · low K⁺ · achlorhydria",m:["vipoma"]},
+  {id:"s4",l:"Carcinoid syndrome",x:2820,y:170,p:"dxsec",s:"flushing · wheeze · right-heart valves",m:["carcinoid"]},
+  {id:"s5",l:"Zollinger-Ellison",x:1020,y:250,p:"dxsec",s:"jejunal ulcers · diarrhea",m:["zes"]},
+  {id:"s6",l:"Microscopic colitis",x:1620,y:250,p:"dxsec",s:"chronic watery · normal-looking colon",m:["microcolitis"]},
+  {id:"s7",l:"Bile acid diarrhea",x:2220,y:250,p:"dxsec",s:"terminal ileum lost or diseased",m:["bileacid"]},
+  {id:"s8",l:"Hyperthyroidism",x:2820,y:250,p:"dxsec",s:"frequent stools · weight loss",m:["hyperthyroid"]},
+  {id:"o1",l:"Lactose intolerance",x:420,y:430,p:"dxosm",s:"after dairy · ↑ stool osmotic gap",m:["lactose"]},
+  {id:"o2",l:"Osmotic laxatives",x:1020,y:430,p:"dxosm",s:"polyethylene glycol · magnesium · lactulose",m:["laxatives"]},
+  {id:"o3",l:"Laxative misuse",x:1620,y:430,p:"dxosm",s:"bulimia · hypokalemia",m:["laxatives"]},
+  {id:"ox1",l:"→ GI & Absorption",x:2220,y:430,p:"neutral",k:"ghost",go:"gut"},
+  {id:"ox2",l:"→ GI Tract by Segment",x:2820,y:430,p:"neutral",k:"ghost",go:"gitract"},
+  {id:"f1",l:"Celiac disease",x:420,y:630,p:"dxmal",s:"IgA anti-tTG · villous atrophy",m:["celiac"]},
+  {id:"f2",l:"Pancreatic insufficiency",x:1020,y:630,p:"dxmal",s:"normal D-xylose · ↓ fecal elastase",m:["pancins","chronicpanc"]},
+  {id:"f3",l:"Cystic fibrosis",x:1620,y:630,p:"dxmal",s:"steatorrhea · lung infections",m:["cf"]},
+  {id:"f4",l:"Whipple disease",x:2220,y:630,p:"dxmal",s:"PAS-positive macrophages · arthralgias",m:["whipple"]},
+  {id:"f5",l:"Giardia",x:2820,y:630,p:"dxmal",s:"camper · foul-smelling fatty stool",m:["giardia"]},
+  {id:"f6",l:"SIBO · short bowel",x:420,y:710,p:"dxmal",s:"bloating · B12 deficiency",m:["sibo"]},
+  {id:"f7",l:"Terminal ileal Crohn",x:1020,y:710,p:"dxmal",s:"B12 and bile acid loss",m:["crohn"]},
+  {id:"b1",l:"Shigella",x:420,y:890,p:"dxinf",s:"tenesmus · bloody mucoid stool",m:["shigella"]},
+  {id:"b2",l:"Campylobacter",x:1020,y:890,p:"dxinf",s:"chicken · then Guillain-Barré",m:["campylobacter"]},
+  {id:"b3",l:"Salmonella",x:1620,y:890,p:"dxinf",s:"poultry, eggs · motile, makes H₂S",m:["salmonella"]},
+  {id:"b4",l:"Shiga toxin E coli",x:2220,y:890,p:"dxinf",s:"bloody diarrhea, then HUS",m:["ttp"]},
+  {id:"b5",l:"Amebiasis",x:2820,y:890,p:"dxinf",s:"dysentery · liver abscess",m:["entamoeba"]},
+  {id:"b6",l:"C difficile",x:420,y:970,p:"dxinf",s:"after antibiotics · pseudomembranes",m:["cdiff"]},
+  {id:"b7",l:"Inflammatory bowel disease",x:1020,y:970,p:"dxinf",s:"Crohn disease · ulcerative colitis",m:["crohn"]},
+  {id:"b8",l:"Colonic ischemia",x:1620,y:970,p:"dxinf",s:"crampy pain, then hematochezia",m:["mesenteric"]},
+  {id:"b9",l:"Colorectal cancer",x:2220,y:970,p:"dxinf",s:"left side: hematochezia, narrow stools",m:["crc"]},
+  {id:"bx1",l:"→ Infections by Site",x:2820,y:970,p:"neutral",k:"ghost",go:"infsite"},
+  {id:"t1",l:"S aureus",x:420,y:1150,p:"dxtox",s:"vomiting 2–6 hours after the meal",m:["saureus"]},
+  {id:"t2",l:"B cereus",x:1020,y:1150,p:"dxtox",s:"reheated rice",m:["bcereus"]},
+  {id:"t3",l:"C perfringens",x:1620,y:1150,p:"dxtox",s:"reheated meat · 10–12 hours",m:["cperfringens"]},
+  {id:"t4",l:"Norovirus",x:2220,y:1150,p:"dxtox",s:"cruise ship outbreaks",m:["noro"]},
+  {id:"t5",l:"Rotavirus",x:2820,y:1150,p:"dxtox",s:"infants · day care · winter",m:["rota"]},
+  {id:"t6",l:"Cryptosporidium",x:420,y:1230,p:"dxtox",s:"AIDS · acid-fast oocysts",m:["cryptosporidium"]},
+  {id:"t7",l:"CMV colitis",x:1020,y:1230,p:"dxtox",s:"advanced HIV",m:["hivoi"]},
+  {id:"t8",l:"Irritable bowel syndrome",x:1620,y:1230,p:"dxtox",s:"pain related to defecation · normal workup",m:["ibs"]}],
+ edges:[
+  {a:"s0",b:"s1",p:"dxsec"}]
+};
+
+MAPS.sxurine = {
+ t:"Hematuria & Proteinuria", sub:"Read the urine first — casts, red cell shape, how much protein · then nephritic or nephrotic glomeruli, the rest of the kidney, the bladder and below, and red urine with no red cells at all",
+ w:3300, h:1560,
+ fa:"112, 428, 430, 465, 612–617, 619–624, 672",
+ src:["Robbins ch 20 — The kidney","Robbins ch 21 — The lower urinary tract and male genital system"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Nephritic — the glomerulus bleeds"},
+  {x:140,y:370,w:3020,h:140,l:"Nephrotic — the glomerulus leaks protein"},
+  {x:140,y:570,w:3020,h:200,l:"The kidney, outside the glomerulus"},
+  {x:140,y:830,w:3020,h:200,l:"Bladder, prostate & urethra"},
+  {x:140,y:1090,w:3020,h:140,l:"Red urine, no red cells"}],
+ panels:[
+  {x:140,y:1290,w:1480,h:204,kw:260,t:"Casts",rows:[
+   ["RBC casts","glomerulonephritis · hypertensive emergency"],
+   ["WBC casts","pyelonephritis · interstitial nephritis · rejection"],
+   ["Muddy brown granular","acute tubular necrosis"],
+   ["Fatty (Maltese cross)","nephrotic syndrome"],
+   ["Waxy","chronic kidney disease"],
+   ["Hyaline","nonspecific — dehydration, exercise, diuretics"],
+   ["No casts","bladder cancer · kidney stones · cystitis"]]},
+  {x:1680,y:1290,w:1480,h:160,kw:220,t:"Nephritic vs nephrotic",rows:[
+   ["Damage","GBM inflammation · podocyte injury"],
+   ["Urine","RBC casts, dysmorphic red cells · frothy, fatty casts"],
+   ["Protein","usually under 3.5 g/day · over 3.5 g/day"],
+   ["Also","hypertension, oliguria · edema, hyperlipidemia, clots"],
+   ["Both at once","diffuse proliferative GN · MPGN"]]}],
+ nodes:[
+  {id:"n0",l:"Approach",x:420,y:170,p:"huapp",k:"hub",s:"casts? red cell shape? how much protein?",m:["hematuriaapproach"]},
+  {id:"n1",l:"Nephritic syndrome",x:1020,y:170,p:"hunephritic",s:"RBC casts · hypertension · oliguria",m:["nephritic"]},
+  {id:"n2",l:"Postinfectious GN",x:1620,y:170,p:"hunephritic",s:"2–4 weeks after strep · ↓ C3",m:["psgn"]},
+  {id:"n3",l:"IgA nephropathy",x:2220,y:170,p:"hunephritic",s:"hematuria during a URI · normal C3",m:["igan","igav"]},
+  {id:"n4",l:"Alport syndrome",x:2820,y:170,p:"hunephritic",s:"hematuria · hearing loss · eye problems",m:["alport"]},
+  {id:"n5",l:"Goodpasture syndrome",x:1020,y:250,p:"hunephritic",s:"hemoptysis + hematuria · linear IF",m:["goodpasture"]},
+  {id:"n6",l:"RPGN",x:1620,y:250,p:"hunephritic",s:"crescents · renal failure in days to weeks",m:["rpgn"]},
+  {id:"n7",l:"Lupus nephritis",x:2220,y:250,p:"hunephritic",s:"wire loops · ↓ C3 and C4",m:["dpgn","sle"]},
+  {id:"n8",l:"MPGN",x:2820,y:250,p:"hunephritic",s:"tram-track · nephritic and nephrotic",m:["mpgn"]},
+  {id:"p1",l:"Nephrotic syndrome",x:420,y:430,p:"hunephrotic",s:"over 3.5 g/day · edema · fatty casts",m:["nephrotic"]},
+  {id:"p2",l:"Minimal change disease",x:1020,y:430,p:"hunephrotic",s:"child · normal light microscopy",m:["mcd"]},
+  {id:"p3",l:"FSGS",x:1620,y:430,p:"hunephrotic",s:"adults · HIV, sickle cell, obesity",m:["fsgs"]},
+  {id:"p4",l:"Membranous nephropathy",x:2220,y:430,p:"hunephrotic",s:"spike and dome · anti-PLA2R",m:["membranous"]},
+  {id:"p5",l:"Diabetic · amyloid",x:2820,y:430,p:"hunephrotic",s:"microalbuminuria first · apple-green birefringence",m:["diabetickidney","amyloidosis"]},
+  {id:"k1",l:"Kidney stone",x:420,y:630,p:"hukid",s:"colicky flank pain · no casts",m:["stones"]},
+  {id:"k2",l:"Pyelonephritis",x:1020,y:630,p:"hukid",s:"fever · flank pain · WBC casts",m:["pyelo"]},
+  {id:"k3",l:"Interstitial nephritis",x:1620,y:630,p:"hukid",s:"new drug · rash · urine eosinophils",m:["ain"]},
+  {id:"k4",l:"Papillary necrosis",x:2220,y:630,p:"hukid",s:"sickle trait · analgesics · diabetes",m:["papnecrosis","sickletrait"]},
+  {id:"k5",l:"ADPKD",x:2820,y:630,p:"hukid",s:"big cystic kidneys · hypertension",m:["adpkd"]},
+  {id:"k6",l:"Renal cell carcinoma",x:420,y:710,p:"hukid",s:"flank pain · mass · hematuria",m:["rcc"]},
+  {id:"k7",l:"Wilms tumor",x:1020,y:710,p:"hukid",s:"child · unilateral flank mass",m:["wilms"]},
+  {id:"k8",l:"Acute tubular necrosis",x:1620,y:710,p:"hukid",s:"muddy brown granular casts",m:["intrarenal"]},
+  {id:"kx1",l:"→ Kidney Injury & CKD",x:2220,y:710,p:"neutral",k:"ghost",go:"akickd"},
+  {id:"kx2",l:"→ Glomerular Disease",x:2820,y:710,p:"neutral",k:"ghost",go:"glom"},
+  {id:"b1",l:"Bladder cancer",x:420,y:890,p:"hutract",s:"painless hematuria · older smoker",m:["bladderca"]},
+  {id:"b2",l:"Cystitis",x:1020,y:890,p:"hutract",s:"dysuria · pyuria without casts",m:["cystitis"]},
+  {id:"b3",l:"Hemorrhagic cystitis",x:1620,y:890,p:"hutract",s:"cyclophosphamide · adenovirus",m:["cyclophos","adeno"]},
+  {id:"b4",l:"Schistosoma haematobium",x:2220,y:890,p:"hutract",s:"hematuria · squamous bladder cancer",m:["schisto"]},
+  {id:"b5",l:"BPH · prostate cancer",x:2820,y:890,p:"hutract",s:"older man · urinary symptoms",m:["bph","prostateca"]},
+  {id:"b6",l:"Trauma",x:420,y:970,p:"hutract",s:"blood at the meatus · flank bruising",m:["gutrauma"]},
+  {id:"bx1",l:"→ Male Repro & Urology",x:1020,y:970,p:"neutral",k:"ghost",go:"malerepro"},
+  {id:"r1",l:"Rhabdomyolysis",x:420,y:1150,p:"hupig",s:"myoglobin · ↑↑ CK · tea-colored urine",m:["rhabdo"]},
+  {id:"r2",l:"Transfusion reaction",x:1020,y:1150,p:"hupig",s:"hemoglobinuria · flank pain · fever",m:["transfusion"]},
+  {id:"r3",l:"G6PD deficiency",x:1620,y:1150,p:"hupig",s:"dark urine days after an oxidant",m:["g6pd"]},
+  {id:"r4",l:"PNH",x:2220,y:1150,p:"hupig",s:"hemoglobinuria · venous thrombosis",m:["pnh"]},
+  {id:"r5",l:"Acute intermittent porphyria",x:2820,y:1150,p:"hupig",s:"port wine–colored urine · painful abdomen",m:["aip"]}],
+ edges:[
+  {a:"n0",b:"n1",p:"hunephritic"}]
+};
+
+MAPS.sxams = {
+ t:"Altered Mental Status", sub:"Less than alert means an organic cause until proven otherwise · delirium or dementia first, then metabolic, drugs and toxins, structural lesions, and infection, seizure or temperature",
+ w:3300, h:1450,
+ fa:"64, 239–240, 338, 345–346, 351, 353, 357, 399, 528, 530, 534–536, 543, 575, 587–588, 592",
+ src:["DeGowin ch 15 — The Mental Status, Psychiatric, and Social Evaluations","Kaplan & Sadock ch 3 — Neurocognitive Disorders"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"Delirium or dementia?"},
+  {x:140,y:310,w:3020,h:200,l:"Metabolic"},
+  {x:140,y:570,w:3020,h:200,l:"Drugs & toxins"},
+  {x:140,y:830,w:3020,h:140,l:"Structural"},
+  {x:140,y:1030,w:3020,h:140,l:"Infection, seizure & temperature"}],
+ panels:[
+  {x:140,y:1230,w:1480,h:160,kw:200,t:"Delirium vs dementia",rows:[
+   ["Onset","delirium acute · dementia gradual"],
+   ["Consciousness","delirium alters it · dementia leaves it intact"],
+   ["Core deficit","inattention · memory and executive function"],
+   ["Hallucinations","visual in delirium (and Lewy body dementia)"],
+   ["Reversible?","delirium usually · dementia sometimes"]]},
+  {x:1680,y:1230,w:1480,h:138,kw:220,t:"Bedside attention tests",rows:[
+   ["Digit span","seven normal · four or fewer abnormal"],
+   ["Serial 7s","or serial 3s from 20"],
+   ["Spell WORLD backward","a verbal task"],
+   ["Tap–no-tap","tap twice when the examiner taps once"]]}],
+ nodes:[
+  {id:"a0",l:"Approach",x:420,y:170,p:"amapp",k:"hub",s:"less than alert = organic until proven otherwise",m:["amsapproach"]},
+  {id:"a1",l:"Delirium",x:1020,y:170,p:"amapp",s:"acute · fluctuating · inattentive",m:["delirium"]},
+  {id:"a2",l:"Reversible dementia",x:1620,y:170,p:"amapp",s:"B12 · thyroid · syphilis · NPH · depression",m:["dementiarev","nph"]},
+  {id:"a3",l:"Alzheimer disease",x:2220,y:170,p:"amapp",s:"insidious memory loss first",m:["alzheimer"]},
+  {id:"a4",l:"Lewy body dementia",x:2820,y:170,p:"amapp",s:"fluctuating · visual hallucinations",m:["lewy"]},
+  {id:"m1",l:"Hypoglycemia",x:420,y:370,p:"ammet",s:"Whipple triad · confusion, seizures",m:["insulinoma"]},
+  {id:"m2",l:"DKA · hyperosmolar state",x:1020,y:370,p:"ammet",s:"HHS: glucose over 600, little ketosis",m:["dka","hhs"]},
+  {id:"m3",l:"Sodium",x:1620,y:370,p:"ammet",s:"low: confusion, seizures · high: stupor",m:["sodiumdis"]},
+  {id:"m4",l:"Hypercalcemia",x:2220,y:370,p:"ammet",s:"psychiatric overtones · polyuria",m:["hcmalig","hyperpara1"]},
+  {id:"m5",l:"Uremia",x:2820,y:370,p:"ammet",s:"encephalopathy with asterixis · pericarditis",m:["uremia"]},
+  {id:"m6",l:"Hepatic encephalopathy",x:420,y:450,p:"ammet",s:"asterixis · after a GI bleed",m:["hepenceph"]},
+  {id:"m7",l:"Wernicke encephalopathy",x:1020,y:450,p:"ammet",s:"confusion · ophthalmoplegia · ataxia",m:["thiamine"]},
+  {id:"m8",l:"Thyroid storm · myxedema",x:1620,y:450,p:"ammet",s:"agitated delirium with fever · or coma",m:["hyperthyroid","hypothyroid"]},
+  {id:"m9",l:"Adrenal crisis",x:2220,y:450,p:"ammet",s:"shock · abdominal pain · confusion",m:["addison"]},
+  {id:"m10",l:"Hypoxia · carbon monoxide",x:2820,y:450,p:"ammet",s:"low oxygen delivery to the brain",m:["hypoxemia","cohb"]},
+  {id:"t1",l:"Toxidromes",x:420,y:630,p:"amtox",s:"pupils, skin and vital signs sort them",m:["toxidromes"]},
+  {id:"t2",l:"Opioids",x:1020,y:630,p:"amtox",s:"pinpoint pupils · slow breathing",m:["opioids"]},
+  {id:"t3",l:"Alcohol",x:1620,y:630,p:"amtox",s:"intoxication · thiamine deficiency",m:["alcohol"]},
+  {id:"t4",l:"Alcohol withdrawal",x:2220,y:630,p:"amtox",s:"delirium tremens at 48–96 hours",m:["alcoholwd"]},
+  {id:"t5",l:"Sedatives",x:2820,y:630,p:"amtox",s:"benzodiazepines · barbiturates",m:["benzos"]},
+  {id:"t6",l:"Anticholinergics",x:420,y:710,p:"amtox",s:"hot, dry, red, blind, mad",m:["antimusc"]},
+  {id:"t7",l:"Serotonin syndrome · NMS",x:1020,y:710,p:"amtox",s:"clonus vs lead-pipe rigidity",m:["serotoninsyndrome","nms"]},
+  {id:"t8",l:"Lithium",x:1620,y:710,p:"amtox",s:"toxicity: ataxia, hyperreflexia, seizures",m:["lithium"]},
+  {id:"t9",l:"TCA overdose",x:2220,y:710,p:"amtox",s:"convulsions · coma · wide QRS",m:["tca"]},
+  {id:"t10",l:"Polypharmacy",x:2820,y:710,p:"amtox",s:"read the medication list first",m:["beers"]},
+  {id:"s1",l:"Subdural hematoma",x:420,y:890,p:"amstruct",s:"older adult · fluctuating · crescent",m:["subdural"]},
+  {id:"s2",l:"Epidural hematoma",x:1020,y:890,p:"amstruct",s:"lucid interval · lens-shaped",m:["epidural"]},
+  {id:"s3",l:"Subarachnoid hemorrhage",x:1620,y:890,p:"amstruct",s:"worst headache of my life",m:["sah"]},
+  {id:"s4",l:"Stroke",x:2220,y:890,p:"amstruct",s:"focal deficit · noncontrast CT first",m:["mcastroke"]},
+  {id:"s5",l:"Herniation · raised ICP",x:2820,y:890,p:"amstruct",s:"blown pupil · Cushing reflex",m:["herniation","icp"]},
+  {id:"i1",l:"Bacterial meningitis",x:420,y:1090,p:"aminf",s:"fever · stiff neck · neutrophils in CSF",m:["bactmening"]},
+  {id:"i2",l:"HSV encephalitis",x:1020,y:1090,p:"aminf",s:"temporal lobe · bizarre behavior",m:["hsvenc"]},
+  {id:"i3",l:"Sepsis",x:1620,y:1090,p:"aminf",s:"warm shock · lactic acidosis",m:["sepsistnf"]},
+  {id:"i4",l:"Seizure",x:2220,y:1090,p:"aminf",s:"aura → ictal → postictal",m:["seizure"]},
+  {id:"i5",l:"Heat stroke · hypothermia",x:2820,y:1090,p:"aminf",s:"heat: delirium · cold: loss of consciousness",m:["heatstroke","hypothermia"]}],
+ edges:[
+  {a:"a0",b:"a1",p:"amapp"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -25553,11 +26323,11 @@ const TOPICS = [
   ["behav","Psych & Behavior",["psychdx","psychsom","substance","sleepdev"]],
   ["eent","EENT",["eyecn","ent"]],
   ["msk","Musculoskeletal",["muscle","bone","arthritis","derm","plexus","orthoinj"]],
-  ["omm","OMM",["vsomatic","chapman","omt","ommmech"]],
+  ["omm","OMM",["vsomatic","chapman","omt","ommmech","cranial","jones"]],
   ["id","Infectious",["microlab","abx","antiviral","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
   ["pharm","Pharm",["pkpd","cyp","adr","aging","tox","environ","anesth","pain"]],
   ["stats","Biostats & Ethics",["biostats","ethics"]],
-  ["sx","Symptoms",["sxchest","sxdyspnea","sxjaundice"]],
+  ["sx","Symptoms",["sxchest","sxdyspnea","sxjaundice","sxabdpain","sxdiarrhea","sxurine","sxams"]],
   ["idx","Index",["index"]]];
 
 
@@ -25917,7 +26687,7 @@ function render(){
   svg.setAttribute("viewBox",`0 0 ${m.w} ${m.h}`);
   svg.innerHTML=`<defs>${defs}</defs><g id="cam"><g class="bg-layer">${comps}${panels}</g><g class="edge-layer">${edges}</g><g class="node-layer">${nodes}</g><g class="chip-layer">${chips}</g><g class="tip-layer">${tips}</g></g>`;
   cam=svg.querySelector("#cam");
-  fitChips(); fitPanels(); fitComps(); applyCam(); applyFilter(); markSelected();
+  fitChips(); fitPanels(); fitComps(); drawMini(); applyCam(); applyFilter(); markSelected();
   /* a re-render replaces every pin; keep keyboard focus on the one that had it */
   if(focusPin){ const ps=svg.querySelectorAll(`.pin[data-les="${focusPin[0]}"]`), p=ps[focusPin[1]]||ps[0];
     if(p){ FOCUS_QUIET=true; try{ p.focus({preventScroll:true}); }catch(e){} FOCUS_QUIET=false; } }
@@ -25991,7 +26761,56 @@ function fitPanels(){
       const l=g.querySelector("line");if(l)l.setAttribute("x2",x+w-15);}
   });
 }
-function applyCam(){ if(cam) cam.setAttribute("transform",`translate(${state.tx.toFixed(2)} ${state.ty.toFixed(2)}) scale(${state.z.toFixed(3)})`); }
+function applyCam(){ if(cam) cam.setAttribute("transform",`translate(${state.tx.toFixed(2)} ${state.ty.toFixed(2)}) scale(${state.z.toFixed(3)})`); miniView(); }
+/* ── overview map ─────────────────────────────────────────
+   Zoomed into a big map it is easy to lose your place. A small overview in the corner
+   shows the whole map with the part on screen outlined and the open card's pins as dots;
+   tap or drag on it to move there. It appears only while zoomed in; × turns it off on this
+   device and "Overview" (by the zoom buttons) brings it back. */
+const mini=document.getElementById("minimap"), mmsvg=document.getElementById("mmsvg"), zmini=document.getElementById("zmini");
+let MINI_OFF=false; try{ MINI_OFF=localStorage.getItem("mla-mini")==="off"; }catch(e){}
+function drawMini(){
+  const m=MAPS[state.view]; if(!m||!mmsvg) return;
+  const small=innerWidth<=620, W=small?110:170, H=small?88:130, w=Math.min(W,H*m.w/m.h);
+  mmsvg.setAttribute("viewBox",`0 0 ${m.w} ${m.h}`); mmsvg.style.width=w.toFixed(1)+"px"; mmsvg.style.height=(w*m.h/m.w).toFixed(1)+"px";
+  let s=(m.comps||[]).map(c=>`<rect class="mm-c" x="${c.x}" y="${c.y}" width="${c.w}" height="${c.h}" rx="26"/>`).join("");
+  s+=[...(m.panels||[]),...(m.plots||[])].map(p=>`<rect class="mm-p" x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="18"/>`).join("");
+  s+=m.nodes.map(n=>{ const b=nodeBox(n); return n.k==="ghost"?`<rect class="mm-g" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="9"/>`
+    :`<rect class="mm-n" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="9" style="fill:${pc(n.p)}"/>`; }).join("");
+  mmsvg.innerHTML=s+'<g class="mm-pins"></g><rect class="mm-v" id="mmv" vector-effect="non-scaling-stroke"/>';
+  miniView();
+}
+function miniPins(){
+  const g=mmsvg&&mmsvg.querySelector(".mm-pins"), m=MAPS[state.view]; if(!g||!m) return;
+  const r=Math.max(m.w,m.h)/60;
+  g.innerHTML=state.sel?[...svg.querySelectorAll(`.pin[data-les="${state.sel}"]`)].map(pinXY).filter(Boolean)
+    .map(p=>`<circle cx="${p.x.toFixed(0)}" cy="${p.y.toFixed(0)}" r="${r.toFixed(0)}"/>`).join(""):"";
+}
+function miniView(){
+  if(!mini) return;
+  const m=MAPS[state.view], onMap=!!m&&state.view!=="index";
+  if(zmini) zmini.hidden=!(onMap&&MINI_OFF);
+  if(!onMap||MINI_OFF){ mini.hidden=true; return; }
+  const v=clearRect(); if(v.r<=v.l||v.b<=v.t){ mini.hidden=true; return; }
+  const a=toVB(v.l,v.t), b=toVB(v.r,v.b);
+  const x0=(a.x-state.tx)/state.z, y0=(a.y-state.ty)/state.z, x1=(b.x-state.tx)/state.z, y1=(b.y-state.ty)/state.z;
+  const seen=Math.max(0,Math.min(x1,m.w)-Math.max(x0,0))*Math.max(0,Math.min(y1,m.h)-Math.max(y0,0));
+  mini.hidden=seen>0.8*m.w*m.h;
+  const r=document.getElementById("mmv");
+  if(r){ r.setAttribute("x",x0.toFixed(0)); r.setAttribute("y",y0.toFixed(0)); r.setAttribute("width",Math.max(0,x1-x0).toFixed(0)); r.setAttribute("height",Math.max(0,y1-y0).toFixed(0)); }
+}
+if(mmsvg){
+  const go=ev=>{ const ctm=mmsvg.getScreenCTM(); if(!ctm) return; const p=mmsvg.createSVGPoint(); p.x=ev.clientX; p.y=ev.clientY;
+    const q=p.matrixTransform(ctm.inverse()); centerOn(q.x,q.y,true); };
+  mmsvg.addEventListener("pointerdown",ev=>{ ev.preventDefault(); ev.stopPropagation(); try{ mmsvg.setPointerCapture(ev.pointerId); }catch(e){} go(ev);
+    const mv=e=>go(e), up=()=>{ mmsvg.removeEventListener("pointermove",mv); mmsvg.removeEventListener("pointerup",up); mmsvg.removeEventListener("pointercancel",up); };
+    mmsvg.addEventListener("pointermove",mv); mmsvg.addEventListener("pointerup",up); mmsvg.addEventListener("pointercancel",up); });
+  mmsvg.addEventListener("wheel",ev=>ev.preventDefault(),{passive:false});
+}
+function setMini(on){ MINI_OFF=!on; try{ if(on) localStorage.removeItem("mla-mini"); else localStorage.setItem("mla-mini","off"); }catch(e){} miniView(); }
+document.getElementById("mmx").onclick=()=>setMini(false);
+if(zmini) zmini.onclick=()=>setMini(true);
+addEventListener("resize",()=>{ if(state.view!=="index") drawMini(); });
 function applyFilter(){
   svg.querySelectorAll("[data-p]").forEach(el=>{
     el.classList.toggle("dim", !!state.filter && el.getAttribute("data-p")!==state.filter);
@@ -25999,8 +26818,12 @@ function applyFilter(){
 }
 function markSelected(){
   svg.querySelectorAll(".pin").forEach(p=>p.classList.toggle("flash",false));
-  if(!state.sel) return;
-  svg.querySelectorAll(`.pin[data-les="${state.sel}"] .pshape`).forEach(s=>{s.setAttribute("stroke","var(--ink)");s.setAttribute("stroke-width","2.5");});
+  if(state.sel){
+    /* the open card's pins keep a halo so they stay easy to find while you read */
+    svg.querySelectorAll(`.pin[data-les="${state.sel}"]`).forEach(p=>{ p.insertAdjacentHTML("afterbegin",'<circle class="selhalo" r="16"/>'); });
+    svg.querySelectorAll(`.pin[data-les="${state.sel}"] .pshape`).forEach(s=>{s.setAttribute("stroke","var(--ink)");s.setAttribute("stroke-width","2.5");});
+  }
+  miniPins();
 }
 
 /* ── drawer ─────────────────────────────────────────── */
@@ -26722,13 +27545,56 @@ function readHash(){
   return false;
 }
 window.addEventListener("hashchange",()=>{ readHash(); });
+/* Where a pin sits in map coordinates. A pin on a node lives inside the node's own
+   translate(), so its transform attribute alone points near the map's top-left corner —
+   read the whole chain up to the camera instead. */
+function pinXY(p){
+  try{ const a=cam&&cam.getCTM(), b=p.getCTM(); if(!a||!b) return null;
+    const m=a.inverse().multiply(b); return {x:m.e,y:m.f}; }catch(e){ return null; }
+}
+/* The part of the map the reader can see: left of the card panel on a wide screen,
+   above it where the panel is a bottom sheet. */
+function clearRect(){
+  const r=svg.getBoundingClientRect(), v={l:r.left,t:r.top,r:r.right,b:r.bottom,svg:r};
+  if(!drawer.hidden){ const d=drawer.getBoundingClientRect();
+    if(d.width&&d.height){
+      if(d.top>r.top+40&&d.top<r.bottom&&d.left<=r.left+4) v.b=d.top;
+      else if(d.left>r.left+120&&d.left<r.right) v.r=d.left;
+    } }
+  return v;
+}
+const fitScale=()=>{ const m=MAPS[state.view], r=svg.getBoundingClientRect(); return (m&&r.width&&r.height)?Math.min(r.width/m.w,r.height/m.h):0; };
+/* screen pixels per map unit the atlas zooms to when it takes you somewhere — enough
+   that a pin and its box label are readable; larger text (Aa) zooms in further */
+const readScale=()=>(innerWidth<=1000?0.5:0.7)*TS;
 function flashPins(id,center){
   const pins=[...svg.querySelectorAll(`.pin[data-les="${id}"]`)];
   pins.forEach(p=>p.classList.add("flash"));
-  if(center&&pins.length){
-    const t=(pins[0].getAttribute("transform")||"").match(/translate\(([-\d.]+) ([-\d.]+)\)/);
-    if(t) centerOn(+t[1],+t[2]);
+  const pts=pins.map(pinXY).filter(Boolean); if(!pts.length) return;
+  if(center){
+    /* several pins on this map: frame them all when they fit at a readable zoom */
+    const m=MAPS[state.view], v=clearRect(), f=fitScale();
+    let x=pts[0].x, y=pts[0].y;
+    if(pts.length>1&&f){
+      const z=Math.min(6,Math.max(state.z,1.25,readScale()/f)), s=f*z;
+      const x0=Math.min(...pts.map(p=>p.x)), x1=Math.max(...pts.map(p=>p.x)), y0=Math.min(...pts.map(p=>p.y)), y1=Math.max(...pts.map(p=>p.y));
+      if((x1-x0)*s<=(v.r-v.l)-120&&(y1-y0)*s<=(v.b-v.t)-120){ x=(x0+x1)/2; y=(y0+y1)/2; }
+    }
+    centerOn(x,y);
+  } else {
+    /* a pin tapped where the card panel now covers it slides back into view */
+    const v=clearRect(), r=pins[0].getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2, pad=36;
+    if(cx<v.l+pad||cx>v.r-pad||cy<v.t+pad||cy>v.b-pad) centerOn(pts[0].x,pts[0].y,true);
   }
+  locate(pts);
+}
+/* a ring that closes in on each pin, the same size on screen at any zoom */
+function locate(pts){
+  svg.querySelectorAll(".locator").forEach(e=>e.remove());
+  const layer=svg.querySelector(".tip-layer"), f=fitScale(); if(!layer||!f) return;
+  const k=1/(f*state.z);
+  layer.insertAdjacentHTML("beforeend",pts.map(p=>`<g class="locator" transform="translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) scale(${k.toFixed(4)})"><circle class="loc1" r="46"/><circle class="loc2" r="46"/></g>`).join(""));
+  clearTimeout(locate.t); locate.t=setTimeout(()=>svg.querySelectorAll(".locator").forEach(e=>e.remove()),2700);
 }
 function gotoLes(id){
   /* A card pinned on several maps must not pull the reader off the map they are
@@ -26738,28 +27604,17 @@ function gotoLes(id){
   if(loc&&loc.v!==state.view) setView(loc.v);
   openLes(id,true);
 }
-function centerOn(x,y){
-  const m=MAPS[state.view];
-  let cy=m.h/2;
-  state.z=Math.max(state.z,1.25);
-  /* On a phone the drawer is a bottom sheet over ~70% of the map, and a whole
-     map squeezed into 375px leaves pins a few pixels wide. Zoom until nodes are
-     readable and centre on the strip still visible above the sheet. */
-  if(innerWidth<=1000){
-    const r=svg.getBoundingClientRect();
-    if(r.width&&r.height){
-      const fit=Math.min(r.width/m.w,r.height/m.h);
-      state.z=Math.min(6,Math.max(state.z,0.5/fit));
-      if(!drawer.hidden){
-        const top=drawer.getBoundingClientRect().top;
-        if(top>r.top+40&&top<r.bottom){
-          const a=toVB(r.left+r.width/2,(r.top+top)/2), b=toVB(r.left+r.width/2,r.top+r.height/2);
-          cy+=a.y-b.y;
-        }
-      }
-    }
+function centerOn(x,y,keepZoom){
+  /* Centre (x,y) in the part of the map the card panel leaves clear — beside it on a
+     wide screen, above it where it is a bottom sheet over ~70% of a phone. A whole map
+     squeezed onto the screen leaves pins a few pixels wide, so zoom until they read. */
+  const m=MAPS[state.view], v=clearRect(), f=fitScale();
+  if(!keepZoom){
+    state.z=Math.max(state.z,1.25);
+    if(f) state.z=Math.min(6,Math.max(state.z,readScale()/f));
   }
-  state.tx=m.w/2-x*state.z; state.ty=cy-y*state.z; applyCam();
+  const c=f?toVB((v.l+v.r)/2,(v.t+v.b)/2):{x:m.w/2,y:m.h/2};
+  state.tx=c.x-x*state.z; state.ty=c.y-y*state.z; applyCam();
 }
 
 /* ── rail ───────────────────────────────────────────── */
@@ -27005,8 +27860,12 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   respdrug:"2026-10-08",adr:"2026-10-08",tumark:"2026-10-08",zoonoses:"2026-10-08",brainreg:"2026-10-08",abdanat:"2026-10-08",
   genpath:"2026-10-08",ihd:"2026-10-08",cardcycle:"2026-10-08",
   neoplasia:"2026-10-08",thromboemb:"2026-10-08",lungmech:"2026-10-08",gihorm:"2026-10-08",renalphys:"2026-10-08",
-  mabs:"2026-10-08",antipara:"2026-10-08",weakness:"2026-10-08",sxchest:"2026-10-08",sxdyspnea:"2026-10-08",sxjaundice:"2026-10-08"};
+  mabs:"2026-10-08",antipara:"2026-10-08",weakness:"2026-10-08",sxchest:"2026-10-08",sxdyspnea:"2026-10-08",sxjaundice:"2026-10-08",
+  cranial:"2026-10-08",jones:"2026-10-08",sxabdpain:"2026-10-08",sxdiarrhea:"2026-10-08",sxurine:"2026-10-08",sxams:"2026-10-08"};
 const WHATSNEW=[
+  ["2026-10-08","<b>OMM</b>: Cranial Osteopathy (the primary respiratory mechanism, SBS strains, CV4 and venous sinus drainage) and Counterstrain Points region by region, each with its classic position."],
+  ["2026-10-08","<b>Symptoms</b>: abdominal pain by location, diarrhea (watery, fatty or bloody), hematuria &amp; proteinuria, and altered mental status."],
+  ["2026-10-08","Searching now lands exactly on the pin, zoomed in and ringed. Zoomed into a big map, an <b>overview</b> in the corner shows where you are — tap it to move. <b>Aa</b> (top right) sets the text size."],
   ["2026-10-08","<b>Symptoms</b> tab: chest pain, dyspnea and jaundice, each starting from the complaint and branching to the diagnosis."],
   ["2026-10-08","<b>Quiz → Daily mix</b>: ten cards from every map — due, starred, missed and new — with a day streak."],
   ["2026-10-08","<b>High-yield only</b> (top of the side panel) dims low-yield cards and leaves them out of lists and quizzes. Search understands abbreviations like MI, DKA and SLE. Press <b>?</b> for keyboard shortcuts."],
@@ -27061,6 +27920,7 @@ function setView(v){
   document.querySelector(".hint").hidden=isIdx;
   renderNav();
   if(isIdx) renderIndex(); else render();
+  miniView();
   renderRail(); updateScore(); writeHash();
   if(state.info){ if(isIdx) closeDrawer(); else openMapInfo(); }
   try{localStorage.setItem("mla-view",v);}catch(e){}
@@ -27170,7 +28030,7 @@ svg.addEventListener("focusin",ev=>{
   const r=pin.getBoundingClientRect(), s=svg.getBoundingClientRect(), pad=40;
   if(r.left<s.left+pad||r.right>s.right-pad||r.top<s.top+pad||r.bottom>s.bottom-pad){
     const p=toVB(r.left+r.width/2,r.top+r.height/2);
-    centerOn((p.x-state.tx)/state.z,(p.y-state.ty)/state.z);
+    centerOn((p.x-state.tx)/state.z,(p.y-state.ty)/state.z,true);
   }
 });
 /* ── keyboard shortcuts sheet ("?") ── */
@@ -27178,7 +28038,7 @@ function openShortcuts(){
   state.sel=null; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
   const rows=[["Tab · Shift+Tab","move between pins and graph chips"],["Enter or Space","open the focused pin · switch a graph"],
     ["1 – 4","answer a quiz question"],["Enter","next question, after answering"],["← →","previous / next section while walking a map"],
-    ["/","search"],["[","show or hide the side panel"],["Esc","close a card, the quiz menu, or the walk"],["?","this list"]];
+    ["/","search"],["[","show or hide the side panel"],["m","show or hide the overview map"],["Esc","close a card, the quiz menu, or the walk"],["?","this list"]];
   drawer.innerHTML=`
    <div class="dhead">
      <button class="dclose" id="dclose" aria-label="Close">×</button>
@@ -27260,6 +28120,19 @@ function setRail(off,save){
 railBtn.onclick=()=>setRail(document.documentElement.getAttribute("data-rail")!=="off");
 const quizBtn=document.getElementById("quizBtn"), qmenu=document.getElementById("qmenu");
 function showQuizMenu(open){ qmenu.hidden=!open; quizBtn.setAttribute("aria-expanded",String(open)); }
+/* ── text size (Aa) — saved on this device ── */
+const tmenu=document.getElementById("tmenu"), textBtn=document.getElementById("textBtn");
+let TS=1; try{ const t=+localStorage.getItem("mla-text"); if([0.9,1,1.15,1.3].includes(t)) TS=t; }catch(e){}
+function applyTS(){ document.documentElement.style.setProperty("--ts",String(TS));
+  tmenu.querySelectorAll("[data-ts]").forEach(o=>o.setAttribute("aria-checked",String(+o.dataset.ts===TS))); }
+function showTextMenu(open){ tmenu.hidden=!open; textBtn.setAttribute("aria-expanded",String(open)); }
+textBtn.onclick=ev=>{ ev.stopPropagation(); showQuizMenu(false); showTextMenu(tmenu.hidden); };
+tmenu.querySelectorAll("[data-ts]").forEach(o=>o.onclick=()=>{ TS=+o.dataset.ts; applyTS(); showTextMenu(false);
+  try{ if(TS===1) localStorage.removeItem("mla-text"); else localStorage.setItem("mla-text",String(TS)); }catch(e){} });
+document.addEventListener("click",ev=>{ if(!tmenu.hidden&&!ev.target.closest(".qwrap")) showTextMenu(false); });
+/* phones have no room for a separate theme button, so it lives in this menu there */
+document.getElementById("tmTheme").onclick=()=>{ showTextMenu(false); document.getElementById("themeBtn").click(); };
+applyTS();
 quizBtn.onclick=ev=>{ ev.stopPropagation();
   const n=dueAll().length, el=document.getElementById("qduen");
   const ms=getStreak(), me=document.getElementById("qmixn");
@@ -27267,7 +28140,7 @@ quizBtn.onclick=ev=>{ ev.stopPropagation();
   const sn=starAll().length, se=document.getElementById("qstarn");
   if(se) se.textContent=sn?`${sn} starred card${sn===1?"":"s"}, across all maps`:"Star cards (☆ on any card) to build this round";
   if(el) el.textContent=!REVIEW_ON?"Optional — turn on card review to use it":n?`${n} card${n===1?"":"s"} due for review, across all maps`:"Nothing due right now — missed answers land here";
-  showQuizMenu(qmenu.hidden); };
+  showTextMenu(false); showQuizMenu(qmenu.hidden); };
 document.getElementById("zprint").onclick=printMap;
 qmenu.querySelectorAll("[data-q]").forEach(o=>o.onclick=()=>{ showQuizMenu(false); setQuiz(o.dataset.q); });
 document.addEventListener("click",ev=>{ if(!qmenu.hidden&&!ev.target.closest(".qwrap")) showQuizMenu(false); });
@@ -27300,7 +28173,8 @@ document.addEventListener("keydown",ev=>{
   if(ev.key==="["&&document.activeElement!==qInput){ ev.preventDefault(); railBtn.click(); }
   if(WALK&&document.activeElement!==qInput&&(ev.key==="ArrowRight"||ev.key==="ArrowLeft")&&!ev.metaKey&&!ev.ctrlKey&&!ev.altKey){
     ev.preventDefault(); walkGo(WALK.i+(ev.key==="ArrowRight"?1:-1)); return; }
-  if(ev.key==="Escape"){ if(!qmenu.hidden){ showQuizMenu(false); return; } if(!drawer.hidden){ closeDrawer(); return; } if(WALK) endWalk(); }
+  if(ev.key==="m"&&!/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||"")&&!ev.metaKey&&!ev.ctrlKey&&!ev.altKey&&state.view!=="index"){ setMini(MINI_OFF); return; }
+  if(ev.key==="Escape"){ if(!tmenu.hidden){ showTextMenu(false); return; } if(!qmenu.hidden){ showQuizMenu(false); return; } if(!drawer.hidden){ closeDrawer(); return; } if(WALK) endWalk(); }
 });
 
 /* ── init ───────────────────────────────────────────── */
