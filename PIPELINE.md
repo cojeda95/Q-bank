@@ -168,6 +168,19 @@ is written as one 0.8-s beat of keypoints and repeated by `cyc()`; `wigMid()` mo
 bands and valve events onto the middle beat, and `wigEach()` repeats the ECG wave names and
 heart sounds on every beat.
 
+A kind can name its x ticks with `xtl: [...]` (one label per entry of `xt`) for a category
+axis — the oxygen cascade's Air · Trachea · Alveoli · Arteries · Tissue fluid · Cells — or for
+ends of a distance axis ("afferent end", "efferent end"). The m30 kinds: `glomcap` (Starling
+pressures along the glomerular capillary from `glomP()`, Costanzo's 45/10/19→35 mm Hg, with
+efferent and afferent constriction, more plasma flow, low plasma protein and obstruction),
+`ecglytes` (one ECG beat from `ecgB()` for normal, high and low K⁺, high and low Ca²⁺, with
+`events` marking the QRS start and T end), `pregweeks` (hCG, estrogens, progesterone and hCS by
+week, plus corpus luteum vs placental progesterone), `vco2` and `vo2` (Guyton's ventilation
+response curves), `o2cascade` (PO₂ from air to the cell at sea level, 20,000 ft and 30,000 ft —
+points joined by straight lines, no `mono()`), `pthca` (PTH and calcitonin against plasma
+calcium, Guyton Fig 80.14, with FHH, primary hyperparathyroidism and hypoparathyroidism) and
+`hcvsero` (HCV RNA, ALT and anti-HCV after infection: clears, chronic, chronic then cured).
+
 ### Search abbreviations
 
 `ABBR` in `tools/atlas-src.html` holds First Aid 2025's abbreviation list (pp. 747–757),
@@ -270,6 +283,15 @@ behind the biggest counts.
 **The card's name base is always a term** (the part before " — "). A card named
 "Insulin — receptor & metabolic effects" linked every answer containing "insulin"; name it
 "Insulin receptor & metabolic effects" instead, so the whole phrase is the term.
+
+**Link sweeps.** To raise an SDL's coverage without new cards, list its unlinked questions with
+the cards whose text overlaps the answer most, then add an answer-only term (`"=…"`, a phrase
+from the correct answer) only where the card already states that fact — or add a find line
+from a source the card cites first. Answer-only phrases cannot pull in questions that merely
+mention the topic. The m30 sweep (Chapman points, osteoarthritis and JIA, cortisol actions,
+surfactant and ventilation, prostate, visual fields and pupils, fractures) linked 45 more
+questions. A card with an empty `q:[]` takes the first term without a leading comma — the
+build's JSON parse fails on `[,"…"]`.
 
 **You picked.** After a miss, `atlasLinksHtml(q, picked)` also matches the option the person
 chose (`atlasPickedFor`): only its leading phrase — the text before the first comma, colon,
@@ -448,6 +470,13 @@ per block, the trial batches (3 always; 4 where the block's `index.html` defines
 as `isTrialQ` does) and each exam's count of non-trial questions — they match the block's
 exam cards. Re-run the build after syncing questions, as for `atlas-practice.js`. The file is
 in `CORE` in `sw.js` and in the hub's Save all list.
+
+**Exam countdown.** A collapsible card under Continue (`#countdownCard`) has one date field per
+exam, built from `QBANK_COUNTS`; dates are kept on this device in `qhub-examdates`
+(`{"<folder>:<exam>": "YYYY-MM-DD"}`). Each tile then shows "Exam N in D days · U new left ·
+P/day" (amber `.bm.cd` chip, placed before the offline chips): U is the exam's regular
+questions not yet answered on this device, P = ⌈U ÷ D⌉. Past dates show nothing; the card's
+summary names the nearest upcoming exam.
 
 **Continue where you left off.** Every block page records where you are (`rememberPlace`
 at the end of `render()` in `shared/app.js`) under `qhub-last` in localStorage: the block

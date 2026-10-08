@@ -125,6 +125,22 @@
   .continue-card .cc-icon { font-size: 1.3rem; flex: none; }
   .continue-card .cc-text { flex: 1; min-width: 0; }
   .continue-card .cc-text > span { display: block; }
+  /* Exam countdown — your exam dates (this device only) and the pace to finish each exam (script at the end) */
+  .countdown-card { margin-top: 18px; }
+  .countdown-card:hover { transform: none; }
+  .countdown-card > summary { display: flex; align-items: center; gap: 14px; cursor: pointer; list-style: none; }
+  .countdown-card > summary::-webkit-details-marker { display: none; }
+  .countdown-card > summary .cc-icon { font-size: 1.3rem; flex: none; }
+  .countdown-card > summary .cc-text { flex: 1; min-width: 0; }
+  .countdown-card > summary .cc-text > span { display: block; }
+  .countdown-card > summary::after { content: "▾"; color: var(--text-faint); flex: none; }
+  .countdown-card[open] > summary::after { content: "▴"; }
+  .cd-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px 22px; margin-top: 14px; }
+  .cd-block-name { font-weight: 600; font-size: 0.92rem; margin-bottom: 4px; }
+  .cd-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.88rem; padding: 3px 0; }
+  .cd-row input { font: inherit; font-size: 0.85rem; padding: 4px 6px; border: 1px solid var(--grey-border); border-radius: 8px; background: var(--card-bg); color: inherit; min-width: 0; }
+  .cd-note { margin-top: 12px; }
+  .bm.cd { color: var(--amber-ink); border-color: var(--amber-line); background: var(--amber-bg); }
 </style>
 <link rel="stylesheet" href="shared/theme.css">
 <script src="shared/theme.js"></script>
@@ -139,10 +155,15 @@
       <span class="cc-icon">▶️</span>
       <span class="cc-text"><span class="block-title">Continue where you left off</span><span class="block-desc" id="continueDesc"></span></span>
     </a>
+    <details class="block-card countdown-card" id="countdownCard">
+      <summary><span class="cc-icon">📅</span><span class="cc-text"><span class="block-title">Exam countdown</span><span class="block-desc" id="countdownNext">Add your exam dates to see the days left and how many new questions a day finish each exam.</span></span></summary>
+      <div class="cd-list" id="countdownList"></div>
+      <div class="block-desc cd-note">Dates are saved on this device only. Each block tile then shows the days left and the daily pace.</div>
+    </details>
     <div class="block-grid">
       <a class="block-card featured" href="resources/metabolic-atlas.html">
         <div class="block-title">🗺️ Lesion Atlas</div>
-        <div class="block-desc">148 interactive maps &middot; 1,752 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
+        <div class="block-desc">155 interactive maps &middot; 1,804 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
         <div class="block-due" id="atlasDue" hidden></div>
       </a>
     </div>
@@ -335,12 +356,23 @@
     function chip(a, kind, cls, text, title) {
       var m = meta(a), el = m.querySelector('[data-k="' + kind + '"]');
       if (!text) { if (el) el.remove(); return; }
-      if (!el) { el = document.createElement('span'); el.setAttribute('data-k', kind); if (kind === 'prog') m.insertBefore(el, m.firstChild); else m.appendChild(el); }
+      if (!el) { el = document.createElement('span'); el.setAttribute('data-k', kind); if (kind === 'prog') m.insertBefore(el, m.firstChild);
+        else if (/^(ex|cd)/.test(kind) && m.querySelector('[data-k="off"],[data-k="save"]')) m.insertBefore(el, m.querySelector('[data-k="off"],[data-k="save"]'));
+        else m.appendChild(el); }
       el.className = 'bm ' + cls; el.textContent = text; if (title) el.title = title; else el.removeAttribute('title');
     }
     function name(a) { var t = a.querySelector('.block-title'); return t ? t.textContent.replace(/^\W+\s*/, '').trim() : ''; }
 
+    /* exam dates you set in the Exam countdown card: {"<folder>:<exam>": "YYYY-MM-DD"} */
+    var DATES = {}, NEXT = null;
+    function loadDates() { try { var o = JSON.parse(localStorage.getItem('qhub-examdates') || '{}'); DATES = o && typeof o === 'object' ? o : {}; } catch (e) { DATES = {}; } }
+    function daysTo(s) {
+      var m = typeof s === 'string' && s.match(/^(\d{4})-(\d{2})-(\d{2})$/); if (!m) return null;
+      var t = new Date(+m[1], +m[2] - 1, +m[3]), now = new Date(); now.setHours(0, 0, 0, 0);
+      return Math.round((t - now) / 86400000);
+    }
     function progress() {
+      loadDates(); NEXT = null;
       blocks.forEach(function (a) {
         var dir = a.getAttribute('href').replace(/\/index\.html$/, ''), list = [];
         try { list = JSON.parse(localStorage.getItem(dir + '_attempts_v1')) || []; } catch (e) { list = []; }
@@ -357,14 +389,48 @@
           ids.forEach(function (id) { var x = last[id]; if (x.examNumber === e[0] && C.trial.indexOf(x.batch) < 0) { seen++; if (x.correct) right++; } });
           chip(a, 'ex' + e[0], 'exr', seen && e[1] ? 'Exam ' + e[0] + ' · ' + Math.min(100, Math.round(100 * seen / e[1])) + '% seen · ' + Math.round(100 * right / seen) + '% right' : '',
             'Exam ' + e[0] + ': ' + seen + ' of its ' + e[1] + ' questions answered on this device; share right on your latest try');
+          /* exam countdown: days to the date you set, and new questions a day to see the rest */
+          var d = daysTo(DATES[dir + ':' + e[0]]), left = Math.max(0, e[1] - seen), pace = d > 0 ? Math.ceil(left / d) : left;
+          var when = d == null || d < 0 ? '' : d === 0 ? 'today' : d === 1 ? 'tomorrow' : 'in ' + d + ' days';
+          chip(a, 'cd' + e[0], 'cd', when ? 'Exam ' + e[0] + ' ' + when + (left ? ' · ' + left + ' new left' + (d > 0 ? ' · ' + pace + '/day' : '') : ' · all seen') : '',
+            when ? 'Exam ' + e[0] + ' ' + when + ': ' + left + ' of its ' + e[1] + ' questions not yet answered on this device' + (d > 0 ? ' — about ' + pace + ' a day to see them all' : '') : '');
+          if (when && (!NEXT || d < NEXT.d)) NEXT = { d: d, text: name(a) + ' · Exam ' + e[0] + ' ' + when + (left ? ' — ' + left + ' new questions left' + (d > 0 ? ', about ' + pace + ' a day' : '') : ' — every question seen') };
         });
       });
     }
-    progress();
-    if (!window.QBANK_COUNTS) {
-      var qc = document.createElement('script'); qc.src = 'resources/qbank-counts.js'; qc.onload = progress; document.head.appendChild(qc);
+    /* the countdown card: one date field per exam, from resources/qbank-counts.js */
+    function countdown() {
+      var next = document.getElementById('countdownNext'), list = document.getElementById('countdownList');
+      if (!next || !list) return;
+      if (NEXT) next.textContent = 'Next: ' + NEXT.text;
+      if (!window.QBANK_COUNTS || list.childElementCount) return;
+      blocks.forEach(function (a) {
+        var dir = a.getAttribute('href').replace(/\/index\.html$/, ''), C = window.QBANK_COUNTS[dir];
+        if (!C || !C.exams.length) return;
+        var box = document.createElement('div'), h = document.createElement('div');
+        h.className = 'cd-block-name'; h.textContent = name(a); box.appendChild(h);
+        C.exams.forEach(function (e) {
+          var row = document.createElement('label'), span = document.createElement('span'), inp = document.createElement('input');
+          row.className = 'cd-row'; span.textContent = 'Exam ' + e[0]; inp.type = 'date'; inp.value = DATES[dir + ':' + e[0]] || '';
+          inp.setAttribute('aria-label', name(a) + ' exam ' + e[0] + ' date');
+          inp.addEventListener('change', function () {
+            loadDates();
+            if (inp.value) DATES[dir + ':' + e[0]] = inp.value; else delete DATES[dir + ':' + e[0]];
+            try { localStorage.setItem('qhub-examdates', JSON.stringify(DATES)); } catch (err) {}
+            progress(); countdown();
+            if (!NEXT) document.getElementById('countdownNext').textContent = 'Add your exam dates to see the days left and how many new questions a day finish each exam.';
+          });
+          row.appendChild(span); row.appendChild(inp); box.appendChild(row);
+        });
+        list.appendChild(box);
+      });
     }
-    window.addEventListener('storage', function (e) { if (e.key && /_attempts_v1$/.test(e.key)) progress(); });
+    function refresh() { progress(); countdown(); }
+    refresh();
+    if (!window.QBANK_COUNTS) {
+      var qc = document.createElement('script'); qc.src = 'resources/qbank-counts.js'; qc.onload = refresh; document.head.appendChild(qc);
+    }
+    window.addEventListener('storage', function (e) { if (e.key && (/_attempts_v1$/.test(e.key) || e.key === 'qhub-examdates')) refresh(); });
 
     /* Continue where you left off: the last place you were in any block ('qhub-last', written
        by shared/app.js), with your position when it was an SDL practice run in progress. */
@@ -388,7 +454,7 @@
     showContinue();
     window.addEventListener('pageshow', showContinue);
     window.addEventListener('storage', function (e) { if (e.key === 'qhub-last') showContinue(); });
-    window.addEventListener('pageshow', progress);
+    window.addEventListener('pageshow', refresh);
 
     if (!('caches' in window) || !window.fetch) return;
     function abs(u) { return new URL(u, location.href).href; }
