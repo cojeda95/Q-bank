@@ -63,6 +63,7 @@ function isTrialQ(q) { return !!TRIAL_BATCHES[q.batch]; }
 const APP_SRC = (document.currentScript && document.currentScript.src) || '';
 const ATLAS_URL = APP_SRC ? new URL('../resources/metabolic-atlas.html', APP_SRC).href : '';
 let ATLAS_INDEX = null;
+let ATLAS_MAPS = null;   // map id -> [title, card ids], for "Practice this map"
 let ATLAS_READY = Promise.resolve();   // settles once atlas-terms.js has loaded (or failed)
 (function loadAtlasTerms() {
   if (!APP_SRC) return;
@@ -73,6 +74,7 @@ let ATLAS_READY = Promise.resolve();   // settles once atlas-terms.js has loaded
     s.onload = () => {
       const d = window.ATLAS_TERMS;
       if (d && Array.isArray(d.cards)) ATLAS_INDEX = d.cards.map(([id, n, k, t]) => ({ id, n, k, t }));
+      if (d && d.maps) ATLAS_MAPS = d.maps;
       resolve();
     };
     s.onerror = resolve;
@@ -613,6 +615,8 @@ function render() {
     renderStudySheet();
   } else if (parts[0] === 'atlas' && parts[1]) {
     renderAtlasPractice(decodeURIComponent(parts[1]));
+  } else if (parts[0] === 'atlasmap' && parts[1]) {
+    renderAtlasMapPractice(decodeURIComponent(parts[1]));
   } else {
     renderHome();
   }
@@ -2565,6 +2569,44 @@ function renderAtlasPractice(id) {
     session = {
       mode: 'review',
       queueLabel: 'Atlas — ' + card.n,
+      questions: shuffle(qs),
+      index: 0,
+      records: new Array(qs.length).fill(null),
+      pendingLetter: null,
+    };
+    renderReviewQuestion();
+  });
+}
+
+/* ── Practice a whole atlas map ──────────────────────────────────────────
+   "Practice this map" opens #atlasmap/<map id>: every question in this block that
+   links to any card pinned on that map (atlas-terms.js lists each map's cards).
+   tools/build-atlas.py counts them the same way for the map's buttons. */
+function renderAtlasMapPractice(mapId) {
+  const route = window.location.hash;
+  main.innerHTML = `<p class="loading">Finding questions…</p>`;
+  ATLAS_READY.then(() => {
+    if (window.location.hash !== route) return;
+    const entry = ATLAS_MAPS && ATLAS_MAPS[mapId];
+    const ids = new Set(entry ? entry[1] : []);
+    const qs = [];
+    if (ids.size) DATA.exams.forEach(e => e.sdls.forEach(sdl => sdl.questions.forEach(q => {
+      if (atlasLinksFor(q).some(c => ids.has(c.id))) {
+        qs.push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title, examNumber: e.examNumber }));
+      }
+    })));
+    if (!qs.length) {
+      main.innerHTML = `
+        <button class="back-link" id="backHome">&larr; Home</button>
+        <h1>${entry ? escapeHtml(entry[0]) : 'Atlas practice'}</h1>
+        <p class="empty-state">No questions in this block link to the cards on that map yet.${ATLAS_URL && entry ? ` <a href="${ATLAS_URL}#${encodeURIComponent(mapId)}">Back to the map</a>` : ''}</p>
+      `;
+      document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+      return;
+    }
+    session = {
+      mode: 'review',
+      queueLabel: 'Atlas — ' + entry[0],
       questions: shuffle(qs),
       index: 0,
       records: new Array(qs.length).fill(null),

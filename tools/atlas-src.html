@@ -167,6 +167,8 @@ svg.map.drag{cursor:grabbing}
 .node{cursor:pointer}
 .node:hover > rect{stroke-width:2.6}
 .node > rect.hl{stroke:var(--accent)!important;stroke-width:3.2}
+.panel-c .rowhl{fill:color-mix(in srgb,var(--accent) 16%,transparent);stroke:var(--accent);stroke-width:1.4}
+.panel-c text.hlrow{fill:var(--ink)!important;font-weight:700}
 .edge{fill:none;stroke-linecap:round}
 .chip{cursor:pointer}
 .chip rect.bg{fill:var(--map-bg);stroke-width:1}
@@ -222,17 +224,21 @@ svg.map.drag{cursor:grabbing}
 .wnlist{margin:10px 0 2px;padding-left:18px;font-size:13px;line-height:1.55}
 .wnlist li{margin:0 0 4px}
 .plot-c .pframe{fill:var(--surface);stroke:var(--line)}
-.plot-c .pt{font-family:var(--font-ui);font-size:15px;font-weight:700;fill:var(--ink)}
-.plot-c .pcap{font-family:var(--font-ui);font-size:13px;fill:var(--ink-2)}
-.plot-c .ptick,.plot-c .plab{font-family:var(--font-ui);font-size:11.5px;fill:var(--ink-3)}
-.plot-c .plab{font-size:12.5px;fill:var(--ink-2)}
+.plot-c .pt{font-family:var(--font-ui);font-size:16px;font-weight:700;fill:var(--ink)}
+.plot-c .pcap{font-family:var(--font-ui);font-size:12.5px;fill:var(--ink-2)}
+.plot-c .ptick,.plot-c .plab{font-family:var(--font-ui);font-size:12px;fill:var(--ink-3)}
+.plot-c .plab{font-size:13px;fill:var(--ink-2)}
+.plot-c .pleg{font-family:var(--font-ui);font-size:12.5px;fill:var(--ink-2)}
+.plot-c .ph{paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.plot-c .pgrid{stroke:var(--line-2);stroke-width:1}
+.plot-c .pdiv{stroke:var(--line-2);stroke-width:1}
 .plot-c .pnote{font-family:var(--font-ui);font-size:10.5px;fill:var(--ink-3);font-style:italic}
 .plot-c .pax{stroke:var(--ink-3);stroke-width:1.4}
 .plot-c .pmark{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:4 4}
 .plot-c .pcur{fill:none;stroke:var(--accent);stroke-width:3.2;stroke-linejoin:round}
 .plot-c .pref{fill:none;stroke:var(--ink-3);stroke-width:2;stroke-dasharray:7 5;opacity:.7}
 .plot-c .pother{fill:none;stroke:var(--ink-3);stroke-width:2;opacity:.35}
-.plot-c .pdot{fill:var(--accent)}
+.plot-c .pdot{fill:var(--ink);stroke:var(--surface);stroke-width:2}
 .pvar{cursor:pointer}
 .pvar rect{fill:var(--surface);stroke:var(--line)}
 .pvar text{font-family:var(--font-ui);font-size:12px;font-weight:600;fill:var(--ink-2);text-anchor:middle}
@@ -1114,6 +1120,27 @@ const PATHS = {
   amtox:{n:"Drugs & toxins",v:"--p-tca"},
   amstruct:{n:"Structural causes",v:"--p-gluconeo"},
   aminf:{n:"Infection, seizure & temperature",v:"--p-ppp"},
+  mpion:{n:"Ion gradients & resting potential",v:"--p-glycolysis"},
+  mpap:{n:"The action potential",v:"--p-tca"},
+  mpcond:{n:"Conduction & glia",v:"--p-gluconeo"},
+  mpclin:{n:"Channel & myelin disorders",v:"--p-ppp"},
+  ufcomp:{n:"Body fluid compartments",v:"--p-glycolysis"},
+  ufshift:{n:"Fluid shifts",v:"--p-tca"},
+  ufconc:{n:"Concentrating the urine",v:"--p-gluconeo"},
+  ufdis:{n:"Water disorders",v:"--p-ppp"},
+  hrcond:{n:"Outer & middle ear",v:"--p-glycolysis"},
+  hrcoch:{n:"Cochlea",v:"--p-tca"},
+  hrpath:{n:"Auditory pathway",v:"--p-gluconeo"},
+  hrvest:{n:"Vestibular system",v:"--p-ppp"},
+  vsopt:{n:"Optics",v:"--p-glycolysis"},
+  vsret:{n:"Retina",v:"--p-tca"},
+  vsphoto:{n:"Phototransduction",v:"--p-sugars"},
+  vscort:{n:"Visual pathway",v:"--p-ppp"},
+  lxphar:{n:"Pharynx",v:"--p-glycolysis"},
+  lxlar:{n:"Larynx",v:"--p-tca"},
+  lxnerve:{n:"Laryngeal nerves",v:"--p-gluconeo"},
+  lxswal:{n:"Swallowing",v:"--p-sugars"},
+  lxdis:{n:"Swallowing disorders",v:"--p-ppp"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -2298,7 +2325,7 @@ mannitol:{n:"Mannitol",k:"drug",p:"nephron",enz:"Osmotic diuretic — filtered b
  src:["Katzung ch 15 — Diuretic Agents","Guyton ch 32 — Diuretics and Kidney Diseases"],
  tx:["—"]},
 
-loopdiuretics:{n:"Loop diuretics",k:"drug",p:"nephron",q:["loop diuretic", "loop diuretics", "furosemide", "bumetanide", "torsemide", "ethacrynic acid"],enz:"Na⁺-K⁺-2Cl⁻ cotransporter (NKCC2), thick ascending limb",inh:"—",fa:"626",hi:1,
+loopdiuretics:{n:"Loop diuretics",k:"drug",p:"nephron",q:["loop diuretic", "loop diuretics", "furosemide", "bumetanide", "torsemide", "ethacrynic acid","=lumen positive potential"],enz:"Na⁺-K⁺-2Cl⁻ cotransporter (NKCC2), thick ascending limb",inh:"—",fa:"626",hi:1,
  mech:"NKCC2 drives the countercurrent multiplier, so blocking it abolishes the medullary concentration gradient — the most powerful diuresis available. It also abolishes the lumen-positive potential that drives <b>paracellular Ca²⁺ and Mg²⁺</b> reabsorption, so both are wasted.",
  find:["Furosemide, bumetanide, torsemide; ethacrynic acid is the non-sulfa option (more ototoxic)","Uses: edematous states (heart failure, cirrhosis, nephrotic syndrome, pulmonary edema), hypertension, hypercalcemia","Action depends on prostaglandins (PGE) → NSAIDs blunt it"],
  labs:["OHH DAANG — Ototoxicity, Hypokalemia, Hypomagnesemia, Dehydration, Allergy (sulfa), metabolic Alkalosis, Nephritis (interstitial), Gout","<b>Hypocalcemia</b> and hypomagnesemia — opposite of thiazides","Hypochloremic metabolic alkalosis"],
@@ -2385,7 +2412,7 @@ rta:{n:"Renal tubular acidoses",k:"dz",p:"cd",enz:"Distal H⁺ ATPase (1) · pro
  labs:["Type 4 is the only one with high potassium — start there"],
  buzz:["Type 1 stones are calcium PHOSPHATE because the urine is alkaline","Only type 4 raises potassium"],
  src:["Guyton ch 31 — Acid–Base Regulation","Robbins ch 20 — The kidney","Costanzo ch 7 — Acid-base physiology","Katzung ch 15 — Diuretic Agents"],
- tx:["—"]},
+ tx:["—"],q:["=alpha intercalated cells","=alpha intercalated cell"]},
 
 fanconisyn:{n:"Fanconi syndrome (proximal tubule)",k:"dz",p:"nephron",enz:"Generalized proximal tubular reabsorption failure",inh:"Acquired / inherited",fa:"604, 611",hi:1,
  mech:"Everything the PCT normally reclaims is lost at once — glucose, amino acids, phosphate, bicarbonate, uric acid. <b>Not related to Fanconi anemia</b>, which is a DNA repair disease.",
@@ -4803,7 +4830,7 @@ bell:{n:"Bell palsy & facial nerve lesions",k:"dz",p:"cnnuclei",enz:"Facial nerv
  labs:["Clinical diagnosis; Lyme serology where it is endemic"],
  buzz:["Forehead involved = peripheral (LMN)","Forehead spared = central (UMN)"],
  src:["Fundamental Neuroscience ch 14 — A Synopsis of Cranial Nerves of the Brainstem","Moore ch 9 — Head","Robbins ch 8 — Infectious diseases"],
- tx:["Glucocorticoids ± acyclovir; protect the eye (incomplete closure)","Most recover gradually; aberrant regeneration can occur"],q:["bell palsy","bell's palsy","facial nerve palsy","facial palsy"]},
+ tx:["Glucocorticoids ± acyclovir; protect the eye (incomplete closure)","Most recover gradually; aberrant regeneration can occur"],q:["bell palsy","bell's palsy","facial nerve palsy","facial palsy","=facial nerve"]},
 
 ms:{n:"Multiple sclerosis",k:"dz",p:"cnnuclei",enz:"CNS myelin — oligodendrocytes",inh:"Autoimmune; women 20–40, higher latitudes",fa:"537, 558",hi:1,
  mech:"Autoreactive T and B cells cross the blood-brain barrier and strip myelin from CNS axons, forming plaques — in periventricular white matter, optic nerves, brainstem and cord — separated in time and space. A plaque in the <b>MLF</b> blocks the signal from the abducens nucleus to the opposite oculomotor nucleus: internuclear ophthalmoplegia.",
@@ -4819,7 +4846,7 @@ cerebellar:{n:"Cerebellar lesions",k:"dz",p:"cnnuclei",enz:"Hemispheres (limbs) 
  labs:["Neuroimaging (MRI or CT)"],
  buzz:["Hemisphere = same-side limbs","Vermis = trunk and gait"],
  src:["Fundamental Neuroscience ch 27 — The Cerebellum","Guyton ch 57 — Cerebellum and Basal Ganglia Contributions to Overall Motor Control","Robbins ch 28 — The central nervous system"],
- tx:["Treat the cause; a cerebellar hemorrhage or infarct with mass effect may need decompression"],q:["cerebellar ataxia","cerebellar vermis","dysdiadochokinesia","intention tremor","dysmetria"],
+ tx:["Treat the cause; a cerebellar hemorrhage or infarct with mass effect may need decompression"],q:["cerebellar ataxia","cerebellar vermis","dysdiadochokinesia","intention tremor","dysmetria","=truncal ataxia"],
  ref:[{a:"Greenberg SM et al.",t:"2022 guideline for the management of patients with spontaneous intracerebral hemorrhage: a guideline from the American Heart Association/American Stroke Association",j:"Stroke",y:2022,pmid:"35579034",doi:"10.1161/STR.0000000000000407"}]},
 
 epidural:{n:"Epidural hematoma",k:"dz",p:"bleed",enz:"Middle meningeal artery",inh:"Temporal bone fracture at the pterion",fa:"528, 543",hi:1,
@@ -9294,7 +9321,7 @@ vfdefects:{n:"Visual field defects",alias:"bitemporal hemianopia · homonymous h
  labs:["Formal perimetry localizes the lesion"],
  buzz:["Bumps into door frames on both sides = bitemporal hemianopia from a pituitary tumor"],
  src:["Fundamental Neuroscience ch 20 — The Visual System"],
- tx:["—"],q:["visual field defect","visual field defects","bitemporal hemianopia","homonymous hemianopia","quadrantanopia","quadrantanopsia","meyer loop","central scotoma","=optic chiasm","=optic tract","=optic radiation"]},
+ tx:["—"],q:["visual field defect","visual field defects","bitemporal hemianopia","homonymous hemianopia","quadrantanopia","quadrantanopsia","meyer loop","central scotoma","=optic chiasm","=optic tract","=optic radiation","=visual field"]},
 
 migraine:{n:"Migraine",k:"dz",p:"eyehead",enz:"Trigeminovascular activation · CGRP and substance P",inh:"Women · family history",fa:"532",hi:1,
  mech:"Activation of trigeminal afferents to meningeal vessels releases vasoactive neuropeptides — <b>CGRP</b> and substance P — causing neurogenic inflammation and throbbing pain. Aura is a wave of cortical spreading depression.",
@@ -10896,7 +10923,7 @@ lymphpump:{n:"Lymphatic pump techniques",alias:"thoracic pump",k:"reg",p:"omtlym
  labs:["—"],
  buzz:["Pneumonia → thoracic lymphatic pump"],
  src:["OCOM OMM — OMS2 written midterm study guide","Foundations of Osteopathic Medicine ch 72 — Osteopathic Considerations in Pulmonology","Somatic Dysfunction in Osteopathic Family Medicine ch 27 — The Patient with Congestive Heart Failure","OCOM OMM — Pulmonary OMM lab slides"],
- tx:["In decompensated heart failure, go gradually so the returned fluid does not overwhelm the heart"],q:["lymphatic pump","thoracic pump","thoracic lymphatic pump"]},
+ tx:["In decompensated heart failure, go gradually so the returned fluid does not overwhelm the heart"],q:["lymphatic pump","thoracic pump","thoracic lymphatic pump","=liver pump","=spleen pump","=splenic pump"]},
 
 mesentericlift:{n:"Mesenteric lift & colonic stimulation",k:"reg",p:"omtvisc",enz:"Decongest the bowel · restore colonic sliding",inh:"—",hi:1,
  mech:"The intestines hang in a stretch-sensitive mesentery that carries their arteries, veins and lymphatics. A <b>mesenteric lift</b> draws the loops gently toward their root, relieving traction and freeing lymph flow. <b>Colonic stimulation</b> mobilizes each colonic segment to restore sliding and distensibility.",
@@ -11024,7 +11051,7 @@ ucs:{n:"Upper crossed syndrome",alias:"Janda",k:"dz",p:"omtpost",enz:"Tight uppe
  labs:["Screen with the supine neck lift and push-up tests"],
  buzz:["Desk worker with forward head and rounded shoulders"],
  src:["OCOM OMM — OMS2 written midterm study guide","OCOM OMM — Week 9 lab rubric: upper and lower crossed syndromes","Foundations of Osteopathic Medicine ch 43 — Clinical Assessment: Viscerosomatic, Somatosomatic, Somatovisceral Reflexes; Counterstrain Points, Myofascial Trigger Points, and Chapman Reflexes"],
- tx:["Janda's rule: release the tight muscles (MET, MFR) before strengthening the weak ones","Then chin tucks, wall slides and Y-to-T raises"],q:["upper crossed syndrome","janda"]},
+ tx:["Janda's rule: release the tight muscles (MET, MFR) before strengthening the weak ones","Then chin tucks, wall slides and Y-to-T raises"],q:["upper crossed syndrome","janda","=forward head posture","=longus colli"]},
 
 lcs:{n:"Lower crossed syndrome",alias:"Janda",k:"dz",p:"omtpost",enz:"Tight erector spinae + hip flexors · weak abdominals + gluteals",inh:"—",hi:1,
  mech:"<b>Tight</b>: thoracolumbar erector spinae (behind) and iliopsoas and rectus femoris (in front). <b>Weak</b>: rectus abdominis, transversus abdominis and obliques, and gluteus maximus and medius.",
@@ -11032,7 +11059,7 @@ lcs:{n:"Lower crossed syndrome",alias:"Janda",k:"dz",p:"omtpost",enz:"Tight erec
  labs:["—"],
  buzz:["Anterior pelvic tilt with weak glutes"],
  src:["OCOM OMM — OMS2 written midterm study guide","OCOM OMM — Week 9 lab rubric: upper and lower crossed syndromes","Foundations of Osteopathic Medicine ch 93 — Osteopathic Considerations in the Patient With Low Back Pain"],
- tx:["Release iliopsoas, rectus femoris and erectors (MET, counterstrain) first","Then glute bridges and clamshells"],q:["lower crossed syndrome"]},
+ tx:["Release iliopsoas, rectus femoris and erectors (MET, counterstrain) first","Then glute bridges and clamshells"],q:["lower crossed syndrome","=anterior pelvic tilt","=glute bridges"]},
 
 /* ── Chapman reflex points (m13) ────────────────────────────────────── */
 chapmanpt:{n:"Chapman reflex points",alias:"neurolymphatic nodules",k:"reg",p:"chconcept",enz:"Visceral-autonomic-lymphatic congestion in the deep fascia",inh:"—",hi:1,
@@ -12006,7 +12033,7 @@ hypothalnuc:{n:"Hypothalamic nuclei",k:"reg",p:"brhypo",enz:"TAN HATS — thirst
  labs:["—"],
  buzz:["Lateral injury makes you lean · ventromedial injury makes you very massive","SAD POX — Supraoptic = ADH, Paraventricular = OXytocin","Anterior Cooling · posterior “hot pot”"],
  src:["Fundamental Neuroscience ch 30 — The Hypothalamus"],
- tx:["—"],q:["hypothalamic nucleus","=hypothalamic nuclei","ventromedial nucleus","ventromedial hypothalamus","=lateral hypothalamus","=lateral hypothalamic","suprachiasmatic nucleus","supraoptic nucleus","paraventricular nucleus","preoptic nucleus"]},
+ tx:["—"],q:["hypothalamic nucleus","=hypothalamic nuclei","ventromedial nucleus","ventromedial hypothalamus","=lateral hypothalamus","=lateral hypothalamic","suprachiasmatic nucleus","supraoptic nucleus","paraventricular nucleus","preoptic nucleus","=supraoptic and paraventricular nuclei"]},
 
 thalnuc:{n:"Thalamic nuclei",k:"reg",p:"brthal",enz:"Every ascending sense but smell relays here",inh:"—",fa:"508",hi:1,
  mech:"The thalamus relays all ascending sensory information except smell to the cortex, each sense through its own nucleus. The ventral anterior and ventral lateral nuclei relay motor loops instead.",
@@ -13072,6 +13099,239 @@ amsapproach:{n:"Approach to altered mental status",k:"reg",p:"amapp",enz:"Deliri
  src:["DeGowin ch 15 — The Mental Status, Psychiatric, and Social Evaluations","Kaplan & Sadock ch 3 — Neurocognitive Disorders"],
  tx:["Treat the cause; reorient (clock, calendar), protect sleep, keep the mind engaged; avoid restraints, anticholinergics, benzodiazepines and opioids; antipsychotics only as needed"],q:["approach to altered mental status","altered mental status","acute confusional state"],
  ref:[{a:"Wilson JE, Mart MF, Cunningham C, et al.",t:"Delirium",j:"Nat Rev Dis Primers",y:2020,pmid:"33184265",doi:"10.1038/s41572-020-00223-4"}]},
+
+/* ── membrane potentials · urine concentration · hearing & balance · spinal tracts · vision · larynx & swallowing (m25) ─── */
+eqpot:{n:"Equilibrium potentials & the Nernst equation",k:"reg",p:"mpion",enz:"Each ion pulls toward its own voltage",inh:"—",hi:1,
+ mech:"When a membrane is permeable to an ion, the ion diffuses down its concentration gradient until the charge it carries builds a voltage that exactly opposes further net diffusion — its equilibrium (Nernst) potential. The Nernst equation converts a concentration difference into that voltage, one ion at a time.",
+ find:["The larger the concentration ratio across the membrane, the larger the equilibrium potential","K⁺ is concentrated inside, so its equilibrium potential is strongly negative; Na⁺ is concentrated outside, so its equilibrium potential is positive (about +65 mV)","Driving force = membrane potential minus the ion’s equilibrium potential; current flows only if the membrane conducts that ion","Diffusion potentials come from very few ions moving — bulk concentrations do not change"],
+ labs:["E = (2.3 RT/zF) × log(C outside / C inside), with 2.3 RT/F ≈ 60 mV at body temperature"],
+ buzz:["Each ion drives the membrane toward its own equilibrium potential"],
+ src:["Costanzo ch 1 — Cellular physiology","Guyton ch 5 — Membrane Potentials and Action Potentials"],
+ tx:["—"],q:["nernst equation","nernst potential","equilibrium potential"]},
+
+rmp:{n:"Resting membrane potential",k:"reg",p:"mpion",enz:"Set mostly by K⁺",inh:"—",fa:"504",hi:1,
+ mech:"At rest, nerve and muscle membranes are far more permeable to K⁺ and Cl⁻ than to Na⁺ and Ca²⁺, so the resting potential sits close to the K⁺ equilibrium potential and far from that of Na⁺. The chord conductance (or Goldman) equation weights each ion’s equilibrium potential by its conductance (or permeability).",
+ find:["Voltage-gated Na⁺ and K⁺ channels are closed at rest","The Na⁺/K⁺-ATPase pumps 3 Na⁺ out for 2 K⁺ in — a small direct electrogenic effect; its main job is keeping the gradients the diffusion potentials depend on","<b>Hyperkalemia</b> depolarizes the resting membrane (the Nernst equation), yet the cell becomes less excitable: sustained depolarization closes Na⁺ inactivation gates (accommodation) → muscle weakness"],
+ labs:["Membrane potential is stated as inside relative to outside"],
+ buzz:["Rest is set by K⁺","High K⁺ → depolarized but weak"],
+ src:["Costanzo ch 1 — Cellular physiology","Guyton ch 5 — Membrane Potentials and Action Potentials"],
+ tx:["—"],q:["resting membrane potential","chord conductance","goldman equation"]},
+
+nerveap:{n:"Nerve action potential",k:"reg",p:"mpap",enz:"Na⁺ in, then K⁺ out",inh:"—",fa:"504",hi:1,
+ mech:"An inward current brings the membrane to threshold, the potential at which an action potential becomes inevitable. Voltage-gated Na⁺ channels open and Na⁺ rushes in, driving the upstroke toward the Na⁺ equilibrium potential. Inactivation gates then close and voltage-gated K⁺ channels open, so K⁺ leaves and the membrane repolarizes; the slow-closing K⁺ channels overshoot into hyperpolarization.",
+ find:["<b>Depolarization</b>: Na⁺ activation gates open → inward Na⁺ current","<b>Repolarization</b>: Na⁺ inactivation gates close at the peak; K⁺ activation gates open → outward K⁺ current","<b>Afterhyperpolarization</b>: K⁺ gates are slow to close; the Na⁺/K⁺ pump restores the ion concentrations","Tetrodotoxin (puffer fish) and lidocaine block voltage-gated Na⁺ channels, so no action potential can fire"],
+ labs:["—"],
+ buzz:["Na⁺ in, then K⁺ out"],
+ src:["Costanzo ch 1 — Cellular physiology","Guyton ch 5 — Membrane Potentials and Action Potentials"],
+ tx:["—"],q:["nerve action potential","neuronal action potential","inactivation gate","activation gate"]},
+
+refractory:{n:"Refractory periods & accommodation",k:"reg",p:"mpap",enz:"Why a nerve cannot fire again at once",inh:"—",hi:1,
+ mech:"During the <b>absolute refractory period</b> — almost the whole action potential — no stimulus, however strong, can fire another, because the Na⁺ inactivation gates stay closed until the membrane repolarizes. During the <b>relative refractory period</b>, overlapping the afterhyperpolarization, a larger-than-usual inward current can fire one, because K⁺ conductance is still high.",
+ find:["<b>Accommodation</b>: slow or sustained depolarization closes the inactivation gates, so threshold passes without an action potential","Hyperkalemia weakens muscle by accommodation"],
+ labs:["—"],
+ buzz:["Absolute: Na⁺ gates inactivated · relative: K⁺ still open"],
+ src:["Costanzo ch 1 — Cellular physiology"],
+ tx:["—"],q:["absolute refractory period","relative refractory period"]},
+
+conduction:{n:"Conduction velocity — diameter & myelin",k:"reg",p:"mpcond",enz:"Bigger and myelinated = faster",inh:"—",fa:"503",hi:1,
+ mech:"Two things speed conduction: a larger fiber (lower internal resistance) and myelin (higher membrane resistance between nodes), both of which let current spread farther along the axon before it decays.",
+ find:["<b>Time constant</b>: how quickly the membrane changes potential (larger with high membrane resistance and capacitance) · <b>length constant</b>: how far current spreads (longest with a large diameter, high membrane resistance, low internal resistance)","<b>Saltatory conduction</b>: action potentials fire only at the nodes of Ranvier, where Na⁺ channels are dense, and appear to jump from node to node","<b>Myelin</b>: oligodendrocytes in the CNS (each myelinates many axons, including CN II), Schwann cells in the PNS (each myelinates one axon, CN III–XII)","<b>Demyelination</b> lowers membrane resistance, so current leaks out and decays before the next node — conduction slows or fails (multiple sclerosis in the CNS, Guillain-Barré in the PNS)"],
+ labs:["—"],
+ buzz:["Bigger and myelinated = faster"],
+ src:["Costanzo ch 1 — Cellular physiology","Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
+ tx:["—"],q:["saltatory conduction","nodes of ranvier","node of ranvier","length constant","cable properties"]},
+
+fibertypes:{n:"Nerve fiber types",k:"reg",p:"mpcond",enz:"Aα to C — biggest and fastest to smallest and slowest",inh:"—",fa:"504",hi:0,
+ mech:"Nerve fibers are classified by diameter, conduction velocity and myelination.",
+ find:["<b>Aα</b>: α motoneurons — largest, fastest, myelinated","<b>Aβ</b>: touch, pressure · <b>Aγ</b>: γ motoneurons to muscle spindles — medium, myelinated","<b>Aδ</b>: touch, pressure, temperature, fast pain — small, myelinated","<b>B</b>: preganglionic autonomic fibers — small, myelinated","<b>C</b>: slow pain, postganglionic autonomic fibers — smallest, slowest, unmyelinated","Free nerve endings carry pain and temperature on Aδ (fast) and C (slow) fibers"],
+ labs:["—"],
+ buzz:["A delta plane is fast, but a taxC is slow"],
+ src:["Costanzo ch 3 — Neurophysiology"],
+ tx:["—"],q:["nerve fiber types","a delta fibers","aδ fibers","c fibers"]},
+
+glia:{n:"Glial cells",k:"reg",p:"mpcond",enz:"Support, myelin, CSF and defense",inh:"—",fa:"503",hi:1,
+ mech:"Glia support neurons. CNS glia come from neuroectoderm — except microglia, which come from mesoderm; PNS glia come from neural crest.",
+ find:["<b>Astrocytes</b>: physical support, repair, removal of excess neurotransmitter, part of the blood-brain barrier, glycogen reserve; GFAP positive; reactive gliosis after injury — the most abundant CNS glia","<b>Oligodendrocytes</b>: myelinate CNS axons (about 30 each); “fried egg” look; injured in multiple sclerosis, leukodystrophies, PML","<b>Ependymal cells</b>: ciliated columnar cells lining the ventricles and central canal; choroid plexus ependyma makes CSF","<b>Microglia</b>: phagocytic scavengers; in HIV they fuse into multinucleated giant cells","<b>Satellite cells</b> surround neuron cell bodies in ganglia · <b>Schwann cells</b> myelinate one PNS axon each, S100 positive, injured in Guillain-Barré"],
+ labs:["—"],
+ buzz:["Oligodendrocyte: one cell, many axons · Schwann: one cell, one axon"],
+ src:["Pawlina ch 12 — Nerve Tissue","Fundamental Neuroscience ch 2 — The Cell Biology of Neurons and Glia"],
+ tx:["—"],q:["astrocytes","oligodendrocytes","microglia","ependymal cells","glial cells","neuroglia"]},
+
+seafoodtox:{n:"Seafood toxins — tetrodotoxin & ciguatoxin",k:"drug",p:"mpclin",enz:"Na⁺ channels shut — or held open",inh:"—",fa:"246",hi:1,
+ mech:"Two seafood toxins act on voltage-gated Na⁺ channels: tetrodotoxin blocks them, ciguatoxin opens them.",
+ find:["<b>Tetrodotoxin</b> (puffer fish): binds fast voltage-gated Na⁺ channels in nerve, preventing depolarization → nausea, diarrhea, paresthesias, weakness, dizziness, loss of reflexes","<b>Ciguatoxin</b> (reef fish — barracuda, snapper, moray eel): opens Na⁺ channels, causing depolarization → nausea, vomiting, diarrhea, perioral numbness, reversal of hot and cold sensation, bradycardia, heart block, hypotension","<b>Scombroid</b> (spoiled tuna, mahi-mahi, mackerel): bacterial histidine decarboxylase makes histamine — flushing, urticaria, bronchospasm; often mistaken for fish allergy"],
+ labs:["—"],
+ buzz:["Hot feels cold after reef fish = ciguatera"],
+ src:["Costanzo ch 1 — Cellular physiology"],
+ tx:["Supportive for tetrodotoxin and ciguatoxin; antihistamines (± albuterol, epinephrine) for scombroid"],q:["tetrodotoxin","ciguatoxin","ciguatera","scombroid","puffer fish","pufferfish"]},
+
+fluidcomp:{n:"Body fluid compartments — 60-40-20",k:"reg",p:"ufcomp",enz:"Where the body’s water is",inh:"—",fa:"599",hi:1,
+ mech:"Total body water is about 60% of body weight: two-thirds inside cells (ICF, 40%) and one-third outside (ECF, 20%). The ECF is three-quarters interstitial fluid and one-quarter plasma.",
+ find:["ICF: mainly K⁺, Mg²⁺ and organic phosphates (ATP) · ECF: mainly Na⁺, Cl⁻, HCO₃⁻ and albumin","<b>Markers</b>: total body water — D₂O, tritiated water, antipyrine · ECF — inulin, mannitol, sulfate · plasma — radiolabeled albumin, Evans blue","ICF and interstitial volumes are found by difference","Plasma volume = total blood volume × (1 − hematocrit); serum osmolality 275–295 mOsm/kg"],
+ labs:["—"],
+ buzz:["60-40-20: total water, inside, outside","HIKIN’: HI K⁺ INtracellularly"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
+ tx:["—"],q:["body fluid compartments","total body water","evans blue","interstitial fluid volume"]},
+
+fluidshifts:{n:"Fluid shifts — volume contraction & expansion",k:"reg",p:"ufshift",enz:"Water follows osmolarity across cell membranes",inh:"—",hi:1,
+ mech:"NaCl stays in the ECF, and water crosses cell membranes only when ECF and ICF osmolarities differ. A gain or loss changes the ECF first; any change in its osmolarity then moves water until both compartments match again.",
+ find:["<b>Isosmotic contraction</b> (diarrhea): ECF volume ↓, no water shift; hematocrit and plasma protein ↑","<b>Hyperosmotic contraction</b> (sweating, water deprivation, diabetes insipidus): sweat is hyposmotic, so ECF osmolarity rises and water leaves the cells — both volumes ↓; plasma protein ↑, hematocrit unchanged","<b>Hyposmotic contraction</b> (adrenal insufficiency): NaCl is lost, water moves into cells — ECF ↓, ICF ↑; hematocrit and protein ↑","<b>Isosmotic expansion</b> (isotonic saline): ECF ↑ only; hematocrit and protein ↓","<b>Hyperosmotic expansion</b> (high NaCl intake): water leaves the cells — ECF ↑, ICF ↓","<b>Hyposmotic expansion</b> (SIADH): retained water spreads one-third to the ECF and two-thirds to the ICF — both volumes ↑, osmolarity ↓"],
+ labs:["Hematocrit and plasma protein concentration show which way the ECF moved"],
+ buzz:["Sweat is hyposmotic","SIADH swells both compartments"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
+ tx:["—"],q:["isosmotic volume contraction","hyperosmotic volume contraction","hyposmotic volume contraction","isosmotic volume expansion","hyperosmotic volume expansion","hyposmotic volume expansion","darrow yannet","fluid shifts","=ecf osmolarity"]},
+
+countercurrent:{n:"Countercurrent multiplication & urea recycling",k:"reg",p:"ufconc",enz:"Building the medullary osmotic gradient",inh:"—",fa:"608",hi:1,
+ mech:"The loop of Henle deposits NaCl in the deep medulla. The thick ascending limb pumps NaCl out but is impermeable to water (the single effect); flow of tubular fluid carries the effect deeper, building the corticopapillary osmotic gradient. Urea recycling adds to it, and the vasa recta preserve it.",
+ find:["<b>Countercurrent multiplication</b> is active (the thick ascending limb); <b>countercurrent exchange</b> in the vasa recta is passive and maintains the gradient","<b>Urea recycling</b>: ADH raises water permeability in the cortical and outer medullary collecting ducts, so urea stays behind and concentrates; in the inner medullary collecting duct ADH also adds the urea transporter, and urea diffuses into the interstitium","<b>Vasa recta</b>: hairpin capillaries with slow flow — about 5% of renal blood flow serves the medulla; freely permeable to water and small solutes","The gradient lets ADH concentrate urine: water leaves the collecting duct into the hyperosmotic medulla"],
+ labs:["—"],
+ buzz:["Thick ascending limb: salt out, water stays"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration"],
+ tx:["—"],q:["countercurrent multiplication","countercurrent multiplier","countercurrent exchange","corticopapillary","urea recycling","vasa recta","medullary osmotic gradient","medullary interstitium"]},
+
+freewater:{n:"Free water — concentrated vs dilute urine",k:"reg",p:"ufconc",enz:"ADH decides whether free water is kept",inh:"—",fa:"608",hi:1,
+ mech:"Free water — water without solute — is generated in the diluting segments (thick ascending limb and early distal tubule), where solute is reabsorbed without water. With little ADH it is excreted: dilute urine, positive free-water clearance. With high ADH the collecting ducts reabsorb it: concentrated urine, negative free-water clearance.",
+ find:["ADH is released for high plasma osmolarity and low blood volume; it binds V2 receptors on principal cells → more aquaporins → water reabsorbed; it also increases urea reabsorption in the medullary collecting duct","Positive free-water clearance: low ADH — water drinking, diabetes insipidus","Negative free-water clearance: high ADH — water deprivation, SIADH"],
+ labs:["C(H₂O) = V − C(osm): urine flow minus osmolar clearance"],
+ buzz:["Diluting segments: thick ascending limb and early distal tubule"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration"],
+ tx:["—"],q:["free water clearance","free water","solute free water","osmolar clearance","diluting segment"]},
+
+polyuriadx:{n:"Polyuria — primary polydipsia vs diabetes insipidus",k:"reg",p:"ufdis",enz:"Water restriction, then desmopressin",inh:"—",fa:"342",hi:1,
+ mech:"Primary polydipsia and diabetes insipidus all produce large volumes of dilute urine (specific gravity under 1.006, osmolality usually under 300 mOsm/kg). Serum osmolality, a water restriction test and a dose of desmopressin sort them.",
+ find:["<b>Primary polydipsia</b>: excess water intake (psychiatric illness, hypothalamic lesions of the thirst center) → ADH ↓, serum osmolality ↓; water restriction raises urine osmolality sharply (over 700 mOsm/kg)","<b>Central DI</b> (arginine vasopressin deficiency): ADH ↓, serum osmolality ↑; little change with water restriction; desmopressin raises urine osmolality by more than 50%","<b>Nephrogenic DI</b> (arginine vasopressin resistance): ADH normal or ↑, serum osmolality ↑; minimal change with desmopressin — hereditary V2 mutation, lithium, demeclocycline, hypercalcemia, hypokalemia"],
+ labs:["Water restriction: no water for 2–3 hours, then hourly urine volume and osmolality and plasma Na⁺ and osmolality"],
+ buzz:["Concentrates when water is withheld = primary polydipsia","Responds to desmopressin = central DI"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration"],
+ tx:["Primary polydipsia: water restriction · central DI: desmopressin · nephrogenic DI: treat the cause, low-solute diet, thiazide, amiloride, indomethacin"],q:["primary polydipsia","psychogenic polydipsia","water deprivation test","water restriction test","desmopressin challenge"]},
+
+soundcond:{n:"Sound conduction & the middle ear",k:"reg",p:"hrcond",enz:"From air to fluid",inh:"—",fa:"519, 547, 638",hi:1,
+ mech:"Sound in air must become pressure waves in the fluid-filled inner ear, whose impedance is much higher. The tympanic membrane and ossicles match the impedance: a large eardrum funnels force onto the small oval window, and the ossicles add lever advantage.",
+ find:["<b>Outer ear</b>: pinna, canal and tympanic membrane · <b>middle ear</b>: air filled; malleus, incus and stapes conduct and amplify; the stapes footplate sits in the oval window","<b>Attenuation reflex</b>: loud sound → stapedius (CN VII) and, less, tensor tympani (CN V3) contract after 40–80 ms, stiffening the ossicles and cutting low-frequency transmission by 30–40 dB; it also dampens hearing of one’s own voice","Arch origins: malleus and incus from the 1st arch, stapes from the 2nd","Conductive loss (otitis media, otosclerosis, cholesteatoma eroding the ossicles): bone conduction beats air conduction on the Rinne test"],
+ labs:["—"],
+ buzz:["Big eardrum, small oval window = impedance matching"],
+ src:["Costanzo ch 3 — Neurophysiology","Guyton ch 53 — The Sense of Hearing"],
+ tx:["—"],q:["=impedance matching","ossicles","ossicular","attenuation reflex","acoustic reflex","stapedius","tensor tympani","oval window"]},
+
+cochlea:{n:"Cochlea & hair cell transduction",k:"reg",p:"hrcoch",enz:"Bending stereocilia let K⁺ in",inh:"—",fa:"547, 548",hi:1,
+ mech:"The cochlea has three fluid-filled ducts. The scala vestibuli and scala tympani hold perilymph, like ECF; the scala media holds endolymph — high K⁺, low Na⁺, made by the stria vascularis. Hair cells of the organ of Corti sit on the basilar membrane with their cilia in the tectorial membrane; sound bends the cilia, changing K⁺ conductance, and because the cilia are bathed in K⁺-rich endolymph, K⁺ flows in and depolarizes the cell.",
+ find:["<b>Inner hair cells</b>: fewer, a single row · <b>outer hair cells</b>: more numerous, several rows","<b>Tonotopy</b>: high frequencies at the base (thin, rigid membrane); low frequencies at the apex near the helicotrema (wide, flexible)","Noise and presbycusis destroy basal hair cells first — high frequencies are lost first","Spiral ganglion neurons carry the signal in CN VIII"],
+ labs:["—"],
+ buzz:["Base = high pitch, apex = low pitch","Endolymph is K⁺-rich"],
+ src:["Costanzo ch 3 — Neurophysiology","Guyton ch 53 — The Sense of Hearing","Pawlina ch 25 — Ear"],
+ tx:["—"],q:["organ of corti","basilar membrane","endolymph","perilymph","tonotopy","tonotopic","scala media","stria vascularis","tectorial membrane","outer hair cells","inner hair cells"]},
+
+audpath:{n:"Central auditory pathway",k:"reg",p:"hrpath",enz:"Bilateral above the cochlear nuclei",inh:"—",hi:1,
+ mech:"CN VIII ends in the cochlear nuclei of the medulla. From there fibers ascend — some crossing, some not — through the superior olivary complex and the lateral lemniscus to the inferior colliculus, then the medial geniculate nucleus of the thalamus, and finally the primary auditory cortex in the superior temporal gyrus.",
+ find:["Each ear reaches both hemispheres (more on the contralateral side), with crossings in the trapezoid body, between the lateral lemnisci and between the inferior colliculi","So deafness in one ear points to the ear, CN VIII or the cochlear nuclei — not to a lesion higher up","<b>Locating sound</b>: the time lag between the two ears (best below 3000 Hz) and the intensity difference (higher frequencies, where the head blocks sound)","The tonotopic map is kept all the way to the cortex"],
+ labs:["—"],
+ buzz:["One deaf ear = ear, nerve or cochlear nucleus"],
+ src:["Costanzo ch 3 — Neurophysiology","Guyton ch 53 — The Sense of Hearing","Fundamental Neuroscience ch 21 — The Auditory System"],
+ tx:["—"],q:["auditory pathway","cochlear nuclei","cochlear nucleus","superior olivary","lateral lemniscus","inferior colliculus","medial geniculate","auditory cortex"]},
+
+vestibular:{n:"Vestibular system — canals & otoliths",k:"reg",p:"hrvest",enz:"Angular vs linear acceleration",inh:"—",fa:"548",hi:1,
+ mech:"The vestibular organ has three perpendicular semicircular canals and two otolith organs, filled with endolymph. Canals sense angular (rotational) acceleration: the cupula in each ampulla is dragged through the endolymph. The utricle and saccule sense linear acceleration and gravity: a mass of calcium carbonate crystals slides across the hair cells when the head tilts.",
+ find:["Stereocilia bent toward the kinocilium → depolarization and ↑ firing; bent away → hyperpolarization and ↓ firing","Turning the head left excites the left horizontal canal and inhibits the right","Vestibular nuclei drive the vestibulo-ocular reflex (via the MLF to the eye-muscle nuclei) and posture","Loose otolith debris in a canal causes benign paroxysmal positional vertigo"],
+ labs:["—"],
+ buzz:["Canals = turning · otoliths = tilting and linear motion"],
+ src:["Costanzo ch 3 — Neurophysiology","Fundamental Neuroscience ch 22 — The Vestibular System"],
+ tx:["—"],q:["=semicircular canal","=semicircular canals","utricle","saccule","otolith organs","kinocilium","cupula","vestibular nuclei","vestibulo ocular reflex","vestibuloocular reflex"]},
+
+nystagmus:{n:"Nystagmus & caloric testing",k:"reg",p:"hrvest",enz:"Named for the fast phase",inh:"—",fa:"548",hi:1,
+ mech:"When the head rotates, the eyes first drift opposite the rotation to hold gaze (the slow phase), then jump in the direction of rotation (the fast phase). Nystagmus is named for the fast phase; when rotation stops, a postrotatory nystagmus beats the opposite way.",
+ find:["<b>Caloric test</b>: head tilted back 60° so the horizontal canals are vertical; irrigation sets the endolymph moving as if the head had turned — warm water: nystagmus toward the treated side; cold water: toward the untreated side (COWS)","<b>Peripheral</b> (inner ear): mixed horizontal-torsional, never purely vertical or torsional, does not change direction, suppressed by visual fixation","<b>Central</b> (brainstem, cerebellum): any direction, not suppressed by fixation, with diplopia, ataxia or dysmetria"],
+ labs:["—"],
+ buzz:["COWS: cold opposite, warm same"],
+ src:["Costanzo ch 3 — Neurophysiology","Fundamental Neuroscience ch 22 — The Vestibular System"],
+ tx:["—"],q:["caloric test","caloric testing","cold calorics","postrotatory nystagmus","fast phase","slow phase"]},
+
+dcmltract:{n:"Dorsal column–medial lemniscus pathway",k:"reg",p:"dcml",enz:"Fine touch, vibration, position — crosses in the medulla",inh:"—",fa:"504, 521, 522, 544",hi:1,
+ mech:"Pressure, vibration, fine touch and conscious proprioception. The first neuron (cell body in the dorsal root ganglion) ascends on the same side in the dorsal columns, synapses in the gracile or cuneate nucleus of the medulla, and the second neuron crosses and ascends as the medial lemniscus to the VPL nucleus of the thalamus; the third neuron reaches the primary somatosensory cortex (postcentral gyrus).",
+ find:["<b>Fasciculus gracilis</b>: legs, below T6, medial · <b>fasciculus cuneatus</b>: arms, above T6, lateral — “grass on the ground, clouds in the sky”","A cord lesion causes loss on the <b>same side</b>; a lesion above the medullary crossing causes loss on the opposite side","Damaged in B12 deficiency (with the corticospinal tract), tabes dorsalis and Friedreich ataxia — a positive Romberg sign","Receptors: Meissner and Pacinian corpuscles and muscle spindles on large myelinated fibers"],
+ labs:["—"],
+ buzz:["Synapse in the medulla, then cross"],
+ src:["Fundamental Neuroscience ch 17 — The Somatosensory System I: Tactile Discrimination and Position Sense","Guyton ch 48 — Somatic Sensations: I. General Organization, Tactile and Position Senses"],
+ tx:["—"],q:["dorsal column","dorsal columns","medial lemniscus","fasciculus gracilis","fasciculus cuneatus","nucleus gracilis","nucleus cuneatus","=posterior column","=posterior columns","dorsal column medial lemniscus"]},
+
+stttract:{n:"Spinothalamic tract — pain & temperature",k:"reg",p:"stt",enz:"Synapse in the dorsal horn, cross within a segment or two",inh:"—",fa:"521, 522, 544",hi:1,
+ mech:"Pain and temperature arrive on Aδ and C fibers from free nerve endings. The first neuron synapses in the dorsal (posterior) horn; the second neuron crosses in the anterior white commissure within one or two segments and ascends on the opposite side to the VPL nucleus of the thalamus; the third neuron projects to the primary somatosensory cortex.",
+ find:["A cord lesion causes pain and temperature loss on the <b>opposite side</b>, starting a segment or two below the lesion","In the lateral spinothalamic and corticospinal tracts the legs are lateral — “arms outside, legs inside” describes the dorsal columns","Syringomyelia destroys the crossing fibers in the anterior white commissure → bilateral cape-like loss of pain and temperature with touch spared","Brown-Séquard: same-side loss of position and motor function, opposite-side loss of pain and temperature"],
+ labs:["—"],
+ buzz:["Ascending tracts synapse then cross"],
+ src:["Fundamental Neuroscience ch 18 — The Somatosensory System II: Nociception, Thermal Sense, and Touch","Guyton ch 49 — Somatic Sensations: II. Pain, Headache, and Thermal Sensations"],
+ tx:["—"],q:["=spinothalamic","=spinothalamic tract","lateral spinothalamic","=anterolateral system","=anterior white commissure"]},
+
+csttract:{n:"Lateral corticospinal tract",k:"reg",p:"cst",enz:"Voluntary movement — crosses at the pyramids",inh:"—",fa:"521, 522, 544",hi:1,
+ mech:"The upper motor neuron starts in the primary motor cortex (precentral gyrus), descends through the posterior limb of the internal capsule and the cerebral peduncle, crosses at the pyramidal decussation in the caudal medulla and runs down the opposite lateral corticospinal tract to synapse on the lower motor neuron in the anterior horn.",
+ find:["A lesion above the decussation weakens the <b>opposite</b> side; a cord lesion weakens the <b>same</b> side below it","Upper motor neuron signs: spastic weakness, hyperreflexia, Babinski sign — lower motor neuron signs come from the anterior horn or the nerve","Descending tract crosses then synapses (the ascending tracts synapse then cross)","Damaged with the dorsal columns in B12 deficiency, with the anterior horn in ALS"],
+ labs:["—"],
+ buzz:["Descending tract: cross, then synapse"],
+ src:["Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Guyton ch 56 — Cortical and Brain Stem Control of Motor Function"],
+ tx:["—"],q:["=corticospinal","=corticospinal tract","lateral corticospinal","=pyramidal decussation","=pyramidal tract","=corticospinal fibers"]},
+
+accommodation:{n:"Accommodation & the near response",k:"reg",p:"vsopt",enz:"Ciliary muscle contracts, the lens rounds up",inh:"—",fa:"519, 549, 550",hi:1,
+ mech:"Focusing on a near object, parasympathetic fibers in CN III contract the ciliary muscle. That relaxes the lens ligaments (zonular fibers), and the elastic lens capsule lets the lens become thicker and more convex — more refractive power.",
+ find:["Light is refracted at four interfaces: air–cornea, cornea–aqueous, aqueous–lens and lens–vitreous","Near response: accommodation, convergence and pupillary constriction; the accommodation reflex runs CN II in, CN III out","<b>Presbyopia</b>: age-related loss of accommodation — likely ↓ lens elasticity; reading glasses","<b>Myopia</b>: eye too long, image in front of the retina — concave lens · <b>hyperopia</b>: eye too short — convex lens · <b>astigmatism</b>: uneven curvature — cylindrical lens"],
+ labs:["—"],
+ buzz:["Near vision = parasympathetic: ciliary muscle contracts, lens rounds"],
+ src:["Guyton ch 50 — The Eye: I. Optics of Vision","Guyton ch 52 — The Eye: III. Central Neurophysiology of Vision","Costanzo ch 3 — Neurophysiology"],
+ tx:["—"],q:["accommodation reflex","near reflex","near response","zonular fibers","lens accommodation"]},
+
+retinacells:{n:"Retinal layers & photoreceptors",k:"reg",p:"vsret",enz:"Rods for dim light, cones for color and detail",inh:"—",fa:"192, 549, 552",hi:1,
+ mech:"Light passes through the inner retina to reach the photoreceptors at the back, against the pigment epithelium. Photoreceptors synapse on bipolar cells, which synapse on ganglion cells whose axons form the optic nerve; horizontal and amacrine cells connect neighbors.",
+ find:["<b>Pigment epithelium</b>: absorbs stray light and converts all-trans retinal back to 11-cis retinal for the photoreceptors","<b>Rods</b>: very sensitive, dim-light and night vision, no color · <b>cones</b>: color and fine detail in bright light; three types sensitive to blue, green and red light","<b>Fovea</b>: a tiny central area packed for acute, detailed vision — the inner layers are pulled aside","Vitamin A is needed to make retinal — deficiency causes night blindness; retinitis pigmentosa also starts with night blindness","Ethambutol optic neuropathy causes red-green color blindness"],
+ labs:["—"],
+ buzz:["Rods = night · cones = color"],
+ src:["Costanzo ch 3 — Neurophysiology","Guyton ch 51 — The Eye: II. Receptor and Neural Function of the Retina"],
+ tx:["—"],q:["photoreceptors","rod photoreceptors","cone photoreceptors","retinal pigment epithelium","fovea","color vision","bipolar cells"]},
+
+phototrans:{n:"Phototransduction",k:"reg",p:"vsphoto",enz:"Light closes Na⁺ channels — the photoreceptor hyperpolarizes",inh:"—",hi:1,
+ mech:"Rhodopsin is opsin (a G protein–coupled receptor) plus 11-cis retinal, an aldehyde of vitamin A. Light converts 11-cis to all-trans retinal, forming metarhodopsin II, which activates the G protein transducin. Transducin turns on a phosphodiesterase that breaks down cGMP; cGMP-gated Na⁺ channels close and the photoreceptor hyperpolarizes, releasing less glutamate.",
+ find:["<b>In the dark</b>: cGMP is high, Na⁺ channels are open — an inward “dark current” keeps the photoreceptor depolarized","<b>Amplification</b>: one photon activates one metarhodopsin II, which activates about 800 transducin molecules","Regenerating 11-cis retinal depends on vitamin A (retinol)","Dark adaptation: after bright light much of the pigment has been broken down and must be rebuilt"],
+ labs:["—"],
+ buzz:["Light → ↓ cGMP → Na⁺ channels close → hyperpolarization"],
+ src:["Costanzo ch 3 — Neurophysiology","Guyton ch 51 — The Eye: II. Receptor and Neural Function of the Retina"],
+ tx:["—"],q:["phototransduction","rhodopsin","transducin","dark current","11 cis retinal","metarhodopsin","dark adaptation"]},
+
+viscortex:{n:"Visual pathway to the cortex",k:"reg",p:"vscort",enz:"Retina → LGN → area 17",inh:"—",fa:"508",hi:1,
+ mech:"Ganglion cell axons form the optic nerves; nasal fibers cross at the optic chiasm, so each optic tract carries the opposite visual field to the lateral geniculate body of the thalamus. The geniculocalcarine tract (optic radiations) runs to the primary visual cortex (area 17) in the occipital lobe.",
+ find:["The temporal visual field lands on the nasal retina, whose fibers cross","Other targets of the optic tract: suprachiasmatic nucleus (circadian rhythm), pretectal nuclei (pupillary light reflex), superior colliculus (rapid eye movements)","The visual cortex detects lines, borders and their orientation","Lesions along the way give the classic field cuts — see the Eye, Cranial Nerves & Headache map"],
+ labs:["—"],
+ buzz:["Nasal fibers cross"],
+ src:["Costanzo ch 3 — Neurophysiology","Guyton ch 52 — The Eye: III. Central Neurophysiology of Vision","Fundamental Neuroscience ch 20 — The Visual System"],
+ tx:["—"],q:["=primary visual cortex","=visual cortex","lateral geniculate","geniculocalcarine","optic radiations","pretectal nuclei"]},
+
+pharynxanat:{n:"Nasopharynx, oropharynx & laryngopharynx",k:"reg",p:"lxphar",enz:"Three parts, a ring of tonsils, two nerves",inh:"—",fa:"519, 638, 690",hi:0,
+ mech:"The pharynx runs from the cranial base to the cricoid cartilage (C6), where it becomes the esophagus — the pharyngoesophageal junction is the narrowest part of the alimentary tract.",
+ find:["<b>Nasopharynx</b>: the pharyngeal tonsil (adenoid when enlarged) on the roof and back wall; the opening of the pharyngotympanic (eustachian) tube, which the salpingopharyngeus opens during swallowing","<b>Oropharynx</b>: palatine tonsils · <b>laryngopharynx</b>: piriform fossae beside the laryngeal inlet","Waldeyer ring: pharyngeal, tubal, palatine and lingual tonsils","Pharyngeal plexus: CN X motor to the constrictors, CN IX sensory; stylopharyngeus is the one muscle of CN IX (3rd arch)","Nasopharyngeal carcinoma can block the eustachian tube → otitis media with effusion"],
+ labs:["—"],
+ buzz:["Gag reflex: CN IX in, CN X out"],
+ src:["Moore ch 8 — Neck"],
+ tx:["—"],q:["nasopharynx","oropharynx","laryngopharynx","hypopharynx","piriform fossa","piriform recess","pharyngeal tonsil","waldeyer ring","pharyngotympanic tube","stylopharyngeus","pharyngeal constrictors"]},
+
+larynxmus:{n:"Larynx — cartilages & muscles",k:"reg",p:"lxlar",enz:"Open, close, tense",inh:"—",fa:"638",hi:1,
+ mech:"The vocal folds bound the rima glottidis. Intrinsic laryngeal muscles move the arytenoid cartilages and change the tension and length of the folds — opening the airway for breathing, closing it for phonation and swallowing.",
+ find:["<b>Posterior cricoarytenoids</b>: the sole abductors — they open the rima glottidis in deep inspiration","<b>Lateral cricoarytenoids and arytenoids</b>: adduct for phonation; stronger contraction seals the rima glottidis (Valsalva) and, with other inlet muscles, closes the laryngeal inlet during swallowing","<b>Cricothyroid</b>: tenses the vocal folds — external branch of the superior laryngeal nerve (4th arch); every other intrinsic muscle — recurrent laryngeal nerve (6th arch)","Cartilages (ACCCT): arytenoids, cricoid, corniculate, cuneiform, thyroid; the epiglottis is elastic cartilage","Phonation: air forced between adducted vocal ligaments produces tone; whispering leaves the arytenoids apart"],
+ labs:["—"],
+ buzz:["Posterior cricoarytenoid: the only one that opens"],
+ src:["Moore ch 8 — Neck"],
+ tx:["—"],q:["posterior cricoarytenoid","cricothyroid muscle","vocal folds","vocal cords","rima glottidis","intrinsic laryngeal muscles","arytenoid"]},
+
+laryngealnerves:{n:"Laryngeal nerves & their injuries",k:"reg",p:"lxnerve",enz:"Superior vs recurrent laryngeal",inh:"—",fa:"286, 288, 347, 703, 704",hi:1,
+ mech:"Both laryngeal nerves come from CN X. The superior laryngeal nerve splits into an internal branch (sensory to the mucosa above the vocal folds) and an external branch (motor to the cricothyroid). The recurrent (inferior) laryngeal nerve supplies every other intrinsic muscle.",
+ find:["The left recurrent laryngeal nerve loops under the aortic arch beside the ligamentum arteriosum; the right loops under the subclavian artery","<b>Recurrent nerve injury</b> → hoarseness (dysphonia) — thyroidectomy (ligating the inferior thyroid artery), Pancoast tumor, lung cancer, left atrial enlargement in mitral stenosis (Ortner syndrome)","<b>External branch injury</b> (ligating the superior thyroid pedicle) → loss of vocal tenor, noticed by professional voice users","Surgery near the carotid triangle can injure the vagus or recurrent nerves and change the voice"],
+ labs:["—"],
+ buzz:["Hoarse after thyroid surgery = recurrent laryngeal nerve"],
+ src:["Moore ch 8 — Neck"],
+ tx:["—"],q:["recurrent laryngeal nerve","superior laryngeal nerve","external laryngeal nerve","internal laryngeal nerve","inferior laryngeal nerve","ortner syndrome"]},
+
+swallowing:{n:"Stages of swallowing",k:"reg",p:"lxswal",enz:"Voluntary, then a brainstem reflex, then peristalsis",inh:"—",fa:"384",hi:1,
+ mech:"Swallowing starts voluntarily, then becomes an automatic reflex run by the swallowing (deglutition) center in the medulla and lower pons, carried out through CN V, IX, X and XII.",
+ find:["<b>Voluntary stage</b>: the tongue pushes the bolus up and back against the palate into the pharynx","<b>Pharyngeal stage</b> (reflex, under 6 seconds, breathing briefly stops): the larynx rises, the epiglottis covers the inlet, the upper esophageal sphincter relaxes and the pharyngeal constrictors contract from top to bottom","<b>Esophageal stage</b>: primary peristalsis continues the pharyngeal wave to the stomach in 8–10 seconds; secondary peristalsis is triggered by food left distending the esophagus","The lower esophageal sphincter stays tonically closed (about 30 mm Hg) and relaxes ahead of the wave (receptive relaxation); failure to relax = achalasia","Between swallows the upper esophageal sphincter stays contracted, keeping air out of the esophagus"],
+ labs:["—"],
+ buzz:["Primary peristalsis follows the swallow; secondary follows distension"],
+ src:["Guyton ch 64 — Propulsion and Mixing of Food in the Alimentary Tract","Costanzo ch 8 — Gastrointestinal physiology","Moore ch 8 — Neck"],
+ tx:["—"],q:["swallowing reflex","deglutition","pharyngeal stage","esophageal stage","primary peristalsis","secondary peristalsis","upper esophageal sphincter","swallowing center","receptive relaxation"]},
 
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
@@ -15855,7 +16115,7 @@ MAPS.spine = {
  t:"Spinal Cord: Tracts and Lesions", sub:"Three long tracts, each crossing at a different level · a lesion's deficits follow the tracts it cuts and which side they have reached",
  w:3500, h:1720,
  fa:"145, 502, 521–523, 543–544",
- src:["Robbins ch 8 — Infectious diseases","Robbins ch 27 — Peripheral nerves and skeletal muscles","Robbins ch 28 — The central nervous system","Guyton ch 48 — Somatic Sensations: I. General Organization, Tactile and Position Senses","Moore ch 2 — Back","Fundamental Neuroscience ch 9 — The Spinal Cord","Fundamental Neuroscience ch 17 — The Somatosensory System I: Tactile Discrimination and Position Sense","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Fundamental Neuroscience ch 33 — The Neurologic Examination","Moore ch 1 — Overview and Basic Concepts"],
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 27 — Peripheral nerves and skeletal muscles","Robbins ch 28 — The central nervous system","Guyton ch 48 — Somatic Sensations: I. General Organization, Tactile and Position Senses","Moore ch 2 — Back","Fundamental Neuroscience ch 9 — The Spinal Cord","Fundamental Neuroscience ch 17 — The Somatosensory System I: Tactile Discrimination and Position Sense","Fundamental Neuroscience ch 18 — The Somatosensory System II: Nociception, Thermal Sense, and Touch","Guyton ch 49 — Somatic Sensations: II. Pain, Headache, and Thermal Sensations","Guyton ch 56 — Cortical and Brain Stem Control of Motor Function","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Fundamental Neuroscience ch 33 — The Neurologic Examination","Moore ch 1 — Overview and Basic Concepts"],
  comps:[
   {x:160,y:110,w:3180,h:560,l:"Three long tracts — what each carries and where it crosses"},
   {x:160,y:750,w:3180,h:620,l:"Lesion patterns — the deficits follow the tracts that are cut"}],
@@ -15882,19 +16142,19 @@ MAPS.spine = {
  nodes:[
   {id:"dcrec",l:"Touch, vibration, position",x:420,y:250,p:"dcml",s:"Meissner · Pacinian · muscle spindles"},
   {id:"dcdrg",l:"Dorsal root ganglion",x:940,y:250,p:"dcml",s:"first neuron — same side"},
-  {id:"dccol",l:"Dorsal columns",x:1460,y:250,p:"dcml",s:"gracilis (legs) · cuneatus (arms)"},
+  {id:"dccol",l:"Dorsal columns",x:1460,y:250,p:"dcml",s:"gracilis (legs) · cuneatus (arms)",m:["dcmltract"]},
   {id:"dcnuc",l:"Gracile & cuneate nuclei",x:1980,y:250,p:"dcml",s:"medulla — second neuron"},
-  {id:"dclem",l:"Medial lemniscus",x:2500,y:250,p:"dcml",s:"now contralateral"},
+  {id:"dclem",l:"Medial lemniscus",x:2500,y:250,p:"dcml",s:"now contralateral",m:["dcmltract"]},
   {id:"dcthal",l:"VPL thalamus → cortex",x:2990,y:250,p:"dcml",s:"postcentral gyrus"},
   {id:"strec",l:"Pain & temperature",x:420,y:400,p:"stt",s:"free nerve endings — Aδ and C fibers"},
   {id:"sthorn",l:"Dorsal horn",x:940,y:400,p:"stt",s:"synapse on the second neuron"},
-  {id:"stcom",l:"Anterior white commissure",x:1460,y:400,p:"stt",s:"crosses within 1–2 segments"},
-  {id:"sttract",l:"Lateral spinothalamic tract",x:1980,y:400,p:"stt",s:"contralateral all the way up"},
+  {id:"stcom",l:"Anterior white commissure",x:1460,y:400,p:"stt",s:"crosses within 1–2 segments",m:["stttract"]},
+  {id:"sttract",l:"Lateral spinothalamic tract",x:1980,y:400,p:"stt",s:"contralateral all the way up",m:["stttract"]},
   {id:"stthal",l:"VPL thalamus → cortex",x:2990,y:400,p:"stt",s:"pain and temperature map"},
   {id:"ctcortex",l:"Motor cortex",x:420,y:550,p:"cst",s:"precentral gyrus — upper motor neuron"},
   {id:"ctcap",l:"Internal capsule",x:940,y:550,p:"cst",s:"posterior limb"},
-  {id:"ctpyr",l:"Pyramidal decussation",x:1460,y:550,p:"cst",s:"caudal medulla — most fibers cross"},
-  {id:"ctlat",l:"Lateral corticospinal tract",x:1980,y:550,p:"cst",s:"descends on the side it serves"},
+  {id:"ctpyr",l:"Pyramidal decussation",x:1460,y:550,p:"cst",s:"caudal medulla — most fibers cross",m:["csttract"]},
+  {id:"ctlat",l:"Lateral corticospinal tract",x:1980,y:550,p:"cst",s:"descends on the side it serves",m:["csttract"]},
   {id:"cthorn",l:"Anterior horn",x:2500,y:550,p:"cst",s:"lower motor neuron",m:["umnlmn"]},
   {id:"ctmus",l:"→ Muscle",x:2990,y:550,p:"cst",k:"ghost",go:"muscle"},
   {id:"lpb12",l:"Dorsal columns + lateral corticospinal",x:560,y:880,p:"cordlesion",s:"subacute combined degeneration",m:["b12def"]},
@@ -26305,7 +26565,311 @@ MAPS.sxams = {
   {a:"a0",b:"a1",p:"amapp"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["index","Index"]];
+MAPS.membrane = {
+ t:"Membrane Potentials & Nerve Conduction", sub:"Ion gradients set the resting potential · Na⁺ in, then K⁺ out makes the action potential · diameter and myelin set the speed · and what happens when channels are blocked or myelin is lost",
+ w:3300, h:1280,
+ fa:"246, 503–504",
+ src:["Costanzo ch 1 — Cellular physiology","Guyton ch 5 — Membrane Potentials and Action Potentials","Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function","Costanzo ch 3 — Neurophysiology"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"Ion gradients & the resting potential"},
+  {x:140,y:310,w:3020,h:140,l:"The action potential"},
+  {x:140,y:510,w:3020,h:200,l:"Conduction along the axon"},
+  {x:140,y:770,w:3020,h:200,l:"When channels or myelin fail"}],
+ panels:[
+  {x:140,y:1030,w:1480,h:138,kw:240,t:"Which gate does what",rows:[
+   ["Na⁺ activation gate","opens on depolarization — the upstroke"],
+   ["Na⁺ inactivation gate","closes at the peak — absolute refractory period"],
+   ["K⁺ channel","opens and closes late — repolarization, afterhyperpolarization"],
+   ["Na⁺/K⁺ pump","3 Na⁺ out, 2 K⁺ in — keeps the gradients"]]},
+  {x:1680,y:1030,w:1480,h:182,kw:120,t:"Nerve fibers",rows:[
+   ["Aα","α motoneurons · largest, fastest"],
+   ["Aβ","touch, pressure"],
+   ["Aγ","γ motoneurons to muscle spindles"],
+   ["Aδ","fast pain, temperature · myelinated"],
+   ["B","preganglionic autonomic"],
+   ["C","slow pain · unmyelinated, slowest"]]}],
+ nodes:[
+  {id:"i1",l:"Nernst equation",x:420,y:170,p:"mpion",k:"hub",s:"a concentration ratio becomes a voltage",m:["eqpot"]},
+  {id:"i2",l:"Na⁺/K⁺-ATPase",x:1020,y:170,p:"mpion",s:"3 Na⁺ out, 2 K⁺ in · keeps the gradients",m:["nakpump"]},
+  {id:"i3",l:"Resting potential",x:1620,y:170,p:"mpion",s:"close to the K⁺ equilibrium potential",m:["rmp"]},
+  {id:"i4",l:"Hyperkalemia",x:2220,y:170,p:"mpion",s:"depolarized but less excitable",m:["hyperk","rmp"]},
+  {id:"i5",l:"Hypokalemia",x:2820,y:170,p:"mpion",s:"muscle weakness · U waves",m:["hypok"]},
+  {id:"a1",l:"Threshold",x:420,y:370,p:"mpap",s:"an action potential becomes inevitable",m:["nerveap"]},
+  {id:"a2",l:"Upstroke",x:1020,y:370,p:"mpap",s:"Na⁺ activation gates open — Na⁺ in",m:["nerveap"]},
+  {id:"a3",l:"Repolarization",x:1620,y:370,p:"mpap",s:"inactivation gates shut · K⁺ out",m:["nerveap"]},
+  {id:"a4",l:"Afterhyperpolarization",x:2220,y:370,p:"mpap",s:"slow K⁺ gates overshoot",m:["nerveap"]},
+  {id:"a5",l:"Refractory periods",x:2820,y:370,p:"mpap",s:"absolute, then relative",m:["refractory"]},
+  {id:"c1",l:"Fiber diameter",x:420,y:570,p:"mpcond",s:"wider → lower internal resistance → faster",m:["conduction"]},
+  {id:"c2",l:"Myelin",x:1020,y:570,p:"mpcond",s:"higher membrane resistance between nodes",m:["conduction"]},
+  {id:"c3",l:"Nodes of Ranvier",x:1620,y:570,p:"mpcond",s:"dense Na⁺ channels · saltatory conduction",m:["conduction"]},
+  {id:"c4",l:"Oligodendrocytes · Schwann cells",x:2220,y:570,p:"mpcond",s:"CNS: many axons each · PNS: one axon each",m:["glia"]},
+  {id:"c5",l:"Fiber types",x:2820,y:570,p:"mpcond",s:"Aα largest, fastest · C unmyelinated, slowest",m:["fibertypes"]},
+  {id:"c6",l:"Astrocytes · microglia · ependyma",x:420,y:650,p:"mpcond",s:"support · scavenge · line the ventricles",m:["glia"]},
+  {id:"c7",l:"Length & time constants",x:1020,y:650,p:"mpcond",s:"how far and how fast current spreads",m:["conduction"]},
+  {id:"cx1",l:"→ Muscle: Nerve to Contraction",x:1620,y:650,p:"neutral",k:"ghost",go:"muscle"},
+  {id:"cx2",l:"→ Spinal Cord: Tracts and Lesions",x:2220,y:650,p:"neutral",k:"ghost",go:"spine"},
+  {id:"cx3",l:"→ Neurotransmitters & Psychopharmacology",x:2820,y:650,p:"neutral",k:"ghost",go:"neurotx"},
+  {id:"d1",l:"Multiple sclerosis",x:420,y:830,p:"mpclin",s:"CNS demyelination",m:["ms"]},
+  {id:"d2",l:"Guillain-Barré",x:1020,y:830,p:"mpclin",s:"PNS demyelination · Schwann cells",m:["gbs"]},
+  {id:"d3",l:"Charcot-Marie-Tooth",x:1620,y:830,p:"mpclin",s:"pes cavus · distal leg weakness",m:["cmt"]},
+  {id:"d4",l:"PML",x:2220,y:830,p:"mpclin",s:"white matter lost · AIDS, natalizumab",m:["pml"]},
+  {id:"d5",l:"Local anesthetics",x:2820,y:830,p:"mpclin",s:"block Na⁺ channels · pain lost first",m:["localanes"]},
+  {id:"d6",l:"Tetrodotoxin · ciguatoxin",x:420,y:910,p:"mpclin",s:"blocks · opens Na⁺ channels",m:["seafoodtox"]},
+  {id:"d7",l:"Class I antiarrhythmics",x:1020,y:910,p:"mpclin",s:"Na⁺ channel blockers",m:["class1"]},
+  {id:"d8",l:"Antiepileptics",x:1620,y:910,p:"mpclin",s:"phenytoin · carbamazepine",m:["antiepileptics"]},
+  {id:"d9",l:"Lambert-Eaton · myasthenia",x:2220,y:910,p:"mpclin",s:"the junction fails, not the axon",m:["lems","mg"]}],
+ edges:[
+  {a:"a1",b:"a2",p:"mpap"},
+  {a:"a2",b:"a3",p:"mpap"},
+  {a:"a3",b:"a4",p:"mpap"}]
+};
+
+MAPS.urineconc = {
+ t:"Urine Concentration & Body Fluids", sub:"Where the body’s water sits and how it shifts · how the loop of Henle and ADH concentrate or dilute the urine · and the disorders of too much or too little water",
+ w:3300, h:1340,
+ fa:"342, 599, 606, 608",
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema","Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"Body fluid compartments"},
+  {x:140,y:310,w:3020,h:200,l:"Fluid shifts — water follows osmolarity"},
+  {x:140,y:570,w:3020,h:200,l:"Concentrating and diluting the urine"},
+  {x:140,y:830,w:3020,h:200,l:"Too much or too little water"}],
+ panels:[
+  {x:140,y:1090,w:1480,h:182,kw:290,t:"Six fluid shifts",rows:[
+   ["Isosmotic contraction","diarrhea — ECF ↓"],
+   ["Hyperosmotic contraction","sweating, DI — ECF ↓, ICF ↓"],
+   ["Hyposmotic contraction","adrenal insufficiency — ECF ↓, ICF ↑"],
+   ["Isosmotic expansion","isotonic saline — ECF ↑"],
+   ["Hyperosmotic expansion","high salt intake — ECF ↑, ICF ↓"],
+   ["Hyposmotic expansion","SIADH — ECF ↑, ICF ↑"]]},
+  {x:1680,y:1090,w:1480,h:138,kw:250,t:"Water restriction & desmopressin",rows:[
+   ["Primary polydipsia","urine osmolality rises over 700 with restriction"],
+   ["Central DI","little change · over 50% rise with desmopressin"],
+   ["Nephrogenic DI","little change with either"],
+   ["Serum osmolality","low in polydipsia · high in DI"]]}],
+ nodes:[
+  {id:"b1",l:"Total body water",x:420,y:170,p:"ufcomp",k:"hub",s:"60% of body weight",m:["fluidcomp"]},
+  {id:"b2",l:"Intracellular fluid",x:1020,y:170,p:"ufcomp",s:"40% · K⁺, Mg²⁺, phosphates",m:["fluidcomp"]},
+  {id:"b3",l:"Extracellular fluid",x:1620,y:170,p:"ufcomp",s:"20% · Na⁺, Cl⁻, HCO₃⁻, albumin",m:["fluidcomp"]},
+  {id:"b4",l:"Interstitial fluid · plasma",x:2220,y:170,p:"ufcomp",s:"three-quarters · one-quarter of the ECF",m:["fluidcomp","capfluid"]},
+  {id:"b5",l:"Markers",x:2820,y:170,p:"ufcomp",s:"D₂O · inulin, mannitol · Evans blue",m:["fluidcomp"]},
+  {id:"s1",l:"Diarrhea",x:420,y:370,p:"ufshift",s:"isosmotic contraction · the ECF alone shrinks",m:["fluidshifts"]},
+  {id:"s2",l:"Sweating · water deprivation",x:1020,y:370,p:"ufshift",s:"hyperosmotic contraction · both shrink",m:["fluidshifts"]},
+  {id:"s3",l:"Adrenal insufficiency",x:1620,y:370,p:"ufshift",s:"hyposmotic contraction · cells swell",m:["fluidshifts","addison"]},
+  {id:"s4",l:"Isotonic saline",x:2220,y:370,p:"ufshift",s:"isosmotic expansion · the ECF alone grows",m:["fluidshifts"]},
+  {id:"s5",l:"Salt load",x:2820,y:370,p:"ufshift",s:"hyperosmotic expansion · cells shrink",m:["fluidshifts"]},
+  {id:"s6",l:"SIADH",x:420,y:450,p:"ufshift",s:"hyposmotic expansion · both swell",m:["fluidshifts","siadh"]},
+  {id:"s7",l:"Edema",x:1020,y:450,p:"ufshift",s:"Starling forces push fluid out of capillaries",m:["capfluid"]},
+  {id:"s8",l:"Sodium disorders",x:1620,y:450,p:"ufshift",s:"low Na⁺: confusion, seizures · high: stupor",m:["sodiumdis"]},
+  {id:"sx1",l:"→ Acid-Base & Electrolytes",x:2220,y:450,p:"neutral",k:"ghost",go:"acidbase"},
+  {id:"sx2",l:"→ Renal Physiology by the Numbers",x:2820,y:450,p:"neutral",k:"ghost",go:"renalphys"},
+  {id:"n1",l:"Thick ascending limb",x:420,y:630,p:"ufconc",s:"salt out, water stays — the single effect",m:["countercurrent"]},
+  {id:"n2",l:"Medullary gradient",x:1020,y:630,p:"ufconc",s:"countercurrent multiplication",m:["countercurrent"]},
+  {id:"n3",l:"Urea recycling",x:1620,y:630,p:"ufconc",s:"inner medullary collecting duct",m:["countercurrent"]},
+  {id:"n4",l:"Vasa recta",x:2220,y:630,p:"ufconc",s:"passive countercurrent exchange",m:["countercurrent"]},
+  {id:"n5",l:"ADH → V2 → aquaporins",x:2820,y:630,p:"ufconc",s:"principal cells reabsorb water",m:["freewater","adhdrugs"]},
+  {id:"n6",l:"Free water",x:420,y:710,p:"ufconc",s:"made in the diluting segments",m:["freewater"]},
+  {id:"n7",l:"Dilute urine",x:1020,y:710,p:"ufconc",s:"low ADH · positive free-water clearance",m:["freewater"]},
+  {id:"n8",l:"Concentrated urine",x:1620,y:710,p:"ufconc",s:"high ADH · negative free-water clearance",m:["freewater"]},
+  {id:"n9",l:"Loop diuretics",x:2220,y:710,p:"ufconc",s:"act on the thick ascending limb",m:["loopdiuretics"]},
+  {id:"n10",l:"Thiazides",x:2820,y:710,p:"ufconc",s:"also used for nephrogenic DI",m:["thiazides"]},
+  {id:"w1",l:"Polyuria",x:420,y:890,p:"ufdis",k:"hub",s:"water restriction, then desmopressin",m:["polyuriadx"]},
+  {id:"w2",l:"Primary polydipsia",x:1020,y:890,p:"ufdis",s:"concentrates when water is withheld",m:["polyuriadx"]},
+  {id:"w3",l:"Central DI",x:1620,y:890,p:"ufdis",s:"responds to desmopressin",m:["di","polyuriadx"]},
+  {id:"w4",l:"Nephrogenic DI",x:2220,y:890,p:"ufdis",s:"lithium · hypercalcemia · V2 mutation",m:["di","lithium"]},
+  {id:"w5",l:"SIADH",x:2820,y:890,p:"ufdis",s:"euvolemic hyponatremia",m:["siadh"]},
+  {id:"w6",l:"Sickle cell trait",x:420,y:970,p:"ufdis",s:"cannot concentrate urine (hyposthenuria)",m:["sickletrait"]},
+  {id:"wx1",l:"→ Nephron",x:1020,y:970,p:"neutral",k:"ghost",go:"nephron"}],
+ edges:[
+  {a:"n1",b:"n2",p:"ufconc"},
+  {a:"n2",b:"n3",p:"ufconc",arrow:"none",dash:true}]
+};
+
+MAPS.hearing = {
+ t:"Hearing & Balance", sub:"Sound from air into fluid · the cochlea turns it into a tonotopic code · the pathway to cortex runs on both sides · and the canals and otoliths that keep you upright",
+ w:3300, h:1230,
+ fa:"519, 547–548, 638",
+ src:["Costanzo ch 3 — Neurophysiology","Guyton ch 53 — The Sense of Hearing","Fundamental Neuroscience ch 21 — The Auditory System","Fundamental Neuroscience ch 22 — The Vestibular System"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"Getting sound in — outer and middle ear"},
+  {x:140,y:310,w:3020,h:200,l:"The cochlea"},
+  {x:140,y:570,w:3020,h:140,l:"The auditory pathway"},
+  {x:140,y:770,w:3020,h:200,l:"Balance — the vestibular system"}],
+ panels:[
+  {x:140,y:1030,w:1480,h:138,kw:250,t:"Weber & Rinne",rows:[
+   ["Weber — conductive loss","louder in the affected ear"],
+   ["Weber — sensorineural loss","louder in the normal ear"],
+   ["Rinne — conductive loss","bone conduction beats air"],
+   ["Rinne — sensorineural loss","air beats bone (the normal pattern)"]]},
+  {x:1680,y:1030,w:1480,h:138,kw:250,t:"Which part senses what",rows:[
+   ["Semicircular canals","head rotation — angular acceleration"],
+   ["Utricle · saccule","tilt, gravity, linear acceleration"],
+   ["Base of the cochlea","high frequencies"],
+   ["Apex of the cochlea","low frequencies"]]}],
+ nodes:[
+  {id:"h1",l:"Outer ear",x:420,y:170,p:"hrcond",s:"pinna · canal · tympanic membrane",m:["soundcond"]},
+  {id:"h2",l:"Ossicles",x:1020,y:170,p:"hrcond",s:"malleus · incus · stapes",m:["soundcond","pharyngeal"]},
+  {id:"h3",l:"Oval window",x:1620,y:170,p:"hrcond",s:"impedance matching into fluid",m:["soundcond"]},
+  {id:"h4",l:"Attenuation reflex",x:2220,y:170,p:"hrcond",s:"stapedius (VII) · tensor tympani (V3)",m:["soundcond","bell"]},
+  {id:"h5",l:"Conductive loss",x:2820,y:170,p:"hrcond",s:"otosclerosis · cholesteatoma",m:["hearingloss","otosclerosis","cholesteatoma"]},
+  {id:"c1",l:"Perilymph · endolymph",x:420,y:370,p:"hrcoch",s:"endolymph is K⁺-rich",m:["cochlea"]},
+  {id:"c2",l:"Organ of Corti",x:1020,y:370,p:"hrcoch",s:"hair cells on the basilar membrane",m:["cochlea"]},
+  {id:"c3",l:"Hair cell transduction",x:1620,y:370,p:"hrcoch",s:"bending lets K⁺ in → depolarization",m:["cochlea"]},
+  {id:"c4",l:"Tonotopy",x:2220,y:370,p:"hrcoch",s:"high pitch at the base · low at the apex",m:["cochlea"]},
+  {id:"c5",l:"Sensorineural loss",x:2820,y:370,p:"hrcoch",s:"noise · presbycusis · ototoxic drugs",m:["hearingloss","ototox"]},
+  {id:"c6",l:"Ménière disease",x:420,y:450,p:"hrcoch",s:"vertigo, hearing loss, tinnitus",m:["meniere"]},
+  {id:"c7",l:"Vestibular schwannoma",x:1020,y:450,p:"hrcoch",s:"cerebellopontine angle · NF2",m:["schwannoma"]},
+  {id:"cx1",l:"→ Ear, Nose & Throat",x:1620,y:450,p:"neutral",k:"ghost",go:"ent"},
+  {id:"p1",l:"Cochlear nuclei",x:420,y:630,p:"hrpath",s:"medulla · the last one-sided stop",m:["audpath"]},
+  {id:"p2",l:"Superior olive",x:1020,y:630,p:"hrpath",s:"compares the two ears",m:["audpath"]},
+  {id:"p3",l:"Lateral lemniscus → inferior colliculus",x:1620,y:630,p:"hrpath",s:"up to the midbrain",m:["audpath"]},
+  {id:"p4",l:"Medial geniculate",x:2220,y:630,p:"hrpath",s:"thalamic relay",m:["audpath"]},
+  {id:"p5",l:"Auditory cortex",x:2820,y:630,p:"hrpath",s:"superior temporal gyrus",m:["audpath"]},
+  {id:"v1",l:"Semicircular canals",x:420,y:830,p:"hrvest",s:"angular acceleration · cupula",m:["vestibular"]},
+  {id:"v2",l:"Utricle · saccule",x:1020,y:830,p:"hrvest",s:"linear acceleration, gravity · otoliths",m:["vestibular"]},
+  {id:"v3",l:"Vestibular hair cells",x:1620,y:830,p:"hrvest",s:"bent toward the kinocilium = more firing",m:["vestibular"]},
+  {id:"v4",l:"Vestibulo-ocular reflex",x:2220,y:830,p:"hrvest",s:"slow phase holds gaze, fast phase resets",m:["vestibular","nystagmus"]},
+  {id:"v5",l:"Caloric test",x:2820,y:830,p:"hrvest",s:"cold opposite, warm same",m:["nystagmus"]},
+  {id:"v6",l:"BPPV",x:420,y:910,p:"hrvest",s:"brief vertigo with head turns",m:["bppv"]},
+  {id:"v7",l:"Vestibular neuritis",x:1020,y:910,p:"hrvest",s:"constant vertigo · hearing intact",m:["vestneuritis"]},
+  {id:"v8",l:"Peripheral vs central",x:1620,y:910,p:"hrvest",s:"fixation suppresses peripheral nystagmus",m:["nystagmus","vertigo"]},
+  {id:"v9",l:"Lateral medulla · MS",x:2220,y:910,p:"hrvest",s:"central vertigo with other signs",m:["wallenberg","ms"]}],
+ edges:[
+  {a:"h1",b:"h2",p:"hrcond"},
+  {a:"h2",b:"h3",p:"hrcond"},
+  {a:"p1",b:"p2",p:"hrpath"},
+  {a:"p2",b:"p3",p:"hrpath"},
+  {a:"p3",b:"p4",p:"hrpath"},
+  {a:"p4",b:"p5",p:"hrpath"}]
+};
+
+MAPS.vision = {
+ t:"Vision — Optics, Retina & Cortex", sub:"Focusing the image · rods and cones turn light into a signal by closing Na⁺ channels · ganglion cells carry it through the thalamus to the occipital cortex",
+ w:3300, h:1230,
+ fa:"192, 508, 519, 549–550, 552",
+ src:["Costanzo ch 3 — Neurophysiology","Guyton ch 50 — The Eye: I. Optics of Vision","Guyton ch 51 — The Eye: II. Receptor and Neural Function of the Retina","Guyton ch 52 — The Eye: III. Central Neurophysiology of Vision","Fundamental Neuroscience ch 20 — The Visual System"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"Focusing the image"},
+  {x:140,y:310,w:3020,h:200,l:"The retina"},
+  {x:140,y:570,w:3020,h:140,l:"Phototransduction — light turns the photoreceptor off"},
+  {x:140,y:770,w:3020,h:200,l:"From the eye to the cortex"}],
+ panels:[
+  {x:140,y:1030,w:1480,h:138,kw:200,t:"Rods vs cones",rows:[
+   ["Best in","dim light · bright light"],
+   ["Color","none · blue, green and red cones"],
+   ["Detail","low · high, packed in the fovea"],
+   ["Night blindness","rods fail — vitamin A, retinitis pigmentosa"]]},
+  {x:1680,y:1030,w:1480,h:94,kw:120,t:"Dark vs light",rows:[
+   ["Dark","cGMP high · Na⁺ channels open · photoreceptor depolarized"],
+   ["Light","cGMP falls · Na⁺ channels close · photoreceptor hyperpolarized"]]}],
+ nodes:[
+  {id:"o1",l:"Cornea · lens",x:420,y:170,p:"vsopt",s:"four refracting surfaces",m:["accommodation"]},
+  {id:"o2",l:"Accommodation",x:1020,y:170,p:"vsopt",s:"ciliary muscle contracts (CN III) · lens rounds",m:["accommodation"]},
+  {id:"o3",l:"Near response",x:1620,y:170,p:"vsopt",s:"accommodation · convergence · miosis",m:["accommodation"]},
+  {id:"o4",l:"Presbyopia",x:2220,y:170,p:"vsopt",s:"less lens elasticity with age",m:["refractive","accommodation"]},
+  {id:"o5",l:"Refractive errors",x:2820,y:170,p:"vsopt",s:"myopia: concave lens · hyperopia: convex",m:["refractive"]},
+  {id:"r1",l:"Pigment epithelium",x:420,y:370,p:"vsret",s:"absorbs stray light · recycles retinal",m:["retinacells"]},
+  {id:"r2",l:"Rods",x:1020,y:370,p:"vsret",s:"dim light and night vision · no color",m:["retinacells"]},
+  {id:"r3",l:"Cones",x:1620,y:370,p:"vsret",s:"color and detail · the fovea",m:["retinacells"]},
+  {id:"r4",l:"Bipolar → ganglion cells",x:2220,y:370,p:"vsret",s:"ganglion axons form the optic nerve",m:["retinacells"]},
+  {id:"r5",l:"Night blindness",x:2820,y:370,p:"vsret",s:"vitamin A deficiency · retinitis pigmentosa",m:["vitadef","retinitispig"]},
+  {id:"r6",l:"Macular degeneration",x:420,y:450,p:"vsret",s:"central vision lost",m:["amd"]},
+  {id:"r7",l:"Red-green color blindness",x:1020,y:450,p:"vsret",s:"ethambutol optic neuropathy",m:["retinacells"]},
+  {id:"rx1",l:"→ Eye, Cranial Nerves & Headache",x:1620,y:450,p:"neutral",k:"ghost",go:"eyecn"},
+  {id:"t1",l:"Light",x:420,y:630,p:"vsphoto",s:"11-cis → all-trans retinal",m:["phototrans"]},
+  {id:"t2",l:"Transducin",x:1020,y:630,p:"vsphoto",s:"G protein · ~800 per photon",m:["phototrans"]},
+  {id:"t3",l:"Phosphodiesterase",x:1620,y:630,p:"vsphoto",s:"breaks down cGMP",m:["phototrans"]},
+  {id:"t4",l:"Na⁺ channels close",x:2220,y:630,p:"vsphoto",s:"the photoreceptor hyperpolarizes",m:["phototrans"]},
+  {id:"t5",l:"Dark current",x:2820,y:630,p:"vsphoto",s:"in the dark cGMP keeps Na⁺ flowing in",m:["phototrans"]},
+  {id:"v1",l:"Optic nerve · chiasm",x:420,y:830,p:"vscort",s:"nasal fibers cross",m:["viscortex"]},
+  {id:"v2",l:"Lateral geniculate",x:1020,y:830,p:"vscort",s:"thalamic relay",m:["viscortex"]},
+  {id:"v3",l:"Optic radiations",x:1620,y:830,p:"vscort",s:"geniculocalcarine tract",m:["viscortex"]},
+  {id:"v4",l:"Primary visual cortex",x:2220,y:830,p:"vscort",s:"area 17 · lines and their orientation",m:["viscortex"]},
+  {id:"v5",l:"Field cuts",x:2820,y:830,p:"vscort",s:"the field lost localizes the lesion",m:["vfdefects"]},
+  {id:"v6",l:"Suprachiasmatic nucleus",x:420,y:910,p:"vscort",s:"circadian rhythm",m:["viscortex","circadian"]},
+  {id:"v7",l:"Pretectal nuclei",x:1020,y:910,p:"vscort",s:"pupillary light reflex",m:["viscortex"]},
+  {id:"v8",l:"Superior colliculus",x:1620,y:910,p:"vscort",s:"rapid eye movements",m:["viscortex"]},
+  {id:"v9",l:"Optic neuritis",x:2220,y:910,p:"vscort",s:"painful vision loss · MS",m:["opticneuritis"]},
+  {id:"v10",l:"PCA stroke",x:2820,y:910,p:"vscort",s:"hemianopia with macular sparing",m:["pcastroke"]}],
+ edges:[
+  {a:"t1",b:"t2",p:"vsphoto"},
+  {a:"t2",b:"t3",p:"vsphoto"},
+  {a:"t3",b:"t4",p:"vsphoto"},
+  {a:"v1",b:"v2",p:"vscort"},
+  {a:"v2",b:"v3",p:"vscort"},
+  {a:"v3",b:"v4",p:"vscort"}]
+};
+
+MAPS.larynx = {
+ t:"Larynx, Pharynx & Swallowing", sub:"The three parts of the pharynx · the laryngeal muscles that open, close and tense the vocal folds and the nerves that run them · the three stages of a swallow · and what makes swallowing fail",
+ w:3300, h:1490,
+ fa:"286, 288, 347, 384, 519, 638, 690, 703–704",
+ src:["Moore ch 8 — Neck","Guyton ch 64 — Propulsion and Mixing of Food in the Alimentary Tract","Costanzo ch 8 — Gastrointestinal physiology"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"The pharynx"},
+  {x:140,y:310,w:3020,h:200,l:"The larynx"},
+  {x:140,y:570,w:3020,h:200,l:"Laryngeal and pharyngeal nerves"},
+  {x:140,y:830,w:3020,h:140,l:"The three stages of a swallow"},
+  {x:140,y:1030,w:3020,h:200,l:"When swallowing fails"}],
+ panels:[
+  {x:140,y:1290,w:1480,h:138,kw:330,t:"Larynx — who does what",rows:[
+   ["Posterior cricoarytenoid","abducts — opens"],
+   ["Lateral cricoarytenoid · arytenoids","adduct — phonation, closure"],
+   ["Cricothyroid","tenses — external laryngeal nerve"],
+   ["Every other intrinsic muscle","recurrent laryngeal nerve"]]},
+  {x:1680,y:1290,w:1480,h:138,kw:220,t:"Nerves of the throat",rows:[
+   ["CN IX","stylopharyngeus · gag afferent"],
+   ["CN X","constrictors and larynx · gag efferent"],
+   ["CN XII","tongue"],
+   ["Swallowing center","medulla and lower pons"]]}],
+ nodes:[
+  {id:"p1",l:"Nasopharynx",x:420,y:170,p:"lxphar",s:"adenoid · eustachian tube opening",m:["pharynxanat"]},
+  {id:"p2",l:"Oropharynx",x:1020,y:170,p:"lxphar",s:"palatine tonsils",m:["pharynxanat"]},
+  {id:"p3",l:"Laryngopharynx",x:1620,y:170,p:"lxphar",s:"piriform fossae · becomes the esophagus at C6",m:["pharynxanat"]},
+  {id:"p4",l:"Nasopharyngeal carcinoma",x:2220,y:170,p:"lxphar",s:"EBV · blocks the eustachian tube",m:["npc"]},
+  {id:"p5",l:"Pharyngeal arches",x:2820,y:170,p:"lxphar",s:"3rd: stylopharyngeus · 4th and 6th: larynx",m:["pharyngeal"]},
+  {id:"l1",l:"Posterior cricoarytenoid",x:420,y:370,p:"lxlar",s:"the only abductor — opens the airway",m:["larynxmus"]},
+  {id:"l2",l:"Adductors",x:1020,y:370,p:"lxlar",s:"lateral cricoarytenoids · arytenoids",m:["larynxmus"]},
+  {id:"l3",l:"Cricothyroid",x:1620,y:370,p:"lxlar",s:"tenses the vocal folds",m:["larynxmus"]},
+  {id:"l4",l:"Phonation",x:2220,y:370,p:"lxlar",s:"air through adducted vocal folds",m:["larynxmus"]},
+  {id:"l5",l:"Epiglottis",x:2820,y:370,p:"lxlar",s:"elastic cartilage",m:["larynxmus"]},
+  {id:"l6",l:"Epiglottitis",x:420,y:450,p:"lxlar",s:"drooling, stridor · thumb sign",m:["epiglottitis"]},
+  {id:"l7",l:"Croup",x:1020,y:450,p:"lxlar",s:"barking cough · steeple sign",m:["parainfl"]},
+  {id:"l8",l:"Laryngeal papillomatosis",x:1620,y:450,p:"lxlar",s:"HPV-6 and 11 · hoarse child",m:["laryngealpap"]},
+  {id:"l9",l:"Head and neck cancer",x:2220,y:450,p:"lxlar",s:"tobacco, alcohol · HPV-16",m:["headneckscc"]},
+  {id:"lx1",l:"→ Ear, Nose & Throat",x:2820,y:450,p:"neutral",k:"ghost",go:"ent"},
+  {id:"n1",l:"Internal laryngeal nerve",x:420,y:630,p:"lxnerve",s:"sensation above the vocal folds",m:["laryngealnerves"]},
+  {id:"n2",l:"External laryngeal nerve",x:1020,y:630,p:"lxnerve",s:"cricothyroid · voice tenor",m:["laryngealnerves"]},
+  {id:"n3",l:"Recurrent laryngeal nerve",x:1620,y:630,p:"lxnerve",s:"every other intrinsic muscle",m:["laryngealnerves"]},
+  {id:"n4",l:"Thyroidectomy",x:2220,y:630,p:"lxnerve",s:"inferior thyroid artery ligation → hoarseness",m:["laryngealnerves","thyroidca"]},
+  {id:"n5",l:"Pancoast tumor",x:2820,y:630,p:"lxnerve",s:"compresses the recurrent nerve",m:["laryngealnerves","lungca"]},
+  {id:"n6",l:"Ortner syndrome",x:420,y:710,p:"lxnerve",s:"big left atrium in mitral stenosis",m:["laryngealnerves","mitralsten"]},
+  {id:"n7",l:"Gag reflex",x:1020,y:710,p:"lxnerve",s:"CN IX in, CN X out",m:["pharynxanat"]},
+  {id:"n8",l:"Lateral medullary syndrome",x:1620,y:710,p:"lxnerve",s:"nucleus ambiguus · dysphagia, hoarseness",m:["wallenberg"]},
+  {id:"nx1",l:"→ Embryology",x:2220,y:710,p:"neutral",k:"ghost",go:"embryo"},
+  {id:"s1",l:"Voluntary stage",x:420,y:890,p:"lxswal",s:"the tongue pushes the bolus back",m:["swallowing"]},
+  {id:"s2",l:"Pharyngeal stage",x:1020,y:890,p:"lxswal",s:"reflex · larynx rises, epiglottis covers",m:["swallowing"]},
+  {id:"s3",l:"Upper esophageal sphincter",x:1620,y:890,p:"lxswal",s:"relaxes, then closes again",m:["swallowing"]},
+  {id:"s4",l:"Primary peristalsis",x:2220,y:890,p:"lxswal",s:"8–10 seconds to the stomach",m:["swallowing"]},
+  {id:"s5",l:"Lower esophageal sphincter",x:2820,y:890,p:"lxswal",s:"receptive relaxation",m:["swallowing"]},
+  {id:"f1",l:"Achalasia",x:420,y:1090,p:"lxdis",s:"solids and liquids from the start · bird’s beak",m:["achalasia"]},
+  {id:"f2",l:"Zenker diverticulum",x:1020,y:1090,p:"lxdis",s:"regurgitation · halitosis",m:["zenker"]},
+  {id:"f3",l:"Plummer-Vinson",x:1620,y:1090,p:"lxdis",s:"webs · iron deficiency",m:["esophagitis"]},
+  {id:"f4",l:"Esophageal cancer",x:2220,y:1090,p:"lxdis",s:"solids, then liquids · weight loss",m:["esophca"]},
+  {id:"f5",l:"Systemic sclerosis",x:2820,y:1090,p:"lxdis",s:"esophageal dysmotility",m:["sclero"]},
+  {id:"f6",l:"Myasthenia gravis",x:420,y:1170,p:"lxdis",s:"bulbar weakness · nasal speech",m:["mg"]},
+  {id:"f7",l:"ALS",x:1020,y:1170,p:"lxdis",s:"dysarthria, dysphagia · tongue fasciculations",m:["als"]},
+  {id:"f8",l:"Botulism",x:1620,y:1170,p:"lxdis",s:"cranial nerves first, then descending",m:["botulinum"]},
+  {id:"f9",l:"TE fistula",x:2220,y:1170,p:"lxdis",s:"newborn drools and chokes",m:["tef"]},
+  {id:"fx1",l:"→ GI Tract by Segment",x:2820,y:1170,p:"neutral",k:"ghost",go:"gitract"}],
+ edges:[
+  {a:"s1",b:"s2",p:"lxswal"},
+  {a:"s2",b:"s3",p:"lxswal"},
+  {a:"s3",b:"s4",p:"lxswal"},
+  {a:"s4",b:"s5",p:"lxswal"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -26313,15 +26877,15 @@ const TOPICS = [
   ["path","Pathology",["genpath","neoplasia","thromboemb"]],
   ["cardio","Cardiac",["cardiac","cardcycle","valves","ihd","chd","vasc","vascshock","htnrx","rhythm"]],
   ["pulmo","Pulmonary",["pulm","lungmech","lungdz","respdrug"]],
-  ["renal","Renal",["nephron","renalphys","glom","acidbase","akickd","endocrine"]],
+  ["renal","Renal",["nephron","renalphys","urineconc","glom","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","liver","gitract","abdanat"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","tumark"]],
   ["immuno","Immunology",["immune","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
   ["endo","Endocrine",["axes","rclass","pancreas"]],
   ["devrepro","Repro & Development",["sexdev","repro","obgyn","malerepro","embryo"]],
-  ["neuro","Neuro",["neurotx","ans","spine","weakness","stroke","brainreg","basal","neuroer","seizhead"]],
+  ["neuro","Neuro",["neurotx","ans","membrane","spine","weakness","stroke","brainreg","basal","neuroer","seizhead"]],
   ["behav","Psych & Behavior",["psychdx","psychsom","substance","sleepdev"]],
-  ["eent","EENT",["eyecn","ent"]],
+  ["eent","EENT",["eyecn","vision","ent","hearing","larynx"]],
   ["msk","Musculoskeletal",["muscle","bone","arthritis","derm","plexus","orthoinj"]],
   ["omm","OMM",["vsomatic","chapman","omt","ommmech","cranial","jones"]],
   ["id","Infectious",["microlab","abx","antiviral","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
@@ -26504,15 +27068,15 @@ function nodeSVG(n){
   return `<g class="${cls}" data-node="${n.id}" data-p="${n.p}" transform="translate(${n.x} ${n.y})">
     <rect x="${-b.w/2}" y="${-b.h/2}" width="${b.w}" height="${b.h}" rx="10" ${fill}/>${t}${pins}</g>`;
 }
-function panelSVG(p){
+function panelSVG(p,pi){
   const kw=p.kw||150;
   let rows="";
   p.rows.forEach((r,i)=>{
     const y=p.y+50+i*22;
-    if(r[0]) rows+=`<text class="pk" x="${p.x+15}" y="${y}">${esc(r[0])}</text>`;
-    rows+=`<text class="pl" x="${p.x+15+kw}" y="${y}">${esc(r[1])}</text>`;
+    if(r[0]) rows+=`<text class="pk" data-row="${i}" x="${p.x+15}" y="${y}">${esc(r[0])}</text>`;
+    rows+=`<text class="pl" data-row="${i}" x="${p.x+15+kw}" y="${y}">${esc(r[1])}</text>`;
   });
-  return `<g class="panel-c"><rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="14"/>
+  return `<g class="panel-c" data-panel="${pi}"><rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="14"/>
     <text class="pt" x="${p.x+15}" y="${p.y+26}">${esc(p.t)}</text>
     <line x1="${p.x+15}" y1="${p.y+34}" x2="${p.x+p.w-15}" y2="${p.y+34}" stroke="var(--line-2)"/>${rows}</g>`;
 }
@@ -26538,7 +27102,7 @@ function glucoseLines(g,pth,tm){   // filtered = g·P; reabsorbed bends smoothly
   const reab=p=>{ if(p<=pth) return g*p; if(p>=psat) return tm;
     const t=(p-pth)/(psat-pth), h=psat-pth;   // cubic Hermite: slope g at the threshold, flat at Tm
     return (2*t*t*t-3*t*t+1)*fth+(t*t*t-2*t*t+t)*h*g+(-2*t*t*t+3*t*t)*tm; };
-  return [{pts:curve(p=>g*p,0,800),lab:"Filtered"},{pts:curve(reab,0,800),lab:"Reabsorbed"},{pts:curve(p=>g*p-reab(p),0,800),lab:"Excreted"},{x:pth,lab:"threshold"},{y:tm,lab:"Tm"}];
+  return [{pts:curve(p=>g*p,0,800),lab:"Filtered load"},{pts:curve(reab,0,800),lab:"Reabsorbed"},{pts:curve(p=>g*p-reab(p),0,800),lab:"Excreted"},{x:pth,lab:"threshold"},{y:tm,lab:"Tm"}];
 }
 const logistic=(emax,lec,n)=>x=>emax/(1+Math.pow(10,(lec-x)*n));
 function flowLoop(tlc,rv,peak,pkAt,scoop,insp){   // expiration above the axis (TLC → RV), inspiration below
@@ -26551,7 +27115,7 @@ function flowLoop(tlc,rv,peak,pkAt,scoop,insp){   // expiration above the axis (
 function cofuncCurves(cmax,msfp,r){
   const card=v=>v<-2?0:cmax*(1-Math.exp(-(v+2)/3)), vasc=v=>Math.max(0,(msfp-Math.max(v,0))/r);
   let best=0,d=1e9; for(let v=-2;v<=10;v+=0.01){ const k=Math.abs(card(v)-vasc(v)); if(k<d){ d=k; best=v; } }
-  return [{pts:curve(card,-2,10),lab:"cardiac function"},{pts:curve(vasc,-2,10)},{marks:[[best,card(best),"operating point"],[msfp,0,"mean systemic pressure"]]}];
+  return [{pts:curve(card,-2,10),lab:"Cardiac function (cardiac output)"},{pts:curve(vasc,-2,10),lab:"Vascular function (venous return)"},{marks:[[best,card(best),"operating point"],[msfp,0,"mean systemic pressure"]]}];
 }
 const PLOTS={
   pvloop:{xl:"Left ventricular volume (mL)",yl:"LV pressure (mm Hg)",xr:[0,200],yr:[0,200],xt:[0,50,100,150,200],yt:[0,50,100,150,200],ref:true,vars:[
@@ -26602,50 +27166,74 @@ const PLOTS={
     {l:"↑ Volume",cap:"↑ Circulating volume or venous tone (fluids, sympathetic activity) shifts the vascular curve right: ↑ cardiac output and ↑ RA pressure.",d:()=>cofuncCurves(10,9,1)},
     {l:"↓ TPR",cap:"↓ TPR (exercise, AV shunt) rotates the vascular curve: ↑ cardiac output; the change in RA pressure is unpredictable.",d:()=>cofuncCurves(10,7,0.65)},
     {l:"HF with reduced EF",cap:"HF with reduced EF lowers the cardiac curve: ↓ cardiac output, ↑ RA pressure.",d:()=>cofuncCurves(6,7,1)}]},
-  glucose:{xl:"Plasma glucose (mg/dL)",yl:"Glucose (mg/min)",xr:[0,800],yr:[0,700],xt:[0,200,400,600,800],yt:[0,175,375,525,700],vars:[
+  glucose:{xl:"Plasma glucose (mg/dL)",yl:"Glucose (mg/min)",xr:[0,800],yr:[0,700],xt:[0,200,400,600,800],yt:[0,200,400,600],vars:[
     {l:"Normal",cap:"Filtered load rises in a straight line. Glucosuria begins at the threshold (~200 mg/dL) and all transporters are saturated at Tm (~375 mg/min); the bend between them is splay.",d:()=>glucoseLines(1.25,200,375)},
     {l:"Pregnancy",cap:"Pregnancy: ↑ GFR filters more glucose at every plasma level, so the threshold falls — glucosuria at normal plasma glucose.",d:()=>glucoseLines(1.6,150,375)},
     {l:"SGLT2 inhibitor",cap:"SGLT2 inhibitors block proximal reabsorption — glucosuria below 200 mg/dL.",d:()=>glucoseLines(1.25,80,150)}]}};
+/* wrap a caption to a column: whole words, at most `max` characters a line */
+function wrapWords(t,max){
+  const out=[]; let line="";
+  String(t).split(" ").forEach(w=>{ if(line&&(line+" "+w).length>max){ out.push(line); line=w; } else line=line?line+" "+w:w; });
+  if(line) out.push(line); return out;
+}
+const PSER=["var(--accent)","var(--p-sugars)","var(--p-glycogen)","var(--p-gluconeo)"];
 function plotSVG(p,i){
   const K=PLOTS[p.kind]; if(!K) return "";
   const key=state.view+":"+i, vi=sat(PLOTVAR[key]||0,0,K.vars.length-1), V=K.vars[vi];
-  const L=p.x+86, R=p.x+p.w-44, T=p.y+120, B=p.y+p.h-64;
+  /* chart on the left, a text column on the right */
+  const side=Math.round(Math.min(560,p.w*0.38)), cw=p.w-side;
+  const L=p.x+80, R=p.x+cw-28, T=p.y+60, B=p.y+p.h-60;
   const X=v=>L+(v-K.xr[0])/(K.xr[1]-K.xr[0])*(R-L), Y=v=>B-(sat(v,K.yr[0],K.yr[1])-K.yr[0])/(K.yr[1]-K.yr[0])*(B-T);
   const path=(pts,close)=>"M"+pts.map(([a,b])=>X(a).toFixed(1)+" "+Y(b).toFixed(1)).join(" L")+(close?" Z":"");
   /* an open curve that leaves the top of the chart stops at the edge instead of flattening along it */
   const clipTop=pts=>{ const out=[]; for(let k=0;k<pts.length;k++){ const [a,b]=pts[k];
     if(b<=K.yr[1]){ out.push(pts[k]); continue; }
     if(k){ const [a0,b0]=pts[k-1], t=(K.yr[1]-b0)/(b-b0); out.push([a0+(a-a0)*t,K.yr[1]]); } break; } return out; };
+  /* a label that stays inside the chart: flips to the left of its point near the right edge */
+  const lab=(x,y,t,dx=8,dy=-8)=>{ const w=String(t).length*6.6, right=x+dx+w>R-4;
+    return `<text class="ptick ph" x="${(right?x-Math.abs(dx):x+dx).toFixed(1)}" y="${Math.max(T+12,Math.min(B-4,y+dy)).toFixed(1)}" text-anchor="${right?"end":"start"}">${esc(t)}</text>`; };
   let s=`<rect class="pframe" x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="14"/>
-    <text class="pt" x="${p.x+18}" y="${p.y+30}">${esc(p.t)}</text>`;
-  let cx=p.x+18;
-  K.vars.forEach((v,j)=>{ const w=Math.round(v.l.length*7.2+26);
-    s+=`<g class="pvar${j===vi?" on":""}" data-plot="${i}" data-pv="${j}" tabindex="0" role="button" aria-pressed="${j===vi}"><rect x="${cx}" y="${p.y+44}" width="${w}" height="26" rx="13"/><text x="${cx+w/2}" y="${p.y+61.5}">${esc(v.l)}</text></g>`;
-    cx+=w+8; });
-  s+=`<text class="pcap" x="${p.x+18}" y="${p.y+96}">${esc(V.cap)}</text>`;
+    <text class="pt" x="${p.x+20}" y="${p.y+34}">${esc(p.t)}</text>
+    <line class="pdiv" x1="${p.x+cw}" y1="${p.y+18}" x2="${p.x+cw}" y2="${p.y+p.h-18}"/>`;
+  /* gridlines, axes, ticks, axis labels */
+  K.xt.forEach(t=>{ s+=`<line class="pgrid" x1="${X(t)}" y1="${T}" x2="${X(t)}" y2="${B}"/><text class="ptick" x="${X(t)}" y="${B+19}" text-anchor="middle">${t}</text>`; });
+  K.yt.forEach(t=>{ s+=`<line class="pgrid" x1="${L}" y1="${Y(t)}" x2="${R}" y2="${Y(t)}"/><text class="ptick" x="${L-10}" y="${Y(t)+4}" text-anchor="end">${t}</text>`; });
   s+=`<line class="pax" x1="${L}" y1="${B}" x2="${R}" y2="${B}"/><line class="pax" x1="${L}" y1="${T}" x2="${L}" y2="${B}"/>`;
   if(K.y0) s+=`<line class="pax" x1="${X(0)}" y1="${T}" x2="${X(0)}" y2="${B}"/>`;
   if(K.zero) s+=`<line class="pax" x1="${L}" y1="${Y(0)}" x2="${R}" y2="${Y(0)}"/>`;
-  K.xt.forEach(t=>{ s+=`<text class="ptick" x="${X(t)}" y="${B+18}" text-anchor="middle">${t}</text>`; });
-  K.yt.forEach(t=>{ s+=`<text class="ptick" x="${L-10}" y="${Y(t)+4}" text-anchor="end">${t}</text>`; });
-  s+=`<text class="plab" x="${(L+R)/2}" y="${p.y+p.h-24}" text-anchor="middle">${esc(K.xl)}</text>
+  s+=`<text class="plab" x="${(L+R)/2}" y="${B+42}" text-anchor="middle">${esc(K.xl)}</text>
     <text class="plab" x="${p.x+28}" y="${(T+B)/2}" text-anchor="middle" transform="rotate(-90 ${p.x+28} ${(T+B)/2})">${esc(K.yl)}</text>`;
-  const draw=(items,cls)=>items.forEach(c=>{
-    if(c.pts) s+=`<path class="${cls}" d="${path(c.close?c.pts:clipTop(c.pts),c.close)}"/>`;
-    if(c.x!=null) s+=`<line class="pmark" x1="${X(c.x)}" y1="${T}" x2="${X(c.x)}" y2="${B}"/><text class="ptick" x="${X(c.x)+6}" y="${T+14}">${esc(c.lab)}</text>`;
-    if(c.y!=null) s+=`<line class="pmark" x1="${L}" y1="${Y(c.y)}" x2="${R}" y2="${Y(c.y)}"/><text class="ptick" x="${R-6}" y="${Y(c.y)-6}" text-anchor="end">${esc(c.lab)}</text>`; });
-  if(K.all) K.vars.forEach((v,j)=>{ if(j!==vi) draw(v.d(),"pother"); });
-  else if(K.ref&&vi>0) draw(K.vars[0].d(),"pref");
-  const cur=V.d(); draw(cur,"pcur");
+  /* curves: other variants faint, the normal one dashed, the chosen one in colour */
+  const draw=(items,cls,colored)=>{ let n=0; items.forEach(c=>{
+    if(c.pts){ s+=`<path class="${cls}" d="${path(c.close?c.pts:clipTop(c.pts),c.close)}"${colored?` style="stroke:${PSER[n%PSER.length]}"`:""}/>`; n++; }
+    if(c.x!=null) s+=`<line class="pmark" x1="${X(c.x)}" y1="${T}" x2="${X(c.x)}" y2="${B}"/>`+lab(X(c.x),T+16,c.lab,6,0);
+    if(c.y!=null) s+=`<line class="pmark" x1="${L}" y1="${Y(c.y)}" x2="${R}" y2="${Y(c.y)}"/>`+lab(L,Y(c.y),c.lab,8,-7); }); };
+  if(K.all) K.vars.forEach((v,j)=>{ if(j!==vi) draw(v.d(),"pother",false); });
+  else if(K.ref&&vi>0) draw(K.vars[0].d(),"pref",false);
+  const cur=V.d(); draw(cur,"pcur",true);
   cur.forEach(c=>{
-    if(c.pts&&c.lab){ const cp=clipTop(c.pts), [a,b]=cp[cp.length-1]; s+=`<text class="ptick" x="${X(a)-6}" y="${Y(b)-8}" text-anchor="end">${esc(c.lab)}</text>`; }
-    (c.corners||[]).forEach(([a,b,t])=>{ s+=`<circle class="pdot" cx="${X(a)}" cy="${Y(b)}" r="4"/><text class="ptick" x="${X(a)+(t==="MC"||t==="AO"?8:-8)}" y="${Y(b)+(t==="MO"||t==="MC"?-8:-8)}" text-anchor="${t==="MC"||t==="AO"?"start":"end"}">${t}</text>`; });
-    if(c.p50!=null){ s+=`<line class="pmark" x1="${L}" y1="${Y(50)}" x2="${X(c.p50)}" y2="${Y(50)}"/><line class="pmark" x1="${X(c.p50)}" y1="${Y(50)}" x2="${X(c.p50)}" y2="${B}"/><text class="ptick" x="${X(c.p50)+6}" y="${B-6}">P50</text>`; }
-    (c.marks||[]).forEach(([a,b,t])=>{ s+=`<circle class="pdot" cx="${X(a)}" cy="${Y(b)}" r="4.5"/><text class="ptick" x="${X(a)+8}" y="${Y(b)-8}">${esc(t)}</text>`; });
-    if(c.drop){ const [a,b,t]=c.drop; s+=`<line class="pmark" x1="${L}" y1="${Y(b)}" x2="${X(a)}" y2="${Y(b)}"/><line class="pmark" x1="${X(a)}" y1="${Y(b)}" x2="${X(a)}" y2="${B}"/><text class="ptick" x="${X(a)+6}" y="${B-6}">${esc(t)}</text><text class="ptick" x="${L+6}" y="${Y(b)-6}">½ Vmax</text>`; }
-    (c.dots||[]).forEach(([po,t])=>{ const f=hill(27,2.7)(po); s+=`<circle class="pdot" cx="${X(po)}" cy="${Y(f)}" r="4"/><text class="ptick" x="${X(po)-8}" y="${Y(f)+18}" text-anchor="end">${t}</text>`; });
+    (c.corners||[]).forEach(([a,b,t])=>{ const left=t==="MO"||t==="AC"; s+=`<circle class="pdot" cx="${X(a)}" cy="${Y(b)}" r="4.5"/>`+lab(X(a),Y(b),t,left?-9:9,t==="MO"||t==="MC"?14:-9).replace('text-anchor="start"',left?'text-anchor="end"':'text-anchor="start"'); });
+    if(c.p50!=null){ s+=`<line class="pmark" x1="${L}" y1="${Y(50)}" x2="${X(c.p50)}" y2="${Y(50)}"/><line class="pmark" x1="${X(c.p50)}" y1="${Y(50)}" x2="${X(c.p50)}" y2="${B}"/>`+lab(X(c.p50),B,"P50",6,-6); }
+    (c.marks||[]).forEach(([a,b,t])=>{ s+=`<circle class="pdot" cx="${X(a)}" cy="${Y(b)}" r="5"/>`+lab(X(a),Y(b),t,9,-10); });
+    if(c.drop){ const [a,b,t]=c.drop; s+=`<line class="pmark" x1="${L}" y1="${Y(b)}" x2="${X(a)}" y2="${Y(b)}"/><line class="pmark" x1="${X(a)}" y1="${Y(b)}" x2="${X(a)}" y2="${B}"/>`+lab(X(a),B,t,6,-6)+lab(L,Y(b),"½ Vmax",6,-7); }
+    (c.dots||[]).forEach(([po,t])=>{ const f=hill(27,2.7)(po); s+=`<circle class="pdot" cx="${X(po)}" cy="${Y(f)}" r="4.5"/>`+lab(X(po),Y(f),t,-9,18).replace('text-anchor="start"','text-anchor="end"'); });
   });
-  s+=`<text class="pnote" x="${p.x+p.w-18}" y="${p.y+p.h-10}" text-anchor="end">Schematic — drawn from the stated relationships, not measured data</text>`;
+  /* right column: variant chips (wrapping), caption, legend, note */
+  const x0=p.x+cw+24, colW=side-44;
+  let cx=x0, cy=p.y+18;
+  K.vars.forEach((v,j)=>{ const w=Math.round(v.l.length*7.2+26);
+    if(cx>x0&&cx+w>x0+colW){ cx=x0; cy+=34; }
+    s+=`<g class="pvar${j===vi?" on":""}" data-plot="${i}" data-pv="${j}" tabindex="0" role="button" aria-pressed="${j===vi}"><rect x="${cx}" y="${cy}" width="${w}" height="26" rx="13"/><text x="${cx+w/2}" y="${cy+17.5}">${esc(v.l)}</text></g>`;
+    cx+=w+8; });
+  let ty=cy+26+28;
+  wrapWords(V.cap,Math.floor(colW/6.9)).forEach(line=>{ s+=`<text class="pcap" x="${x0}" y="${ty}">${esc(line)}</text>`; ty+=19; });
+  const leg=[]; let ci=0;
+  cur.forEach(c=>{ if(c.pts){ leg.push({cls:"pcur",col:PSER[ci%PSER.length],t:c.lab||V.l}); ci++; } });
+  if(K.ref&&vi>0) leg.push({cls:"pref",t:K.vars[0].l+" (for comparison)"});
+  if(K.all&&K.vars.length>1) leg.push({cls:"pother",t:"The other variants"});
+  ty+=10;
+  leg.forEach(g=>{ s+=`<line class="${g.cls}" x1="${x0}" y1="${ty-4}" x2="${x0+26}" y2="${ty-4}"${g.col?` style="stroke:${g.col}"`:""}/><text class="pleg" x="${x0+36}" y="${ty}">${esc(g.t)}</text>`; ty+=22; });
+  s+=`<text class="pnote" x="${x0}" y="${p.y+p.h-20}">Schematic — drawn from the stated relationships, not measured data</text>`;
   return `<g class="plot-c">${s}</g>`;
 }
 function render(){
@@ -26840,6 +27428,17 @@ function practiceHtml(id){
     const [dir,label]=P.blocks[b];
     return `<a class="pqb" href="../${encodeURIComponent(dir)}/index.html#atlas/${encodeURIComponent(id)}" target="_blank" rel="noopener">${esc(label)} <span>· ${n}</span></a>`;
   }).join("")}</div>`);
+}
+/* every question-bank question linked to any card on the map, per block — the block
+   opens #atlasmap/<map id> and runs them (shared/app.js renderAtlasMapPractice) */
+function mapPracticeHtml(v){
+  const P=window.ATLAS_PRACTICE, rows=P&&P.maps&&P.maps[v];
+  if(!rows||!rows.length) return "";
+  const total=rows.reduce((s,r)=>s+r[1],0);
+  return `<div class="practice"><p class="pqlead">${total} question${total===1?"":"s"} in the question bank link to cards on this map</p>${rows.map(([b,n])=>{
+    const [dir,label]=P.blocks[b];
+    return `<a class="pqb" href="../${encodeURIComponent(dir)}/index.html#atlasmap/${encodeURIComponent(v)}" target="_blank" rel="noopener">${esc(label)} <span>· ${n}</span></a>`;
+  }).join("")}</div>`;
 }
 const REPO="https://github.com/cojeda95/Q-bank";
 function quizNote(id){
@@ -27589,12 +28188,61 @@ function flashPins(id,center){
   locate(pts);
 }
 /* a ring that closes in on each pin, the same size on screen at any zoom */
-function locate(pts){
+function locate(pts,minR){
   svg.querySelectorAll(".locator").forEach(e=>e.remove());
   const layer=svg.querySelector(".tip-layer"), f=fitScale(); if(!layer||!f) return;
-  const k=1/(f*state.z);
-  layer.insertAdjacentHTML("beforeend",pts.map(p=>`<g class="locator" transform="translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) scale(${k.toFixed(4)})"><circle class="loc1" r="46"/><circle class="loc2" r="46"/></g>`).join(""));
+  const k=1/(f*state.z), r=Math.max(46,(minR||0)*f*state.z);
+  layer.insertAdjacentHTML("beforeend",pts.map(p=>`<g class="locator" transform="translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) scale(${k.toFixed(4)})"><circle class="loc1" r="${r.toFixed(0)}"/><circle class="loc2" r="${r.toFixed(0)}"/></g>`).join(""));
   clearTimeout(locate.t); locate.t=setTimeout(()=>svg.querySelectorAll(".locator").forEach(e=>e.remove()),2700);
+}
+/* ── search inside the maps ─────────────────────────────
+   Not everything worth finding is a card: "PC3", "McBurney" or "Weber" may sit in a box
+   caption or a panel row. Matches (word starts; whole words for three letters or fewer)
+   are listed under the cards, current map first; choosing one opens that map, centres
+   the spot and rings it. */
+let BOXIDX=null, BOXHITS=[];
+function boxIndex(){
+  if(BOXIDX) return BOXIDX;
+  BOXIDX=[];
+  VIEWS.forEach(([v,title])=>{ const m=MAPS[v]; if(!m) return;
+    m.nodes.forEach(n=>{ if(n.k==="ghost") return;
+      BOXIDX.push({v,title,kind:"node",id:n.id,p:n.p,l:n.l,s:n.s||"",hay:(n.l+" · "+(n.s||"")).toLowerCase()}); });
+    (m.panels||[]).forEach((p,pi)=>p.rows.forEach((r,ri)=>
+      BOXIDX.push({v,title,kind:"row",pi,ri,l:(r[0]?r[0]+" — ":"")+r[1],s:p.t,hay:(p.t+" · "+r[0]+" · "+r[1]).toLowerCase()})));
+  });
+  return BOXIDX;
+}
+function boxMatches(q){
+  q=(q||"").trim().toLowerCase();
+  if(q.length<2||pageQuery(q)!=null||chapterQuery(q)) return [];
+  const e=q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"), re=new RegExp("(^|[^a-z0-9])"+e+(q.length<=3?"($|[^a-z0-9])":""));
+  return boxIndex().filter(b=>re.test(b.hay))
+    .sort((a,b)=>(a.v===state.view?0:1)-(b.v===state.view?0:1)||(a.kind==="node"?0:1)-(b.kind==="node"?0:1));
+}
+function boxRowHtml(b,i,cls){
+  const c=b.kind==="node"?pc(b.p):"var(--ink-3)", where=(b.kind==="row"?b.s+" · ":"")+(b.v===state.view?"this map":b.title);
+  return cls==="li"?`<button class="li bx" data-box="${i}" style="--c:${c}"><span class="dot"></span><span><span class="nm">${esc(b.l)}</span><span class="bz">${esc(where)}</span></span></button>`
+    :`<li><button class="idxrow" data-box="${i}"><span class="t">${esc(b.l)}</span><span class="e">${esc(where)}</span>${b.kind==="node"&&b.s?`<span class="b">${esc(b.s)}</span>`:""}</button></li>`;
+}
+function goBox(b){
+  if(!b) return;
+  if(state.view!==b.v) setView(b.v);
+  const m=MAPS[b.v];
+  if(b.kind==="node"){
+    const n=m._n&&m._n[b.id]; if(!n) return;
+    centerOn(n.x,n.y);
+    const r=svg.querySelector(`.node[data-node="${b.id}"] > rect`);
+    if(r){ r.classList.add("hl"); setTimeout(()=>r.classList.remove("hl"),2600); }
+    locate([{x:n.x,y:n.y}],nodeBox(n).w/2+16);
+  } else {
+    const p=m.panels[b.pi]; if(!p) return;
+    const y=p.y+50+b.ri*22-5;
+    centerOn(p.x+p.w/2,y);
+    const g=svg.querySelector(`.panel-c[data-panel="${b.pi}"]`);
+    if(g){ g.querySelector("rect").insertAdjacentHTML("afterend",`<rect class="rowhl" x="${p.x+6}" y="${y-11}" width="${p.w-12}" height="22" rx="6"/>`);
+      g.querySelectorAll(`[data-row="${b.ri}"]`).forEach(t=>t.classList.add("hlrow"));
+      setTimeout(()=>{ g.querySelectorAll(".rowhl").forEach(x=>x.remove()); g.querySelectorAll(".hlrow").forEach(t=>t.classList.remove("hlrow")); },2800); }
+  }
 }
 function gotoLes(id){
   /* A card pinned on several maps must not pull the reader off the map they are
@@ -27718,7 +28366,7 @@ function openMapInfo(){
      <h2 class="dtitle">${esc(m.t)}</h2>
      ${m.sub?`<p class="dalias">${esc(m.sub)}</p>`:""}
    </div>
-   <div class="dbody">${sec("Your progress",progHtml(mapIds(state.view),"cards"))}${(m.fa||(m.src&&m.src.length))?sec("Sources for this map",`<p class="reflead">${MAPSRC_LEAD}</p>${mapSrcList(m)}`):""}</div>`;
+   <div class="dbody">${sec("Your progress",progHtml(mapIds(state.view),"cards"))}${mapPracticeHtml(state.view)?sec("Practice this map",mapPracticeHtml(state.view)):""}${(m.fa||(m.src&&m.src.length))?sec("Sources for this map",`<p class="reflead">${MAPSRC_LEAD}</p>${mapSrcList(m)}`):""}</div>`;
   drawer.scrollTop=0;
   document.getElementById("dclose").onclick=closeDrawer;
   drawer.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
@@ -27765,6 +28413,8 @@ function renderRail(){
   if(cq) html+=`<div class="rail-sec"><h3 class="rail-h">Maps citing ${esc(cq.label)}</h3><p class="rail-sub">${esc(cq.full)}</p>${chapterHitsHtml(cq)||`<p class="rail-sub">No map lists this chapter.</p>`}</div>`;
   const onMap=!state.q&&state.view!=="index";
   if(onMap&&ids.length) html+=`<div class="rail-sec"><h3 class="rail-h">Your progress</h3>${progHtml(ids,"cards")}</div>`;
+  const mp=onMap?mapPracticeHtml(state.view):"";
+  if(mp) html+=`<div class="rail-sec"><h3 class="rail-h">Practice this map</h3>${mp}</div>`;
   if(!state.q){ const st=starAll(); if(st.length) html+=`<div class="rail-sec"><h3 class="rail-h">Starred · ${st.length}</h3>
     <div class="lesionlist">${st.slice(0,8).map(id=>{const L=LES[id];return `<button class="li" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">★ ${esc(L.n)}</span></span></button>`;}).join("")}</div>
     ${st.length>8?`<p class="revnote" style="margin:6px 7px 0">${st.length-8} more on the Index</p>`:""}</div>`; }
@@ -27773,8 +28423,11 @@ function renderRail(){
       return `<button class="li${isRev(id)?" rev":""}${isWeak(id)?" weak":""}${isKnown(id)?" known":""}" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
     }).join(""):`<p style="font-size:12.5px;color:var(--ink-3);padding:4px 7px">No match. Try “Heinz”, “orotic”, “second wind”.</p>`}</div>
     ${onMap&&ids.some(id=>isRev(id)||PROG.ok[id]||PROG.miss[id])?`<p style="margin:10px 7px 0"><button class="linkbtn" data-resetprog>Reset this map’s progress</button></p>`:""}</div>`;
+  BOXHITS=state.q?boxMatches(state.q):[];
+  if(BOXHITS.length) html+=`<div class="rail-sec"><h3 class="rail-h">In map boxes · ${BOXHITS.length}</h3><div class="lesionlist">${BOXHITS.slice(0,8).map((b,i)=>boxRowHtml(b,i,"li")).join("")}</div>${BOXHITS.length>8?`<p class="revnote" style="margin:6px 7px 0">${BOXHITS.length-8} more — add a word to narrow it</p>`:""}</div>`;
   rail.innerHTML=html+(state.q?"":mapSrcHtml(m));
   bindSrcJump();
+  rail.querySelectorAll("[data-box]").forEach(b=>b.onclick=()=>goBox(BOXHITS[+b.dataset.box]));
   rail.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{state.filter=b.dataset.f||null;render();renderRail();if(state.view==="index")renderIndex();});
   rail.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
   rail.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
@@ -27842,7 +28495,9 @@ function renderIndex(){
       </ul>
       <p>A study aid, not a replacement for these texts. If something looks wrong, tap <b>Report</b> on that card or <a href="${REPO}/issues/new" target="_blank" rel="noopener">open an issue</a> so it can be fixed.</p>
     </details></div>
-    ${cards||`<p class="empty">Nothing matches “${esc(state.q)}”.</p>`}`;
+    ${(()=>{ BOXHITS=q?boxMatches(q):[]; return BOXHITS.length?`<section class="idxcard" style="--c:var(--ink-3)"><h3><span class="bar"></span>In map boxes · ${BOXHITS.length}</h3><ul>${BOXHITS.slice(0,30).map((b,i)=>boxRowHtml(b,i,"idx")).join("")}</ul>${BOXHITS.length>30?`<p class="revnote">${BOXHITS.length-30} more — add a word to narrow it</p>`:""}</section>`:""; })()}
+    ${cards||(BOXHITS.length?"":`<p class="empty">Nothing matches “${esc(state.q)}”.</p>`)}`;
+  idxWrap.querySelectorAll("[data-box]").forEach(b=>b.onclick=()=>goBox(BOXHITS[+b.dataset.box]));
   idxWrap.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
   idxWrap.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
 }
@@ -27861,8 +28516,12 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   genpath:"2026-10-08",ihd:"2026-10-08",cardcycle:"2026-10-08",
   neoplasia:"2026-10-08",thromboemb:"2026-10-08",lungmech:"2026-10-08",gihorm:"2026-10-08",renalphys:"2026-10-08",
   mabs:"2026-10-08",antipara:"2026-10-08",weakness:"2026-10-08",sxchest:"2026-10-08",sxdyspnea:"2026-10-08",sxjaundice:"2026-10-08",
-  cranial:"2026-10-08",jones:"2026-10-08",sxabdpain:"2026-10-08",sxdiarrhea:"2026-10-08",sxurine:"2026-10-08",sxams:"2026-10-08"};
+  cranial:"2026-10-08",jones:"2026-10-08",sxabdpain:"2026-10-08",sxdiarrhea:"2026-10-08",sxurine:"2026-10-08",sxams:"2026-10-08",
+  membrane:"2026-10-08",urineconc:"2026-10-08",hearing:"2026-10-08",vision:"2026-10-08",larynx:"2026-10-08"};
 const WHATSNEW=[
+  ["2026-10-08","Physiology maps: <b>Membrane Potentials</b> (Neuro), <b>Urine Concentration</b> (Renal), and <b>Vision</b>, <b>Hearing &amp; Balance</b> and <b>Larynx &amp; Swallowing</b> (EENT). The Spinal Cord map’s three tracts are now cards."],
+  ["2026-10-08","<b>Graphs redrawn</b>: each chart now has room to breathe, with gridlines, a colour per curve, a legend, and the buttons and explanation in their own column."],
+  ["2026-10-08","Search also finds <b>map boxes and panel rows</b> (“PC3”, “McBurney”, “Weber”) and takes you to the spot. Each map’s side panel and Info sheet now has <b>Practice this map</b> — every question-bank question linked to its cards."],
   ["2026-10-08","<b>OMM</b>: Cranial Osteopathy (the primary respiratory mechanism, SBS strains, CV4 and venous sinus drainage) and Counterstrain Points region by region, each with its classic position."],
   ["2026-10-08","<b>Symptoms</b>: abdominal pain by location, diarrhea (watery, fatty or bloody), hematuria &amp; proteinuria, and altered mental status."],
   ["2026-10-08","Searching now lands exactly on the pin, zoomed in and ringed. Zoomed into a big map, an <b>overview</b> in the corner shows where you are — tap it to move. <b>Aa</b> (top right) sets the text size."],
@@ -28158,7 +28817,8 @@ qInput.addEventListener("input",()=>{
   qt=setTimeout(()=>{state.q=qInput.value;renderRail();if(state.view==="index")renderIndex();},130);
 });
 qInput.addEventListener("keydown",ev=>{
-  if(ev.key==="Enter"){ const ids=currentLesIds(); if(ids.length===1) gotoLes(ids[0]); else if(state.view!=="index") setView("index"); }
+  if(ev.key==="Enter"){ const ids=currentLesIds(), bx=boxMatches(qInput.value);
+    if(ids.length===1) gotoLes(ids[0]); else if(!ids.length&&bx.length===1) goBox(bx[0]); else if(state.view!=="index") setView("index"); }
 });
 document.addEventListener("keydown",ev=>{
   /* quizzes: 1–4 answer, Enter goes to the next question */

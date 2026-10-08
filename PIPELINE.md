@@ -130,6 +130,13 @@ row of variants (tap a chip to shift the curve). The kinds live in `PLOTS` in
 canvas. Every graph says on its face that it is schematic; its caption carries the sourced
 facts, so check each caption against the map's sources like any card line.
 
+Layout (`plotSVG`): the chart takes the left ~62% of the frame (about 2.5:1, with light
+gridlines at the ticks); a column on the right holds the variant chips (they wrap), the
+caption (wrapped by `wrapWords`) and a legend. The chosen variant's curves get distinct
+colours from `PSER` and their `lab` becomes the legend entry — label curves through `lab`,
+not by placing text on the chart. Marker labels (`marks`, `drop`, `corners`, `x`/`y` lines)
+carry a surface-coloured halo and flip to the left near the right edge.
+
 ### Search abbreviations
 
 `ABBR` in `tools/atlas-src.html` holds First Aid 2025's abbreviation list (pp. 747–757),
@@ -144,6 +151,22 @@ atrium), the list follows First Aid; add entries by hand only with a source.
 (Daily mix: last finished day and streak length), `mla-text` (Aa text size), `mla-mini`
 (overview map turned off) and `mla-review` live in localStorage on each device and are not
 synced; `mla-progress` (with `known` and `star`) syncs by PIN.
+
+### Search inside the maps
+
+Besides cards, a search lists matching **map boxes** (node label and caption) and **panel
+rows** (`boxIndex`/`boxMatches`; word starts, whole words for three letters or fewer),
+current map first. `goBox` opens the map, centres the spot and rings it (panel rows get a
+highlight band). Panels render `data-panel`/`data-row` for this.
+
+### Practice this map
+
+`tools/build-atlas.py` writes each map's pinned card ids into `resources/atlas-terms.js`
+(`maps: id -> [title, card ids]`) and, in `resources/atlas-practice.js`, how many questions
+per block link to any card on the map (`maps: id -> [[block, n]]`, each question once). The
+side panel and the Info sheet show a button per block that opens
+`<block>/index.html#atlasmap/<map id>`, run by `renderAtlasMapPractice` in `shared/app.js`
+with the same linking rule, so the counts match.
 
 ### Taking the reader to a pin
 

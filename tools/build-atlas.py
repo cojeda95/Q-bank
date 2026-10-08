@@ -285,8 +285,18 @@ for i, m in enumerate(heads):
     qm = re.search(r"\bq:(\[[^\]]*\])", block)
     q = json.loads(qm.group(1)) if qm else []
     rows.append([m.group(1), m.group(2), m.group(4), link_terms(m.group(2), m.group(3), q)])
-TERMS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. [id, name, kind, normalized terms] */\n"
-                     "window.ATLAS_TERMS=" + json.dumps({"atlas": "metabolic-atlas.html", "cards": rows},
+# map id -> [title, card ids pinned anywhere on it], for "Practice this map" (#atlasmap/<id>)
+map_cards = {}
+for mm in re.finditer(r"^MAPS\.([a-z0-9_]+) = \{\s*t:\"([^\"]*)\"(.*?)\n\};", art, re.M | re.S):
+    ids = []
+    for lst in re.findall(r"\bm:\[([^\]]*)\]", mm.group(3)):
+        for cid in re.findall(r'"([a-z0-9_]+)"', lst):
+            if cid not in ids:
+                ids.append(cid)
+    if ids:
+        map_cards[mm.group(1)] = [mm.group(2), ids]
+TERMS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. [id, name, kind, normalized terms]; maps: id -> [title, card ids] */\n"
+                     "window.ATLAS_TERMS=" + json.dumps({"atlas": "metabolic-atlas.html", "cards": rows, "maps": map_cards},
                                                         ensure_ascii=False, separators=(",", ":")) + ";\n",
                      encoding="utf-8")
 print(f"built {TERMS_OUT.relative_to(ROOT)}  —  {sum(len(r[3]) for r in rows)} link terms for {len(rows)} cards")
@@ -350,6 +360,11 @@ def links_for(q):
     return [cid for cid, _ in sorted(found.items(), key=lambda kv: (kv[1][0], -kv[1][1], kv[1][2]))[:3]]
 
 counts = {}
+map_counts = {}   # map id -> block index -> questions linked to any card on that map (each question once)
+maps_of = {}
+for mid, (_, ids) in map_cards.items():
+    for cid in ids:
+        maps_of.setdefault(cid, set()).add(mid)
 nq = 0
 for bi, (b, _) in enumerate(blocks):
     raw = (ROOT / b / "data.js").read_text(encoding="utf-8")
@@ -358,12 +373,18 @@ for bi, (b, _) in enumerate(blocks):
         for sdl in ex["sdls"]:
             for q in sdl["questions"]:
                 nq += 1
+                hit_maps = set()
                 for cid in links_for(q):
                     counts.setdefault(cid, {}).setdefault(bi, 0)
                     counts[cid][bi] += 1
-PRACTICE_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. cards: id -> [[block index, questions]] */\n"
+                    hit_maps |= maps_of.get(cid, set())
+                for mid in hit_maps:
+                    map_counts.setdefault(mid, {}).setdefault(bi, 0)
+                    map_counts[mid][bi] += 1
+PRACTICE_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. cards (and maps): id -> [[block index, questions]] */\n"
                         "window.ATLAS_PRACTICE=" + json.dumps(
                             {"blocks": [list(b) for b in blocks],
-                             "cards": {cid: sorted(v.items(), key=lambda kv: -kv[1]) for cid, v in sorted(counts.items())}},
+                             "cards": {cid: sorted(v.items(), key=lambda kv: -kv[1]) for cid, v in sorted(counts.items())},
+                             "maps": {mid: sorted(v.items(), key=lambda kv: -kv[1]) for mid, v in sorted(map_counts.items())}},
                             ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
-print(f"built {PRACTICE_OUT.relative_to(ROOT)}  —  {len(counts)} cards with practice questions from {nq} questions in {len(blocks)} blocks")
+print(f"built {PRACTICE_OUT.relative_to(ROOT)}  —  {len(counts)} cards and {len(map_counts)} maps with practice questions from {nq} questions in {len(blocks)} blocks")
