@@ -56,7 +56,7 @@ function isTrialQ(q) { return !!TRIAL_BATCHES[q.batch]; }
    rules as atlasNorm() below — keep the two in step. Once a question is
    answered, a card is linked when one of its terms appears as a whole phrase in
    the correct answer or the first sentence of the explanation — the part that
-   explains the answer. Later sentences and the board-prep note were tested and
+   explains the answer. Terms written "=term" match in the correct answer only. Later sentences and the board-prep note were tested and
    left out: they mostly discuss the wrong choices and differentials, and linked
    the wrong cards. The file loads lazily; if it is missing, questions simply
    show no atlas links. */
@@ -102,8 +102,12 @@ function atlasLinksFor(q) {
     const text = ' ' + atlasNorm(z) + ' ';
     for (const c of ATLAS_INDEX) {
       if (found.has(c.id)) continue;
-      const hit = c.t.find(t => text.includes(' ' + t + ' ') || text.includes(' ' + t + 's ') || text.includes(' ' + t + 'es '));
-      if (hit) found.set(c.id, { c, zone, len: hit.length });
+      // a term written "=term" is answer-only: it never matches in the explanation
+      const hit = c.t.find(t => {
+        if (t[0] === '=') { if (zone) return false; t = t.slice(1); }
+        return text.includes(' ' + t + ' ') || text.includes(' ' + t + 's ') || text.includes(' ' + t + 'es ');
+      });
+      if (hit) found.set(c.id, { c, zone, len: hit.replace(/^=/, '').length });
     }
   });
   return [...found.values()].sort((a, b) => a.zone - b.zone || b.len - a.len).slice(0, 3).map(x => x.c);

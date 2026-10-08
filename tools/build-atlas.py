@@ -266,13 +266,17 @@ def link_terms(n, alias, q):
         a = re.sub(r"\s*\([^)]*\)", "", a).split(" — ")[0].strip()
         if a and (" " in a or re.fullmatch(r"[A-Z0-9]{3,}", a)):
             out.append(a)
-    out += q
+    # A q entry written "=term" counts only in the correct answer, never in the
+    # explanation: for findings and anatomy that explanations mention in passing.
+    # It also overrides the same term coming from the name or alias.
+    answer_only = {atlas_norm(x[1:]) for x in q if x.startswith("=")}
+    out += [x.lstrip("=") for x in q]
     seen = []
     for t in out:
         t = atlas_norm(t)
         if len(t) >= 3 and t not in seen:
             seen.append(t)
-    return seen
+    return ["=" + t if t in answer_only else t for t in seen]
 
 rows = []
 heads = list(re.finditer(r'^([a-z0-9_]+):\{n:"([^"]*)",(?:alias:"([^"]*)",)?k:"([a-z]+)"', art, re.M))
@@ -290,7 +294,8 @@ print(f"built {TERMS_OUT.relative_to(ROOT)}  —  {sum(len(r[3]) for r in rows)}
 
 # ── practice index: how many Q-bank questions link to each card ─────────────
 # The same rule as atlasLinksFor() in shared/app.js — a term as a whole phrase
-# (or with -s/-es) in the correct answer or the first explanation sentence,
+# (or with -s/-es) in the correct answer or the first explanation sentence
+# ("=" terms in the answer only),
 # earlier zone first, then longer term, top 3 cards per question — so the count
 # on a card's button matches what #atlas/<id> finds when it runs in the block.
 
@@ -305,10 +310,14 @@ for b in re.findall(r'href="([a-z0-9_-]+)/index\.html"', hub):
 by_first = {}
 for ci, (cid, _, _, terms) in enumerate(rows):
     for t in terms:
-        by_first.setdefault(t.split(" ")[0], set()).add(ci)
+        by_first.setdefault(t.lstrip("=").split(" ")[0], set()).add(ci)
 
-def first_hit(terms, text):
+def first_hit(terms, text, zone):
     for t in terms:
+        if t.startswith("="):           # answer-only term
+            if zone:
+                continue
+            t = t[1:]
         if f" {t} " in text or f" {t}s " in text or f" {t}es " in text:
             return t
     return None
@@ -335,7 +344,7 @@ def links_for(q):
             cid = rows[ci][0]
             if cid in found:
                 continue
-            hit = first_hit(rows[ci][3], text)
+            hit = first_hit(rows[ci][3], text, zone)
             if hit:
                 found[cid] = (zone, len(hit), ci)
     return [cid for cid, _ in sorted(found.items(), key=lambda kv: (kv[1][0], -kv[1][1], kv[1][2]))[:3]]

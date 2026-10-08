@@ -125,6 +125,23 @@ button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
 .li .dot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:4px;background:var(--c)}
 .li .nm{font-size:12.5px;font-weight:600;color:var(--ink)}
 .li .bz{font-size:11.5px;color:var(--ink-3);display:block;margin-top:1px}
+.li.rev .nm::after,.idxrow.rev .t::after{content:" ✓";color:var(--ok);font-weight:700}
+.li.weak .dot{box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px var(--bad)}
+.li .rec{font-size:11.5px;color:var(--bad);display:block;margin-top:1px}
+.revbar{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:11.5px;color:var(--ink-3)}
+.revbar b{color:var(--ink-2);font-variant-numeric:tabular-nums}
+.revrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 0}
+.revbtn{padding:5px 11px;border-radius:8px;border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink-2);background:var(--surface)}
+.revbtn:hover{border-color:var(--ink-3);color:var(--ink)}
+.revbtn[aria-pressed="true"]{background:color-mix(in srgb,var(--ok) 14%,var(--surface));border-color:var(--ok);color:var(--ok)}
+.revnote{font-size:11.5px;color:var(--ink-3)}
+.revnote.weak{color:var(--bad)}
+.linkbtn{padding:0;background:none;border:none;font-size:11.5px;color:var(--ink-3);text-decoration:underline;cursor:pointer}
+.linkbtn:hover{color:var(--ink)}
+.dtitle.bzq{font-style:italic;font-weight:600}
+.qscore .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.qscore .seg button{border-radius:0}
+.qscore .seg button[aria-pressed="true"]{background:var(--surface-3);color:var(--ink)}
 
 /* ── map ────────────────────────────────────────────── */
 .mapwrap{position:relative;min-width:0;background:var(--map-bg);overflow:hidden}
@@ -349,6 +366,7 @@ body{display:flex;flex-direction:column}
           <button class="qopt" role="menuitemradio" data-q="" aria-checked="true">Off</button>
           <button class="qopt" role="menuitemradio" data-q="steps" aria-checked="false">Hide the step names<span>Tap a chip to reveal its enzyme</span></button>
           <button class="qopt" role="menuitemradio" data-q="pins" aria-checked="false">Name the pins<span>Tap a pin, then pick the lesion it marks</span></button>
+          <button class="qopt" role="menuitemradio" data-q="buzz" aria-checked="false">Buzzword → card<span>Read a buzzword, pick the card it belongs to</span></button>
         </div>
       </div>
       <button class="btn" id="themeBtn" title="Toggle light / dark">◐</button>
@@ -364,7 +382,7 @@ body{display:flex;flex-direction:column}
         <button class="tbtn" id="zin" title="Zoom in" aria-label="Zoom in">+</button>
         <button class="tbtn" id="zout" title="Zoom out" aria-label="Zoom out">−</button>
         <button class="tbtn wide" id="zfit" title="Fit map to screen">Fit</button>
-        <button class="tbtn wide" id="zsrc" title="What this map covers and the sources it was checked against">Sources</button>
+        <button class="tbtn wide" id="zsrc" title="This map’s progress, weak spots and sources">Info</button>
       </div>
       <div class="qscore" id="qscore" hidden></div>
       <div class="hint" id="hint">drag to pan · scroll to zoom · click any pin</div>
@@ -2890,7 +2908,7 @@ pnh:{n:"Paroxysmal nocturnal haemoglobinuria",alias:"PIGA · loss of CD55 and CD
  tx:["Eculizumab or ravulizumab (anti-C5); they raise the risk of serious meningococcal infection, so vaccinate","Hematopoietic stem cell transplant is the only cure"]},
 
 /* ── cytokines ──────────────────────────────────────── */
-thelperreg:{n:"The T-helper fork",alias:"Th1 · Th2 · Th17 · Treg",k:"reg",p:"th",q:["th1", "th2", "th17", "regulatory t cell", "regulatory t cells", "t helper cell", "t helper cells", "helper t cell", "helper t cells"],enz:"IL-12 · IL-4 · IL-6+TGF-β · TGF-β+IL-2",inh:"—",fa:"100",hi:1,
+thelperreg:{n:"The T-helper fork",alias:"Th1 · Th2 · Th17 · Treg",k:"reg",p:"th",q:["th1","th2","th17","regulatory t cell","regulatory t cells","=t helper cell","=t helper cells","=helper t cell","=helper t cells"],enz:"IL-12 · IL-4 · IL-6+TGF-β · TGF-β+IL-2",inh:"—",fa:"100",hi:1,
  mech:"A naive CD4 cell is uncommitted. The <b>cytokine present when it meets antigen decides what it becomes</b>, and each subset then secretes the cytokine that reinforces itself and suppresses the others. That mutual antagonism is why responses polarize instead of staying mixed.",
  find:["<b>IL-12 → Th1</b>, which makes <b>IFN-γ</b> and IL-2 — the axis against intracellular organisms","IL-4 → Th2, which makes IL-4, IL-5, IL-6, IL-10, IL-13 — parasites, IgE, eosinophils","TGF-β, IL-1, IL-6 → Th17, which makes IL-17, IL-21, IL-22 — neutrophils at mucosal surfaces","TGF-β + IL-2 → Treg (FOXP3), which makes IL-10, TGF-β, IL-35 — maintains tolerance","Cross-regulation: <b>IFN-γ suppresses Th2, IL-4 suppresses Th1</b>"],
  labs:["Break the IL-12 → IFN-γ axis and you get disseminated mycobacteria — see IL-12 receptor deficiency","Break Th17 (STAT3) and you get staphylococcal cold abscesses — see Job syndrome","Break FOXP3 and Tregs never form — IPEX"],
@@ -3161,7 +3179,7 @@ sheehan:{n:"Sheehan syndrome & pituitary apoplexy",k:"dz",p:"hpa",q:["sheehan sy
  src:["Robbins ch 24 — The endocrine system","Katzung ch 37 — Hypothalamic & Pituitary Hormones"],
  tx:["Replace each deficient hormone (glucocorticoids, thyroxine, sex steroids, GH). Correct adrenal insufficiency before starting thyroid hormone"],
  ref:[{a:"Fleseriu M, Hashim IA, Karavitaki N, et al",t:"Hormonal replacement in hypopituitarism in adults: an Endocrine Society clinical practice guideline",j:"J Clin Endocrinol Metab",y:2016,pmid:"27736313",doi:"10.1210/jc.2016-2118"}]},
-thyroidreg:{n:"Thyroid hormone — synthesis and transport",k:"reg",p:"thyroidax",q:["thyroid peroxidase", "thyroglobulin", "deiodinase", "wolff chaikoff", "thyroid hormone synthesis"],enz:"Thyroid peroxidase · 5′-deiodinase",inh:"—",fa:"335",hi:1,
+thyroidreg:{n:"Thyroid hormone — synthesis and transport",k:"reg",p:"thyroidax",q:["thyroid peroxidase","thyroglobulin","deiodinase","wolff chaikoff","thyroid hormone synthesis","=thyroid hormone"],enz:"Thyroid peroxidase · 5′-deiodinase",inh:"—",fa:"335",hi:1,
  mech:"One enzyme does three jobs and is the target of the main drugs. <b>Thyroid peroxidase</b> oxidizes iodide, organifies it onto thyroglobulin tyrosines, and couples them. The gland then secretes mostly <b>T4</b>, which is a prohormone — the active hormone is <b>T3</b>, made peripherally by 5′-deiodinase.",
  find:["Iodide is trapped by the <b>Na⁺/I⁻ symporter</b>, then oxidized, organified and coupled by <b>thyroid peroxidase</b>","T4 is ~93% of output but T3 is about 4× more potent — most T3 comes from peripheral conversion","Wolff-Chaikoff effect: a large iodide load transiently shuts off thyroid peroxidase. Jod-Basedow: iodine (eg, contrast) triggers thyrotoxicosis","Reverse T3 is the inactive byproduct; glucocorticoids and GH increase it"],
  labs:["<b>Only free hormone is active.</b> Anything that raises <b>TBG</b> — pregnancy, oestrogen, OCPs — raises total T4 with a normal free T4 and a normal TSH, and the patient is euthyroid","Anything that lowers TBG — nephrotic syndrome, steroids — does the reverse","Nonthyroidal illness (sick euthyroid): ↓ T3 with normal or ↓ T4 and TSH in critical illness","Antibodies: <b>anti-TPO</b> in Hashimoto, <b>TSI</b> in Graves"],
@@ -3420,7 +3438,7 @@ ansreg:{n:"Autonomic wiring — which transmitter where",k:"reg",p:"cholin",enz:
  labs:["Resting tone: parasympathetic dominates the SA node, gut, bladder and pupil; sympathetic dominates arterioles and sweat glands"],
  buzz:["Preganglionic is always ACh on nicotinic","The adrenal medulla is a modified sympathetic ganglion"],
  src:["Katzung ch 6 — Introduction to Autonomic Pharmacology","Guyton ch 61 — The Autonomic Nervous System and the Adrenal Medulla","Costanzo ch 2 — Autonomic nervous system","Fundamental Neuroscience ch 29 — Visceral Motor Pathways"],
- tx:["—"],q:["autonomic nervous system","preganglionic","postganglionic"]},
+ tx:["—"],q:["=autonomic nervous system","preganglionic","postganglionic"]},
 
 botulinum:{n:"Botulinum toxin",k:"drug",p:"cholin",enz:"SNARE proteins (synaptobrevin · SNAP-25)",inh:"Toxin",fa:"136",hi:1,
  mech:"The toxin is a protease that cleaves the <b>SNARE</b> proteins an ACh vesicle needs to fuse with the membrane, so the nerve cannot release ACh. Every cholinergic synapse fails — the neuromuscular junction and the autonomic ones — giving a <b>descending flaccid paralysis</b> with anticholinergic signs.",
@@ -3494,7 +3512,7 @@ alpha1drugs:{n:"α₁ agonists & α blockers",k:"drug",p:"adren",enz:"α₁ rece
  labs:["Phenylephrine causes a <b>reflex bradycardia</b> — pressure rises with no direct cardiac effect"],
  buzz:["-osin for BPH — first-dose faint","Phenoxybenzamine before a pheochromocytoma comes out"],
  src:["Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs","Katzung ch 10 — Adrenoceptor Antagonist Drugs"],
- tx:["—"],q:["alpha 1 blocker","alpha 1 blockers","alpha blocker","alpha blockers","alpha 1 agonist","alpha 1 receptor","phenylephrine","prazosin","terazosin","doxazosin","tamsulosin","phenoxybenzamine","phentolamine","midodrine"]},
+ tx:["—"],q:["alpha 1 blocker","alpha 1 blockers","alpha blocker","alpha blockers","alpha 1 agonist","=alpha 1 receptor","phenylephrine","prazosin","terazosin","doxazosin","tamsulosin","phenoxybenzamine","phentolamine","midodrine"]},
 
 alpha2drugs:{n:"α₂ agonists",k:"drug",p:"adren",enz:"α₂ receptor — Gi → ↓ cAMP",inh:"—",fa:"243, 568",hi:1,
  mech:"α₂ receptors sit on the presynaptic terminal as a brake: stimulating them <b>reduces norepinephrine release</b>. Central α₂ agonists therefore cut sympathetic outflow from the brainstem, and pressure and heart rate fall.",
@@ -3592,7 +3610,7 @@ dapathways:{n:"The four dopamine pathways",k:"reg",p:"dopamine",enz:"Mesolimbic 
  labs:["Schizophrenia: two or more of delusions, hallucinations, disorganized speech, disorganized behaviour and negative symptoms, lasting at least 6 months with at least 1 month of active symptoms","Lateral and third ventricular enlargement on imaging"],
  buzz:["Positive symptoms = mesolimbic excess","Galactorrhea on risperidone = tuberoinfundibular blockade"],
  src:["Katzung ch 29 — Antipsychotic Agents & Lithium","Kaplan & Sadock ch 5 — Schizophrenia Spectrum and Other Psychotic Disorders","Kaplan & Sadock ch 21 — Psychopharmacology"],
- tx:["—"],q:["schizophrenia","mesolimbic","mesocortical","nigrostriatal","tuberoinfundibular","dopamine hypothesis","positive symptoms","negative symptoms"]},
+ tx:["—"],q:["mesolimbic","mesocortical","nigrostriatal","tuberoinfundibular","dopamine hypothesis","positive symptoms","negative symptoms"]},
 
 antipsychotics:{n:"Antipsychotics",k:"drug",p:"dopamine",enz:"D₂ receptor (typicals) · D₂ + 5-HT₂A (atypicals)",inh:"—",fa:"591",hi:1,
  mech:"All antipsychotics block <b>D₂</b> receptors. Typical agents do little else, so the high-potency ones cause the most extrapyramidal effects. Atypicals also block <b>5-HT₂A</b>, which lets dopamine back into the striatum and cuts EPS — at the price of metabolic effects.",
@@ -3752,7 +3770,7 @@ lithium:{n:"Lithium & mood stabilizers",k:"drug",p:"channels",enz:"Inositol mono
  labs:["Check levels, creatinine, TSH and calcium before and during treatment"],
  buzz:["Lithium: nephrogenic DI, hypothyroidism, Ebstein anomaly","Thiazides push lithium levels up"],
  src:["Kaplan & Sadock ch 21 — Psychopharmacology","Katzung ch 29 — Antipsychotic Agents & Lithium","Katzung ch 58 — Management of the Poisoned Patient"],
- tx:["Toxicity: stop lithium, hydrate with isotonic saline; consider hemodialysis"],q:["lithium","mood stabilizer","mood stabilizers","bipolar disorder","bipolar i disorder","ebstein anomaly"]},
+ tx:["Toxicity: stop lithium, hydrate with isotonic saline; consider hemodialysis"],q:["lithium","mood stabilizer","mood stabilizers","ebstein anomaly"]},
 
 antiepileptics:{n:"Antiepileptic drugs",k:"drug",p:"channels",enz:"Na⁺ channels · T-type Ca²⁺ · GABA · SV2A · α₂δ",inh:"—",fa:"560, 632",hi:1,
  mech:"Each drug quiets neurons one of four ways: hold <b>voltage-gated Na⁺ channels</b> inactivated (phenytoin, carbamazepine, lamotrigine, lacosamide); block <b>thalamic T-type Ca²⁺ channels</b> (ethosuximide); boost <b>GABA</b> (benzodiazepines, barbiturates, vigabatrin, tiagabine); or reduce transmitter release (<b>levetiracetam</b> on SV2A, <b>gabapentin and pregabalin</b> on the α₂δ subunit). Valproate and topiramate do several.",
@@ -3785,7 +3803,7 @@ t2dm:{n:"Type 2 diabetes mellitus",k:"dz",p:"dm",enz:"Insulin resistance + progr
  labs:["C-peptide normal or high early on"],
  buzz:["Insulin resistance and islet amyloid","Acanthosis nigricans"],
  src:["Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs","Robbins ch 24 — The endocrine system"],
- tx:["Weight loss and activity; <b>metformin</b> first line","Add a GLP-1 agonist (liraglutide, semaglutide — fewer cardiovascular deaths) or an SGLT2 inhibitor (fewer heart failure admissions); insulin when needed"],q:["type 2 diabetes","type 2 diabetes mellitus","type 2 diabetic","t2dm","insulin resistance","islet amyloid","acanthosis nigricans","metabolic syndrome"]},
+ tx:["Weight loss and activity; <b>metformin</b> first line","Add a GLP-1 agonist (liraglutide, semaglutide — fewer cardiovascular deaths) or an SGLT2 inhibitor (fewer heart failure admissions); insulin when needed"],q:["type 2 diabetes","type 2 diabetes mellitus","type 2 diabetic","t2dm","=insulin resistance","islet amyloid","acanthosis nigricans","metabolic syndrome"]},
 
 dka:{n:"Diabetic ketoacidosis",k:"dz",p:"dm",enz:"Insulin absent · glucagon unopposed",inh:"—",fa:"350, 351",hi:1,
  mech:"With no insulin and plenty of glucagon, lipolysis floods the liver with fatty acids that are oxidized to <b>acetoacetate and β-hydroxybutyrate</b>. The ketoacids use up bicarbonate (anion gap acidosis), and glucose spills into the urine, dragging water and potassium with it.",
@@ -4443,7 +4461,7 @@ lockedin:{n:"Basilar artery occlusion",alias:"Locked-in syndrome",k:"dz",p:"vert
  labs:["CT angiography: basilar occlusion; MRI shows the pontine infarct"],
  buzz:["Awake and aware, can only blink and look up"],
  src:["Robbins ch 28 — The central nervous system","Fundamental Neuroscience ch 10 — An Overview of the Brainstem"],
- tx:["Reperfusion therapy"],q:["locked in syndrome","basilar artery occlusion","basilar artery"]},
+ tx:["Reperfusion therapy"],q:["locked in syndrome","basilar artery occlusion","=basilar artery"]},
 
 weber:{n:"Weber syndrome",alias:"Medial midbrain stroke",k:"dz",p:"vertebro",enz:"Paramedian branches of the PCA and basilar — medial midbrain",inh:"Atherosclerosis",fa:"526",
  mech:"In the medial midbrain the exiting oculomotor fibers run beside the cerebral peduncle, which carries the corticospinal tract before it crosses.",
@@ -4459,7 +4477,7 @@ aphasia:{n:"Aphasias",k:"reg",p:"carotid",enz:"Broca (inferior frontal) · Werni
  labs:["Test fluency, comprehension and repetition"],
  buzz:["Broca = broken boca · Wernicke = word salad","Wernicke = wordy, makes no sense","Can't repeat = arcuate fasciculus"],
  src:["Fundamental Neuroscience ch 32 — The Cerebral Cortex"],
- tx:["Speech and language therapy"],q:["broca","broca aphasia","wernicke aphasia","wernicke's aphasia","conduction aphasia","global aphasia","arcuate fasciculus","aphasia"]},
+ tx:["Speech and language therapy"],q:["=broca","broca aphasia","wernicke aphasia","wernicke's aphasia","conduction aphasia","global aphasia","arcuate fasciculus","aphasia","broca area","brocas area"]},
 
 cn3palsy:{n:"Oculomotor nerve palsy",alias:"CN III palsy",k:"dz",p:"cnnuclei",enz:"Oculomotor nerve — motor core and surface pupil fibers",inh:"PCom aneurysm (compressive) vs diabetes (ischemic)",fa:"530, 556",hi:1,
  mech:"CN III moves four of the six eye muscles and lifts the lid, while parasympathetic fibers on its <b>outer surface</b> constrict the pupil. Compression from outside (a posterior communicating artery aneurysm, uncal herniation) hits the pupil fibers first; ischemia from diabetes damages the nerve's core and spares the pupil.",
@@ -4483,7 +4501,7 @@ ms:{n:"Multiple sclerosis",k:"dz",p:"cnnuclei",enz:"CNS myelin — oligodendrocy
  labs:["MRI (gold standard): periventricular plaques, white matter lesions disseminated in space and time","CSF: oligoclonal bands, ↑ IgG and myelin basic protein"],
  buzz:["Bilateral INO in a young adult = MS","Scanning speech, intention tremor, nystagmus"],
  src:["Robbins ch 28 — The central nervous system","Katzung ch 55 — Immunopharmacology"],
- tx:["Relapse: IV steroids","Disease-modifying: interferon-β, glatiramer, natalizumab (PML risk), ocrelizumab (anti-CD20)","Symptomatic: baclofen for spasticity; antimuscarinics or botulinum toxin for neurogenic bladder; TCAs or anticonvulsants for pain"],q:["multiple sclerosis","internuclear ophthalmoplegia","oligoclonal bands","optic neuritis"]},
+ tx:["Relapse: IV steroids","Disease-modifying: interferon-β, glatiramer, natalizumab (PML risk), ocrelizumab (anti-CD20)","Symptomatic: baclofen for spasticity; antimuscarinics or botulinum toxin for neurogenic bladder; TCAs or anticonvulsants for pain"],q:["multiple sclerosis","oligoclonal bands","optic neuritis"]},
 
 cerebellar:{n:"Cerebellar lesions",k:"dz",p:"cnnuclei",enz:"Hemispheres (limbs) · vermis (trunk)",inh:"Stroke, alcohol, tumor, MS",fa:"510, 524",
  mech:"Each cerebellar hemisphere coordinates the limbs on its own side — its output crosses and the corticospinal tract crosses back — so hemisphere lesions cause <b>ipsilateral</b> signs. The midline vermis controls the trunk and gait.",
@@ -6377,7 +6395,7 @@ hs1:{n:"Type I hypersensitivity",alias:"anaphylactic and atopic · IgE-mediated"
  labs:["Skin prick test or allergen-specific IgE (ELISA)","↑ Serum tryptase marks mast-cell activation"],
  buzz:["First and Fast","Tryptase = mast cells degranulated"],
  src:["Robbins ch 6 — Diseases of the immune system","Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids","Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs"],
- tx:["Anaphylaxis: <b>IM epinephrine</b> first; antihistamines, glucocorticoids","Prevention: avoidance, omalizumab (anti-IgE), immunotherapy"],q:["type i hypersensitivity","type 1 hypersensitivity","anaphylaxis","anaphylactic","ige mediated","immediate hypersensitivity","tryptase"]},
+ tx:["Anaphylaxis: <b>IM epinephrine</b> first; antihistamines, glucocorticoids","Prevention: avoidance, omalizumab (anti-IgE), immunotherapy"],q:["type i hypersensitivity","type 1 hypersensitivity","=anaphylaxis","=anaphylactic","ige mediated","immediate hypersensitivity","tryptase"]},
 
 hs2:{n:"Type II hypersensitivity",alias:"antibody-mediated · cytotoxic",k:"dz",p:"hsens",enz:"IgG or IgM binds antigens on cells or matrix",inh:"—",fa:"110",hi:1,
  mech:"Antibodies bind antigens fixed on cells or basement membranes. Three outcomes: <b>destruction</b> (opsonization and phagocytosis, complement, or NK-cell ADCC), <b>inflammation</b> (complement and Fc-receptor activation) and <b>dysfunction</b> (antibodies block or stimulate receptors).",
@@ -6922,7 +6940,7 @@ adinh:{n:"Autosomal dominant inheritance",k:"reg",p:"ginherit",enz:"One mutant a
  labs:["Pedigree: vertical transmission; male-to-male transmission possible"],
  buzz:["Structural gene defects, every generation, 50% risk"],
  src:["Robbins ch 5 — Genetic disorders","Marks ch 18 — An Introduction to Human Genetics"],
- tx:["—"],q:["autosomal dominant"]},
+ tx:["—"],q:["=autosomal dominant"]},
 
 arinh:{n:"Autosomal recessive inheritance",k:"reg",p:"ginherit",enz:"Both alleles must be lost — usually enzyme deficiencies",inh:"Two carrier parents: 25% affected, 50% carriers, 25% unaffected",fa:"58",hi:1,
  mech:"Usually one generation affected, siblings rather than parents. Most are enzyme deficiencies, typically more severe than dominant disorders and presenting in childhood. Risk rises with consanguinity. An unaffected sibling of an affected child has a 2/3 chance of being a carrier.",
@@ -6930,7 +6948,7 @@ arinh:{n:"Autosomal recessive inheritance",k:"reg",p:"ginherit",enz:"Both allele
  labs:["Pedigree: horizontal — affected siblings, carrier parents"],
  buzz:["Oh, please! Can students who score high grades tell me features of the kidney disorder ARPKD?","Unaffected sibling of an affected child: 2/3 carrier"],
  src:["Robbins ch 5 — Genetic disorders","Marks ch 18 — An Introduction to Human Genetics"],
- tx:["—"],q:["autosomal recessive"]},
+ tx:["—"],q:["=autosomal recessive"]},
 
 xlrinh:{n:"X-linked recessive inheritance",k:"reg",p:"ginherit",enz:"Males with one mutant X are affected; females are usually carriers",inh:"Sons of carrier mothers: 50% affected",fa:"57, 59",hi:1,
  mech:"No male-to-male transmission; it skips generations through carrier females. Females are affected only if homozygous, if they have Turner syndrome (45,X), or through skewed X-inactivation (lyonization).",
@@ -7833,7 +7851,7 @@ bgcircuit:{n:"Basal ganglia — direct and indirect pathways",k:"reg",p:"bgdirec
  labs:["D1 Receptor = D1Rect pathway · indirect (D2) = inhibitory"],
  buzz:["D1 Rect pathway","Dopamine: gas on the direct, brake off the indirect"],
  src:["Fundamental Neuroscience ch 26 — The Basal Nuclei","Katzung ch 28 — Pharmacologic Management of Parkinsonism & Other Movement Disorders","Guyton ch 57 — Cerebellum and Basal Ganglia Contributions to Overall Motor Control"],
- tx:["—"],q:["basal ganglia","direct pathway","indirect pathway","globus pallidus","subthalamic nucleus","striatum","substantia nigra pars compacta","nigrostriatal"]},
+ tx:["—"],q:["=basal ganglia","direct pathway","indirect pathway","globus pallidus","=subthalamic nucleus","=striatum","substantia nigra pars compacta","nigrostriatal"]},
 
 hemiballismus:{n:"Hemiballismus",k:"dz",p:"bgindirect",enz:"Loss of the subthalamic nucleus",inh:"Lacunar stroke",fa:"533",hi:1,
  mech:"Without the subthalamic nucleus driving the GPi, the indirect pathway loses its output and the thalamus is released — the opposite side of the body flings wildly.",
@@ -7942,7 +7960,7 @@ bradfordhill:{n:"Bradford Hill criteria",k:"reg",p:"bsdesign",enz:"Evidence for 
  find:["<b>Strength</b> of association · <b>Consistency</b> across samples · <b>Specificity</b> of cause to effect · <b>Temporality</b> — the cause comes first · <b>Biological gradient</b> (dose-response) · <b>Plausibility</b> · <b>Coherence</b> with existing knowledge · <b>Experiment</b> · <b>Analogy</b>"],
  labs:["—"],
  buzz:["More exposure, more disease = biological gradient"],
- tx:["—"],q:["bradford hill criteria","bradford hill","dose response relationship"]},
+ tx:["—"],q:["bradford hill criteria","bradford hill","=dose response relationship"]},
 
 oddsratio:{n:"Odds ratio & relative risk",k:"reg",p:"bsrisk",enz:"The 2 × 2 table: exposure (a, b) over no exposure (c, d)",inh:"—",fa:"258, 266",hi:1,
  mech:"In the 2 × 2 table, rows are exposure (yes: a, b · no: c, d) and columns are disease (yes: a, c · no: b, d). The <b>odds ratio</b> compares the odds of exposure in cases with the odds in controls; the <b>relative risk</b> compares the risk of disease in the exposed with the unexposed.",
@@ -8368,7 +8386,7 @@ suicide:{n:"Suicide risk — SAD PERSONS",alias:"SAD PERSONS",k:"reg",p:"pmood",
  labs:["Ask directly — asking does not plant the idea"],
  buzz:["Older man, widowed, drinking, with a gun at home"],
  src:["Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient","Kaplan & Sadock ch 7 — Depressive Disorders"],
- tx:["Remove access to means; admit if intent or plan; lithium and clozapine lower suicide rates"],q:["suicide risk","suicidal ideation","suicide attempt","completed suicide","suicidality","sad persons"]},
+ tx:["Remove access to means; admit if intent or plan; lithium and clozapine lower suicide rates"],q:["suicide risk","suicidal ideation","suicide attempt","completed suicide","=suicidality","sad persons"]},
 
 ect:{n:"Electroconvulsive therapy",alias:"ECT",k:"drug",p:"pmood",enz:"A controlled generalized seizure under anesthesia",inh:"—",fa:"579",hi:1,
  mech:"A brief tonic-clonic seizure induced under general anesthesia and neuromuscular blockade. It works faster than antidepressants and is the most effective treatment for severe depression.",
@@ -8626,7 +8644,7 @@ sud:{n:"Substance use disorder",k:"reg",p:"srecov",enz:"Drug-driven plasticity i
  labs:["Urine screens miss fentanyl, synthetic cannabinoids and many inhalants"],
  buzz:["Tolerance alone is not addiction"],
  src:["Kaplan & Sadock ch 4 — Substance Use and Addictive Disorders","Katzung ch 32 — Drugs of Abuse"],
- tx:["Motivational interviewing, CBT, mutual-help groups, drug-specific medications"],q:["substance use disorder","addiction","substance abuse","drug dependence","tolerance and withdrawal"],
+ tx:["Motivational interviewing, CBT, mutual-help groups, drug-specific medications"],q:["substance use disorder","addiction","=substance abuse","drug dependence","tolerance and withdrawal"],
  ref:[{a:"Moeller KE, Kissack JC, Atayee RS, Lee KC",t:"Clinical interpretation of urine drug tests: what clinicians need to know about urine drug screens",j:"Mayo Clin Proc",y:2017,pmid:"28325505",doi:"10.1016/j.mayocp.2016.12.007"}]},
 
 stageschange:{n:"Stages of change & motivational interviewing",alias:"transtheoretical model",k:"reg",p:"srecov",enz:"Matching the talk to the patient's readiness",inh:"—",fa:"586",hi:1,
@@ -8692,7 +8710,7 @@ insomnia:{n:"Insomnia & hypnotics",alias:"insomnia disorder",k:"dz",p:"slpdz",en
  labs:["Sleep diary"],
  buzz:["First line is sleep hygiene and CBT, not a pill"],
  src:["Kaplan & Sadock ch 15 — Sleep–Wake Disorders","Katzung ch 22 — Sedative-Hypnotic Drugs"],
- tx:["Sleep hygiene and <b>cognitive behavioral therapy for insomnia</b> first","Short-term hypnotics"],q:["insomnia","suvorexant","ramelteon","sleep hygiene","cognitive behavioral therapy for insomnia","hypnotic","hypnotics"]},
+ tx:["Sleep hygiene and <b>cognitive behavioral therapy for insomnia</b> first","Short-term hypnotics"],q:["=insomnia","suvorexant","ramelteon","sleep hygiene","cognitive behavioral therapy for insomnia","hypnotic","hypnotics"]},
 
 circadian:{n:"Circadian rhythm sleep-wake disorders",alias:"delayed sleep phase · jet lag · shift work",k:"dz",p:"slpdz",enz:"Body clock out of step with the day",inh:"—",fa:"507, 508",hi:1,
  mech:"The suprachiasmatic nucleus sets a roughly 24-hour clock that light resets each morning. When the clock and the required schedule disagree, sleep comes at the wrong time.",
@@ -8926,7 +8944,7 @@ cn46palsy:{n:"Trochlear & abducens nerve palsy",alias:"CN IV palsy · CN VI pals
  labs:["CN IV crosses the midline — the only cranial nerve with contralateral function"],
  buzz:["Tilts head to the left to stop double vision = right CN IV","Obese woman with headache and an eye that will not abduct = IIH"],
  src:["Fundamental Neuroscience ch 28 — Visual Motor Systems","Moore ch 9 — Head","Moore ch 10 — Cranial Nerves","Fundamental Neuroscience ch 10 — An Overview of the Brainstem"],
- tx:["Treat the cause"],q:["trochlear nerve palsy","cn iv palsy","fourth nerve palsy","abducens nerve palsy","cn vi palsy","sixth nerve palsy","superior oblique","lateral rectus"]},
+ tx:["Treat the cause"],q:["trochlear nerve palsy","cn iv palsy","fourth nerve palsy","abducens nerve palsy","cn vi palsy","sixth nerve palsy","superior oblique","lateral rectus","abducens nerve","trochlear nerve"]},
 
 ino:{n:"Internuclear ophthalmoplegia",alias:"MLF syndrome",k:"dz",p:"eyemove",enz:"Medial longitudinal fasciculus",inh:"Multiple sclerosis · stroke",fa:"558",hi:1,
  mech:"The MLF links the CN VI nucleus to the opposite CN III nucleus so both eyes turn together. When it is cut, the eye on the side of the lesion <b>cannot adduct</b> on lateral gaze, and the abducting eye shows nystagmus. Convergence still works.",
@@ -8934,7 +8952,7 @@ ino:{n:"Internuclear ophthalmoplegia",alias:"MLF syndrome",k:"dz",p:"eyemove",en
  labs:["MRI: demyelinating plaque in the MLF"],
  buzz:["INO = Ipsilateral adduction failure, Nystagmus Opposite"],
  src:["Fundamental Neuroscience ch 14 — A Synopsis of Cranial Nerves of the Brainstem","Fundamental Neuroscience ch 28 — Visual Motor Systems"],
- tx:["Treat the cause"],q:["internuclear ophthalmoplegia","mlf lesion","medial longitudinal fasciculus"]},
+ tx:["Treat the cause"],q:["internuclear ophthalmoplegia","mlf lesion","=medial longitudinal fasciculus"]},
 
 cavernous:{n:"Cavernous sinus syndrome",alias:"cavernous sinus thrombosis",k:"dz",p:"eyemove",enz:"CN III, IV, V1, V2, VI and sympathetics in one sinus",inh:"—",fa:"557",hi:1,
  mech:"The cavernous sinus beside the pituitary carries the internal carotid, CNs III, IV, V1, V2 and VI and the sympathetic fibers to the eye. One lesion there hits several nerves at once.",
@@ -8966,7 +8984,7 @@ vfdefects:{n:"Visual field defects",alias:"bitemporal hemianopia · homonymous h
  labs:["Formal perimetry localizes the lesion"],
  buzz:["Bumps into door frames on both sides = bitemporal hemianopia from a pituitary tumor"],
  src:["Fundamental Neuroscience ch 20 — The Visual System"],
- tx:["—"],q:["visual field defect","visual field defects","bitemporal hemianopia","homonymous hemianopia","quadrantanopia","quadrantanopsia","meyer loop","central scotoma","optic chiasm","optic tract","optic radiation"]},
+ tx:["—"],q:["visual field defect","visual field defects","bitemporal hemianopia","homonymous hemianopia","quadrantanopia","quadrantanopsia","meyer loop","central scotoma","=optic chiasm","=optic tract","=optic radiation"]},
 
 migraine:{n:"Migraine",k:"dz",p:"eyehead",enz:"Trigeminovascular activation · CGRP and substance P",inh:"Women · family history",fa:"532",hi:1,
  mech:"Activation of trigeminal afferents to meningeal vessels releases vasoactive neuropeptides — <b>CGRP</b> and substance P — causing neurogenic inflammation and throbbing pain. Aura is a wave of cortical spreading depression.",
@@ -9176,7 +9194,7 @@ longthoracic:{n:"Long thoracic nerve injury",alias:"winged scapula",k:"dz",p:"bp
  labs:["—"],
  buzz:["Scapula sticks out after a mastectomy with node dissection"],
  src:["Moore ch 3 — Upper Limb"],
- tx:["—"],q:["long thoracic nerve","winged scapula","serratus anterior"]},
+ tx:["—"],q:["long thoracic nerve","winged scapula","=serratus anterior"]},
 
 axillarynerve:{n:"Axillary nerve injury",k:"dz",p:"bpupper",enz:"Deltoid and teres minor (C5–C6)",inh:"Surgical-neck fracture, anterior shoulder dislocation",fa:"450",hi:1,
  mech:"The axillary nerve lies against the <b>surgical neck of the humerus</b>, so a fracture there or an anterior dislocation injures it.",
@@ -9257,7 +9275,7 @@ sciaticnerve:{n:"Sciatic & tibial nerve injury",alias:"tarsal tunnel",k:"dz",p:"
  labs:["—"],
  buzz:["Cannot stand on tiptoe after a knee injury"],
  src:["Moore ch 7 — Lower Limb","Moore ch 6 — Pelvis and Perineum"],
- tx:["Treat the cause"],q:["sciatic nerve","tibial nerve","tarsal tunnel","tarsal tunnel syndrome","piriformis syndrome"]},
+ tx:["Treat the cause"],q:["=sciatic nerve","=tibial nerve","tarsal tunnel","tarsal tunnel syndrome","piriformis syndrome"]},
 
 peroneal:{n:"Common peroneal nerve injury — foot drop",alias:"common fibular nerve",k:"dz",p:"lleg",enz:"Dorsiflexors and evertors (L4–S2)",inh:"Fibular neck fracture, lateral knee trauma, compression",fa:"457",hi:1,
  mech:"The common peroneal nerve wraps around the <b>fibular neck</b>, where it is easily compressed or injured. PED: Peroneal Everts and Dorsiflexes.",
@@ -9677,7 +9695,7 @@ morpherrors:{n:"Errors in morphogenesis",alias:"malformation · deformation · d
  labs:["—"],
  buzz:["Amniotic band amputation = disruption"],
  src:["Robbins ch 10 — Diseases of infancy and childhood","Langman ch 9 — Birth Defects and Prenatal Diagnosis"],
- tx:["—"],q:["amniotic band","amniotic band syndrome","field defect","errors in morphogenesis","deformation sequence"]},
+ tx:["—"],q:["amniotic band","amniotic band syndrome","errors in morphogenesis","deformation sequence"]},
 
 twins:{n:"Twinning & twin-twin transfusion",alias:"monozygotic · dizygotic · chorionicity",k:"reg",p:"embweeks",enz:"When the single embryo splits",inh:"—",fa:"635",hi:1,
  mech:"Dizygotic twins come from two eggs and always have two placentas and two sacs. In monozygotic twins the <b>timing of the split</b> decides what they share.",
@@ -9960,7 +9978,7 @@ syncope:{n:"Syncope",k:"dz",p:"vshtn",enz:"Transient loss of consciousness from 
  labs:["—"],
  buzz:["Fainted while standing in a hot crowd, after feeling warm and nauseated"],
  src:["Robbins ch 12 — The heart","Costanzo ch 4 — Cardiovascular physiology"],
- tx:["—"],q:["syncope","vasovagal","orthostatic hypotension","carotid sinus hypersensitivity"]},
+ tx:["—"],q:["syncope","vasovagal","=orthostatic hypotension","carotid sinus hypersensitivity"]},
 
 cholemb:{n:"Cholesterol emboli syndrome",alias:"atheroembolism",k:"dz",p:"vsath",enz:"Cholesterol crystals shower from aortic plaque",inh:"Angiography, angioplasty, endovascular grafting",fa:"306",hi:0,
  mech:"Cholesterol displaced from atherosclerotic plaque in large arteries (usually the aorta) lodges in small arteries and incites inflammation.",
@@ -11261,7 +11279,7 @@ nociception:{n:"Nociceptive pain — the four steps",alias:"transduction · tran
  labs:["—"],
  buzz:["Aδ = sharp and fast · C = dull and slow"],
  src:["Fundamental Neuroscience ch 18 — The Somatosensory System II: Nociception, Thermal Sense, and Touch","Katzung ch 31 — Opioid Agonists & Antagonists"],
- tx:["—"],q:["nociceptive pain","nociception","pain transmission","a delta fibers","c fibers","trpv1"]},
+ tx:["—"],q:["nociceptive pain","nociception","pain transmission","a delta fibers","=c fibers","trpv1","=c fiber"]},
 
 neuropathicpain:{n:"Neuropathic pain",k:"dz",p:"pnneuro",enz:"Upregulated, persistently active voltage-gated Na⁺ channels",inh:"Diabetes, shingles, nerve injury",hi:1,fa:"235",
  mech:"Pain from dysfunction of the CNS or PNS itself, carried by upregulated and persistently active voltage-gated Na⁺ channels. Diabetic peripheral neuropathy is the classic example.",
@@ -22097,6 +22115,18 @@ const svg=document.getElementById('svg'), drawer=document.getElementById('drawer
 const state={view:"core",z:1,tx:0,ty:0,sel:null,quiz:"",reveal:new Set(),filter:null,q:""};
 /* pin quiz: PQ[view][cardId] = true (named correctly) or false */
 const PQ={};
+/* review progress, kept on this device only: cards marked reviewed, and every
+   quiz answer (pins and buzzwords). A card is a weak spot while its misses
+   outnumber its right answers. */
+const PROG_KEY="mla-progress";
+let PROG={rev:{},ok:{},miss:{}};
+try{ const p=JSON.parse(localStorage.getItem(PROG_KEY)||"null"); if(p&&typeof p==="object") PROG={rev:p.rev||{},ok:p.ok||{},miss:p.miss||{}}; }catch(e){}
+function saveProg(){ try{ localStorage.setItem(PROG_KEY,JSON.stringify(PROG)); }catch(e){} }
+const isRev=id=>!!PROG.rev[id];
+const isWeak=id=>(PROG.miss[id]||0)>(PROG.ok[id]||0);
+function setRev(id,on){ if(on) PROG.rev[id]=Date.now(); else delete PROG.rev[id]; saveProg(); }
+function recordAnswer(id,right){ const b=right?PROG.ok:PROG.miss; b[id]=(b[id]||0)+1; saveProg(); }
+function clearProg(ids){ ids.forEach(id=>{ delete PROG.rev[id]; delete PROG.ok[id]; delete PROG.miss[id]; }); saveProg(); }
 let cam=null;
 
 Object.values(MAPS).forEach(m=>{m._n={};m.nodes.forEach(n=>m._n[n.id]=n);});
@@ -22325,6 +22355,17 @@ function practiceHtml(id){
   }).join("")}</div>`);
 }
 const REPO="https://github.com/cojeda95/Q-bank";
+function quizNote(id){
+  const ok=PROG.ok[id]||0, miss=PROG.miss[id]||0;
+  if(!ok&&!miss) return "";
+  return `<span class="revnote${isWeak(id)?" weak":""}">Quiz: ${ok} right · ${miss} missed${isWeak(id)?" — on your review list":""}</span>`;
+}
+/* progress block for a set of cards — the rail, the phone drawer and the Index use it */
+function progHtml(ids,label){
+  const rev=ids.filter(isRev).length, weak=ids.filter(isWeak);
+  return `<div class="revbar"><span><b>${rev}</b> of <b>${ids.length}</b> ${label} reviewed</span><span class="qbar"><i style="width:${ids.length?Math.round(rev/ids.length*100):0}%"></i></span></div>
+    ${weak.length?`<div class="rsrc-b">Review these · ${weak.length}</div><div class="lesionlist">${weak.map(id=>{const L=LES[id];return `<button class="li weak" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="rec">${PROG.ok[id]||0} right · ${PROG.miss[id]||0} missed</span></span></button>`;}).join("")}</div>`:""}`;
+}
 function reportUrl(id){
   const L=LES[id]||{}, m=MAPS[state.view];
   const srcs=[L.fa?`First Aid 2025, ${/[,–]/.test(L.fa)?"pp.":"p."} ${L.fa}`:"",...(L.src||[])].filter(Boolean);
@@ -22335,8 +22376,8 @@ function openLes(id,center,pick){
   const L=LES[id]; if(!L) return;
   state.sel=id; state.info=false; drawer.hidden=false;
   const res=pick===undefined?"":pick===id
-    ?`<div class="pqres ok"><span>✓ Right.</span><button data-next>Next pin →</button></div>`
-    :`<div class="pqres bad"><span>✗ You picked ${esc(LES[pick].n)}.</span><button data-next>Next pin →</button></div>`;
+    ?`<div class="pqres ok"><span>✓ Right.</span><button data-next>${state.quiz==="buzz"?"Next buzzword":"Next pin"} →</button></div>`
+    :`<div class="pqres bad"><span>✗ You picked ${esc(LES[pick].n)}.</span><button data-next>${state.quiz==="buzz"?"Next buzzword":"Next pin"} →</button></div>`;
   const rel=Object.entries(LES).filter(([k,v])=>v.p===L.p&&k!==id).slice(0,7);
   drawer.innerHTML=`
    <div class="dhead">
@@ -22356,6 +22397,7 @@ function openLes(id,center,pick){
        ${L.fa?`<span class="mtag fa" title="First Aid for the USMLE Step 1 2025">First Aid ${/[,–]/.test(L.fa)?"pp.":"p."} ${esc(L.fa)}</span>`:""}
        ${L.ref&&L.ref.length?`<span class="mtag fa" title="Checked against the PubMed-indexed articles listed at the bottom of this card">Literature ${L.ref.length===1?"ref":"refs"} ↓</span>`:""}
      </div>
+     <div class="revrow"><button class="revbtn" id="drev" aria-pressed="${isRev(id)}" title="Saved on this device only">${isRev(id)?"✓ Reviewed":"Mark reviewed"}</button>${quizNote(id)}</div>
    </div>
    <div class="dbody">
      ${res}
@@ -22372,6 +22414,9 @@ function openLes(id,center,pick){
   drawer.scrollTop=0;
   document.getElementById("dclose").onclick=closeDrawer;
   document.getElementById("dlink").onclick=copyLink;
+  document.getElementById("drev").onclick=ev=>{ const on=!isRev(id); setRev(id,on);
+    ev.currentTarget.setAttribute("aria-pressed",String(on)); ev.currentTarget.textContent=on?"✓ Reviewed":"Mark reviewed";
+    renderRail(); if(state.view==="index") renderIndex(); };
   drawer.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.go));
   drawer.querySelectorAll("[data-next]").forEach(b=>b.onclick=nextQuiz);
   renderRail();
@@ -22456,18 +22501,88 @@ function openQuiz(id){
   document.getElementById("dclose").onclick=closeDrawer;
   drawer.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
     (PQ[state.view]=PQ[state.view]||{})[id]=(b.dataset.a===id);
+    recordAnswer(id,b.dataset.a===id);
     openLes(id,false,b.dataset.a); updateScore();
   });
   render(); flashPins(id,false); writeHash();
 }
 function nextQuiz(){
+  if(state.quiz==="buzz") return nextBuzz();
   const done=PQ[state.view]||{}, left=mapIds(state.view).filter(k=>!(k in done));
   if(!left.length){ closeDrawer(); return; }
   const id=left[Math.floor(Math.random()*left.length)];
   openQuiz(id); flashPins(id,true);
 }
+/* ── buzzword quiz ───────────────────────────────────────
+   One buzzword from a card (its own name blanked) and four cards to choose
+   from, drawn from this map or from the whole topic — same pathway first. */
+const BQ={};   // BQ[scope][cardId] = true/false for this session
+let BSCOPE="map";
+try{ if(localStorage.getItem("mla-bscope")==="topic") BSCOPE="topic"; }catch(e){}
+const topicViews=()=>BSCOPE==="topic"?((TOPICS.find(t=>t[0]===TOPIC_OF[state.view])||[0,0,[state.view]])[2]):[state.view];
+const buzzKey=()=>BSCOPE==="topic"?"t:"+TOPIC_OF[state.view]:"m:"+state.view;
+function buzzOf(id){
+  const L=LES[id], red=redactor(L);
+  return (L.buzz||[]).filter(b=>b&&b!=="—").map(red).filter(b=>(b.replace(/▢/g,"").match(/[A-Za-z]{3,}/g)||[]).length>=2);
+}
+function buzzIds(){
+  const ids=new Set(); topicViews().forEach(v=>mapIds(v).forEach(id=>ids.add(id)));
+  return [...ids].filter(id=>buzzOf(id).length);
+}
+function buzzOptions(id,pool){
+  const L=LES[id];
+  const pools=[pool.filter(k=>LES[k].p===L.p), pool.filter(k=>LES[k].k===L.k), pool, Object.keys(LES).filter(k=>LES[k].p===L.p)];
+  const pick=new Set([id]);
+  for(const p of pools){ for(const k of shuffle(p.filter(k=>!pick.has(k)&&LES[k].n!==L.n))){ if(pick.size>=4) break; pick.add(k); } }
+  return shuffle([...pick]);
+}
+function openBuzz(id){
+  const L=LES[id], pool=buzzIds(), bz=buzzOf(id); if(!L||!bz.length) return;
+  const clue=bz[Math.floor(Math.random()*bz.length)];
+  const from=BSCOPE==="topic"?(TOPICS.find(t=>t[0]===TOPIC_OF[state.view])||[0,""])[1]:MAPS[state.view].t;
+  state.sel=null; state.info=false; drawer.hidden=false;
+  drawer.innerHTML=`
+   <div class="dhead">
+     <button class="dclose" id="dclose" aria-label="Close">×</button>
+     <span class="dkind" style="--k:var(--accent)">Buzzword</span>
+     <h2 class="dtitle bzq">“${esc(clue)}”</h2>
+     <p class="pqwhere">Which card is this? Drawn from <b>${esc(from)}</b></p>
+   </div>
+   <div class="dbody">
+     ${sec("Your answer",`<div class="pqopts">${buzzOptions(id,pool).map(k=>`<button class="pqopt" data-a="${k}">${esc(LES[k].n)}</button>`).join("")}</div>`)}
+   </div>`;
+  drawer.scrollTop=0;
+  document.getElementById("dclose").onclick=closeDrawer;
+  drawer.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
+    const right=b.dataset.a===id;
+    (BQ[buzzKey()]=BQ[buzzKey()]||{})[id]=right; recordAnswer(id,right);
+    if(!livesOn(id,state.view)){ const l=(LOC[id]||[]).find(x=>topicViews().includes(x.v)); if(l) setView(l.v); }
+    openLes(id,true,b.dataset.a); updateScore();
+  });
+  writeHash();
+}
+function nextBuzz(){
+  if(state.view==="index") return;
+  const done=BQ[buzzKey()]||{}, left=buzzIds().filter(k=>!(k in done));
+  if(!left.length){ closeDrawer(); updateScore(); return; }
+  openBuzz(left[Math.floor(Math.random()*left.length)]);
+}
 function updateScore(){
   const box=document.getElementById("qscore");
+  if(state.quiz==="buzz"&&state.view!=="index"){
+    const total=buzzIds().length, done=BQ[buzzKey()]||{};
+    const named=Object.keys(done).length, right=Object.values(done).filter(Boolean).length;
+    box.hidden=false;
+    box.innerHTML=`<span class="seg"><button data-bscope="map" aria-pressed="${BSCOPE==="map"}">This map</button><button data-bscope="topic" aria-pressed="${BSCOPE==="topic"}">Whole topic</button></span>
+      <span>Answered <b>${named}/${total}</b> · <b>${right}</b> right</span>
+      <span class="qbar"><i style="width:${total?Math.round(named/total*100):0}%"></i></span>
+      ${named<total?`<button class="go" data-qnext>Next buzzword</button>`:`<span>All done</span>`}
+      ${named?`<button data-qreset title="Clear this round">Reset</button>`:""}`;
+    box.querySelectorAll("[data-bscope]").forEach(b=>b.onclick=()=>{ BSCOPE=b.dataset.bscope; try{localStorage.setItem("mla-bscope",BSCOPE);}catch(e){} updateScore(); nextBuzz(); });
+    const n=box.querySelector("[data-qnext]"); if(n) n.onclick=nextBuzz;
+    const r=box.querySelector("[data-qreset]"); if(r) r.onclick=()=>{ delete BQ[buzzKey()]; updateScore(); nextBuzz(); };
+    return;
+  }
   const on=state.quiz==="pins"&&state.view!=="index";
   box.hidden=!on; if(!on) return;
   const total=mapIds(state.view).length, done=PQ[state.view]||{};
@@ -22483,11 +22598,12 @@ function setQuiz(mode){
   state.quiz=mode; state.reveal.clear();
   const b=document.getElementById("quizBtn");
   b.classList.toggle("on",!!mode);
-  b.textContent=mode==="steps"?"Quiz: steps":mode==="pins"?"Quiz: pins":"Quiz";
+  b.textContent=mode==="steps"?"Quiz: steps":mode==="pins"?"Quiz: pins":mode==="buzz"?"Quiz: buzzwords":"Quiz";
   document.querySelectorAll("#qmenu [data-q]").forEach(o=>o.setAttribute("aria-checked",String(o.dataset.q===mode)));
   if(mode==="pins"){ drawer.hidden=true; state.sel=null; writeHash(); }
   if(state.view!=="index") render();
   renderRail(); updateScore();
+  if(mode==="buzz") nextBuzz();
 }
 
 /* ── deep links ─────────────────────────────────────────
@@ -22617,9 +22733,10 @@ function openMapInfo(){
      <h2 class="dtitle">${esc(m.t)}</h2>
      ${m.sub?`<p class="dalias">${esc(m.sub)}</p>`:""}
    </div>
-   <div class="dbody">${(m.fa||(m.src&&m.src.length))?sec("Sources for this map",`<p class="reflead">${MAPSRC_LEAD}</p>${mapSrcList(m)}`):""}</div>`;
+   <div class="dbody">${sec("Your progress",progHtml(mapIds(state.view),"cards"))}${(m.fa||(m.src&&m.src.length))?sec("Sources for this map",`<p class="reflead">${MAPSRC_LEAD}</p>${mapSrcList(m)}`):""}</div>`;
   drawer.scrollTop=0;
   document.getElementById("dclose").onclick=closeDrawer;
+  drawer.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
   render(); renderRail(); writeHash();
 }
 function bindSrcJump(){
@@ -22657,15 +22774,20 @@ function renderRail(){
   }
   const pg=pageQuery(state.q);
   if(pg!=null) html+=`<div class="rail-sec"><h3 class="rail-h">Maps citing First Aid p. ${pg}</h3>${pageHitsHtml(pg)||`<p class="rail-sub">No map lists this page.</p>`}</div>`;
+  const onMap=!state.q&&state.view!=="index";
+  if(onMap&&ids.length) html+=`<div class="rail-sec"><h3 class="rail-h">Your progress</h3>${progHtml(ids,"cards")}</div>`;
   html+=`<div class="rail-sec"><h3 class="rail-h">${pg!=null?`Cards citing p. ${pg}`:state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${ids.length}</h3>
     <div class="lesionlist">${ids.length?ids.map(id=>{const L=LES[id];
-      return `<button class="li" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
-    }).join(""):`<p style="font-size:12.5px;color:var(--ink-3);padding:4px 7px">No match. Try “Heinz”, “orotic”, “second wind”.</p>`}</div></div>`;
+      return `<button class="li${isRev(id)?" rev":""}${isWeak(id)?" weak":""}" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
+    }).join(""):`<p style="font-size:12.5px;color:var(--ink-3);padding:4px 7px">No match. Try “Heinz”, “orotic”, “second wind”.</p>`}</div>
+    ${onMap&&ids.some(id=>isRev(id)||PROG.ok[id]||PROG.miss[id])?`<p style="margin:10px 7px 0"><button class="linkbtn" data-resetprog>Reset this map’s progress</button></p>`:""}</div>`;
   rail.innerHTML=html+(state.q?"":mapSrcHtml(m));
   bindSrcJump();
   rail.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{state.filter=b.dataset.f||null;render();renderRail();if(state.view==="index")renderIndex();});
   rail.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
   rail.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
+  const rp=rail.querySelector("[data-resetprog]");
+  if(rp) rp.onclick=()=>{ if(confirm("Clear the reviewed marks and quiz record for the cards on this map? This only affects this device.")){ clearProg(mapIds(state.view)); renderRail(); } };
 }
 
 /* ── index view ─────────────────────────────────────── */
@@ -22676,13 +22798,14 @@ function renderIndex(){
   ids.forEach(id=>{(groups[LES[id].p]=groups[LES[id].p]||[]).push(id);});
   const cards=Object.entries(groups).map(([p,list])=>`
     <section class="idxcard" style="--c:${pc(p)}"><h3><span class="bar"></span>${esc((PATHS[p]||PATHS.neutral).n)}</h3>
-    <ul>${list.map(id=>{const L=LES[id];return `<li><button class="idxrow" data-les="${id}">
+    <ul>${list.map(id=>{const L=LES[id];return `<li><button class="idxrow${isRev(id)?" rev":""}" data-les="${id}">
       <span class="t">${esc(L.n)}</span><span class="e">${esc(L.enz||"")}</span>
       ${L.buzz&&L.buzz[0]?`<span class="b">${esc(L.buzz[0])}</span>`:""}</button></li>`;}).join("")}</ul></section>`).join("");
   const pg=pageQuery(q);
   idxWrap.innerHTML=`<div class="idx-intro">${pg!=null?`<h2>First Aid 2025, p. ${pg}</h2>
     <p>${ids.length} ${ids.length===1?"card cites":"cards cite"} this page${mapsOnPage(pg).length?`, and so ${mapsOnPage(pg).length===1?"does this map":"do these maps"}:`:"."}</p>${pageHitsHtml(pg)}`:`<h2>Every lesion on one page</h2>
-    <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>`}
+    <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>
+    ${!q?`<details class="idx-sources" ${Object.keys(LES).some(isWeak)?"open":""}><summary>Your progress (this device)</summary>${progHtml(Object.keys(LES),"cards")}</details>`:""}`}
     <details class="idx-sources"><summary>Sources</summary>
       <p>Every card was written from and checked against the sources below, line by line. Each card carries its own <b>Sources</b> section naming the exact First Aid pages and book chapters it rests on, so you can see why a fact is stated where it is; the pins on every map open the card that carries those citations, and each map's side panel lists the First Aid pages and chapters the map itself was checked against. Where sources disagree, the card says so or leaves the number out, and anything no source supported was cut. The First Aid page on each card points to the 2025 edition.</p>
       <ul>
