@@ -40,3 +40,21 @@ Pipeline side (schema for `questions_sdlNN.js`, checker rules): `/workspace/pipe
 section "Grid (matrix) choices — PROTOTYPE". Grid explanations refer to rows by letter
 ("Choice A (↓ serum osmolality, ↓ urine osmolality, ↓ urine Na⁺) is …"), never by a bare `↓ / ↓ / ↓`;
 the site never reorders choices, so the letters in the data are the letters the student sees.
+
+## Wave 1 on the Nephro site — trial batch 4 ("Trial: grid answer choices")
+Ten grid questions (one each in SDLs 6, 9, 15, 18, 20, 25, 26, 28, 45, 46; ids `grid_sdlNN_q01`) live in
+`nephro/data.js` as **batch 4**. No existing question was replaced. Batch 4 gets the same treatment as
+the batch-3 short-stem trial:
+- `shared/app.js`: `TRIAL_BATCHES` = { 3: BATCH3, 4: `QUIZ_CONFIG.batch4` (only where a block sets it) };
+  `isTrialQ(q)` replaces the old `q.batch === 3` tests, so trial items stay out of exam totals, Full Exam
+  Simulation, the Custom Exam Builder and objective splits. Neuro's Bloom Batch (batch 3, no batch4
+  config) is unchanged.
+- SDL picker: the batch-4 row (amber, `trial-alt-row`) sits right under the purple batch-3 row (or right
+  under Batch 2 when an SDL has no batch 3); its own banner, hint and score key `sdl-N-b4`.
+- SDL list meta: "12 questions · 🧪 3 trial questions · ▦ 1 grid trial".
+- `live.js`: trial batches (≥ 3) are left out of the whole-exam id pools; batch 4 has its own label.
+- Hub card: "1,122 questions + 46 trial" (36 short-stem + 10 grid).
+- Pipeline source: `blocks/nephro/trial_grid/questions_grid_trial.js` → `make_grid_files.js` →
+  `questions/questions_sdlNN_grid.js` (`gridQuestions`), loaded as batch 4 by `tools/lib/load_questions.js`.
+The demo page (`nephro/grid-demo.html`) is kept for now; its SDL 15/20/45 items are the same
+questions as `grid_sdl15/20/45_q01` under demo ids, and it can be deleted once the trial is reviewed.

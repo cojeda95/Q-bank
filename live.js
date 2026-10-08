@@ -36,7 +36,7 @@ const BLOCKS = [
   { key: 'pulm', label: 'Pulmonology' },
   { key: 'ortho', label: 'Orthopedics' },
   { key: 'rheum', label: 'Rheumatology' },
-  { key: 'nephro', label: 'Nephrology/Urology', batch3Label: 'Batch 3 — Trial: shorter clinical stems + shorter answer choices' },
+  { key: 'nephro', label: 'Nephrology/Urology', batch3Label: 'Batch 3 — Trial: shorter clinical stems + shorter answer choices', batch4Label: 'Batch 4 — Trial: grid answer choices' },
   { key: 'omm', label: 'OMM III' },
 ];
 
@@ -237,8 +237,8 @@ function shuffleArr(arr) {
   }
   return a;
 }
-// Every question id in a block across both regular batches — excludes batch
-// 3 (Bloom Batch), same opt-in-only exclusion the regular per-block app uses
+// Every question id in a block across both regular batches — excludes the trial
+// batches (3: Bloom Batch / nephro short-stem trial; 4: nephro grid trial), same opt-in-only exclusion the regular per-block app uses
 // for its own Exam/Final Exam Simulation question pools. Pass examNumber to
 // scope to just that exam; omit (or pass null) for the whole block.
 function allBlockQuestionIds(quizData, examNumber) {
@@ -246,7 +246,7 @@ function allBlockQuestionIds(quizData, examNumber) {
   (quizData.exams || []).forEach(exam => {
     if (examNumber != null && exam.examNumber !== examNumber) return;
     (exam.sdls || []).forEach(sdl => {
-      (sdl.questions || []).forEach(q => { if (q.batch !== 3) ids.push(q.id); });
+      (sdl.questions || []).forEach(q => { if (!(q.batch >= 3)) ids.push(q.id); });
     });
   });
   return ids;
@@ -259,7 +259,7 @@ function blockQuestionIdsBefore(quizData, examNumber) {
   (quizData.exams || []).forEach(exam => {
     if (exam.examNumber >= examNumber) return;
     (exam.sdls || []).forEach(sdl => {
-      (sdl.questions || []).forEach(q => { if (q.batch !== 3) ids.push(q.id); });
+      (sdl.questions || []).forEach(q => { if (!(q.batch >= 3)) ids.push(q.id); });
     });
   });
   return ids;
@@ -353,6 +353,7 @@ function batchLabel(b) {
   if (b === 1) return 'Batch 1 — Quick Recall';
   if (b === 2) return 'Batch 2 — Deep Vignettes';
   if (b === 3) { const blk = BLOCKS.find(x => x.key === loadedBlockKey); return (blk && blk.batch3Label) || 'Batch 3 — Bloom Batch'; }
+  if (b === 4) { const blk = BLOCKS.find(x => x.key === loadedBlockKey); return (blk && blk.batch4Label) || 'Batch 4 — Trial'; }
   return `Batch ${b}`;
 }
 

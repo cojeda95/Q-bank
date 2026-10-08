@@ -223,6 +223,10 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   background: var(--purple-bg);
 }
 .sdl-row.bloom-row .sdl-title { color: var(--purple-ink); }
+/* Second trial slot (QUIZ_CONFIG.batch4, e.g. nephro "Trial: grid answer choices"): amber, so it never
+   reads as part of the purple batch-3 trial. */
+.sdl-row.bloom-row.trial-alt-row { border-color: var(--amber-line); background: var(--amber-bg); }
+.sdl-row.bloom-row.trial-alt-row .sdl-title { color: var(--amber-ink); }
 
 .btn {
   background: var(--navy-fill);
@@ -327,6 +331,7 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   border-radius: 8px;
   margin-bottom: 14px;
 }
+.bloom-banner.trial-alt-banner { background: var(--amber-bg); color: var(--amber-ink); }
 .flag-btn {
   background: none;
   border: 1px solid var(--grey-border);

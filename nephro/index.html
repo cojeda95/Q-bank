@@ -49,6 +49,19 @@
     hint: 'Trial set: the same Exam 2 objectives written with shorter clinical stems and shorter answer choices. It is kept out of the exam totals, Full Exam Simulation and the Custom Exam Builder.',
     banner: '🧪 Trial: shorter clinical stems + shorter answer choices',
     afterBatch2: true
+  },
+  // Batch 4 (second trial slot, shared/app.js TRIAL_BATCHES) is the grid-answer-choice trial:
+  // one question per wave-1 SDL, same treatment as batch 3 (kept out of exam totals,
+  // simulations, the Custom Exam Builder and splits). Listed right under the batch-3 row.
+  batch4: {
+    name: 'Grid trial',
+    listLabel: 'grid trial',
+    icon: '▦',
+    title: '▦ Trial: grid answer choices',
+    meta: 'experimental format, kept separate from Batches 1–2',
+    hint: 'Grid trial: answer choices are rows of findings (↑ / ↓ / ↔) under column headings, the table format used by board question banks. It is kept out of the exam totals, Full Exam Simulation and the Custom Exam Builder.',
+    banner: '▦ Trial: grid answer choices',
+    afterBatch2: true
   }
 };</script>
 <script src="data.js"></script>

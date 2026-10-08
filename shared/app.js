@@ -36,6 +36,19 @@ const BATCH3 = Object.assign({
   banner: '🧠 Bloom Batch — Level 3/4 Trial (experimental, board-qbank style)',
   afterBatch2: false,
 }, QUIZ_CONFIG.batch3 || {});
+// Batch 4 is a second, optional trial slot with the same treatment as batch 3; it exists
+// only where a block sets QUIZ_CONFIG.batch4 (same fields, plus rowClass for the picker
+// row; afterBatch2 lists it right under batch 3). TRIAL_BATCHES maps batch number ->
+// config, and isTrialQ() is the one test for "kept out of totals/simulation/builder/splits".
+const TRIAL_BATCHES = { 3: Object.assign({ rowClass: 'bloom-row' }, BATCH3) };
+if (QUIZ_CONFIG.batch4) {
+  TRIAL_BATCHES[4] = Object.assign({
+    name: 'Trial 2', listLabel: 'trial questions', icon: '🧪', title: '🧪 Trial', meta: 'experimental',
+    hint: '', banner: '🧪 Trial (experimental)', afterBatch2: false, rowClass: 'bloom-row trial-alt-row',
+  }, QUIZ_CONFIG.batch4);
+}
+const TRIAL_KEYS = Object.keys(TRIAL_BATCHES).map(Number).sort((a, b) => a - b);
+function isTrialQ(q) { return !!TRIAL_BATCHES[q.batch]; }
 
 /* ── Lesion Atlas links ─────────────────────────────────────────────────
    resources/atlas-terms.js (written by tools/build-atlas.py) lists every atlas
@@ -238,6 +251,7 @@ function savePracticeSessionSnapshot() {
       examNumber: session.examNumber,
       scoreKey: session.scoreKey,
       isBloom: session.isBloom,
+      trialBatch: session.trialBatch || 0,
       questions: session.questions,
       index: session.index,
       records: session.records,
@@ -410,7 +424,8 @@ function findSdl(sdlNumber) {
 }
 
 function allQuestionsForExam(examNumber) {
-  // Excludes batch 3 (Bloom Batch) — that's an opt-in experimental trial, not part of
+  // Excludes the trial batches (isTrialQ: batch 3, Bloom Batch / nephro short-stem trial,
+  // and batch 4 where QUIZ_CONFIG.batch4 exists) — opt-in experimental trials, not part of
   // the standard question pool used for exam totals, Full Exam Simulation, or the
   // Custom Exam Builder's current/prior blend. Also respects High-Yield Only mode.
   const settings = loadSettings();
@@ -419,7 +434,7 @@ function allQuestionsForExam(examNumber) {
   let qs = [];
   exam.sdls.forEach(sdl => {
     sdl.questions.forEach(q => {
-      if (q.batch === 3) return;
+      if (isTrialQ(q)) return;
       if (settings.hyOnly && !q.isHighYield) return;
       qs.push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title }));
     });
@@ -741,8 +756,7 @@ function scoreKeysForSdl(sdlNumber) {
     { key: `sdl-${sdlNumber}`, label: 'Both Batches' },
     { key: `sdl-${sdlNumber}-b1`, label: 'Batch 1' },
     { key: `sdl-${sdlNumber}-b2`, label: 'Batch 2' },
-    { key: `sdl-${sdlNumber}-b3`, label: BATCH3.name },
-  ];
+  ].concat(TRIAL_KEYS.map(b => ({ key: `sdl-${sdlNumber}-b${b}`, label: TRIAL_BATCHES[b].name })));
 }
 function bestScoreForSdl(sdlNumber) {
   const options = scoreKeysForSdl(sdlNumber)
@@ -758,14 +772,17 @@ function renderExamSdlList(examNumber) {
   if (!exam) { renderHome(); return; }
 
   const settings = loadSettings();
-  const totalQ = exam.sdls.reduce((s, sdl) => s + visibleQuestions(sdl).filter(q => q.batch !== 3).length, 0);
+  const totalQ = exam.sdls.reduce((s, sdl) => s + visibleQuestions(sdl).filter(q => !isTrialQ(q)).length, 0);
   const estMinutes = Math.round(totalQ * 90 / 60);
 
   const rows = exam.sdls.map(sdl => {
     const best = bestScoreForSdl(sdl.sdlNumber);
     const visible = visibleQuestions(sdl);
-    const regularCount = visible.filter(q => q.batch !== 3).length;
-    const bloomCount = visible.filter(q => q.batch === 3).length;
+    const regularCount = visible.filter(q => !isTrialQ(q)).length;
+    const trialMeta = TRIAL_KEYS.map(b => {
+      const n = visible.filter(q => q.batch === b).length;
+      return n ? ` &middot; ${TRIAL_BATCHES[b].icon} ${n} ${escapeHtml(TRIAL_BATCHES[b].listLabel)}` : '';
+    }).join('');
     if (!sdl.questions.length) return `
       <div class="sdl-row pending">
         <div>
@@ -780,7 +797,7 @@ function renderExamSdlList(examNumber) {
       <div class="sdl-row" data-sdl="${sdl.sdlNumber}">
         <div>
           <div class="sdl-title">${escapeHtml(sdl.title)}</div>
-          <div class="sdl-meta">${regularCount} questions${bloomCount ? ` &middot; ${BATCH3.icon} ${bloomCount} ${escapeHtml(BATCH3.listLabel)}` : ''}</div>
+          <div class="sdl-meta">${regularCount} questions${trialMeta}</div>
         </div>
         ${scoreHtml}
       </div>`;
@@ -1144,7 +1161,7 @@ function finalPresetCardsHtml(note) {
    extra (default 0) }. Every run draws `perObjective` random questions from
    each objective of each SDL in `exam`, in SDL then objective order, and puts
    `extra` more at the end, drawn at random from the rest of that exam's pool.
-   Bloom Batch is left out as everywhere else, but High-Yield Only Mode is
+   Trial batches (isTrialQ) are left out as everywhere else, but High-Yield Only Mode is
    ignored: the split's size is set by the objective count, and some objectives
    have no high-yield questions at all. Blocks without splits see no change. */
 function splitPresets() {
@@ -1168,7 +1185,7 @@ function splitObjectiveGroups(preset) {
   exam.sdls.slice().sort((a, b) => a.sdlNumber - b.sdlNumber).forEach(sdl => {
     const byObjective = new Map();
     sdl.questions.forEach(q => {
-      if (q.batch === 3) return;
+      if (isTrialQ(q)) return;
       if (!byObjective.has(q.objective)) byObjective.set(q.objective, []);
       byObjective.get(q.objective).push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title }));
     });
@@ -1486,7 +1503,7 @@ function renderBatchPicker(sdlNumber) {
 
   const batch1Count = visible.filter(q => q.batch === 1).length;
   const batch2Count = visible.filter(q => q.batch === 2).length;
-  const bloomCount = visible.filter(q => q.batch === 3).length;
+  const trialCounts = TRIAL_KEYS.map(b => [b, visible.filter(q => q.batch === b).length]).filter(([, n]) => n);
   const classicBoth = batch1Count > 0 && batch2Count > 0;
 
   // Build the list of selectable options. If there's only one, skip the picker entirely.
@@ -1494,11 +1511,15 @@ function renderBatchPicker(sdlNumber) {
   if (batch1Count) options.push({ key: '1', title: 'Batch 1 — Quick Recall', meta: `${batch1Count} questions`, scoreKey: `sdl-${sdlNumber}-b1` });
   if (batch2Count) options.push({ key: '2', title: 'Batch 2 — Deep Vignettes', meta: `${batch2Count} questions`, scoreKey: `sdl-${sdlNumber}-b2` });
   if (classicBoth) options.push({ key: 'all', title: 'Both Batches', meta: `${batch1Count + batch2Count} questions`, scoreKey: `sdl-${sdlNumber}` });
-  if (bloomCount) {
-    const trialOpt = { key: '3', title: escapeHtml(BATCH3.title), meta: `${bloomCount} questions · ${escapeHtml(BATCH3.meta)}`, scoreKey: `sdl-${sdlNumber}-b3`, special: true };
+  // Trial rows: an afterBatch2 trial goes right under Batch 2 (after any earlier trial row
+  // placed there), otherwise at the end.
+  let afterB2 = 0;
+  trialCounts.forEach(([b, n]) => {
+    const T = TRIAL_BATCHES[b];
+    const trialOpt = { key: String(b), title: escapeHtml(T.title), meta: `${n} question${n === 1 ? '' : 's'} · ${escapeHtml(T.meta)}`, scoreKey: `sdl-${sdlNumber}-b${b}`, rowClass: T.rowClass };
     const b2 = options.findIndex(o => o.key === '2');
-    if (BATCH3.afterBatch2 && b2 >= 0) options.splice(b2 + 1, 0, trialOpt); else options.push(trialOpt);
-  }
+    if (T.afterBatch2 && b2 >= 0) options.splice(b2 + 1 + afterB2++, 0, trialOpt); else options.push(trialOpt);
+  });
 
   if (options.length === 0) {
     main.innerHTML = `
@@ -1520,7 +1541,7 @@ function renderBatchPicker(sdlNumber) {
   };
 
   const rows = options.map(opt => `
-    <div class="sdl-row ${opt.special ? 'bloom-row' : ''}" data-batch="${opt.key}">
+    <div class="sdl-row ${opt.rowClass || ''}" data-batch="${opt.key}">
       <div>
         <div class="sdl-title">${opt.title}</div>
         <div class="sdl-meta">${opt.meta}</div>
@@ -1533,7 +1554,7 @@ function renderBatchPicker(sdlNumber) {
     <h1>${escapeHtml(sdl.title)}</h1>
     <p class="subtitle">Choose which batch to practice.${settings.hyOnly ? ' <strong>⚡ High-Yield Only Mode is ON</strong> — counts below are already filtered.' : ''}</p>
     <div class="sdl-list">${rows}</div>
-    ${bloomCount ? `<p class="setup-hint" style="margin-top:14px;">${escapeHtml(BATCH3.hint)}</p>` : ''}
+    ${trialCounts.map(([b]) => TRIAL_BATCHES[b].hint ? `<p class="setup-hint" style="margin-top:14px;">${escapeHtml(TRIAL_BATCHES[b].hint)}</p>` : '').join('')}
   `;
 
   document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
@@ -1567,6 +1588,7 @@ function renderPracticeStart(sdlNumber, batch, forceNew) {
         examNumber: snap.examNumber,
         scoreKey: snap.scoreKey,
         isBloom: !!snap.isBloom,
+        trialBatch: snap.trialBatch || (snap.isBloom ? 3 : 0),
         questions: snap.questions,
         index: Math.min(snap.index || 0, snap.questions.length - 1),
         records: Array.isArray(snap.records) && snap.records.length === snap.questions.length
@@ -1591,14 +1613,16 @@ function renderPracticeStart(sdlNumber, batch, forceNew) {
   const batch2Count = baseQuestions.filter(q => q.batch === 2).length;
   const hasClassicBatches = batch1Count > 0 && batch2Count > 0;
 
-  let questions = baseQuestions.filter(q => q.batch !== 3); // default/"all": classic batches only, never bloom
+  let questions = baseQuestions.filter(q => !isTrialQ(q)); // default/"all": classic batches only, never a trial
   let scoreKey = `sdl-${sdlNumber}`;
   let isBloom = false;
+  let trialBatch = 0;
 
-  if (batch === '3') {
-    questions = baseQuestions.filter(q => q.batch === 3);
-    scoreKey = `sdl-${sdlNumber}-b3`;
-    isBloom = true;
+  if (TRIAL_BATCHES[batch]) {
+    trialBatch = Number(batch);
+    questions = baseQuestions.filter(q => q.batch === trialBatch);
+    scoreKey = `sdl-${sdlNumber}-b${trialBatch}`;
+    isBloom = trialBatch === 3;
   } else if (hasClassicBatches && (batch === '1' || batch === '2')) {
     questions = baseQuestions.filter(q => q.batch === Number(batch));
     scoreKey = `sdl-${sdlNumber}-b${batch}`;
@@ -1620,6 +1644,7 @@ function renderPracticeStart(sdlNumber, batch, forceNew) {
     examNumber,
     scoreKey,
     isBloom,
+    trialBatch,
     questions,
     index: 0,
     records: new Array(questions.length).fill(null), // {letter, confidence, correct} once answered, per question
@@ -1689,7 +1714,7 @@ function renderPracticeQuestion() {
 
   main.innerHTML = `
     <button class="back-link" id="backExam">&larr; Exam ${session.examNumber}</button>
-    ${session.isBloom ? `<div class="bloom-banner">${escapeHtml(BATCH3.banner)}</div>` : ''}
+    ${TRIAL_BATCHES[session.trialBatch || (session.isBloom ? 3 : 0)] ? `<div class="bloom-banner${session.trialBatch === 4 ? ' trial-alt-banner' : ''}">${escapeHtml(TRIAL_BATCHES[session.trialBatch || 3].banner)}</div>` : ''}
     <div class="quiz-header">
       <span class="quiz-progress">Question ${session.index + 1} of ${total}</span>
       <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}</span>
