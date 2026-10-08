@@ -88,6 +88,13 @@ button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
 .rail-sec{padding:0 16px 20px}
 .rail-h{font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin:0 0 9px}
 .rail-sub{margin:0;font-size:12px;line-height:1.5;color:var(--ink-2)}
+.srcjump{margin:8px 0 0;padding:0;background:none;border:none;font-size:11.5px;font-weight:500;color:var(--accent);cursor:pointer}
+.srcjump:hover{text-decoration:underline}
+#mapsrc .rail-sub{margin-bottom:4px}
+.rsrc-b{margin:10px 0 3px;font-size:11.5px;font-weight:600;color:var(--ink)}
+.rsrc{margin:0;padding:0;list-style:none}
+.rsrc li{margin:0 0 4px;font-size:11.5px;line-height:1.45;color:var(--ink-2)}
+.rsrc .ch{font-weight:600;color:var(--ink-3);white-space:nowrap;font-variant-numeric:tabular-nums}
 .chips{display:flex;flex-direction:column;gap:2px}
 .pchip{display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:9px;font-size:12.5px;text-align:left;width:100%;color:var(--ink-2)}
 .pchip:hover{background:var(--surface-2)}
@@ -11045,6 +11052,8 @@ const MAPS = {};
 MAPS.core = {
  t:"Core Carbon", sub:"Glycolysis · HMP shunt · glycogen · TCA · oxidative phosphorylation",
  w:2200, h:1880,
+ fa:"34, 66, 70, 73–79, 84–85, 88",
+ src:["Robbins ch 5 — Genetic disorders","Robbins ch 7 — Neoplasia","Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 24 — The endocrine system","Marks ch 22 — Generation of Adenosine Triphosphate from Glucose, Fructose, and Galactose: Glycolysis","Marks ch 23 — Tricarboxylic Acid Cycle","Marks ch 24 — Oxidative Phosphorylation and Mitochondrial Function","Marks ch 26 — Formation and Degradation of Glycogen","Marks ch 27 — Pentose Phosphate Pathway and the Synthesis of Glycosides, Lactose, Glycoproteins, and Glycolipids","Marks ch 28 — Gluconeogenesis and Maintenance of Blood Glucose Levels","Marks ch 31 — Synthesis of Fatty Acids, Triacylglycerols, and the Major Membrane Lipids","Marks ch 33 — Metabolism of Ethanol","Marks ch 36 — Fate of Amino Acid Nitrogen: Urea Cycle","Marks ch 42 — The Biochemistry of Erythrocytes and Other Blood Cells","Marks ch 44 — Liver Metabolism"],
  comps:[{x:700,y:950,w:1400,h:830,tx:420,l:"Mitochondrion — matrix"}],
  mem:{x:700,y:1636,w:1400,h:48,l:"Intermembrane space — H⁺ gradient"},
  panels:[
@@ -11209,6 +11218,8 @@ MAPS.core = {
 MAPS.lipid = {
  t:"Lipids & Sterols", sub:"Fatty-acid synthesis · carnitine shuttle · β-oxidation · peroxisome · ketones · cholesterol · lipoproteins",
  w:2200, h:2080,
+ fa:"46, 68, 71, 76, 87–88, 91–92, 126, 195, 325, 351",
+ src:["Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids","Katzung ch 35 — Agents Used in Dyslipidemia","Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis","Katzung ch 48 — Antifungal Agents","Marks ch 30 — Oxidation of Fatty Acids and Ketone Bodies","Marks ch 31 — Synthesis of Fatty Acids, Triacylglycerols, and the Major Membrane Lipids","Marks ch 32 — Cholesterol Absorption, Synthesis, Metabolism, and Fate","Marks ch 34 — Integration of Carbohydrate and Lipid Metabolism","Marks ch 44 — Liver Metabolism","Pawlina ch 2 — Cell Cytoplasm"],
  comps:[
   {x:460,y:700,w:1240,h:620,ty:40,l:"Mitochondrion — matrix"},
   {x:60,y:1380,w:1640,h:320,l:"Peroxisome — the pre-processor"}],
@@ -11323,6 +11334,8 @@ MAPS.lipid = {
 MAPS.nitrogen = {
  t:"Nitrogen", sub:"Transamination · urea cycle · amino-acid disorders · SAM and one-carbon transfer",
  w:2300, h:1700,
+ fa:"59, 65–67, 80–83, 484",
+ src:["Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 18 — Liver and gallbladder","Robbins ch 24 — The endocrine system","Katzung ch 6 — Introduction to Autonomic Pharmacology","Marks ch 35 — Protein Digestion and Amino Acid Absorption","Marks ch 36 — Fate of Amino Acid Nitrogen: Urea Cycle","Marks ch 37 — Synthesis and Degradation of Amino Acids","Marks ch 38 — Tetrahydrofolate, Vitamin B12, and S-Adenosylmethionine","Marks ch 39 — Purine and Pyrimidine Metabolism","Marks ch 46 — Metabolism of the Nervous System"],
  comps:[{x:220,y:600,w:900,h:800,l:"Hepatocyte"},{x:300,y:680,w:480,h:640,l:"Mitochondrion"}],
  panels:[
   {x:760,y:90,w:420,h:252,kw:100,t:"The urea cycle in one line",rows:[
@@ -11430,6 +11443,8 @@ MAPS.nitrogen = {
 MAPS.nucleo = {
  t:"Heme & Nucleotides", sub:"Heme synthesis & porphyrias · bilirubin · purine and pyrimidine synthesis, salvage and drug targets",
  w:2300, h:1520,
+ fa:"34–35, 119, 382, 400–401, 425, 428, 430, 473, 688",
+ src:["Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 18 — Liver and gallbladder","Robbins ch 26 — Bones, joints, and soft tissue tumors","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 54 — Cancer Chemotherapy","Katzung ch 58 — Management of the Poisoned Patient","Marks ch 39 — Purine and Pyrimidine Metabolism","Marks ch 42 — The Biochemistry of Erythrocytes and Other Blood Cells"],
  comps:[{x:170,y:68,w:340,h:122,l:"Mitochondrion"},{x:170,y:820,w:340,h:250,tx:200,l:"Mitochondrion"}],
  panels:[
   {x:560,y:190,w:400,h:188,kw:112,t:"Jaundice at a glance",rows:[
@@ -11535,6 +11550,8 @@ MAPS.nucleo = {
 MAPS.steroid = {
  t:"Steroids", sub:"Adrenal & gonadal steroidogenesis · congenital adrenal hyperplasias · 5α-reductase, aromatase and their drugs",
  w:2150, h:1300,
+ fa:"331, 339, 656, 676",
+ src:["Robbins ch 24 — The endocrine system","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Costanzo ch 9 — Endocrine physiology","Costanzo ch 10 — Reproductive physiology","Marks ch 32 — Cholesterol Absorption, Synthesis, Metabolism, and Fate","Langman ch 16 — Urogenital System"],
  comps:[
   {x:270,y:170,w:270,h:770,ty:26,l:"Glomerulosa — salt"},
   {x:830,y:170,w:270,h:610,l:"Fasciculata — sugar"},
@@ -11613,6 +11630,8 @@ MAPS.steroid = {
 MAPS.lysosome = {
  t:"Lysosome", sub:"Sphingolipid degradation · mucopolysaccharidoses · mannose-6-phosphate trafficking",
  w:2150, h:1300,
+ fa:"45, 85–86",
+ src:["Robbins ch 5 — Genetic disorders","Robbins ch 28 — The central nervous system","Marks ch 27 — Pentose Phosphate Pathway and the Synthesis of Glycosides, Lactose, Glycoproteins, and Glycolipids","Pawlina ch 2 — Cell Cytoplasm","Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders"],
  comps:[{x:230,y:60,w:1180,h:820,l:"Lysosome"},{x:1540,y:880,w:480,h:130,l:"Lysosome"}],
  panels:[
   {x:250,y:1040,w:620,h:182,kw:172,t:"Telling them apart",rows:[
@@ -11678,6 +11697,8 @@ MAPS.lysosome = {
 MAPS.collagen = {
  t:"Collagen & ECM", sub:"Collagen assembly line · the four collagen types · elastin, fibrillin and α1-antitrypsin",
  w:2300, h:1400,
+ fa:"48–50, 67, 83, 614–615",
+ src:["Robbins ch 2 — Cell injury, cell death, and adaptations","Robbins ch 5 — Genetic disorders","Robbins ch 15 — The lung","Robbins ch 18 — Liver and gallbladder","Robbins ch 20 — The kidney","Marks ch 47 — The Extracellular Matrix and Connective Tissue","Pawlina ch 6 — Connective Tissue"],
  comps:[
   {x:380,y:90,w:440,h:570,l:"Rough ER & Golgi"},
   {x:380,y:720,w:440,h:440,ty:34,l:"Extracellular space"},
@@ -11748,6 +11769,8 @@ MAPS.collagen = {
 MAPS.vitamins = {
  t:"Vitamins", sub:"Each vitamin sits beside the enzyme it serves · deficiency, toxicity and the drugs that block them",
  w:2400, h:1640,
+ fa:"34, 64–69, 73, 77, 83, 397, 425, 495",
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 14 — Red blood cell and bleeding disorders","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis","Katzung ch 54 — Cancer Chemotherapy","Guyton ch 72 — Dietary Balances; Regulation of Feeding; Obesity and Starvation; Vitamins and Minerals","Marks ch 23 — Tricarboxylic Acid Cycle","Marks ch 31 — Synthesis of Fatty Acids, Triacylglycerols, and the Major Membrane Lipids","Marks ch 38 — Tetrahydrofolate, Vitamin B12, and S-Adenosylmethionine","Marks ch 43 — Blood Plasma Proteins, Coagulation, and Fibrinolysis"],
  comps:[
   {x:180,y:90,w:800,h:1210,l:"Water-soluble, minerals"},
   {x:1000,y:850,w:560,h:260,l:"Antioxidant defense"},
@@ -11832,6 +11855,8 @@ MAPS.vitamins = {
 MAPS.cellcycle = {
  t:"Cell Cycle & Repair", sub:"Phases and checkpoints · the Rb and p53 brakes · five DNA repair systems and the syndromes that break them",
  w:2300, h:1300,
+ fa:"37, 44, 115, 220, 395, 443, 447",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 7 — Neoplasia","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 17 — The gastrointestinal tract","Robbins ch 23 — The breast","Katzung ch 54 — Cancer Chemotherapy","Marks ch 12 — Synthesis of DNA","Marks ch 17 — The Molecular Biology of Cancer","Pawlina ch 3 — The Cell Nucleus"],
  comps:[{x:1700,y:120,w:560,h:800,l:"DNA repair systems"}],
  panels:[
   {x:240,y:980,w:700,h:226,kw:150,t:"Which tissues cycle, and why it matters",rows:[
@@ -11897,6 +11922,8 @@ MAPS.cellcycle = {
 MAPS.endocrine = {
  t:"RAAS & Calcium", sub:"Renin–angiotensin–aldosterone and the PTH–vitamin D axis, with the drugs that act on each step",
  w:2300, h:1580,
+ fa:"114, 248, 336, 348–349, 354, 361, 462, 467, 606, 628",
+ src:["Robbins ch 20 — The kidney","Robbins ch 24 — The endocrine system","Katzung ch 17 — Vasoactive Peptides","Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis","Guyton ch 80 — Parathyroid Hormone, Calcitonin, Calcium and Phosphate Metabolism, Vitamin D, Bone, and Teeth","Costanzo ch 6 — Renal physiology","Costanzo ch 9 — Endocrine physiology"],
  comps:[
   {x:200,y:90,w:1740,h:700,l:"Renin–angiotensin system"},
   {x:230,y:800,w:1700,h:450,l:"Calcium & PTH"}],
@@ -11968,6 +11995,8 @@ MAPS.endocrine = {
 MAPS.nephron = {
  t:"Nephron", sub:"Segment by segment — what each part transports, which diuretic acts there, and what poisons it",
  w:2500, h:1500,
+ fa:"342, 599, 601, 603–604, 607, 611, 615, 617, 620–621, 626–627",
+ src:["Robbins ch 20 — The kidney","Robbins ch 21 — The lower urinary tract and male genital system","Robbins ch 24 — The endocrine system","Katzung ch 13 — Drugs Used in Heart Failure","Katzung ch 15 — Diuretic Agents","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Guyton ch 32 — Diuretics and Kidney Diseases","Costanzo ch 6 — Renal physiology","Costanzo ch 7 — Acid-base physiology","Pawlina ch 20 — Urinary System"],
  comps:[
   {x:190,y:120,w:1660,h:400,l:"Renal cortex"},
   {x:190,y:970,w:1660,h:190,l:"Acute kidney injury"},
@@ -12045,6 +12074,8 @@ MAPS.nephron = {
 MAPS.cardiac = {
  t:"Cardiac", sub:"Conduction system and the ECG · action potential phases with the antiarrhythmic classes · contraction and cardiac output",
  w:2500, h:1740,
+ fa:"289–290, 295, 297–298, 303, 308, 311, 313, 323, 326–328, 459",
+ src:["Robbins ch 12 — The heart","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 13 — Drugs Used in Heart Failure","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves","Costanzo ch 4 — Cardiovascular physiology"],
  comps:[
   {x:190,y:110,w:2140,h:300,l:"Conduction system"},
   {x:190,y:490,w:1100,h:420,l:"Action potentials"},
@@ -12128,6 +12159,8 @@ MAPS.cardiac = {
 MAPS.pulm = {
  t:"Pulmonary", sub:"Airway tree and dead space · the alveolar gas equation and V/Q · oxygen carriage · alveolar disease",
  w:2500, h:1740,
+ fa:"58, 679–680, 682, 684–687, 689, 694",
+ src:["Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 12 — The heart","Robbins ch 15 — The lung","Katzung ch 20 — Drugs Used in Asthma & Chronic Obstructive Pulmonary Disease","Guyton ch 38 — Pulmonary Ventilation","Guyton ch 43 — Respiratory Insufficiency—Pathophysiology, Diagnosis, Oxygen Therapy","Costanzo ch 5 — Respiratory physiology","Moore ch 4 — Thorax"],
  comps:[
   {x:190,y:110,w:2140,h:300,l:"Conducting → respiratory zone"},
   {x:190,y:490,w:1100,h:420,l:"Gas exchange"},
@@ -12200,6 +12233,8 @@ MAPS.pulm = {
 MAPS.eicosanoid = {
  t:"Eicosanoids", sub:"Arachidonic acid → the COX and lipoxygenase arms, with every anti-inflammatory pinned to the enzyme it blocks",
  w:2400, h:1100,
+ fa:"287, 406, 495–496, 568, 607, 693, 706",
+ src:["Robbins ch 15 — The lung","Robbins ch 18 — Liver and gallbladder","Katzung ch 15 — Diuretic Agents","Katzung ch 18 — The Eicosanoids: Prostaglandins, Thromboxanes, Leukotrienes, & Related Compounds","Katzung ch 20 — Drugs Used in Asthma & Chronic Obstructive Pulmonary Disease","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Marks ch 31 — Synthesis of Fatty Acids, Triacylglycerols, and the Major Membrane Lipids"],
  comps:[{x:190,y:110,w:2020,h:590,l:"Arachidonic acid cascade"}],
  panels:[
   {x:240,y:790,w:760,h:226,kw:150,t:"NSAIDs and the COX isoforms",rows:[
@@ -12262,6 +12297,8 @@ MAPS.eicosanoid = {
 MAPS.gut = {
  t:"GI & Absorption", sub:"Which segment absorbs what · fat, B12 and iron end to end · the malabsorption patterns that follow",
  w:2500, h:1650,
+ fa:"67, 83, 325, 379, 382, 388, 404, 407, 712",
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder","Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Katzung ch 35 — Agents Used in Dyslipidemia","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases","Costanzo ch 8 — Gastrointestinal physiology","Marks ch 38 — Tetrahydrofolate, Vitamin B12, and S-Adenosylmethionine"],
  comps:[
   {x:190,y:110,w:2120,h:300,l:"Mouth to colon — where each nutrient is taken up"},
   {x:190,y:490,w:1000,h:420,l:"Fat digestion & absorption"},
@@ -12337,6 +12374,8 @@ MAPS.gut = {
 MAPS.hemostasis = {
  t:"Hemostasis", sub:"Endothelium → platelet plug → the full coagulation ladder · every factor, cofactor and antithrombotic in its place",
  w:3100, h:2620,
+ fa:"104, 417–419, 431–433, 440–442, 628",
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock","Robbins ch 14 — Red blood cell and bleeding disorders","Katzung ch 17 — Vasoactive Peptides","Katzung ch 34 — Drugs Used in Disorders of Coagulation","Katzung ch 55 — Immunopharmacology","Marks ch 43 — Blood Plasma Proteins, Coagulation, and Fibrinolysis"],
  comps:[
   {x:190,y:110,w:2720,h:340,l:"Vessel wall & primary hemostasis — the platelet plug"},
   {x:190,y:530,w:2720,h:1210,l:"The coagulation ladder — intrinsic (PTT) on the left, extrinsic (PT) on the right"},
@@ -12456,6 +12495,8 @@ MAPS.hemostasis = {
 MAPS.immune = {
  t:"Immunity", sub:"B and T cell development with the arrest point of every immunodeficiency · phagocytes · complement",
  w:3000, h:1780,
+ fa:"100, 103–105, 107, 111, 113–115, 126, 427",
+ src:["Robbins ch 3 — Inflammation and repair","Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 24 — The endocrine system","Katzung ch 55 — Immunopharmacology","Pawlina ch 14 — Immune System and Lymphatic Tissues and Organs"],
  comps:[
   {x:190,y:110,w:2620,h:340,l:"B-cell development — marrow, then the germinal centre"},
   {x:190,y:530,w:2620,h:420,l:"T-cell development — marrow, then the thymus"},
@@ -12546,6 +12587,8 @@ MAPS.immune = {
 MAPS.cytokine = {
  t:"Cytokines", sub:"The T-helper fork · the acute-phase trio · interferons · and every biologic pinned to what it blocks",
  w:3000, h:2040,
+ fa:"100–101, 106–107, 114–115, 119, 209, 254, 498, 705",
+ src:["Robbins ch 3 — Inflammation and repair","Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 24 — The endocrine system","Katzung ch 20 — Drugs Used in Asthma & Chronic Obstructive Pulmonary Disease","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 55 — Immunopharmacology"],
  comps:[
   {x:190,y:110,w:2620,h:620,l:"The T-helper fork — the cytokine present decides the subset"},
   {x:190,y:810,w:1600,h:420,l:"Acute phase — one macrophage, three systemic effects"},
@@ -12634,6 +12677,8 @@ MAPS.cytokine = {
 MAPS.sexdev = {
  t:"Sexual Differentiation", sub:"SRY → gonad → ducts → external genitalia · read the level of the lesion straight off the anatomy",
  w:3000, h:1880,
+ fa:"639–640, 655–656, 674, 676",
+ src:["Robbins ch 22 — The female genital tract","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Costanzo ch 10 — Reproductive physiology","Langman ch 16 — Urogenital System","Moore ch 5 — Abdomen","Pawlina ch 22 — Male Reproductive System"],
  comps:[
   {x:190,y:110,w:2620,h:400,l:"Gonadal sex — SRY decides, and the ovary is the default"},
   {x:190,y:590,w:2620,h:440,l:"Internal ducts — AMH destroys one, testosterone rescues the other"},
@@ -12703,6 +12748,8 @@ MAPS.sexdev = {
 MAPS.axes = {
  t:"Endocrine Axes", sub:"Hypothalamus → pituitary → target gland · five axes side by side, and the two numbers that locate any lesion",
  w:3200, h:1720,
+ fa:"331, 333–334, 339, 343, 345, 352, 356, 360, 542, 656, 674",
+ src:["Robbins ch 24 — The endocrine system","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 38 — Thyroid & Antithyroid Drugs","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration","Guyton ch 78 — Adrenocortical Hormones","Costanzo ch 9 — Endocrine physiology","Costanzo ch 10 — Reproductive physiology"],
  comps:[
   {x:190,y:110,w:2820,h:790,l:"Anterior pituitary — five axes, same three steps"},
   {x:190,y:980,w:1400,h:300,l:"Posterior pituitary — stored, not made"},
@@ -12799,6 +12846,8 @@ MAPS.axes = {
 MAPS.rbc = {
  t:"Red Cell & Anemia", sub:"Read the MCV first, then the reticulocyte count · each lesion is pinned to the branch where the red cell goes wrong",
  w:3360, h:2800,
+ fa:"410, 413, 420, 423–429, 712",
+ src:["Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 20 — The kidney","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Katzung ch 57 — Heavy Metal Intoxication & Chelators","Marks ch 39 — Purine and Pyrimidine Metabolism","Marks ch 42 — The Biochemistry of Erythrocytes and Other Blood Cells","Pawlina ch 10 — Blood"],
  comps:[
   {x:640,y:110,w:2620,h:650,l:"Microcytic — hemoglobin is short, so the precursor divides once more"},
   {x:640,y:830,w:2620,h:1000,l:"Normocytic — built correctly, too few; the reticulocyte count says why"},
@@ -12916,6 +12965,8 @@ MAPS.rbc = {
 MAPS.pancreas = {
  t:"Endocrine Pancreas & Diabetes", sub:"Follow glucose into the β cell, insulin out to its targets, and the hormones that push back · each drug and disease is pinned where it acts",
  w:3500, h:2340,
+ fa:"47, 73, 88, 338, 350–351, 357–359",
+ src:["Robbins ch 17 — The gastrointestinal tract","Robbins ch 24 — The endocrine system","Katzung ch 15 — Diuretic Agents","Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs","Marks ch 19 — Basic Concepts in the Regulation of Fuel Metabolism by Insulin, Glucagon, and Other Hormones","Marks ch 21 — Digestion, Absorption, and Transport of Carbohydrates","Marks ch 22 — Generation of Adenosine Triphosphate from Glucose, Fructose, and Galactose: Glycolysis","Marks ch 26 — Formation and Degradation of Glycogen","Marks ch 41 — Actions of Hormones That Regulate Fuel Metabolism"],
  comps:[
   {x:160,y:110,w:3180,h:560,l:"β cell — how glucose becomes insulin"},
   {x:160,y:750,w:1700,h:620,l:"Insulin action — where the signal lands"},
@@ -13002,6 +13053,8 @@ MAPS.pancreas = {
 MAPS.ans = {
  t:"Autonomic Nervous System", sub:"Two transmitters and their receptor families · every drug here mimics, blocks or empties one step of the synapse",
  w:3300, h:2440,
+ fa:"234, 238–239, 241, 244, 355, 555, 564, 568",
+ src:["Robbins ch 27 — Peripheral nerves and skeletal muscles","Katzung ch 6 — Introduction to Autonomic Pharmacology","Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs","Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs","Katzung ch 10 — Adrenoceptor Antagonist Drugs","Katzung ch 11 — Antihypertensive Agents","Katzung ch 15 — Diuretic Agents","Katzung ch 27 — Skeletal Muscle Relaxants","Katzung ch 58 — Management of the Poisoned Patient","Costanzo ch 2 — Autonomic nervous system","Fundamental Neuroscience ch 29 — Visceral Motor Pathways","Kaplan & Sadock ch 4 — Substance Use and Addictive Disorders"],
  comps:[
   {x:160,y:110,w:2980,h:660,l:"Cholinergic synapse — ganglia, parasympathetic targets, NMJ"},
   {x:160,y:850,w:2980,h:720,l:"Adrenergic synapse — sympathetic targets and the adrenal medulla"},
@@ -13085,6 +13138,8 @@ MAPS.ans = {
 MAPS.neurotx = {
  t:"Neurotransmitters & Psychopharmacology", sub:"Each row is one transmitter, from precursor to receptor · pins sit on the step a drug or disease changes",
  w:3300, h:2480,
+ fa:"65–66, 82, 136, 238, 357, 507, 534, 561–563, 567, 587, 589, 591, 706",
+ src:["Robbins ch 28 — The central nervous system","Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids","Katzung ch 21 — Introduction to the Pharmacology of CNS Drugs","Katzung ch 24 — Antiseizure Medications","Katzung ch 28 — Pharmacologic Management of Parkinsonism & Other Movement Disorders","Katzung ch 29 — Antipsychotic Agents & Lithium","Katzung ch 30 — Antidepressant Agents","Katzung ch 31 — Opioid Agonists & Antagonists","Katzung ch 32 — Drugs of Abuse","Katzung ch 58 — Management of the Poisoned Patient","Marks ch 37 — Synthesis and Degradation of Amino Acids","Marks ch 46 — Metabolism of the Nervous System","Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System","Fundamental Neuroscience ch 26 — The Basal Nuclei","Kaplan & Sadock ch 4 — Substance Use and Addictive Disorders","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:160,y:110,w:2980,h:800,l:"Monoamines — dopamine, norepinephrine, serotonin"},
   {x:160,y:990,w:2980,h:560,l:"Amino acids — GABA brakes, glutamate drives"},
@@ -13167,6 +13222,8 @@ MAPS.neurotx = {
 MAPS.abx = {
  t:"Antimicrobials by Target", sub:"Build the wall, read the message, copy the DNA · each drug is pinned to the step it jams, and each side effect to the off-target mechanism that causes it",
  w:3500, h:3060,
+ fa:"77, 183, 185, 187–192, 194–195",
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 20 — The kidney","Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics","Katzung ch 44 — Tetracyclines, Macrolides, Clindamycin, Chloramphenicol, Streptogramins, Oxazolidinones, & Pleuromutilins","Katzung ch 45 — Aminoglycosides & Spectinomycin","Katzung ch 46 — Sulfonamides, Trimethoprim, & Quinolones","Katzung ch 47 — Antimycobacterial Drugs","Katzung ch 48 — Antifungal Agents","Katzung ch 50 — Miscellaneous Antimicrobial Agents; Disinfectants, Antiseptics, & Sterilants","Katzung ch 51 — Clinical Use of Antimicrobial Agents","Katzung ch 54 — Cancer Chemotherapy","Marks ch 33 — Metabolism of Ethanol","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:160,y:110,w:3180,h:560,l:"Cell wall — built inside, cross-linked outside"},
   {x:160,y:750,w:1520,h:700,l:"Ribosome — 30S and 50S"},
@@ -13265,6 +13322,8 @@ MAPS.abx = {
 MAPS.antiviral = {
  t:"Antivirals by Target", sub:"Every antiviral blocks a step the virus needs and the host does not · side effects are pinned to the off-target mechanism that causes them",
  w:3500, h:3600,
+ fa:"107, 161, 163, 166, 170–172, 196–199",
+ src:["Robbins ch 3 — Inflammation and repair","Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 18 — Liver and gallbladder","Robbins ch 20 — The kidney","Katzung ch 49 — Antiviral Agents","Katzung ch 51 — Clinical Use of Antimicrobial Agents","Katzung ch 54 — Cancer Chemotherapy","Marks ch 24 — Oxidative Phosphorylation and Mitochondrial Function"],
  comps:[
   {x:160,y:110,w:3180,h:520,l:"HIV — every step of the life cycle has a drug"},
   {x:160,y:710,w:3180,h:520,l:"Herpesviruses — a viral kinase decides where the drug works"},
@@ -13360,6 +13419,8 @@ MAPS.antiviral = {
 MAPS.spine = {
  t:"Spinal Cord: Tracts and Lesions", sub:"Three long tracts, each crossing at a different level · a lesion's deficits follow the tracts it cuts and which side they have reached",
  w:3500, h:1720,
+ fa:"145, 502, 521–523, 543–544",
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 27 — Peripheral nerves and skeletal muscles","Robbins ch 28 — The central nervous system","Guyton ch 48 — Somatic Sensations: I. General Organization, Tactile and Position Senses","Moore ch 2 — Back","Fundamental Neuroscience ch 9 — The Spinal Cord","Fundamental Neuroscience ch 17 — The Somatosensory System I: Tactile Discrimination and Position Sense","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Fundamental Neuroscience ch 33 — The Neurologic Examination"],
  comps:[
   {x:160,y:110,w:3180,h:560,l:"Three long tracts — what each carries and where it crosses"},
   {x:160,y:750,w:3180,h:620,l:"Lesion patterns — the deficits follow the tracts that are cut"}],
@@ -13431,6 +13492,8 @@ MAPS.spine = {
 MAPS.stroke = {
  t:"Stroke, Brainstem and Bleeds", sub:"Each artery owns a territory, and its stroke is that territory's job list · crossed findings put a lesion in the brainstem",
  w:3500, h:1990,
+ fa:"506, 524–530, 546, 555, 558",
+ src:["Robbins ch 28 — The central nervous system","Moore ch 9 — Head","Fundamental Neuroscience ch 7 — The Meninges","Fundamental Neuroscience ch 8 — A Survey of the Cerebrovascular System","Fundamental Neuroscience ch 10 — An Overview of the Brainstem","Fundamental Neuroscience ch 14 — A Synopsis of Cranial Nerves of the Brainstem","Fundamental Neuroscience ch 16 — The Telencephalon","Fundamental Neuroscience ch 20 — The Visual System","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Fundamental Neuroscience ch 28 — Visual Motor Systems","Fundamental Neuroscience ch 32 — The Cerebral Cortex"],
  comps:[
   {x:160,y:110,w:2400,h:660,l:"Arteries and the strokes they cause"},
   {x:160,y:850,w:2400,h:560,l:"Brainstem — cranial nerves, the MLF, the cerebellum"},
@@ -13508,6 +13571,8 @@ MAPS.stroke = {
 MAPS.signal = {
  t:"Growth Signals & Targeted Cancer Drugs", sub:"Cancer is growth signaling stuck in the 'on' position · each targeted drug is pinned to the protein it switches off",
  w:3500, h:2940,
+ fa:"37, 118, 217, 220, 254, 446–447, 673",
+ src:["Robbins ch 7 — Neoplasia","Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 23 — The breast","Robbins ch 28 — The central nervous system","Katzung ch 24 — Antiseizure Medications","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 54 — Cancer Chemotherapy","Katzung ch 55 — Immunopharmacology","Marks ch 17 — The Molecular Biology of Cancer"],
  comps:[
   {x:160,y:110,w:3180,h:470,l:"Receptor tyrosine kinase → RAS → MAP kinase"},
   {x:160,y:660,w:3180,h:430,l:"PI3K → AKT → mTOR"},
@@ -13602,6 +13667,8 @@ MAPS.signal = {
 MAPS.muscle = {
  t:"Muscle: Nerve to Contraction", sub:"The signal crosses the junction, runs down the T-tubule, releases calcium, and the sarcomere pulls · each disease is pinned to the step it breaks",
  w:3500, h:1840,
+ fa:"60, 136, 459–460, 477, 480, 566",
+ src:["Robbins ch 5 — Genetic disorders","Robbins ch 6 — Diseases of the immune system","Robbins ch 20 — The kidney","Robbins ch 27 — Peripheral nerves and skeletal muscles","Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs","Katzung ch 27 — Skeletal Muscle Relaxants","Guyton ch 6 — Contraction of Skeletal Muscle","Costanzo ch 1 — Cellular physiology","Marks ch 24 — Oxidative Phosphorylation and Mitochondrial Function","Fundamental Neuroscience ch 24 — Motor System I: Peripheral Sensory, Brainstem, and Spinal Influence on Anterior Horn Neurons"],
  comps:[
   {x:160,y:110,w:3180,h:480,l:"Neuromuscular junction"},
   {x:160,y:670,w:3180,h:470,l:"Excitation–contraction coupling"},
@@ -13661,6 +13728,8 @@ MAPS.muscle = {
 MAPS.bone = {
  t:"Bone: Build, Resorb, Mineralize", sub:"Osteoblasts lay down collagen, minerals harden it, osteoclasts carve it back · RANKL from the osteoblast is the signal that ties the two cells together",
  w:3500, h:1840,
+ fa:"68, 336, 349, 461–462, 467–468",
+ src:["Robbins ch 5 — Genetic disorders","Robbins ch 24 — The endocrine system","Robbins ch 26 — Bones, joints, and soft tissue tumors","Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis","Guyton ch 80 — Parathyroid Hormone, Calcitonin, Calcium and Phosphate Metabolism, Vitamin D, Bone, and Teeth","Costanzo ch 9 — Endocrine physiology","Pawlina ch 8 — Bone"],
  comps:[
   {x:160,y:110,w:3180,h:470,l:"Building bone"},
   {x:160,y:660,w:3180,h:470,l:"Resorbing bone — RANKL links the two cells"},
@@ -13715,6 +13784,8 @@ MAPS.bone = {
 MAPS.repro = {
  t:"Menstrual Cycle & Pregnancy", sub:"FSH grows a follicle, the LH surge releases it, progesterone readies the lining · hCG keeps the corpus luteum alive until the placenta takes over",
  w:3500, h:1770,
+ fa:"501, 652–653, 662, 673–675",
+ src:["Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 22 — The female genital tract","Robbins ch 24 — The endocrine system","Katzung ch 18 — The Eicosanoids: Prostaglandins, Thromboxanes, Leukotrienes, & Related Compounds","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs","Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones","Costanzo ch 10 — Reproductive physiology","Langman ch 3 — First Week of Development: Ovulation to Implantation","Pawlina ch 23 — Female Reproductive System"],
  comps:[
   {x:160,y:110,w:3180,h:520,l:"The ovarian cycle"},
   {x:160,y:710,w:2240,h:500,l:"Pregnancy"},
@@ -13776,6 +13847,8 @@ MAPS.repro = {
 MAPS.gpos = {
  t:"Gram-Positive Bacteria", sub:"Purple on Gram stain · follow the tests from shape to species; each organism's card holds its toxins, diseases and drug",
  w:3500, h:2560,
+ fa:"125, 132–137",
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 12 — The heart","Robbins ch 15 — The lung","Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics","Katzung ch 51 — Clinical Use of Antimicrobial Agents","Pawlina ch 2 — Cell Cytoplasm"],
  comps:[
   {x:160,y:110,w:2280,h:1240,l:"Cocci"},
   {x:160,y:1430,w:2280,h:1070,l:"Rods and branching filaments"}],
@@ -13873,6 +13946,8 @@ MAPS.gpos = {
 MAPS.gneg = {
  t:"Gram-Negative Bacteria & Poor Stainers", sub:"Pink on Gram stain · lactose, oxidase and shape split the rods; the last box holds organisms a Gram stain barely shows",
  w:3500, h:2650,
+ fa:"124, 140–144, 146, 148, 179, 406",
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 15 — The lung","Robbins ch 17 — The gastrointestinal tract","Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics","Katzung ch 44 — Tetracyclines, Macrolides, Clindamycin, Chloramphenicol, Streptogramins, Oxazolidinones, & Pleuromutilins","Katzung ch 51 — Clinical Use of Antimicrobial Agents","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases"],
  comps:[
   {x:160,y:110,w:2280,h:600,l:"Cocci and coccobacilli"},
   {x:160,y:790,w:2280,h:900,l:"Straight rods"},
@@ -13950,6 +14025,8 @@ MAPS.gneg = {
 MAPS.rclass = {
  t:"Receptor Classes — How Hormones Signal", sub:"Every hormone, transmitter and cytokine acts through one of seven receptor machines · toxins, diseases and drugs are pinned where they break the chain",
  w:3400, h:3760,
+ fa:"68, 100, 107, 141, 143–144, 237, 243–244, 322, 333–334, 341, 348, 352, 358, 538, 592, 604, 606, 656, 704",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 17 — The gastrointestinal tract","Robbins ch 24 — The endocrine system","Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Katzung ch 15 — Diuretic Agents","Katzung ch 17 — Vasoactive Peptides","Katzung ch 19 — Nitric Oxide","Katzung ch 20 — Drugs Used in Asthma & Chronic Obstructive Pulmonary Disease","Katzung ch 29 — Antipsychotic Agents & Lithium","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 38 — Thyroid & Antithyroid Drugs","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs","Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis","Katzung ch 55 — Immunopharmacology","Guyton ch 78 — Adrenocortical Hormones","Costanzo ch 6 — Renal physiology","Costanzo ch 9 — Endocrine physiology","Marks ch 10 — Cell Structure and Signaling by Chemical Messengers"],
  comps:[
   {x:160,y:110,w:3080,h:520,l:"Gs → adenylyl cyclase → cAMP"},
   {x:160,y:700,w:3080,h:330,l:"Gi → less cAMP"},
@@ -14121,6 +14198,8 @@ MAPS.rclass = {
 MAPS.toxins = {
  t:"Bacterial Toxins & Gene Transfer", sub:"Each toxin pinned to the host step it breaks · below, how toxin and resistance genes move between bacteria",
  w:3400, h:4980,
+ fa:"128–131, 134–137, 141, 175, 186",
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 12 — The heart","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 17 — The gastrointestinal tract","Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics","Katzung ch 51 — Clinical Use of Antimicrobial Agents","Katzung ch 55 — Immunopharmacology","Marks ch 12 — Synthesis of DNA","Marks ch 14 — Translation: Synthesis of Proteins","Pawlina ch 2 — Cell Cytoplasm","Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System"],
  comps:[
   {x:160,y:110,w:3080,h:400,l:"Stop protein synthesis"},
   {x:160,y:580,w:3080,h:400,l:"Drive fluid secretion"},
@@ -14312,6 +14391,8 @@ MAPS.toxins = {
 MAPS.hemeonc = {
  t:"Heme Malignancies", sub:"Each leukemia and lymphoma pinned to the cell it starts from · myeloid on top, then B cells and plasma cells, then T cells",
  w:4400, h:2820,
+ fa:"35, 64, 108, 434–440, 444, 446–447, 497",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 7 — Neoplasia","Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 17 — The gastrointestinal tract","Robbins ch 25 — The skin","Robbins ch 26 — Bones, joints, and soft tissue tumors","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 54 — Cancer Chemotherapy","Katzung ch 55 — Immunopharmacology","Guyton ch 34 — Resistance of the Body to Infection: I. Leukocytes, Granulocytes, the Monocyte-Macrophage System, and Inflammation"],
  comps:[
   {x:140,y:110,w:4120,h:400,l:"Myeloid — stem cell to granulocyte, monocyte, red cell and platelet"},
   {x:140,y:580,w:4120,h:530,l:"B cells — marrow, then the lymph node follicle, then the plasma cell"},
@@ -14520,6 +14601,8 @@ MAPS.hemeonc = {
 MAPS.carcino = {
  t:"Oncogenic Viruses & Carcinogens", sub:"What damages the DNA, and the cancer that follows · paraneoplastic syndromes, tumor markers and metastases below",
  w:3700, h:4420,
+ fa:"44, 162, 173, 221–224, 386, 399, 434–435, 437, 439–440, 480, 624, 661, 663, 690, 695, 703",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 7 — Neoplasia","Robbins ch 8 — Infectious diseases","Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 11 — Blood vessels","Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 15 — The lung","Robbins ch 16 — Head and neck","Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder","Robbins ch 21 — The lower urinary tract and male genital system","Robbins ch 22 — The female genital tract","Robbins ch 24 — The endocrine system","Robbins ch 27 — Peripheral nerves and skeletal muscles","Robbins ch 28 — The central nervous system","Katzung ch 49 — Antiviral Agents","Katzung ch 54 — Cancer Chemotherapy","Costanzo ch 9 — Endocrine physiology","Marks ch 17 — The Molecular Biology of Cancer"],
  comps:[
   {x:140,y:110,w:3480,h:360,l:"HPV — E6 and E7 switch off p53 and Rb"},
   {x:140,y:540,w:3480,h:620,l:"Lymphotropic viruses — EBV, HHV-8, HTLV-1"},
@@ -14779,6 +14862,8 @@ MAPS.carcino = {
 MAPS.chemo = {
  t:"Chemotherapy", sub:"Each cytotoxic drug on the step it blocks · below, the organ each one injures and what protects it",
  w:3300, h:3760,
+ fa:"34–35, 223, 342, 407, 443–447",
+ src:["Robbins ch 1 — The cell as a unit of health and disease","Robbins ch 6 — Diseases of the immune system","Robbins ch 14 — Red blood cell and bleeding disorders","Katzung ch 1 — Introduction: The Nature of Drugs & Drug Development & Regulation","Katzung ch 5 — Pharmacogenomics","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 54 — Cancer Chemotherapy","Katzung ch 55 — Immunopharmacology","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases","Marks ch 11 — Structure of the Nucleic Acids","Marks ch 12 — Synthesis of DNA","Marks ch 39 — Purine and Pyrimidine Metabolism"],
  comps:[
   {x:140,y:110,w:3020,h:540,l:"Antimetabolites — starve DNA synthesis (S phase)"},
   {x:140,y:720,w:3020,h:860,l:"DNA damage — cross-link, break, intercalate"},
@@ -14982,6 +15067,8 @@ MAPS.chemo = {
 MAPS.tumgut = {
  t:"GI & Breast Tumors", sub:"Esophagus, colon, pancreas and breast · each cancer on the path that leads to it",
  w:3300, h:2596,
+ fa:"220, 385, 389, 394–395, 405, 446–447, 667–668",
+ src:["Robbins ch 7 — Neoplasia","Robbins ch 17 — The gastrointestinal tract","Robbins ch 19 — The pancreas","Robbins ch 23 — The breast","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 54 — Cancer Chemotherapy","Marks ch 17 — The Molecular Biology of Cancer"],
  comps:[
   {x:140,y:110,w:3020,h:340,l:"Esophagus — squamous above, adenocarcinoma below"},
   {x:140,y:520,w:3020,h:540,l:"Colon — two roads to carcinoma"},
@@ -15102,6 +15189,8 @@ MAPS.tumgut = {
 MAPS.tumgu = {
  t:"GU & Gynecologic Tumors", sub:"Kidney, prostate, testis, ovary and uterus · each tumor pinned to the cell it comes from",
  w:3300, h:3470,
+ fa:"386, 446, 596, 623–624, 659, 664–666, 670–672, 674, 676",
+ src:["Robbins ch 7 — Neoplasia","Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 17 — The gastrointestinal tract","Robbins ch 20 — The kidney","Robbins ch 21 — The lower urinary tract and male genital system","Robbins ch 22 — The female genital tract","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs","Katzung ch 55 — Immunopharmacology","Moore ch 5 — Abdomen"],
  comps:[
   {x:140,y:110,w:3020,h:560,l:"Kidney"},
   {x:140,y:740,w:3020,h:470,l:"Prostate — transition zone vs peripheral zone"},
@@ -15251,6 +15340,8 @@ MAPS.tumgu = {
 MAPS.tumcns = {
  t:"Brain, Thyroid, Skin & Bone Tumors", sub:"Each tumor pinned to its cell of origin · bone tumors sorted by where on the bone they sit",
  w:3300, h:3318,
+ fa:"37, 220, 347, 356, 394, 445, 447, 470–471, 494, 540, 542, 734",
+ src:["Robbins ch 7 — Neoplasia","Robbins ch 17 — The gastrointestinal tract","Robbins ch 24 — The endocrine system","Robbins ch 25 — The skin","Robbins ch 26 — Bones, joints, and soft tissue tumors","Robbins ch 28 — The central nervous system","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 54 — Cancer Chemotherapy","Marks ch 17 — The Molecular Biology of Cancer","Fundamental Neuroscience ch 7 — The Meninges"],
  comps:[
   {x:140,y:110,w:3020,h:600,l:"Adult brain tumors — by cell of origin"},
   {x:140,y:780,w:3020,h:480,l:"Childhood brain tumors"},
@@ -15391,6 +15482,8 @@ MAPS.tumcns = {
 MAPS.glom = {
  t:"Glomerular Disease", sub:"Nephritic diseases break the basement membrane and leak blood; nephrotic diseases injure podocytes and leak protein",
  w:3300, h:1900,
+ fa:"208, 479, 599, 612–616, 730",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 11 — Blood vessels","Robbins ch 15 — The lung","Robbins ch 20 — The kidney","Robbins ch 24 — The endocrine system","Katzung ch 55 — Immunopharmacology","Pawlina ch 20 — Urinary System"],
  comps:[
   {x:140,y:110,w:3020,h:640,l:"Nephritic — inflammation lets red cells through"},
   {x:140,y:820,w:3020,h:560,l:"Nephrotic — podocyte injury lets protein through"}],
@@ -15497,6 +15590,8 @@ MAPS.glom = {
 MAPS.acidbase = {
  t:"Acid-Base & Electrolytes", sub:"Read the gas from pH to primary disorder to anion gap · RTAs by the segment that fails · K⁺ shifts and every electrolyte",
  w:3300, h:3438,
+ fa:"70, 224, 321, 348–350, 608–611, 626",
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 20 — The kidney","Robbins ch 24 — The endocrine system","Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs","Katzung ch 11 — Antihypertensive Agents","Katzung ch 13 — Drugs Used in Heart Failure","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Katzung ch 15 — Diuretic Agents","Katzung ch 23 — The Alcohols","Katzung ch 31 — Opioid Agonists & Antagonists","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists","Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis","Katzung ch 58 — Management of the Poisoned Patient","Guyton ch 31 — Acid–Base Regulation","Guyton ch 32 — Diuretics and Kidney Diseases","Guyton ch 78 — Adrenocortical Hormones","Costanzo ch 5 — Respiratory physiology","Costanzo ch 6 — Renal physiology","Costanzo ch 7 — Acid-base physiology","Costanzo ch 9 — Endocrine physiology","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:490,l:"Reading a blood gas"},
   {x:140,y:660,w:3020,h:620,l:"Metabolic acidosis — what raises the gap and what does not"},
@@ -15685,6 +15780,8 @@ MAPS.acidbase = {
 MAPS.vasc = {
  t:"Vasculitis", sub:"Sorted by vessel size · each row runs from the classic patient to the treatment",
  w:3300, h:2600,
+ fa:"170, 478–480, 614",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 11 — Blood vessels","Robbins ch 15 — The lung","Robbins ch 18 — Liver and gallbladder","Robbins ch 20 — The kidney","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 49 — Antiviral Agents","Katzung ch 55 — Immunopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:320,l:"Large vessels — granulomatous"},
   {x:140,y:500,w:3020,h:320,l:"Medium vessels"},
@@ -15841,6 +15938,8 @@ MAPS.vasc = {
 MAPS.tox = {
  t:"Toxicology & Antidotes", sub:"Each poison runs from mechanism to finding, with its antidote blocking it · drug reactions and toxidromes below",
  w:3300, h:3534,
+ fa:"70, 74, 192, 244, 247, 251, 326, 397, 402, 418, 442, 444, 496, 562, 567, 587, 593, 688–689",
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 18 — Liver and gallbladder","Katzung ch 4 — Drug Biotransformation","Katzung ch 8 — Cholinoceptor-Blocking Drugs","Katzung ch 13 — Drugs Used in Heart Failure","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids","Katzung ch 23 — The Alcohols","Katzung ch 34 — Drugs Used in Disorders of Coagulation","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 54 — Cancer Chemotherapy","Katzung ch 57 — Heavy Metal Intoxication & Chelators","Katzung ch 58 — Management of the Poisoned Patient","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:630,l:"Receptor and channel poisons"},
   {x:140,y:800,w:3020,h:540,l:"Metabolic and oxygen poisons"},
@@ -16069,6 +16168,8 @@ MAPS.tox = {
 MAPS.cyp = {
  t:"CYP450 Interactions", sub:"Inducers on the left push each isozyme up, inhibitors on the right block it, and the substrates below rise or fall",
  w:3300, h:4068,
+ fa:"70, 118, 189–191, 195, 198, 251, 324, 326–328, 406, 441–442, 495, 562, 567, 591, 593–594, 628, 674",
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Katzung ch 4 — Drug Biotransformation","Katzung ch 5 — Pharmacogenomics","Katzung ch 11 — Antihypertensive Agents","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Katzung ch 22 — Sedative-Hypnotic Drugs","Katzung ch 30 — Antidepressant Agents","Katzung ch 34 — Drugs Used in Disorders of Coagulation","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs","Katzung ch 47 — Antimycobacterial Drugs","Katzung ch 48 — Antifungal Agents","Katzung ch 49 — Antiviral Agents","Katzung ch 58 — Management of the Poisoned Patient","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases","Katzung ch 67 — Important Drug Interactions & Their Mechanisms","Marks ch 44 — Liver Metabolism","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:360,l:"How interactions work"},
   {x:140,y:540,w:3020,h:480,l:"CYP3A4 — the busiest enzyme"},
@@ -16263,6 +16364,8 @@ MAPS.cyp = {
 MAPS.hypimm = {
  t:"Hypersensitivity & Immunodeficiency", sub:"Four hypersensitivity types with their examples · transfusion reactions · immunodeficiencies sorted by which cell fails",
  w:3300, h:3256,
+ fa:"104–105, 110–112, 114–116, 126, 479, 614",
+ src:["Robbins ch 3 — Inflammation and repair","Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 11 — Blood vessels","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 15 — The lung","Robbins ch 20 — The kidney","Robbins ch 24 — The endocrine system","Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs","Katzung ch 55 — Immunopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:1030,l:"Hypersensitivity — four types"},
   {x:140,y:1170,w:3020,h:490,l:"Transfusion reactions"},
@@ -16410,6 +16513,8 @@ MAPS.hypimm = {
 MAPS.fungpar = {
  t:"Fungi & Parasites", sub:"Endemic and opportunistic fungi · protozoa · roundworms by route · tapeworms and flukes · ectoparasites",
  w:3300, h:4482,
+ fa:"149–158, 404, 722",
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 15 — The lung","Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Katzung ch 48 — Antifungal Agents","Katzung ch 51 — Clinical Use of Antimicrobial Agents","Katzung ch 52 — Antiprotozoal Drugs","Katzung ch 53 — Pharmacology of the Antihelminthic Drugs","Katzung ch 61 — Dermatologic Pharmacology","Fundamental Neuroscience ch 6 — The Ventricles, Choroid Plexus, and Cerebrospinal Fluid"],
  comps:[
   {x:140,y:110,w:3020,h:470,l:"Endemic fungi — mold in the cold, yeast in the heat"},
   {x:140,y:650,w:3020,h:470,l:"Opportunistic fungi"},
@@ -16756,6 +16861,8 @@ MAPS.fungpar = {
 MAPS.virus = {
  t:"Virus Families", sub:"The classic algorithm: DNA or RNA → strandedness and sense → envelope → family → the viruses that matter",
  w:3400, h:3748,
+ fa:"159–170",
+ src:["Robbins ch 7 — Neoplasia","Robbins ch 8 — Infectious diseases","Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 15 — The lung","Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder","Robbins ch 28 — The central nervous system","Katzung ch 49 — Antiviral Agents"],
  comps:[
   {x:140,y:110,w:3120,h:1062,l:"DNA viruses"},
   {x:140,y:1246,w:3120,h:1948,l:"RNA viruses"}],
@@ -16939,6 +17046,8 @@ MAPS.virus = {
 MAPS.chd = {
  t:"Congenital Heart & Fetal Circulation", sub:"Fetal shunts and how they close · right-to-left lesions (the 5 Ts) · left-to-right shunts and Eisenmenger · coarctation",
  w:3300, h:2342,
+ fa:"285–287, 302–304",
+ src:["Robbins ch 5 — Genetic disorders","Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 12 — The heart","Katzung ch 18 — The Eicosanoids: Prostaglandins, Thromboxanes, Leukotrienes, & Related Compounds","Katzung ch 19 — Nitric Oxide","Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects","Langman ch 13 — Cardiovascular System","Langman ch 16 — Urogenital System","Moore ch 4 — Thorax","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:520,l:"Fetal circulation — three shunts, closed at birth"},
   {x:140,y:700,w:3020,h:540,l:"Right-to-left shunts — the 5 Ts: early cyanosis"},
@@ -17094,6 +17203,8 @@ MAPS.chd = {
 MAPS.genetics = {
  t:"Genetics", sub:"Modes of inheritance with their diseases · repeat expansions · trisomies and sex chromosomes · deletions and imprinting",
  w:3300, h:3250,
+ fa:"50, 54–57, 59–63, 114, 545, 655",
+ src:["Robbins ch 5 — Genetic disorders","Robbins ch 6 — Diseases of the immune system","Robbins ch 7 — Neoplasia","Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 12 — The heart","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 17 — The gastrointestinal tract","Robbins ch 20 — The kidney","Robbins ch 24 — The endocrine system","Robbins ch 26 — Bones, joints, and soft tissue tumors","Robbins ch 27 — Peripheral nerves and skeletal muscles","Robbins ch 28 — The central nervous system","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Marks ch 18 — An Introduction to Human Genetics","Langman ch 17 — Head and Neck"],
  comps:[
   {x:140,y:110,w:3020,h:640,l:"Modes of inheritance"},
   {x:140,y:820,w:3020,h:380,l:"Trinucleotide repeats — anticipation"},
@@ -17257,6 +17368,8 @@ MAPS.genetics = {
 MAPS.arthritis = {
  t:"Arthritis & Autoantibodies", sub:"Degenerative, crystal, seronegative and connective tissue disease · every antibody matched to its disease at the bottom",
  w:3300, h:3794,
+ fa:"67, 113, 323, 345–346, 350, 388, 402, 428, 472–477, 480–482",
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock","Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 11 — Blood vessels","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 15 — The lung","Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder","Robbins ch 20 — The kidney","Robbins ch 24 — The endocrine system","Robbins ch 25 — The skin","Robbins ch 26 — Bones, joints, and soft tissue tumors","Robbins ch 27 — Peripheral nerves and skeletal muscles","Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 55 — Immunopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:380,l:"Degenerative vs inflammatory"},
   {x:140,y:550,w:3020,h:230,l:"Crystal arthritis"},
@@ -17505,6 +17618,8 @@ MAPS.arthritis = {
 MAPS.malerepro = {
  t:"Male Repro & Urology", sub:"LH runs the Leydig cell and FSH the Sertoli cell · erection follows the autonomic rules · an algorithm for scrotal swelling · prostate, penis and urethra",
  w:3300, h:2576,
+ fa:"245, 641, 645–647, 653, 656, 669–672, 676",
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 21 — The lower urinary tract and male genital system","Robbins ch 22 — The female genital tract","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)","Costanzo ch 10 — Reproductive physiology","Langman ch 16 — Urogenital System","Moore ch 5 — Abdomen","Moore ch 6 — Pelvis and Perineum","Pawlina ch 22 — Male Reproductive System","Kaplan & Sadock ch 16 — Human Sexuality and Sexual Dysfunctions"],
  comps:[
   {x:140,y:110,w:3020,h:410,l:"Testis — hormones and sperm"},
   {x:140,y:580,w:3020,h:270,l:"Erection and ejaculation — point, squeeze, shoot"},
@@ -17626,6 +17741,8 @@ MAPS.malerepro = {
 MAPS.akickd = {
  t:"Kidney Injury & CKD", sub:"Sort acute kidney injury by where it starts · infection climbs from bladder to kidney · chronic kidney disease is MAD HUNGER · cysts by inheritance",
  w:3300, h:2554,
+ fa:"250, 349, 427, 596, 607, 609, 612, 618–622",
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock","Robbins ch 8 — Infectious diseases","Robbins ch 11 — Blood vessels","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 15 — The lung","Robbins ch 17 — The gastrointestinal tract","Robbins ch 20 — The kidney","Robbins ch 21 — The lower urinary tract and male genital system","Robbins ch 24 — The endocrine system","Robbins ch 26 — Bones, joints, and soft tissue tumors","Katzung ch 8 — Cholinoceptor-Blocking Drugs","Katzung ch 11 — Antihypertensive Agents","Katzung ch 15 — Diuretic Agents","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics","Katzung ch 54 — Cancer Chemotherapy","Katzung ch 58 — Management of the Poisoned Patient","Guyton ch 32 — Diuretics and Kidney Diseases","Costanzo ch 6 — Renal physiology","Langman ch 16 — Urogenital System","Moore ch 6 — Pelvis and Perineum"],
  comps:[
   {x:140,y:110,w:3020,h:640,l:"Acute kidney injury — before, inside, or after the kidney"},
   {x:140,y:810,w:3020,h:250,l:"Infection and incontinence"},
@@ -17741,6 +17858,8 @@ MAPS.akickd = {
 MAPS.valves = {
  t:"Murmurs, Valves & Cardiomyopathy", sub:"Name a murmur by its timing, place and maneuvers · three cardiomyopathies by their geometry · rheumatic fever, endocarditis, myocarditis and the pericardium",
  w:3300, h:2634,
+ fa:"134, 294–296, 308, 314–315, 318–320",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 12 — The heart","Robbins ch 20 — The kidney","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 51 — Clinical Use of Antimicrobial Agents","Katzung ch 52 — Antiprotozoal Drugs","Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects","Moore ch 4 — Thorax"],
  comps:[
   {x:140,y:110,w:3020,h:740,l:"Murmurs — timing and place"},
   {x:140,y:910,w:3020,h:150,l:"Maneuvers and heart sounds"},
@@ -17882,6 +18001,8 @@ MAPS.valves = {
 MAPS.liver = {
  t:"Liver, Gallbladder & Pancreas", sub:"Every road to cirrhosis and what cirrhosis breaks · where jaundice comes from · stones and their complications · acute and chronic pancreatitis",
  w:3300, h:2304,
+ fa:"157, 170, 205, 244, 372, 396–400, 402–405, 495",
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 15 — The lung","Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder","Robbins ch 19 — The pancreas","Robbins ch 24 — The endocrine system","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 49 — Antiviral Agents","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases","Marks ch 33 — Metabolism of Ethanol","Marks ch 36 — Fate of Amino Acid Nitrogen: Urea Cycle","Marks ch 44 — Liver Metabolism","Moore ch 5 — Abdomen"],
  comps:[
   {x:140,y:110,w:3020,h:530,l:"Liver injury → cirrhosis → portal hypertension"},
   {x:140,y:700,w:3020,h:300,l:"Vessels, acute injury and masses"},
@@ -18011,6 +18132,8 @@ MAPS.liver = {
 MAPS.derm = {
  t:"Dermatology", sub:"Blisters sorted by where the skin splits · scaly and inflamed rashes · color · infections by depth · growths from benign to deadly · burns and ulcers",
  w:3300, h:2406,
+ fa:"133, 163, 483–494",
+ src:["Robbins ch 3 — Inflammation and repair","Robbins ch 6 — Diseases of the immune system","Robbins ch 7 — Neoplasia","Robbins ch 8 — Infectious diseases","Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 11 — Blood vessels","Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 15 — The lung","Robbins ch 17 — The gastrointestinal tract","Robbins ch 22 — The female genital tract","Robbins ch 25 — The skin","Robbins ch 26 — Bones, joints, and soft tissue tumors","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 61 — Dermatologic Pharmacology","Moore ch 7 — Lower Limb","Pawlina ch 15 — Integumentary System"],
  comps:[
   {x:140,y:110,w:3020,h:510,l:"Blisters — where the skin splits"},
   {x:140,y:680,w:3020,h:310,l:"Scaly, itchy and inflamed"},
@@ -18121,6 +18244,8 @@ MAPS.derm = {
 MAPS.basal = {
  t:"Basal Ganglia & Movement Disorders", sub:"The direct and indirect pathways, and the disease that breaks each part · tremors and other abnormal movements · dementias and their reversible mimics",
  w:3300, h:2046,
+ fa:"239, 511, 525, 533–536, 591",
+ src:["Robbins ch 5 — Genetic disorders","Robbins ch 18 — Liver and gallbladder","Robbins ch 27 — Peripheral nerves and skeletal muscles","Robbins ch 28 — The central nervous system","Katzung ch 28 — Pharmacologic Management of Parkinsonism & Other Movement Disorders","Katzung ch 29 — Antipsychotic Agents & Lithium","Katzung ch 32 — Drugs of Abuse","Guyton ch 57 — Cerebellum and Basal Ganglia Contributions to Overall Motor Control","Fundamental Neuroscience ch 26 — The Basal Nuclei","Kaplan & Sadock ch 3 — Neurocognitive Disorders","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:390,l:"The basal ganglia circuit"},
   {x:140,y:570,w:3020,h:310,l:"Parkinsonism"},
@@ -18212,6 +18337,7 @@ MAPS.basal = {
 MAPS.biostats = {
  t:"Biostats & Epidemiology", sub:"Pick the study design · read the 2 × 2 table for risk and for tests · name the bias · choose the statistic",
  w:3300, h:2318,
+ fa:"256–263, 266–267",
  comps:[
   {x:140,y:110,w:3020,h:240,l:"Study designs — weakest to strongest"},
   {x:140,y:420,w:3020,h:310,l:"The 2 × 2 table — measuring risk"},
@@ -18322,6 +18448,8 @@ MAPS.biostats = {
 MAPS.pkpd = {
  t:"Pharmacokinetics & Dynamics", sub:"What the body does to the drug — absorb, distribute, metabolize, excrete · what the drug does to the body — efficacy, potency, antagonists and the therapeutic index",
  w:3300, h:1654,
+ fa:"228–234, 243, 441",
+ src:["Katzung ch 1 — Introduction: The Nature of Drugs & Drug Development & Regulation","Katzung ch 2 — Drug Receptors & Pharmacodynamics","Katzung ch 3 — Pharmacokinetics & Pharmacodynamics: Rational Dosing & the Time Course of Drug Action","Katzung ch 4 — Drug Biotransformation","Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs","Katzung ch 22 — Sedative-Hypnotic Drugs","Katzung ch 31 — Opioid Agonists & Antagonists","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 58 — Management of the Poisoned Patient","Katzung ch 67 — Important Drug Interactions & Their Mechanisms","Kaplan & Sadock ch 4 — Substance Use and Addictive Disorders","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:450,l:"Pharmacokinetics — what the body does to the drug"},
   {x:140,y:640,w:3020,h:330,l:"Pharmacodynamics — what the drug does to the body"},
@@ -18397,6 +18525,8 @@ MAPS.pkpd = {
 MAPS.anesth = {
  t:"Anesthesia & Muscle Relaxants", sub:"Local anesthetics block Na⁺ channels from inside · inhaled and IV agents by what they do to pressure and breathing · two kinds of neuromuscular block and how to reverse each",
  w:3300, h:1974,
+ fa:"241, 353, 562, 565–567, 706",
+ src:["Katzung ch 25 — General Anesthetics","Katzung ch 26 — Local Anesthetics","Katzung ch 27 — Skeletal Muscle Relaxants","Katzung ch 32 — Drugs of Abuse","Katzung ch 58 — Management of the Poisoned Patient","Costanzo ch 9 — Endocrine physiology","Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:320,l:"Local anesthetics"},
   {x:140,y:490,w:3020,h:570,l:"General anesthesia"},
@@ -18480,6 +18610,8 @@ MAPS.anesth = {
 MAPS.lungdz = {
  t:"Lung Disease & PFTs", sub:"Start with spirometry: obstructive or restrictive, then inside or outside the lung · pleural fluid and air · pneumonia by pattern",
  w:3300, h:1814,
+ fa:"692–694, 696–701",
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 12 — The heart","Robbins ch 15 — The lung","Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder","Costanzo ch 5 — Respiratory physiology","Moore ch 4 — Thorax","Kaplan & Sadock ch 15 — Sleep–Wake Disorders"],
  comps:[
   {x:140,y:110,w:3020,h:270,l:"Obstructive — air gets in but cannot get out"},
   {x:140,y:460,w:3020,h:440,l:"Restrictive — the lungs cannot fill"},
@@ -18561,6 +18693,8 @@ MAPS.lungdz = {
 MAPS.psychdx = {
  t:"Psychosis, Mood & Anxiety", sub:"Most psychiatric diagnoses turn on how long the symptoms last · each disorder runs left to right from diagnosis to treatment",
  w:3300, h:2136,
+ fa:"244, 509, 576–581, 587, 591",
+ src:["Katzung ch 29 — Antipsychotic Agents & Lithium","Katzung ch 30 — Antidepressant Agents","Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient","Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders","Kaplan & Sadock ch 5 — Schizophrenia Spectrum and Other Psychotic Disorders","Kaplan & Sadock ch 6 — Bipolar Disorders","Kaplan & Sadock ch 7 — Depressive Disorders","Kaplan & Sadock ch 8 — Anxiety Disorders","Kaplan & Sadock ch 10 — Trauma- and Stressor-Related Disorders","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:430,l:"Psychotic disorders — the duration decides the name"},
   {x:140,y:620,w:3020,h:590,l:"Mood disorders"},
@@ -18673,6 +18807,8 @@ MAPS.psychdx = {
 MAPS.psychsom = {
  t:"Personality, Somatic & Eating Disorders", sub:"Personality clusters · who is faking, and whether they know why · eating disorders and what purging and starvation do to the body",
  w:3300, h:1984,
+ fa:"575, 582–584, 593, 609",
+ src:["Katzung ch 30 — Antidepressant Agents","Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders","Kaplan & Sadock ch 4 — Substance Use and Addictive Disorders","Kaplan & Sadock ch 11 — Dissociative Disorders","Kaplan & Sadock ch 12 — Somatic Symptom and Related Disorders","Kaplan & Sadock ch 13 — Feeding and Eating Disorders","Kaplan & Sadock ch 16 — Human Sexuality and Sexual Dysfunctions","Kaplan & Sadock ch 19 — Personality Disorders","Kaplan & Sadock ch 21 — Psychopharmacology","Kaplan & Sadock ch 23 — Psychotherapy"],
  comps:[
   {x:140,y:110,w:3020,h:270,l:"Personality disorders — inflexible, ego-syntonic, present by early adulthood"},
   {x:140,y:460,w:3020,h:430,l:"Symptoms with no medical cause — are they faked, and does the patient know why?"},
@@ -18774,6 +18910,8 @@ MAPS.psychsom = {
 MAPS.substance = {
  t:"Substance Use", sub:"Intoxication and withdrawal are mirror images: a depressant's withdrawal excites, a stimulant's withdrawal crashes · each row runs drug → withdrawal → treatment",
  w:3300, h:2086,
+ fa:"561–562, 567, 586, 588–590, 594",
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 18 — Liver and gallbladder","Katzung ch 22 — Sedative-Hypnotic Drugs","Katzung ch 23 — The Alcohols","Katzung ch 32 — Drugs of Abuse","Kaplan & Sadock ch 4 — Substance Use and Addictive Disorders","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:430,l:"Depressants — intoxication sedates, withdrawal excites"},
   {x:140,y:620,w:3020,h:430,l:"Stimulants — intoxication excites, withdrawal crashes"},
@@ -18871,6 +19009,8 @@ MAPS.substance = {
 MAPS.sleepdev = {
  t:"Sleep & Development", sub:"The sleep cycle stage by stage and the disorder born in each · milestones from birth to school age and the disorders that surface along the way · defenses, conditioning and grief",
  w:3300, h:2056,
+ fa:"60, 507, 533, 570–574, 585, 590, 697",
+ src:["Robbins ch 5 — Genetic disorders","Katzung ch 22 — Sedative-Hypnotic Drugs","Katzung ch 28 — Pharmacologic Management of Parkinsonism & Other Movement Disorders","Guyton ch 60 — States of Brain Activity—Sleep, Brain Waves, Epilepsy, Psychoses, and Dementia","Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient","Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders","Kaplan & Sadock ch 15 — Sleep–Wake Disorders","Kaplan & Sadock ch 19 — Personality Disorders","Kaplan & Sadock ch 21 — Psychopharmacology","Kaplan & Sadock ch 23 — Psychotherapy"],
  comps:[
   {x:140,y:110,w:3020,h:350,l:"Sleep — the stages, the clock, and what goes wrong"},
   {x:140,y:540,w:3020,h:830,l:"Development — milestones, and the disorders that surface along the way"},
@@ -18975,6 +19115,8 @@ MAPS.sleepdev = {
 MAPS.eyecn = {
  t:"Eye, Cranial Nerves & Headache", sub:"Light's path from cornea to cortex, with the disease at each step · the pupil reflexes · which nerve moves which muscle · headaches by pattern",
  w:3300, h:3084,
+ fa:"83, 140, 250, 526, 530, 532, 542, 549–558",
+ src:["Robbins ch 5 — Genetic disorders","Robbins ch 8 — Infectious diseases","Robbins ch 15 — The lung","Robbins ch 24 — The endocrine system","Robbins ch 28 — The central nervous system","Robbins ch 29 — The eye","Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs","Katzung ch 10 — Adrenoceptor Antagonist Drugs","Guyton ch 52 — The Eye: III. Central Neurophysiology of Vision","Moore ch 9 — Head","Pawlina ch 24 — Eye","Fundamental Neuroscience ch 6 — The Ventricles, Choroid Plexus, and Cerebrospinal Fluid","Fundamental Neuroscience ch 7 — The Meninges","Fundamental Neuroscience ch 14 — A Synopsis of Cranial Nerves of the Brainstem","Fundamental Neuroscience ch 20 — The Visual System","Fundamental Neuroscience ch 28 — Visual Motor Systems","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:350,l:"Front of the eye — where light enters"},
   {x:140,y:540,w:3020,h:670,l:"Retina — central vision, vessels and detachment"},
@@ -19124,6 +19266,8 @@ MAPS.eyecn = {
 MAPS.ent = {
  t:"Ear, Nose & Throat", sub:"Follow sound inward and see which loss each lesion causes · peripheral or central vertigo · the nose, the throat and the mouth",
  w:3300, h:2304,
+ fa:"162, 166, 173, 383, 474, 540, 547–548, 626, 690, 727",
+ src:["Robbins ch 7 — Neoplasia","Robbins ch 8 — Infectious diseases","Robbins ch 11 — Blood vessels","Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 15 — The lung","Robbins ch 16 — Head and neck","Robbins ch 28 — The central nervous system","Katzung ch 45 — Aminoglycosides & Spectinomycin","Katzung ch 55 — Immunopharmacology","Moore ch 9 — Head","Pawlina ch 25 — Ear","Fundamental Neuroscience ch 14 — A Synopsis of Cranial Nerves of the Brainstem","Fundamental Neuroscience ch 21 — The Auditory System","Fundamental Neuroscience ch 22 — The Vestibular System"],
  comps:[
   {x:140,y:110,w:3020,h:430,l:"Ear and hearing — follow the sound inward"},
   {x:140,y:620,w:3020,h:350,l:"Balance — is the vertigo peripheral or central?"},
@@ -19226,6 +19370,8 @@ MAPS.ent = {
 MAPS.plexus = {
  t:"Brachial Plexus & Peripheral Nerves", sub:"Roots → trunks → cords → branches, and the deficit each branch leaves · the nerves of the leg · the joint injuries that hit them",
  w:3300, h:1954,
+ fa:"350, 450–453, 456–458, 463–465, 538",
+ src:["Robbins ch 27 — Peripheral nerves and skeletal muscles","Moore ch 3 — Upper Limb","Moore ch 6 — Pelvis and Perineum","Moore ch 7 — Lower Limb"],
  comps:[
   {x:140,y:110,w:3020,h:510,l:"Brachial plexus — Randy Travis Drinks Cold Beer: roots, trunks, divisions, cords, branches"},
   {x:140,y:700,w:3020,h:430,l:"Nerves of the leg"},
@@ -19341,6 +19487,8 @@ MAPS.plexus = {
 MAPS.gitract = {
  t:"GI Tract by Segment", sub:"Mouth to anus, one segment per band · each disorder runs to its complication and treatment · hernias, bleeding and the GI drugs",
  w:3300, h:3054,
+ fa:"155, 366, 377–378, 384, 386–387, 389–393, 395, 406–408, 584",
+ src:["Robbins ch 7 — Neoplasia","Robbins ch 8 — Infectious diseases","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 17 — The gastrointestinal tract","Robbins ch 24 — The endocrine system","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases","Moore ch 5 — Abdomen"],
  comps:[
   {x:140,y:110,w:3020,h:510,l:"Esophagus"},
   {x:140,y:700,w:3020,h:350,l:"Stomach"},
@@ -19462,6 +19610,8 @@ MAPS.gitract = {
 MAPS.transplant = {
  t:"Transplant & Immunosuppression", sub:"Each step of T-cell activation, the drug that blocks it, and that drug's signature toxicity · rejection by timing · the costs of suppression",
  w:3300, h:1794,
+ fa:"101, 110, 117–119, 173, 444, 446",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 7 — Neoplasia","Robbins ch 8 — Infectious diseases","Robbins ch 15 — The lung","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 49 — Antiviral Agents","Katzung ch 55 — Immunopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:590,l:"Activating a T cell — and the drug that blocks each step"},
   {x:140,y:780,w:3020,h:350,l:"Rejection — the timing tells the mechanism"},
@@ -19558,6 +19708,8 @@ MAPS.transplant = {
 MAPS.embryo = {
  t:"Embryology", sub:"Week by week to week 8 · what each germ layer becomes · the pharyngeal apparatus · the defects of the neural tube, gut, kidney and body wall",
  w:3300, h:2224,
+ fa:"114, 330, 366, 391, 501–502, 597, 630–633, 637–638",
+ src:["Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 17 — The gastrointestinal tract","Robbins ch 20 — The kidney","Robbins ch 24 — The endocrine system","Robbins ch 28 — The central nervous system","Langman ch 6 — Third to Eighth Weeks: The Embryonic Period","Langman ch 9 — Birth Defects and Prenatal Diagnosis","Langman ch 15 — Digestive System","Langman ch 16 — Urogenital System","Langman ch 17 — Head and Neck","Langman ch 18 — Central Nervous System","Moore ch 5 — Abdomen","Moore ch 8 — Neck","Moore ch 9 — Head","Moore ch 10 — Cranial Nerves","Fundamental Neuroscience ch 5 — Development of the Nervous System"],
  comps:[
   {x:140,y:110,w:3020,h:350,l:"Weeks 1–8 — from zygote to organs"},
   {x:140,y:540,w:3020,h:510,l:"Face and neck — clefts outside, arches in the middle, pouches inside"},
@@ -19683,6 +19835,8 @@ MAPS.embryo = {
 MAPS.obgyn = {
  t:"Obstetrics & Gynecology", sub:"Bleeding in pregnancy, painful or painless · early pregnancy loss · hypertension and diabetes of pregnancy · labor and postpartum · the gynecologic causes of pain, discharge and missed periods",
  w:3300, h:1954,
+ fa:"178–179, 181, 343, 411, 579, 635, 652, 657–660, 662, 666, 675",
+ src:["Robbins ch 5 — Genetic disorders","Robbins ch 8 — Infectious diseases","Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 22 — The female genital tract","Robbins ch 24 — The endocrine system","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Pawlina ch 23 — Female Reproductive System"],
  comps:[
   {x:140,y:110,w:3020,h:270,l:"Placenta — bleeding in late pregnancy"},
   {x:140,y:460,w:3020,h:510,l:"Pregnancy — early loss, hypertension, diabetes and labor"},
@@ -19774,6 +19928,8 @@ MAPS.obgyn = {
 MAPS.vascshock = {
  t:"Vessels, Blood Pressure & Shock", sub:"Atherosclerosis and where it strikes · aneurysm vs dissection · DVT · hypertension and syncope · the four shocks by which number moved first",
  w:3300, h:2138,
+ fa:"144, 241, 296, 304–307, 314, 317–318, 321, 354, 442, 691",
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock","Robbins ch 8 — Infectious diseases","Robbins ch 11 — Blood vessels","Robbins ch 12 — The heart","Robbins ch 15 — The lung","Robbins ch 20 — The kidney","Robbins ch 24 — The endocrine system","Robbins ch 28 — The central nervous system","Robbins ch 29 — The eye","Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs","Katzung ch 11 — Antihypertensive Agents","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 13 — Drugs Used in Heart Failure","Katzung ch 34 — Drugs Used in Disorders of Coagulation","Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects","Guyton ch 24 — Circulatory Shock and Its Treatment","Costanzo ch 4 — Cardiovascular physiology","Moore ch 4 — Thorax","Moore ch 5 — Abdomen"],
  comps:[
   {x:140,y:110,w:3020,h:190,l:"Atherosclerosis — from fatty streak to complication"},
   {x:140,y:380,w:3020,h:350,l:"The aorta — aneurysm and dissection"},
@@ -19882,6 +20038,8 @@ MAPS.vascshock = {
 MAPS.rhythm = {
  t:"Arrhythmias & the Conduction System", sub:"Each rhythm pinned where it starts — SA node, atria, AV node, accessory pathway, ventricles · narrow vs wide · the drug for each",
  w:3300, h:2014,
+ fa:"298, 311–313, 326, 328",
+ src:["Robbins ch 12 — The heart","Katzung ch 10 — Adrenoceptor Antagonist Drugs","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 13 — Drugs Used in Heart Failure","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Guyton ch 13 — Cardiac Arrhythmias and Their Electrocardiographic Interpretation","Costanzo ch 4 — Cardiovascular physiology","Moore ch 4 — Thorax","Pawlina ch 13 — Cardiovascular System"],
  comps:[
   {x:140,y:110,w:3020,h:110,l:"Normal conduction"},
   {x:140,y:300,w:3020,h:430,l:"SA node & atria — narrow complex"},
@@ -19982,6 +20140,8 @@ MAPS.rhythm = {
 MAPS.cnsinf = {
  t:"CNS Infections & Mycobacteria", sub:"Meningitis organisms by age · reading the CSF · encephalitis, abscess and AIDS lesions · tuberculosis from Ghon complex to miliary spread · MAC and leprosy",
  w:3300, h:2042,
+ fa:"138–139, 145, 153, 162, 164, 168, 173–174, 176, 193",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 15 — The lung","Robbins ch 16 — Head and neck","Robbins ch 28 — The central nervous system","Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics","Katzung ch 47 — Antimycobacterial Drugs","Katzung ch 49 — Antiviral Agents","Katzung ch 51 — Clinical Use of Antimicrobial Agents"],
  comps:[
   {x:140,y:110,w:3020,h:430,l:"Meningitis — the organism depends on age"},
   {x:140,y:620,w:3020,h:270,l:"Read the CSF"},
@@ -20088,6 +20248,8 @@ MAPS.cnsinf = {
 MAPS.neuroer = {
  t:"Neuro Emergencies", sub:"Pressure in a closed box — CPP = MAP − ICP · which herniation does what · the bleeds and how they look on CT · status epilepticus · cauda equina",
  w:3300, h:1984,
+ fa:"480, 512, 520, 528–529, 536, 543, 545, 560, 562, 626",
+ src:["Robbins ch 28 — The central nervous system","Moore ch 9 — Head","Fundamental Neuroscience ch 7 — The Meninges","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:270,l:"Pressure in a closed box — CPP = MAP − ICP"},
   {x:140,y:460,w:3020,h:350,l:"Herniation — what slips where"},
@@ -20179,6 +20341,8 @@ MAPS.neuroer = {
 MAPS.ethics = {
  t:"Ethics, Communication & Patient Safety", sub:"Who decides — capacity, consent, directives, surrogates, minors · end of life · confidentiality and its exceptions · bad news · medical errors",
  w:3300, h:2044,
+ fa:"267–273, 276–277",
+ src:["Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient","Kaplan & Sadock ch 27 — Ethics and Professionalism","Kaplan & Sadock ch 28 — Forensic and Legal Issues","Kaplan & Sadock ch 29 — End-of-Life Issues and Palliative Care"],
  comps:[
   {x:140,y:110,w:3020,h:110,l:"Four principles"},
   {x:140,y:300,w:3020,h:350,l:"Who decides?"},
@@ -20268,6 +20432,8 @@ MAPS.ethics = {
 MAPS.vsomatic = {
  t:"Viscerosomatic Reflexes & Levels", sub:"How organ disease shows up in the back · the spinal level to palpate for each organ · vagal and sacral outflow · where the charts differ",
  w:3300, h:1976,
+ fa:"315, 317, 371, 390, 619, 701",
+ src:["OCOM OMM — OMS2 written midterm study guide","OCOM OMM — Week 5 lab: Chapman's reflex points chart","Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder","Robbins ch 20 — The kidney","Moore ch 5 — Abdomen","Foundations of Osteopathic Medicine ch 6 — Autonomic Nervous System","Foundations of Osteopathic Medicine ch 43 — Clinical Assessment: Viscerosomatic, Somatosomatic, Somatovisceral Reflexes; Counterstrain Points, Myofascial Trigger Points, and Chapman Reflexes","Foundations of Osteopathic Medicine ch 71 — Osteopathic Considerations in Cardiovascular Medicine","Foundations of Osteopathic Medicine ch 72 — Osteopathic Considerations in Pulmonology","An Osteopathic Approach to Diagnosis and Treatment ch 22 — Chapman's Reflex Points","An Osteopathic Approach to Diagnosis and Treatment ch 113 — Cardiac Applications","Somatic Dysfunction in Osteopathic Family Medicine ch 29 — The Patient with Urologic Concerns","Osmosis — Chapman points","Osmosis — Viscerosomatic reflexes"],
  comps:[
   {x:140,y:110,w:3020,h:270,l:"How a sick organ reaches the paraspinals"},
   {x:140,y:460,w:3020,h:830,l:"Sympathetic outflow T1–L2 — the level to palpate"},
@@ -20369,6 +20535,8 @@ MAPS.vsomatic = {
 MAPS.omt = {
  t:"OMT — Techniques, Targets & Safety", sub:"What each technique does and where it aims · the order for heart failure and pneumonia · back pain and posture · when not to treat",
  w:3300, h:2124,
+ fa:"299, 306, 316, 390, 393, 520, 692",
+ src:["OCOM OMM — Lab rubric: Still technique and FPR","OCOM OMM — OMS2 written midterm study guide","OCOM OMM — Pulmonary OMM lab slides","OCOM OMM — Thoracic OMT review lab rubric","OCOM OMM — Week 4 lab rubric: visceral manipulation","OCOM OMM — Week 5 lab: Chapman's reflex points chart","OCOM OMM — Week 9 lab rubric: upper and lower crossed syndromes","Costanzo ch 5 — Respiratory physiology","Moore ch 5 — Abdomen","Foundations of Osteopathic Medicine ch 6 — Autonomic Nervous System","Foundations of Osteopathic Medicine (4e) ch 42 — Acute Low Back Pain","Foundations of Osteopathic Medicine ch 43 — Clinical Assessment: Viscerosomatic, Somatosomatic, Somatovisceral Reflexes; Counterstrain Points, Myofascial Trigger Points, and Chapman Reflexes","Foundations of Osteopathic Medicine ch 55 — Visceral Manipulation","Foundations of Osteopathic Medicine ch 56 — Still Technique: A Facilitated Indirect Then Direct Method","Foundations of Osteopathic Medicine ch 71 — Osteopathic Considerations in Cardiovascular Medicine","Foundations of Osteopathic Medicine ch 72 — Osteopathic Considerations in Pulmonology","Foundations of Osteopathic Medicine ch 78 — Osteopathic Considerations and Approaches in the Acutely Ill or Hospitalized Patient","Foundations of Osteopathic Medicine ch 93 — Osteopathic Considerations in the Patient With Low Back Pain","An Osteopathic Approach to Diagnosis and Treatment ch 22 — Chapman's Reflex Points","An Osteopathic Approach to Diagnosis and Treatment ch 113 — Cardiac Applications","Somatic Dysfunction in Osteopathic Family Medicine ch 27 — The Patient with Congestive Heart Failure"],
  comps:[
   {x:140,y:110,w:3020,h:270,l:"Autonomic targets — calm the sympathetics, restore the vagus"},
   {x:140,y:460,w:3020,h:190,l:"Lymphatics — open the drain first, then pump"},
@@ -20463,6 +20631,8 @@ MAPS.omt = {
 MAPS.chapman = {
  t:"Chapman Reflex Points", sub:"Anterior point → organ ← posterior point, from the Week 5 lab chart · Osmosis variants in the panel · palpate anterior first, confirm posterior",
  w:3300, h:4226,
+ fa:"181, 345, 353, 384, 389–390, 393, 403–404, 547, 619, 662, 672, 690, 693, 698",
+ src:["OCOM OMM — OMS2 written midterm study guide","OCOM OMM — Week 5 lab: Chapman's reflex points chart","Robbins ch 8 — Infectious diseases","Robbins ch 15 — The lung","Robbins ch 17 — The gastrointestinal tract","Robbins ch 24 — The endocrine system","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases","Moore ch 5 — Abdomen","Moore ch 9 — Head","Foundations of Osteopathic Medicine ch 6 — Autonomic Nervous System","Foundations of Osteopathic Medicine ch 43 — Clinical Assessment: Viscerosomatic, Somatosomatic, Somatovisceral Reflexes; Counterstrain Points, Myofascial Trigger Points, and Chapman Reflexes","An Osteopathic Approach to Diagnosis and Treatment ch 22 — Chapman's Reflex Points","Somatic Dysfunction in Osteopathic Family Medicine ch 29 — The Patient with Urologic Concerns","Osmosis — Chapman points","Osmosis — Viscerosomatic reflexes"],
  comps:[
   {x:140,y:110,w:3020,h:110,l:"Reading the chart"},
   {x:140,y:300,w:3020,h:670,l:"Head & neck"},
@@ -20689,6 +20859,8 @@ MAPS.chapman = {
 MAPS.seizhead = {
  t:"Seizures & Headache", sub:"Focal vs generalized and the mimics · each anticonvulsant pinned to the channel it blocks · status epilepticus · primary vs secondary headache",
  w:3300, h:1846,
+ fa:"318, 530–532, 536, 560–562",
+ src:["Robbins ch 28 — The central nervous system","Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids","Katzung ch 24 — Antiseizure Medications","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases","Guyton ch 60 — States of Brain Activity—Sleep, Brain Waves, Epilepsy, Psychoses, and Dementia","Costanzo ch 4 — Cardiovascular physiology","Moore ch 9 — Head","Kaplan & Sadock ch 3 — Neurocognitive Disorders","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:350,l:"What kind of seizure?"},
   {x:140,y:540,w:3020,h:350,l:"Where the anticonvulsants act"},
@@ -20795,6 +20967,8 @@ MAPS.seizhead = {
 MAPS.infsite = {
  t:"Infections by Site", sub:"Start from the patient, not the bug: pneumonia by age and setting · bloody vs watery diarrhea and food sources · UTI, vaginitis and genital ulcers · TORCH · childhood rashes · hospital and HIV infections",
  w:3300, h:3056,
+ fa:"130, 133, 140, 146, 162, 173–175, 177–182, 619",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 15 — The lung","Robbins ch 16 — Head and neck","Robbins ch 17 — The gastrointestinal tract","Robbins ch 18 — Liver and gallbladder","Robbins ch 20 — The kidney","Robbins ch 21 — The lower urinary tract and male genital system","Robbins ch 22 — The female genital tract","Robbins ch 25 — The skin","Robbins ch 28 — The central nervous system","Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products","Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics","Katzung ch 44 — Tetracyclines, Macrolides, Clindamycin, Chloramphenicol, Streptogramins, Oxazolidinones, & Pleuromutilins","Katzung ch 46 — Sulfonamides, Trimethoprim, & Quinolones","Katzung ch 49 — Antiviral Agents","Katzung ch 51 — Clinical Use of Antimicrobial Agents","Katzung ch 52 — Antiprotozoal Drugs"],
  comps:[
   {x:140,y:110,w:3020,h:430,l:"Pneumonia — age decides the bug"},
   {x:140,y:620,w:3020,h:190,l:"Pneumonia — special groups"},
@@ -20983,6 +21157,8 @@ MAPS.infsite = {
 MAPS.pain = {
  t:"Pain & Analgesia", sub:"The four steps from stimulus to awareness, with the drugs that block each one · opioids from full agonist to antagonist · neuropathic and central pain and what treats it",
  w:3300, h:1234,
+ fa:"235, 477, 529, 532, 565, 567–568, 593",
+ src:["Robbins ch 8 — Infectious diseases","Katzung ch 11 — Antihypertensive Agents","Katzung ch 24 — Antiseizure Medications","Katzung ch 30 — Antidepressant Agents","Katzung ch 31 — Opioid Agonists & Antagonists","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Fundamental Neuroscience ch 18 — The Somatosensory System II: Nociception, Thermal Sense, and Touch","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
   {x:140,y:110,w:3020,h:190,l:"Four steps from stimulus to awareness"},
   {x:140,y:380,w:3020,h:190,l:"Opioids — from full agonist to antagonist"},
@@ -21060,6 +21236,8 @@ MAPS.pain = {
 MAPS.orthoinj = {
  t:"Ortho Injuries & Pediatric Ortho", sub:"The child's hip and knee by age · nursemaid's elbow and buckle fractures · shoulder, knee, wrist, leg and chest wall injuries · fragile bone and back pain",
  w:3300, h:1612,
+ fa:"450–451, 463–467, 520",
+ src:["OCOM OMM — OMS2 written midterm study guide","Robbins ch 26 — Bones, joints, and soft tissue tumors","Langman ch 12 — Limbs","Moore ch 1 — Overview and Basic Concepts","Moore ch 3 — Upper Limb","Moore ch 7 — Lower Limb","Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders","Foundations of Osteopathic Medicine ch 93 — Osteopathic Considerations in the Patient With Low Back Pain"],
  comps:[
   {x:140,y:110,w:3020,h:430,l:"The growing child — think by age"},
   {x:140,y:620,w:3020,h:430,l:"Joints & soft tissue — by region"},
@@ -21650,10 +21828,28 @@ function currentLesIds(){
   else ids=[...new Set(Object.keys(LOC).filter(id=>LOC[id].some(l=>l.v===state.view)))];
   return ids.filter(id=>LES[id]&&lesMatches(LES[id],q)&&(!state.filter||state.view==="index"||LES[id].p===state.filter));
 }
+function mapSrcHtml(m){
+  if(!m||!(m.fa||(m.src&&m.src.length))) return "";
+  const groups=[];
+  (m.src||[]).forEach(s=>{
+    const c=s.match(/^(.+?) ((?:\(4e\) )?(?:ch|Appendix) \d+) — (.+)$/), d=c?null:s.match(/^(.+?) — (.+)$/);
+    const b=c?c[1]:d?d[1]:s, it={ch:c?c[2]:"",t:c?c[3]:d?d[2]:""};
+    const g=groups.find(g=>g.b===b); g?g.items.push(it):groups.push({b,items:[it]});
+  });
+  return `<div class="rail-sec" id="mapsrc"><h3 class="rail-h">Sources for this map</h3>
+    <p class="rail-sub">The nodes, links and tables on this map were checked against these. Each pin opens a card that lists the sources for its own lines.</p>
+    ${m.fa?`<div class="rsrc-b">First Aid 2025</div><ul class="rsrc"><li>${/[,–]/.test(m.fa)?"pp.":"p."} ${esc(m.fa)}</li></ul>`:""}
+    ${groups.map(g=>`<div class="rsrc-b">${esc(g.b)}</div><ul class="rsrc">${g.items.map(it=>`<li>${it.ch?`<span class="ch">${esc(it.ch)}</span> `:""}${esc(it.t)}</li>`).join("")}</ul>`).join("")}
+  </div>`;
+}
+function bindSrcJump(){
+  const b=rail.querySelector(".srcjump"), t=document.getElementById("mapsrc");
+  if(b&&t) b.onclick=()=>t.scrollIntoView({behavior:"smooth",block:"start"});
+}
 function renderRail(){
   const m=MAPS[state.view];
   let html="";
-  if(m&&m.sub) html+=`<div class="rail-sec"><p class="rail-sub">${esc(m.sub)}</p></div>`;
+  if(m&&m.sub) html+=`<div class="rail-sec"><p class="rail-sub">${esc(m.sub)}</p>${(m.fa||(m.src&&m.src.length))&&!state.q?`<button class="srcjump" type="button">Sources for this map ↓</button>`:""}</div>`;
   if(m){
     const counts={};
     m.edges.forEach(e=>counts[e.p]=(counts[e.p]||0)+1);
@@ -21674,7 +21870,8 @@ function renderRail(){
   const ids=currentLesIds();
   if(state.quiz==="pins"&&!state.q&&state.view!=="index"){
     html+=`<div class="rail-sec"><h3 class="rail-h">Lesions on this map · ${ids.length}</h3><p class="rail-sub">Hidden while you name the pins. Searching still works.</p></div>`;
-    rail.innerHTML=html;
+    rail.innerHTML=html+mapSrcHtml(m);
+    bindSrcJump();
     rail.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{state.filter=b.dataset.f||null;render();renderRail();});
     return;
   }
@@ -21682,7 +21879,8 @@ function renderRail(){
     <div class="lesionlist">${ids.length?ids.map(id=>{const L=LES[id];
       return `<button class="li" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
     }).join(""):`<p style="font-size:12.5px;color:var(--ink-3);padding:4px 7px">No match. Try “Heinz”, “orotic”, “second wind”.</p>`}</div></div>`;
-  rail.innerHTML=html;
+  rail.innerHTML=html+(state.q?"":mapSrcHtml(m));
+  bindSrcJump();
   rail.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{state.filter=b.dataset.f||null;render();renderRail();if(state.view==="index")renderIndex();});
   rail.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
 }
@@ -21701,7 +21899,7 @@ function renderIndex(){
   idxWrap.innerHTML=`<div class="idx-intro"><h2>Every lesion on one page</h2>
     <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>
     <details class="idx-sources"><summary>Sources</summary>
-      <p>Every card was written from and checked against the sources below, line by line. Each card carries its own <b>Sources</b> section naming the exact First Aid pages and book chapters it rests on, so you can see why a fact is stated where it is; the pins on every map open the card that carries those citations. Where sources disagree, the card says so or leaves the number out, and anything no source supported was cut. The First Aid page on each card points to the 2025 edition.</p>
+      <p>Every card was written from and checked against the sources below, line by line. Each card carries its own <b>Sources</b> section naming the exact First Aid pages and book chapters it rests on, so you can see why a fact is stated where it is; the pins on every map open the card that carries those citations, and each map's side panel lists the First Aid pages and chapters the map itself was checked against. Where sources disagree, the card says so or leaves the number out, and anything no source supported was cut. The First Aid page on each card points to the 2025 edition.</p>
       <ul>
         <li><b>Board review:</b> First Aid for the USMLE Step 1 2025</li>
         <li><b>Textbooks:</b> Robbins, Cotran &amp; Kumar Pathologic Basis of Disease (11th ed.) · Katzung's Basic &amp; Clinical Pharmacology (16th ed.) · Guyton and Hall Textbook of Medical Physiology (15th ed.) · Costanzo Physiology · Marks' Basic Medical Biochemistry: A Clinical Approach (6th ed.) · Moore's Clinically Oriented Anatomy (10th ed.) · Langman's Medical Embryology (15th ed.) · Histology: A Text and Atlas (Pawlina, 9th ed.) · Kaplan &amp; Sadock's Concise Textbook of Clinical Psychiatry (5th ed.) · Fundamental Neuroscience for Basic and Clinical Applications (6th ed.) · Neuroanatomy Atlas in Clinical Context (11th ed.) · DeGowin's Diagnostic Examination (11th ed.)</li>

@@ -50,7 +50,10 @@ def validate(art):
     card = None
     for ln in lines:
         m = re.match(r"^([a-z0-9_]+):\{n:\"", ln)
-        if m:
+        mp = re.match(r"^MAPS\.([a-z0-9_]+) = \{", ln)
+        if mp:
+            card = f"MAPS.{mp.group(1)}"   # maps carry src lines too
+        elif m:
             card = m.group(1)
             if ESCAPED_TAG.search(ln):
                 problems.append(

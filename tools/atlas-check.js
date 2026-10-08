@@ -74,6 +74,8 @@
   Object.entries(MAPS).forEach(([v,m])=>{
     const where=`MAPS.${v}`;
     if(!(m.w>0&&m.h>0)) err(`${where}: needs a positive w and h`);
+    if(m.src!==undefined&&!(Array.isArray(m.src)&&m.src.every(s=>typeof s==="string"&&s))) err(`${where}: src must be a list of source strings`);
+    if(!m.fa&&!(m.src&&m.src.length)) err(`${where}: lists no sources — give it fa and/or src so the side panel shows what the map was checked against`);
     if(!Array.isArray(m.nodes)||!Array.isArray(m.edges)){ err(`${where}: nodes and edges must be arrays`); return; }
     const ids=new Set();
     m.nodes.forEach(n=>{
