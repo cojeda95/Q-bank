@@ -151,6 +151,24 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   margin: 28px 0 10px;
 }
 
+/* Block home: "Maps for this block" (shared/app.js fillAtlasMapsHome) */
+.amap-note { margin: -4px 0 10px; font-size: 0.86rem; color: var(--text-muted); }
+.amap-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--atlas-line); border-radius: 12px; background: var(--atlas-bg); overflow: hidden; }
+.amap-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-top: 1px solid var(--atlas-line); }
+.amap-row:first-child { border-top: none; }
+.amap-name { flex: 1; min-width: 0; color: var(--atlas-ink); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+.amap-name:hover { text-decoration: underline; }
+.amap-n { font-size: 0.82rem; color: var(--text-muted); white-space: nowrap; }
+.amap-go { flex: none; font-size: 0.82rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--atlas-line); background: var(--input-bg); color: var(--atlas-ink); text-decoration: none; }
+.amap-go:hover { border-color: var(--atlas-ink); }
+.amap-more { margin-top: 8px; }
+.amap-more summary { cursor: pointer; font-size: 0.86rem; color: var(--atlas-ink); font-weight: 600; padding: 4px 2px; }
+.amap-more .amap-list { margin-top: 6px; }
+@media (max-width: 480px) {
+  .amap-row { flex-wrap: wrap; gap: 4px 10px; }
+  .amap-name { flex-basis: 100%; }
+}
+
 /* ── Custom Exam Builder ── */
 .setup-card {
   background: var(--card-bg);
@@ -502,6 +520,12 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 .info-block.atlas .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--atlas-reg); flex: none; }
 .info-block.atlas .k-dz .dot { background: var(--atlas-dz); }
 .info-block.atlas .k-drug .dot { background: var(--atlas-drug); }
+/* "You picked": the card for the wrong answer chosen, with a Compare link */
+.info-block.atlas .atlas-picked { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--atlas-line); }
+.info-block.atlas .atlas-picked-lbl { font-size: 0.82rem; font-weight: 600; opacity: .8; margin-right: 2px; }
+.info-block.atlas .atlas-picked .atlas-link { margin-right: 0; }
+.info-block.atlas .atlas-cmp { font-size: 0.84rem; font-weight: 600; color: var(--atlas-ink); text-decoration: underline; text-underline-offset: 2px; }
+.info-block.atlas .atlas-cmp::before { content: "\21C4\00a0"; text-decoration: none; display: inline-block; }
 
 .next-row {
   display: flex;

@@ -97,6 +97,14 @@
   }
   .announce-banner .announce-icon { flex-shrink: 0; font-size: 1.05rem; line-height: 1.3; }
   .announce-banner .announce-date { font-weight: 700; margin-right: 6px; }
+  /* Use Offline — save every page into the service worker's cache (sw.js, CACHE) */
+  .offline-card { display: flex; align-items: center; gap: 14px; background: var(--card-bg, #fff); border: 1px solid var(--grey-border, #ddd); border-radius: 12px; padding: 16px 18px; }
+  .offline-text { flex: 1; min-width: 0; }
+  .offline-btn { flex: none; font: inherit; font-weight: 600; font-size: 0.92rem; padding: 9px 18px; border-radius: 999px; border: 1px solid var(--navy-fill); background: var(--navy-fill); color: #fff; cursor: pointer; }
+  .offline-btn:disabled { opacity: .6; cursor: default; }
+  .offline-bar { margin-top: 10px; height: 6px; border-radius: 999px; background: var(--track, #e0e0e0); overflow: hidden; }
+  .offline-bar span { display: block; height: 100%; width: 0; background: var(--navy-fill); transition: width .2s; }
+  @media (max-width: 520px) { .offline-card { flex-direction: column; align-items: stretch; } .offline-btn { width: 100%; } }
 </style>
 <link rel="stylesheet" href="shared/theme.css">
 <script src="shared/theme.js"></script>
@@ -110,7 +118,7 @@
     <div class="block-grid">
       <a class="block-card featured" href="resources/metabolic-atlas.html">
         <div class="block-title">🗺️ Lesion Atlas</div>
-        <div class="block-desc">126 interactive maps &middot; 1,554 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
+        <div class="block-desc">131 interactive maps &middot; 1,620 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
         <div class="block-due" id="atlasDue" hidden></div>
       </a>
     </div>
@@ -173,8 +181,18 @@
 
     <div class="section-label">Sync Across Devices</div>
     <div id="syncSection"></div>
+
+    <div class="section-label">Use Offline</div>
+    <div class="offline-card" id="offlineCard">
+      <div class="offline-text">
+        <div class="block-title">Save everything for offline</div>
+        <div class="block-desc" id="offlineStatus">Downloads every block, the Lesion Atlas and the shared files to this device (about 21&nbsp;MB) so they all work without signal.</div>
+        <div class="offline-bar" id="offlineBar" hidden><span id="offlineFill"></span></div>
+      </div>
+      <button class="offline-btn" id="offlineBtn" type="button">Save all</button>
+    </div>
   </div>
-  <div class="footer">Client-side only &mdash; each block's progress and flags are stored separately in your browser, optionally synced across devices via the PIN above. Works offline: the hub, the Lesion Atlas and any block you have opened once are saved on this device.</div>
+  <div class="footer">Client-side only &mdash; each block's progress and flags are stored separately in your browser, optionally synced across devices via the PIN above. Works offline: the hub, the Lesion Atlas and any block you have opened once are saved on this device &mdash; or save them all at once with <i>Save all</i> above.</div>
 <script src="announcements.js"></script>
 <script>
   /* Lesion Atlas cards due for review on this device — shown only to people who turned
@@ -211,6 +229,60 @@
     root.innerHTML =
       '<div class="announce-banner"><span class="announce-icon">📢</span>' +
       '<span>' + dateHtml + a.text + '</span></div>';
+  })();
+</script>
+<script>
+  /* Save everything for offline: fetch every block page and its questions, the atlas and
+     the shared files, and put them in the same cache sw.js serves from (CACHE below must
+     match sw.js). Works even before the service worker controls this tab. The time of the
+     last full save is kept on this device ('qhub-offline-at'). */
+  (function () {
+    var CACHE = 'qhub-v1', KEY = 'qhub-offline-at';
+    var btn = document.getElementById('offlineBtn'), status = document.getElementById('offlineStatus');
+    var bar = document.getElementById('offlineBar'), fill = document.getElementById('offlineFill');
+    if (!btn) return;
+    var base = status.textContent;
+    function when(t) { var d = new Date(+t); return isNaN(d) ? '' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); }
+    function showSaved() {
+      var t = null; try { t = localStorage.getItem(KEY); } catch (e) {}
+      status.textContent = t ? 'Everything was saved on this device on ' + when(t) + '. Save again after updates to refresh it.' : base;
+      btn.textContent = t ? 'Save again' : 'Save all';
+    }
+    if (!('caches' in window) || !window.fetch) {
+      status.textContent = 'This browser cannot save pages for offline use.'; btn.disabled = true; return;
+    }
+    showSaved();
+    btn.addEventListener('click', function () {
+      var urls = ['./', 'index.html', 'announcements.js', 'sync.js', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
+        'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png',
+        'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js'];
+      Array.prototype.forEach.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]'), function (a) {
+        var dir = a.getAttribute('href').replace(/index\.html$/, '');
+        urls.push(dir + 'index.html', dir + 'data.js');
+      });
+      try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+      btn.disabled = true; bar.hidden = false; fill.style.width = '0%';
+      var done = 0, failed = 0;
+      caches.open(CACHE).then(function (cache) {
+        return Promise.all(urls.map(function (u) {
+          var url = new URL(u, location.href).href;
+          return fetch(url, { cache: 'reload' }).then(function (res) {
+            if (!res.ok) throw new Error(res.status);
+            return cache.put(url, res);
+          }).catch(function () { failed++; }).then(function () {
+            done++; fill.style.width = Math.round(100 * done / urls.length) + '%';
+            status.textContent = 'Saving… ' + done + ' of ' + urls.length + ' files';
+          });
+        }));
+      }).then(function () {
+        btn.disabled = false;
+        if (failed) { status.textContent = failed + ' of ' + urls.length + ' files could not be saved — check your connection and try again.'; return; }
+        try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {}
+        showSaved(); setTimeout(function () { bar.hidden = true; }, 1200);
+      }, function () {
+        btn.disabled = false; bar.hidden = true; status.textContent = 'Saving failed — this browser may be blocking storage for this site.';
+      });
+    });
   })();
 </script>
 </body>

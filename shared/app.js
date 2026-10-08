@@ -94,10 +94,9 @@ function atlasNorm(t) {
     .replace(/[^a-z0-9+ ]/g, ' ')
     .replace(/\s+/g, ' ').trim();
 }
-function atlasLinksFor(q) {
-  if (!ATLAS_INDEX || !q) return [];
-  const lead = (String(q.explanation || '').match(/[^.!?]+[.!?]+/g) || [q.explanation || ''])[0];
-  const zones = [q.choices && choiceText(q, q.correct), lead];
+// Cards whose terms appear in the given zones (zone 0 = an answer's text, where
+// "=term" also counts), best first: earlier zone, then longer matching term.
+function atlasMatch(zones) {
   const found = new Map();
   zones.forEach((z, zone) => {
     if (!z) return;
@@ -112,13 +111,36 @@ function atlasLinksFor(q) {
       if (hit) found.set(c.id, { c, zone, len: hit.replace(/^=/, '').length });
     }
   });
-  return [...found.values()].sort((a, b) => a.zone - b.zone || b.len - a.len).slice(0, 3).map(x => x.c);
+  return [...found.values()].sort((a, b) => a.zone - b.zone || b.len - a.len).map(x => x.c);
 }
-function atlasLinksHtml(q) {
+function atlasLinksFor(q) {
+  if (!ATLAS_INDEX || !q) return [];
+  const lead = (String(q.explanation || '').match(/[^.!?]+[.!?]+/g) || [q.explanation || ''])[0];
+  return atlasMatch([q.choices && choiceText(q, q.correct), lead]).slice(0, 3);
+}
+/* "You picked": after a miss, the option the person chose is matched the same way as
+   a correct answer, and its best card — one not already linked for the right answer —
+   is shown with a Compare link that opens it beside the correct card in the atlas
+   (#cmp/<picked>/<correct>). */
+function atlasPickedFor(q, picked, have) {
+  if (!ATLAS_INDEX || !q || !q.choices || !picked || picked === q.correct) return null;
+  // Only the option's leading phrase — what it names — not the reasoning that follows,
+  // which mentions other things in passing ("X, which …", "X because …", "X — …").
+  const head = String(choiceText(q, picked)).split(/[,;:(]| [—–-] | (?:which|because|since|due to|caused by|as|so|while|whereas|that) /i)[0];
+  // If the option's best card is already one linked for the right answer, the option is
+  // about the same thing (a wrong statement about it) — nothing to compare.
+  const top = atlasMatch([head])[0];
+  return top && !(have || []).some(c => c.id === top.id) ? top : null;
+}
+function atlasLinksHtml(q, picked) {
+  if (!ATLAS_URL) return '';
   const cards = atlasLinksFor(q);
-  if (!cards.length || !ATLAS_URL) return '';
-  return `<div class="info-block atlas"><b>On the Lesion Atlas</b>${cards.map(c =>
-    `<a class="atlas-link k-${c.k}" href="${ATLAS_URL}#${encodeURIComponent(c.id)}" target="_blank" rel="noopener"><span class="dot"></span>${escapeHtml(c.n)}</a>`).join('')}</div>`;
+  const wrong = atlasPickedFor(q, picked, cards);
+  if (!cards.length && !wrong) return '';
+  const link = c => `<a class="atlas-link k-${c.k}" href="${ATLAS_URL}#${encodeURIComponent(c.id)}" target="_blank" rel="noopener"><span class="dot"></span>${escapeHtml(c.n)}</a>`;
+  const pickedHtml = wrong ? `<div class="atlas-picked"><span class="atlas-picked-lbl">You picked ${escapeHtml(picked)}:</span>${link(wrong)}${cards.length
+    ? `<a class="atlas-cmp" href="${ATLAS_URL}#cmp/${encodeURIComponent(wrong.id)}/${encodeURIComponent(cards[0].id)}" target="_blank" rel="noopener">Compare with ${escapeHtml(cards[0].n)}</a>` : ''}</div>` : '';
+  return `<div class="info-block atlas"><b>On the Lesion Atlas</b>${cards.map(link).join('')}${pickedHtml}</div>`;
 }
 
 /* Missed questions feed the Lesion Atlas review list. The atlas keeps its
@@ -625,6 +647,52 @@ function render() {
 homeBtn.addEventListener('click', () => setRoute(''));
 
 /* ── Home screen ──────────────────────────────────────────────────────── */
+/* "Maps for this block" on the block home: the atlas maps whose cards this block's
+   questions link to most (counts from resources/atlas-practice.js, built by
+   tools/build-atlas.py), each with a link to the map and a Practice button that runs
+   those questions here (#atlasmap/<map id>). Loads lazily; absent data shows nothing. */
+let ATLAS_PRACTICE_READY = null;
+function loadAtlasPractice() {
+  if (ATLAS_PRACTICE_READY) return ATLAS_PRACTICE_READY;
+  ATLAS_PRACTICE_READY = new Promise(resolve => {
+    if (window.ATLAS_PRACTICE) return resolve(window.ATLAS_PRACTICE);
+    if (!APP_SRC) return resolve(null);
+    const s = document.createElement('script');
+    s.src = new URL('../resources/atlas-practice.js', APP_SRC).href;
+    s.async = true;
+    s.onload = () => resolve(window.ATLAS_PRACTICE || null);
+    s.onerror = () => resolve(null);
+    document.head.appendChild(s);
+  });
+  return ATLAS_PRACTICE_READY;
+}
+function blockDirName() {
+  const parts = location.pathname.split('/').filter(Boolean);
+  if (parts.length && /\.html?$/i.test(parts[parts.length - 1])) parts.pop();
+  return parts.length ? decodeURIComponent(parts[parts.length - 1]) : '';
+}
+function fillAtlasMapsHome() {
+  const el = document.getElementById('atlasMapsHome');
+  if (!el || !ATLAS_URL) return;
+  Promise.all([ATLAS_READY, loadAtlasPractice()]).then(([, P]) => {
+    if (!document.body.contains(el) || !P || !P.maps || !ATLAS_MAPS) return;
+    const bi = (P.blocks || []).findIndex(b => b[0] === blockDirName());
+    if (bi < 0) return;
+    const rows = Object.keys(P.maps).map(id => [id, ((P.maps[id] || []).find(x => x[0] === bi) || [0, 0])[1]])
+      .filter(([id, n]) => n > 0 && ATLAS_MAPS[id]).sort((a, b) => b[1] - a[1] || ATLAS_MAPS[a[0]][0].localeCompare(ATLAS_MAPS[b[0]][0]));
+    if (!rows.length) return;
+    const row = ([id, n]) => `<li class="amap-row">
+        <a class="amap-name" href="${ATLAS_URL}#${encodeURIComponent(id)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[id][0])}</a>
+        <span class="amap-n">${n} question${n === 1 ? '' : 's'}</span>
+        <a class="amap-go" href="#atlasmap/${encodeURIComponent(id)}">Practice</a></li>`;
+    const top = rows.slice(0, 8), rest = rows.slice(8);
+    el.innerHTML = `<div class="section-label">Maps for this block</div>
+      <p class="amap-note">Lesion Atlas maps ranked by how many of this block’s questions link to their cards. Open a map, or practice its questions here.</p>
+      <ul class="amap-list">${top.map(row).join('')}</ul>
+      ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} maps</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}`;
+  });
+}
+
 function renderHome() {
   const examCards = DATA.exams.map(e => {
     // Regular bank only (trial batches are opt-in, as in the SDL list); trial counts follow.
@@ -738,6 +806,7 @@ function renderHome() {
         <div class="action-label">${flagCount} question${flagCount === 1 ? '' : 's'} currently flagged, across all SDLs</div>
       </div>
     </div>
+    <div id="atlasMapsHome"></div>
 
     <div class="section-label">Settings</div>
     <label class="radio-option" style="cursor:pointer;">
@@ -753,6 +822,7 @@ function renderHome() {
       <span>💥 Wrong-Answer Flash — red screen flash and image burst when you miss a question (applies to every block)</span>
     </label>
   `;
+  fillAtlasMapsHome();
 
   main.querySelectorAll('.exam-card').forEach(card => {
     card.addEventListener('click', () => setRoute(`exam-sdls/${card.dataset.exam}`));
@@ -1768,7 +1838,7 @@ function renderPracticeQuestion() {
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
-      ${atlasLinksHtml(q)}
+      ${atlasLinksHtml(q, record.correct ? null : record.letter)}
     `;
   }
 
@@ -2063,7 +2133,7 @@ function renderExamQuestion() {
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
-      ${atlasLinksHtml(q)}
+      ${atlasLinksHtml(q, isCorrect ? null : selected)}
     `;
   }
 
@@ -2269,7 +2339,7 @@ function renderExamResults() {
         <div class="correct-answer">Correct answer: ${q.correct} — ${escapeHtml(choiceText(q, q.correct, true))}</div>
         <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
         ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
-        ${atlasLinksHtml(q)}
+        ${atlasLinksHtml(q, given)}
       </div>
     `).join('');
 
@@ -2392,7 +2462,7 @@ function renderFlaggedQuestion() {
       </div>
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
-      ${atlasLinksHtml(q)}
+      ${atlasLinksHtml(q, record.correct ? null : record.letter)}
     `;
   }
 
@@ -2713,7 +2783,7 @@ function renderReviewQuestion() {
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
-      ${atlasLinksHtml(q)}
+      ${atlasLinksHtml(q, record.correct ? null : record.letter)}
     `;
   }
 

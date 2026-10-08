@@ -168,6 +168,12 @@ side panel and the Info sheet show a button per block that opens
 `<block>/index.html#atlasmap/<map id>`, run by `renderAtlasMapPractice` in `shared/app.js`
 with the same linking rule, so the counts match.
 
+Each block's home page also lists **Maps for this block** (`fillAtlasMapsHome` in
+`shared/app.js`): the maps ranked by that block's count in `atlas-practice.js`, each with a
+link to the map and a Practice button for the same `#atlasmap/<map id>` session. The block
+is read from the page's folder name, which must match the block's first entry in
+`blocks` of `atlas-practice.js` (the build takes it from the hub's block links).
+
 ### Taking the reader to a pin
 
 `flashPins` → `centerOn` is the one path every search result, link and "Same pathway"
@@ -210,6 +216,20 @@ After adding cards, count which questions in every block would link to them (ser
 repo, open any block, call `atlasLinksFor(q)` over its `data.js`) and read the terms
 behind the biggest counts.
 
+**The card's name base is always a term** (the part before " — "). A card named
+"Insulin — receptor & metabolic effects" linked every answer containing "insulin"; name it
+"Insulin receptor & metabolic effects" instead, so the whole phrase is the term.
+
+**You picked.** After a miss, `atlasLinksHtml(q, picked)` also matches the option the person
+chose (`atlasPickedFor`): only its leading phrase — the text before the first comma, colon,
+dash, "which", "because" and similar — so the reasoning in a long distractor does not pull
+in passing mentions. If that option's best card is one already linked for the right answer,
+nothing is shown (the option is a wrong statement about the same thing). Otherwise the card
+appears under the links with **Compare with …**, which opens
+`metabolic-atlas.html#cmp/<picked card>/<correct card>`: the atlas opens on the correct
+card's home map with both cards side by side (`readHash` → `openCompare`). About one wrong
+option in five gets a card.
+
 ### Practice buttons on atlas cards
 
 Links also run the other way. The build writes `resources/atlas-practice.js`: for every
@@ -230,7 +250,8 @@ compare with `atlas-practice.js` — they matched exactly (0 of 8 blocks off) wh
 was added.
 
 Deep links work anywhere: `metabolic-atlas.html#abx` opens a map,
-`#abx/vancomycin` a card on that map, `#vancomycin` a card on its first home.
+`#abx/vancomycin` a card on that map, `#vancomycin` a card on its first home, and
+`#cmp/<a>/<b>` two cards side by side.
 
 ### Layout
 
@@ -324,6 +345,15 @@ notice. Requests to other sites (the Firestore sync, CDNs) pass straight through
 Nothing extra is needed when you publish. If a shared file is renamed, update the `CORE`
 list at the top of `sw.js`, which pre-saves the hub, `shared/` and the atlas on first visit.
 To throw away everyone's saved copies, change `CACHE` (`qhub-v1` → `qhub-v2`).
+
+The hub's **Use Offline → Save all** button fetches every block's `index.html` and `data.js`
+(from the hub's block links), the atlas files and `shared/`, and puts them straight into the
+service worker's cache with the Cache API — so it works even on a first visit, before the
+worker controls the tab. The cache name is written in the hub's script too: **if `CACHE` in
+`sw.js` changes, change it in `index.html` as well**, or the saved copies land in a cache the
+worker no longer reads (and its activate step deletes). The time of the last full save is
+kept per device under `qhub-offline-at`. Pages needing a CDN (the sacral explorer's three.js)
+are left out — they cannot work offline anyway.
 
 ## Cross-device sync
 
