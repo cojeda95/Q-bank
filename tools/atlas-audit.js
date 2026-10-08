@@ -13,6 +13,7 @@ window.__boxes = function(view){
   svg.querySelectorAll('.node').forEach(g=>items.push({t:'node',id:g.dataset.node,b:box(g.querySelector(':scope > rect')),g}));
   svg.querySelectorAll('.chip').forEach(g=>items.push({t:'chip',id:g.dataset.chip,b:box(g.querySelector('rect.bg'))}));
   svg.querySelectorAll('.panel-c').forEach((g,i)=>items.push({t:'panel',id:'panel'+i,b:box(g.querySelector('rect'))}));
+  svg.querySelectorAll('.plot-c').forEach((g,i)=>items.push({t:'plot',id:'plot'+i,b:box(g.querySelector('rect.pframe'))}));
   svg.querySelectorAll('.pin').forEach(g=>items.push({t:'pin',id:g.dataset.les,b:box(g.querySelector('.pshape')),owner:g.closest('.node'),chipOwner:g.closest('.chipwrap')}));
   svg.querySelectorAll('.comp-badge').forEach((r,i)=>items.push({t:'badge',id:'badge'+i,b:box(r)}));
   return {svg,box,items};
@@ -32,6 +33,7 @@ window.__audit = function(view){
   svg.querySelectorAll('.node').forEach(g=>{const r=box(g.querySelector(':scope > rect'));g.querySelectorAll(':scope > text').forEach(t=>{const w=textW(t);if(w>r.w-8)out.overflow.push(`node ${g.dataset.node}`);});});
   svg.querySelectorAll('.chip').forEach(g=>{const r=box(g.querySelector('rect.bg'));g.querySelectorAll('text').forEach(t=>{if(textW(t)>r.w-6)out.overflow.push(`chip ${g.dataset.chip}`);});});
   svg.querySelectorAll('.panel-c').forEach(g=>{const r=box(g.querySelector('rect'));g.querySelectorAll('text').forEach(t=>{const b=box(t);if(b.x+b.w>r.x+r.w-4||b.y+b.h>r.y+r.h-2)out.overflow.push(`panel text: ${t.textContent.slice(0,30)}`);});});
+  svg.querySelectorAll('.plot-c').forEach(g=>{const r=box(g.querySelector('rect.pframe'));g.querySelectorAll('text').forEach(t=>{const b=box(t);if(b.x<r.x+2||b.x+b.w>r.x+r.w-2||b.y<r.y||b.y+b.h>r.y+r.h)out.overflow.push(`plot text: ${t.textContent.slice(0,30)}`);});});
   svg.querySelectorAll('.comp-tag').forEach(g=>{const r=box(g.querySelector('rect')),t=g.querySelector('text');if(textW(t)>r.w-10)out.overflow.push(`badge ${t.textContent.slice(0,30)}`);});
   const m=MAPS[view];
   const tipsOf=m.edges.filter(e=>(e.arrow||"one")!=="none").map(e=>({k:e.a+'>'+e.b,g:geom(m,e)}));

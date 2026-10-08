@@ -202,6 +202,52 @@ svg.map.drag{cursor:grabbing}
 .pagehit.isnew{border-color:var(--accent);color:var(--accent)}
 .wnlist{margin:10px 0 2px;padding-left:18px;font-size:13px;line-height:1.55}
 .wnlist li{margin:0 0 4px}
+.plot-c .pframe{fill:var(--surface);stroke:var(--line)}
+.plot-c .pt{font-family:var(--font-ui);font-size:15px;font-weight:700;fill:var(--ink)}
+.plot-c .pcap{font-family:var(--font-ui);font-size:13px;fill:var(--ink-2)}
+.plot-c .ptick,.plot-c .plab{font-family:var(--font-ui);font-size:11.5px;fill:var(--ink-3)}
+.plot-c .plab{font-size:12.5px;fill:var(--ink-2)}
+.plot-c .pnote{font-family:var(--font-ui);font-size:10.5px;fill:var(--ink-3);font-style:italic}
+.plot-c .pax{stroke:var(--ink-3);stroke-width:1.4}
+.plot-c .pmark{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:4 4}
+.plot-c .pcur{fill:none;stroke:var(--accent);stroke-width:3.2;stroke-linejoin:round}
+.plot-c .pref{fill:none;stroke:var(--ink-3);stroke-width:2;stroke-dasharray:7 5;opacity:.7}
+.plot-c .pother{fill:none;stroke:var(--ink-3);stroke-width:2;opacity:.35}
+.plot-c .pdot{fill:var(--accent)}
+.pvar{cursor:pointer}
+.pvar rect{fill:var(--surface);stroke:var(--line)}
+.pvar text{font-family:var(--font-ui);font-size:12px;font-weight:600;fill:var(--ink-2);text-anchor:middle}
+.pvar.on rect{fill:var(--accent);stroke:var(--accent)}
+.pvar.on text{fill:#fff}
+.pvar:hover rect{stroke:var(--ink-3)}
+.pvar:focus{outline:none}
+.pvar:focus-visible rect{stroke:var(--ink);stroke-width:2.4}
+.node.wdim{opacity:.22}
+.walk{position:absolute;left:16px;bottom:70px;z-index:7;width:min(440px,calc(100% - 32px));max-height:min(42%,380px);display:flex;flex-direction:column;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.14);font-size:13px}
+.wk-h{display:flex;align-items:center;gap:10px;padding:10px 12px 8px;border-bottom:1px solid var(--line)}
+.wk-h b{flex:1;min-width:0}
+.wk-n{font-size:11.5px;color:var(--ink-3);white-space:nowrap}
+.wk-x{font-size:18px;line-height:1;color:var(--ink-3);padding:0 4px}
+.wk-list{margin:0;padding:8px 12px 8px 30px;overflow:auto;line-height:1.45}
+.wk-list li{margin:0 0 5px}
+.wk-list button{text-align:left;color:var(--ink);font:inherit;padding:0}
+.wk-list button:hover b{text-decoration:underline}
+.wk-nav{display:flex;justify-content:space-between;gap:8px;padding:8px 12px 10px;border-top:1px solid var(--line)}
+.wk-nav button{padding:5px 12px;border-radius:8px;border:1px solid var(--line);font-size:12.5px;font-weight:600;background:var(--surface);color:var(--ink-2)}
+.wk-nav button.go{background:var(--accent);border-color:var(--accent);color:#fff}
+.wk-nav button:disabled{opacity:.4}
+.dstar[aria-pressed="true"]{color:var(--due)}
+.mprog{margin-left:6px;font-size:10.5px;font-weight:700;color:var(--ok);font-variant-numeric:tabular-nums}
+.mprog.zero{color:var(--ink-3)}
+.cloze{border:0;border-bottom:2px dashed var(--accent);background:var(--accent-soft);border-radius:4px;padding:0 4px;margin:0 1px;font:inherit;font-weight:700;cursor:pointer}
+.cloze span{visibility:hidden}
+.cloze.open{background:none;border-bottom-color:transparent;cursor:default}
+.cloze.open span{visibility:visible}
+.clozeend{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 4px;font-size:13px}
+.clozeend button{padding:6px 12px;border-radius:8px;border:1px solid var(--line);font-size:12.5px;font-weight:600;background:var(--surface);color:var(--ink-2)}
+.clozeend button.go{background:var(--accent);border-color:var(--accent);color:#fff}
+.clozeend .linkbtn{border:0;background:none;padding:0}
 .revtoggle .linkbtn{font-size:12px}
 .weakmaps{display:grid;gap:6px;margin:8px 0 10px}
 .weakmap{display:grid;grid-template-columns:minmax(0,1fr) 96px auto;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--line);
@@ -410,6 +456,8 @@ svg.map.drag{cursor:grabbing}
           <button class="qopt" role="menuitemradio" data-q="fill" aria-checked="false">Fill in the map<span>Every box’s caption hidden — tap a box to check yourself</span></button>
           <button class="qopt" role="menuitemradio" data-q="pins" aria-checked="false">Name the pins<span>Tap a pin, then pick the lesion it marks</span></button>
           <button class="qopt" role="menuitemradio" data-q="buzz" aria-checked="false">Buzzword → card<span>Read a buzzword, pick the card it belongs to</span></button>
+          <button class="qopt" role="menuitemradio" data-q="case" aria-checked="false">Case vignettes<span>Findings from a disease card, its name hidden — pick the diagnosis</span></button>
+          <button class="qopt" role="menuitemradio" data-q="star" aria-checked="false">Starred cards<span id="qstarn">Every card you’ve starred, across all maps</span></button>
           <button class="qopt" role="menuitemradio" data-q="due" aria-checked="false">Due cards<span id="qduen">Every card due for review, across all maps</span></button>
         </div>
       </div>
@@ -426,10 +474,12 @@ svg.map.drag{cursor:grabbing}
         <button class="tbtn" id="zin" title="Zoom in" aria-label="Zoom in">+</button>
         <button class="tbtn" id="zout" title="Zoom out" aria-label="Zoom out">−</button>
         <button class="tbtn wide" id="zfit" title="Fit map to screen">Fit</button>
+        <button class="tbtn wide" id="zwalk" title="Walk through this map one section at a time (← → keys)">Walk</button>
         <button class="tbtn wide" id="zsrc" title="This map’s progress, weak spots and sources">Info</button>
         <button class="tbtn wide" id="zprint" title="Print this map with a one-page summary of its cards">Print</button>
       </div>
       <div class="qscore" id="qscore" hidden></div>
+      <div class="walk" id="walk" hidden></div>
       <div class="hint" id="hint">drag to pan · scroll to zoom · click any pin · Tab through pins</div>
       <div class="indexwrap" id="indexwrap" hidden></div>
       <aside class="drawer" id="drawer" hidden></aside>
@@ -928,6 +978,30 @@ const PATHS = {
   ccjvp:{n:"Jugular pulse",v:"--p-ppp"},
   ablymph:{n:"Lymphatic drainage",v:"--p-sugars"},
   brsense:{n:"Sensory receptors",v:"--p-glycogen"},
+  npprog:{n:"Progression",v:"--p-glycolysis"},
+  npname:{n:"Naming & staging",v:"--p-tca"},
+  nphall:{n:"Hallmarks",v:"--p-gluconeo"},
+  npgene:{n:"Oncogenes & suppressors",v:"--p-sugars"},
+  npspread:{n:"Spread & epidemiology",v:"--p-ppp"},
+  teedema:{n:"Edema",v:"--p-glycolysis"},
+  tethromb:{n:"Thrombosis",v:"--p-tca"},
+  teembol:{n:"Embolism",v:"--p-gluconeo"},
+  teout:{n:"Where emboli land",v:"--p-ppp"},
+  lmvol:{n:"Volumes & ventilation",v:"--p-glycolysis"},
+  lmmech:{n:"Mechanics",v:"--p-tca"},
+  lmcirc:{n:"Circulation & diffusion",v:"--p-gluconeo"},
+  lmgas:{n:"O₂ and CO₂ carriage",v:"--p-sugars"},
+  lmctrl:{n:"Control of breathing",v:"--p-ppp"},
+  ghhorm:{n:"Gut hormones",v:"--p-glycolysis"},
+  ghmot:{n:"Motility & neural",v:"--p-glycogen"},
+  ghacid:{n:"Gastric acid",v:"--p-tca"},
+  ghpanc:{n:"Pancreas & bile",v:"--p-gluconeo"},
+  rpclear:{n:"Clearance",v:"--p-glycolysis"},
+  rpglom:{n:"Filtration",v:"--p-tca"},
+  rpauto:{n:"Autoregulation",v:"--p-gluconeo"},
+  rptube:{n:"Tubule math",v:"--p-sugars"},
+  devnewborn:{n:"Newborn",v:"--p-glycogen"},
+  devrash:{n:"Childhood rashes",v:"--p-sugars"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -12151,6 +12225,336 @@ stretchrec:{n:"Muscle spindle & Golgi tendon organ",k:"reg",p:"brsense",enz:"Spi
  src:["Guyton ch 55 — Spinal Cord Motor Functions; The Cord Reflexes","Fundamental Neuroscience ch 24 — Motor System I: Peripheral Sensory, Brainstem, and Spinal Influence on Anterior Horn Neurons"],
  tx:["—"],q:["muscle spindle","muscle spindles","golgi tendon organ","golgi tendon organs","stretch reflex","ia afferent","ib afferent"]},
 
+/* ── neoplasia · edema, thrombosis & embolism · lung mechanics · GI hormones · renal physiology · newborn (m22) ─── */
+neoprog:{n:"Neoplastic progression — dysplasia to metastasis",k:"reg",p:"npprog",enz:"The basement membrane separates in situ from invasive",inh:"—",fa:"215, 217",hi:1,
+ mech:"A neoplasm is an uncontrolled, often monoclonal proliferation of cells, benign or malignant, with two parts: the neoplastic cells and a non-neoplastic stroma of vessels and connective tissue. Malignancy advances in steps, and the basement membrane is the line between in situ and invasive disease.",
+ find:["<b>Dysplasia</b>: pleomorphism, lost tissue orientation, ↑ nuclear:cytoplasmic ratio — often reversible","<b>Carcinoma in situ</b>: irreversible severe dysplasia through the full thickness of the epithelium; basement membrane intact","<b>Invasive carcinoma</b>: collagenases and hydrolases (metalloproteinases) breach the basement membrane; E-cadherin inactivation loosens cell–cell contacts","<b>Tissue invasion</b>: cells attach to ECM proteins (laminin, fibronectin) and migrate through the degraded matrix to reach vessels","<b>Metastasis</b>: spread through lymphatics or blood — adhesion to endothelium, extravasation, homing; the target is often the first capillary bed the cells meet"],
+ labs:["—"],
+ buzz:["Basement membrane intact = in situ · breached = invasive"],
+ src:["Robbins ch 7 — Neoplasia"],
+ tx:["—"],q:["neoplastic progression","e cadherin"]},
+
+tumornomen:{n:"Tumor nomenclature — benign vs malignant",k:"reg",p:"npname",enz:"Carcinoma = epithelium · sarcoma = mesenchyme",inh:"—",fa:"216",hi:1,
+ mech:"Carcinoma means epithelial origin and sarcoma mesenchymal origin; both terms generally imply malignancy. Benign tumors are generally named by adding -oma to the cell of origin (fibroma, chondroma).",
+ find:["<b>Benign</b>: usually well differentiated and well demarcated, low mitotic activity, no metastases, no necrosis","<b>Malignant</b>: may show poor differentiation, erratic growth, local invasion, metastasis and ↓ apoptosis","Epithelium: adenoma, papilloma → adenocarcinoma, papillary carcinoma · blood cells → leukemia, lymphoma","Blood vessels: hemangioma → angiosarcoma · smooth muscle: leiomyoma → leiomyosarcoma · striated muscle: rhabdomyoma → rhabdomyosarcoma","Connective tissue: fibroma → fibrosarcoma · bone: osteoma → osteosarcoma · fat: lipoma → liposarcoma · melanocyte: nevus → melanoma","<b>Hamartoma</b>: disorganized overgrowth of tissue in its native location (Peutz-Jeghers polyps) · <b>choristoma</b>: normal tissue in a foreign location (gastric tissue in a Meckel diverticulum)"],
+ labs:["—"],
+ buzz:["Hamartoma = right place, wrong arrangement · choristoma = right tissue, wrong place"],
+ src:["Robbins ch 7 — Neoplasia"],
+ tx:["—"],q:["tumor nomenclature","hamartoma","hamartomas","choristoma"]},
+
+gradestage:{n:"Tumor grade vs stage",k:"reg",p:"npname",enz:"Grade = how the cells look · stage = how far it spread",inh:"—",fa:"216",hi:1,
+ mech:"Grade describes the tumor cells; stage describes how far the tumor has spread. Stage usually predicts survival better.",
+ find:["<b>Grade</b>: differentiation (resemblance to the tissue of origin) and mitotic activity on histology — low grade (well differentiated) to high grade (poorly differentiated or anaplastic); higher grade often means more aggressive","<b>Stage</b>: invasion and spread from the primary site; depth of invasion correlates with metastatic risk; clinical (c) or pathologic (p)","<b>TNM</b>: T = primary tumor size or invasion, N = regional lymph node metastasis, M = distant metastasis — importance M > N > T","A high-stage, low-grade tumor usually does worse than a low-stage, high-grade one"],
+ labs:["—"],
+ buzz:["Stage (spread) determines survival"],
+ src:["Robbins ch 7 — Neoplasia"],
+ tx:["—"],q:["tumor grade","tumor stage","tnm staging","tnm","anaplasia"]},
+
+hallmarks:{n:"Hallmarks of cancer",k:"reg",p:"nphall",enz:"Acquired mutations in growth, DNA repair and survival",inh:"—",fa:"217, 218",hi:1,
+ mech:"Cancer comes from (mostly acquired) DNA mutations in genes that control growth, DNA repair and survival. Each hallmark is a capability the tumor gains.",
+ find:["<b>Growth signal self-sufficiency</b>: proto-oncogene mutations in growth factors (PDGF autocrine loop in brain tumors), receptors (HER2), signaling molecules (RAS), transcription factors (MYC), cell cycle regulators (cyclins, CDKs)","<b>Anti-growth signal insensitivity</b>: tumor suppressor loss (Rb); loss of E-cadherin function → lost contact inhibition (NF2 mutations)","<b>Evasion of apoptosis</b>: TP53, BCL2 (follicular B-cell lymphoma)","<b>Limitless replication</b>: telomerase reactivated → telomeres maintained","<b>Sustained angiogenesis</b>: ↑ VEGF or ↓ inhibitors; vessels sprout from capillaries (neoangiogenesis) or come from marrow-derived endothelial cells (vasculogenesis); often leaky and dilated","<b>Warburg effect</b>: glycolysis even with oxygen present → carbon for building cells, ↑ lactic acid","<b>Immune evasion</b>: ↓ MHC class I, TGF-β and regulatory T cells, upregulated immune checkpoint molecules","<b>Invasion and metastasis</b>: E-cadherin lost, metalloproteinases degrade basement membrane and ECM, vascular dissemination"],
+ labs:["—"],
+ buzz:["Warburg = aerobic glycolysis"],
+ src:["Robbins ch 7 — Neoplasia"],
+ tx:["—"],q:["hallmarks of cancer","warburg effect","neoangiogenesis","vasculogenesis","immune evasion"]},
+
+oncogenes:{n:"Oncogenes — one hit is enough",k:"reg",p:"npgene",enz:"Gain of function in a proto-oncogene",inh:"—",fa:"220",hi:1,
+ mech:"A gain-of-function mutation turns a normal proto-oncogene into an oncogene. Damage to only one allele is needed.",
+ find:["Receptor tyrosine kinases: <b>ALK</b> and <b>EGFR</b> (lung adenocarcinoma), <b>HER2</b> (breast and gastric carcinoma), <b>RET</b> (MEN2A and 2B, medullary and papillary thyroid carcinoma, pheochromocytoma)","Non-receptor tyrosine kinases: <b>BCR-ABL</b> (CML, ALL), <b>JAK2</b> (myeloproliferative neoplasms)","<b>BRAF</b> (serine/threonine kinase): melanoma, non-Hodgkin lymphoma, colorectal and papillary thyroid carcinoma, hairy cell leukemia","<b>c-KIT</b> (CD117): GIST, mastocytosis","Transcription factors: <b>MYCC</b> (Burkitt lymphoma), <b>MYCN</b> (neuroblastoma)","<b>KRAS</b> (GTPase): pancreatic, colorectal, lung, endometrial cancers · <b>BCL-2</b> (antiapoptotic): follicular and diffuse large B-cell lymphomas"],
+ labs:["—"],
+ buzz:["RET = REceptor Tyrosine kinase","c-KIT = cytoKIne receptor"],
+ src:["Robbins ch 7 — Neoplasia"],
+ tx:["—"],q:["=oncogenes","=proto oncogene","=proto oncogenes"]},
+
+tsgenes:{n:"Tumor suppressor genes — two hits",k:"reg",p:"npgene",enz:"Loss of function of both alleles (Knudson)",inh:"—",fa:"220",hi:1,
+ mech:"Loss of function raises cancer risk, but both alleles must be lost before the disease appears — the Knudson two-hit hypothesis. Someone who inherits one bad copy needs only one more hit.",
+ find:["Cell cycle brakes: <b>RB1</b> (inhibits E2F — retinoblastoma, osteosarcoma), <b>TP53</b> (activates p21 — most cancers, Li-Fraumeni), <b>CDKN2A</b> (p16 — melanoma, lung, pancreatic)","Signaling brakes: <b>APC</b> (β-catenin/WNT — colorectal cancer, FAP), <b>PTEN</b> (PI3K/AKT — prostate, breast, endometrial), <b>NF1</b> (Ras GTPase-activating protein)","DNA repair: <b>BRCA1/BRCA2</b> — breast, ovarian, prostate, pancreatic cancers","Deleted genes: <b>DCC</b> (colorectal), <b>SMAD4/DPC4</b> (pancreatic, colorectal)","Syndromes: <b>MEN1</b> (menin), <b>NF2</b> (merlin), <b>TSC1/TSC2</b> (hamartin, tuberin), <b>VHL</b> (inhibits HIF-1α), <b>WT1</b> (Wilms tumor)"],
+ labs:["—"],
+ buzz:["Two hits for suppressors, one for oncogenes"],
+ src:["Robbins ch 7 — Neoplasia"],
+ tx:["—"],q:["=tumor suppressor gene","=tumor suppressor genes","two hit hypothesis","knudson"]},
+
+cancerepi:{n:"Cancer epidemiology",k:"reg",p:"npspread",enz:"Incidence vs mortality by sex and age",inh:"—",fa:"218",hi:0,
+ mech:"Skin cancer (basal > squamous ≫ melanoma) is the most common cancer and is left out of the usual rankings. Cancer is the second leading cause of death in the United States, after heart disease.",
+ find:["<b>Incidence</b> — men: prostate, lung, colorectal · women: breast, lung, colorectal · children (0–14): leukemia, CNS, neuroblastoma","<b>Mortality</b> — men: lung, prostate, colorectal · women: lung, breast, colorectal · children: leukemia, CNS, neuroblastoma","Lung cancer incidence has fallen in men but not changed much in women"],
+ labs:["—"],
+ buzz:["Lung cancer kills the most in both sexes"],
+ src:["Robbins ch 7 — Neoplasia"],
+ tx:["—"],q:["cancer epidemiology","cancer incidence","cancer mortality"]},
+
+metsites:{n:"Where metastases go — routes and favorite sites",k:"reg",p:"npspread",enz:"Carcinomas by lymph, sarcomas by blood",inh:"—",fa:"217, 219",hi:1,
+ mech:"Most carcinomas spread by lymphatics and most sarcomas by blood. Metastases to bone, liver, lung and brain are more common than primary tumors of those organs, and they often appear as multiple lesions.",
+ find:["Carcinomas that spread through blood: follicular thyroid, choriocarcinoma, renal cell, hepatocellular","<b>Bone</b>: prostate, breast ≫ lung > kidney, colon — axial skeleton; blastic (prostate, small cell lung), mixed (breast), lytic (kidney, colon, non-small cell lung)","<b>Liver</b>: colon > breast ≫ pancreas, lung, prostate","<b>Lung</b>: colon, breast ≫ kidney, prostate — usually both lungs","<b>Brain</b>: lung > breast ≫ melanoma > colon, prostate — at the gray-white junction","Organ tropism: lung cancers commonly spread to the adrenals"],
+ labs:["—"],
+ buzz:["CLaSH — Carcinomas by Lymph, Sarcomas Hematogenously"],
+ src:["Robbins ch 7 — Neoplasia"],
+ tx:["—"],q:["common metastases","blastic metastases","lytic metastases","brain metastases","liver metastases"]},
+
+capfluid:{n:"Capillary fluid exchange & edema",k:"reg",p:"teedema",enz:"Starling forces across the capillary wall",inh:"—",fa:"301",hi:1,
+ mech:"Four Starling forces decide whether fluid leaves a capillary or returns to it. Edema is excess fluid in the interstitium, and each cause pushes one of the four.",
+ find:["Out: <b>capillary hydrostatic pressure (Pc)</b> and <b>interstitial oncotic pressure (πi)</b> · in: <b>plasma oncotic pressure (πc)</b> and <b>interstitial hydrostatic pressure (Pi)</b>","Net flow Jv = Kf [(Pc − Pi) − σ(πc − πi)] — Kf is permeability to fluid; σ, the reflection coefficient, is how impermeable the wall is to protein","↑ Pc: heart failure","↑ Kf (permeability): toxins, infections, burns","↑ πi: lymphatic blockage","↓ πc (plasma protein): nephrotic syndrome, liver failure, protein malnutrition"],
+ labs:["—"],
+ buzz:["Two forces push out, two pull in — find the one that changed"],
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock","Guyton ch 16 — The Microcirculation and Lymphatic System: Capillary Fluid Exchange, Interstitial Fluid, and Lymph Flow"],
+ tx:["—"],q:["starling forces","capillary fluid exchange","reflection coefficient"]},
+
+thrombosisreg:{n:"Thrombus formation — Virchow triad & lines of Zahn",k:"reg",p:"tethromb",enz:"Stasis, hypercoagulability, endothelial damage",inh:"—",fa:"321, 433, 691",hi:1,
+ mech:"A thrombus forms when Virchow’s triad is in play. A thrombus formed in flowing blood during life is laminated; a clot that forms after death is not.",
+ find:["Virchow triad (SHE): <b>stasis</b> (after surgery, long drive or flight), <b>hypercoagulability</b> (factor V Leiden, oral contraceptives, pregnancy), <b>endothelial damage</b> (exposed collagen triggers clotting)","<b>Lines of Zahn</b>: interdigitating pink (platelets, fibrin) and red (RBC) layers — only in thrombi formed before death","Hereditary thrombophilias (autosomal dominant): antithrombin deficiency, factor V Leiden, protein C or S deficiency, prothrombin G20210A","Acquired: nephrotic syndrome (antithrombin lost in urine), DIC, antiphospholipid syndrome","Fate of a thrombus: it propagates, embolizes, dissolves, or organizes and recanalizes"],
+ labs:["—"],
+ buzz:["Virchow triad = SHE"],
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock"],
+ tx:["—"],q:["lines of zahn","postmortem clot"]},
+
+emboli:{n:"Embolus types — FAT BAT",k:"reg",p:"teembol",enz:"Fat, Air, Thrombus, Bacteria, Amniotic fluid, Tumor",inh:"—",fa:"284, 321, 691",hi:1,
+ mech:"An embolus is material carried in the blood from where it formed to where it lodges. Most are thrombi.",
+ find:["<b>Thrombus</b>: most pulmonary emboli come from proximal deep leg veins (iliac, femoral, popliteal)","<b>Fat</b>: long-bone fractures, liposuction — hypoxemia, neurologic changes, petechial rash","<b>Air</b>: decompression sickness in divers who ascend (nitrogen bubbles) or iatrogenic (central line placement)","<b>Bacteria</b>: infected material — vegetations (thrombi on heart valves) can be infected","<b>Amniotic fluid</b>: during labor or postpartum → DIC; rare but high mortality","<b>Tumor</b>: tumor cells carried in blood or lymph","Most systemic arterial emboli (~80%) start as intracardiac mural thrombi — after LV infarcts, or with left atrial dilation and fibrillation","A venous embolus that crosses an atrial or ventricular septal defect or a patent foramen ovale into the systemic circulation is a <b>paradoxical embolism</b>"],
+ labs:["—"],
+ buzz:["An embolus moves like a FAT BAT"],
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock"],
+ tx:["—"],q:["fat bat","paradoxical embolism","paradoxical emboli","embolus types"]},
+
+fatemb:{n:"Fat embolism syndrome",k:"dz",p:"teembol",enz:"Marrow fat in the circulation",inh:"—",fa:"691",hi:1,
+ mech:"Fat from marrow enters the circulation after a long-bone fracture (or liposuction) and lodges in the small vessels of the lungs, brain and skin.",
+ find:["Classic triad: <b>hypoxemia</b>, <b>neurologic abnormalities</b> and a <b>petechial rash</b>","Symptoms typically begin 1–3 days after the injury","Fat microemboli block vessels, and the free fatty acids they release injure endothelium"],
+ labs:["—"],
+ buzz:["Long-bone fracture, then confusion and petechiae"],
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock"],
+ tx:["—"],q:["fat embolism","fat emboli","fat embolism syndrome"]},
+
+airemb:{n:"Air embolism & decompression sickness",k:"dz",p:"teembol",enz:"Gas bubbles block flow",inh:"—",fa:"691",hi:1,
+ mech:"Gas bubbles in the circulation block flow. In divers who ascend too fast, nitrogen dissolved at depth comes out of solution; air can also enter during procedures such as central line placement.",
+ find:["<b>Decompression sickness</b>: joint and muscle pain (“the bends”), breathing difficulty (“the chokes”), neurologic symptoms","<b>Caisson disease</b> (chronic): bone infarcts — ischemic necrosis, especially of the femoral heads","Iatrogenic air embolism: central line placement and other invasive procedures"],
+ labs:["—"],
+ buzz:["Ascending diver → nitrogen bubbles → hyperbaric O₂"],
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock","Guyton ch 45 — Physiology of Deep-Sea Diving and Other Hyperbaric Conditions"],
+ tx:["Hyperbaric O₂ for decompression sickness"],q:["air embolism","air emboli","decompression sickness","caisson disease"]},
+
+afe:{n:"Amniotic fluid embolism",k:"dz",p:"teembol",enz:"Amniotic fluid enters the maternal circulation",inh:"—",fa:"691",hi:1,
+ mech:"Amniotic fluid and fetal cells enter the maternal circulation, typically during labor or postpartum, though uterine trauma can also do it.",
+ find:["Sudden severe dyspnea, cyanosis and shock, then seizures and coma","<b>DIC</b> follows","Fetal squamous cells, lanugo hair, fat and mucin in the maternal pulmonary vessels","Rare but high mortality"],
+ labs:["—"],
+ buzz:["Labor + sudden shock + DIC"],
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock"],
+ tx:["—"],q:["amniotic fluid embolism","amniotic fluid emboli"]},
+
+lungvol:{n:"Lung volumes, capacities & ventilation",k:"reg",p:"lmvol",enz:"Four volumes make four capacities",inh:"—",fa:"682, 683",hi:1,
+ mech:"Four volumes add up to four capacities. Residual volume — and any capacity that contains it — cannot be measured by spirometry.",
+ find:["Tidal volume (VT) ~500 mL (6–8 mL/kg) · inspiratory reserve (IRV) · expiratory reserve (ERV) · residual volume (RV), left after a maximal exhale","Inspiratory capacity = IRV + VT · functional residual capacity (FRC) = RV + ERV · vital capacity = IRV + VT + ERV · total lung capacity = VC + RV","At FRC the inward pull of the lung balances the outward pull of the chest wall","Minute ventilation VE = VT × RR · alveolar ventilation VA = (VT − VD) × RR — normal RR 12–20, VT 500 mL, VD 150 mL"],
+ labs:["—"],
+ buzz:["RV, FRC and TLC can’t be measured by spirometry"],
+ src:["Costanzo ch 5 — Respiratory physiology","Guyton ch 38 — Pulmonary Ventilation"],
+ tx:["—"],q:["lung volumes","tidal volume","vital capacity","functional residual capacity","residual volume","total lung capacity","inspiratory capacity","expiratory reserve volume","inspiratory reserve volume","minute ventilation","alveolar ventilation"]},
+
+compliance:{n:"Compliance, elastic recoil & surfactant",k:"reg",p:"lmmech",enz:"How easily the lung fills — ΔV/ΔP",inh:"—",fa:"679, 683",hi:1,
+ mech:"The lungs tend to collapse inward and the chest wall to spring outward; at FRC the two balance. Compliance is the change in lung volume for a change in pressure.",
+ find:["At FRC, airway and alveolar pressures are atmospheric and intrapleural pressure is negative, which keeps alveoli open; pulmonary vascular resistance is at its minimum","<b>↑ Compliance</b> (easier to fill): emphysema, older adults · <b>↓ compliance</b>: pulmonary fibrosis, pneumonia, ARDS, pulmonary edema","<b>Hysteresis</b>: inflation and deflation follow different pressure-volume curves because surface tension must be overcome on inflation","<b>Laplace</b>: collapsing pressure = 2 × surface tension / radius — small alveoli tend to collapse on expiration","<b>Surfactant</b> (mainly DPPC, from type II pneumocytes): ↓ surface tension, ↓ collapse, ↓ recoil, ↑ compliance; made from ~20 weeks, mature by ~35 weeks; glucocorticoids drive it"],
+ labs:["—"],
+ buzz:["Emphysema is floppy, fibrosis is stiff"],
+ src:["Costanzo ch 5 — Respiratory physiology","Guyton ch 38 — Pulmonary Ventilation"],
+ tx:["—"],q:["lung compliance","elastic recoil","hysteresis","law of laplace","dipalmitoylphosphatidylcholine"]},
+
+airwayres:{n:"Airway resistance & work of breathing",k:"reg",p:"lmmech",enz:"Medium bronchi resist most",inh:"—",fa:"680, 682",hi:1,
+ mech:"Resistance is highest in the large and medium bronchi; the small airways are so many, side by side, that together they resist least. The work of breathing goes to overcoming elastic recoil and airway resistance.",
+ find:["Resistance highest in large- to medium-sized bronchi; terminal bronchioles, in parallel, have the least","Resistance varies inversely with the fourth power of the airway radius, so narrowing raises it steeply","<b>Work of breathing</b>: elastic plus flow-resistive work, kept low by the best mix of rate and tidal volume","Restrictive disease: more elastic work — fast, shallow breathing (↑ RR, ↓ VT)","Obstructive disease: more resistive work — slow, deep breathing (↓ RR, ↑ VT)"],
+ labs:["—"],
+ buzz:["Restrictive = fast and shallow · obstructive = slow and deep"],
+ src:["Costanzo ch 5 — Respiratory physiology","Guyton ch 38 — Pulmonary Ventilation"],
+ tx:["—"],q:["airway resistance","work of breathing"]},
+
+pulmcirc:{n:"Pulmonary circulation & diffusion",k:"reg",p:"lmcirc",enz:"Low pressure, and it constricts when O₂ falls",inh:"—",fa:"684, 685",hi:1,
+ mech:"The pulmonary circulation is low resistance and high compliance. Unlike systemic arterioles, pulmonary vessels constrict when alveolar oxygen falls, steering blood toward ventilated alveoli.",
+ find:["<b>Hypoxic vasoconstriction</b>: ↓ PAO₂ shifts blood from poorly to well-ventilated regions; chronic → pulmonary hypertension ± cor pulmonale","<b>Perfusion limited</b> (O₂ in health, CO₂, N₂O): the gas equilibrates early — more uptake only with more flow","<b>Diffusion limited</b> (O₂ in emphysema or fibrosis, CO): the gas has not equilibrated by the end of the capillary","Diffusion J = A × Dk × (P1 − P2)/Δx — area ↓ in emphysema, wall thickness ↑ in fibrosis; DLCO measures it","Fibrosis causes hypoxia before hypercapnia because CO₂ diffuses far faster than O₂","PVR = (pulmonary artery pressure − left atrial pressure) / cardiac output; left atrial pressure ≈ wedge pressure","Lung zones: zone 1 PA ≥ Pa > Pv · zone 2 Pa > PA > Pv · zone 3 Pa > Pv > PA; V/Q ~3 at the apex, ~0.6 at the base"],
+ labs:["—"],
+ buzz:["The lung is the one bed that constricts to hypoxia"],
+ src:["Costanzo ch 5 — Respiratory physiology","Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid","Guyton ch 40 — Principles of Gas Exchange; Diffusion of Oxygen and Carbon Dioxide Through Respiratory Membranes"],
+ tx:["—"],q:["hypoxic vasoconstriction","hypoxic pulmonary vasoconstriction","perfusion limited","diffusion limited","dlco","pulmonary vascular resistance"]},
+
+odc:{n:"Oxygen content & the hemoglobin dissociation curve",k:"reg",p:"lmgas",enz:"Sigmoid because hemoglobin binds O₂ cooperatively",inh:"—",fa:"687, 688",hi:1,
+ mech:"Hemoglobin binds O₂ cooperatively, so its curve is sigmoid; myoglobin, a single chain, binds more tightly and its curve is not sigmoid. Shifts in the curve match unloading to what the tissue needs.",
+ find:["O₂ content = (1.34 × Hb × SaO₂) + (0.003 × PaO₂); binding capacity ≈ 20 mL O₂/dL; delivery = cardiac output × content","<b>Right shift</b> (↓ affinity, ↑ unloading, ↑ P50): exercise, ↓ pH, ↑ temperature, ↑ 2,3-BPG (hypoxia), ↑ H⁺ and CO₂ (Bohr effect)","<b>Left shift</b> (↑ affinity): ↓ temperature, fetal Hb (binds 2,3-BPG poorly), CO, methemoglobin","Anemia: ↓ content with normal SaO₂ and PaO₂ · polycythemia: ↑ content","CO poisoning and methemoglobinemia: ↓ SaO₂ and content, normal PaO₂ · cyanide: all normal"],
+ labs:["—"],
+ buzz:["Left is lower (P50)"],
+ src:["Costanzo ch 5 — Respiratory physiology","Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids"],
+ tx:["—"],q:["oxygen hemoglobin dissociation curve","oxyhemoglobin dissociation curve","dissociation curve","p50","bohr effect","oxygen content"]},
+
+co2trans:{n:"CO₂ transport & the Haldane effect",k:"reg",p:"lmgas",enz:"Mostly as bicarbonate made in red cells",inh:"—",fa:"686, 687",hi:1,
+ mech:"CO₂ travels in blood three ways, mostly as bicarbonate made inside red cells by carbonic anhydrase.",
+ find:["Most as <b>HCO₃⁻</b> — about 90% by First Aid and Costanzo, about 70% by Guyton: CO₂ + H₂O → H₂CO₃ in red cells (carbonic anhydrase); HCO₃⁻ leaves in exchange for Cl⁻ (chloride shift)","~5% as carbamino compounds (carbaminohemoglobin on deoxygenated Hb) · ~5% dissolved in plasma","<b>Haldane effect</b>: in the lungs, oxygenating Hb releases H⁺ → CO₂ leaves the red cells","<b>Bohr effect</b>: in the tissues, H⁺ and CO₂ lower Hb’s O₂ affinity → O₂ unloads"],
+ labs:["—"],
+ buzz:["Haldane at the lung, Bohr at the tissue"],
+ src:["Costanzo ch 5 — Respiratory physiology","Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids"],
+ tx:["—"],q:["haldane effect","carbaminohemoglobin","chloride shift","co2 transport","carbon dioxide transport"]},
+
+chemorec:{n:"Control of breathing — chemoreceptors",k:"reg",p:"lmctrl",enz:"CO₂ drives breathing; low O₂ only below 60 mm Hg",inh:"—",fa:"299",hi:1,
+ mech:"Breathing is driven mainly by CO₂, sensed through the pH of brain interstitial fluid; low O₂ adds drive through the peripheral chemoreceptors only when it falls far.",
+ find:["<b>Central</b> chemoreceptors (medulla): respond to pH and PCO₂ of brain interstitial fluid — arterial CO₂ crosses the blood-brain barrier, H⁺ does not; no response to PO₂","<b>Peripheral</b> chemoreceptors (carotid and aortic bodies): ↑ PCO₂, ↓ pH, and PO₂ < 60 mm Hg","Chronic ↑ PCO₂ (COPD) blunts the central chemoreceptors → ventilation depends more on the peripheral response to low O₂","The medullary respiratory centers set the rhythm — the dorsal respiratory group drives inspiration; the pneumotaxic center in the pons limits it"],
+ labs:["—"],
+ buzz:["Central = CO₂ via CSF pH · peripheral = O₂ < 60"],
+ src:["Guyton ch 42 — Regulation of Respiration","Costanzo ch 5 — Respiratory physiology"],
+ tx:["—"],q:["central chemoreceptors","=peripheral chemoreceptors","=carotid body","=carotid bodies","hypoxic drive"]},
+
+exercisephys:{n:"Response to exercise",k:"reg",p:"lmctrl",enz:"Ventilation and output rise to match",inh:"—",fa:"685, 688",hi:0,
+ mech:"Exercise raises O₂ use and CO₂ production; ventilation and cardiac output rise to match, so arterial PO₂ and PCO₂ stay normal.",
+ find:["↑ HR and ↑ SV → ↑ cardiac output and pulmonary blood flow → V/Q becomes more uniform from base to apex","↑ CO₂ and ↓ pH in the tissues → right shift of the dissociation curve → more O₂ unloaded; ↑ arteriovenous O₂ difference","PaO₂ and PaCO₂ stay normal · venous PO₂ falls (more O₂ used) and venous PCO₂ rises (more CO₂ made)"],
+ labs:["—"],
+ buzz:["Arterial gases stay normal; venous gases move"],
+ src:["Guyton ch 85 — Sports Physiology","Costanzo ch 5 — Respiratory physiology"],
+ tx:["—"],q:["response to exercise","exercise physiology"]},
+
+gastrin:{n:"Gastrin",k:"reg",p:"ghhorm",enz:"G cells — antrum and duodenum",inh:"—",fa:"378, 380",hi:1,
+ mech:"Gastrin raises acid mainly by making ECL cells release histamine, rather than by acting on parietal cells directly. It also grows the gastric mucosa and increases motility.",
+ find:["↑ by stomach distention or alkalinization, amino acids, peptides, and vagal stimulation through gastrin-releasing peptide (GRP)","↓ when gastric pH falls below 1.5","↑ with chronic PPI use and in chronic atrophic gastritis (H pylori) · ↑↑ in Zollinger-Ellison syndrome (gastrinoma)"],
+ labs:["—"],
+ buzz:["Gastrin works mostly through histamine"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 65 — Secretory Functions of the Alimentary Tract"],
+ tx:["—"],q:["gastrin","g cells","gastrin releasing peptide"]},
+
+cck:{n:"Cholecystokinin (CCK)",k:"reg",p:"ghhorm",enz:"I cells — duodenum and jejunum",inh:"—",fa:"378",hi:1,
+ mech:"Fat and protein in the duodenum release CCK, which brings bile and pancreatic enzymes to digest them and slows gastric emptying so the intestine keeps up.",
+ find:["↑ pancreatic secretion (through neural muscarinic pathways), ↑ gallbladder contraction, ↑ sphincter of Oddi relaxation","↓ gastric emptying","Released by fatty acids and amino acids"],
+ labs:["—"],
+ buzz:["Fat in the duodenum → CCK → gallbladder squeezes"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 65 — Secretory Functions of the Alimentary Tract"],
+ tx:["—"],q:["cholecystokinin","cck","i cells"]},
+
+secretin:{n:"Secretin",k:"reg",p:"ghhorm",enz:"S cells — duodenum",inh:"—",fa:"378",hi:1,
+ mech:"Acid entering the duodenum releases secretin, which brings bicarbonate from the pancreas to neutralize it so pancreatic enzymes can work.",
+ find:["↑ pancreatic HCO₃⁻ secretion, ↑ bile secretion, ↓ gastric acid secretion","Released by acid and fatty acids in the duodenal lumen"],
+ labs:["—"],
+ buzz:["Secretin = the body’s antacid"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 65 — Secretory Functions of the Alimentary Tract"],
+ tx:["—"],q:["secretin","s cells"]},
+
+sstgi:{n:"Somatostatin in the gut — the brake",k:"reg",p:"ghhorm",enz:"D cells — pancreatic islets and GI mucosa",inh:"—",fa:"378",hi:1,
+ mech:"Somatostatin inhibits the secretion of almost everything around it (“somato-stasis”).",
+ find:["↓ gastric acid and pepsinogen, ↓ pancreatic and small-intestine fluid, ↓ gallbladder contraction, ↓ insulin and glucagon release","↑ by acid · ↓ by vagal stimulation","<b>Octreotide</b> (analog): acromegaly, carcinoid syndrome, VIPoma, variceal bleeding"],
+ labs:["—"],
+ buzz:["Somatostatin encourages somato-stasis"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 65 — Secretory Functions of the Alimentary Tract"],
+ tx:["—"],q:["d cells"]},
+
+gip:{n:"GIP — glucose-dependent insulinotropic peptide",k:"reg",p:"ghhorm",enz:"K cells — duodenum and jejunum",inh:"—",fa:"378",hi:0,
+ mech:"GIP (also called gastric inhibitory peptide) tells the pancreas that food is coming, which is why oral glucose raises insulin more than the same glucose given IV.",
+ find:["Endocrine: ↑ insulin release · exocrine: ↓ gastric H⁺ secretion","Released by fatty acids, amino acids and oral glucose","An oral glucose load raises insulin more than the IV equivalent because of GIP"],
+ labs:["—"],
+ buzz:["Oral glucose beats IV glucose for insulin release"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 65 — Secretory Functions of the Alimentary Tract"],
+ tx:["—"],q:["glucose dependent insulinotropic peptide","gastric inhibitory peptide","k cells"]},
+
+ghrelin:{n:"Ghrelin",k:"reg",p:"ghhorm",enz:"Stomach — the hunger hormone",inh:"—",fa:"378",hi:0,
+ mech:"Ghrelin from the stomach raises appetite.",
+ find:["↑ appetite (“ghrowlin’ stomach”)","↑ in the fasting state · ↓ by food","↑ in Prader-Willi syndrome · ↓ after gastric bypass surgery"],
+ labs:["—"],
+ buzz:["Ghrowlin’ stomach"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 65 — Secretory Functions of the Alimentary Tract"],
+ tx:["—"],q:["ghrelin"]},
+
+motilin:{n:"Motilin & the migrating motor complex",k:"reg",p:"ghmot",enz:"Small intestine — fasting housekeeping",inh:"—",fa:"378",hi:0,
+ mech:"Between meals, motilin sets off migrating motor complexes that sweep the gut clean.",
+ find:["Made in the small intestine; ↑ in the fasting state","Produces migrating motor complexes (MMCs)","Motilin receptor agonists (erythromycin) stimulate intestinal peristalsis"],
+ labs:["—"],
+ buzz:["Erythromycin works as a motilin agonist"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 64 — Propulsion and Mixing of Food in the Alimentary Tract"],
+ tx:["—"],q:["motilin","migrating motor complex","migrating motor complexes"]},
+
+vip:{n:"Vasoactive intestinal polypeptide (VIP)",k:"reg",p:"ghmot",enz:"Parasympathetic ganglia — sphincters, gallbladder, small intestine",inh:"—",fa:"378",hi:0,
+ mech:"VIP pulls water and electrolytes into the gut and relaxes intestinal smooth muscle and sphincters.",
+ find:["↑ intestinal water and electrolyte secretion, ↑ relaxation of intestinal smooth muscle and sphincters, ↓ gastric acid","↑ by distention and vagal stimulation · ↓ by adrenergic input","VIPoma: Watery Diarrhea, Hypokalemia, Achlorhydria (WDHA)","Nitric oxide also relaxes smooth muscle, including the lower esophageal sphincter; its loss raises LES tone in achalasia"],
+ labs:["—"],
+ buzz:["VIPoma = WDHA"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 64 — Propulsion and Mixing of Food in the Alimentary Tract"],
+ tx:["—"],q:["vasoactive intestinal polypeptide","vasoactive intestinal peptide"]},
+
+gastricacid:{n:"Parietal cell — acid secretion and its controls",k:"reg",p:"ghacid",enz:"H⁺/K⁺-ATPase driven by histamine, ACh and gastrin",inh:"—",fa:"379, 380",hi:1,
+ mech:"Parietal cells secrete acid when histamine, acetylcholine and gastrin stimulate them — and histamine from ECL cells carries most of gastrin’s effect.",
+ find:["↑ by <b>histamine</b> (H₂ receptors), <b>ACh</b> (vagus, M₃ receptors) and <b>gastrin</b> (largely by releasing histamine from ECL cells)","↓ by somatostatin, GIP, prostaglandins and secretin","Parietal cells also make <b>intrinsic factor</b>, needed for B12 uptake in the terminal ileum","Chief cells make <b>pepsinogen</b>, which acid converts to pepsin; ↑ by vagal ACh and local acid","Autoimmune destruction of parietal cells → chronic gastritis and pernicious anemia"],
+ labs:["—"],
+ buzz:["Three keys open the parietal cell: histamine, ACh, gastrin"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 65 — Secretory Functions of the Alimentary Tract","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases"],
+ tx:["—"],q:["parietal cell","parietal cells","enterochromaffin like cells","ecl cells","pepsinogen"]},
+
+mucosaldef:{n:"Bicarbonate & mucosal defense — Brunner glands",k:"reg",p:"ghacid",enz:"Mucus traps bicarbonate on the surface",inh:"—",fa:"369, 379",hi:0,
+ mech:"Bicarbonate from several sources neutralizes acid at the mucosal surface and in the duodenum.",
+ find:["HCO₃⁻ comes from mucosal cells (stomach, duodenum), salivary glands, the pancreas and <b>Brunner glands</b> in the duodenal submucosa","It is trapped in the mucus covering the gastric epithelium","Pancreatic and biliary HCO₃⁻ rise with secretin"],
+ labs:["—"],
+ buzz:["Brunner glands = duodenal submucosa"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Pawlina ch 17 — Digestive System II: Esophagus and Gastrointestinal Tract"],
+ tx:["—"],q:["brunner glands","brunner gland"]},
+
+pancsec:{n:"Pancreatic secretions",k:"reg",p:"ghpanc",enz:"Acinar enzymes · ductal bicarbonate",inh:"—",fa:"380",hi:1,
+ mech:"The pancreas secretes an isotonic fluid whose anions shift with flow — high Cl⁻ at low flow, high HCO₃⁻ at high flow — and enzymes, most as inactive zymogens.",
+ find:["α-amylase (starch; secreted active) · lipases · proteases (trypsin, chymotrypsin, elastase, carboxypeptidases) secreted as zymogens","<b>Enterokinase</b> (enteropeptidase) on the duodenal and jejunal brush border converts trypsinogen to trypsin","Trypsin activates the other proenzymes and more trypsinogen — a positive feedback loop","Secretin drives the bicarbonate; CCK drives the enzymes"],
+ labs:["—"],
+ buzz:["Enterokinase lights the trypsin fuse"],
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 65 — Secretory Functions of the Alimentary Tract"],
+ tx:["—"],q:["pancreatic secretion","pancreatic secretions","enterokinase","enteropeptidase","trypsinogen","zymogen","zymogens"]},
+
+renalclear:{n:"Renal clearance",k:"reg",p:"rpclear",enz:"Cx = Ux × V / Px",inh:"—",fa:"600",hi:1,
+ mech:"Clearance is the volume of plasma completely cleared of a substance per unit time. Comparing it with GFR shows what the tubule did to that substance.",
+ find:["Cx = (Ux × V) / Px — Ux urine concentration, Px plasma concentration, V urine flow rate","Cx < GFR: net reabsorption and/or not freely filtered","Cx > GFR: net secretion","Cx = GFR: no net secretion or reabsorption (inulin)"],
+ labs:["—"],
+ buzz:["Compare clearance with GFR to see what the tubule did"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control"],
+ tx:["—"],q:["renal clearance"]},
+
+gfrcalc:{n:"GFR — inulin & creatinine",k:"reg",p:"rpglom",enz:"Glomerular filtration rate ≈ 100 mL/min",inh:"—",fa:"600, 601",hi:1,
+ mech:"Inulin is freely filtered and neither reabsorbed nor secreted, so its clearance equals GFR. Creatinine clearance is the everyday estimate.",
+ find:["C(inulin) = GFR = U(inulin) × V / P(inulin)","GFR = Kf [(P<sub>GC</sub> − P<sub>BS</sub>) − (π<sub>GC</sub> − π<sub>BS</sub>)] — π<sub>BS</sub> is normally zero","Creatinine clearance slightly <b>overestimates</b> GFR because the proximal tubule secretes some creatinine","Filtered load = GFR × plasma concentration"],
+ labs:["—"],
+ buzz:["Inulin = true GFR · creatinine slightly overshoots"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control"],
+ tx:["—"],q:["=gfr","inulin","inulin clearance","filtered load"]},
+
+erpf:{n:"Renal plasma flow & filtration fraction",k:"reg",p:"rpglom",enz:"PAH clearance · FF = GFR / RPF",inh:"—",fa:"600, 601",hi:1,
+ mech:"PAH is filtered and secreted so completely that nearly all of it entering the kidney is excreted, so its clearance estimates renal plasma flow.",
+ find:["eRPF = C(PAH) = U(PAH) × V / P(PAH) — about 20% filtered, 80% secreted","eRPF slightly underestimates true RPF","RBF = RPF / (1 − Hct); about 20–25% of cardiac output","<b>Filtration fraction</b> = GFR / RPF, normally ~20%"],
+ labs:["—"],
+ buzz:["PAH for flow, inulin for filtration"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control"],
+ tx:["—"],q:["effective renal plasma flow","renal plasma flow","para aminohippuric acid","pah clearance","filtration fraction"]},
+
+glomdyn:{n:"Changes in glomerular dynamics",k:"reg",p:"rpglom",enz:"Read the filtration fraction to tell them apart",inh:"—",fa:"601",hi:1,
+ mech:"Each change moves GFR and RPF differently, and the filtration fraction (GFR / RPF) tells them apart.",
+ find:["<b>Afferent constriction</b>: ↓ GFR, ↓ RPF, FF unchanged","<b>Efferent constriction</b> (angiotensin II): ↑ GFR, ↓ RPF, ↑ FF","↑ Plasma protein: ↓ GFR, RPF unchanged, ↓ FF · ↓ plasma protein: ↑ GFR, ↑ FF","<b>Ureter constriction</b>: ↓ GFR, RPF unchanged, ↓ FF","<b>Dehydration</b>: ↓ GFR, ↓↓ RPF, ↑ FF","Prostaglandins Dilate the Afferent arteriole (PDA); Angiotensin II Constricts the Efferent (ACE) — NSAIDs and ACE inhibitors should not be given together"],
+ labs:["—"],
+ buzz:["PDA and ACE"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control"],
+ tx:["—"],q:["glomerular dynamics","afferent arteriole constriction","efferent arteriole constriction"]},
+
+rbfauto:{n:"Renal blood flow autoregulation",k:"reg",p:"rpauto",enz:"Myogenic reflex and tubuloglomerular feedback",inh:"—",fa:"600",hi:1,
+ mech:"Two mechanisms hold renal blood flow and GFR steady when perfusion pressure changes, protecting the kidney.",
+ find:["<b>Myogenic</b>: ↑ arterial pressure stretches the afferent arteriole → it constricts → RBF held steady","<b>Tubuloglomerular feedback</b>: ↑ NaCl reaching the macula densa → paracrine constriction of the afferent arteriole; ↓ NaCl does the opposite"],
+ labs:["—"],
+ buzz:["Stretch → constrict · more salt at the macula densa → constrict"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control"],
+ tx:["—"],q:["renal autoregulation","tubuloglomerular feedback"]},
+
+reabsec:{n:"Filtered load, reabsorption, secretion & FENa",k:"reg",p:"rptube",enz:"Filtered vs excreted tells you which",inh:"—",fa:"602, 620",hi:1,
+ mech:"Compare what was filtered with what was excreted: if less came out, the tubule reabsorbed the difference; if more, it secreted it.",
+ find:["Filtered load = GFR × Px · excretion rate = V × Ux","Reabsorption = filtered − excreted · secretion = excreted − filtered","<b>FENa</b> = Na⁺ excreted / Na⁺ filtered = (U<sub>Na</sub> × P<sub>Cr</sub>) / (P<sub>Na</sub> × U<sub>Cr</sub>)","FENa < 1% in prerenal injury · > 2% in intrinsic (tubular) injury"],
+ labs:["—"],
+ buzz:["Prerenal kidneys hold on to sodium"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 28 — Renal Tubular Reabsorption and Secretion"],
+ tx:["—"],q:["fena","fractional excretion of sodium"]},
+
+glucthresh:{n:"Glucose clearance — threshold, Tm & splay",k:"reg",p:"rptube",enz:"Glucosuria from ~200 mg/dL",inh:"—",fa:"602",hi:1,
+ mech:"At normal plasma levels, glucose is completely reabsorbed in the proximal tubule by Na⁺/glucose cotransport. Above the threshold, the transporters run out.",
+ find:["Normal plasma glucose (60–120 mg/dL) is fully reabsorbed in the PCT","Glucosuria begins at ~200 mg/dL (threshold); all transporters saturate at ~375 mg/min (Tm)","<b>Splay</b>: Tm is reached gradually because nephrons differ in their Tm","Pregnancy: ↑ GFR lowers the threshold → glucosuria at normal plasma glucose","SGLT2 inhibitors cause glucosuria below 200 mg/dL"],
+ labs:["Glucosuria is an important clue to diabetes mellitus"],
+ buzz:["Threshold ~200 mg/dL · Tm ~375 mg/min"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 28 — Renal Tubular Reabsorption and Secretion"],
+ tx:["—"],q:["renal threshold","transport maximum","splay"]},
+
+apgar:{n:"Apgar score & birth weight",k:"reg",p:"devnewborn",enz:"Appearance, Pulse, Grimace, Activity, Respiration",inh:"—",fa:"652",hi:1,
+ mech:"The Apgar score rates a newborn’s condition at 1 and 5 minutes after delivery, 0–2 points for each of five signs (10 points total).",
+ find:["<b>Appearance</b>: pink 2 · extremities blue 1 · pale or blue 0","<b>Pulse</b>: ≥ 100 2 · < 100 1 · none 0","<b>Grimace</b>: cries and pulls away 2 · grimaces or weak cry 1 · no response 0","<b>Activity</b>: active movement 2 · arms and legs flexed 1 · no movement 0","<b>Respiration</b>: strong cry 2 · slow, irregular 1 · none 0","Scores < 7 may need further evaluation; a score that stays low raises the risk of long-term neurologic damage","The score alone is not evidence of asphyxia and does not predict an individual infant’s outcome","<b>Low birth weight</b> < 2500 g (prematurity, fetal growth restriction): ↑ mortality (SIDS) and morbidity · <b>macrosomia</b> > 4000 g (maternal obesity or diabetes): birth trauma such as shoulder dystocia"],
+ labs:["—"],
+ buzz:["APGAR — Appearance, Pulse, Grimace, Activity, Respiration"],
+ src:["Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders","Robbins ch 10 — Diseases of infancy and childhood"],
+ tx:["—"],q:["apgar","apgar score","macrosomia"],
+ ref:[{a:"American Academy of Pediatrics Committee on Fetus and Newborn; American College of Obstetricians and Gynecologists Committee on Obstetric Practice",t:"The Apgar Score",j:"Pediatrics",y:2015,pmid:"26416932",doi:"10.1542/peds.2015-2651"}]},
+
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
  mech:"A seizure is synchronized, high-frequency firing of a population of neurons. It runs in three phases: <b>aura</b> (the early part — odd smells or tastes), <b>ictal</b> (first symptom to end of seizure activity) and <b>postictal</b> (gradual recovery to baseline). <b>Epilepsy</b> is a disorder of recurrent, <b>unprovoked</b> seizures.",
@@ -13700,10 +14104,10 @@ MAPS.pulm = {
   {id:"diffusion",l:"Alveolar–capillary membrane",x:700,y:700,p:"gasex",s:"Fick: area × ΔP / thickness"},
   {id:"artblood",l:"Arterial O₂ (PaO₂)",x:700,y:830,p:"gasex",s:"A–a gradient",m:["hypoxemia","altitude"]},
   {id:"hb",l:"Hemoglobin",x:1500,y:590,p:"o2transport",s:"4 O₂ per tetramer",go:"nucleo"},
-  {id:"curve",l:"O₂ dissociation curve",x:1840,y:590,p:"o2transport",s:"sigmoid · cooperative"},
-  {id:"tissue",l:"Tissue O₂ delivery",x:2180,y:590,p:"o2transport",s:"CaO₂ × cardiac output"},
-  {id:"rightshift",l:"Right shift",x:1500,y:790,p:"o2transport",s:"↑ CO₂, H⁺, temp, 2,3-BPG"},
-  {id:"leftshift",l:"Left shift",x:1840,y:790,p:"o2transport",s:"HbF · CO · methemoglobin"},
+  {id:"curve",l:"O₂ dissociation curve",x:1840,y:590,p:"o2transport",s:"sigmoid · cooperative",m:["odc"]},
+  {id:"tissue",l:"Tissue O₂ delivery",x:2180,y:590,p:"o2transport",s:"CaO₂ × cardiac output",m:["odc"]},
+  {id:"rightshift",l:"Right shift",x:1500,y:790,p:"o2transport",s:"↑ CO₂, H⁺, temp, 2,3-BPG",m:["odc"]},
+  {id:"leftshift",l:"Left shift",x:1840,y:790,p:"o2transport",s:"HbF · CO · methemoglobin",m:["odc"]},
   {id:"bpgconn",l:"2,3-BPG (Core Carbon)",x:1500,y:880,p:"o2transport",k:"ghost",go:"core"},
   {id:"typeII",l:"Type II pneumocyte",x:450,y:1110,p:"alveolus",s:"surfactant · stem cell",m:["nrds"]},
   {id:"surfactant",l:"Surfactant",x:900,y:1110,p:"alveolus",s:"↓ surface tension (Laplace)",m:["ards"]},
@@ -20519,14 +20923,15 @@ MAPS.substance = {
 };
 
 MAPS.sleepdev = {
- t:"Sleep & Development", sub:"The sleep cycle stage by stage and the disorder born in each · milestones from birth to school age and the disorders that surface along the way · defenses, conditioning and grief",
- w:3300, h:2056,
- fa:"60, 507, 533, 570–574, 585, 590, 697",
- src:["Robbins ch 5 — Genetic disorders","Katzung ch 22 — Sedative-Hypnotic Drugs","Katzung ch 28 — Pharmacologic Management of Parkinsonism & Other Movement Disorders","Guyton ch 60 — States of Brain Activity—Sleep, Brain Waves, Epilepsy, Psychoses, and Dementia","Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient","Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders","Kaplan & Sadock ch 15 — Sleep–Wake Disorders","Kaplan & Sadock ch 19 — Personality Disorders","Kaplan & Sadock ch 21 — Psychopharmacology","Kaplan & Sadock ch 23 — Psychotherapy"],
+ t:"Sleep & Development", sub:"The sleep cycle stage by stage and the disorder born in each · milestones from birth to school age and the disorders that surface along the way · defenses, conditioning and grief · the newborn and the red rashes of childhood",
+ w:3300, h:2396,
+ fa:"60, 177, 507, 533, 570–574, 585, 590, 652, 697",
+ src:["Robbins ch 5 — Genetic disorders","Robbins ch 8 — Infectious diseases","Robbins ch 10 — Diseases of infancy and childhood","Katzung ch 22 — Sedative-Hypnotic Drugs","Katzung ch 28 — Pharmacologic Management of Parkinsonism & Other Movement Disorders","Guyton ch 60 — States of Brain Activity—Sleep, Brain Waves, Epilepsy, Psychoses, and Dementia","Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient","Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders","Kaplan & Sadock ch 15 — Sleep–Wake Disorders","Kaplan & Sadock ch 19 — Personality Disorders","Kaplan & Sadock ch 21 — Psychopharmacology","Kaplan & Sadock ch 23 — Psychotherapy"],
  comps:[
   {x:140,y:110,w:3020,h:350,l:"Sleep — the stages, the clock, and what goes wrong"},
   {x:140,y:540,w:3020,h:830,l:"Development — milestones, and the disorders that surface along the way"},
-  {x:140,y:1450,w:3020,h:270,l:"Behavior — defenses, learning and grief"}],
+  {x:140,y:1450,w:3020,h:270,l:"Behavior — defenses, learning and grief"},
+  {x:140,y:2056,w:3020,h:280,l:"Newborn & the red rashes of childhood"}],
  panels:[
   {x:140,y:1800,w:1480,h:196,kw:230,t:"A night of sleep",rows:[
    ["Awake","beta with eyes open · alpha with eyes closed"],
@@ -20587,7 +20992,20 @@ MAPS.sleepdev = {
   {id:"bh6",l:"Behavioral therapy",x:2220,y:1590,p:"devbeh",s:"systematic desensitization",m:["phobia"]},
   {id:"bh7",l:"Grief",x:1020,y:1670,p:"devbeh",s:"not a disorder · eases within months",m:["grief"]},
   {id:"bh8",l:"Prolonged grief disorder",x:1620,y:1670,p:"devbeh",s:"intense and impairing past 6–12 months",m:["grief"]},
-  {id:"bh9",l:"Major depression",x:2220,y:1670,p:"devbeh",s:"diagnose it when the criteria are met",m:["mdd"]}],
+  {id:"bh9",l:"Major depression",x:2220,y:1670,p:"devbeh",s:"diagnose it when the criteria are met",m:["mdd"]},
+  {id:"nb1",l:"Apgar score",x:420,y:2116,p:"devnewborn",s:"appearance · pulse · grimace · activity · respiration",m:["apgar"]},
+  {id:"nb2",l:"Birth weight",x:1020,y:2116,p:"devnewborn",s:"< 2500 g low · > 4000 g macrosomia",m:["apgar"]},
+  {id:"nb3",l:"→ Inborn Errors by Lab",x:1620,y:2116,p:"neutral",k:"ghost",go:"iemlab"},
+  {id:"nb4",l:"Neonatal respiratory distress",x:2220,y:2116,p:"devnewborn",s:"surfactant deficiency",m:["nrds"]},
+  {id:"nbx1",l:"→ Embryology",x:2820,y:2116,p:"neutral",k:"ghost",go:"embryo"},
+  {id:"rs1",l:"Measles",x:420,y:2196,p:"devrash",s:"starts on the head · Koplik spots",m:["measles"]},
+  {id:"rs2",l:"Rubella",x:1020,y:2196,p:"devrash",s:"discrete spots · postauricular nodes",m:["rubella"]},
+  {id:"rs3",l:"Roseola",x:1620,y:2196,p:"devrash",s:"rash after days of high fever",m:["roseola"]},
+  {id:"rs4",l:"Fifth disease",x:2220,y:2196,p:"devrash",s:"slapped-cheek rash",m:["parvo"]},
+  {id:"rs5",l:"Hand-foot-mouth disease",x:2820,y:2196,p:"devrash",s:"coxsackie A · palms, soles, mouth",m:["entero"]},
+  {id:"rs6",l:"Scarlet fever",x:420,y:2276,p:"devrash",s:"sandpaper rash · strawberry tongue",m:["gas"]},
+  {id:"rs7",l:"Chickenpox",x:1020,y:2276,p:"devrash",s:"starts on the trunk · lesions in different stages",m:["hsvvzv"]},
+  {id:"rs8",l:"Kawasaki disease",x:1620,y:2276,p:"devrash",s:"fever 5+ days · CRASH",m:["kawasaki"]}],
  edges:[
   {a:"sl0",b:"sl1",p:"slphys"},
   {a:"sl1",b:"sl2",p:"slphys"},
@@ -24223,7 +24641,7 @@ MAPS.ihd = {
 
 MAPS.cardcycle = {
  t:"Cardiac Cycle & Pressure-Volume Loops", sub:"Output equations and resistance · one beat on the pressure-volume loop · how preload, afterload, contractility and valve lesions bend it · heart sounds and the jugular pulse",
- w:3300, h:1590,
+ w:3300, h:2090,
  fa:"289–293",
  src:["Costanzo ch 4 — Cardiovascular physiology","Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves","Guyton ch 14 — Overview of the Circulation: Pressure, Flow, and Resistance","Guyton ch 20 — Cardiac Output, Venous Return, and Their Regulation","Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects"],
  comps:[
@@ -24244,6 +24662,9 @@ MAPS.cardcycle = {
    ["↑ Afterload","proportional to arterial pressure"],
    ["↑ Heart rate","also shortens diastolic filling"],
    ["↑ Ventricular diameter","more wall tension — Laplace’s law"]]}],
+ plots:[
+  {x:140,y:1590,w:1480,h:440,kind:"pvloop",t:"Pressure–volume loop"},
+  {x:1680,y:1590,w:1480,h:440,kind:"starling",t:"Frank-Starling curves"}],
  nodes:[
   {id:"q1",l:"Stroke volume",x:420,y:170,p:"cceq",s:"EDV − ESV",m:["cardiaceq"]},
   {id:"q2",l:"Ejection fraction",x:1020,y:170,p:"cceq",s:"SV ÷ EDV · normal 50–70%",m:["cardiaceq","hf"]},
@@ -24291,16 +24712,344 @@ MAPS.cardcycle = {
   {a:"j4",b:"j5",p:"ccjvp"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["index","Index"]];
+MAPS.neoplasia = {
+ t:"Neoplasia", sub:"From dysplasia to metastasis · how tumors are named, graded and staged · the hallmarks of cancer · oncogenes and tumor suppressors · where cancers spread and who gets them",
+ w:3300, h:1570,
+ fa:"215–220",
+ src:["Robbins ch 7 — Neoplasia"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"Progression — the basement membrane is the line"},
+  {x:140,y:310,w:3020,h:200,l:"Naming, grading & staging"},
+  {x:140,y:570,w:3020,h:200,l:"Hallmarks of cancer"},
+  {x:140,y:830,w:3020,h:200,l:"Oncogenes vs tumor suppressors"},
+  {x:140,y:1090,w:3020,h:200,l:"Spread & who gets it"}],
+ panels:[
+  {x:140,y:1350,w:1480,h:154,kw:240,t:"Oncogene vs tumor suppressor",rows:[
+   ["Mutation","gain of function · loss of function"],
+   ["Alleles hit","one is enough · both must be lost (two hits)"],
+   ["Examples","KRAS, MYC, HER2 · RB1, TP53, APC"],
+   ["Inherited syndromes","MEN2 (RET) · Li-Fraumeni, FAP, BRCA"]]},
+  {x:1680,y:1350,w:1480,h:154,kw:240,t:"Benign vs malignant",rows:[
+   ["Differentiation","usually well · may be poor"],
+   ["Border","well demarcated · invades locally"],
+   ["Growth","low mitotic activity, no necrosis · erratic"],
+   ["Metastasis","none · may metastasize"]]}],
+ nodes:[
+  {id:"p1",l:"Dysplasia",x:420,y:180,p:"npprog",s:"pleomorphism · often reversible",m:["neoprog","cervicalca"]},
+  {id:"p2",l:"Carcinoma in situ",x:1020,y:180,p:"npprog",s:"full thickness · membrane intact",m:["neoprog"]},
+  {id:"p3",l:"Invasive carcinoma",x:1620,y:180,p:"npprog",s:"metalloproteinases · E-cadherin lost",m:["neoprog"]},
+  {id:"p4",l:"Vascular spread",x:2220,y:180,p:"npprog",s:"laminin, fibronectin · lymph or blood",m:["neoprog"]},
+  {id:"p5",l:"Metastasis",x:2820,y:180,p:"npprog",s:"often the first capillary bed downstream",m:["neoprog","metsites"]},
+  {id:"n1",l:"Carcinoma vs sarcoma",x:420,y:370,p:"npname",s:"epithelium vs mesenchyme",m:["tumornomen"]},
+  {id:"n2",l:"Benign",x:1020,y:370,p:"npname",s:"well differentiated · no metastases",m:["tumornomen"]},
+  {id:"n3",l:"Malignant",x:1620,y:370,p:"npname",s:"invades · may metastasize",m:["tumornomen"]},
+  {id:"n4",l:"Hamartoma",x:2220,y:370,p:"npname",s:"native tissue, disorganized",m:["tumornomen"]},
+  {id:"n5",l:"Choristoma",x:2820,y:370,p:"npname",s:"normal tissue in the wrong place",m:["tumornomen","meckel"]},
+  {id:"n6",l:"Grade",x:420,y:450,p:"npname",s:"differentiation · mitoses",m:["gradestage"]},
+  {id:"n7",l:"Stage — TNM",x:1020,y:450,p:"npname",s:"M > N > T",m:["gradestage"]},
+  {id:"n8",l:"Stage beats grade",x:1620,y:450,p:"npname",s:"spread predicts survival",m:["gradestage"]},
+  {id:"h1",l:"Growth signals",x:420,y:630,p:"nphall",s:"HER2 · RAS · MYC",m:["hallmarks","her2","kras"]},
+  {id:"h2",l:"Ignore the brakes",x:1020,y:630,p:"nphall",s:"Rb lost · contact inhibition lost",m:["hallmarks","rb"]},
+  {id:"h3",l:"Evade apoptosis",x:1620,y:630,p:"nphall",s:"TP53 · BCL2",m:["hallmarks","p53","follicular"]},
+  {id:"h4",l:"Limitless replication",x:2220,y:630,p:"nphall",s:"telomerase",m:["hallmarks","telomerase"]},
+  {id:"h5",l:"Angiogenesis",x:2820,y:630,p:"nphall",s:"VEGF · leaky vessels",m:["hallmarks","vhl"]},
+  {id:"h6",l:"Warburg effect",x:420,y:710,p:"nphall",s:"glycolysis with oxygen present",m:["hallmarks"]},
+  {id:"h7",l:"Immune evasion",x:1020,y:710,p:"nphall",s:"↓ MHC I · checkpoints · TGF-β",m:["hallmarks","checkpoint"]},
+  {id:"h8",l:"Invasion & metastasis",x:1620,y:710,p:"nphall",s:"metalloproteinases",m:["hallmarks","neoprog"]},
+  {id:"hx1",l:"→ Cell Cycle & Repair",x:2220,y:710,p:"neutral",k:"ghost",go:"cellcycle"},
+  {id:"g1",l:"Oncogenes — one hit",x:420,y:890,p:"npgene",s:"gain of function",m:["oncogenes"]},
+  {id:"g2",l:"Receptor kinases",x:1020,y:890,p:"npgene",s:"HER2 · EGFR · ALK · RET",m:["oncogenes","her2","egfr","men"]},
+  {id:"g3",l:"BCR-ABL · JAK2",x:1620,y:890,p:"npgene",s:"non-receptor kinases",m:["cml","jak2"]},
+  {id:"g4",l:"RAS · BRAF",x:2220,y:890,p:"npgene",s:"signal relays",m:["kras","braf"]},
+  {id:"g5",l:"MYC · BCL-2",x:2820,y:890,p:"npgene",s:"transcription · survival",m:["mycamp","follicular"]},
+  {id:"g6",l:"Suppressors — two hits",x:420,y:970,p:"npgene",s:"Knudson",m:["tsgenes"]},
+  {id:"g7",l:"RB1 · TP53 · CDKN2A",x:1020,y:970,p:"npgene",s:"cell cycle brakes",m:["rb","p53"]},
+  {id:"g8",l:"APC · PTEN · NF1",x:1620,y:970,p:"npgene",s:"signaling brakes",m:["fap","pten","nf1"]},
+  {id:"g9",l:"BRCA1 · BRCA2",x:2220,y:970,p:"npgene",s:"DNA repair",m:["brca"]},
+  {id:"g10",l:"VHL · TSC · NF2 · WT1",x:2820,y:970,p:"npgene",s:"tumor syndromes",m:["vhl","tsc","nf2","wilms"]},
+  {id:"s1",l:"Carcinomas → lymph",x:420,y:1150,p:"npspread",s:"except follicular thyroid, chorio, RCC, HCC",m:["metsites"]},
+  {id:"s2",l:"Sarcomas → blood",x:1020,y:1150,p:"npspread",s:"hematogenous",m:["metsites"]},
+  {id:"s3",l:"Bone",x:1620,y:1150,p:"npspread",s:"prostate, breast · blastic or lytic",m:["metsites","hcmalig"]},
+  {id:"s4",l:"Liver",x:2220,y:1150,p:"npspread",s:"colon > breast",m:["metsites"]},
+  {id:"s5",l:"Brain",x:2820,y:1150,p:"npspread",s:"lung > breast · gray-white junction",m:["metsites","lungca"]},
+  {id:"s6",l:"Incidence",x:420,y:1230,p:"npspread",s:"prostate · breast · lung · colorectal",m:["cancerepi"]},
+  {id:"s7",l:"Mortality",x:1020,y:1230,p:"npspread",s:"lung leads in both sexes",m:["cancerepi","lungca"]},
+  {id:"s8",l:"Children",x:1620,y:1230,p:"npspread",s:"leukemia · CNS · neuroblastoma",m:["cancerepi","neuroblastoma"]},
+  {id:"sx1",l:"→ Oncogenic Viruses & Carcinogens",x:2220,y:1230,p:"neutral",k:"ghost",go:"carcino"},
+  {id:"sx2",l:"→ Tumor Markers & Stains",x:2820,y:1230,p:"neutral",k:"ghost",go:"tumark"}],
+ edges:[
+  {a:"p1",b:"p2",p:"npprog"},
+  {a:"p2",b:"p3",p:"npprog"},
+  {a:"p3",b:"p4",p:"npprog"},
+  {a:"p4",b:"p5",p:"npprog"},
+  {a:"n6",b:"n7",p:"npname",arrow:"none",dash:true}]
+};
+
+MAPS.thromboemb = {
+ t:"Edema, Thrombosis & Embolism", sub:"The Starling forces behind edema · Virchow triad, thrombophilias and the fate of a thrombus · the six kinds of embolus · where emboli land",
+ w:3300, h:1310,
+ fa:"301, 321, 433, 691",
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock","Guyton ch 16 — The Microcirculation and Lymphatic System: Capillary Fluid Exchange, Interstitial Fluid, and Lymph Flow","Guyton ch 45 — Physiology of Deep-Sea Diving and Other Hyperbaric Conditions"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Edema — the Starling forces"},
+  {x:140,y:370,w:3020,h:200,l:"Thrombosis"},
+  {x:140,y:630,w:3020,h:200,l:"Embolism — FAT BAT"},
+  {x:140,y:890,w:3020,h:140,l:"Where emboli land"}],
+ panels:[
+  {x:140,y:1090,w:1480,h:154,kw:280,t:"Hereditary thrombophilias",rows:[
+   ["Factor V Leiden","resists activated protein C"],
+   ["Prothrombin G20210A","↑ prothrombin → venous clots"],
+   ["Protein C or S deficiency","can’t inactivate Va, VIIIa · warfarin skin necrosis"],
+   ["Antithrombin deficiency","blunts the PTT rise with heparin"]]},
+  {x:1680,y:1090,w:1480,h:154,kw:220,t:"Thrombus vs postmortem clot",rows:[
+   ["Lines of Zahn","thrombus only — formed in flowing blood"],
+   ["Attachment","thrombus attached at its origin"],
+   ["Postmortem clot","gelatinous, not attached"],
+   ["","dark red below, yellow “chicken fat” above"]]}],
+ nodes:[
+  {id:"e1",l:"Capillary hydrostatic ↑",x:420,y:170,p:"teedema",s:"Pc · heart failure",m:["capfluid","hf"]},
+  {id:"e2",l:"Plasma oncotic ↓",x:1020,y:170,p:"teedema",s:"πc · nephrotic, liver failure, malnutrition",m:["capfluid","nephrotic","cirrhosis","kwashiorkor"]},
+  {id:"e3",l:"Permeability ↑",x:1620,y:170,p:"teedema",s:"Kf · toxins, infections, burns",m:["capfluid","burns"]},
+  {id:"e4",l:"Interstitial oncotic ↑",x:2220,y:170,p:"teedema",s:"πi · lymphatic blockage",m:["capfluid","filaria"]},
+  {id:"e5",l:"Interstitial hydrostatic",x:2820,y:170,p:"teedema",s:"Pi · pushes fluid back in",m:["capfluid"]},
+  {id:"e6",l:"Net filtration",x:420,y:250,p:"teedema",s:"Kf [(Pc − Pi) − σ(πc − πi)]",m:["capfluid"]},
+  {id:"e7",l:"Pleural effusion",x:1020,y:250,p:"teedema",s:"transudate vs exudate",m:["effusion"]},
+  {id:"t1",l:"Virchow triad",x:420,y:430,p:"tethromb",s:"stasis · hypercoagulability · endothelium",m:["thrombosisreg","dvt"]},
+  {id:"t2",l:"Lines of Zahn",x:1020,y:430,p:"tethromb",s:"formed in life, not after death",m:["thrombosisreg"]},
+  {id:"t3",l:"Hereditary thrombophilias",x:1620,y:430,p:"tethromb",s:"factor V Leiden · protein C, S · antithrombin",m:["factorv"]},
+  {id:"t4",l:"Antiphospholipid syndrome",x:2220,y:430,p:"tethromb",s:"acquired",m:["aps"]},
+  {id:"t5",l:"DIC",x:2820,y:430,p:"tethromb",s:"clots and bleeds at once",m:["dic"]},
+  {id:"t6",l:"Nephrotic syndrome",x:420,y:510,p:"tethromb",s:"antithrombin lost in urine",m:["nephrotic","thrombosisreg"]},
+  {id:"t7",l:"Fate of a thrombus",x:1020,y:510,p:"tethromb",s:"propagate · embolize · dissolve · organize",m:["thrombosisreg"]},
+  {id:"t8",l:"Anticoagulants",x:1620,y:510,p:"tethromb",s:"heparin · DOACs · warfarin",m:["heparin","doac","warfarin"]},
+  {id:"tx1",l:"→ Hemostasis",x:2220,y:510,p:"neutral",k:"ghost",go:"hemostasis"},
+  {id:"b1",l:"Thrombus",x:420,y:690,p:"teembol",s:"proximal leg veins → lung",m:["emboli","pe","dvt"]},
+  {id:"b2",l:"Fat",x:1020,y:690,p:"teembol",s:"long-bone fracture · petechiae",m:["fatemb"]},
+  {id:"b3",l:"Air",x:1620,y:690,p:"teembol",s:"ascending divers · central lines",m:["airemb"]},
+  {id:"b4",l:"Bacteria",x:2220,y:690,p:"teembol",s:"infected vegetations",m:["emboli","endocarditis"]},
+  {id:"b5",l:"Amniotic fluid",x:2820,y:690,p:"teembol",s:"labor → shock → DIC",m:["afe"]},
+  {id:"b6",l:"Tumor",x:420,y:770,p:"teembol",s:"cells carried in blood or lymph",m:["emboli","metsites"]},
+  {id:"b7",l:"Paradoxical embolism",x:1020,y:770,p:"teembol",s:"venous clot crosses a septal defect",m:["emboli"]},
+  {id:"b8",l:"From the heart",x:1620,y:770,p:"teembol",s:"atrial fibrillation · mural thrombus",m:["emboli","afib"]},
+  {id:"b9",l:"Cholesterol emboli",x:2220,y:770,p:"teembol",s:"atheroma fragments",m:["cholemb"]},
+  {id:"o1",l:"Pulmonary embolism",x:420,y:960,p:"teout",s:"V/Q mismatch · obstructive shock",m:["pe"]},
+  {id:"o2",l:"Stroke",x:1020,y:960,p:"teout",s:"emboli from the heart",m:["mcastroke"]},
+  {id:"ox1",l:"→ Cell Injury, Inflammation & Repair",x:1620,y:960,p:"neutral",k:"ghost",go:"genpath"},
+  {id:"ox2",l:"→ Vessels, Blood Pressure & Shock",x:2220,y:960,p:"neutral",k:"ghost",go:"vascshock"},
+  {id:"ox3",l:"→ Stroke, Brainstem and Bleeds",x:2820,y:960,p:"neutral",k:"ghost",go:"stroke"}],
+ edges:[
+  {a:"b1",b:"b2",p:"teembol",arrow:"none",dash:true}]
+};
+
+MAPS.lungmech = {
+ t:"Lung Mechanics & Control of Breathing", sub:"Volumes and ventilation · compliance, surfactant and airway resistance · the pulmonary circulation and diffusion · carrying O₂ and CO₂ · chemoreceptors, altitude and exercise",
+ w:3300, h:2090,
+ fa:"299, 679–680, 682–688",
+ src:["Costanzo ch 5 — Respiratory physiology","Guyton ch 38 — Pulmonary Ventilation","Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid","Guyton ch 40 — Principles of Gas Exchange; Diffusion of Oxygen and Carbon Dioxide Through Respiratory Membranes","Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids","Guyton ch 42 — Regulation of Respiration","Guyton ch 85 — Sports Physiology"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Volumes & ventilation"},
+  {x:140,y:370,w:3020,h:200,l:"Mechanics"},
+  {x:140,y:630,w:3020,h:200,l:"Pulmonary circulation & diffusion"},
+  {x:140,y:890,w:3020,h:200,l:"Carrying O₂ and CO₂"},
+  {x:140,y:1150,w:3020,h:140,l:"Control of breathing, altitude & exercise"}],
+ panels:[
+  {x:140,y:1350,w:1480,h:176,kw:240,t:"Which number moves",rows:[
+   ["Anemia","Hb ↓ · SaO₂, PaO₂ normal · content ↓"],
+   ["Polycythemia","Hb ↑ · content ↑"],
+   ["CO poisoning","SaO₂ ↓ · PaO₂ normal · content ↓"],
+   ["Methemoglobinemia","SaO₂ ↓ · PaO₂ normal · content ↓"],
+   ["Cyanide","Hb, SaO₂, PaO₂ and content all normal"]]},
+  {x:1680,y:1350,w:1480,h:176,kw:200,t:"Lung zones",rows:[
+   ["Zone 1","PA ≥ Pa > Pv"],
+   ["Zone 2","Pa > PA > Pv"],
+   ["Zone 3","Pa > Pv > PA"],
+   ["Apex","V/Q ~3 — wasted ventilation"],
+   ["Base","V/Q ~0.6 — wasted perfusion"]]}],
+ plots:[
+  {x:140,y:1590,w:1480,h:440,kind:"odc",t:"Oxygen–hemoglobin dissociation curve"},
+  {x:1680,y:1590,w:1480,h:440,kind:"lungpv",t:"Lung pressure–volume curve"}],
+ nodes:[
+  {id:"v1",l:"Tidal volume",x:420,y:170,p:"lmvol",s:"~500 mL each breath",m:["lungvol"]},
+  {id:"v2",l:"Residual volume",x:1020,y:170,p:"lmvol",s:"left after a full exhale",m:["lungvol"]},
+  {id:"v3",l:"FRC",x:1620,y:170,p:"lmvol",s:"lung pull = chest wall pull",m:["lungvol","compliance"]},
+  {id:"v4",l:"Vital capacity",x:2220,y:170,p:"lmvol",s:"IRV + VT + ERV",m:["lungvol"]},
+  {id:"v5",l:"Total lung capacity",x:2820,y:170,p:"lmvol",s:"VC + RV",m:["lungvol"]},
+  {id:"v6",l:"Minute ventilation",x:420,y:250,p:"lmvol",s:"VT × RR",m:["lungvol"]},
+  {id:"v7",l:"Alveolar ventilation",x:1020,y:250,p:"lmvol",s:"(VT − VD) × RR",m:["lungvol","deadspace"]},
+  {id:"v8",l:"Dead space",x:1620,y:250,p:"lmvol",s:"anatomic + alveolar",m:["deadspace"]},
+  {id:"m1",l:"Elastic recoil",x:420,y:430,p:"lmmech",s:"lung in · chest wall out",m:["compliance"]},
+  {id:"m2",l:"Compliance",x:1020,y:430,p:"lmmech",s:"ΔV / ΔP",m:["compliance"]},
+  {id:"m3",l:"Surfactant",x:1620,y:430,p:"lmmech",s:"↓ surface tension · Laplace",m:["compliance","nrds"]},
+  {id:"m4",l:"↑ Compliance",x:2220,y:430,p:"lmmech",s:"emphysema · older adults",m:["compliance","copd"]},
+  {id:"m5",l:"↓ Compliance",x:2820,y:430,p:"lmmech",s:"fibrosis · ARDS · edema",m:["compliance","ild","ards"]},
+  {id:"m6",l:"Airway resistance",x:420,y:510,p:"lmmech",s:"highest in medium bronchi",m:["airwayres"]},
+  {id:"m7",l:"Work of breathing",x:1020,y:510,p:"lmmech",s:"elastic + resistive",m:["airwayres"]},
+  {id:"m8",l:"Restrictive pattern",x:1620,y:510,p:"lmmech",s:"fast, shallow breaths",m:["airwayres"]},
+  {id:"m9",l:"Obstructive pattern",x:2220,y:510,p:"lmmech",s:"slow, deep breaths",m:["airwayres"]},
+  {id:"mx1",l:"→ Lung Disease & PFTs",x:2820,y:510,p:"neutral",k:"ghost",go:"lungdz"},
+  {id:"c1",l:"Hypoxic vasoconstriction",x:420,y:690,p:"lmcirc",s:"blood goes where the air is",m:["pulmcirc"]},
+  {id:"c2",l:"Pulmonary hypertension",x:1020,y:690,p:"lmcirc",s:"chronic hypoxia",m:["pulmhtn"]},
+  {id:"c3",l:"Lung zones",x:1620,y:690,p:"lmcirc",s:"apex V/Q ~3 · base ~0.6",m:["pulmcirc","vq"]},
+  {id:"c4",l:"Perfusion limited",x:2220,y:690,p:"lmcirc",s:"O₂ in health · CO₂ · N₂O",m:["pulmcirc"]},
+  {id:"c5",l:"Diffusion limited",x:2820,y:690,p:"lmcirc",s:"CO · O₂ in fibrosis",m:["pulmcirc"]},
+  {id:"c6",l:"Diffusion · DLCO",x:420,y:770,p:"lmcirc",s:"area ÷ wall thickness",m:["pulmcirc"]},
+  {id:"c7",l:"A–a gradient",x:1020,y:770,p:"lmcirc",s:"(age ÷ 4) + 4",m:["aagradient"]},
+  {id:"c8",l:"Hypoxemia",x:1620,y:770,p:"lmcirc",s:"five causes",m:["hypoxemia"]},
+  {id:"g1",l:"O₂ content",x:420,y:950,p:"lmgas",s:"1.34 × Hb × SaO₂ + 0.003 × PaO₂",m:["odc"]},
+  {id:"g2",l:"Right shift",x:1020,y:950,p:"lmgas",s:"exercise · acid · heat · 2,3-BPG",m:["odc"]},
+  {id:"g3",l:"Left shift",x:1620,y:950,p:"lmgas",s:"fetal Hb · CO · cold",m:["odc"]},
+  {id:"g4",l:"Carbon monoxide",x:2220,y:950,p:"lmgas",s:"↓ SaO₂ · normal PaO₂",m:["cohb"]},
+  {id:"g5",l:"Methemoglobin",x:2820,y:950,p:"lmgas",s:"Fe³⁺ · chocolate-colored blood",m:["methb"]},
+  {id:"g6",l:"Bicarbonate",x:420,y:1030,p:"lmgas",s:"carries most of the CO₂",m:["co2trans"]},
+  {id:"g7",l:"Haldane effect",x:1020,y:1030,p:"lmgas",s:"oxygenation releases CO₂",m:["co2trans"]},
+  {id:"g8",l:"Bohr effect",x:1620,y:1030,p:"lmgas",s:"H⁺ and CO₂ unload O₂",m:["co2trans","odc"]},
+  {id:"gx1",l:"→ Pulmonary",x:2220,y:1030,p:"neutral",k:"ghost",go:"pulm"},
+  {id:"k1",l:"Central chemoreceptors",x:420,y:1220,p:"lmctrl",s:"CO₂ via brain pH",m:["chemorec"]},
+  {id:"k2",l:"Peripheral chemoreceptors",x:1020,y:1220,p:"lmctrl",s:"PO₂ < 60 · carotid and aortic bodies",m:["chemorec"]},
+  {id:"k3",l:"Chronic CO₂ retention",x:1620,y:1220,p:"lmctrl",s:"hypoxic drive",m:["chemorec","copd"]},
+  {id:"k4",l:"High altitude",x:2220,y:1220,p:"lmctrl",s:"hyperventilate · EPO · 2,3-BPG",m:["altitude"]},
+  {id:"k5",l:"Exercise",x:2820,y:1220,p:"lmctrl",s:"arterial gases stay normal",m:["exercisephys"]}],
+ edges:[
+  {a:"m1",b:"m2",p:"lmmech"},
+  {a:"m2",b:"m3",p:"lmmech",arrow:"none",dash:true},
+  {a:"c1",b:"c2",p:"lmcirc"},
+  {a:"g6",b:"g7",p:"lmgas",arrow:"none",dash:true},
+  {a:"g7",b:"g8",p:"lmgas",arrow:"none",dash:true}]
+};
+
+MAPS.gihorm = {
+ t:"GI Hormones & Secretions", sub:"Gastrin, CCK, secretin, GIP, somatostatin and the rest — where each is made and what releases it · acid secretion and its brakes · pancreatic enzymes and bile",
+ w:3300, h:1140,
+ fa:"369, 378–380, 382",
+ src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 64 — Propulsion and Mixing of Food in the Alimentary Tract","Guyton ch 65 — Secretory Functions of the Alimentary Tract","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases","Pawlina ch 17 — Digestive System II: Esophagus and Gastrointestinal Tract"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Hormones of the gut"},
+  {x:140,y:370,w:3020,h:200,l:"Stomach — acid and its brakes"},
+  {x:140,y:630,w:3020,h:200,l:"Pancreas & bile"}],
+ panels:[
+  {x:140,y:890,w:1480,h:182,kw:190,t:"Cell, hormone, trigger",rows:[
+   ["G cells","gastrin — amino acids, distention, vagus (GRP)"],
+   ["I cells","CCK — fatty acids, amino acids"],
+   ["S cells","secretin — acid, fatty acids in the duodenum"],
+   ["K cells","GIP — fat, protein, oral glucose"],
+   ["D cells","somatostatin — acid; vagus inhibits it"],
+   ["Small intestine","motilin — fasting"]]},
+  {x:1680,y:890,w:1480,h:182,kw:220,t:"Where the secreting cells live",rows:[
+   ["Fundus and body","parietal cells (HCl, intrinsic factor)"],
+   ["","chief cells (pepsinogen)"],
+   ["Antrum","G cells (gastrin)"],
+   ["Duodenum","S, I and K cells · Brunner glands"],
+   ["Pancreas","acinar cells (enzymes) · duct cells (HCO₃⁻)"],
+   ["Islets and GI mucosa","D cells (somatostatin)"]]}],
+ nodes:[
+  {id:"h1",l:"Gastrin",x:420,y:170,p:"ghhorm",s:"G cells · acid and mucosal growth",m:["gastrin","zes"]},
+  {id:"h2",l:"CCK",x:1020,y:170,p:"ghhorm",s:"I cells · bile and enzymes · slows the stomach",m:["cck","gallstones"]},
+  {id:"h3",l:"Secretin",x:1620,y:170,p:"ghhorm",s:"S cells · pancreatic bicarbonate",m:["secretin"]},
+  {id:"h4",l:"GIP",x:2220,y:170,p:"ghhorm",s:"K cells · insulin with oral glucose",m:["gip"]},
+  {id:"h5",l:"Somatostatin",x:2820,y:170,p:"ghhorm",s:"D cells · inhibits almost everything",m:["sstgi","somatostatinoma"]},
+  {id:"h6",l:"Ghrelin",x:420,y:250,p:"ghhorm",s:"hunger · ↑ in Prader-Willi",m:["ghrelin","imprinting"]},
+  {id:"h7",l:"Motilin",x:1020,y:250,p:"ghmot",s:"fasting · migrating motor complex",m:["motilin"]},
+  {id:"h8",l:"VIP",x:1620,y:250,p:"ghmot",s:"water out · sphincters relax",m:["vip","vipoma"]},
+  {id:"h9",l:"Nitric oxide",x:2220,y:250,p:"ghmot",s:"relaxes the LES — lost in achalasia",m:["vip","achalasia"]},
+  {id:"h10",l:"Octreotide",x:2820,y:250,p:"ghhorm",s:"carcinoid · VIPoma · varices",m:["sstgi","carcinoid"]},
+  {id:"a1",l:"Histamine — H₂",x:420,y:430,p:"ghacid",s:"from ECL cells",m:["gastricacid","ppi"]},
+  {id:"a2",l:"ACh — M₃",x:1020,y:430,p:"ghacid",s:"vagus",m:["gastricacid"]},
+  {id:"a3",l:"Gastrin → ECL cells",x:1620,y:430,p:"ghacid",s:"mostly through histamine",m:["gastricacid","gastrin"]},
+  {id:"a4",l:"Parietal cell",x:2220,y:430,p:"ghacid",s:"H⁺/K⁺-ATPase · intrinsic factor",m:["gastricacid","ppi"]},
+  {id:"a5",l:"Brakes on acid",x:2820,y:430,p:"ghacid",s:"somatostatin · GIP · PGs · secretin",m:["gastricacid","sstgi"]},
+  {id:"a6",l:"Chief cells",x:420,y:510,p:"ghacid",s:"pepsinogen → pepsin",m:["gastricacid"]},
+  {id:"a7",l:"Mucus & bicarbonate",x:1020,y:510,p:"ghacid",s:"surface defense",m:["mucosaldef"]},
+  {id:"a8",l:"Brunner glands",x:1620,y:510,p:"ghacid",s:"duodenal submucosa · HCO₃⁻",m:["mucosaldef"]},
+  {id:"a9",l:"Pernicious anemia",x:2220,y:510,p:"ghacid",s:"parietal cells destroyed",m:["b12def","gastritis"]},
+  {id:"a10",l:"Zollinger-Ellison",x:2820,y:510,p:"ghacid",s:"gastrinoma",m:["zes"]},
+  {id:"p1",l:"Acinar enzymes",x:420,y:690,p:"ghpanc",s:"amylase · lipase · proteases",m:["pancsec"]},
+  {id:"p2",l:"Enterokinase",x:1020,y:690,p:"ghpanc",s:"brush border enzyme",m:["pancsec"]},
+  {id:"p3",l:"Trypsin",x:1620,y:690,p:"ghpanc",s:"activates the other zymogens",m:["pancsec"]},
+  {id:"p4",l:"Ductal bicarbonate",x:2220,y:690,p:"ghpanc",s:"high flow → high HCO₃⁻",m:["pancsec","secretin"]},
+  {id:"p5",l:"Pancreatic insufficiency",x:2820,y:690,p:"ghpanc",s:"fat and protein malabsorption",m:["pancins","cf"]},
+  {id:"p6",l:"Bile salts",x:420,y:770,p:"ghpanc",s:"7α-hydroxylase · glycine or taurine",m:["bileacid"]},
+  {id:"p7",l:"Enterohepatic loop",x:1020,y:770,p:"ghpanc",s:"reabsorbed in the distal ileum",m:["bileacid"]},
+  {id:"p8",l:"Ileal disease",x:1620,y:770,p:"ghpanc",s:"fat malabsorption · oxalate stones",m:["bileacid","crohn"]},
+  {id:"p9",l:"Gallstones",x:2220,y:770,p:"ghpanc",s:"cholesterol or pigment",m:["gallstones"]},
+  {id:"px1",l:"→ GI & Absorption",x:2820,y:770,p:"neutral",k:"ghost",go:"gut"}],
+ edges:[
+  {a:"p2",b:"p3",p:"ghpanc"},
+  {a:"p6",b:"p7",p:"ghpanc"}]
+};
+
+MAPS.renalphys = {
+ t:"Renal Physiology by the Numbers", sub:"Clearance and what it says about the tubule · GFR, renal plasma flow and filtration fraction · what each arteriole does · autoregulation · reabsorption, FENa and the glucose threshold",
+ w:3300, h:1800,
+ fa:"600–602, 620",
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control","Guyton ch 28 — Renal Tubular Reabsorption and Secretion"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"Clearance — what the tubule did"},
+  {x:140,y:310,w:3020,h:200,l:"Filtration"},
+  {x:140,y:570,w:3020,h:140,l:"Holding flow steady"},
+  {x:140,y:770,w:3020,h:200,l:"Tubule math"}],
+ panels:[
+  {x:140,y:1030,w:1480,h:204,kw:280,t:"Glomerular dynamics",rows:[
+   ["","GFR · RPF · FF"],
+   ["Afferent constriction","↓ · ↓ · —"],
+   ["Efferent constriction","↑ · ↓ · ↑"],
+   ["↑ Plasma protein","↓ · — · ↓"],
+   ["↓ Plasma protein","↑ · — · ↑"],
+   ["Ureter constriction","↓ · — · ↓"],
+   ["Dehydration","↓ · ↓↓ · ↑"]]},
+  {x:1680,y:1030,w:1480,h:182,kw:180,t:"Formulas",rows:[
+   ["Clearance","Cx = Ux × V / Px"],
+   ["GFR","C(inulin) ≈ C(creatinine)"],
+   ["eRPF","C(PAH)"],
+   ["RBF","RPF / (1 − Hct)"],
+   ["FF","GFR / RPF"],
+   ["FENa","(UNa × PCr) / (PNa × UCr)"]]}],
+ plots:[
+  {x:140,y:1300,w:1480,h:440,kind:"glucose",t:"Glucose titration curve"}],
+ nodes:[
+  {id:"c1",l:"Clearance",x:420,y:180,p:"rpclear",s:"Cx = Ux × V / Px",m:["renalclear"]},
+  {id:"c2",l:"Cx < GFR",x:1020,y:180,p:"rpclear",s:"reabsorbed or not freely filtered",m:["renalclear"]},
+  {id:"c3",l:"Cx = GFR",x:1620,y:180,p:"rpclear",s:"inulin",m:["renalclear","gfrcalc"]},
+  {id:"c4",l:"Cx > GFR",x:2220,y:180,p:"rpclear",s:"secreted — PAH",m:["renalclear","erpf"]},
+  {id:"c5",l:"Filtered load",x:2820,y:180,p:"rpclear",s:"GFR × plasma concentration",m:["gfrcalc","reabsec"]},
+  {id:"f1",l:"Starling forces",x:420,y:370,p:"rpglom",s:"(PGC − PBS) − (πGC − πBS)",m:["gfrcalc"]},
+  {id:"f2",l:"GFR",x:1020,y:370,p:"rpglom",s:"inulin · creatinine overestimates",m:["gfrcalc"]},
+  {id:"f3",l:"Renal plasma flow",x:1620,y:370,p:"rpglom",s:"PAH clearance",m:["erpf"]},
+  {id:"f4",l:"Filtration fraction",x:2220,y:370,p:"rpglom",s:"GFR ÷ RPF ≈ 20%",m:["erpf"]},
+  {id:"f5",l:"Filtration barrier",x:2820,y:370,p:"rpglom",s:"charge and size",m:["filtrationbarrier"]},
+  {id:"f6",l:"Afferent constriction",x:420,y:450,p:"rpglom",s:"↓ GFR · ↓ RPF · FF same",m:["glomdyn","nsaidkidney"]},
+  {id:"f7",l:"Efferent constriction",x:1020,y:450,p:"rpglom",s:"↑ GFR · ↓ RPF · ↑ FF",m:["glomdyn","raasdrugs"]},
+  {id:"f8",l:"Plasma protein",x:1620,y:450,p:"rpglom",s:"↑ protein lowers GFR",m:["glomdyn"]},
+  {id:"f9",l:"Ureter obstruction",x:2220,y:450,p:"rpglom",s:"↓ GFR · ↓ FF",m:["glomdyn"]},
+  {id:"f10",l:"Dehydration",x:2820,y:450,p:"rpglom",s:"↓↓ RPF · ↑ FF",m:["glomdyn","prerenal"]},
+  {id:"a1",l:"Myogenic reflex",x:420,y:640,p:"rpauto",s:"stretch → afferent constricts",m:["rbfauto"]},
+  {id:"a2",l:"Tubuloglomerular feedback",x:1020,y:640,p:"rpauto",s:"macula densa senses NaCl",m:["rbfauto"]},
+  {id:"a3",l:"Prostaglandins",x:1620,y:640,p:"rpauto",s:"dilate the afferent — NSAIDs block",m:["glomdyn","nsaidkidney"]},
+  {id:"a4",l:"Angiotensin II",x:2220,y:640,p:"rpauto",s:"constricts the efferent — ACE inhibitors block",m:["glomdyn","raasdrugs"]},
+  {id:"ax1",l:"→ RAAS & Calcium",x:2820,y:640,p:"neutral",k:"ghost",go:"endocrine"},
+  {id:"t1",l:"Reabsorption",x:420,y:830,p:"rptube",s:"filtered − excreted",m:["reabsec"]},
+  {id:"t2",l:"Secretion",x:1020,y:830,p:"rptube",s:"excreted − filtered",m:["reabsec"]},
+  {id:"t3",l:"FENa",x:1620,y:830,p:"rptube",s:"< 1% prerenal · > 2% intrinsic",m:["reabsec","prerenal"]},
+  {id:"t4",l:"Glucose threshold",x:2220,y:830,p:"rptube",s:"~200 mg/dL · Tm ~375 mg/min",m:["glucthresh"]},
+  {id:"t5",l:"SGLT2 inhibitors",x:2820,y:830,p:"rptube",s:"glucosuria below the threshold",m:["sglt2","glucthresh"]},
+  {id:"t6",l:"Pregnancy",x:420,y:910,p:"rptube",s:"↑ GFR · glucosuria at normal glucose",m:["pregphys","glucthresh"]},
+  {id:"tx1",l:"→ Nephron",x:1020,y:910,p:"neutral",k:"ghost",go:"nephron"},
+  {id:"tx2",l:"→ Kidney Injury & CKD",x:1620,y:910,p:"neutral",k:"ghost",go:"akickd"}],
+ edges:[
+  {a:"f2",b:"f3",p:"rpglom",arrow:"none",dash:true},
+  {a:"f3",b:"f4",p:"rpglom",arrow:"none",dash:true},
+  {a:"t1",b:"t2",p:"rptube",arrow:"none",dash:true}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
   ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","iemlab","nucleo","collagen","vitamins","cellcycle","cellbio","molbio","signal","genetics"]],
-  ["path","Pathology",["genpath"]],
+  ["path","Pathology",["genpath","neoplasia","thromboemb"]],
   ["cardio","Cardiac",["cardiac","cardcycle","valves","ihd","chd","vasc","vascshock","htnrx","rhythm"]],
-  ["pulmo","Pulmonary",["pulm","lungdz","respdrug"]],
-  ["renal","Renal",["nephron","glom","acidbase","akickd","endocrine"]],
-  ["gi","GI",["gut","liver","gitract","abdanat"]],
+  ["pulmo","Pulmonary",["pulm","lungmech","lungdz","respdrug"]],
+  ["renal","Renal",["nephron","renalphys","glom","acidbase","akickd","endocrine"]],
+  ["gi","GI",["gut","gihorm","liver","gitract","abdanat"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","tumark"]],
   ["immuno","Immunology",["immune","hypimm","cytokine","eicosanoid","transplant","vaccines"]],
   ["endo","Endocrine",["axes","rclass","pancreas"]],
@@ -24329,6 +25078,7 @@ const state={view:"core",z:1,tx:0,ty:0,sel:null,quiz:"",reveal:new Set(),filter:
 /* pin quiz: PQ[view][cardId] = true (named correctly) or false */
 const PQ={};
 let FOCUS_QUIET=false;   // set while a re-render hands keyboard focus back to a pin
+let WALK=null;           // walk-through: {v, i, steps}
 /* review progress, kept on this device only (the question bank shares it on the
    same site): cards marked reviewed, every quiz answer, and a spaced-review
    schedule. A miss puts a card in box 0, due now; each right answer moves it
@@ -24337,7 +25087,7 @@ let FOCUS_QUIET=false;   // set while a re-render hands keyboard focus back to a
    misses; keep the two in step. `at` records when each card's schedule last
    changed, so the hub's PIN sync (sync.js) keeps whichever device reviewed it
    more recently. */
-const PROG_KEY="mla-progress", PROG_PARTS=["rev","ok","miss","box","due","qok","qmiss","at","known"];
+const PROG_KEY="mla-progress", PROG_PARTS=["rev","ok","miss","box","due","qok","qmiss","at","known","star"];
 /* Card review — the spaced-review schedule and every "due" reminder — is opt-in.
    It stays off until a person turns it on, so anyone not interested in card
    quizzes never sees a due message. While it is off, quiz answers are still
@@ -24366,6 +25116,16 @@ const isRev=id=>!!PROG.rev[id];
 const isKnown=id=>(+PROG.known[id]||0)>0;
 let HIDEKNOWN=false; try{ HIDEKNOWN=localStorage.getItem("mla-hideknown")==="on"; }catch(e){}
 function setKnown(id,on){ PROG.known[id]=on?Date.now():-Date.now(); saveProg(); }
+/* Starred cards: a bookmark, stored the same way (+time starred, −time unstarred) */
+const isStarred=id=>(+PROG.star[id]||0)>0;
+function setStar(id,on){ PROG.star[id]=on?Date.now():-Date.now(); saveProg(); }
+const starAll=()=>Object.keys(LES).filter(isStarred);
+/* Progress: a card counts once it has been answered right more often than missed
+   (atlas quizzes plus question-bank questions), or marked known. Shown only where
+   there is some quiz history, so nobody who skips quizzes sees empty rings. */
+const tried=id=>isKnown(id)||!!(PROG.ok[id]||PROG.miss[id]||PROG.qok[id]||PROG.qmiss[id]);
+const isSolid=id=>isKnown(id)||((PROG.ok[id]||0)+(PROG.qok[id]||0))>((PROG.miss[id]||0)+(PROG.qmiss[id]||0));
+function mastery(ids){ return ids.some(tried)?{n:ids.length,solid:ids.filter(isSolid).length}:null; }
 const isWeak=id=>REVIEW_ON&&!isKnown(id)&&(id in PROG.box)&&(PROG.due[id]||0)<=Date.now();      // due for review now
 const isLater=id=>REVIEW_ON&&!isKnown(id)&&(id in PROG.box)&&(PROG.due[id]||0)>Date.now();      // scheduled, not yet due
 function schedule(id,right){
@@ -24378,7 +25138,8 @@ function schedule(id,right){
   PROG.box[id]=b; PROG.due[id]=Date.now()+BOX_DAYS[b]*DAY;
 }
 function setRev(id,on){ if(on) PROG.rev[id]=Date.now(); else delete PROG.rev[id]; saveProg(); }
-function recordAnswer(id,right){ const b=right?PROG.ok:PROG.miss; b[id]=(b[id]||0)+1; schedule(id,right); saveProg(); }
+function recordAnswer(id,right){ const b=right?PROG.ok:PROG.miss; b[id]=(b[id]||0)+1; schedule(id,right); saveProg();
+  try{ renderNav(); }catch(e){} }   // redraws the map tab's progress
 function clearProg(ids){ ids.forEach(id=>PROG_PARTS.forEach(k=>delete PROG[k][id])); saveProg(); }
 function dueText(id){
   if(isWeak(id)) return "due now";
@@ -24484,6 +25245,95 @@ function panelSVG(p){
     <text class="pt" x="${p.x+15}" y="${p.y+26}">${esc(p.t)}</text>
     <line x1="${p.x+15}" y1="${p.y+34}" x2="${p.x+p.w-15}" y2="${p.y+34}" stroke="var(--line-2)"/>${rows}</g>`;
 }
+/* ── graphs on the physiology maps ───────────────────────
+   A map can carry plots:[{x,y,w,h,kind,t}]. Each kind draws a schematic graph with a
+   row of variants to switch between (tap, or Enter on a focused chip). The curves are
+   drawn from the relationships the cited sources state — shapes, not measured data.
+   tools/atlas-check.js keeps a list of these kinds; add a new one there too. */
+const PLOTVAR={};   // "view:index" → chosen variant
+const lin=n=>Array.from({length:n+1},(_,i)=>i/n);
+const hill=(p50,n)=>p=>100*Math.pow(p,n)/(Math.pow(p,n)+Math.pow(p50,n));
+function pvLoop(o){
+  const {edv,esv,edp,po,pk,pc,slant=0,rslant=0}=o, pts=[[edv,edp],[edv-slant,po]];
+  lin(24).slice(1).forEach(t=>pts.push([edv-slant+(esv-edv+slant)*t, po+(pc-po)*t+(pk-(po+pc)/2)*Math.sin(Math.PI*t)]));
+  const v0=esv+rslant, pmin=4; pts.push([v0,pmin]);
+  lin(20).slice(1).forEach(t=>{ const v=v0+(edv-v0)*t; pts.push([v,pmin+(edp-pmin)*t*t]); });
+  return {pts,close:true,corners:[[edv,edp,"MC"],[edv-slant,po,"AO"],[esv,pc,"AC"],[v0,pmin,"MO"]]};
+}
+const curve=(f,a,b)=>lin(60).map(t=>{ const x=a+(b-a)*t; return [x,f(x)]; });
+const sat=(x,lo,hi)=>Math.max(lo,Math.min(hi,x));
+function glucoseLines(g,pth,tm){   // filtered = g·P; reabsorbed bends smoothly (splay) up to Tm
+  const fth=g*pth, psat=pth+2*(tm-fth)/g;
+  const reab=p=>{ if(p<=pth) return g*p; if(p>=psat) return tm;
+    const t=(p-pth)/(psat-pth), h=psat-pth;   // cubic Hermite: slope g at the threshold, flat at Tm
+    return (2*t*t*t-3*t*t+1)*fth+(t*t*t-2*t*t+t)*h*g+(-2*t*t*t+3*t*t)*tm; };
+  return [{pts:curve(p=>g*p,0,800),lab:"Filtered"},{pts:curve(reab,0,800),lab:"Reabsorbed"},{pts:curve(p=>g*p-reab(p),0,800),lab:"Excreted"},{x:pth,lab:"threshold"},{y:tm,lab:"Tm"}];
+}
+const PLOTS={
+  pvloop:{xl:"Left ventricular volume (mL)",yl:"LV pressure (mm Hg)",xr:[0,200],yr:[0,200],xt:[0,50,100,150,200],yt:[0,50,100,150,200],ref:true,vars:[
+    {l:"Normal",cap:"One beat: MC mitral closes → isovolumetric contraction → AO aortic opens → ejection → AC aortic closes → isovolumetric relaxation → MO mitral opens → filling. Width = stroke volume.",d:()=>[pvLoop({edv:120,esv:50,edp:8,po:80,pk:125,pc:100})]},
+    {l:"↑ Preload",cap:"↑ Preload → ↑ EDV → ↑ stroke volume; the loop widens to the right.",d:()=>[pvLoop({edv:150,esv:50,edp:12,po:80,pk:128,pc:100})]},
+    {l:"↑ Afterload",cap:"↑ Afterload → ↑ ESV → ↓ stroke volume; the loop gets taller and narrower.",d:()=>[pvLoop({edv:120,esv:75,edp:9,po:105,pk:150,pc:130})]},
+    {l:"↑ Contractility",cap:"↑ Contractility → ↓ ESV → ↑ stroke volume and ↑ ejection fraction.",d:()=>[pvLoop({edv:120,esv:30,edp:8,po:80,pk:135,pc:105})]},
+    {l:"Aortic stenosis",cap:"Aortic stenosis: LV pressure far above aortic · ↑ ESV · ↓ SV · the hypertrophied LV is stiff (↑ EDP for a given EDV).",d:()=>[pvLoop({edv:125,esv:70,edp:16,po:95,pk:190,pc:150})]},
+    {l:"Mitral regurgitation",cap:"Mitral regurgitation: no true isovolumetric phases · ↑ EDV · ↓ ESV · ↑ total SV (forward flow plus backflow into the LA).",d:()=>[pvLoop({edv:160,esv:40,edp:12,po:75,pk:115,pc:90,slant:18,rslant:8})]}]},
+  starling:{xl:"Ventricular EDV (preload)",yl:"Stroke volume",xr:[0,250],yr:[0,140],xt:[0,50,100,150,200,250],yt:[],all:true,vars:[
+    {l:"Normal (rest)",cap:"Force of contraction rises with end-diastolic fiber length (preload): within limits, the heart pumps out what comes back.",d:()=>[{pts:curve(v=>v<40?0:90*(1-Math.exp(-(v-40)/60)),0,250)}]},
+    {l:"Exercise",cap:"↑ Contractility (catecholamines, positive inotropes such as dobutamine, milrinone, digoxin): more stroke volume at every preload.",d:()=>[{pts:curve(v=>v<40?0:120*(1-Math.exp(-(v-40)/60)),0,250)}]},
+    {l:"Heart failure",cap:"↓ Contractility (lost myocardium after MI, β-blockers acutely, non-DHP calcium channel blockers, HF): less stroke volume at every preload.",d:()=>[{pts:curve(v=>v<40?0:50*(1-Math.exp(-(v-40)/60)),0,250)}]},
+    {l:"HF + positive inotrope",cap:"A positive inotrope lifts the failing heart’s curve back toward normal.",d:()=>[{pts:curve(v=>v<40?0:70*(1-Math.exp(-(v-40)/60)),0,250)}]}]},
+  odc:{xl:"PO₂ (mm Hg)",yl:"Hb saturation (%)",xr:[0,100],yr:[0,100],xt:[0,20,40,60,80,100],yt:[0,25,50,75,100],ref:true,vars:[
+    {l:"Normal",cap:"Sigmoid because hemoglobin binds O₂ cooperatively. P50 is the PO₂ at 50% saturation; arterial blood sits on the flat top, venous blood on the steep part.",d:()=>[{pts:curve(hill(27,2.7),0,100),p50:27,dots:[[100,"arterial"],[40,"venous"]]}]},
+    {l:"Right shift",cap:"Right shift (↓ affinity, ↑ P50, more O₂ unloaded): exercise, ↓ pH, ↑ temperature, ↑ 2,3-BPG, ↑ H⁺ and CO₂ (Bohr effect).",d:()=>[{pts:curve(hill(35,2.7),0,100),p50:35}]},
+    {l:"Left shift",cap:"Left shift (↑ affinity, ↓ P50, less unloading): ↓ temperature, fetal Hb, CO, methemoglobin. Left is lower.",d:()=>[{pts:curve(hill(19,2.7),0,100),p50:19}]},
+    {l:"Myoglobin",cap:"Myoglobin: one chain and no cooperativity — higher affinity, and a curve that is not sigmoid.",d:()=>[{pts:curve(hill(3,1),0,100),p50:3}]}]},
+  lungpv:{xl:"Distending pressure (cm H₂O)",yl:"Lung volume (L)",xr:[0,40],yr:[0,8],xt:[0,10,20,30,40],yt:[0,2,4,6,8],ref:true,vars:[
+    {l:"Normal",cap:"Compliance is the slope of this curve — the change in volume for a change in pressure (ΔV/ΔP).",d:()=>[{pts:curve(p=>0.8+5.2*(1-Math.exp(-p/9)),0,40)}]},
+    {l:"Emphysema",cap:"↑ Compliance (emphysema, older adults): more volume for the same pressure — the lung is easier to fill.",d:()=>[{pts:curve(p=>1.2+6.3*(1-Math.exp(-p/5.5)),0,40)}]},
+    {l:"Fibrosis",cap:"↓ Compliance (pulmonary fibrosis, pneumonia, ARDS, pulmonary edema): a flatter curve — the lung is harder to fill.",d:()=>[{pts:curve(p=>0.6+3.2*(1-Math.exp(-p/14)),0,40)}]},
+    {l:"Hysteresis",cap:"Inflation and deflation follow different curves because surface tension must be overcome on inflation.",d:()=>[{pts:curve(p=>0.8+5.2*(1-Math.exp(-p/9)),0,40),lab:"deflation"},{pts:curve(p=>0.8+5.2*(1-Math.exp(-Math.max(p-6,0)/7)),0,40),lab:"inflation"}]}]},
+  glucose:{xl:"Plasma glucose (mg/dL)",yl:"Glucose (mg/min)",xr:[0,800],yr:[0,700],xt:[0,200,400,600,800],yt:[0,175,375,525,700],vars:[
+    {l:"Normal",cap:"Filtered load rises in a straight line. Glucosuria begins at the threshold (~200 mg/dL) and all transporters are saturated at Tm (~375 mg/min); the bend between them is splay.",d:()=>glucoseLines(1.25,200,375)},
+    {l:"Pregnancy",cap:"Pregnancy: ↑ GFR filters more glucose at every plasma level, so the threshold falls — glucosuria at normal plasma glucose.",d:()=>glucoseLines(1.6,150,375)},
+    {l:"SGLT2 inhibitor",cap:"SGLT2 inhibitors block proximal reabsorption — glucosuria below 200 mg/dL.",d:()=>glucoseLines(1.25,80,150)}]}};
+function plotSVG(p,i){
+  const K=PLOTS[p.kind]; if(!K) return "";
+  const key=state.view+":"+i, vi=sat(PLOTVAR[key]||0,0,K.vars.length-1), V=K.vars[vi];
+  const L=p.x+86, R=p.x+p.w-44, T=p.y+120, B=p.y+p.h-64;
+  const X=v=>L+(v-K.xr[0])/(K.xr[1]-K.xr[0])*(R-L), Y=v=>B-(sat(v,K.yr[0],K.yr[1])-K.yr[0])/(K.yr[1]-K.yr[0])*(B-T);
+  const path=(pts,close)=>"M"+pts.map(([a,b])=>X(a).toFixed(1)+" "+Y(b).toFixed(1)).join(" L")+(close?" Z":"");
+  /* an open curve that leaves the top of the chart stops at the edge instead of flattening along it */
+  const clipTop=pts=>{ const out=[]; for(let k=0;k<pts.length;k++){ const [a,b]=pts[k];
+    if(b<=K.yr[1]){ out.push(pts[k]); continue; }
+    if(k){ const [a0,b0]=pts[k-1], t=(K.yr[1]-b0)/(b-b0); out.push([a0+(a-a0)*t,K.yr[1]]); } break; } return out; };
+  let s=`<rect class="pframe" x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="14"/>
+    <text class="pt" x="${p.x+18}" y="${p.y+30}">${esc(p.t)}</text>`;
+  let cx=p.x+18;
+  K.vars.forEach((v,j)=>{ const w=Math.round(v.l.length*7.2+26);
+    s+=`<g class="pvar${j===vi?" on":""}" data-plot="${i}" data-pv="${j}" tabindex="0" role="button" aria-pressed="${j===vi}"><rect x="${cx}" y="${p.y+44}" width="${w}" height="26" rx="13"/><text x="${cx+w/2}" y="${p.y+61.5}">${esc(v.l)}</text></g>`;
+    cx+=w+8; });
+  s+=`<text class="pcap" x="${p.x+18}" y="${p.y+96}">${esc(V.cap)}</text>`;
+  s+=`<line class="pax" x1="${L}" y1="${B}" x2="${R}" y2="${B}"/><line class="pax" x1="${L}" y1="${T}" x2="${L}" y2="${B}"/>`;
+  K.xt.forEach(t=>{ s+=`<text class="ptick" x="${X(t)}" y="${B+18}" text-anchor="middle">${t}</text>`; });
+  K.yt.forEach(t=>{ s+=`<text class="ptick" x="${L-10}" y="${Y(t)+4}" text-anchor="end">${t}</text>`; });
+  s+=`<text class="plab" x="${(L+R)/2}" y="${p.y+p.h-24}" text-anchor="middle">${esc(K.xl)}</text>
+    <text class="plab" x="${p.x+28}" y="${(T+B)/2}" text-anchor="middle" transform="rotate(-90 ${p.x+28} ${(T+B)/2})">${esc(K.yl)}</text>`;
+  const draw=(items,cls)=>items.forEach(c=>{
+    if(c.pts) s+=`<path class="${cls}" d="${path(c.close?c.pts:clipTop(c.pts),c.close)}"/>`;
+    if(c.x!=null) s+=`<line class="pmark" x1="${X(c.x)}" y1="${T}" x2="${X(c.x)}" y2="${B}"/><text class="ptick" x="${X(c.x)+6}" y="${T+14}">${esc(c.lab)}</text>`;
+    if(c.y!=null) s+=`<line class="pmark" x1="${L}" y1="${Y(c.y)}" x2="${R}" y2="${Y(c.y)}"/><text class="ptick" x="${R-6}" y="${Y(c.y)-6}" text-anchor="end">${esc(c.lab)}</text>`; });
+  if(K.all) K.vars.forEach((v,j)=>{ if(j!==vi) draw(v.d(),"pother"); });
+  else if(K.ref&&vi>0) draw(K.vars[0].d(),"pref");
+  const cur=V.d(); draw(cur,"pcur");
+  cur.forEach(c=>{
+    if(c.pts&&c.lab){ const cp=clipTop(c.pts), [a,b]=cp[cp.length-1]; s+=`<text class="ptick" x="${X(a)-6}" y="${Y(b)-8}" text-anchor="end">${esc(c.lab)}</text>`; }
+    (c.corners||[]).forEach(([a,b,t])=>{ s+=`<circle class="pdot" cx="${X(a)}" cy="${Y(b)}" r="4"/><text class="ptick" x="${X(a)+(t==="MC"||t==="AO"?8:-8)}" y="${Y(b)+(t==="MO"||t==="MC"?-8:-8)}" text-anchor="${t==="MC"||t==="AO"?"start":"end"}">${t}</text>`; });
+    if(c.p50!=null){ s+=`<line class="pmark" x1="${L}" y1="${Y(50)}" x2="${X(c.p50)}" y2="${Y(50)}"/><line class="pmark" x1="${X(c.p50)}" y1="${Y(50)}" x2="${X(c.p50)}" y2="${B}"/><text class="ptick" x="${X(c.p50)+6}" y="${B-6}">P50</text>`; }
+    (c.dots||[]).forEach(([po,t])=>{ const f=hill(27,2.7)(po); s+=`<circle class="pdot" cx="${X(po)}" cy="${Y(f)}" r="4"/><text class="ptick" x="${X(po)-8}" y="${Y(f)+18}" text-anchor="end">${t}</text>`; });
+  });
+  s+=`<text class="pnote" x="${p.x+p.w-18}" y="${p.y+p.h-10}" text-anchor="end">Schematic — drawn from the stated relationships, not measured data</text>`;
+  return `<g class="plot-c">${s}</g>`;
+}
 function render(){
   const m=MAPS[state.view];
   const paths=[...new Set([...m.edges.map(e=>e.p),...m.nodes.map(n=>n.p)])];
@@ -24496,7 +25346,7 @@ function render(){
       <g class="comp-tag"><rect class="comp-badge" x="${b.x+26}" y="${b.y+b.h+14}" width="140" height="24" rx="8"/><text class="comp-l" x="${b.x+38}" y="${b.y+b.h+30.5}">${esc(b.l)}</text></g>`;
     [980,1420,1640].forEach(x=>{comps+=`<path d="M${x} ${b.y+b.h+4} v26" stroke="var(--compartment-line)" stroke-width="2" marker-end="url(#ah-etc)"/><text class="hlab" x="${x+9}" y="${b.y+b.h+26}">H⁺</text>`;});
     comps+=`<path d="M1880 ${b.y+b.h+30} v-26" stroke="var(--compartment-line)" stroke-width="2" marker-end="url(#ah-etc)"/><text class="hlab" x="1889" y="${b.y+b.h+26}">H⁺</text></g>`;}
-  const panels=(m.panels||[]).map(panelSVG).join("");
+  const panels=(m.panels||[]).map(panelSVG).join("")+(m.plots||[]).map(plotSVG).join("");
   let edges="",chips="",tips="";
   m.edges.forEach((e,i)=>{
     e._k=e.a+">"+e.b;
@@ -24519,6 +25369,7 @@ function render(){
   const nodes=m.nodes.map(nodeSVG).join("");
   const fe=document.activeElement, fp=fe&&svg.contains(fe)&&fe.closest?fe.closest(".pin"):null;
   const focusPin=fp?[fp.dataset.les,[...svg.querySelectorAll(`.pin[data-les="${fp.dataset.les}"]`)].indexOf(fp)]:null;
+  const fv=fe&&svg.contains(fe)&&fe.closest?fe.closest(".pvar"):null, focusVar=fv?[fv.dataset.plot,fv.dataset.pv]:null;
   svg.setAttribute("viewBox",`0 0 ${m.w} ${m.h}`);
   svg.innerHTML=`<defs>${defs}</defs><g id="cam"><g class="bg-layer">${comps}${panels}</g><g class="edge-layer">${edges}</g><g class="node-layer">${nodes}</g><g class="chip-layer">${chips}</g><g class="tip-layer">${tips}</g></g>`;
   cam=svg.querySelector("#cam");
@@ -24526,6 +25377,9 @@ function render(){
   /* a re-render replaces every pin; keep keyboard focus on the one that had it */
   if(focusPin){ const ps=svg.querySelectorAll(`.pin[data-les="${focusPin[0]}"]`), p=ps[focusPin[1]]||ps[0];
     if(p){ FOCUS_QUIET=true; try{ p.focus({preventScroll:true}); }catch(e){} FOCUS_QUIET=false; } }
+  if(focusVar){ const q=svg.querySelector(`.pvar[data-plot="${focusVar[0]}"][data-pv="${focusVar[1]}"]`);
+    if(q){ FOCUS_QUIET=true; try{ q.focus({preventScroll:true}); }catch(e){} FOCUS_QUIET=false; } }
+  if(WALK&&WALK.v===state.view) walkDim();
 }
 /* Text measurement.
    Every box on every map is sized from measured text, so the measurement has to be
@@ -24694,6 +25548,7 @@ function openLes(id,center,pick){
    <div class="dhead">
      <button class="dclose" id="dclose" aria-label="Close">×</button>
      <div class="dacts">
+     <button class="dlink dstar" id="dstar" aria-pressed="${isStarred(id)}" title="Star this card to find it again — and to quiz yourself on your starred cards">${isStarred(id)?"★":"☆"}<span>${isStarred(id)?"Starred":"Star"}</span></button>
      <a class="dlink" id="dreport" href="${esc(reportUrl(id))}" target="_blank" rel="noopener" title="Report a mistake on this card (opens a GitHub issue)"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 14V2.5"/><path d="M3.5 3h8l-1.6 3 1.6 3h-8"/></svg><span>Report</span></a>
      <button class="dlink" id="dlink" title="Copy a link straight to this card"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6.5 9.5a3 3 0 0 0 4.2 0l2.4-2.4a3 3 0 0 0-4.2-4.2L7.8 4"/><path d="M9.5 6.5a3 3 0 0 0-4.2 0L2.9 8.9a3 3 0 0 0 4.2 4.2L8.2 12"/></svg><span>Link</span></button>
      </div>
@@ -24710,7 +25565,7 @@ function openLes(id,center,pick){
      </div>
      ${(()=>{ const others=[...new Set((LOC[id]||[]).map(l=>l.v))].filter(v=>v!==state.view);
        return others.length?`<div class="pagehits alsoon"><span class="revnote">${state.view==="index"?"On":"Also on"}</span>${others.map(v=>`<button class="pagehit" data-also="${v}">${esc((VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1])}</button>`).join("")}</div>`:""; })()}
-     <div class="revrow"><button class="revbtn" id="drev" aria-pressed="${isRev(id)}" title="Saved on this device only">${isRev(id)?"✓ Reviewed":"Mark reviewed"}</button><button class="revbtn" id="dknow" aria-pressed="${isKnown(id)}" title="Leave this card out of every quiz and the due list">${isKnown(id)?"✓ I know this":"I know this"}</button><button class="revbtn" id="dcmp" title="Set this card beside another, line by line">Compare…</button>${quizNote(id)}</div>
+     <div class="revrow"><button class="revbtn" id="drev" aria-pressed="${isRev(id)}" title="Saved on this device only">${isRev(id)?"✓ Reviewed":"Mark reviewed"}</button><button class="revbtn" id="dknow" aria-pressed="${isKnown(id)}" title="Leave this card out of every quiz and the due list">${isKnown(id)?"✓ I know this":"I know this"}</button><button class="revbtn" id="dcmp" title="Set this card beside another, line by line">Compare…</button>${clozeCount(id)>=2?'<button class="revbtn" id="dtest" title="Hide this card’s key terms and recall them">Test me</button>':""}${quizNote(id)}</div>
    </div>
    <div class="dbody">
      ${res}
@@ -24732,9 +25587,13 @@ function openLes(id,center,pick){
   document.getElementById("drev").onclick=ev=>{ const on=!isRev(id); setRev(id,on);
     ev.currentTarget.setAttribute("aria-pressed",String(on)); ev.currentTarget.textContent=on?"✓ Reviewed":"Mark reviewed";
     renderRail(); if(state.view==="index") renderIndex(); };
+  document.getElementById("dstar").onclick=ev=>{ const on=!isStarred(id); setStar(id,on);
+    ev.currentTarget.setAttribute("aria-pressed",String(on)); ev.currentTarget.innerHTML=(on?"★":"☆")+`<span>${on?"Starred":"Star"}</span>`;
+    renderRail(); if(state.view==="index") renderIndex(); if(state.quiz==="star") updateScore(); };
+  const dt=document.getElementById("dtest"); if(dt) dt.onclick=()=>openCloze(id);
   document.getElementById("dknow").onclick=ev=>{ const on=!isKnown(id); setKnown(id,on);
     ev.currentTarget.setAttribute("aria-pressed",String(on)); ev.currentTarget.textContent=on?"✓ I know this":"I know this";
-    renderRail(); if(state.view==="index") renderIndex(); else render(); updateScore(); };
+    renderRail(); renderNav(); if(state.view==="index") renderIndex(); else render(); updateScore(); };
   drawer.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.go));
   drawer.querySelectorAll("[data-next]").forEach(b=>b.onclick=nextQuiz);
   renderRail();
@@ -24824,10 +25683,12 @@ function openQuiz(id){
   });
   render(); flashPins(id,false); writeHash();
 }
-const NEXT_LABEL=()=>state.quiz==="buzz"?"Next buzzword":state.quiz==="due"?"Next due card":"Next pin";
+const NEXT_LABEL=()=>state.quiz==="buzz"?"Next buzzword":state.quiz==="due"?"Next due card":state.quiz==="case"?"Next case":state.quiz==="star"?"Next starred card":"Next pin";
 function nextQuiz(){
   if(state.quiz==="buzz") return nextBuzz();
   if(state.quiz==="due") return nextDue();
+  if(state.quiz==="case") return nextCase();
+  if(state.quiz==="star") return nextStar();
   const done=PQ[state.view]||{}, left=mapIds(state.view).filter(k=>!(k in done)&&!isKnown(k));
   if(!left.length){ closeDrawer(); return; }
   const id=left[Math.floor(Math.random()*left.length)];
@@ -24918,6 +25779,33 @@ function updateScore(){
     const r=box.querySelector("[data-qreset]"); if(r) r.onclick=()=>{ delete BQ[buzzKey()]; updateScore(); nextBuzz(); };
     return;
   }
+  if(state.quiz==="star"){
+    if(!SQ) SQ={list:shuffle(starAll()),done:{}};
+    const total=SQ.list.length, named=Object.keys(SQ.done).length, right=Object.values(SQ.done).filter(Boolean).length;
+    box.hidden=false;
+    box.innerHTML=total?`<span>Starred cards <b>${named}/${total}</b> · <b>${right}</b> right</span>
+      <span class="qbar"><i style="width:${Math.round(named/total*100)}%"></i></span>
+      ${named<total?`<button class="go" data-qnext>Next starred card</button>`:`<span>All done</span>`}
+      ${named?`<button data-qreset title="Start the round again">Reset</button>`:""}`
+      :`<span>No starred cards yet — tap ☆ Star on any card to add it here.</span>`;
+    const n=box.querySelector("[data-qnext]"); if(n) n.onclick=nextStar;
+    const r=box.querySelector("[data-qreset]"); if(r) r.onclick=()=>{ SQ=null; nextStar(); };
+    return;
+  }
+  if(state.quiz==="case"&&state.view!=="index"){
+    const total=caseIds().length, done=CQ[buzzKey()]||{};
+    const named=Object.keys(done).length, right=Object.values(done).filter(Boolean).length;
+    box.hidden=false;
+    box.innerHTML=`<span class="seg"><button data-cscope="map" aria-pressed="${BSCOPE==="map"}">This map</button><button data-cscope="topic" aria-pressed="${BSCOPE==="topic"}">Whole topic</button><button data-cscope="all" aria-pressed="${BSCOPE==="all"}">All maps</button></span>
+      <span>Cases <b>${named}/${total}</b> · <b>${right}</b> right</span>
+      <span class="qbar"><i style="width:${total?Math.round(named/total*100):0}%"></i></span>
+      ${named<total?`<button class="go" data-qnext>Next case</button>`:`<span>All done</span>`}
+      ${named?`<button data-qreset title="Clear this round">Reset</button>`:""}`;
+    box.querySelectorAll("[data-cscope]").forEach(b=>b.onclick=()=>{ BSCOPE=b.dataset.cscope; try{localStorage.setItem("mla-bscope",BSCOPE);}catch(e){} updateScore(); nextCase(); });
+    const n=box.querySelector("[data-qnext]"); if(n) n.onclick=nextCase;
+    const r=box.querySelector("[data-qreset]"); if(r) r.onclick=()=>{ delete CQ[buzzKey()]; updateScore(); nextCase(); };
+    return;
+  }
   if(state.quiz==="fill"&&state.view!=="index"){
     const ns=MAPS[state.view].nodes.filter(n=>n.s&&n.k!=="ghost"), shown=ns.filter(n=>state.reveal.has("n:"+n.id)).length;
     box.hidden=false;
@@ -24945,14 +25833,16 @@ function setQuiz(mode){
   state.quiz=mode; state.reveal.clear();
   const b=document.getElementById("quizBtn");
   b.classList.toggle("on",!!mode);
-  b.textContent=mode==="steps"?"Quiz: steps":mode==="fill"?"Quiz: fill in":mode==="pins"?"Quiz: pins":mode==="buzz"?"Quiz: buzzwords":mode==="due"?"Quiz: due cards":"Quiz";
-  DQ=null;
+  b.textContent=mode==="steps"?"Quiz: steps":mode==="fill"?"Quiz: fill in":mode==="case"?"Quiz: cases":mode==="star"?"Quiz: starred":mode==="pins"?"Quiz: pins":mode==="buzz"?"Quiz: buzzwords":mode==="due"?"Quiz: due cards":"Quiz";
+  DQ=null; SQ=null;
   document.querySelectorAll("#qmenu [data-q]").forEach(o=>o.setAttribute("aria-checked",String(o.dataset.q===mode)));
   if(mode==="pins"){ drawer.hidden=true; state.sel=null; writeHash(); }
   if(state.view!=="index") render();
   renderRail(); updateScore();
   if(mode==="buzz") nextBuzz();
   if(mode==="due") nextDue();
+  if(mode==="case") nextCase();
+  if(mode==="star") nextStar();
 }
 
 /* ── due-card review ────────────────────────────────────
@@ -24964,7 +25854,7 @@ let DQ=null;   // {list:[ids], done:{id:true/false}}
 const dueAll=()=>Object.keys(LES).filter(isWeak);
 const dueSorted=()=>dueAll().sort((a,b)=>(PROG.due[a]||0)-(PROG.due[b]||0));
 function homeOf(id){ return state.view!=="index"&&livesOn(id,state.view)?state.view:((LOC[id]||[])[0]||{}).v; }
-function openDue(id){
+function openDue(id,star){
   const L=LES[id]; if(!L) return;
   const v=homeOf(id); if(v&&v!==state.view) setView(v);
   const red=redactor(L), bz=buzzOf(id), pool=mapIds(v||state.view);
@@ -24974,7 +25864,7 @@ function openDue(id){
   drawer.innerHTML=`
    <div class="dhead">
      <button class="dclose" id="dclose" aria-label="Close">×</button>
-     <span class="dkind" style="--k:var(--due)">Due for review</span>
+     ${star?'<span class="dkind" style="--k:var(--accent)">★ Starred card</span>':'<span class="dkind" style="--k:var(--due)">Due for review</span>'}
      ${head}
      <p class="pqwhere">Which card is this? It lives on <b>${esc(MAPS[v]?MAPS[v].t:"")}</b></p>
    </div>
@@ -24982,8 +25872,10 @@ function openDue(id){
   drawer.scrollTop=0;
   document.getElementById("dclose").onclick=closeDrawer;
   drawer.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
-    const right=b.dataset.a===id; if(!DQ) DQ={list:[id],done:{}};
-    DQ.done[id]=right; recordAnswer(id,right);
+    const right=b.dataset.a===id;
+    if(star){ if(!SQ) SQ={list:[id],done:{}}; SQ.done[id]=right; }
+    else { if(!DQ) DQ={list:[id],done:{}}; DQ.done[id]=right; }
+    recordAnswer(id,right);
     openLes(id,true,b.dataset.a); updateScore();
   });
   writeHash();
@@ -24996,6 +25888,103 @@ function nextDue(){
   openDue(left[0]);
 }
 document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-duego]"); if(b){ ev.preventDefault(); setQuiz("due"); } });
+
+/* ── starred round: every starred card, shuffled, each once ── */
+let SQ=null;   // {list:[ids], done:{id:true/false}}
+function nextStar(){
+  if(!SQ) SQ={list:shuffle(starAll()),done:{}};
+  const left=SQ.list.filter(k=>LES[k]&&isStarred(k)&&!(k in SQ.done));
+  updateScore();
+  if(!left.length){ closeDrawer(); return; }
+  openDue(left[0],true);
+}
+
+/* ── case vignettes ───────────────────────────────────────
+   Two or three findings and a lab from a disease card, its own name blanked, and
+   four diagnoses to choose from. Scope follows the buzzword quiz (map, topic, all). */
+const CQ={};   // CQ[scope][cardId] = true/false for this session
+const plainText=s=>String(s).replace(/<[^>]+>/g,"");
+function caseLines(id){
+  const L=LES[id], red0=redactor(L);
+  /* the shared redactor skips short words; a case must not show "Fat …" for fat embolism */
+  const short=[...new Set((L.n+" "+(L.alias||"")).split(/[^A-Za-z]+/).filter(w=>w.length===3&&!/^(and|the|for|with|its|per|not|via|all|one|two|due)$/i.test(w)))];
+  const re3=short.length?new RegExp("\\b(?:"+short.join("|")+")\\b","gi"):null;
+  const red=s=>{ const t=red0(s); return re3?t.replace(re3,"▢▢▢"):t; };
+  const ok=s=>{ const t=red(plainText(s)).trim(); if(!t||t==="—") return null;
+    const words=t.split(/\s+/).length, hid=(t.match(/▢▢▢/g)||[]).length;
+    return words>=5&&hid<=1?t:null; };
+  return {find:(L.find||[]).map(ok).filter(Boolean),labs:(L.labs||[]).map(ok).filter(Boolean)};
+}
+const CZC={};
+function caseIds(){
+  const k=buzzKey();
+  if(!CZC[k]){ const ids=new Set(); topicViews().forEach(v=>mapIds(v).forEach(id=>ids.add(id)));
+    CZC[k]=[...ids].filter(id=>LES[id].k==="dz"&&caseLines(id).find.length>=2); }
+  return CZC[k].filter(id=>!isKnown(id));
+}
+function openCase(id){
+  const L=LES[id]; if(!L) return;
+  const C=caseLines(id), idx=shuffle(C.find.map((_,i)=>i)).slice(0,3).sort((a,b)=>a-b);
+  const lab=C.labs.length?C.labs[Math.floor(Math.random()*C.labs.length)]:"";
+  let pool=caseIds(); if(pool.length<4) pool=Object.keys(LES).filter(k=>LES[k].k==="dz");
+  const from=BSCOPE==="all"?"all maps":BSCOPE==="topic"?(TOPICS.find(t=>t[0]===TOPIC_OF[state.view])||[0,""])[1]:MAPS[state.view].t;
+  state.sel=null; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
+  drawer.innerHTML=`
+   <div class="dhead">
+     <button class="dclose" id="dclose" aria-label="Close">×</button>
+     <span class="dkind" style="--k:var(--accent)">Case</span>
+     <h2 class="dtitle">Which diagnosis fits?</h2>
+     <p class="pqwhere">Drawn from <b>${esc(from)}</b></p>
+   </div>
+   <div class="dbody">
+     ${sec("The case",ul(idx.map(i=>esc(C.find[i]))))}
+     ${lab?sec("Labs &amp; studies",ul([esc(lab)])):""}
+     ${sec("Your answer",`<div class="pqopts">${buzzOptions(id,pool).map(k=>`<button class="pqopt" data-a="${k}">${esc(LES[k].n)}</button>`).join("")}</div>`)}
+   </div>`;
+  drawer.scrollTop=0;
+  document.getElementById("dclose").onclick=closeDrawer;
+  drawer.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
+    const right=b.dataset.a===id;
+    (CQ[buzzKey()]=CQ[buzzKey()]||{})[id]=right; recordAnswer(id,right);
+    if(!livesOn(id,state.view)){ const l=(LOC[id]||[]).find(x=>topicViews().includes(x.v)); if(l) setView(l.v); }
+    openLes(id,true,b.dataset.a); updateScore();
+  });
+  writeHash();
+}
+function nextCase(){
+  if(state.view==="index") return;
+  const done=CQ[buzzKey()]||{}, left=caseIds().filter(k=>!(k in done));
+  if(!left.length){ closeDrawer(); updateScore(); return; }
+  openCase(left[Math.floor(Math.random()*left.length)]);
+}
+
+/* ── "Test me": the card's bold key terms, hidden until tapped ── */
+const clozeCount=id=>{ const L=LES[id]; return [...(L.find||[]),...(L.labs||[])].join(" ").split("<b>").length-1; };
+function openCloze(id){
+  const L=LES[id]; if(!L) return;
+  state.sel=id; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
+  const hide=s=>String(s).replace(/<b>(.*?)<\/b>/g,(_,t)=>`<button class="cloze" aria-label="Hidden term — tap to reveal"><span>${t}</span></button>`);
+  drawer.innerHTML=`
+   <div class="dhead">
+     <button class="dclose" id="dclose" aria-label="Close">×</button>
+     <span class="dkind" style="--k:${mkc(L.k)}">Test me</span>
+     <h2 class="dtitle">${esc(L.n)}</h2>
+     <p class="pqwhere">Say each hidden term to yourself, then tap it to check.</p>
+   </div>
+   <div class="dbody">
+     ${sec("Presentation",ul((L.find||[]).map(hide)))}
+     ${sec("Labs &amp; studies",ul((L.labs||[]).filter(x=>x!=="—").map(hide)))}
+     <div class="clozeend"><span>How did it go?</span>
+       <button class="go" data-czok>Got them all</button><button data-czmiss>Missed some</button>
+       <button class="linkbtn" data-czback>Back to the card</button></div>
+   </div>`;
+  drawer.scrollTop=0;
+  document.getElementById("dclose").onclick=closeDrawer;
+  drawer.querySelectorAll(".cloze").forEach(b=>b.onclick=()=>{ b.classList.add("open"); b.removeAttribute("aria-label"); });
+  drawer.querySelector("[data-czok]").onclick=()=>{ recordAnswer(id,true); openLes(id,false); };
+  drawer.querySelector("[data-czmiss]").onclick=()=>{ recordAnswer(id,false); openLes(id,false); };
+  drawer.querySelector("[data-czback]").onclick=()=>openLes(id,false);
+}
 
 /* ── textbook chapter lookup ─────────────────────────────
    "Katzung ch 11", "robbins 7", "Guyton chapter 83": every card and map whose
@@ -25315,6 +26304,9 @@ function renderRail(){
   if(cq) html+=`<div class="rail-sec"><h3 class="rail-h">Maps citing ${esc(cq.label)}</h3><p class="rail-sub">${esc(cq.full)}</p>${chapterHitsHtml(cq)||`<p class="rail-sub">No map lists this chapter.</p>`}</div>`;
   const onMap=!state.q&&state.view!=="index";
   if(onMap&&ids.length) html+=`<div class="rail-sec"><h3 class="rail-h">Your progress</h3>${progHtml(ids,"cards")}</div>`;
+  if(!state.q){ const st=starAll(); if(st.length) html+=`<div class="rail-sec"><h3 class="rail-h">Starred · ${st.length}</h3>
+    <div class="lesionlist">${st.slice(0,8).map(id=>{const L=LES[id];return `<button class="li" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">★ ${esc(L.n)}</span></span></button>`;}).join("")}</div>
+    ${st.length>8?`<p class="revnote" style="margin:6px 7px 0">${st.length-8} more on the Index</p>`:""}</div>`; }
   html+=`<div class="rail-sec"><h3 class="rail-h">${pg!=null?`Cards citing p. ${pg}`:cq?`Cards citing ${esc(cq.label)}`:state.fuzzy?"Closest matches":state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${shown.length}${shown.length<ids.length?` <span class="hidn">· ${ids.length-shown.length} known hidden</span>`:""}</h3>
     <div class="lesionlist">${ids.length?shown.map(id=>{const L=LES[id];
       return `<button class="li${isRev(id)?" rev":""}${isWeak(id)?" weak":""}${isKnown(id)?" known":""}" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
@@ -25343,6 +26335,22 @@ function weakSpotsHtml(){
     ${n?`<button class="duego" data-duego>Review every due card · ${n} →</button>`:""}</details>`;
 }
 
+function topicProgressHtml(){
+  const rows=TOPICS.filter(t=>t[0]!=="idx").map(([t,l,vs])=>{ const ids=[...new Set(vs.flatMap(v=>MAPS[v]?mapIds(v):[]))], M=mastery(ids);
+    return M&&{v:lastInTopic[t]||vs[0],l,...M}; }).filter(Boolean);
+  if(!rows.length) return "";
+  return `<details class="idx-sources"><summary>Progress by topic</summary>
+    <p>A card counts once you’ve answered it right more often than you’ve missed it — atlas quizzes and question-bank questions together — or marked it known. This device only.</p>
+    <div class="weakmaps">${rows.map(r=>`<button class="weakmap" data-view="${r.v}"><span class="wm-t">${esc(r.l)}</span><span class="qbar"><i style="width:${Math.round(r.solid/r.n*100)}%"></i></span><span class="wm-n">${r.solid} of ${r.n}</span></button>`).join("")}</div></details>`;
+}
+function starredIdxHtml(){
+  const st=starAll(); if(!st.length) return "";
+  return `<details class="idx-sources" open><summary>Starred cards · ${st.length}</summary>
+    <div class="pagehits">${st.map(id=>`<button class="pagehit" data-les="${id}">★ ${esc(LES[id].n)}</button>`).join("")}</div>
+    <button class="duego" data-q="star" data-starround>Quiz yourself on them →</button></details>`;
+}
+document.addEventListener("click",ev=>{ if(ev.target.closest("[data-starround]")){ ev.preventDefault(); setQuiz("star"); } });
+
 /* ── index view ─────────────────────────────────────── */
 function renderIndex(){
   const q=state.q.trim().toLowerCase();
@@ -25361,7 +26369,7 @@ function renderIndex(){
     <p>Closest matches, allowing for a letter or two off:</p>`:pg!=null?`<h2>First Aid 2025, p. ${pg}</h2>
     <p>${ids.length} ${ids.length===1?"card cites":"cards cite"} this page${mapsOnPage(pg).length?`, and so ${mapsOnPage(pg).length===1?"does this map":"do these maps"}:`:"."}</p>${pageHitsHtml(pg)}`:`<h2>Every lesion on one page</h2>
     <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>
-    ${!q?`${whatsNewHtml()}<details class="idx-sources" ${Object.keys(LES).some(isWeak)?"open":""}><summary>Your progress (this device)</summary>${progHtml(Object.keys(LES),"cards")}</details>${weakSpotsHtml()}`:""}`}
+    ${!q?`${whatsNewHtml()}<details class="idx-sources" ${Object.keys(LES).some(isWeak)?"open":""}><summary>Your progress (this device)</summary>${progHtml(Object.keys(LES),"cards")}</details>${weakSpotsHtml()}${topicProgressHtml()}${starredIdxHtml()}`:""}`}
     <details class="idx-sources"><summary>Sources</summary>
       <p>Every card was written from and checked against the sources below, line by line. Each card carries its own <b>Sources</b> section naming the exact First Aid pages and book chapters it rests on, so you can see why a fact is stated where it is; the pins on every map open the card that carries those citations, and each map's side panel lists the First Aid pages and chapters the map itself was checked against. Where sources disagree, the card says so or leaves the number out, and anything no source supported was cut. The First Aid page on each card points to the 2025 edition.</p>
       <ul>
@@ -25389,8 +26397,13 @@ const NEW_DAYS=21;
 const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   microlab:"2026-10-08",molbio:"2026-10-08",cellbio:"2026-10-08",htnrx:"2026-10-08",aging:"2026-10-08",iemlab:"2026-10-08",
   respdrug:"2026-10-08",adr:"2026-10-08",tumark:"2026-10-08",zoonoses:"2026-10-08",brainreg:"2026-10-08",abdanat:"2026-10-08",
-  genpath:"2026-10-08",ihd:"2026-10-08",cardcycle:"2026-10-08"};
+  genpath:"2026-10-08",ihd:"2026-10-08",cardcycle:"2026-10-08",
+  neoplasia:"2026-10-08",thromboemb:"2026-10-08",lungmech:"2026-10-08",gihorm:"2026-10-08",renalphys:"2026-10-08"};
 const WHATSNEW=[
+  ["2026-10-08","<b>Graphs</b> on Cardiac Cycle, Lung Mechanics and Renal Physiology — pressure–volume loops, Starling curves, the O₂ dissociation curve, lung compliance and the glucose threshold; tap a chip to shift the curve."],
+  ["2026-10-08","<b>Quiz → Case vignettes</b> gives two or three findings and a lab from a disease card, name hidden — pick the diagnosis."],
+  ["2026-10-08","<b>Test me</b> on a card hides its key terms until you tap them. <b>Walk</b> (by the zoom buttons) steps through a map one section at a time."],
+  ["2026-10-08","<b>☆ Star</b> any card to bookmark it; Quiz → Starred cards runs them as a round, and each map tab shows your progress once you’ve quizzed on it."],
   ["2026-10-08","<b>Quiz → Fill in the map</b> hides the caption in every box; tap a box to check yourself."],
   ["2026-10-08","<b>I know this</b> on any card leaves it out of every quiz and the due list; Your progress can hide those cards from the lists too."],
   ["2026-10-08","<b>Keyboard</b>: Tab moves between pins, Enter or Space opens one."],
@@ -25419,7 +26432,7 @@ function renderNav(){
   });
   const vs=(TOPICS.find(x=>x[0]===t)||[0,0,[]])[2];
   subbar.hidden=vs.length<2;
-  tabsEl.innerHTML=vs.map(v=>`<button class="tab" role="tab" data-v="${v}" aria-selected="${v===state.view}">${esc((VIEWS.find(x=>x[0]===v)||[v,v])[1])}${isNewMap(v)?'<span class="newpill">New</span>':""}</button>`).join("");
+  tabsEl.innerHTML=vs.map(v=>`<button class="tab" role="tab" data-v="${v}" aria-selected="${v===state.view}">${esc((VIEWS.find(x=>x[0]===v)||[v,v])[1])}${isNewMap(v)?'<span class="newpill">New</span>':""}${(M=>M?`<span class="mprog${M.solid?"":" zero"}" title="${M.solid} of ${M.n} cards on this map answered right more often than missed, or marked known">${Math.round(M.solid/M.n*100)}%</span>`:"")(mastery(mapIds(v)))}</button>`).join("");
   tabsEl.querySelectorAll(".tab").forEach(b=>b.onclick=()=>setView(b.dataset.v));
   [topicsEl,tabsEl].forEach(el=>{ const cur=el.querySelector('[aria-selected="true"]');
     if(cur) el.scrollLeft=Math.max(0,cur.offsetLeft-el.clientWidth/2+cur.offsetWidth/2); });
@@ -25427,6 +26440,7 @@ function renderNav(){
 
 /* ── views & camera ─────────────────────────────────── */
 function setView(v){
+  if(WALK&&WALK.v!==v) endWalk(true);
   if(v!==state.view) state.reveal.clear();   // revealed steps and captions belong to one map
   markSeen(v);
   state.view=v; state.filter=null; state.z=1; state.tx=0; state.ty=0;
@@ -25512,6 +26526,8 @@ svg.addEventListener("pointerleave",ev=>{ if(!svg.hasPointerCapture||!svg.hasPoi
 svg.addEventListener("gesturestart",ev=>ev.preventDefault());   // Safari: keep the page itself from zooming
 svg.addEventListener("click",ev=>{
   if(dragged){ dragged=false; return; }   // the end of a pan is not a tap
+  const pv=ev.target.closest(".pvar");
+  if(pv){ PLOTVAR[state.view+":"+pv.dataset.plot]=+pv.dataset.pv; render(); return; }
   const pq=state.quiz==="pins";
   const ask=id=>{ if(pq&&!isKnown(id)&&!(PQ[state.view]&&id in PQ[state.view])) openQuiz(id); else openLes(id,false); };
   const pin=ev.target.closest(".pin");
@@ -25535,7 +26551,7 @@ svg.addEventListener("click",ev=>{
 /* keyboard: pins are focusable — Tab moves between them, Enter or Space opens one,
    and a pin that gets focus off-screen is brought into view */
 svg.addEventListener("keydown",ev=>{
-  const pin=ev.target.closest&&ev.target.closest(".pin"); if(!pin) return;
+  const pin=ev.target.closest&&ev.target.closest(".pin, .pvar"); if(!pin) return;
   if(ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); ev.stopPropagation(); dragged=false; pin.dispatchEvent(new MouseEvent("click",{bubbles:true})); }
 });
 svg.addEventListener("focusin",ev=>{
@@ -25546,6 +26562,61 @@ svg.addEventListener("focusin",ev=>{
     centerOn((p.x-state.tx)/state.z,(p.y-state.ty)/state.z);
   }
 });
+/* ── walk me through this map ────────────────────────────
+   One step per lane (comps), or per pathway on maps drawn without lanes. Each step
+   zooms to its section, dims the rest and lists its boxes; ← → move, Esc ends. */
+const walkEl=document.getElementById("walk");
+function walkSteps(v){
+  const m=MAPS[v], ns=m.nodes.filter(n=>n.k!=="ghost"), ord=(a,b)=>a.y-b.y||a.x-b.x;
+  const inBox=(n,c)=>n.x>=c.x&&n.x<=c.x+c.w&&n.y>=c.y&&n.y<=c.y+c.h;
+  const steps=(m.comps||[]).map(c=>({t:c.l,box:c,nodes:ns.filter(n=>inBox(n,c)).sort(ord)})).filter(s=>s.nodes.length);
+  /* boxes outside every lane (older maps draw few lanes) get one step per pathway */
+  const rest=ns.filter(n=>!(m.comps||[]).some(c=>inBox(n,c))), order=[];
+  rest.forEach(n=>{ if(!order.includes(n.p)) order.push(n.p); });
+  order.forEach(p=>{ const g=rest.filter(n=>n.p===p).sort(ord), xs=g.map(n=>n.x), ys=g.map(n=>n.y);
+    const x=Math.min(...xs)-150, y=Math.min(...ys)-70;
+    steps.push({t:(PATHS[p]||PATHS.neutral).n,box:{x,y,w:Math.max(...xs)+150-x,h:Math.max(...ys)+70-y},nodes:g}); });
+  return steps.sort((a,b)=>a.box.y-b.box.y||a.box.x-b.box.x);
+}
+function walkDim(){
+  const keep=new Set(WALK.steps[WALK.i].nodes.map(n=>n.id));
+  svg.querySelectorAll(".node").forEach(el=>el.classList.toggle("wdim",!keep.has(el.dataset.node)));
+}
+function walkGo(i){
+  if(!WALK) return;
+  WALK.i=Math.max(0,Math.min(WALK.steps.length-1,i));
+  const s=WALK.steps[WALK.i], m=MAPS[state.view], b=s.box, pad=1.15;
+  const hideCap=state.quiz==="fill", n=WALK.steps.length;
+  walkEl.hidden=false;
+  walkEl.innerHTML=`<div class="wk-h"><span class="wk-n">${WALK.i+1} / ${n}</span><b>${esc(s.t)}</b><button class="wk-x" data-wkend aria-label="End the walk">×</button></div>
+    <ol class="wk-list">${s.nodes.map(nd=>`<li>${nd.m&&nd.m.length?`<button data-wk="${nd.id}">`:"<span>"}<b>${esc(quizMask(nd.m,nd.l))}</b>${nd.s&&!hideCap?` — ${esc(quizMask(nd.m,nd.s))}`:""}${nd.m&&nd.m.length?"</button>":"</span>"}</li>`).join("")}</ol>
+    <div class="wk-nav"><button data-wkprev ${WALK.i?"":"disabled"}>← Back</button><button class="go" data-wknext>${WALK.i<n-1?"Next →":"Finish"}</button></div>`;
+  walkEl.querySelector("[data-wkend]").onclick=()=>endWalk();
+  walkEl.querySelector("[data-wkprev]").onclick=()=>walkGo(WALK.i-1);
+  walkEl.querySelector("[data-wknext]").onclick=()=>{ if(WALK.i<n-1) walkGo(WALK.i+1); else endWalk(); };
+  walkEl.querySelectorAll("[data-wk]").forEach(btn=>btn.onclick=()=>{ const nd=MAPS[state.view]._n[btn.dataset.wk];
+    if(nd&&nd.m&&nd.m.length){ if(state.quiz==="pins"&&!isKnown(nd.m[0])&&!(PQ[state.view]&&nd.m[0] in PQ[state.view])) openQuiz(nd.m[0]); else openLes(nd.m[0],false); } });
+  /* fit the section into the part of the map the panel leaves free; on a phone, zoom to
+     readable size and start at the section's left end (drag to see the rest) */
+  const r=svg.getBoundingClientRect(), wr=walkEl.getBoundingClientRect(), k=Math.min(r.width/m.w,r.height/m.h)||1;
+  const top=r.top+8, bot=Math.max(top+80,Math.min(r.bottom,wr.top)-8), lft=r.left+8, rgt=r.right-8;
+  let z=Math.min((rgt-lft)/(k*b.w*pad),(bot-top)/(k*b.h*pad));
+  if(innerWidth<=700) z=Math.max(z,0.5/k);
+  z=Math.min(6,Math.max(.35,z));
+  const visW=(rgt-lft)/(k*z), cx=visW<b.w?b.x+visW/2:b.x+b.w/2, cy=b.y+b.h/2, P=toVB((lft+rgt)/2,(top+bot)/2);
+  state.z=z; state.tx=P.x-cx*z; state.ty=P.y-cy*z; applyCam(); walkDim();
+}
+function startWalk(){
+  if(state.view==="index"||!MAPS[state.view]) return;
+  const steps=walkSteps(state.view); if(!steps.length) return;
+  closeDrawer(); WALK={v:state.view,i:0,steps}; walkGo(0);
+}
+function endWalk(quiet){
+  WALK=null; walkEl.hidden=true; walkEl.innerHTML="";
+  svg.querySelectorAll(".node.wdim").forEach(el=>el.classList.remove("wdim"));
+  if(!quiet){ state.z=1; state.tx=0; state.ty=0; applyCam(); }
+}
+document.getElementById("zwalk").onclick=()=>{ if(WALK) endWalk(); else startWalk(); };
 document.getElementById("zin").onclick=()=>zoomBy(1.25);
 document.getElementById("zout").onclick=()=>zoomBy(1/1.25);
 document.getElementById("zfit").onclick=()=>{state.z=1;state.tx=0;state.ty=0;applyCam();};
@@ -25562,6 +26633,8 @@ const quizBtn=document.getElementById("quizBtn"), qmenu=document.getElementById(
 function showQuizMenu(open){ qmenu.hidden=!open; quizBtn.setAttribute("aria-expanded",String(open)); }
 quizBtn.onclick=ev=>{ ev.stopPropagation();
   const n=dueAll().length, el=document.getElementById("qduen");
+  const sn=starAll().length, se=document.getElementById("qstarn");
+  if(se) se.textContent=sn?`${sn} starred card${sn===1?"":"s"}, across all maps`:"Star cards (☆ on any card) to build this round";
   if(el) el.textContent=!REVIEW_ON?"Optional — turn on card review to use it":n?`${n} card${n===1?"":"s"} due for review, across all maps`:"Nothing due right now — missed answers land here";
   showQuizMenu(qmenu.hidden); };
 document.getElementById("zprint").onclick=printMap;
@@ -25593,7 +26666,9 @@ document.addEventListener("keydown",ev=>{
   }
   if(ev.key==="/"&&document.activeElement!==qInput){ ev.preventDefault(); qInput.focus(); }
   if(ev.key==="["&&document.activeElement!==qInput){ ev.preventDefault(); railBtn.click(); }
-  if(ev.key==="Escape"){ if(!qmenu.hidden){ showQuizMenu(false); return; } if(!drawer.hidden) closeDrawer(); }
+  if(WALK&&document.activeElement!==qInput&&(ev.key==="ArrowRight"||ev.key==="ArrowLeft")&&!ev.metaKey&&!ev.ctrlKey&&!ev.altKey){
+    ev.preventDefault(); walkGo(WALK.i+(ev.key==="ArrowRight"?1:-1)); return; }
+  if(ev.key==="Escape"){ if(!qmenu.hidden){ showQuizMenu(false); return; } if(!drawer.hidden){ closeDrawer(); return; } if(WALK) endWalk(); }
 });
 
 /* ── init ───────────────────────────────────────────── */

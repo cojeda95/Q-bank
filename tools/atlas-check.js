@@ -103,6 +103,11 @@
     [...(m.comps||[]),...(m.panels||[])].forEach(c=>{
       if(c.x<0||c.y<0||c.x+c.w>m.w||c.y+c.h>m.h) err(`${where}: box "${(c.l||c.t||"").slice(0,40)}" runs off the ${m.w}×${m.h} canvas`);
     });
+    /* graphs: the kinds tools/atlas-src.html can draw (PLOTS) — keep in step */
+    (m.plots||[]).forEach(p=>{
+      if(!["pvloop","starling","odc","lungpv","glucose"].includes(p.kind)) err(`${where}: plot "${p.t}" has unknown kind "${p.kind}"`);
+      if(p.x<0||p.y<0||p.x+p.w>m.w||p.y+p.h>m.h) err(`${where}: plot "${p.t}" runs off the ${m.w}×${m.h} canvas`);
+    });
     const pin=(arr,owner)=>{ const seen=new Set();
       (arr||[]).forEach(id=>{
         if(!has(LES,id)) err(`${where}: ${owner} pins "${id}", but no such card exists`);

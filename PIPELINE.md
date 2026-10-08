@@ -120,6 +120,15 @@ three weeks it carries a "New" pill on its tab and a dot on its topic until the 
 opens it (`mla-seen`, per device), and the Index lists it under What's new. A new feature
 worth announcing gets a line in `WHATSNEW` the same way.
 
+### Graphs on a map
+
+A map can carry `plots:[{x,y,w,h,kind,t}]` — a schematic graph drawn by the engine, with a
+row of variants (tap a chip to shift the curve). The kinds live in `PLOTS` in
+`tools/atlas-src.html` (`pvloop`, `starling`, `odc`, `lungpv`, `glucose`);
+`tools/atlas-check.js` keeps the same list and refuses an unknown kind or a plot off the
+canvas. Every graph says on its face that it is schematic; its caption carries the sourced
+facts, so check each caption against the map's sources like any card line.
+
 ### Links from the question bank
 
 The build also writes `resources/atlas-terms.js`: each card's name, alias and its curated
@@ -293,7 +302,7 @@ the side whose `at` timestamp (when that card's schedule last changed) is newer.
 atlas (`schedule()` in `tools/atlas-src.html`) and `atlasNoteAnswer` in `shared/app.js`
 write `at` — keep them in step with `mergeAtlas`.
 
-**"I know this"** marks live in the same blob as `known`: the time a card was marked, or
+**"I know this"** marks and **starred cards** live in the same blob as `known` and `star`: the time a card was marked, or
 minus the time it was unmarked, so `mergeAtlas` keeps whichever device acted last (larger
 absolute value). A known card sits out every atlas quiz and the due list — `isWeak()` in the
 atlas and the hub's due pill both skip it. Hiding known cards from the lists

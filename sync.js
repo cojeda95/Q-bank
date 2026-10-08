@@ -141,16 +141,16 @@ function mergeSettings(a, b, preferRemote) {
 function mergeAtlas(a, b) {
   a = a || {}; b = b || {};
   const part = (o, k) => (o[k] && typeof o[k] === 'object') ? o[k] : {};
-  const out = { rev: {}, ok: {}, miss: {}, qok: {}, qmiss: {}, box: {}, due: {}, at: {}, known: {} };
+  const out = { rev: {}, ok: {}, miss: {}, qok: {}, qmiss: {}, box: {}, due: {}, at: {}, known: {}, star: {} };
   [a, b].forEach(src => Object.entries(part(src, 'rev')).forEach(([id, t]) => {
     out.rev[id] = Math.max(+out.rev[id] || 0, +t || 0) || t;
   }));
-  // "I know this": marked = the time, unmarked = minus the time, so the device that
-  // acted last wins either way
-  [a, b].forEach(src => Object.entries(part(src, 'known')).forEach(([id, t]) => {
+  // "I know this" and starred cards: marked = the time, unmarked = minus the time, so
+  // the device that acted last wins either way
+  ['known', 'star'].forEach(k => [a, b].forEach(src => Object.entries(part(src, k)).forEach(([id, t]) => {
     t = +t || 0;
-    if (t && (!(id in out.known) || Math.abs(t) > Math.abs(out.known[id]))) out.known[id] = t;
-  }));
+    if (t && (!(id in out[k]) || Math.abs(t) > Math.abs(out[k][id]))) out[k][id] = t;
+  })));
   ['ok', 'miss', 'qok', 'qmiss'].forEach(k => [a, b].forEach(src => Object.entries(part(src, k)).forEach(([id, n]) => {
     out[k][id] = Math.max(out[k][id] || 0, +n || 0);
   })));
