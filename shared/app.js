@@ -144,18 +144,23 @@ function atlasNoteAnswer(rec) {
     if (!card) return;
     let p = {};
     try { p = JSON.parse(localStorage.getItem(ATLAS_PROG_KEY)) || {}; } catch (e) { p = {}; }
-    ['qok', 'qmiss', 'box', 'due'].forEach(k => { if (!p[k] || typeof p[k] !== 'object') p[k] = {}; });
+    ['qok', 'qmiss', 'box', 'due', 'at'].forEach(k => { if (!p[k] || typeof p[k] !== 'object') p[k] = {}; });
     const id = card.id, now = Date.now();
+    // Counts are always kept; the review schedule only when the person has turned
+    // card review on in the atlas (opt-in, same key the atlas and the hub read).
+    let review = false;
+    try { review = localStorage.getItem('mla-review') === 'on'; } catch (e) {}
     if (rec.correct) {
       p.qok[id] = (p.qok[id] || 0) + 1;
-      if (id in p.box) {
+      if (review && id in p.box) {
+        p.at[id] = now;   // when the schedule last changed — PIN sync keeps the newer side
         const b = p.box[id] + 1;
         if (b >= ATLAS_BOX_DAYS.length) { delete p.box[id]; delete p.due[id]; }
         else { p.box[id] = b; p.due[id] = now + ATLAS_BOX_DAYS[b] * 864e5; }
       }
     } else {
       p.qmiss[id] = (p.qmiss[id] || 0) + 1;
-      p.box[id] = 0; p.due[id] = now;
+      if (review) { p.box[id] = 0; p.due[id] = now; p.at[id] = now; }
     }
     try { localStorage.setItem(ATLAS_PROG_KEY, JSON.stringify(p)); } catch (e) {}
   });

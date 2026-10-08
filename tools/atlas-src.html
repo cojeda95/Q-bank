@@ -185,6 +185,15 @@ svg.map.drag{cursor:grabbing}
 .duego{display:block;width:100%;margin:8px 0 2px;padding:8px 12px;border-radius:9px;border:1px solid color-mix(in srgb,var(--due) 55%,var(--line));
   background:color-mix(in srgb,var(--due) 12%,var(--surface));color:var(--ink);font-size:12.5px;font-weight:600;text-align:left}
 .duego:hover{border-color:var(--due)}
+.revtoggle{font-size:12px;color:var(--ink-3);margin:9px 0 0;line-height:1.45}
+.revtoggle .linkbtn{font-size:12px}
+.weakmaps{display:grid;gap:6px;margin:8px 0 10px}
+.weakmap{display:grid;grid-template-columns:minmax(0,1fr) 96px auto;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--line);
+  border-radius:9px;background:var(--surface);text-align:left;font-size:13px;color:var(--ink)}
+.weakmap:hover{border-color:var(--ink-3)}
+.weakmap .qbar{width:96px}
+.wm-n{font-size:12px;color:var(--ink-3);white-space:nowrap}
+@media (max-width:620px){ .weakmap{grid-template-columns:minmax(0,1fr) auto} .weakmap .qbar{display:none} }
 
 /* ── detail drawer ──────────────────────────────────── */
 .drawer{position:absolute;top:0;right:0;bottom:0;width:404px;max-width:92%;background:var(--surface);
@@ -868,6 +877,21 @@ const PATHS = {
   tmstain:{n:"Immunostains",v:"--p-glycolysis"},
   mlid:{n:"Identifying bacteria",v:"--p-tca"},
   puberty:{n:"Puberty",v:"--p-sugars"},
+  zntick:{n:"Ticks",v:"--p-tca"},
+  znflea:{n:"Fleas & lice",v:"--p-gluconeo"},
+  znpet:{n:"Pets & birds",v:"--p-glycolysis"},
+  znstock:{n:"Livestock, water & wildlife",v:"--p-glycogen"},
+  znvector:{n:"Mosquitoes, flies & bugs",v:"--p-sugars"},
+  zntx:{n:"Treatment",v:"--p-ppp"},
+  brhypo:{n:"Hypothalamus & barrier",v:"--p-glycolysis"},
+  brthal:{n:"Thalamus",v:"--p-tca"},
+  brlimbic:{n:"Limbic system",v:"--p-sugars"},
+  brcortex:{n:"Cortex & brainstem",v:"--p-gluconeo"},
+  brcereb:{n:"Cerebellum",v:"--p-ppp"},
+  abvasc:{n:"Vessels & liver",v:"--p-gluconeo"},
+  abperit:{n:"Peritoneum",v:"--p-glycogen"},
+  abwall:{n:"Groin & wall",v:"--p-tca"},
+  abanal:{n:"Gut wall & anal canal",v:"--p-ppp"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -11668,6 +11692,219 @@ dermatomes:{n:"Dermatomes — the landmark levels",k:"reg",p:"periph",enz:"One s
  buzz:["T4 at the teat pore · T10 at the belly button","Thumbs-up on the left hand looks like a 6"],
  src:["Moore ch 1 — Overview and Basic Concepts","Fundamental Neuroscience ch 9 — The Spinal Cord"],
  tx:["—"],q:["=dermatome","=dermatomes","=dermatomal"]},
+
+/* ── zoonoses & vectors · brain regions & lesions · abdominal anatomy (m20) ─── */
+brucella:{n:"Brucellosis",k:"dz",p:"znstock",enz:"Brucella spp — facultative intracellular coccobacilli",inh:"—",fa:"147, 125, 139",hi:1,
+ mech:"Brucella species are gram-negative coccobacilli that can survive inside cells. People catch them from <b>unpasteurized dairy</b> or by inhaling or touching infected animal tissue or fluids. The disease is also called <b>undulant fever</b>.",
+ find:["Unpasteurized dairy; inhaling or touching infected animal tissue or fluids","Facultative intracellular — survives inside phagocytes","Coccobacillus on the gram-negative algorithm, alongside Pasteurella, Francisella and Bordetella"],
+ labs:["—"],
+ buzz:["Unpasteurized dairy, then fevers that come and go (undulant)"],
+ src:["Robbins ch 8 — Infectious diseases","Katzung ch 45 — Aminoglycosides & Spectinomycin"],
+ tx:["Streptomycin is sometimes used"],q:["brucellosis","brucella","undulant fever"],
+ ref:[{a:"Pappas G et al.",t:"Brucellosis",j:"N Engl J Med",y:2005,pmid:"15930423",doi:"10.1056/NEJMra050570"}]},
+
+tularemia:{n:"Tularemia",k:"dz",p:"zntick",enz:"Francisella tularensis — facultative intracellular coccobacillus",inh:"—",fa:"147, 124, 125",hi:1,
+ mech:"Francisella tularensis is a gram-negative coccobacillus that survives inside phagocytes. People catch it from <b>ticks, rabbits and deer flies</b>.",
+ find:["Ticks, rabbits, deer flies","Ulceroglandular tularemia is the most common form — usually after the bite of an arthropod that fed on an infected animal","Pneumonic tularemia is rare"],
+ labs:["Grows on charcoal yeast extract agar"],
+ buzz:["Rabbit or tick exposure, then a skin ulcer with swollen nodes"],
+ src:["Katzung ch 45 — Aminoglycosides & Spectinomycin"],
+ tx:["Streptomycin"],q:["tularemia","francisella","francisella tularensis"],
+ ref:[{a:"Ellis J et al.",t:"Tularemia",j:"Clin Microbiol Rev",y:2002,pmid:"12364373",doi:"10.1128/CMR.15.4.631-646.2002"}]},
+
+plague:{n:"Plague",k:"dz",p:"znflea",enz:"Yersinia pestis — gram-negative rod carried by fleas",inh:"—",fa:"147",hi:1,
+ mech:"Yersinia pestis lives in rodents — <b>rats and prairie dogs</b> are its reservoirs — and reaches people through <b>flea bites</b>. The bite drains to painful, enlarged lymph nodes called <b>buboes</b>.",
+ find:["Fleas; rats and prairie dogs are reservoirs","Painful, enlarged lymph nodes (buboes) after the flea bite"],
+ labs:["—"],
+ buzz:["Painful swollen lymph node (bubo) after a flea bite"],
+ src:["Robbins ch 8 — Infectious diseases","Katzung ch 45 — Aminoglycosides & Spectinomycin"],
+ tx:["Streptomycin"],q:["plague","yersinia pestis","bubonic plague","buboes"],
+ ref:[{a:"Barbieri R et al.",t:"Yersinia pestis: the natural history of plague",j:"Clin Microbiol Rev",y:2020,pmid:"33298527",doi:"10.1128/CMR.00044-19"}]},
+
+lepto:{n:"Leptospirosis",k:"dz",p:"znstock",enz:"Leptospira — spirochete with hook-shaped ends",inh:"—",fa:"145, 147, 123",hi:1,
+ mech:"Leptospira is a spirochete with hook-shaped ends found in <b>water contaminated with animal urine</b>. Recreational water use — surfing, especially in the tropics — is the classic exposure.",
+ find:["Flulike illness with myalgias, classically of the calves","Jaundice; photophobia with <b>conjunctival suffusion</b> (redness without exudate)","Common in surfers and the tropics (eg, Hawaii)","<b>Weil disease</b> (icterohemorrhagic leptospirosis): jaundice and azotemia from liver and kidney failure, fever, hemorrhage, anemia"],
+ labs:["Spirochete — too thin to see on Gram stain"],
+ buzz:["Surfer in Hawaii with fever, calf pain and red eyes without discharge"],
+ tx:["—"],q:["leptospirosis","leptospira","weil disease","conjunctival suffusion"],
+ ref:[{a:"Rajapakse S et al.",t:"Leptospirosis",j:"Nat Rev Dis Primers",y:2025,pmid:"40316520",doi:"10.1038/s41572-025-00614-5"}]},
+
+qfever:{n:"Q fever",k:"dz",p:"znstock",enz:"Coxiella burnetii — no vector, no rash",inh:"—",fa:"148, 147, 701",hi:1,
+ mech:"Coxiella burnetii is closely related to the rickettsiae but has <b>no arthropod vector</b>: it is inhaled in aerosols of <b>cattle or sheep amniotic fluid</b>. It can survive outside the body in a spore-like form, and it causes <b>no rash</b>.",
+ find:["Headache, cough, flulike illness, atypical pneumonia, sometimes hepatitis","Common cause of <b>culture-negative endocarditis</b>"],
+ labs:["—"],
+ buzz:["Q fever is a Quite Complicated bug — no rash, no vector"],
+ tx:["Doxycycline"],q:["q fever","coxiella","coxiella burnetii"],
+ ref:[{a:"Eldin C et al.",t:"From Q fever to Coxiella burnetii infection: a paradigm change",j:"Clin Microbiol Rev",y:2017,pmid:"27856520",doi:"10.1128/CMR.00045-16"}]},
+
+ehrlichia:{n:"Ehrlichiosis & anaplasmosis",k:"dz",p:"zntick",enz:"Tick-borne intracellular bacteria with morulae",inh:"—",fa:"148, 147, 144",hi:1,
+ mech:"Two tick-borne obligate intracellular bacteria that grow as mulberry-like clusters (<b>morulae</b>) inside white cells — Ehrlichia in monocytes, Anaplasma in granulocytes. A rash is rare.",
+ find:["<b>Ehrlichiosis</b>: Ehrlichia chaffeensis, Amblyomma (Lone Star) tick — morulae in monocytes","<b>Anaplasmosis</b>: Anaplasma, Ixodes tick — the same tick that carries Lyme disease and Babesia — morulae in granulocytes"],
+ labs:["Rash is rare"],
+ buzz:["MEGA — Monocytes = Ehrlichiosis, Granulocytes = Anaplasmosis"],
+ src:["Robbins ch 8 — Infectious diseases","Katzung ch 44 — Tetracyclines, Macrolides, Clindamycin, Chloramphenicol, Streptogramins, Oxazolidinones, & Pleuromutilins"],
+ tx:["Doxycycline"],q:["ehrlichiosis","ehrlichia","anaplasmosis","anaplasma","morulae"]},
+
+typhus:{n:"Typhus — endemic & epidemic",k:"dz",p:"znflea",enz:"Rickettsia typhi (fleas) · Rickettsia prowazekii (lice)",inh:"—",fa:"148, 147",hi:1,
+ mech:"Two rickettsial fevers, one spread by fleas and one by the human body louse. Their rash starts on the trunk and spreads outward, <b>sparing the palms and soles</b> — the opposite of Rocky Mountain spotted fever.",
+ find:["<b>Endemic typhus</b>: Rickettsia typhi, spread by fleas","<b>Epidemic typhus</b>: Rickettsia prowazekii, spread person to person by the human body louse","Rash starts centrally and spreads out, sparing palms and soles"],
+ labs:["—"],
+ buzz:["Rickettsii on the wrists, typhus on the trunk"],
+ src:["Robbins ch 8 — Infectious diseases","Katzung ch 44 — Tetracyclines, Macrolides, Clindamycin, Chloramphenicol, Streptogramins, Oxazolidinones, & Pleuromutilins"],
+ tx:["Doxycycline"],q:["typhus","endemic typhus","epidemic typhus","rickettsia typhi","rickettsia prowazekii"]},
+
+bartonella:{n:"Bartonella — cat scratch disease & bacillary angiomatosis",k:"dz",p:"znpet",enz:"Bartonella henselae — intracellular gram-negative rod",inh:"—",fa:"147, 213, 123",hi:1,
+ mech:"Bartonella species spread by <b>cat scratches</b>. Cat scratch disease forms stellate necrotizing granulomas; Bartonella also causes <b>bacillary angiomatosis</b>, a reactive proliferation of small blood vessels.",
+ find:["Cat scratch disease: stellate necrotizing granulomas","Bacillary angiomatosis: a reactive proliferation of small vessels, not a true tumor","Primarily intracellular — stains poorly on Gram stain; seen with silver stain"],
+ labs:["—"],
+ buzz:["Cat scratch → stellate necrotizing granulomas"],
+ src:["Robbins ch 11 — Blood vessels"],
+ tx:["—"],q:["bartonella","bartonella henselae","cat scratch disease","bacillary angiomatosis"],
+ ref:[{a:"Florin TA et al.",t:"Beyond cat scratch disease: widening spectrum of Bartonella henselae infection",j:"Pediatrics",y:2008,pmid:"18443019",doi:"10.1542/peds.2007-1897"}]},
+
+psittacosis:{n:"Psittacosis",k:"dz",p:"znpet",enz:"Chlamydophila psittaci — obligate intracellular, avian reservoir",inh:"—",fa:"146, 147, 701",hi:0,
+ mech:"Chlamydophila psittaci has an <b>avian reservoir</b> — parrots and other birds — and is inhaled in aerosols, causing an atypical pneumonia. Like all chlamydiae it is obligate intracellular, and its wall lacks classic peptidoglycan, so β-lactams fail.",
+ find:["Parrots and other birds; aerosol transmission","Atypical (interstitial) pneumonia"],
+ labs:["Diagnosis: PCR or NAAT"],
+ buzz:["Parrot owner with atypical pneumonia"],
+ tx:["Doxycycline; azithromycin in pregnancy"],q:["psittacosis","chlamydophila psittaci","chlamydia psittaci"],
+ ref:[{a:"Wang J et al.",t:"Chlamydia psittaci: a zoonotic pathogen causing avian chlamydiosis and psittacosis",j:"Virulence",y:2024,pmid:"39541409",doi:"10.1080/21505594.2024.2428411"}]},
+
+relapsing:{n:"Relapsing fever",k:"dz",p:"znflea",enz:"Borrelia recurrentis — louse-borne spirochete",inh:"—",fa:"147, 144",hi:0,
+ mech:"Borrelia recurrentis is confined to humans and spread by the <b>human body louse</b>. Fevers come back again and again because the spirochete keeps changing its surface antigens.",
+ find:["Recurrent fevers from variable surface antigens","Borrelia is large enough to see with Wright or Giemsa stain","Jarisch-Herxheimer reaction — fever, chills, headache, myalgia — can follow the start of antibiotics"],
+ labs:["—"],
+ buzz:["Body lice + fevers that keep returning"],
+ tx:["—"],q:["relapsing fever","borrelia recurrentis","louse borne relapsing fever"],
+ ref:[{a:"Kahlig P et al.",t:"Louse-borne relapsing fever — a systematic review and analysis of the literature: part 2 — mortality, Jarisch-Herxheimer reaction, impact on pregnancy",j:"PLoS Negl Trop Dis",y:2021,pmid:"33705387",doi:"10.1371/journal.pntd.0008656"}]},
+
+hypothalnuc:{n:"Hypothalamic nuclei",k:"reg",p:"brhypo",enz:"TAN HATS — thirst, pituitary, hunger, autonomic, temperature, sex",inh:"—",fa:"508",hi:1,
+ mech:"The hypothalamus keeps the body in balance — <b>T</b>hirst and water balance, <b>A</b>denohypophysis and <b>N</b>eurohypophysis release, <b>H</b>unger, <b>A</b>utonomic nervous system, <b>T</b>emperature and <b>S</b>exual urges. Its sensors sit outside the blood-brain barrier: the OVLT senses osmolarity and the area postrema responds to emetics.",
+ find:["<b>Lateral nucleus</b>: hunger — stimulated by ghrelin, inhibited by leptin; destruction → anorexia, failure to thrive","<b>Ventromedial nucleus</b>: satiety — stimulated by leptin; destruction (eg, craniopharyngioma) → hyperphagia","<b>Anterior nucleus</b>: cooling, parasympathetic · <b>posterior nucleus</b>: heating, sympathetic","<b>Suprachiasmatic nucleus</b>: circadian rhythm","<b>Supraoptic and paraventricular nuclei</b>: make ADH and oxytocin, carried by neurophysins to the posterior pituitary — destruction → central diabetes insipidus","<b>Preoptic nucleus</b>: thermoregulation, sexual behavior, GnRH — GnRH neurons that fail to migrate from the olfactory pit → Kallmann syndrome"],
+ labs:["—"],
+ buzz:["Lateral injury makes you lean · ventromedial injury makes you very massive","SAD POX — Supraoptic = ADH, Paraventricular = OXytocin","Anterior Cooling · posterior “hot pot”"],
+ src:["Fundamental Neuroscience ch 30 — The Hypothalamus"],
+ tx:["—"],q:["hypothalamic nucleus","=hypothalamic nuclei","ventromedial nucleus","ventromedial hypothalamus","=lateral hypothalamus","=lateral hypothalamic","suprachiasmatic nucleus","supraoptic nucleus","paraventricular nucleus","preoptic nucleus"]},
+
+thalnuc:{n:"Thalamic nuclei",k:"reg",p:"brthal",enz:"Every ascending sense but smell relays here",inh:"—",fa:"508",hi:1,
+ mech:"The thalamus relays all ascending sensory information except smell to the cortex, each sense through its own nucleus. The ventral anterior and ventral lateral nuclei relay motor loops instead.",
+ find:["<b>VPL</b>: spinothalamic tract and dorsal columns — pain, temperature, touch, vibration, proprioception → primary somatosensory cortex","<b>VPM</b>: trigeminal and taste pathways — face sensation and taste → primary somatosensory cortex","<b>Lateral geniculate</b>: optic tract — vision → primary visual cortex","<b>Medial geniculate</b>: superior olive and inferior colliculus — hearing → primary auditory cortex","<b>Ventral anterior and ventral lateral</b>: basal ganglia and cerebellum — motor → motor cortex"],
+ labs:["—"],
+ buzz:["Lateral = light, medial = music","Makeup goes on the face — VPM"],
+ src:["Fundamental Neuroscience ch 15 — The Diencephalon"],
+ tx:["—"],q:["thalamic nucleus","thalamic nuclei","ventral posterolateral","ventral posteromedial","lateral geniculate","medial geniculate","lateral geniculate nucleus","medial geniculate nucleus"]},
+
+limbic:{n:"Limbic system",k:"reg",p:"brlimbic",enz:"Feeding, fleeing, fighting, feeling and sex",inh:"—",fa:"509, 524",hi:1,
+ mech:"Structures for emotion, long-term memory, smell, behavior and autonomic control: the hippocampus, amygdalae, mammillary bodies, anterior thalamic nuclei, cingulate gyrus and entorhinal cortex. Bilateral damage to one part gives a recognizable syndrome.",
+ find:["Bilateral <b>hippocampal</b> lesions → anterograde amnesia (no new memories), as in Alzheimer disease","Bilateral <b>mammillary body</b> lesions → Wernicke-Korsakoff syndrome (thiamine deficiency)","Bilateral <b>amygdala</b> lesions → <b>Klüver-Bucy syndrome</b> — disinhibition, hyperphagia, hypersexuality, hyperorality; seen with HSV-1 encephalitis"],
+ labs:["—"],
+ buzz:["The famous 5 F’s"],
+ src:["Fundamental Neuroscience ch 31 — The Limbic System","Kaplan & Sadock ch 3 — Neurocognitive Disorders"],
+ tx:["—"],q:["limbic system","=hippocampus","=hippocampal","=amygdala","cingulate gyrus","kluver bucy","kluver bucy syndrome","=anterograde amnesia"]},
+
+cortexlesions:{n:"Cortical lesion syndromes",k:"reg",p:"brcortex",enz:"Where the damage is decides the syndrome",inh:"—",fa:"524",hi:1,
+ mech:"Damage to particular cortical and brainstem areas gives recognizable syndromes — useful for localizing a stroke, tumor or degeneration.",
+ find:["<b>Prefrontal cortex</b>: frontal lobe syndrome — disinhibition, hyperphagia, impulsivity, loss of empathy, impaired executive function, akinetic mutism (eg, frontotemporal dementia)","<b>Dominant parietal cortex</b>: Gerstmann syndrome — agraphia, acalculia, finger agnosia, left-right disorientation","<b>Nondominant parietal cortex</b>: hemispatial neglect — unaware of the opposite side of the world","<b>Frontal eye field</b> lesion: eyes look toward the lesion, away from the hemiplegia (MCA stroke)","<b>PPRF</b> lesion: eyes look away from the lesion, toward the hemiplegia","<b>Reticular activating system</b>: reduced arousal and wakefulness, coma"],
+ labs:["—"],
+ buzz:["Eyes look toward a cortical lesion, away from a pontine one"],
+ src:["Fundamental Neuroscience ch 32 — The Cerebral Cortex","Fundamental Neuroscience ch 28 — Visual Motor Systems","Kaplan & Sadock ch 3 — Neurocognitive Disorders","Robbins ch 28 — The central nervous system"],
+ tx:["—"],q:["gerstmann syndrome","hemispatial neglect","hemineglect","frontal lobe syndrome","frontal eye field","frontal eye fields","paramedian pontine reticular formation","=reticular activating system"]},
+
+posturing:{n:"Decorticate & decerebrate posturing",k:"reg",p:"brcortex",enz:"Which brainstem tracts are left unopposed",inh:"—",fa:"524",hi:0,
+ mech:"After severe brain injury the posture shows how low the lesion reaches. Above the red nucleus, the rubrospinal and vestibulospinal tracts are left in charge; below it, only the vestibulospinal tract is.",
+ find:["<b>Decorticate</b> (flexor): lesion above the red nucleus (often cortex) → upper limbs flex, lower limbs extend","<b>Decerebrate</b> (extensor): lesion between the red and vestibular nuclei (brainstem) → all limbs extend — worse prognosis"],
+ labs:["—"],
+ buzz:["Decorticate — your hands are near the cor (heart)"],
+ src:["Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement"],
+ tx:["—"],q:["decorticate","decerebrate","decorticate posturing","decerebrate posturing"]},
+
+bbbcvo:{n:"Blood-brain barrier & circumventricular organs",k:"reg",p:"brhypo",enz:"Tight junctions everywhere but a few windows",inh:"—",fa:"506",hi:1,
+ mech:"The blood-brain barrier keeps circulating substances (bacteria, many drugs) out of the CSF and brain. It is built from tight junctions between nonfenestrated capillary endothelial cells, the basement membrane, pericytes and astrocyte foot processes.",
+ find:["Glucose and amino acids cross slowly by carrier-mediated transport; nonpolar, lipid-soluble substances diffuse rapidly","<b>Circumventricular organs</b> have fenestrated capillaries and no barrier: area postrema (vomiting after chemotherapy), OVLT (osmoreceptors), neurohypophysis (ADH release)","Vomiting center: the NTS in the medulla, fed by the chemoreceptor trigger zone in the area postrema — D2, 5-HT3, NK-1, H1 and M1 receptors"],
+ labs:["Disrupting the barrier (eg, stroke) → vasogenic edema; hyperosmolar mannitol can open it to drugs"],
+ buzz:["Area postrema — pronounce it “puke”-strema"],
+ src:["Fundamental Neuroscience ch 6 — The Ventricles, Choroid Plexus, and Cerebrospinal Fluid","Fundamental Neuroscience ch 8 — A Survey of the Cerebrovascular System","Fundamental Neuroscience ch 11 — The Medulla Oblongata","Robbins ch 28 — The central nervous system"],
+ tx:["—"],q:["circumventricular organ","circumventricular organs","area postrema","organum vasculosum","chemoreceptor trigger zone"]},
+
+cerebcircuit:{n:"Cerebellar peduncles & deep nuclei",k:"reg",p:"brcereb",enz:"In through the inferior and middle peduncles, out through the superior",inh:"—",fa:"510",hi:0,
+ mech:"The cerebellum modulates movement and aids coordination and balance. Input arrives through the inferior and middle peduncles, Purkinje cells of the cortex project to the deep nuclei, and output leaves through the superior peduncle to the opposite cortex.",
+ find:["Input: ipsilateral unconscious proprioception from the spinal cord (inferior peduncle); contralateral cortex (middle peduncle); vestibular nuclei to the flocculonodular lobe","Output: Purkinje cells → deep nuclei → superior peduncle → contralateral cortex","Deep nuclei, lateral to medial: dentate, emboliform, globose, fastigial","Medial cerebellum (vermis): axial and proximal muscles on both sides · lateral cerebellum (hemispheres): distal limbs on the same side"],
+ labs:["—"],
+ buzz:["Don’t eat greasy foods — dentate, emboliform, globose, fastigial"],
+ src:["Fundamental Neuroscience ch 27 — The Cerebellum"],
+ tx:["—"],q:["=cerebellar peduncle","=superior cerebellar peduncle","=inferior cerebellar peduncle","=middle cerebellar peduncle","purkinje cell","purkinje cells","dentate nucleus","deep cerebellar nuclei"]},
+
+gutarteries:{n:"Gut blood supply by embryonic region",k:"reg",p:"abvasc",enz:"Foregut celiac · midgut SMA · hindgut IMA",inh:"—",fa:"370, 371",hi:1,
+ mech:"Each embryonic gut segment keeps its own artery, parasympathetic nerve and vertebral level. Arteries to the gut are single and branch anteriorly; arteries to non-gut organs are paired and branch laterally and posteriorly.",
+ find:["<b>Foregut</b> — celiac trunk, vagus, T12/L1: lower esophagus to the proximal duodenum, plus liver, gallbladder, pancreas and spleen","<b>Midgut</b> — SMA, vagus, L1: distal duodenum to the proximal two-thirds of the transverse colon","<b>Hindgut</b> — IMA, pelvic splanchnic nerves, L3: distal third of the transverse colon to the upper anal canal","Celiac trunk branches: common hepatic, splenic, left gastric","Watershed areas with dual supply: splenic flexure (SMA and IMA) and rectosigmoid junction (IMA and superior rectal) — first to suffer in colonic ischemia"],
+ labs:["Strong anastomoses: left and right gastroepiploics, left and right gastrics"],
+ buzz:["Splenic flexure and rectosigmoid — the watershed areas"],
+ src:["Moore ch 5 — Abdomen","Langman ch 15 — Digestive System"],
+ tx:["—"],q:["celiac trunk","superior mesenteric artery","watershed area","watershed areas","splenic flexure"]},
+
+retroperit:{n:"Retroperitoneal organs",k:"reg",p:"abperit",enz:"SAD PUCKER — behind the peritoneum",inh:"—",fa:"367",hi:1,
+ mech:"Retroperitoneal organs sit behind and outside the peritoneal cavity, so an injury to them can collect blood or gas in the retroperitoneal space.",
+ find:["Suprarenal (adrenal) glands","Aorta and IVC","Duodenum, 2nd through 4th parts","Pancreas, except the tail","Ureters","Colon — ascending and descending","Kidneys","Esophagus, thoracic part","Rectum, in part"],
+ labs:["—"],
+ buzz:["SAD PUCKER"],
+ src:["Moore ch 5 — Abdomen"],
+ tx:["—"],q:["=retroperitoneal","retroperitoneal organ","retroperitoneal organs","retroperitoneal structures"]},
+
+giligaments:{n:"Peritoneal ligaments",k:"reg",p:"abperit",enz:"Folds of mesentery that carry vessels",inh:"—",fa:"368",hi:0,
+ mech:"The ligaments of the upper abdomen are folds of the ventral and dorsal mesentery, and each carries particular vessels.",
+ find:["<b>Falciform</b>: liver to anterior abdominal wall — ligamentum teres (fetal umbilical vein), paraumbilical veins","<b>Hepatoduodenal</b>: the portal triad (proper hepatic artery, portal vein, common bile duct) — clamped in the Pringle maneuver; borders the omental foramen","<b>Hepatogastric</b>: gastric vessels — with the hepatoduodenal, forms the lesser omentum","<b>Gastrocolic</b>: gastroepiploic arteries — part of the greater omentum","<b>Gastrosplenic</b>: short gastrics, left gastroepiploic vessels","<b>Splenorenal</b>: splenic artery and vein, tail of the pancreas"],
+ labs:["—"],
+ buzz:["Pringle maneuver = clamp the hepatoduodenal ligament"],
+ src:["Moore ch 5 — Abdomen"],
+ tx:["—"],q:["hepatoduodenal ligament","falciform ligament","gastrosplenic ligament","splenorenal ligament","hepatogastric ligament","gastrocolic ligament","pringle maneuver","portal triad","omental foramen","lesser omentum","greater omentum"]},
+
+portosys:{n:"Portosystemic anastomoses",k:"reg",p:"abvasc",enz:"Where portal and systemic veins meet",inh:"—",fa:"372",hi:1,
+ mech:"In portal hypertension, blood backs up through the places where portal veins meet systemic veins, and those veins dilate.",
+ find:["Esophagus: left gastric ↔ esophageal veins (to the azygos) → <b>esophageal varices</b>","Umbilicus: paraumbilical ↔ small epigastric veins → <b>caput medusae</b>","Rectum: superior rectal ↔ middle and inferior rectal veins → <b>anorectal varices</b>","<b>TIPS</b> joins the portal vein to a hepatic vein, bypassing the liver — can precipitate hepatic encephalopathy"],
+ labs:["—"],
+ buzz:["Varices of the gut, butt and caput"],
+ src:["Moore ch 5 — Abdomen","Robbins ch 18 — Liver and gallbladder"],
+ tx:["—"],q:["portosystemic anastomosis","portosystemic anastomoses","caput medusae","anorectal varices","transjugular intrahepatic portosystemic shunt"]},
+
+pectinate:{n:"Pectinate (dentate) line",k:"reg",p:"abanal",enz:"Hindgut endoderm above, ectoderm below",inh:"—",fa:"373",hi:1,
+ mech:"The pectinate line is where hindgut endoderm meets ectoderm, so nerves, vessels and lymph change at it.",
+ find:["Above: visceral nerves (inferior hypogastric plexus), superior rectal artery (IMA), superior rectal vein → IMV → portal vein, internal iliac nodes — internal hemorrhoids are painless","Below: somatic nerves (pudendal, S2–S4), inferior rectal artery (internal pudendal), inferior rectal vein → internal iliac → IVC, superficial inguinal nodes — thrombosed external hemorrhoids hurt","Anal fissure: tear below the line in the posterior midline, which is poorly perfused — painful defecation, blood on the paper","Cancer: adenocarcinoma above the line, squamous cell carcinoma below"],
+ labs:["—"],
+ buzz:["Painless bleeding = internal hemorrhoid · pain = below the line"],
+ src:["Moore ch 6 — Pelvis and Perineum","Langman ch 15 — Digestive System"],
+ tx:["—"],q:["pectinate line","dentate line"]},
+
+inguinalcanal:{n:"Inguinal canal & spermatic cord",k:"reg",p:"abwall",enz:"Deep ring lateral, Hesselbach triangle medial",inh:"—",fa:"376, 377",hi:1,
+ mech:"The inguinal canal runs from the deep ring (an evagination of transversalis fascia) to the superficial ring. Indirect hernias enter the deep ring lateral to the inferior epigastric vessels; direct hernias push through Hesselbach triangle medial to them.",
+ find:["Hesselbach (inguinal) triangle: inferior epigastric vessels, rectus abdominis, inguinal ligament","Contents: ductus deferens (male) or round ligament of the uterus (female), ilioinguinal nerve, testicular vessels","Spermatic cord layers: internal spermatic fascia (transversalis fascia), cremasteric muscle and fascia (internal oblique), external spermatic fascia (external oblique)"],
+ labs:["—"],
+ buzz:["MDs don’t lie — Medial to the inferior epigastrics = Direct, Lateral = indirect"],
+ src:["Moore ch 5 — Abdomen"],
+ tx:["—"],q:["inguinal canal","hesselbach triangle","inguinal triangle","deep inguinal ring","superficial inguinal ring","spermatic cord","spermatic fascia"]},
+
+femoralreg:{n:"Femoral triangle & sheath",k:"reg",p:"abwall",enz:"Nerve, artery, vein, lymphatics — lateral to medial",inh:"—",fa:"375, 377",hi:0,
+ mech:"Below the inguinal ligament the femoral structures line up lateral to medial: nerve, artery, vein, lymphatics.",
+ find:["Femoral triangle: femoral nerve, artery and vein","Femoral sheath: 3–4 cm below the inguinal ligament — femoral vein, artery and canal (deep inguinal nodes), but not the nerve","Femoral hernia: through the femoral canal, below the inguinal ligament and lateral to the pubic tubercle"],
+ labs:["—"],
+ buzz:["Lateral to medial — you go from lateral to medial to find your NAVeL"],
+ src:["Moore ch 7 — Lower Limb"],
+ tx:["—"],q:["femoral triangle","femoral sheath","femoral canal"]},
+
+gutwall:{n:"Gut wall layers & enteric plexuses",k:"reg",p:"abanal",enz:"Mucosa · submucosa (Meissner) · muscularis (Auerbach) · serosa",inh:"—",fa:"369",hi:0,
+ mech:"The gut wall has four layers, inside to outside — mucosa, submucosa, muscularis externa and serosa — and two nerve plexuses.",
+ find:["Mucosa: epithelium, lamina propria, muscularis mucosa — erosions stay here","Submucosa: submucosal (Meissner) plexus; secretes fluid; carries vessels","Muscularis externa: myenteric (Auerbach) plexus — motility","Serosa when intraperitoneal; adventitia when retroperitoneal","Ulcers reach the submucosa or deeper","Slow waves start in the interstitial cells of Cajal: duodenum > ileum > stomach"],
+ labs:["—"],
+ buzz:["MSMS — mucosa, submucosa, muscularis, serosa"],
+ src:["Pawlina ch 17 — Digestive System II: Esophagus and Gastrointestinal Tract"],
+ tx:["—"],q:["myenteric plexus","auerbach plexus","submucosal plexus","meissner plexus","muscularis externa","interstitial cells of cajal"]},
+
+liverzones:{n:"Liver lobule zones",k:"reg",p:"abvasc",enz:"Zone 1 periportal · zone 2 intermediate · zone 3 pericentral",inh:"—",fa:"374",hi:1,
+ mech:"Blood flows from the portal triads at the edge of each lobule to the central vein, so oxygen falls from zone 1 to zone 3. Bile flows the opposite way. The liver gets about 80% of its blood from the portal vein and 20% from the hepatic artery.",
+ find:["<b>Zone 1</b> (periportal): hit first by viral hepatitis and ingested toxins (eg, cocaine); best oxygenated","<b>Zone 2</b> (intermediate): yellow fever","<b>Zone 3</b> (pericentral): hit first by ischemia (eg, congestive hepatopathy); richest in cytochrome P-450, so most sensitive to metabolic toxins (ethanol, CCl₄, rifampin, acetaminophen); site of alcoholic hepatitis","Kupffer cells in the sinusoids clear bacteria and old RBCs · stellate (Ito) cells in the space of Disse store vitamin A and drive fibrosis"],
+ labs:["—"],
+ buzz:["Acetaminophen and ischemia hit zone 3 first"],
+ src:["Pawlina ch 18 — Digestive System III: Liver, Gallbladder, and Pancreas","Robbins ch 18 — Liver and gallbladder"],
+ tx:["—"],q:["zone 1","zone 3","centrilobular necrosis","kupffer cell","kupffer cells","stellate cells","space of disse"]},
 
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
@@ -23372,7 +23609,177 @@ MAPS.tumark = {
  edges:[]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["index","Index"]];
+MAPS.zoonoses = {
+ t:"Zoonoses & Vectors", sub:"Infections caught from animals and the insects that carry them — ticks · fleas and lice · pets and birds · livestock, water and wildlife · mosquitoes, flies and bugs",
+ w:3300, h:1760,
+ fa:"123–125, 139, 144–148, 152–155, 168, 213, 701",
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 11 — Blood vessels","Katzung ch 44 — Tetracyclines, Macrolides, Clindamycin, Chloramphenicol, Streptogramins, Oxazolidinones, & Pleuromutilins","Katzung ch 45 — Aminoglycosides & Spectinomycin"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Ticks"},
+  {x:140,y:370,w:3020,h:200,l:"Fleas & lice"},
+  {x:140,y:630,w:3020,h:200,l:"Pets & birds"},
+  {x:140,y:890,w:3020,h:140,l:"Livestock, water & wildlife"},
+  {x:140,y:1090,w:3020,h:200,l:"Mosquitoes, flies & bugs"},
+  {x:140,y:1350,w:3020,h:140,l:"Treatment"}],
+ panels:[
+  {x:140,y:1550,w:1480,h:154,kw:190,t:"Rash or no rash",rows:[
+   ["Palms and soles","RMSF · secondary syphilis · coxsackie A"],
+   ["Starts on the trunk","typhus — spares palms and soles"],
+   ["Rash is rare","ehrlichiosis · anaplasmosis"],
+   ["No rash, no vector","Q fever"]]}],
+ nodes:[
+  {id:"t1",l:"Ixodes deer tick",x:420,y:170,p:"zntick",s:"mice carry Borrelia; deer keep the tick going",m:["lyme"]},
+  {id:"t2",l:"Lyme disease",x:1020,y:170,p:"zntick",s:"Borrelia burgdorferi · erythema migrans",m:["lyme"]},
+  {id:"t3",l:"Anaplasmosis",x:1620,y:170,p:"zntick",s:"same Ixodes tick · morulae in granulocytes",m:["ehrlichia"]},
+  {id:"t4",l:"Babesiosis",x:2220,y:170,p:"zntick",s:"same Ixodes tick",m:["babesia"]},
+  {id:"t5",l:"Tularemia",x:2820,y:170,p:"zntick",s:"ticks, rabbits, deer flies",m:["tularemia"]},
+  {id:"t6",l:"Rocky Mountain spotted fever",x:1020,y:250,p:"zntick",s:"Dermacentor tick · wrists and ankles → palms, soles",m:["rmsf"]},
+  {id:"t7",l:"Ehrlichiosis",x:1620,y:250,p:"zntick",s:"Lone Star tick · morulae in monocytes",m:["ehrlichia"]},
+  {id:"f1",l:"Fleas",x:420,y:430,p:"znflea",s:"rats and prairie dogs carry plague"},
+  {id:"f2",l:"Plague",x:1020,y:430,p:"znflea",s:"Yersinia pestis · painful buboes",m:["plague"]},
+  {id:"f3",l:"Endemic typhus",x:1620,y:430,p:"znflea",s:"Rickettsia typhi · fleas",m:["typhus"]},
+  {id:"f4",l:"Human body louse",x:420,y:510,p:"znflea",s:"passes person to person"},
+  {id:"f5",l:"Epidemic typhus",x:1020,y:510,p:"znflea",s:"Rickettsia prowazekii · rash spares palms",m:["typhus"]},
+  {id:"f6",l:"Relapsing fever",x:1620,y:510,p:"znflea",s:"Borrelia recurrentis · shifting antigens",m:["relapsing"]},
+  {id:"f7",l:"Lice & scabies",x:2220,y:510,p:"znflea",s:"the parasites themselves",m:["ectoparasites"]},
+  {id:"p1",l:"Bartonella",x:420,y:690,p:"znpet",s:"cat scratch disease · bacillary angiomatosis",m:["bartonella"]},
+  {id:"p2",l:"Pasteurella",x:1020,y:690,p:"znpet",s:"cat or dog bite → cellulitis, osteomyelitis",m:["animalbite"]},
+  {id:"p3",l:"Toxoplasmosis",x:1620,y:690,p:"znpet",s:"cat feces",m:["toxo"]},
+  {id:"p4",l:"Rabies",x:2220,y:690,p:"znpet",s:"animal bites",m:["rabies"]},
+  {id:"p5",l:"Psittacosis",x:2820,y:690,p:"znpet",s:"parrots · atypical pneumonia",m:["psittacosis"]},
+  {id:"p6",l:"Campylobacter",x:420,y:770,p:"znpet",s:"pet feces, meat · bloody diarrhea",m:["campylobacter"]},
+  {id:"p7",l:"Salmonella",x:1020,y:770,p:"znpet",s:"reptiles and poultry",m:["salmonella"]},
+  {id:"l1",l:"Brucellosis",x:420,y:960,p:"znstock",s:"unpasteurized dairy · undulant fever",m:["brucella"]},
+  {id:"l2",l:"Q fever",x:1020,y:960,p:"znstock",s:"cattle and sheep amniotic fluid · no vector, no rash",m:["qfever"]},
+  {id:"l3",l:"Leptospirosis",x:1620,y:960,p:"znstock",s:"animal urine in water · surfers",m:["lepto"]},
+  {id:"l4",l:"Leprosy",x:2220,y:960,p:"znstock",s:"armadillos (rarely)",m:["leprosy"]},
+  {id:"v1",l:"Malaria",x:420,y:1150,p:"znvector",s:"Anopheles mosquito",m:["malaria"]},
+  {id:"v2",l:"Dengue · chikungunya",x:1020,y:1150,p:"znvector",s:"Aedes mosquito",m:["arbo"]},
+  {id:"v3",l:"Leishmaniasis",x:1620,y:1150,p:"znvector",s:"sandfly",m:["leish"]},
+  {id:"v4",l:"Chagas disease",x:2220,y:1150,p:"znvector",s:"triatomine (kissing) bug",m:["chagas"]},
+  {id:"v5",l:"African sleeping sickness",x:2820,y:1150,p:"znvector",s:"tsetse fly",m:["trypbrucei"]},
+  {id:"vx1",l:"→ Fungi & Parasites",x:420,y:1230,p:"neutral",k:"ghost",go:"fungpar"},
+  {id:"vx2",l:"→ Virus Families",x:1020,y:1230,p:"neutral",k:"ghost",go:"virus"},
+  {id:"vx3",l:"→ Gram-Negative Bacteria & Poor Stainers",x:1620,y:1230,p:"neutral",k:"ghost",go:"gneg"},
+  {id:"x1",l:"Doxycycline",x:420,y:1420,p:"zntx",s:"rickettsiae · ehrlichiosis · anaplasmosis · Q fever · Lyme",m:["tetracyclines"]},
+  {id:"x2",l:"Streptomycin",x:1020,y:1420,p:"zntx",s:"plague · tularemia",m:["aminoglycosides"]},
+  {id:"x3",l:"Jarisch-Herxheimer reaction",x:1620,y:1420,p:"zntx",s:"fever after treating a spirochete",m:["relapsing","syphilis"]}],
+ edges:[
+  {a:"t1",b:"t2",p:"zntick"},
+  {a:"t2",b:"t3",p:"zntick",arrow:"none",dash:true},
+  {a:"t3",b:"t4",p:"zntick",arrow:"none",dash:true},
+  {a:"f1",b:"f2",p:"znflea"},
+  {a:"f4",b:"f5",p:"znflea"},
+  {a:"f5",b:"f6",p:"znflea",arrow:"none",dash:true}]
+};
+
+MAPS.brainreg = {
+ t:"Brain Regions & Lesions", sub:"What each hypothalamic and thalamic nucleus does · the limbic system · cortical and brainstem lesion syndromes · the cerebellum’s circuit",
+ w:3300, h:1370,
+ fa:"506, 508–510, 524",
+ src:["Fundamental Neuroscience ch 30 — The Hypothalamus","Fundamental Neuroscience ch 15 — The Diencephalon","Fundamental Neuroscience ch 31 — The Limbic System","Fundamental Neuroscience ch 32 — The Cerebral Cortex","Fundamental Neuroscience ch 28 — Visual Motor Systems","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Fundamental Neuroscience ch 27 — The Cerebellum","Fundamental Neuroscience ch 6 — The Ventricles, Choroid Plexus, and Cerebrospinal Fluid","Kaplan & Sadock ch 3 — Neurocognitive Disorders","Robbins ch 28 — The central nervous system"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Hypothalamus & the blood-brain barrier"},
+  {x:140,y:370,w:3020,h:140,l:"Thalamus — the sensory relay"},
+  {x:140,y:570,w:3020,h:140,l:"Limbic system"},
+  {x:140,y:770,w:3020,h:280,l:"Cortex & brainstem — lesion syndromes"},
+  {x:140,y:1110,w:3020,h:200,l:"Cerebellum"}],
+ panels:[],
+ nodes:[
+  {id:"h1",l:"Lateral nucleus",x:420,y:170,p:"brhypo",s:"hunger · lesion → anorexia",m:["hypothalnuc"]},
+  {id:"h2",l:"Ventromedial nucleus",x:1020,y:170,p:"brhypo",s:"satiety · lesion → hyperphagia",m:["hypothalnuc","craniopharyngioma"]},
+  {id:"h3",l:"Anterior · posterior nuclei",x:1620,y:170,p:"brhypo",s:"cooling · heating",m:["hypothalnuc"]},
+  {id:"h4",l:"Suprachiasmatic nucleus",x:2220,y:170,p:"brhypo",s:"circadian rhythm",m:["hypothalnuc","circadian"]},
+  {id:"h5",l:"Supraoptic · paraventricular",x:2820,y:170,p:"brhypo",s:"ADH · oxytocin → posterior pituitary",m:["hypothalnuc","di"]},
+  {id:"h6",l:"Preoptic nucleus",x:420,y:250,p:"brhypo",s:"GnRH · thermoregulation",m:["hypothalnuc","kallmann"]},
+  {id:"h7",l:"OVLT · area postrema",x:1020,y:250,p:"brhypo",s:"sensors outside the blood-brain barrier",m:["bbbcvo"]},
+  {id:"h8",l:"Blood-brain barrier",x:1620,y:250,p:"brhypo",s:"tight junctions · pericytes · astrocyte feet",m:["bbbcvo"]},
+  {id:"h9",l:"Vomiting center",x:2220,y:250,p:"brhypo",s:"area postrema → NTS · D2, 5-HT3, NK-1",m:["bbbcvo","antiemetic"]},
+  {id:"th1",l:"VPL",x:420,y:440,p:"brthal",s:"body sensation → somatosensory cortex",m:["thalnuc"]},
+  {id:"th2",l:"VPM",x:1020,y:440,p:"brthal",s:"face sensation and taste",m:["thalnuc"]},
+  {id:"th3",l:"Lateral geniculate",x:1620,y:440,p:"brthal",s:"vision → visual cortex",m:["thalnuc"]},
+  {id:"th4",l:"Medial geniculate",x:2220,y:440,p:"brthal",s:"hearing → auditory cortex",m:["thalnuc"]},
+  {id:"th5",l:"VA · VL",x:2820,y:440,p:"brthal",s:"basal ganglia, cerebellum → motor cortex",m:["thalnuc"]},
+  {id:"lm1",l:"Hippocampus",x:420,y:640,p:"brlimbic",s:"bilateral lesion → anterograde amnesia",m:["limbic","alzheimer"]},
+  {id:"lm2",l:"Mammillary bodies",x:1020,y:640,p:"brlimbic",s:"thiamine → Wernicke-Korsakoff",m:["limbic","thiamine"]},
+  {id:"lm3",l:"Amygdala",x:1620,y:640,p:"brlimbic",s:"bilateral lesion → Klüver-Bucy · HSV-1",m:["limbic","hsvenc"]},
+  {id:"lm4",l:"Dopamine pathways",x:2220,y:640,p:"brlimbic",s:"mesolimbic · mesocortical · nigrostriatal",m:["dapathways"]},
+  {id:"lm5",l:"Cingulate · entorhinal cortex",x:2820,y:640,p:"brlimbic",s:"emotion and memory",m:["limbic"]},
+  {id:"c1",l:"Prefrontal cortex",x:420,y:830,p:"brcortex",s:"frontal lobe syndrome · disinhibition",m:["cortexlesions","ftd"]},
+  {id:"c2",l:"Frontal eye fields",x:1020,y:830,p:"brcortex",s:"eyes look toward the lesion",m:["cortexlesions","mcastroke"]},
+  {id:"c3",l:"Broca · Wernicke areas",x:1620,y:830,p:"brcortex",s:"expressive vs receptive aphasia",m:["aphasia"]},
+  {id:"c4",l:"Dominant parietal cortex",x:2220,y:830,p:"brcortex",s:"Gerstmann syndrome",m:["cortexlesions"]},
+  {id:"c5",l:"Nondominant parietal cortex",x:2820,y:830,p:"brcortex",s:"hemispatial neglect",m:["cortexlesions"]},
+  {id:"c6",l:"PPRF",x:420,y:910,p:"brcortex",s:"eyes look away from the lesion",m:["cortexlesions"]},
+  {id:"c7",l:"Reticular activating system",x:1020,y:910,p:"brcortex",s:"arousal · lesion → coma",m:["cortexlesions"]},
+  {id:"c8",l:"Medial longitudinal fasciculus",x:1620,y:910,p:"brcortex",s:"internuclear ophthalmoplegia",m:["ino"]},
+  {id:"c9",l:"Subthalamic nucleus",x:2220,y:910,p:"brcortex",s:"contralateral hemiballismus",m:["hemiballismus"]},
+  {id:"c10",l:"Abnormal posturing",x:2820,y:910,p:"brcortex",s:"decorticate above the red nucleus · decerebrate below",m:["posturing"]},
+  {id:"c11",l:"Dorsal midbrain",x:420,y:990,p:"brcortex",s:"Parinaud syndrome",m:["lightnear"]},
+  {id:"cb1",l:"Inputs",x:420,y:1170,p:"brcereb",s:"inferior and middle peduncles",m:["cerebcircuit"]},
+  {id:"cb2",l:"Purkinje cells → deep nuclei",x:1020,y:1170,p:"brcereb",s:"dentate · emboliform · globose · fastigial",m:["cerebcircuit"]},
+  {id:"cb3",l:"Output",x:1620,y:1170,p:"brcereb",s:"superior peduncle → opposite cortex",m:["cerebcircuit"]},
+  {id:"cb4",l:"Hemisphere lesion",x:2220,y:1170,p:"brcereb",s:"same-side limb ataxia · intention tremor",m:["cerebellar"]},
+  {id:"cb5",l:"Vermis lesion",x:2820,y:1170,p:"brcereb",s:"truncal ataxia · chronic alcohol use",m:["cerebellar"]},
+  {id:"cx1",l:"→ Stroke, Brainstem and Bleeds",x:420,y:1250,p:"neutral",k:"ghost",go:"stroke"},
+  {id:"cx2",l:"→ Basal Ganglia & Movement Disorders",x:1020,y:1250,p:"neutral",k:"ghost",go:"basal"},
+  {id:"cx3",l:"→ Eye, Cranial Nerves & Headache",x:1620,y:1250,p:"neutral",k:"ghost",go:"eyecn"},
+  {id:"cx4",l:"→ Sleep & Development",x:2220,y:1250,p:"neutral",k:"ghost",go:"sleepdev"}],
+ edges:[
+  {a:"h7",b:"h8",p:"brhypo",arrow:"none",dash:true},
+  {a:"cb1",b:"cb2",p:"brcereb"},
+  {a:"cb2",b:"cb3",p:"brcereb"}]
+};
+
+MAPS.abdanat = {
+ t:"Abdominal Anatomy", sub:"Blood supply by embryonic gut · portal veins, varices and liver zones · peritoneum and its ligaments · the groin · the gut wall and anal canal",
+ w:3300, h:1290,
+ fa:"367–377",
+ src:["Moore ch 5 — Abdomen","Moore ch 6 — Pelvis and Perineum","Moore ch 7 — Lower Limb","Langman ch 15 — Digestive System","Pawlina ch 17 — Digestive System II: Esophagus and Gastrointestinal Tract","Pawlina ch 18 — Digestive System III: Liver, Gallbladder, and Pancreas","Robbins ch 18 — Liver and gallbladder"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Arteries — one per embryonic gut segment"},
+  {x:140,y:370,w:3020,h:200,l:"Portal veins, varices & liver zones"},
+  {x:140,y:630,w:3020,h:140,l:"Peritoneum & ligaments"},
+  {x:140,y:830,w:3020,h:200,l:"Groin & abdominal wall"},
+  {x:140,y:1090,w:3020,h:140,l:"Gut wall & anal canal"}],
+ panels:[],
+ nodes:[
+  {id:"a1",l:"Foregut — celiac trunk",x:420,y:170,p:"abvasc",s:"T12/L1 · esophagus to proximal duodenum",m:["gutarteries"]},
+  {id:"a2",l:"Midgut — SMA",x:1020,y:170,p:"abvasc",s:"L1 · to proximal 2/3 of transverse colon",m:["gutarteries"]},
+  {id:"a3",l:"Hindgut — IMA",x:1620,y:170,p:"abvasc",s:"L3 · to upper anal canal",m:["gutarteries"]},
+  {id:"a4",l:"Watershed areas",x:2220,y:170,p:"abvasc",s:"splenic flexure · rectosigmoid junction",m:["gutarteries","mesenteric"]},
+  {id:"a5",l:"Celiac trunk branches",x:420,y:250,p:"abvasc",s:"common hepatic · splenic · left gastric",m:["gutarteries"]},
+  {id:"v1",l:"Portal vein",x:420,y:430,p:"abvasc",s:"about 80% of the liver’s blood",m:["liverzones"]},
+  {id:"v2",l:"Esophageal varices",x:1020,y:430,p:"abvasc",s:"left gastric ↔ esophageal → azygos",m:["portosys","cirrhosis"]},
+  {id:"v3",l:"Caput medusae",x:1620,y:430,p:"abvasc",s:"paraumbilical ↔ epigastric",m:["portosys"]},
+  {id:"v4",l:"Anorectal varices",x:2220,y:430,p:"abvasc",s:"superior ↔ middle and inferior rectal",m:["portosys"]},
+  {id:"v5",l:"TIPS",x:2820,y:430,p:"abvasc",s:"portal → hepatic vein · encephalopathy risk",m:["portosys","hepenceph"]},
+  {id:"v6",l:"Zone 1 — periportal",x:420,y:510,p:"abvasc",s:"viral hepatitis · best oxygenated",m:["liverzones"]},
+  {id:"v7",l:"Zone 3 — pericentral",x:1020,y:510,p:"abvasc",s:"ischemia · P-450 · acetaminophen",m:["liverzones","acetaminophen"]},
+  {id:"r1",l:"Retroperitoneal organs",x:420,y:700,p:"abperit",s:"SAD PUCKER",m:["retroperit"]},
+  {id:"r2",l:"Hepatoduodenal ligament",x:1020,y:700,p:"abperit",s:"portal triad · Pringle maneuver",m:["giligaments"]},
+  {id:"r3",l:"Falciform ligament",x:1620,y:700,p:"abperit",s:"ligamentum teres · paraumbilical veins",m:["giligaments"]},
+  {id:"r4",l:"Gastrosplenic · splenorenal",x:2220,y:700,p:"abperit",s:"short gastrics · splenic vessels",m:["giligaments"]},
+  {id:"r5",l:"Lesser · greater omentum",x:2820,y:700,p:"abperit",s:"hepatogastric · gastrocolic",m:["giligaments"]},
+  {id:"w1",l:"Inguinal canal",x:420,y:890,p:"abwall",s:"deep ring → superficial ring",m:["inguinalcanal"]},
+  {id:"w2",l:"Hesselbach triangle",x:1020,y:890,p:"abwall",s:"direct hernias push through",m:["inguinalcanal","hernias"]},
+  {id:"w3",l:"Deep inguinal ring",x:1620,y:890,p:"abwall",s:"indirect hernias enter · lateral to the epigastrics",m:["inguinalcanal","hernias"]},
+  {id:"w4",l:"Spermatic cord layers",x:2220,y:890,p:"abwall",s:"internal · cremasteric · external",m:["inguinalcanal"]},
+  {id:"w5",l:"Femoral triangle",x:420,y:970,p:"abwall",s:"nerve, artery, vein — lateral to medial",m:["femoralreg"]},
+  {id:"w6",l:"Femoral hernia",x:1020,y:970,p:"abwall",s:"below the inguinal ligament · strangulates",m:["hernias","femoralreg"]},
+  {id:"g1",l:"Gut wall layers",x:420,y:1160,p:"abanal",s:"mucosa · submucosa · muscularis · serosa",m:["gutwall"]},
+  {id:"g2",l:"Meissner · Auerbach plexuses",x:1020,y:1160,p:"abanal",s:"secretion · motility",m:["gutwall","hirschsprung"]},
+  {id:"g3",l:"Pectinate line",x:1620,y:1160,p:"abanal",s:"endoderm above, ectoderm below",m:["pectinate"]},
+  {id:"g4",l:"Internal vs external hemorrhoids",x:2220,y:1160,p:"abanal",s:"painless above · painful below",m:["pectinate","hemorrhoids"]},
+  {id:"g5",l:"Anal fissure",x:2820,y:1160,p:"abanal",s:"posterior midline · painful",m:["pectinate","hemorrhoids"]}],
+ edges:[
+  {a:"a1",b:"a2",p:"abvasc",arrow:"none",dash:true},
+  {a:"a2",b:"a3",p:"abvasc",arrow:"none",dash:true},
+  {a:"v1",b:"v2",p:"abvasc"},
+  {a:"w2",b:"w3",p:"abwall",arrow:"none",dash:true}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -23380,17 +23787,17 @@ const TOPICS = [
   ["cardio","Cardiac",["cardiac","valves","chd","vasc","vascshock","htnrx","rhythm"]],
   ["pulmo","Pulmonary",["pulm","lungdz","respdrug"]],
   ["renal","Renal",["nephron","glom","acidbase","akickd","endocrine"]],
-  ["gi","GI",["gut","liver","gitract"]],
+  ["gi","GI",["gut","liver","gitract","abdanat"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","tumark"]],
   ["immuno","Immunology",["immune","hypimm","cytokine","eicosanoid","transplant","vaccines"]],
   ["endo","Endocrine",["axes","rclass","pancreas"]],
   ["devrepro","Repro & Development",["sexdev","repro","obgyn","malerepro","embryo"]],
-  ["neuro","Neuro",["neurotx","ans","spine","stroke","basal","neuroer","seizhead"]],
+  ["neuro","Neuro",["neurotx","ans","spine","stroke","brainreg","basal","neuroer","seizhead"]],
   ["behav","Psych & Behavior",["psychdx","psychsom","substance","sleepdev"]],
   ["eent","EENT",["eyecn","ent"]],
   ["msk","Musculoskeletal",["muscle","bone","arthritis","derm","plexus","orthoinj"]],
   ["omm","OMM",["vsomatic","chapman","omt","ommmech"]],
-  ["id","Infectious",["microlab","abx","antiviral","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite"]],
+  ["id","Infectious",["microlab","abx","antiviral","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
   ["pharm","Pharm",["pkpd","cyp","adr","aging","tox","environ","anesth","pain"]],
   ["stats","Biostats & Ethics",["biostats","ethics"]],
   ["idx","Index",["index"]]];
@@ -23413,8 +23820,17 @@ const PQ={};
    schedule. A miss puts a card in box 0, due now; each right answer moves it
    up a box — due again in 1, 3, then 7 days — and one more right answer takes
    it off the schedule. shared/app.js schedules the same way for question-bank
-   misses; keep the two in step. */
-const PROG_KEY="mla-progress", PROG_PARTS=["rev","ok","miss","box","due","qok","qmiss"];
+   misses; keep the two in step. `at` records when each card's schedule last
+   changed, so the hub's PIN sync (sync.js) keeps whichever device reviewed it
+   more recently. */
+const PROG_KEY="mla-progress", PROG_PARTS=["rev","ok","miss","box","due","qok","qmiss","at"];
+/* Card review — the spaced-review schedule and every "due" reminder — is opt-in.
+   It stays off until a person turns it on, so anyone not interested in card
+   quizzes never sees a due message. While it is off, quiz answers are still
+   counted but nothing is scheduled. The question bank (shared/app.js) and the
+   hub read the same key: "mla-review" = "on". */
+const REVIEW_KEY="mla-review";
+let REVIEW_ON=false; try{ REVIEW_ON=localStorage.getItem(REVIEW_KEY)==="on"; }catch(e){}
 const DAY=864e5, BOX_DAYS=[0,1,3,7];
 let PROG={}; PROG_PARTS.forEach(k=>PROG[k]={});
 try{ const p=JSON.parse(localStorage.getItem(PROG_KEY)||"null"); if(p&&typeof p==="object") PROG_PARTS.forEach(k=>{ if(p[k]&&typeof p[k]==="object") PROG[k]=p[k]; }); }catch(e){}
@@ -23422,16 +23838,20 @@ Object.keys(PROG.miss).forEach(id=>{ if(!(id in PROG.box)&&PROG.miss[id]>(PROG.o
 function saveProg(){ try{ localStorage.setItem(PROG_KEY,JSON.stringify(PROG)); }catch(e){} }
 /* the question bank may update progress in another tab — take its copy */
 window.addEventListener("storage",ev=>{
+  if(ev.key===REVIEW_KEY){ REVIEW_ON=ev.newValue==="on";
+    try{ if(!REVIEW_ON&&state.quiz==="due") setQuiz(""); if(state.view==="index") renderIndex(); else render(); renderRail(); }catch(e){} return; }
   if(ev.key!==PROG_KEY) return;
   try{ const p=JSON.parse(ev.newValue||"null")||{}; PROG_PARTS.forEach(k=>{ PROG[k]=(p[k]&&typeof p[k]==="object")?p[k]:{}; }); }catch(e){}
   try{ renderRail(); if(state.view==="index") renderIndex(); }catch(e){}
 });
 const isRev=id=>!!PROG.rev[id];
-const isWeak=id=>(id in PROG.box)&&(PROG.due[id]||0)<=Date.now();      // due for review now
-const isLater=id=>(id in PROG.box)&&(PROG.due[id]||0)>Date.now();      // scheduled, not yet due
+const isWeak=id=>REVIEW_ON&&(id in PROG.box)&&(PROG.due[id]||0)<=Date.now();      // due for review now
+const isLater=id=>REVIEW_ON&&(id in PROG.box)&&(PROG.due[id]||0)>Date.now();      // scheduled, not yet due
 function schedule(id,right){
-  if(!right){ PROG.box[id]=0; PROG.due[id]=Date.now(); return; }
+  if(!REVIEW_ON) return;
+  if(!right){ PROG.box[id]=0; PROG.due[id]=Date.now(); PROG.at[id]=Date.now(); return; }
   if(!(id in PROG.box)) return;
+  PROG.at[id]=Date.now();
   const b=PROG.box[id]+1;
   if(b>=BOX_DAYS.length){ delete PROG.box[id]; delete PROG.due[id]; return; }
   PROG.box[id]=b; PROG.due[id]=Date.now()+BOX_DAYS[b]*DAY;
@@ -23687,8 +24107,42 @@ function progHtml(ids,label){
   const rev=ids.filter(isRev).length, weak=ids.filter(isWeak), later=ids.filter(isLater).length;
   return `<div class="revbar"><span><b>${rev}</b> of <b>${ids.length}</b> ${label} reviewed</span><span class="qbar"><i style="width:${ids.length?Math.round(rev/ids.length*100):0}%"></i></span></div>
     ${weak.length?`<button class="duego" data-duego>Review every due card · ${dueAll().length} →</button><div class="rsrc-b">Review these · ${weak.length} due</div><div class="lesionlist">${weak.map(id=>{const L=LES[id];return `<button class="li weak" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="rec">${(PROG.miss[id]||0)+(PROG.qmiss[id]||0)} missed · ${(PROG.ok[id]||0)+(PROG.qok[id]||0)} right</span></span></button>`;}).join("")}</div>`:""}
-    ${later?`<p class="revnote" style="margin:6px 0 0">${later} more scheduled for later review</p>`:""}`;
+    ${later?`<p class="revnote" style="margin:6px 0 0">${later} more scheduled for later review</p>`:""}
+    ${reviewToggleHtml()}`;
 }
+function reviewToggleHtml(){
+  return REVIEW_ON?`<p class="revtoggle">Card review is <b>on</b> · <button class="linkbtn" data-review="off">turn off</button></p>`
+    :`<p class="revtoggle">Card review is off. <button class="linkbtn" data-review="on">Turn it on</button> to have missed cards come back after 1, 3 and 7 days.</p>`;
+}
+function setReview(on){
+  REVIEW_ON=!!on;
+  try{ if(on) localStorage.setItem(REVIEW_KEY,"on"); else localStorage.removeItem(REVIEW_KEY); }catch(e){}
+  if(!on&&state.quiz==="due") setQuiz("");
+  if(state.view==="index") renderIndex(); else render();
+  renderRail(); if(state.info) openMapInfo();
+}
+function openReviewIntro(){
+  state.sel=null; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
+  drawer.innerHTML=`
+   <div class="dhead">
+     <button class="dclose" id="dclose" aria-label="Close">×</button>
+     <span class="dkind" style="--k:var(--due)">Card review</span>
+     <h2 class="dtitle">Turn on card review?</h2>
+   </div>
+   <div class="dbody">
+     <p>Card review is optional. When it’s on, missing a card in an atlas quiz — or missing a question-bank question linked to a card — schedules that card. It comes back after 1, 3 and 7 days until you get it right.</p>
+     <p>Due cards get an amber ring on the map, and Quiz → Due cards runs them all in one round. It starts with your next missed answer.</p>
+     <p class="revnote">Saved on this device; turn it off any time under Your progress.</p>
+     <button class="duego" data-review="on" data-start="1">Turn on card review</button>
+     <p style="margin:10px 0 0"><button class="linkbtn" id="revno">Not now</button></p>
+   </div>`;
+  drawer.scrollTop=0;
+  document.getElementById("dclose").onclick=closeDrawer;
+  document.getElementById("revno").onclick=closeDrawer;
+}
+document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-review]"); if(!b) return;
+  ev.preventDefault(); const on=b.dataset.review==="on"; setReview(on);
+  if(on&&b.dataset.start){ setQuiz("due"); if(!dueAll().length) closeDrawer(); } });
 function reportUrl(id){
   const L=LES[id]||{}, m=MAPS[state.view];
   const srcs=[L.fa?`First Aid 2025, ${/[,–]/.test(L.fa)?"pp.":"p."} ${L.fa}`:"",...(L.src||[])].filter(Boolean);
@@ -23847,16 +24301,19 @@ function nextQuiz(){
    from, drawn from this map or from the whole topic — same pathway first. */
 const BQ={};   // BQ[scope][cardId] = true/false for this session
 let BSCOPE="map";
-try{ if(localStorage.getItem("mla-bscope")==="topic") BSCOPE="topic"; }catch(e){}
-const topicViews=()=>BSCOPE==="topic"?((TOPICS.find(t=>t[0]===TOPIC_OF[state.view])||[0,0,[state.view]])[2]):[state.view];
-const buzzKey=()=>BSCOPE==="topic"?"t:"+TOPIC_OF[state.view]:"m:"+state.view;
+try{ const v=localStorage.getItem("mla-bscope"); if(v==="topic"||v==="all") BSCOPE=v; }catch(e){}
+const topicViews=()=>BSCOPE==="all"?VIEWS.map(v=>v[0]).filter(v=>MAPS[v])
+  :BSCOPE==="topic"?((TOPICS.find(t=>t[0]===TOPIC_OF[state.view])||[0,0,[state.view]])[2]):[state.view];
+const buzzKey=()=>BSCOPE==="all"?"all":BSCOPE==="topic"?"t:"+TOPIC_OF[state.view]:"m:"+state.view;
 function buzzOf(id){
   const L=LES[id], red=redactor(L);
   return (L.buzz||[]).filter(b=>b&&b!=="—").map(red).filter(b=>(b.replace(/▢/g,"").match(/[A-Za-z]{3,}/g)||[]).length>=2);
 }
+const BZC={};   // card pools per scope — the cards never change while the page is open
 function buzzIds(){
+  const k=buzzKey(); if(BZC[k]) return BZC[k];
   const ids=new Set(); topicViews().forEach(v=>mapIds(v).forEach(id=>ids.add(id)));
-  return [...ids].filter(id=>buzzOf(id).length);
+  return BZC[k]=[...ids].filter(id=>buzzOf(id).length);
 }
 function buzzOptions(id,pool){
   const L=LES[id];
@@ -23868,7 +24325,7 @@ function buzzOptions(id,pool){
 function openBuzz(id){
   const L=LES[id], pool=buzzIds(), bz=buzzOf(id); if(!L||!bz.length) return;
   const clue=bz[Math.floor(Math.random()*bz.length)];
-  const from=BSCOPE==="topic"?(TOPICS.find(t=>t[0]===TOPIC_OF[state.view])||[0,""])[1]:MAPS[state.view].t;
+  const from=BSCOPE==="all"?"all maps":BSCOPE==="topic"?(TOPICS.find(t=>t[0]===TOPIC_OF[state.view])||[0,""])[1]:MAPS[state.view].t;
   state.sel=null; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
   drawer.innerHTML=`
    <div class="dhead">
@@ -23913,7 +24370,7 @@ function updateScore(){
     const total=buzzIds().length, done=BQ[buzzKey()]||{};
     const named=Object.keys(done).length, right=Object.values(done).filter(Boolean).length;
     box.hidden=false;
-    box.innerHTML=`<span class="seg"><button data-bscope="map" aria-pressed="${BSCOPE==="map"}">This map</button><button data-bscope="topic" aria-pressed="${BSCOPE==="topic"}">Whole topic</button></span>
+    box.innerHTML=`<span class="seg"><button data-bscope="map" aria-pressed="${BSCOPE==="map"}">This map</button><button data-bscope="topic" aria-pressed="${BSCOPE==="topic"}">Whole topic</button><button data-bscope="all" aria-pressed="${BSCOPE==="all"}">All maps</button></span>
       <span>Answered <b>${named}/${total}</b> · <b>${right}</b> right</span>
       <span class="qbar"><i style="width:${total?Math.round(named/total*100):0}%"></i></span>
       ${named<total?`<button class="go" data-qnext>Next buzzword</button>`:`<span>All done</span>`}
@@ -23935,6 +24392,7 @@ function updateScore(){
   const r=box.querySelector("[data-qreset]"); if(r) r.onclick=()=>{ delete PQ[state.view]; closeDrawer(); updateScore(); };
 }
 function setQuiz(mode){
+  if(mode==="due"&&!REVIEW_ON){ openReviewIntro(); return; }
   state.quiz=mode; state.reveal.clear();
   const b=document.getElementById("quizBtn");
   b.classList.toggle("on",!!mode);
@@ -24292,7 +24750,7 @@ function renderRail(){
     }<text x="0" y="0.5" text-anchor="middle" dominant-baseline="central" fill="#fff" style="font:700 10px sans-serif">${v.g}</text></svg>${v.n}</div>`).join("")}
     <div class="lg"><svg width="19" height="19" viewBox="0 0 20 20"><line x1="4" y1="3" x2="4" y2="17" stroke="var(--ink)" stroke-width="3.4" stroke-linecap="round"/></svg>Rate-limiting step</div>
     <div class="lg"><svg width="19" height="19" viewBox="0 0 20 20"><line x1="1" y1="10" x2="19" y2="10" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="5 4"/></svg>Multi-step, transport or regulation</div>
-    <div class="lg"><svg width="19" height="19" viewBox="-10 -10 20 20"><circle r="7.5" fill="none" stroke="var(--due)" stroke-width="2.4"/></svg>Due for review</div>
+    ${REVIEW_ON?`<div class="lg"><svg width="19" height="19" viewBox="-10 -10 20 20"><circle r="7.5" fill="none" stroke="var(--due)" stroke-width="2.4"/></svg>Due for review</div>`:""}
   </div></div>`;
   const ids=currentLesIds();
   if(state.quiz==="pins"&&!state.q&&state.view!=="index"){
@@ -24322,6 +24780,20 @@ function renderRail(){
   if(rp) rp.onclick=()=>{ if(confirm("Clear the reviewed marks and quiz record for the cards on this map? This only affects this device.")){ clearProg(mapIds(state.view)); renderRail(); } };
 }
 
+/* maps ranked by misses — atlas quiz misses plus question-bank misses on the
+   cards pinned there — so the Index can point at the topic to review next */
+function weakSpotsHtml(){
+  const rows=VIEWS.map(v=>v[0]).filter(v=>MAPS[v]).map(v=>{ const ids=mapIds(v);
+    return {v, miss:ids.reduce((s,id)=>s+(PROG.miss[id]||0)+(PROG.qmiss[id]||0),0), due:ids.filter(isWeak).length}; })
+    .filter(r=>r.miss||r.due).sort((a,b)=>b.miss-a.miss||b.due-a.due).slice(0,10);
+  if(!rows.length) return "";
+  const top=Math.max(1,rows[0].miss), n=dueAll().length;
+  return `<details class="idx-sources" open><summary>Where you miss most</summary>
+    <p>Misses on each map’s cards — atlas quizzes plus question-bank questions linked to those cards, on this device.</p>
+    <div class="weakmaps">${rows.map(r=>`<button class="weakmap" data-view="${r.v}"><span class="wm-t">${esc((VIEWS.find(x=>x[0]===r.v)||[r.v,MAPS[r.v].t])[1])}</span><span class="qbar"><i style="width:${Math.round(r.miss/top*100)}%"></i></span><span class="wm-n">${r.miss} missed${r.due?` · ${r.due} due`:""}</span></button>`).join("")}</div>
+    ${n?`<button class="duego" data-duego>Review every due card · ${n} →</button>`:""}</details>`;
+}
+
 /* ── index view ─────────────────────────────────────── */
 function renderIndex(){
   const q=state.q.trim().toLowerCase();
@@ -24340,7 +24812,7 @@ function renderIndex(){
     <p>Closest matches, allowing for a letter or two off:</p>`:pg!=null?`<h2>First Aid 2025, p. ${pg}</h2>
     <p>${ids.length} ${ids.length===1?"card cites":"cards cite"} this page${mapsOnPage(pg).length?`, and so ${mapsOnPage(pg).length===1?"does this map":"do these maps"}:`:"."}</p>${pageHitsHtml(pg)}`:`<h2>Every lesion on one page</h2>
     <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>
-    ${!q?`<details class="idx-sources" ${Object.keys(LES).some(isWeak)?"open":""}><summary>Your progress (this device)</summary>${progHtml(Object.keys(LES),"cards")}</details>`:""}`}
+    ${!q?`<details class="idx-sources" ${Object.keys(LES).some(isWeak)?"open":""}><summary>Your progress (this device)</summary>${progHtml(Object.keys(LES),"cards")}</details>${weakSpotsHtml()}`:""}`}
     <details class="idx-sources"><summary>Sources</summary>
       <p>Every card was written from and checked against the sources below, line by line. Each card carries its own <b>Sources</b> section naming the exact First Aid pages and book chapters it rests on, so you can see why a fact is stated where it is; the pins on every map open the card that carries those citations, and each map's side panel lists the First Aid pages and chapters the map itself was checked against. Where sources disagree, the card says so or leaves the number out, and anything no source supported was cut. The First Aid page on each card points to the 2025 edition.</p>
       <ul>
@@ -24496,7 +24968,7 @@ const quizBtn=document.getElementById("quizBtn"), qmenu=document.getElementById(
 function showQuizMenu(open){ qmenu.hidden=!open; quizBtn.setAttribute("aria-expanded",String(open)); }
 quizBtn.onclick=ev=>{ ev.stopPropagation();
   const n=dueAll().length, el=document.getElementById("qduen");
-  if(el) el.textContent=n?`${n} card${n===1?"":"s"} due for review, across all maps`:"Nothing due right now — missed answers land here";
+  if(el) el.textContent=!REVIEW_ON?"Optional — turn on card review to use it":n?`${n} card${n===1?"":"s"} due for review, across all maps`:"Nothing due right now — missed answers land here";
   showQuizMenu(qmenu.hidden); };
 document.getElementById("zprint").onclick=printMap;
 qmenu.querySelectorAll("[data-q]").forEach(o=>o.onclick=()=>{ showQuizMenu(false); setQuiz(o.dataset.q); });

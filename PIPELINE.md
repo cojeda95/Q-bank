@@ -280,3 +280,14 @@ maximum allowed size". Now:
   older cached `sync.js` can write it again; the next push folds that back in.
 
 A new block needs its storage key in `BLOCK_KEYS` in `sync.js`, or its progress won't sync.
+
+**Lesion Atlas progress** (`mla-progress`: reviewed marks, quiz record, the spaced-review
+schedule and question-bank misses) syncs in its own document, `syncs/{PIN}_atlas`, through
+`mergeAtlas` in `sync.js`. Counts take the larger side; the schedule takes, card by card,
+the side whose `at` timestamp (when that card's schedule last changed) is newer. Both the
+atlas (`schedule()` in `tools/atlas-src.html`) and `atlasNoteAnswer` in `shared/app.js`
+write `at` — keep them in step with `mergeAtlas`.
+
+Card review is **opt-in** (`mla-review` = `"on"`, per device, not synced). While it is off,
+answers are still counted but nothing is scheduled, and no "due" message appears anywhere —
+not the map rings, the Due cards round, the rail lists or the hub pill.

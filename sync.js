@@ -39,6 +39,11 @@ const FIREBASE_CONFIG = {
 
 const BLOCK_KEYS = ['neuro', 'pulm', 'eent', 'endocrine', 'ortho', 'rheum', 'psych', 'nephro', 'omm'];
 const SUFFIXES = ['flags_v1', 'progress_v1', 'attempts_v1', 'settings_v1'];
+// The Lesion Atlas keeps its review progress (reviewed marks, quiz record and the
+// spaced-review schedule, including question-bank misses) under one key, synced in
+// its own cloud document, syncs/{PIN}_atlas.
+const ATLAS_KEY = 'mla-progress';
+const ATLAS_DOC = 'atlas';
 const LS_PIN = 'qbank_sync_pin';
 const LS_LAST_SYNC = 'qbank_sync_last';
 const MAX_ATTEMPTS_STORED = 5000;
@@ -50,6 +55,7 @@ const DOC_BYTE_BUDGET = 1000000;
 function allSyncKeys() {
   const keys = [];
   BLOCK_KEYS.forEach(b => SUFFIXES.forEach(s => keys.push(`${b}_${s}`)));
+  keys.push(ATLAS_KEY);
   return keys;
 }
 
@@ -127,6 +133,41 @@ function mergeSettings(a, b, preferRemote) {
   return preferRemote ? Object.assign({}, a || {}, b || {}) : Object.assign({}, b || {}, a || {});
 }
 
+// Atlas progress. Reviewed marks: union, latest time. Answer counts: the larger
+// count per card, so syncing again never inflates them. Review schedule: per card,
+// the side whose last schedule change (`at`) is newer wins; with no timestamps on
+// either side (progress saved before they existed), the card stays due on the
+// sooner date.
+function mergeAtlas(a, b) {
+  a = a || {}; b = b || {};
+  const part = (o, k) => (o[k] && typeof o[k] === 'object') ? o[k] : {};
+  const out = { rev: {}, ok: {}, miss: {}, qok: {}, qmiss: {}, box: {}, due: {}, at: {} };
+  [a, b].forEach(src => Object.entries(part(src, 'rev')).forEach(([id, t]) => {
+    out.rev[id] = Math.max(+out.rev[id] || 0, +t || 0) || t;
+  }));
+  ['ok', 'miss', 'qok', 'qmiss'].forEach(k => [a, b].forEach(src => Object.entries(part(src, k)).forEach(([id, n]) => {
+    out[k][id] = Math.max(out[k][id] || 0, +n || 0);
+  })));
+  const ids = new Set([a, b].flatMap(src => Object.keys(part(src, 'box')).concat(Object.keys(part(src, 'at')))));
+  ids.forEach(id => {
+    const ta = +part(a, 'at')[id] || 0, tb = +part(b, 'at')[id] || 0;
+    const inA = id in part(a, 'box'), inB = id in part(b, 'box');
+    if (ta !== tb) {
+      const w = ta > tb ? a : b;
+      if (id in part(w, 'box')) { out.box[id] = part(w, 'box')[id]; out.due[id] = part(w, 'due')[id] || 0; }
+    } else if (inA && inB) {
+      out.box[id] = Math.min(part(a, 'box')[id], part(b, 'box')[id]);
+      out.due[id] = Math.min(part(a, 'due')[id] || 0, part(b, 'due')[id] || 0);
+    } else if (inA || inB) {
+      const w = inA ? a : b;
+      out.box[id] = part(w, 'box')[id]; out.due[id] = part(w, 'due')[id] || 0;
+    }
+    const t = Math.max(ta, tb);
+    if (t) out.at[id] = t;
+  });
+  return out;
+}
+
 // Merge two full blobs (each a map of localStorage-key -> raw JSON string).
 function mergeBlobs(localBlob, remoteBlob) {
   const out = {};
@@ -142,6 +183,8 @@ function mergeBlobs(localBlob, remoteBlob) {
     out[aKey] = JSON.stringify(mergeAttempts(la, ra));
     out[sKey] = JSON.stringify(mergeSettings(ls, rs, true));
   });
+  const lAtlas = safeParse(localBlob[ATLAS_KEY], null), rAtlas = safeParse(remoteBlob[ATLAS_KEY], null);
+  if (lAtlas || rAtlas) out[ATLAS_KEY] = JSON.stringify(mergeAtlas(lAtlas, rAtlas));
   return out;
 }
 
@@ -237,17 +280,18 @@ async function patchDoc(docId, body) {
 // progress, so a push knows to empty it.
 async function fetchRemoteBlob(pin) {
   const [legacyDoc, ...blockDocs] = await Promise.all(
-    [fetchDoc(pin)].concat(BLOCK_KEYS.map(b => fetchDoc(blockDocId(pin, b)))));
+    [fetchDoc(pin)].concat(BLOCK_KEYS.concat([ATLAS_DOC]).map(b => fetchDoc(blockDocId(pin, b)))));
   const legacy = fromFirestoreFields(legacyDoc);
   const current = Object.assign({}, ...blockDocs.map(fromFirestoreFields));
   return { blob: mergeBlobs(legacy, current), hasLegacyData: Object.keys(legacy).length > 0 };
 }
 
 async function writeRemoteBlob(pin, blob, clearLegacy) {
+  const atlas = blob[ATLAS_KEY];
   await Promise.all(BLOCK_KEYS.map(block => {
     const data = cloudBlockBlob(blob, block);
     return data ? patchDoc(blockDocId(pin, block), toFirestoreFields(data)) : null;
-  }));
+  }).concat(atlas && atlas.length > 2 ? [patchDoc(blockDocId(pin, ATLAS_DOC), toFirestoreFields({ [ATLAS_KEY]: atlas }))] : []));
   // Only after every block is safely stored: the old document now holds
   // nothing they don't, so empty it to stay out of the way.
   if (clearLegacy) {
@@ -318,7 +362,7 @@ function initSyncUI() {
             <button class="sync-btn secondary" id="forgetPinBtn">Use a different PIN</button>
           </div>
         ` : `
-          <p class="sync-hint">Sync your progress (flags, scores, missed questions) across devices with a PIN — no account needed.</p>
+          <p class="sync-hint">Sync your progress (flags, scores, missed questions, and your Lesion Atlas reviews) across devices with a PIN — no account needed.</p>
           <div class="sync-actions">
             <button class="sync-btn" id="newPinBtn">Create a New PIN</button>
           </div>
@@ -372,7 +416,7 @@ function initSyncUI() {
 // Exposed on window: used by index.html's inline boot script, and handy for testing/debugging.
 window.pushToCloud = pushToCloud;
 window.pullFromCloud = pullFromCloud;
-window.__syncInternals = { mergeFlags, mergeProgress, mergeScoreHistory, mergeAttempts, mergeBlobs, readLocalBlob, cloudBlockBlob, fetchRemoteBlob };
+window.__syncInternals = { mergeFlags, mergeProgress, mergeScoreHistory, mergeAttempts, mergeAtlas, mergeBlobs, readLocalBlob, cloudBlockBlob, fetchRemoteBlob, writeRemoteBlob };
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initSyncUI);

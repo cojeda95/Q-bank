@@ -37,6 +37,7 @@
   .block-card.featured { border: 2px solid var(--navy); padding: 19px; }
   .block-title { font-weight: 700; font-size: 1.15rem; color: var(--navy); }
   .block-desc { font-size: 0.9rem; color: var(--grey-text); margin-top: 4px; }
+  .block-due { display: inline-block; margin-top: 10px; padding: 4px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; color: var(--navy); border: 1px solid var(--navy); }
   .footer { text-align: center; padding: 20px; font-size: 0.8rem; color: var(--text-faint); }
 
   .section-label {
@@ -109,7 +110,8 @@
     <div class="block-grid">
       <a class="block-card featured" href="resources/metabolic-atlas.html">
         <div class="block-title">🗺️ Lesion Atlas</div>
-        <div class="block-desc">98 interactive maps &middot; 1,382 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
+        <div class="block-desc">101 interactive maps &middot; 1,408 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
+        <div class="block-due" id="atlasDue" hidden></div>
       </a>
     </div>
 
@@ -174,6 +176,28 @@
   </div>
   <div class="footer">Client-side only &mdash; each block's progress and flags are stored separately in your browser, optionally synced across devices via the PIN above. Works offline: the hub, the Lesion Atlas and any block you have opened once are saved on this device.</div>
 <script src="announcements.js"></script>
+<script>
+  /* Lesion Atlas cards due for review on this device — shown only to people who turned
+     card review on in the atlas ("mla-review" = "on"); it is off by default. */
+  (function () {
+    var el = document.getElementById('atlasDue');
+    if (!el) return;
+    function show() {
+      var n = 0, p = null, now = Date.now(), on = false;
+      try { on = localStorage.getItem('mla-review') === 'on'; } catch (e) { on = false; }
+      if (!on) { el.hidden = true; el.textContent = ''; return; }
+      try { p = JSON.parse(localStorage.getItem('mla-progress') || 'null'); } catch (e) { p = null; }
+      if (p && p.box && typeof p.box === 'object') {
+        Object.keys(p.box).forEach(function (id) { if (((p.due && p.due[id]) || 0) <= now) n++; });
+      }
+      el.hidden = !n;
+      el.textContent = n ? n + (n === 1 ? ' card' : ' cards') + ' due for review — open the atlas, then Quiz → Due cards' : '';
+    }
+    show();
+    window.addEventListener('storage', function (e) { if (e.key === 'mla-progress' || e.key === 'mla-review') show(); });
+    window.addEventListener('pageshow', show);
+  })();
+</script>
 <script src="sync.js"></script>
 <script>
   (function () {
