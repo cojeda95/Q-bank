@@ -22,6 +22,20 @@ const LS_PRACTICE_SESSION = QUIZ_CONFIG.storageKey + '_practicesession_v1';
 // turns it off everywhere.
 const LS_WRONG_FLASH = 'qbank_wrongflash_v1';
 const MAX_ATTEMPTS_STORED = 5000;
+// Batch 3 is the per-SDL opt-in trial slot (kept out of exam totals, simulations,
+// custom exams and splits). Its wording defaults to the Neuro "Bloom Batch"; a block
+// can relabel it with QUIZ_CONFIG.batch3 = { name, listLabel, icon, title, meta, hint,
+// banner, afterBatch2 } (afterBatch2: list it right under Batch 2 in the batch picker).
+const BATCH3 = Object.assign({
+  name: 'Bloom Batch',
+  listLabel: 'Bloom Batch',
+  icon: '🧠',
+  title: '🧠 Bloom Batch — Level 3/4 Trial',
+  meta: 'experimental, board-qbank style',
+  hint: 'Bloom Batch is an experimental higher-rigor trial — short single-term answer choices and board-qbank-style vignettes, kept separate from the regular batches.',
+  banner: '🧠 Bloom Batch — Level 3/4 Trial (experimental, board-qbank style)',
+  afterBatch2: false,
+}, QUIZ_CONFIG.batch3 || {});
 
 /* ── Lesion Atlas links ─────────────────────────────────────────────────
    resources/atlas-terms.js (written by tools/build-atlas.py) lists every atlas
@@ -670,7 +684,7 @@ function scoreKeysForSdl(sdlNumber) {
     { key: `sdl-${sdlNumber}`, label: 'Both Batches' },
     { key: `sdl-${sdlNumber}-b1`, label: 'Batch 1' },
     { key: `sdl-${sdlNumber}-b2`, label: 'Batch 2' },
-    { key: `sdl-${sdlNumber}-b3`, label: 'Bloom Batch' },
+    { key: `sdl-${sdlNumber}-b3`, label: BATCH3.name },
   ];
 }
 function bestScoreForSdl(sdlNumber) {
@@ -709,7 +723,7 @@ function renderExamSdlList(examNumber) {
       <div class="sdl-row" data-sdl="${sdl.sdlNumber}">
         <div>
           <div class="sdl-title">${escapeHtml(sdl.title)}</div>
-          <div class="sdl-meta">${regularCount} questions${bloomCount ? ` &middot; 🧠 ${bloomCount} Bloom Batch` : ''}</div>
+          <div class="sdl-meta">${regularCount} questions${bloomCount ? ` &middot; ${BATCH3.icon} ${bloomCount} ${escapeHtml(BATCH3.listLabel)}` : ''}</div>
         </div>
         ${scoreHtml}
       </div>`;
@@ -1423,7 +1437,11 @@ function renderBatchPicker(sdlNumber) {
   if (batch1Count) options.push({ key: '1', title: 'Batch 1 — Quick Recall', meta: `${batch1Count} questions`, scoreKey: `sdl-${sdlNumber}-b1` });
   if (batch2Count) options.push({ key: '2', title: 'Batch 2 — Deep Vignettes', meta: `${batch2Count} questions`, scoreKey: `sdl-${sdlNumber}-b2` });
   if (classicBoth) options.push({ key: 'all', title: 'Both Batches', meta: `${batch1Count + batch2Count} questions`, scoreKey: `sdl-${sdlNumber}` });
-  if (bloomCount) options.push({ key: '3', title: '🧠 Bloom Batch — Level 3/4 Trial', meta: `${bloomCount} questions · experimental, board-qbank style`, scoreKey: `sdl-${sdlNumber}-b3`, special: true });
+  if (bloomCount) {
+    const trialOpt = { key: '3', title: escapeHtml(BATCH3.title), meta: `${bloomCount} questions · ${escapeHtml(BATCH3.meta)}`, scoreKey: `sdl-${sdlNumber}-b3`, special: true };
+    const b2 = options.findIndex(o => o.key === '2');
+    if (BATCH3.afterBatch2 && b2 >= 0) options.splice(b2 + 1, 0, trialOpt); else options.push(trialOpt);
+  }
 
   if (options.length === 0) {
     main.innerHTML = `
@@ -1458,7 +1476,7 @@ function renderBatchPicker(sdlNumber) {
     <h1>${escapeHtml(sdl.title)}</h1>
     <p class="subtitle">Choose which batch to practice.${settings.hyOnly ? ' <strong>⚡ High-Yield Only Mode is ON</strong> — counts below are already filtered.' : ''}</p>
     <div class="sdl-list">${rows}</div>
-    ${bloomCount ? '<p class="setup-hint" style="margin-top:14px;">Bloom Batch is an experimental higher-rigor trial — short single-term answer choices and board-qbank-style vignettes, kept separate from the regular batches.</p>' : ''}
+    ${bloomCount ? `<p class="setup-hint" style="margin-top:14px;">${escapeHtml(BATCH3.hint)}</p>` : ''}
   `;
 
   document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
@@ -1614,7 +1632,7 @@ function renderPracticeQuestion() {
 
   main.innerHTML = `
     <button class="back-link" id="backExam">&larr; Exam ${session.examNumber}</button>
-    ${session.isBloom ? '<div class="bloom-banner">🧠 Bloom Batch — Level 3/4 Trial (experimental, board-qbank style)</div>' : ''}
+    ${session.isBloom ? `<div class="bloom-banner">${escapeHtml(BATCH3.banner)}</div>` : ''}
     <div class="quiz-header">
       <span class="quiz-progress">Question ${session.index + 1} of ${total}</span>
       <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}</span>

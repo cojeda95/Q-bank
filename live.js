@@ -36,7 +36,7 @@ const BLOCKS = [
   { key: 'pulm', label: 'Pulmonology' },
   { key: 'ortho', label: 'Orthopedics' },
   { key: 'rheum', label: 'Rheumatology' },
-  { key: 'nephro', label: 'Nephrology/Urology' },
+  { key: 'nephro', label: 'Nephrology/Urology', batch3Label: 'Batch 3 — Trial: shorter clinical stems + shorter answer choices' },
   { key: 'omm', label: 'OMM III' },
 ];
 
@@ -325,7 +325,7 @@ function renderHostSetup() {
 function batchLabel(b) {
   if (b === 1) return 'Batch 1 — Quick Recall';
   if (b === 2) return 'Batch 2 — Deep Vignettes';
-  if (b === 3) return 'Batch 3 — Bloom Batch';
+  if (b === 3) { const blk = BLOCKS.find(x => x.key === loadedBlockKey); return (blk && blk.batch3Label) || 'Batch 3 — Bloom Batch'; }
   return `Batch ${b}`;
 }
 
