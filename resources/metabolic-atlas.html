@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 89 pan/zoom maps with 1312 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 95 pan/zoom maps with 1361 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="89 interactive maps. 1312 lesions pinned to the step they break.">
+<meta property="og:description" content="95 interactive maps. 1361 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -291,7 +291,10 @@ svg.map.drag{cursor:grabbing}
 .pin.pq-bad .pshape{stroke:var(--bad);stroke-width:3.2}
 .pqwhere{font-size:12.5px;color:var(--ink-2);margin:10px 0 0}
 .pqwhere b{color:var(--ink)}
-.pqopts{display:flex;flex-direction:column;gap:7px}
+.pqopts{display:flex;flex-direction:column;gap:7px;counter-reset:opt}
+.pqopt::before{counter-increment:opt;content:counter(opt);display:inline-grid;place-items:center;width:18px;height:18px;margin-right:9px;border-radius:5px;background:var(--surface-3);color:var(--ink-3);font-size:11px;font-weight:600;vertical-align:1px}
+@media (pointer:coarse){ .pqopt::before{display:none} }
+.alsoon{margin:10px 0 0;align-items:center}
 .pqopt{text-align:left;padding:11px 14px;border:1px solid var(--line);border-radius:11px;background:var(--surface-2);font-size:13.5px;font-weight:500;color:var(--ink);line-height:1.35}
 .pqopt:hover{background:var(--surface-3);border-color:var(--ink-3)}
 .pqres{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 13px;border-radius:10px;font-size:13px;font-weight:600;margin:0 0 18px}
@@ -804,6 +807,33 @@ const PATHS = {
   oiinj:{n:"Joint and soft-tissue injuries",v:"--p-tca"},
   oiadult:{n:"Adult overuse and fragile bone",v:"--p-glycolysis"},
   oiback:{n:"Back pain",v:"--p-gluconeo"},
+  mlstruct:{n:"Cell envelope & structures",v:"--p-glycolysis"},
+  mlstain:{n:"Stains",v:"--p-tca"},
+  mlmedia:{n:"Culture media",v:"--p-ppp"},
+  mllife:{n:"Oxygen & intracellular life",v:"--p-gluconeo"},
+  mlgroups:{n:"Organism groups",v:"--p-glycogen"},
+  mlvir:{n:"Virulence & gene transfer",v:"--p-sugars"},
+  mbrep:{n:"DNA replication & mutations",v:"--p-tca"},
+  mbtx:{n:"Transcription & RNA processing",v:"--p-glycolysis"},
+  mbtl:{n:"Translation",v:"--p-gluconeo"},
+  mblab:{n:"Lab techniques",v:"--p-ppp"},
+  cbnuc:{n:"Cell types",v:"--p-glycogen"},
+  cbtraf:{n:"Protein synthesis & trafficking",v:"--p-tca"},
+  cbskel:{n:"Cytoskeleton & cilia",v:"--p-glycolysis"},
+  cbmem:{n:"Membrane & junctions",v:"--p-ppp"},
+  hxfirst:{n:"First-line drugs",v:"--p-tca"},
+  hxpick:{n:"Choice by comorbidity",v:"--p-glycolysis"},
+  hxother:{n:"Add-on agents",v:"--p-ppp"},
+  hxemerg:{n:"Hypertensive emergency",v:"--p-gluconeo"},
+  agbody:{n:"Normal aging",v:"--p-ppp"},
+  agdrug:{n:"Drugs in older adults",v:"--p-glycolysis"},
+  agsyn:{n:"Geriatric syndromes",v:"--p-gluconeo"},
+  agcare:{n:"Geriatric care & OMT",v:"--p-tca"},
+  iemnh3:{n:"Hyperammonemia",v:"--p-tca"},
+  iemacid:{n:"Organic acidemias",v:"--p-gluconeo"},
+  iemglu:{n:"Hypoglycemia",v:"--p-glycolysis"},
+  iemlact:{n:"Lactic acidosis",v:"--p-glycogen"},
+  iemclue:{n:"Clues & screening",v:"--p-ppp"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -11046,6 +11076,398 @@ venom:{n:"Black widow & scorpion envenomation",k:"dz",p:"enbite",enz:"α-Latroto
  src:["Katzung ch 6 — Introduction to Autonomic Pharmacology","Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
  tx:["—"],q:["black widow","latrodectus","latrotoxin","scorpion sting"]},
 
+/* ── microbiology lab & virulence · molecular biology & lab techniques (m18) ──── */
+bactenvelope:{n:"Bacterial cell envelope",alias:"gram-positive vs gram-negative wall",k:"reg",p:"mlstruct",enz:"Thick peptidoglycan (gram +) vs outer membrane (gram −)",inh:"—",fa:"122",hi:1,
+ mech:"Gram-positive bacteria have a <b>thick peptidoglycan</b> wall threaded with lipoteichoic acid. Gram-negative bacteria have a thin peptidoglycan layer inside an <b>outer membrane</b>, whose outer leaflet carries endotoxin (LPS) and whose porins let molecules through. Between the two membranes lies the periplasm, where β-lactamases collect. Penicillin-binding proteins in the cytoplasmic membrane cross-link the peptidoglycan.",
+ find:["Lipoteichoic acid (gram-positive) and lipid A of endotoxin (gram-negative) both induce TNF and IL-1","Capsule: usually polysaccharide — protects against phagocytosis","Slime layer: loose polysaccharide that helps bacteria stick to catheters and build biofilms","Pili mediate adherence, and the sex pilus forms during conjugation · flagella give motility","Spore: keratin-like coat with dipicolinic acid — resists heat, drying and chemicals"],
+ labs:["The Gram stain separates the two by peptidoglycan thickness"],
+ buzz:["β-lactamase sits in the gram-negative periplasm"],
+ src:["Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics"],
+ tx:["—"],q:["cell envelope","lipoteichoic acid","periplasm","porin","porins"]},
+
+gramstain:{n:"Gram stain & the poor stainers",k:"reg",p:"mlstain",enz:"Crystal violet held by thick peptidoglycan",inh:"—",fa:"123",hi:1,
+ mech:"Bacteria with a <b>thick peptidoglycan</b> layer keep the crystal violet and stain purple (gram-positive); thin-walled bacteria lose it and take the red counterstain (gram-negative, pink). It is the first-line test in identifying bacteria — but some organisms barely stain.",
+ find:["Treponema, Leptospira: too thin to see","Mycobacteria: cell wall rich in lipid (mycolic acid)","Mycoplasma, Ureaplasma: no cell wall","Legionella, Rickettsia, Chlamydia, Bartonella, Anaplasma, Ehrlichia: mostly intracellular — and Chlamydia lacks classic peptidoglycan"],
+ labs:["—"],
+ buzz:["These Little Microbes May Unfortunately Lack Real Color But Are Everywhere"],
+ src:["Robbins ch 8 — Infectious diseases","Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics"],
+ tx:["—"],q:["poorly on gram stain","stain poorly on gram stain"]},
+
+specialstains:{n:"Special stains",alias:"Giemsa · periodic acid-Schiff · Ziehl-Neelsen · India ink · silver",k:"reg",p:"mlstain",enz:"Match the stain to the organism it was built for",inh:"—",fa:"123",hi:1,
+ mech:"When the Gram stain will not do, each special stain targets a particular structure — mycolic acid for the acid-fast stain, glycogen and mucopolysaccharide for PAS, the polysaccharide capsule of Cryptococcus for India ink and mucicarmine, and fungal walls for silver.",
+ find:["Giemsa: H pylori, Chlamydia, Borrelia, Rickettsia, trypanosomes, Plasmodium","PAS: glycogen and mucopolysaccharides — Whipple disease (Tropheryma whipplei)","Ziehl-Neelsen (acid-fast): mycobacteria and Nocardia, plus Cryptosporidium oocysts — auramine-rhodamine is the cheaper, more sensitive screen","India ink: Cryptococcus · mucicarmine stains its thick capsule red","Silver: H pylori, Legionella, Bartonella henselae and fungi (Coccidioides, Pneumocystis, Aspergillus)","Fluorescent antibody: many bacteria and viruses, Pneumocystis, Giardia, Cryptosporidium — eg, FTA-ABS for syphilis"],
+ labs:["Nocardia takes a modified (weak) acid-fast stain; Actinomyces does not"],
+ buzz:["Help! Certain Bugs Really Try my Patience — Giemsa","HeLiCoPters Are silver"],
+ src:["Robbins ch 8 — Infectious diseases"],
+ tx:["—"],q:["giemsa","periodic acid schiff","pas stain","ziehl neelsen","acid fast stain","india ink","mucicarmine","silver stain","auramine rhodamine","fluorescent antibody"]},
+
+culturemedia:{n:"Special culture media",k:"reg",p:"mlmedia",enz:"Supply what the organism lacks, suppress what competes",inh:"—",fa:"124",hi:1,
+ mech:"Some bacteria grow only on media that supply what they cannot make or that suppress the organisms competing with them.",
+ find:["H influenzae: chocolate agar — factors V (NAD⁺) and X (hematin)","Neisseria: Thayer-Martin — vancomycin, trimethoprim, colistin and nystatin suppress the competition","B pertussis: Bordet-Gengou or Regan-Lowe","C diphtheriae: tellurite agar, Löffler medium","M tuberculosis: Löwenstein-Jensen, Middlebrook, rapid automated broth","M pneumoniae: Eaton agar — needs cholesterol","Lactose fermenters turn pink on MacConkey · E coli gives a green metallic sheen on EMB","Brucella, Francisella, Legionella, Pasteurella: buffered charcoal yeast extract with cysteine and iron","Fungi: Sabouraud agar"],
+ labs:["—"],
+ buzz:["Chocolate agar with factors V and X"],
+ tx:["—"],q:["chocolate agar","thayer martin","bordet gengou","regan lowe","tellurite agar","loffler","lowenstein jensen","eaton agar","macconkey agar","eosin methylene blue","charcoal yeast extract","sabouraud agar","culture media"]},
+
+anaerobes:{n:"Anaerobes & facultative anaerobes",k:"reg",p:"mllife",enz:"No catalase and/or superoxide dismutase",inh:"—",fa:"125",hi:1,
+ mech:"Anaerobes lack catalase and/or superoxide dismutase, so oxygen damages them. Facultative anaerobes use oxygen as the final electron acceptor when it is there and ferment when it is not.",
+ find:["Anaerobes: Clostridioides, Clostridium, Bacteroides, Fusobacterium, Actinomyces israelii","Foul-smelling, hard to culture, and make gas in tissue — normal gut flora, pathogenic elsewhere (eg, aspiration pneumonia)","Aminoglycosides miss anaerobes: their uptake into the bacterium needs oxygen","Facultative anaerobes: streptococci, staphylococci, enteric gram-negative rods"],
+ labs:["—"],
+ buzz:["Anaerobes Can’t Breathe Fresh Air"],
+ src:["Katzung ch 45 — Aminoglycosides & Spectinomycin"],
+ tx:["—"],q:["anaerobes","anaerobic bacteria","facultative anaerobe","facultative anaerobes"]},
+
+intracellular:{n:"Obligate & facultative intracellular bacteria",k:"reg",p:"mllife",enz:"Need host ATP, or survive inside phagocytes",inh:"—",fa:"125, 139",hi:1,
+ mech:"Obligate intracellular bacteria rely on host ATP and must live inside cells. Facultative intracellular bacteria can live either way and survive inside phagocytes — mycobacteria block phagosome–lysosome fusion, and Listeria breaks out of the phagosome into the cytosol.",
+ find:["Obligate: Rickettsia, Chlamydia, Coxiella","Facultative: Salmonella, Neisseria, Brucella, Mycobacterium, Listeria, Francisella, Legionella, Yersinia pestis","M leprae is obligate intracellular and cannot be grown in culture"],
+ labs:["—"],
+ buzz:["Stay inside when it is Really Chilly and Cold","Some Nasty Bugs May Live FacultativeLY"],
+ src:["Robbins ch 8 — Infectious diseases"],
+ tx:["—"],q:["obligate intracellular","facultative intracellular"]},
+
+ureasepos:{n:"Urease-positive organisms",k:"reg",p:"mlgroups",enz:"Urea → ammonia + CO₂, raising the pH",inh:"—",fa:"125",hi:0,
+ mech:"Urease splits urea into ammonia and CO₂ and raises the urine pH, which favours struvite (magnesium ammonium phosphate) stones — especially with Proteus.",
+ find:["Proteus, Cryptococcus, H pylori, Ureaplasma, Nocardia, Klebsiella, S epidermidis, S saprophyticus"],
+ labs:["—"],
+ buzz:["Pee CHUNKSS"],
+ src:["Robbins ch 20 — The kidney"],
+ tx:["—"],q:["urease positive"]},
+
+catalasepos:{n:"Catalase-positive organisms",k:"reg",p:"mlgroups",enz:"Catalase destroys H₂O₂ before myeloperoxidase can use it",inh:"—",fa:"126",hi:1,
+ mech:"Catalase breaks H₂O₂ down to water and oxygen before myeloperoxidase can turn it into microbicidal products. Patients with chronic granulomatous disease, who lack the NADPH oxidase that makes their own H₂O₂, therefore get recurrent infections with catalase-positive organisms.",
+ find:["Candida, Pseudomonas, Nocardia, B pertussis, Burkholderia cepacia, H pylori, Aspergillus, staphylococci, Serratia, Listeria, E coli"],
+ labs:["—"],
+ buzz:["Catalase Positive: Notoriously Big Bubbling HASSLE"],
+ src:["Robbins ch 6 — Diseases of the immune system"],
+ tx:["—"],q:["catalase positive","catalase positive organisms"]},
+
+pigments:{n:"Pigment-producing bacteria",k:"reg",p:"mlgroups",enz:"A colony’s colour can name it",inh:"—",fa:"126",hi:0,
+ mech:"A few bacteria announce themselves by colour.",
+ find:["Actinomyces israelii: yellow “sulfur” granules made of bacterial filaments","S aureus: golden yellow","P aeruginosa: blue-green (pyocyanin, pyoverdin)","Serratia marcescens: red"],
+ labs:["—"],
+ buzz:["Israel has yellow sand · aureus = gold · Aerugula is green"],
+ tx:["—"],q:["sulfur granules","pyocyanin","pigment producing"]},
+
+biofilm:{n:"Biofilm-producing bacteria",k:"reg",p:"mlvir",enz:"A sticky matrix on tissue or devices",inh:"—",fa:"126, 133",hi:1,
+ mech:"In a biofilm, bacteria live in a viscous layer of polysaccharide, protein and DNA stuck to tissue or to a device. It helps them adhere, shields them from immune effectors and makes them more resistant to antibiotics.",
+ find:["S epidermidis: catheter and prosthetic device infections","Viridans streptococci (S mutans, S sanguinis): dental plaque, infective endocarditis","P aeruginosa: airway colonization in cystic fibrosis, ventilator-associated pneumonia, contact-lens keratitis","Nontypeable H influenzae: otitis media"],
+ labs:["—"],
+ buzz:["S epidermidis on a prosthetic joint"],
+ src:["Robbins ch 8 — Infectious diseases"],
+ tx:["—"],q:["biofilm producing","biofilm forming"]},
+
+spores:{n:"Spore-forming bacteria",k:"reg",p:"mlgroups",enz:"Dormant, heat-resistant forms of gram-positive rods",inh:"—",fa:"127",hi:1,
+ mech:"Some gram-positive rods form spores when nutrients run short. Spores have no metabolic activity and resist heat and chemicals; dipicolinic acid in the core gives the heat resistance.",
+ find:["Bacillus anthracis, B cereus, Clostridium botulinum, Clostridioides difficile, C perfringens, C tetani","Killed by autoclaving — steam at 121°C for 15 minutes at 15 psi","Hydrogen peroxide and iodine-based agents are also sporicidal","Inhaled anthrax spores are carried to lymph nodes, where they germinate"],
+ labs:["—"],
+ buzz:["Autoclave to kill Bacillus and Clostridium (ABC)"],
+ src:["Robbins ch 8 — Infectious diseases"],
+ tx:["—"],q:["spore forming","spore formers","endospore","autoclave"]},
+
+virulence:{n:"Bacterial virulence factors",k:"reg",p:"mlvir",enz:"Capsule · protein A · IgA protease · M protein",inh:"—",fa:"127, 133",hi:1,
+ mech:"Virulence factors help bacteria evade the immune response. The <b>capsule</b> blocks phagocytosis and complement lysis; <b>protein A</b> of S aureus binds the Fc portion of IgG so antibodies cannot opsonize; <b>IgA protease</b> lets bacteria colonize mucosa; <b>M protein</b> of group A strep resists phagocytosis and resembles cardiac myosin.",
+ find:["IgA protease: S pneumoniae, H influenzae type b, Neisseria (SHiN)","Antibodies against M protein cross-react with the heart — rheumatic heart disease","Inside phagocytes: mycobacteria block phagosome–lysosome fusion; Listeria escapes into the cytosol","S aureus coagulase builds a fibrin clot around the organism — an abscess"],
+ labs:["—"],
+ buzz:["Protein A binds Fc — no opsonization"],
+ src:["Robbins ch 8 — Infectious diseases"],
+ tx:["—"],q:["virulence factor","virulence factors","iga protease"]},
+
+dnarep:{n:"DNA replication enzymes",k:"reg",p:"mbrep",enz:"Helicase · SSB · topoisomerase · primase · polymerase · ligase",inh:"—",fa:"36",hi:1,
+ mech:"Replication is semiconservative and runs 5′→3′ — continuously on the leading strand and in Okazaki fragments on the lagging strand. Helicase unwinds the template, single-strand binding proteins keep the strands apart, topoisomerases relieve supercoils, primase lays an RNA primer, DNA polymerase extends it, and DNA ligase seals the fragments.",
+ find:["Bacterial DNA polymerase III elongates and proofreads (3′→5′ exonuclease); DNA polymerase I removes the RNA primer (5′→3′ exonuclease) and fills the gap","Helicase is deficient in Bloom syndrome (BLM)","Topoisomerase I: irinotecan, topotecan · topoisomerase II: etoposide, teniposide · bacterial gyrase and topoisomerase IV: fluoroquinolones","Drugs with a modified 3′ OH stop chain elongation"],
+ labs:["Origins of replication are AT-rich — one in bacteria, many in eukaryotes"],
+ buzz:["Helicase halves DNA · ligase links it"],
+ src:["Marks ch 12 — Synthesis of DNA"],
+ tx:["—"],q:["dna polymerase i","dna polymerase iii","okazaki fragment","okazaki fragments","dna ligase","primase","helicase"]},
+
+telomerase:{n:"Telomerase",k:"reg",p:"mbrep",enz:"RNA-dependent DNA polymerase that rebuilds chromosome ends",inh:"—",fa:"36",hi:0,
+ mech:"Telomerase is a reverse transcriptase that carries its own RNA template and adds TTAGGG repeats to the 3′ ends of chromosomes, so they do not lose material with every round of replication.",
+ find:["Upregulated in progenitor cells and often in cancer","Downregulated in aging and progeria"],
+ labs:["—"],
+ buzz:["Telomerase TAGs for Greatness and Glory"],
+ src:["Marks ch 12 — Synthesis of DNA"],
+ tx:["—"],q:["telomerase","telomere","telomeres"]},
+
+mutations:{n:"Mutations in DNA",k:"reg",p:"mbrep",enz:"Silent << missense < nonsense < frameshift",inh:"—",fa:"38",hi:1,
+ mech:"Severity climbs from silent to missense to nonsense to frameshift. A transition swaps a purine for a purine (or a pyrimidine for a pyrimidine); a transversion swaps a purine for a pyrimidine.",
+ find:["Silent: same amino acid, usually the 3rd codon position (wobble)","Missense: a new amino acid — sickle cell disease (glutamic acid → valine)","Nonsense: an early stop codon (UGA, UAA, UAG)","Frameshift: an insertion or deletion not divisible by 3 — Duchenne, Tay-Sachs, cystic fibrosis","Splice-site: a retained intron — some β-thalassemias, Gaucher disease, Marfan syndrome","Slipped-strand mispairing at repeats → anticipation (Huntington CAG repeats)"],
+ labs:["—"],
+ buzz:["Stop the nonsense!"],
+ tx:["—"],q:["nonsense mutation","frameshift mutation","silent mutation","splice site mutation","transversion"]},
+
+transcription:{n:"Transcription & RNA polymerases",k:"reg",p:"mbtx",enz:"RNA polymerase II binds the promoter",inh:"—",fa:"40",hi:1,
+ mech:"RNA polymerase II binds the promoter — an AT-rich upstream sequence with TATA and CAAT boxes — and makes mRNA. Activators bind enhancers and repressors bind silencers, which can sit near, far from, or inside the gene. Eukaryotes use three RNA polymerases; bacteria use one.",
+ find:["RNA polymerase I: rRNA (nucleolus) · II: mRNA, miRNA, snRNA · III: 5S rRNA, tRNA","α-Amanitin (death cap mushroom) inhibits RNA polymerase II — severe hepatotoxicity","Rifamycins inhibit bacterial RNA polymerase; dactinomycin inhibits both","Promoter mutations sharply cut transcription","Epigenetics — DNA methylation, histone modification, noncoding RNA — changes expression without changing the sequence"],
+ labs:["—"],
+ buzz:["rRNA, mRNA, tRNA — polymerases I, II, III in order of use"],
+ src:["Marks ch 13 — Transcription: Synthesis of RNA","Marks ch 15 — Regulation of Gene Expression"],
+ tx:["—"],q:["rna polymerase","rna polymerase ii","enhancer","alpha amanitin","tata box","epigenetics"]},
+
+rnaproc:{n:"RNA processing & splicing",k:"reg",p:"mbtx",enz:"5′ cap · poly-A tail · splicing, all in the nucleus",inh:"—",fa:"40, 41",hi:1,
+ mech:"The first transcript (hnRNA) gets a 7-methylguanosine cap at the 5′ end, a poly-A tail at the 3′ end (signal AAUAAA), and has its introns spliced out — all in the nucleus — before the mRNA leaves for the cytosol. snRNPs assemble the spliceosome, which cuts at GU…AG and releases the intron as a lariat.",
+ find:["Alternative splicing makes several proteins from one gene — secreted vs membrane-bound Ig, tropomyosin variants","Spinal muscular atrophy: low SMN protein disrupts snRNP assembly → floppy baby","Anti-U1 snRNP antibodies: SLE, mixed connective tissue disease","P-bodies in the cytoplasm degrade or store mRNA","Kozak sequence: where most eukaryotic translation starts"],
+ labs:["—"],
+ buzz:["Introns stay in the nucleus, exons exit"],
+ src:["Marks ch 13 — Transcription: Synthesis of RNA"],
+ tx:["—"],q:["spliceosome","snrnp","alternative splicing","poly a tail","mrna processing","introns"]},
+
+lacop:{n:"Lac operon",k:"reg",p:"mbtx",enz:"Low glucose + lactose present = genes on",inh:"—",fa:"39",hi:0,
+ mech:"E coli prefers glucose. When glucose is low, cAMP rises and activates the catabolite activator protein (CAP), which boosts transcription; when lactose is present, allolactose pulls the repressor off the operator. The lac genes are strongly expressed only when glucose is low and lactose is available.",
+ find:["High glucose, no lactose: genes off","Low glucose, no lactose: repressor bound — genes off","High glucose, lactose present: very low (basal) expression"],
+ labs:["—"],
+ buzz:["cAMP–CAP pushes, the repressor blocks"],
+ src:["Marks ch 15 — Regulation of Gene Expression"],
+ tx:["—"],q:["lac operon"]},
+
+translation:{n:"Translation of mRNA — tRNA, ribosomes, steps",k:"reg",p:"mbtl",enz:"Charge the tRNA, read the codon, move three bases",inh:"—",fa:"42, 43",hi:1,
+ mech:"Aminoacyl-tRNA synthetase (one per amino acid, using ATP) attaches each amino acid to the 3′ CCA end of its tRNA and checks the match. The ribosome assembles on AUG; each aminoacyl-tRNA enters the A site, rRNA catalyzes the peptide bond, and the ribosome moves three nucleotides; release factors end translation at a stop codon.",
+ find:["Eukaryotes: 40S + 60S = 80S · bacteria: 30S + 50S = 70S","A site: incoming aminoacyl-tRNA · P site: growing peptide · E site: empty tRNA exits","ATP charges tRNA; GTP powers binding and translocation","AUG = methionine (N-formylmethionine in bacteria, which attracts neutrophils) · stops: UGA, UAA, UAG","Shine-Dalgarno sequence aligns the bacterial ribosome; initiation factors find the eukaryotic 5′ cap","Elongation factors are toxin targets — diphtheria and Pseudomonas exotoxin"],
+ labs:["—"],
+ buzz:["Going APE — A site, P site, E site"],
+ src:["Marks ch 14 — Translation: Synthesis of Proteins"],
+ tx:["—"],q:["ribosome","ribosomes","aminoacyl trna synthetase","trna","start codon","stop codon","elongation factor"]},
+
+ptm:{n:"Posttranslational modification & chaperones",k:"reg",p:"mbtl",enz:"Trim, modify, fold",inh:"—",fa:"43",hi:0,
+ mech:"After synthesis, proteins are trimmed (zymogens such as trypsinogen → trypsin) and covalently modified — phosphorylation, glycosylation, hydroxylation, methylation, acetylation, ubiquitination. Chaperones help them fold; heat shock proteins rise with heat, acid and hypoxia to prevent misfolding.",
+ find:["—"],
+ labs:["—"],
+ buzz:["Trypsinogen → trypsin"],
+ src:["Marks ch 14 — Translation: Synthesis of Proteins"],
+ tx:["—"],q:["posttranslational modification","posttranslational modifications","molecular chaperone"]},
+
+pcr:{n:"Polymerase chain reaction (PCR)",k:"reg",p:"mblab",enz:"Denature · anneal · elongate, then repeat",inh:"—",fa:"50",hi:1,
+ mech:"The polymerase chain reaction amplifies a chosen DNA fragment by cycling heat to separate the strands (denaturation), cooling so primers bind (annealing), and warming again so a heat-stable DNA polymerase adds dNTPs (elongation).",
+ find:["Diagnostic uses: neonatal HIV, herpes encephalitis"],
+ labs:["—"],
+ buzz:["Amplify a fragment you already know how to find"],
+ src:["Marks ch 16 — Use of Recombinant DNA Techniques in Medicine"],
+ tx:["—"],q:["=pcr"]},
+
+blots:{n:"Southern, Northern & Western blots",k:"reg",p:"mblab",enz:"Gel, membrane, probe — DNA, RNA, protein",inh:"—",fa:"51",hi:1,
+ mech:"Each blot separates molecules by gel electrophoresis, transfers them to a membrane and probes them: a Southern blot finds DNA with a labeled DNA probe, a Northern blot finds RNA, and a Western blot finds protein with a labeled antibody.",
+ find:["Southern: sizes a sequence — eg, counts CGG repeats in FMR1 for fragile X","Northern: mRNA level and size — shows splicing errors","Western: identifies and measures a protein"],
+ labs:["—"],
+ buzz:["SNoW DRoP: Southern DNA, Northern RNA, Western protein"],
+ src:["Marks ch 16 — Use of Recombinant DNA Techniques in Medicine"],
+ tx:["—"],q:["southern blot","northern blot","western blot"]},
+
+elisaflow:{n:"ELISA, flow cytometry & microarrays",k:"reg",p:"mblab",enz:"Antigen or antibody · cell by cell · many genes at once",inh:"—",fa:"52",hi:0,
+ mech:"ELISA detects an antigen (direct) or an antibody (indirect) using an enzyme-linked antibody — sensitive, but less specific than a Western blot, so it screens for HIV. Flow cytometry tags cells with fluorescent antibodies and reads them one at a time. Microarrays compare transcription of many genes and detect SNPs and copy-number variants.",
+ find:["Flow cytometry: leukemia immunophenotype, PNH, fetal red cells in maternal blood, CD4 count in HIV"],
+ labs:["—"],
+ buzz:["ELISA screens, Western blot confirms"],
+ src:["Marks ch 16 — Use of Recombinant DNA Techniques in Medicine"],
+ tx:["—"],q:["elisa","enzyme linked immunosorbent assay","flow cytometry","microarray","microarrays"]},
+
+cytogen:{n:"Karyotype, FISH & CRISPR",k:"reg",p:"mblab",enz:"Whole chromosomes · one locus · one cut",inh:"—",fa:"51, 53",hi:1,
+ mech:"Karyotyping uses colchicine to disrupt the mitotic spindle and arrest cultured cells in mitosis, then orders the stained chromosomes — for trisomies and sex-chromosome disorders. FISH uses a fluorescent probe to light up one locus — for microdeletions, translocations and duplications. CRISPR/Cas9 uses a guide RNA to take the Cas9 endonuclease to a target sequence and cut it.",
+ find:["Karyotype samples: blood, bone marrow, amniotic fluid, placenta","FISH microdeletion: one copy of the chromosome fluoresces at the locus, the other does not","After a CRISPR cut, nonhomologous end joining knocks a gene out; donor DNA with homology-directed repair knocks a sequence in","Molecular cloning makes human proteins in bacteria — insulin, growth hormone"],
+ labs:["—"],
+ buzz:["Microdeletion → FISH"],
+ src:["Marks ch 16 — Use of Recombinant DNA Techniques in Medicine"],
+ tx:["—"],q:["karyotyping","fluorescence in situ hybridization","=fish","crispr","cas9","molecular cloning"]},
+
+/* ── cell biology · hypertension drug choice · aging · Sturge-Weber · inborn errors by lab (m18) ──── */
+celltypes:{n:"Permanent, stable & labile cells",k:"reg",p:"cbnuc",enz:"Whether a cell can leave G0 decides how it regenerates",inh:"—",fa:"44",hi:1,
+ mech:"Tissues regenerate according to how readily their cells divide. <b>Permanent</b> cells stay in G0 and are replaced only from stem cells. <b>Stable</b> (quiescent) cells rest in G0 but re-enter G1 when stimulated. <b>Labile</b> cells never go to G0 — they divide continuously with a short G1.",
+ find:["Permanent: neurons, skeletal and cardiac muscle, RBCs","Stable: hepatocytes, lymphocytes, proximal tubule cells, periosteal cells","Labile: bone marrow, gut epithelium, skin, hair follicles, germ cells"],
+ labs:["Labile cells are the ones chemotherapy hits hardest"],
+ buzz:["Hair loss, mucositis and low counts after chemotherapy = labile cells"],
+ src:["Robbins ch 3 — Inflammation and repair"],
+ tx:["—"],q:["permanent cells","stable cells","labile cells","quiescent cells","labile tissue","labile tissues"]},
+
+organelles:{n:"Rough ER, smooth ER & Golgi",k:"reg",p:"cbtraf",enz:"Make on the RER, modify and sort in the Golgi",inh:"—",fa:"45",hi:1,
+ mech:"Proteins bound for secretion, for the membrane or for other organelles are made on the <b>rough ER</b>, where N-linked oligosaccharides are added. The <b>Golgi</b> is the distribution center: it modifies N-oligosaccharides on asparagine, adds O-oligosaccharides on serine and threonine, and tags lysosomal enzymes with <b>mannose-6-phosphate</b>. The <b>smooth ER</b> has no ribosomes; it makes steroids and detoxifies drugs and poisons.",
+ find:["RER-rich cells: mucus-secreting goblet cells, antibody-secreting plasma cells · Nissl bodies are the RER of neurons (peptide neurotransmitters)","Free ribosomes: cytosolic, peroxisomal and mitochondrial proteins","SER-rich cells: hepatocytes and steroid-producing cells of the adrenal cortex and gonads · glucose-6-phosphatase sits in the SER","Endosomes sort material from outside the cell or from the Golgi — on to lysosomes for destruction, or back to the membrane or Golgi"],
+ labs:["I-cell disease: the Golgi fails to add mannose-6-phosphate, so lysosomal enzymes are secreted instead (↑ plasma levels)"],
+ buzz:["N-linked sugars in the eNdoplasmic reticulum · O-linked in the GOlgi","Plasma cells are packed with RER"],
+ src:["Pawlina ch 2 — Cell Cytoplasm"],
+ tx:["—"],q:["smooth endoplasmic reticulum","golgi apparatus","nissl body","nissl bodies","free ribosomes","n linked glycosylation","o linked glycosylation"]},
+
+vesicles:{n:"Vesicle traffic — SRP, COPI, COPII & clathrin",k:"reg",p:"cbtraf",enz:"Coated vesicles move cargo between compartments",inh:"—",fa:"45",hi:1,
+ mech:"The <b>signal recognition particle</b> (SRP), an abundant cytosolic ribonucleoprotein, carries the ribosome and its growing polypeptide to the RER; without it, protein piles up in the cytosol. Coated vesicles then move cargo forward to the Golgi, back to the ER, and out to lysosomes or in from the cell surface.",
+ find:["COPII: ER → cis-Golgi (anterograde)","COPI: Golgi → Golgi and cis-Golgi → ER (retrograde)","Clathrin: trans-Golgi → lysosomes · plasma membrane → endosomes (receptor-mediated endocytosis, eg, LDL receptor)"],
+ labs:["—"],
+ buzz:["Two (COPII) steps forward, one (COPI) step back"],
+ src:["Pawlina ch 2 — Cell Cytoplasm"],
+ tx:["—"],q:["signal recognition particle","copii","clathrin","receptor mediated endocytosis","vesicular trafficking"]},
+
+cytoskel:{n:"Cytoskeleton — the three filament types",k:"reg",p:"cbskel",enz:"Microfilaments · intermediate filaments · microtubules",inh:"—",fa:"46",hi:1,
+ mech:"A network of protein fibers that supports the cell’s structure, moves the cell and its organelles, and divides it. Each filament type has its own job.",
+ find:["Microfilaments (actin): muscle contraction, cytokinesis, phagocytosis, microvilli","Intermediate filaments: hold the structure — vimentin, desmin, cytokeratin, lamins, GFAP, neurofilaments","Microtubules: movement and division — cilia, flagella, mitotic spindle, axonal trafficking, centrioles"],
+ labs:["Intermediate filament proteins are tissue specific — eg, cytokeratins in epithelial cells, vimentin in cells of mesenchymal origin"],
+ buzz:["Vimentin, desmin, cytokeratin, lamins, GFAP, neurofilaments = intermediate filaments"],
+ src:["Pawlina ch 2 — Cell Cytoplasm"],
+ tx:["—"],q:["cytoskeleton","intermediate filament","intermediate filaments","microfilament","microfilaments","vimentin","cytokeratin","lamins"]},
+
+motors:{n:"Microtubules, dynein & kinesin",k:"reg",p:"cbskel",enz:"Dynein walks to the minus end, kinesin to the plus end",inh:"—",fa:"46",hi:1,
+ mech:"Microtubules are hollow cylinders of <b>α- and β-tubulin</b> heterodimers (each dimer binds 2 GTP), with the negative end near the nucleus and the positive end toward the periphery. Motor proteins carry cargo along them: <b>dynein</b> toward the minus end (retrograde, toward the cell body) and <b>kinesin</b> toward the plus end (anterograde).",
+ find:["Retrograde transport by dynein carries tetanus toxin, poliovirus, rabies virus and HSV to the neuronal cell body","HSV reactivation travels back out by kinesin (anterograde)","Slow anterograde transport is the rate-limiting step in peripheral nerve regeneration","Drugs that act on microtubules: mebendazole, griseofulvin, colchicine, vinca alkaloids, taxanes"],
+ labs:["Colchicine binds tubulin and blocks polymerization — neutrophils cannot migrate into a gouty joint"],
+ buzz:["Microtubules get constructed very terribly — mebendazole, griseofulvin, colchicine, vincas, taxanes"],
+ src:["Pawlina ch 2 — Cell Cytoplasm"],
+ tx:["—"],q:["dynein","kinesin","mebendazole","griseofulvin"]},
+
+pcd:{n:"Primary ciliary dyskinesia & Kartagener syndrome",alias:"Kartagener syndrome · immotile cilia",k:"dz",p:"cbskel",enz:"Dynein arm defect → immotile cilia",inh:"—",fa:"47",hi:1,
+ mech:"Autosomal recessive defect in the <b>dynein arms</b> — the ATPases that bend motile cilia (a 9 doublet + 2 singlet axoneme) by sliding the doublets. Without ciliary beating, the airways cannot clear debris, embryonic organs may not orient, and sperm and fallopian-tube transport fail. <b>Kartagener syndrome</b> is PCD with situs inversus, the most common type.",
+ find:["Recurrent sinusitis, ear infections and <b>bronchiectasis</b>","Situs inversus (Kartagener syndrome)","Hearing loss from eustachian tube dysfunction","Infertility — immotile sperm; ↑ ectopic pregnancy risk from fallopian tube cilia","Contrast: dysgenesis of nonmotile (primary) cilia → polycystic kidney disease, mitral valve prolapse, retinal degeneration"],
+ labs:["↓ Nasal nitric oxide — the screening test","Electron microscopy of a nasal biopsy shows the cilia"],
+ buzz:["Bronchiectasis + chronic sinusitis + situs inversus","Infertile man with recurrent sinus infections"],
+ src:["Pawlina ch 5 — Epithelial Tissue","Robbins ch 15 — The lung"],
+ tx:["—"],q:["primary ciliary dyskinesia","kartagener","kartagener syndrome","immotile cilia","situs inversus","dynein arm","dynein arms"]},
+
+nakpump:{n:"Na⁺/K⁺-ATPase",alias:"sodium-potassium pump",k:"reg",p:"cbmem",enz:"3 Na⁺ out, 2 K⁺ in, for one ATP",inh:"—",fa:"47",hi:1,
+ mech:"Sits in the plasma membrane with its ATP site on the cytosolic side. Each ATP moves <b>3 Na⁺ out and 2 K⁺ in</b> — the pump is phosphorylated as Na⁺ leaves and dephosphorylated as K⁺ enters. Moving more positive charge out than in makes it <b>electrogenic</b>. It keeps intracellular Na⁺ low and K⁺ high, and it controls cell volume.",
+ find:["Cardiac glycosides (digoxin, ouabain) inhibit it → ↑ intracellular Na⁺ → less Na⁺/Ca²⁺ exchange → ↑ intracellular Ca²⁺ → ↑ contractility","Without the pump most cells would swell and burst"],
+ labs:["—"],
+ buzz:["2 strikes? K, you’re still in. 3 strikes? Nah, you’re out!"],
+ src:["Costanzo ch 1 — Cellular physiology","Guyton ch 4 — Transport of Substances Through Cell Membranes"],
+ tx:["—"],q:["sodium potassium pump","sodium potassium atpase","na+ k+ pump","electrogenic pump","ouabain"]},
+
+celljunctions:{n:"Epithelial cell junctions",k:"reg",p:"cbmem",enz:"Seal, anchor, communicate",inh:"—",fa:"482",hi:1,
+ mech:"Junctions seal an epithelium, tie its cells to each other and to the basement membrane, and let neighboring cells communicate. From apical to basal: tight junction, adherens junction, desmosome, gap junction, hemidesmosome.",
+ find:["<b>Tight junction</b> (zonula occludens): claudins and occludins — block paracellular movement of solutes","<b>Adherens junction</b> (zonula adherens, belt desmosome): Ca²⁺-dependent cadherins link the actin cytoskeletons — loss of E-cadherin promotes metastasis","<b>Desmosome</b> (macula adherens, spot desmosome): intermediate filaments — autoantibodies to desmoglein 3 ± desmoglein 1 cause pemphigus vulgaris","<b>Gap junction</b>: connexons — electrical and chemical communication","<b>Hemidesmosome</b>: anchors basal-cell keratin to the basement membrane — autoantibodies cause bullous pemphigoid","<b>Integrins</b>: bind collagen, laminin and fibronectin in the basement membrane"],
+ labs:["—"],
+ buzz:["Hemidesmosomes are down “bullow” — bullous pemphigoid"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["—"],q:["tight junction","tight junctions","zonula occludens","adherens junction","zonula adherens","macula adherens","hemidesmosome","hemidesmosomes","connexon","connexons","claudins","occludins","e cadherin"]},
+
+exocrine:{n:"Exocrine secretion — merocrine, apocrine, holocrine",k:"reg",p:"cbmem",enz:"How much of the cell leaves with the product",inh:"—",fa:"482",hi:0,
+ mech:"Exocrine glands release products other than hormones through ducts to a surface; endocrine glands secrete hormones into the blood. They differ in how the product leaves the cell.",
+ find:["Merocrine: exocytosis of vesicles at the apical membrane — salivary and sweat glands (the most common type)","Apocrine: the apical part of the cell pinches off with the product — mammary gland (lipid droplets in milk)","Holocrine: the whole cell disintegrates into the secretion — sebaceous glands"],
+ labs:["—"],
+ buzz:["Sebaceous gland = holocrine"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["—"],q:["merocrine","holocrine","apocrine secretion","holocrine secretion","merocrine secretion"]},
+
+ccbs:{n:"Dihydropyridine calcium channel blockers",k:"drug",p:"hxfirst",enz:"L-type Ca²⁺ channels of vascular smooth muscle",inh:"—",fa:"323",hi:1,
+ mech:"Block voltage-dependent <b>L-type calcium channels</b>. The dihydropyridines — amlodipine, nifedipine, nicardipine, clevidipine, nimodipine — act mainly on <b>vascular smooth muscle</b> and dilate arteries; verapamil and diltiazem act mainly on the heart. Vascular selectivity: amlodipine = nifedipine > diltiazem > verapamil.",
+ find:["Uses: hypertension, angina (including vasospastic), Raynaud phenomenon","Nimodipine: subarachnoid hemorrhage — prevents delayed ischemia","Nicardipine, clevidipine (IV): hypertensive urgency or emergency","Adverse: peripheral edema, flushing, dizziness, gingival hyperplasia","Reflex sympathetic activation with slight tachycardia keeps cardiac output up"],
+ labs:["Less cardiac depression than verapamil or diltiazem"],
+ buzz:["The -dipines work on the vessels; verapamil and diltiazem work on the heart","Peripheral edema after starting amlodipine"],
+ src:["Katzung ch 11 — Antihypertensive Agents","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes"],
+ tx:["—"],q:["dihydropyridine","dihydropyridines","amlodipine","nifedipine","nicardipine","clevidipine","nimodipine","felodipine","=calcium channel blocker","=calcium channel blockers"]},
+
+hydralazine:{n:"Hydralazine",k:"drug",p:"hxother",enz:"↑ cGMP → arteriolar smooth muscle relaxation",inh:"—",fa:"323",hi:1,
+ mech:"Raises cGMP and relaxes smooth muscle — <b>arterioles more than veins</b>, so it cuts afterload. The fall in pressure sets off reflex tachycardia and fluid retention, so it is usually given with a β-blocker.",
+ find:["Uses: severe hypertension (particularly acute); heart failure, combined with an organic nitrate","Safe in pregnancy","Adverse: compensatory tachycardia (contraindicated in angina/CAD), fluid retention, headache, angina","<b>Drug-induced lupus</b> — no renal damage, reversed when the drug is stopped"],
+ labs:["—"],
+ buzz:["Pregnant patient with severe hypertension — hydralazine","Hydralazine + nitrate for heart failure"],
+ src:["Katzung ch 11 — Antihypertensive Agents"],
+ tx:["—"],q:["hydralazine"]},
+
+minoxidil:{n:"Minoxidil",k:"drug",p:"hxother",enz:"Opens K⁺ channels in arteriolar smooth muscle",inh:"—",fa:"676",hi:0,
+ mech:"Its active metabolite, minoxidil sulfate, <b>opens potassium channels</b>, holding smooth muscle at its resting potential so it contracts less. Like hydralazine it dilates arterioles but not veins — and it is more powerful.",
+ find:["Uses: severe refractory hypertension; topically, androgenetic alopecia","Given with a β-blocker and a diuretic to blunt reflex tachycardia and fluid retention","Adverse: tachycardia, palpitations, angina, edema; headache, sweating, <b>hypertrichosis</b>"],
+ labs:["—"],
+ buzz:["Hair growth: a side effect turned into a baldness treatment"],
+ src:["Katzung ch 11 — Antihypertensive Agents"],
+ tx:["—"],q:["minoxidil"]},
+
+nitroprusside:{n:"Nitroprusside & fenoldopam",k:"drug",p:"hxemerg",enz:"NO donor · dopamine D1 agonist",inh:"—",fa:"323",hi:1,
+ mech:"<b>Nitroprusside</b> releases NO directly, raising cGMP and dilating arteries and veins equally. It acts within minutes and wears off within minutes, so it is given by IV infusion. <b>Fenoldopam</b> is a dopamine D1 agonist that dilates coronary, peripheral, renal and splanchnic arteries and promotes natriuresis.",
+ find:["Hypertensive emergency: labetalol, clevidipine, fenoldopam, nicardipine, nitroprusside","Nitroprusside releases <b>cyanide</b>; rhodanese, with a sulfur donor, turns it into thiocyanate, which the kidney clears slowly","Nitroprusside solution is light-sensitive — made fresh and covered","Fenoldopam: also postoperative hypertension · hypotension, tachycardia, flushing, headache, nausea"],
+ labs:["Cyanide toxicity with nitroprusside"],
+ buzz:["Prolonged nitroprusside infusion → think cyanide"],
+ src:["Katzung ch 11 — Antihypertensive Agents"],
+ tx:["—"],q:["nitroprusside","sodium nitroprusside","fenoldopam"]},
+
+htncompelling:{n:"Antihypertensive choice by comorbidity",k:"reg",p:"hxpick",enz:"Let one drug treat two diseases — and avoid the one that worsens the second",inh:"—",fa:"321",hi:1,
+ mech:"Thiazides, ACE inhibitors, ARBs and calcium channel blockers all reduce the complications of primary hypertension and can be used first. A coexisting disease then steers the choice: pick a drug that helps both conditions, and avoid one that harms the second.",
+ find:["Heart failure: ACE inhibitor/ARB, β-blocker (compensated HF), aldosterone antagonist, diuretic","Diabetes: ACE inhibitor/ARB (protect against nephropathy), CCB, thiazide, β-blocker (can mask hypoglycemia)","Asthma: ARB, CCB, thiazide, cardioselective β-blocker — avoid nonselective β-blockers and ACE inhibitors (cough confusion)","Pregnancy: hydralazine, methyldopa, labetalol, nifedipine","Gout: ACE inhibitor, ARB (especially losartan), CCB — avoid loop and thiazide diuretics","Osteoporosis: thiazide (↑ Ca²⁺ reabsorption)","Pheochromocytoma: α-blockade (phenoxybenzamine, phentolamine) before β-blockade","Angina: β-blocker or CCB · BPH in men: α₁-blocker"],
+ labs:["β-blockers are not first line for uncomplicated hypertension","African American patients respond better on average to diuretics and CCBs than to β-blockers or ACE inhibitors","Three drugs needed: diuretic + ACE inhibitor or ARB + CCB"],
+ buzz:["Hypertensive moms love nifedipine","Hypertension + osteoporosis → thiazide"],
+ src:["Katzung ch 11 — Antihypertensive Agents"],
+ tx:["—"],q:["compelling indication","compelling indications","first line antihypertensive","choice of antihypertensive"]},
+
+normalaging:{n:"Normal aging — organ by organ",k:"reg",p:"agbody",enz:"Less physiologic reserve (homeostenosis), not disease",inh:"—",fa:"225, 290",hi:1,
+ mech:"A time-dependent, progressive decline in organ function that raises susceptibility to disease — linked to telomere shortening, DNA methylation changes and mitochondrial dysfunction. These changes are not diseases themselves, but they shrink the reserve (<b>homeostenosis</b>) that a stressor can draw on.",
+ find:["Heart and vessels: ↓ arterial compliance, ↑ aortic diameter, sigmoid septum, aortic and mitral valve calcification, ↓ maximum heart rate","Lungs: ↑ lung compliance, ↓ chest wall compliance, ↓ FEV₁ and FVC, ↑ RV with TLC unchanged, ↑ A-a gradient, blunted response to hypoxia and hypercapnia","Kidneys: ↓ GFR and renal blood flow (fewer nephrons)","Immune: ↓ naïve B and T cells with memory cells preserved — weaker response to new antigens and vaccines","Muscle and bone: ↓ muscle mass (sarcopenia), ↓ bone mass (osteopenia), thinner joint cartilage","Brain and senses: ↓ brain volume and blood flow with function preserved · presbyopia, presbycusis, ↓ smell and taste","Skin: ↓ dermal collagen and elastin (wrinkles, senile purpura), ↓ sweat glands (heat stroke), ↓ sebaceous glands (xerosis)","Gut: ↓ LES tone, ↓ gastric mucosal protection, ↓ colonic motility"],
+ labs:["Lipofuscin: yellow-brown “wear and tear” pigment from lipid peroxidation — a normal autopsy finding in heart, liver, colon, kidney and eye","Aortic stiffening raises pulse pressure — isolated systolic hypertension in older adults"],
+ buzz:["Older lung: ↑ RV, TLC unchanged","Lipofuscin = wear-and-tear pigment"],
+ src:["Foundations of Osteopathic Medicine ch 69 — Osteopathic Considerations in Geriatric Medicine","OCOM OMM — OMS2 written midterm study guide"],
+ tx:["—"],q:["=normal aging","homeostenosis","lipofuscin","sarcopenia","immunosenescence","senile purpura","isolated systolic hypertension"]},
+
+geripk:{n:"Drug handling in older adults",k:"reg",p:"agdrug",enz:"↓ Renal clearance · ↓ phase I metabolism · more fat, less water",inh:"—",fa:"225",hi:1,
+ mech:"The most important change is the <b>fall in renal function</b>. Creatinine clearance declines in about two thirds of older adults, but serum creatinine stays near normal because muscle mass — and creatinine production — fall too. Half-lives lengthen, and renally cleared drugs accumulate unless the dose is reduced in size or frequency.",
+ find:["Distribution: ↓ lean body mass and body water, ↑ fat — changes the loading dose a drug needs","↓ Albumin (binds weak acids) and ↑ α₁-acid glycoprotein (binds bases) shift the free fraction","Metabolism: phase I (P450) reactions fall most; phase II conjugation changes little; ↓ liver blood flow slows high-extraction drugs","Absorption: little change with age","Digoxin: smaller loading dose (smaller volume of distribution) and often a smaller maintenance dose (lower clearance)","Older adults are more sensitive to sedative-hypnotics and to the respiratory effects of opioids"],
+ labs:["Serum creatinine alone is not an adequate measure of renal function in older adults","Cockcroft-Gault estimate of GFR (× 0.85 for women) — a population estimate; up to a third of older adults keep normal clearance"],
+ buzz:["A normal creatinine in an 85-year-old does not mean a normal GFR","Start low and go slow"],
+ src:["Katzung ch 60 — Special Aspects of Geriatric Pharmacology","Foundations of Osteopathic Medicine ch 69 — Osteopathic Considerations in Geriatric Medicine"],
+ tx:["—"],q:["geriatric pharmacology","geriatric pharmacokinetics","cockcroft gault"]},
+
+beers:{n:"Beers criteria & polypharmacy",k:"reg",p:"agdrug",enz:"Potentially inappropriate medications for older adults",inh:"—",fa:"240, 575, 593",hi:1,
+ mech:"Adverse drug reactions climb with the number of drugs — from about 10% of patients taking one drug to nearly 100% of those taking ten. Medication-review tools catch the risky ones: the <b>Beers Criteria</b> list potentially inappropriate medications to avoid or use with caution in older adults; <b>STOPP/START</b> flags drugs to stop and treatments that are missing; the Medication Appropriateness Index scores each drug on 10 criteria.",
+ find:["Every medication needs a clear indication, at the lowest effective dose","Anticholinergics: confusion and delirium, urinary retention with BPH, acute angle-closure glaucoma","TCAs cause more confusion and hallucinations in older adults — nortriptyline (a secondary amine) is better tolerated","Sedative-hypnotics: ataxia, falls and fractures","Lithium is renally cleared — lower the dose, and lower it again with a thiazide","Ask about herbal products — eg, ginkgo with low-dose aspirin raises bleeding risk"],
+ labs:["Long-term care residents average 6–8 prescriptions each"],
+ buzz:["New confusion in an older adult — read the medication list first"],
+ src:["Katzung ch 60 — Special Aspects of Geriatric Pharmacology","Foundations of Osteopathic Medicine ch 69 — Osteopathic Considerations in Geriatric Medicine","OCOM OMM — OMS2 written midterm study guide"],
+ tx:["—"],q:["beers criteria","beers list","polypharmacy","potentially inappropriate medication","potentially inappropriate medications","stopp criteria"],
+ ref:[{a:"2023 American Geriatrics Society Beers Criteria Update Expert Panel",t:"American Geriatrics Society 2023 updated AGS Beers Criteria for potentially inappropriate medication use in older adults",j:"J Am Geriatr Soc",y:2023,pmid:"37139824",doi:"10.1111/jgs.18372"}]},
+
+falls:{n:"Falls in older adults",k:"dz",p:"agsyn",enz:"Stacked intrinsic, environmental and drug risks",inh:"—",hi:1,
+ mech:"Falls are a major geriatric syndrome with overlapping risks. Failing vision removes the visual cues for balance; sarcopenia weakens the leg muscles that try to compensate; vibratory sense, the righting reflex and reaction time all decline; and sedating drugs add ataxia.",
+ find:["Independent predictors of hip fracture from a fall: slow gait, trouble with a tandem walk, poor visual acuity, small calf circumference","Timed Up and Go: stand from a chair, walk 3 m (10 ft), turn, walk back, sit — more than 12 seconds means high fall risk","Benzodiazepines are strongly associated with falls, delirium and depression","Weak gluteus medius → sideways falls, which carry the highest hip-fracture risk","Restricted ankle dorsiflexion, psoas tension and a forward-head posture all impair balance","Delirium and acute illness predispose to falls"],
+ labs:["—"],
+ buzz:["TUG over 12 seconds = high fall risk","Older adult on a benzodiazepine who keeps falling"],
+ src:["OCOM OMM — OMS2 written midterm study guide","Foundations of Osteopathic Medicine ch 69 — Osteopathic Considerations in Geriatric Medicine","Katzung ch 60 — Special Aspects of Geriatric Pharmacology"],
+ tx:["Keep the patient mobile","Review and cut sedating drugs","OMT can address dizziness and improved balance scores in studies"],q:["fall risk","falls in older adults","falls in the elderly","timed up and go"]},
+
+elderabuse:{n:"Elder abuse",k:"dz",p:"agsyn",enz:"Physical or financial abuse — or neglect — by a caregiver",inh:"—",fa:"269",hi:0,
+ mech:"Dependent older adults are sometimes abused physically or financially by caregivers, at home or in nursing homes. Abuse should be considered as a cause of nonadherence and of unexplained injuries.",
+ find:["Clues: unexplained bruises, dehydration, missed medications","Mistreatment is part of the geriatric assessment"],
+ labs:["—"],
+ buzz:["Bruises, dehydration and missed medications in a dependent older adult"],
+ src:["Katzung ch 60 — Special Aspects of Geriatric Pharmacology","Foundations of Osteopathic Medicine ch 69 — Osteopathic Considerations in Geriatric Medicine"],
+ tx:["Abuse of older adults is an exception to confidentiality"],q:["elder abuse","elder mistreatment","elder neglect","abuse of older adults"]},
+
+fourms:{n:"The 4Ms of age-friendly care",k:"reg",p:"agcare",enz:"What Matters · Medication · Mentation · Mobility",inh:"—",hi:0,
+ mech:"An age-friendly health systems framework, assessed and acted on at the Medicare Annual Wellness Visit. Care of older adults is interprofessional and aims at prevention, health maintenance and function.",
+ find:["What Matters: goals and priorities, preferred language, culture, health beliefs, family support — and advance care planning","Medication: polypharmacy, high-risk drugs, side effects","Mentation: mood, cognition and memory, hearing, vision","Mobility: fall risk, osteoarthritis, osteoporosis, feet and gait","Also: nutrition, swallowing, teeth, pressure injuries, mistreatment, infections, bowel and bladder control"],
+ labs:["—"],
+ buzz:["4Ms: What Matters, Medication, Mentation, Mobility"],
+ src:["Foundations of Osteopathic Medicine ch 69 — Osteopathic Considerations in Geriatric Medicine"],
+ tx:["—"],q:["4ms","age friendly","annual wellness visit"]},
+
+geriomt:{n:"OMT in older adults",k:"reg",p:"agcare",enz:"Treat the physiologic age, not the chronologic age",inh:"—",hi:1,
+ mech:"Frail older adults have little homeostatic reserve and respond strongly to physical treatment, so OMT is adapted: a smaller dose, slow and gentle forces, and a technique chosen for the tissue causing the problem.",
+ find:["Articular restriction: low-velocity, moderate-to-high-amplitude articulation rather than rapid, high-force thrusts","Myofascial tension: gentle myofascial release, soft-tissue stretching, modified muscle energy","Neural reflex irritability: indirect techniques — counterstrain, facilitated positional release","Viscerosomatic reflexes: treat the visceral disease; keep the manipulation gentle","Start low and go slow; do not chase a youthful range of motion; use exhalation as the corrective force","Treat lumbar spine, psoas, ilia and pubes before the sacrum","Rebound reactions (fatigue, more pain) come on slower in older adults and last 12–48 h — space treatments 3 days to 2 weeks if they occur","No better after 2–3 treatments → reconsider the diagnosis"],
+ labs:["Absolute contraindications: acute fracture or instability, ruptured AAA, bony metastasis at the segment, spinal osteomyelitis or diskitis, cauda equina syndrome, medical instability","Severe osteoporosis: avoid high-force compression of the rib cage — use gentle indirect techniques instead"],
+ buzz:["Osteoporotic patient → indirect techniques, no thrust on the ribs"],
+ src:["OCOM OMM — OMS2 written midterm study guide","Somatic Dysfunction in Osteopathic Family Medicine ch 16 — The Geriatric Patient","Foundations of Osteopathic Medicine ch 69 — Osteopathic Considerations in Geriatric Medicine"],
+ tx:["—"],q:["geriatric omt","omt in older adults","omt in the elderly"]},
+
+sturgeweber:{n:"Sturge-Weber syndrome",k:"dz",p:"tbrain",enz:"Somatic activating GNAQ mutation (mosaic)",inh:"—",fa:"539",hi:1,
+ mech:"A congenital, <b>nonhereditary</b> anomaly of neural crest derivatives, caused by somatic mosaicism for an activating mutation in one copy of <b>GNAQ</b>. Capillary vascular malformations appear in the face, the leptomeninges and the eye.",
+ find:["<b>Port-wine stain</b> (nevus flammeus) in the CN V1/V2 distribution","Ipsilateral leptomeningeal angioma with calcifications → seizures","Intellectual disability, hemiplegia","Episcleral hemangioma → ↑ intraocular pressure → early-onset glaucoma"],
+ labs:["Skull radiopacities · calcified leptomeningeal angioma"],
+ buzz:["Port-wine stain over the forehead + seizures + glaucoma"],
+ src:["Robbins ch 11 — Blood vessels","Robbins ch 29 — The eye"],
+ tx:["—"],q:["sturge weber","sturge weber syndrome","encephalotrigeminal angiomatosis","port wine stain","nevus flammeus","gnaq"]},
+
+iempattern:{n:"Sorting inborn errors by the labs",k:"reg",p:"iemnh3",enz:"Ammonia · anion gap · ketones · glucose · lactate",inh:"—",fa:"75, 80–81, 83, 85, 87",hi:1,
+ mech:"A handful of bedside labs splits the acutely ill inborn errors into groups, and each pattern points to where the pathway is blocked.",
+ find:["High ammonia, no acidosis, low BUN: urea cycle defect — ↑ orotic acid says OTC; normal orotic acid says CPS I","High ammonia with anion-gap acidosis, ketosis and low glucose: organic acidemia (propionic, methylmalonic)","Low glucose with low or absent ketones: fatty-acid oxidation defect (MCAD, carnitine deficiency)","Severe fasting hypoglycemia with high lactate, triglycerides and uric acid and a big liver: von Gierke disease","High lactate with high alanine: pyruvate dehydrogenase deficiency","High orotic acid with megaloblastic anemia and normal ammonia: hereditary orotic aciduria"],
+ labs:["—"],
+ buzz:["Hyperammonemia without acidosis = urea cycle","Hypoketotic hypoglycemia = fatty-acid oxidation"],
+ src:["Marks ch 36 — Fate of Amino Acid Nitrogen: Urea Cycle","Marks ch 30 — Oxidation of Fatty Acids and Ketone Bodies","Marks ch 26 — Formation and Degradation of Glycogen"],
+ tx:["—"],q:["hypoketotic hypoglycemia","urea cycle disorder","urea cycle disorders","urea cycle defect"]},
+
+iemclues:{n:"Clues that suggest an inborn error",k:"reg",p:"iemclue",enz:"Odor, eyes, liver, brain",inh:"—",fa:"35, 78, 82, 86",hi:1,
+ mech:"Inborn errors show themselves through the metabolite that piles up or the product that is missing. General clues: dysmorphic features, deafness, self-mutilation, abnormal hair, abnormal body or urine odor, hepatosplenomegaly or cardiomegaly, hydrops; abnormal tone, lethargy, coma or seizures; poor feeding, recurrent vomiting, jaundice; and eye findings.",
+ find:["Odor: maple syrup or burnt sugar (MSUD) · musty (PKU)","Eyes: cataracts (galactosemia), cherry-red macula (Tay-Sachs, Niemann-Pick), dislocated lens (homocystinuria)","Dark urine on standing in air: alkaptonuria","Red-orange “sand” of urate crystals in the diaper with self-mutilation: Lesch-Nyhan syndrome","Symptoms after milk: galactosemia · after fruit, juice or honey: hereditary fructose intolerance"],
+ labs:["Reducing sugar in the urine with a negative glucose dipstick — a nonspecific screen for carbohydrate disorders"],
+ buzz:["Newborn with vomiting, poor feeding and urine that smells like maple syrup"],
+ src:["Robbins ch 10 — Diseases of infancy and childhood"],
+ tx:["—"],q:["inborn error of metabolism","inborn errors of metabolism"]},
+
+newbornscreen:{n:"Newborn screening",k:"reg",p:"iemclue",enz:"Find treatable disorders before symptoms",inh:"—",fa:"58, 82, 115",hi:1,
+ mech:"Screening matters most where early treatment prevents death or intellectual disability. PKU and galactosemia are the classic examples: affected infants are normal at birth, and restricting phenylalanine or galactose early prevents the damage.",
+ find:["PKU: ↑ phenylalanine — normal at birth because maternal enzyme covered the fetus","Galactosemia: GALT activity on a dried blood spot","Cystic fibrosis: ↑ immunoreactive trypsinogen (clogged pancreatic ducts)","SCID: ↓ T-cell receptor excision circles (TRECs)"],
+ labs:["A positive screen must be confirmed — eg, red-cell GALT for galactosemia, sweat chloride for CF"],
+ buzz:["Low TRECs on the newborn screen — SCID"],
+ src:["Robbins ch 10 — Diseases of infancy and childhood"],
+ tx:["—"],q:["newborn screening","newborn screen","neonatal screening","immunoreactive trypsinogen","trec","trecs"]},
+
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
  mech:"A seizure is synchronized, high-frequency firing of a population of neurons. It runs in three phases: <b>aura</b> (the early part — odd smells or tastes), <b>ictal</b> (first symptom to end of seizure activity) and <b>postictal</b> (gradual recovery to baseline). <b>Epilepsy</b> is a disorder of recurrent, <b>unprovoked</b> seizures.",
@@ -15731,8 +16153,8 @@ MAPS.tumgu = {
 MAPS.tumcns = {
  t:"Brain, Thyroid, Skin & Bone Tumors", sub:"Each tumor pinned to its cell of origin · bone tumors sorted by where on the bone they sit",
  w:3300, h:3318,
- fa:"37, 220, 347, 356, 394, 445, 447, 470–471, 494, 540, 542, 734",
- src:["Robbins ch 7 — Neoplasia","Robbins ch 17 — The gastrointestinal tract","Robbins ch 24 — The endocrine system","Robbins ch 25 — The skin","Robbins ch 26 — Bones, joints, and soft tissue tumors","Robbins ch 28 — The central nervous system","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 54 — Cancer Chemotherapy","Marks ch 17 — The Molecular Biology of Cancer","Fundamental Neuroscience ch 7 — The Meninges"],
+ fa:"37, 220, 347, 356, 394, 445, 447, 470–471, 494, 539–540, 542, 734",
+ src:["Robbins ch 7 — Neoplasia","Robbins ch 11 — Blood vessels","Robbins ch 17 — The gastrointestinal tract","Robbins ch 24 — The endocrine system","Robbins ch 25 — The skin","Robbins ch 26 — Bones, joints, and soft tissue tumors","Robbins ch 28 — The central nervous system","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 54 — Cancer Chemotherapy","Marks ch 17 — The Molecular Biology of Cancer","Fundamental Neuroscience ch 7 — The Meninges"],
  comps:[
   {x:140,y:110,w:3020,h:600,l:"Adult brain tumors — by cell of origin"},
   {x:140,y:780,w:3020,h:480,l:"Childhood brain tumors"},
@@ -15791,6 +16213,8 @@ MAPS.tumcns = {
   {id:"hydro",l:"Noncommunicating hydrocephalus",x:1620,y:1000,p:"tbrain",s:"headache · vomiting · papilledema"},
   {id:"nf1C",l:"Neurofibromatosis type 1",x:2220,y:870,p:"tbrain",s:"optic pathway gliomas",m:["nf1"]},
   {id:"turc",l:"Turcot syndrome",x:2220,y:950,p:"tbrain",s:"FAP or Lynch + brain tumor",m:["polyposis"]},
+  {id:"tscC",l:"Tuberous sclerosis",x:2220,y:1030,p:"tbrain",s:"subependymal giant cell astrocytoma",m:["tsc"]},
+  {id:"swC",l:"Sturge-Weber syndrome",x:2220,y:1110,p:"tbrain",s:"leptomeningeal angioma · port-wine stain",m:["sturgeweber"]},
   {id:"folc",l:"Follicular cell",x:420,y:1460,p:"tthyroid"},
   {id:"ptc",l:"Papillary carcinoma",x:1020,y:1420,p:"tthyroid",s:"most common · Orphan Annie nuclei · psammoma · nodes",m:["thyroidca"]},
   {id:"ftc",l:"Follicular carcinoma",x:1020,y:1500,p:"tthyroid",s:"capsular invasion · spreads by blood",m:["thyroidca"]},
@@ -22079,12 +22503,462 @@ MAPS.environ = {
   {a:"n6",b:"n11",p:"ennutr"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["index","Index"]];
+MAPS.microlab = {
+ t:"Microbiology Lab & Virulence", sub:"What the stain is seeing · which stain and which medium for which bug · oxygen and life inside cells · the organism groups worth memorizing · how bacteria dodge the immune system",
+ w:3300, h:1960,
+ fa:"122–127, 133, 139",
+ src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 20 — The kidney","Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics","Katzung ch 45 — Aminoglycosides & Spectinomycin"],
+ comps:[
+  {x:140,y:110,w:3020,h:280,l:"Structure — what the stain is seeing"},
+  {x:140,y:450,w:3020,h:280,l:"Stains"},
+  {x:140,y:790,w:3020,h:200,l:"Culture media"},
+  {x:140,y:1050,w:3020,h:200,l:"Oxygen, and living inside cells"},
+  {x:140,y:1310,w:3020,h:200,l:"Groups worth memorizing"},
+  {x:140,y:1570,w:3020,h:200,l:"Virulence and how genes spread"}],
+ panels:[
+  {x:140,y:1830,w:1480,h:110,kw:150,t:"Hemolysis on blood agar",rows:[
+   ["α — partial, green","S pneumoniae · viridans streptococci"],
+   ["β — complete, clear","S aureus · group A and B strep · Listeria"]]}],
+ nodes:[
+  {id:"b1",l:"Gram-positive wall",x:420,y:170,p:"mlstruct",s:"thick peptidoglycan · lipoteichoic acid",m:["bactenvelope"]},
+  {id:"b2",l:"Gram-negative wall",x:1020,y:170,p:"mlstruct",s:"thin peptidoglycan · outer membrane with LPS",m:["bactenvelope","endotoxin"]},
+  {id:"b3",l:"Periplasm",x:1620,y:170,p:"mlstruct",s:"between the membranes · β-lactamases collect",m:["bactenvelope","abxresistance"]},
+  {id:"b4",l:"Penicillin-binding proteins",x:2220,y:170,p:"mlstruct",s:"cross-link peptidoglycan · β-lactam target",m:["bactenvelope","penicillins"]},
+  {id:"b5",l:"Capsule",x:420,y:250,p:"mlstruct",s:"polysaccharide · blocks phagocytosis",m:["virulence","encaps"]},
+  {id:"b6",l:"Slime layer",x:1020,y:250,p:"mlstruct",s:"sticks to catheters · biofilm",m:["biofilm"]},
+  {id:"b7",l:"Pili and flagella",x:1620,y:250,p:"mlstruct",s:"adherence · sex pilus · motility",m:["bactenvelope","conjugation"]},
+  {id:"b8",l:"Spore",x:2220,y:250,p:"mlstruct",s:"dipicolinic acid core · heat resistant",m:["spores"]},
+  {id:"b9",l:"Lipid A · lipoteichoic acid",x:420,y:330,p:"mlstruct",s:"both induce TNF and IL-1",m:["endotoxin"]},
+  {id:"b10",l:"Porins",x:1020,y:330,p:"mlstruct",s:"channels through the outer membrane",m:["bactenvelope"]},
+  {id:"s1",l:"Gram stain",x:420,y:510,p:"mlstain",s:"purple = thick wall · pink = thin wall",m:["gramstain"]},
+  {id:"s2",l:"Too thin to see",x:1020,y:510,p:"mlstain",s:"Treponema · Leptospira",m:["gramstain","syphilis"]},
+  {id:"s3",l:"No cell wall",x:1620,y:510,p:"mlstain",s:"Mycoplasma · Ureaplasma",m:["gramstain","mycoplasma"]},
+  {id:"s4",l:"Mostly intracellular",x:2220,y:510,p:"mlstain",s:"Legionella · Rickettsia · Chlamydia · Bartonella",m:["gramstain"]},
+  {id:"s5",l:"Lipid-rich wall",x:2820,y:510,p:"mlstain",s:"mycobacteria",m:["gramstain","tb"]},
+  {id:"s6",l:"Acid-fast (Ziehl-Neelsen)",x:420,y:590,p:"mlstain",s:"mycobacteria · Nocardia · Cryptosporidium",m:["specialstains"]},
+  {id:"s7",l:"Giemsa",x:1020,y:590,p:"mlstain",s:"Chlamydia · Borrelia · Rickettsia · Plasmodium",m:["specialstains"]},
+  {id:"s8",l:"PAS",x:1620,y:590,p:"mlstain",s:"glycogen · Whipple disease",m:["specialstains","whipple"]},
+  {id:"s9",l:"India ink · mucicarmine",x:2220,y:590,p:"mlstain",s:"Cryptococcus capsule",m:["specialstains","crypto"]},
+  {id:"s10",l:"Silver",x:2820,y:590,p:"mlstain",s:"H pylori · Legionella · Bartonella · fungi",m:["specialstains"]},
+  {id:"s11",l:"Fluorescent antibody",x:420,y:670,p:"mlstain",s:"eg, FTA-ABS for syphilis",m:["specialstains"]},
+  {id:"s12",l:"Nocardia vs Actinomyces",x:1020,y:670,p:"mlstain",s:"weakly acid-fast vs not acid-fast",m:["specialstains","nocardia","actinomyces"]},
+  {id:"c1",l:"Chocolate agar",x:420,y:850,p:"mlmedia",s:"H influenzae · factors V and X",m:["culturemedia","hflu"]},
+  {id:"c2",l:"Thayer-Martin",x:1020,y:850,p:"mlmedia",s:"Neisseria · antibiotics kill the competition",m:["culturemedia","gonococcus"]},
+  {id:"c3",l:"Bordet-Gengou · Regan-Lowe",x:1620,y:850,p:"mlmedia",s:"B pertussis",m:["culturemedia","pertussis"]},
+  {id:"c4",l:"Tellurite · Löffler",x:2220,y:850,p:"mlmedia",s:"C diphtheriae",m:["culturemedia","diphtheria"]},
+  {id:"c5",l:"Löwenstein-Jensen",x:2820,y:850,p:"mlmedia",s:"M tuberculosis",m:["culturemedia","tb"]},
+  {id:"c6",l:"Eaton agar",x:420,y:930,p:"mlmedia",s:"Mycoplasma — needs cholesterol",m:["culturemedia","mycoplasma"]},
+  {id:"c7",l:"MacConkey · EMB",x:1020,y:930,p:"mlmedia",s:"lactose fermenters pink · E coli green sheen",m:["culturemedia","ecoli"]},
+  {id:"c8",l:"Charcoal yeast extract",x:1620,y:930,p:"mlmedia",s:"Legionella · Brucella · Francisella · Pasteurella",m:["culturemedia","legionella"]},
+  {id:"c9",l:"Sabouraud agar",x:2220,y:930,p:"mlmedia",s:"fungi",m:["culturemedia"]},
+  {id:"o1",l:"Anaerobes",x:420,y:1110,p:"mllife",s:"no catalase or superoxide dismutase",m:["anaerobes"]},
+  {id:"o2",l:"Clostridium · Bacteroides · Actinomyces",x:1020,y:1110,p:"mllife",s:"foul-smelling · gas in tissue · gut flora",m:["anaerobes","cperfringens"]},
+  {id:"o3",l:"Aminoglycosides miss them",x:1620,y:1110,p:"mllife",s:"uptake needs oxygen",m:["anaerobes","aminoglycosides"]},
+  {id:"o4",l:"Facultative anaerobes",x:2220,y:1110,p:"mllife",s:"strep · staph · enteric rods",m:["anaerobes"]},
+  {id:"o5",l:"Obligate intracellular",x:420,y:1190,p:"mllife",s:"Rickettsia · Chlamydia · Coxiella — need host ATP",m:["intracellular","chlamydia","rmsf"]},
+  {id:"o6",l:"Facultative intracellular",x:1020,y:1190,p:"mllife",s:"Salmonella · Listeria · mycobacteria · Legionella",m:["intracellular","listeria"]},
+  {id:"o7",l:"Surviving inside phagocytes",x:1620,y:1190,p:"mllife",s:"block phagosome fusion · escape to cytosol",m:["intracellular","virulence"]},
+  {id:"g1",l:"Encapsulated",x:420,y:1370,p:"mlgroups",s:"SHiNE SKiS · cleared by the spleen",m:["encaps","asplenia"]},
+  {id:"g2",l:"Urease-positive",x:1020,y:1370,p:"mlgroups",s:"Pee CHUNKSS · struvite stones",m:["ureasepos","stones"]},
+  {id:"g3",l:"Catalase-positive",x:1620,y:1370,p:"mlgroups",s:"the infections of chronic granulomatous disease",m:["catalasepos","cgd"]},
+  {id:"g4",l:"Spore formers",x:2220,y:1370,p:"mlgroups",s:"Bacillus · Clostridium — autoclave at 121°C",m:["spores"]},
+  {id:"g5",l:"Pigments",x:2820,y:1370,p:"mlgroups",s:"sulfur granules · gold · blue-green · red",m:["pigments"]},
+  {id:"g6",l:"Biofilm producers",x:420,y:1450,p:"mlgroups",s:"S epidermidis · viridans strep · Pseudomonas",m:["biofilm"]},
+  {id:"v1",l:"Protein A",x:420,y:1630,p:"mlvir",s:"S aureus · binds the Fc of IgG",m:["virulence","saureus"]},
+  {id:"v2",l:"IgA protease",x:1020,y:1630,p:"mlvir",s:"S pneumoniae · Hib · Neisseria",m:["virulence"]},
+  {id:"v3",l:"M protein",x:1620,y:1630,p:"mlvir",s:"group A strep · mimics cardiac myosin",m:["virulence","gas","rheumfever"]},
+  {id:"v4",l:"Coagulase",x:2220,y:1630,p:"mlvir",s:"fibrin clot around the organism · abscess",m:["virulence","saureus"]},
+  {id:"v5",l:"Gene transfer",x:420,y:1710,p:"mlvir",s:"transformation · conjugation · transduction",m:["transform","conjugation","transduction"]},
+  {id:"gx1",l:"→ Bacterial Toxins & Gene Transfer",x:1020,y:1710,p:"neutral",k:"ghost",go:"toxins"},
+  {id:"gx2",l:"→ Gram-Positive Bacteria",x:1620,y:1710,p:"neutral",k:"ghost",go:"gpos"},
+  {id:"gx3",l:"→ Gram-Negative Bacteria & Poor Stainers",x:2220,y:1710,p:"neutral",k:"ghost",go:"gneg"}],
+ edges:[
+  {a:"b1",b:"b2",p:"mlstruct",arrow:"none",dash:true},
+  {a:"b2",b:"b3",p:"mlstruct",arrow:"none"},
+  {a:"b3",b:"b4",p:"mlstruct",arrow:"none",dash:true},
+  {a:"s1",b:"s2",p:"mlstain",arrow:"none",dash:true},
+  {a:"s2",b:"s3",p:"mlstain",arrow:"none",dash:true},
+  {a:"s3",b:"s4",p:"mlstain",arrow:"none",dash:true},
+  {a:"s4",b:"s5",p:"mlstain",arrow:"none",dash:true},
+  {a:"s1",b:"s6",p:"mlstain",arrow:"none",dash:true},
+  {a:"s6",b:"s12",p:"mlstain",arrow:"none",dash:true},
+  {a:"o1",b:"o2",p:"mllife"},
+  {a:"o2",b:"o3",p:"mllife",arrow:"none",dash:true},
+  {a:"o5",b:"o6",p:"mllife",arrow:"none",dash:true},
+  {a:"o6",b:"o7",p:"mllife"},
+  {a:"v1",b:"v2",p:"mlvir",arrow:"none",dash:true},
+  {a:"v2",b:"v3",p:"mlvir",arrow:"none",dash:true},
+  {a:"v3",b:"v4",p:"mlvir",arrow:"none",dash:true}]
+};
+
+MAPS.molbio = {
+ t:"Molecular Biology & Lab Techniques", sub:"DNA replication and its drugs · how mutations change a protein · transcription, RNA processing and splicing · translation and the antibiotics that block it · the lab tests, molecule by molecule",
+ w:3300, h:1880,
+ fa:"36, 38–43, 50–53, 187",
+ src:["Marks ch 12 — Synthesis of DNA","Marks ch 13 — Transcription: Synthesis of RNA","Marks ch 14 — Translation: Synthesis of Proteins","Marks ch 15 — Regulation of Gene Expression","Marks ch 16 — Use of Recombinant DNA Techniques in Medicine"],
+ comps:[
+  {x:140,y:110,w:3020,h:280,l:"DNA replication"},
+  {x:140,y:450,w:3020,h:200,l:"Mutations — how much the protein changes"},
+  {x:140,y:710,w:3020,h:280,l:"Transcription & RNA processing"},
+  {x:140,y:1050,w:3020,h:200,l:"Translation & after"},
+  {x:140,y:1310,w:3020,h:280,l:"Lab techniques"}],
+ panels:[
+  {x:140,y:1660,w:1480,h:160,kw:170,t:"Which test for which question",rows:[
+   ["DNA","Southern blot · PCR to amplify"],
+   ["RNA","Northern blot · microarray for many genes"],
+   ["Protein","Western blot · ELISA (antigen or antibody)"],
+   ["Chromosomes","karyotype for whole chromosomes · FISH for one locus"],
+   ["Cells","flow cytometry"]]},
+  {x:1680,y:1660,w:1480,h:116,kw:170,t:"Ribosomes and the drugs that block them",rows:[
+   ["30S","aminoglycosides · tetracyclines"],
+   ["50S","chloramphenicol · clindamycin · macrolides · linezolid"],
+   ["Humans","80S — spared"]]}],
+ nodes:[
+  {id:"r1",l:"Helicase",x:420,y:170,p:"mbrep",s:"unwinds the template · Bloom syndrome",m:["dnarep"]},
+  {id:"r2",l:"Single-strand binding proteins",x:1020,y:170,p:"mbrep",s:"keep the strands apart",m:["dnarep"]},
+  {id:"r3",l:"Topoisomerases",x:1620,y:170,p:"mbrep",s:"I: one-strand break · II: two-strand break",m:["dnarep","topo1","topo2"]},
+  {id:"r4",l:"Fluoroquinolones",x:2220,y:170,p:"mbrep",s:"bacterial gyrase and topoisomerase IV",m:["fluoroquinolones"]},
+  {id:"r5",l:"Primase",x:420,y:250,p:"mbrep",s:"lays the RNA primer",m:["dnarep"]},
+  {id:"r6",l:"DNA polymerase III",x:1020,y:250,p:"mbrep",s:"elongates 5′→3′ · proofreads 3′→5′",m:["dnarep"]},
+  {id:"r7",l:"DNA polymerase I",x:1620,y:250,p:"mbrep",s:"removes the primer · fills the gap",m:["dnarep"]},
+  {id:"r8",l:"DNA ligase",x:2220,y:250,p:"mbrep",s:"seals Okazaki fragments",m:["dnarep"]},
+  {id:"r9",l:"Telomerase",x:420,y:330,p:"mbrep",s:"adds TTAGGG · up in cancer, down in aging",m:["telomerase"]},
+  {id:"r10",l:"Chain terminators",x:1020,y:330,p:"mbrep",s:"modified 3′ OH stops elongation",m:["dnarep"]},
+  {id:"r11",l:"Repair defects",x:1620,y:330,p:"mbrep",s:"xeroderma pigmentosum · Lynch syndrome",m:["xp","lynch"]},
+  {id:"u1",l:"Silent",x:420,y:510,p:"mbrep",s:"same amino acid · wobble position",m:["mutations"]},
+  {id:"u2",l:"Missense",x:1020,y:510,p:"mbrep",s:"new amino acid · sickle cell disease",m:["mutations","sickle"]},
+  {id:"u3",l:"Nonsense",x:1620,y:510,p:"mbrep",s:"early stop codon",m:["mutations"]},
+  {id:"u4",l:"Frameshift",x:2220,y:510,p:"mbrep",s:"Duchenne · Tay-Sachs · cystic fibrosis",m:["mutations","dmd","cf"]},
+  {id:"u5",l:"Splice-site",x:420,y:590,p:"mbrep",s:"retained intron · some β-thalassemias",m:["mutations"]},
+  {id:"u6",l:"Repeat expansion",x:1020,y:590,p:"mbrep",s:"anticipation · Huntington CAG",m:["mutations","huntington"]},
+  {id:"t1",l:"Promoter · TATA box",x:420,y:770,p:"mbtx",s:"RNA polymerase II binds here",m:["transcription"]},
+  {id:"t2",l:"Enhancers · silencers",x:1020,y:770,p:"mbtx",s:"activators and repressors, near or far",m:["transcription"]},
+  {id:"t3",l:"RNA polymerases I, II, III",x:1620,y:770,p:"mbtx",s:"rRNA · mRNA · tRNA",m:["transcription"]},
+  {id:"t4",l:"Polymerase blockers",x:2220,y:770,p:"mbtx",s:"α-amanitin · rifampin · dactinomycin",m:["transcription","rifamycins"]},
+  {id:"t5",l:"5′ cap · poly-A tail",x:420,y:850,p:"mbtx",s:"7-methylguanosine · AAUAAA signal",m:["rnaproc"]},
+  {id:"t6",l:"Splicing",x:1020,y:850,p:"mbtx",s:"snRNPs · spliceosome · GU…AG lariat",m:["rnaproc"]},
+  {id:"t7",l:"Alternative splicing",x:1620,y:850,p:"mbtx",s:"several proteins from one gene",m:["rnaproc"]},
+  {id:"t8",l:"snRNP disease",x:2220,y:850,p:"mbtx",s:"SMA · anti-U1 snRNP in SLE and MCTD",m:["rnaproc","sma","mctd"]},
+  {id:"t9",l:"Lac operon",x:420,y:930,p:"mbtx",s:"low glucose + lactose → genes on",m:["lacop"]},
+  {id:"t10",l:"Epigenetics",x:1020,y:930,p:"mbtx",s:"methylation · histones · noncoding RNA",m:["transcription"]},
+  {id:"l1",l:"tRNA charging",x:420,y:1110,p:"mbtl",s:"aminoacyl-tRNA synthetase · ATP · CCA end",m:["translation"]},
+  {id:"l2",l:"Initiation on AUG",x:1020,y:1110,p:"mbtl",s:"methionine · fMet in bacteria",m:["translation"]},
+  {id:"l3",l:"Elongation",x:1620,y:1110,p:"mbtl",s:"A → P → E sites · GTP · rRNA makes the bond",m:["translation"]},
+  {id:"l4",l:"Termination",x:2220,y:1110,p:"mbtl",s:"UGA · UAA · UAG · release factors",m:["translation"]},
+  {id:"l5",l:"Toxins on elongation factor",x:420,y:1190,p:"mbtl",s:"diphtheria · Pseudomonas exotoxin",m:["translation","diphtheria","pseudomonas"]},
+  {id:"l6",l:"30S blockers",x:1020,y:1190,p:"mbtl",s:"aminoglycosides · tetracyclines",m:["aminoglycosides","tetracyclines"]},
+  {id:"l7",l:"50S blockers",x:1620,y:1190,p:"mbtl",s:"chloramphenicol · macrolides · linezolid",m:["chloramphenicol","macrolides","linezolid"]},
+  {id:"l8",l:"After translation",x:2220,y:1190,p:"mbtl",s:"trimming · phosphorylation · chaperones",m:["ptm"]},
+  {id:"x1",l:"PCR",x:420,y:1370,p:"mblab",s:"denature · anneal · elongate",m:["pcr"]},
+  {id:"x2",l:"Southern blot",x:1020,y:1370,p:"mblab",s:"DNA · CGG repeats in fragile X",m:["blots","fragilex"]},
+  {id:"x3",l:"Northern blot",x:1620,y:1370,p:"mblab",s:"RNA · splicing errors",m:["blots"]},
+  {id:"x4",l:"Western blot",x:2220,y:1370,p:"mblab",s:"protein · labeled antibody",m:["blots"]},
+  {id:"x5",l:"ELISA",x:420,y:1450,p:"mblab",s:"antigen or antibody · HIV screening",m:["elisaflow","hiv"]},
+  {id:"x6",l:"Flow cytometry",x:1020,y:1450,p:"mblab",s:"cell by cell · CD4 count · leukemia",m:["elisaflow"]},
+  {id:"x7",l:"Microarray",x:1620,y:1450,p:"mblab",s:"many genes · SNPs · copy-number variants",m:["elisaflow"]},
+  {id:"x8",l:"Karyotype",x:2220,y:1450,p:"mblab",s:"colchicine arrests mitosis · trisomies",m:["cytogen"]},
+  {id:"x9",l:"FISH",x:420,y:1530,p:"mblab",s:"one locus · microdeletions",m:["cytogen"]},
+  {id:"x10",l:"CRISPR/Cas9",x:1020,y:1530,p:"mblab",s:"guide RNA takes Cas9 to the target",m:["cytogen"]},
+  {id:"x11",l:"Molecular cloning",x:1620,y:1530,p:"mblab",s:"insulin and growth hormone made in bacteria",m:["cytogen"]}],
+ edges:[
+  {a:"r1",b:"r2",p:"mbrep"},
+  {a:"r2",b:"r3",p:"mbrep",arrow:"none",dash:true},
+  {a:"r3",b:"r4",p:"mbrep",arrow:"none",dash:true},
+  {a:"r5",b:"r6",p:"mbrep"},
+  {a:"r6",b:"r7",p:"mbrep"},
+  {a:"r7",b:"r8",p:"mbrep"},
+  {a:"u1",b:"u2",p:"mbrep"},
+  {a:"u2",b:"u3",p:"mbrep"},
+  {a:"u3",b:"u4",p:"mbrep"},
+  {a:"t1",b:"t3",p:"mbtx",arrow:"none",dash:true},
+  {a:"t5",b:"t6",p:"mbtx"},
+  {a:"t6",b:"t7",p:"mbtx"},
+  {a:"l1",b:"l2",p:"mbtl"},
+  {a:"l2",b:"l3",p:"mbtl"},
+  {a:"l3",b:"l4",p:"mbtl"},
+  {a:"x2",b:"x3",p:"mblab",arrow:"none",dash:true},
+  {a:"x3",b:"x4",p:"mblab",arrow:"none",dash:true}]
+};
+
+MAPS.cellbio = {
+ t:"Cell Biology & Histology", sub:"Which cells can divide · how a protein is made, tagged and shipped · the cytoskeleton, its motors and cilia · the pump, the junctions and the glands",
+ w:3300, h:1680,
+ fa:"44–47, 116, 482",
+ src:["Pawlina ch 2 — Cell Cytoplasm","Pawlina ch 5 — Epithelial Tissue","Robbins ch 3 — Inflammation and repair","Robbins ch 15 — The lung","Costanzo ch 1 — Cellular physiology","Guyton ch 4 — Transport of Substances Through Cell Membranes"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"Which cells can divide"},
+  {x:140,y:310,w:3020,h:360,l:"Making, tagging & shipping proteins"},
+  {x:140,y:730,w:3020,h:360,l:"Cytoskeleton, motors & cilia"},
+  {x:140,y:1150,w:3020,h:280,l:"Membrane, junctions & glands"}],
+ panels:[
+  {x:140,y:1490,w:1480,h:132,kw:150,t:"Which cells are rich in what",rows:[
+   ["Rough ER","goblet cells · plasma cells · neurons (Nissl bodies)"],
+   ["Smooth ER","hepatocytes · adrenal cortex · gonads"],
+   ["Peroxisome","VLCFA β-oxidation · plasmalogens · bile acids"]]}],
+ nodes:[
+  {id:"k1",l:"Permanent cells",x:420,y:180,p:"cbnuc",s:"neurons · cardiac and skeletal muscle · RBCs",m:["celltypes"]},
+  {id:"k2",l:"Stable cells",x:1020,y:180,p:"cbnuc",s:"hepatocytes · lymphocytes · proximal tubule",m:["celltypes"]},
+  {id:"k3",l:"Labile cells",x:1620,y:180,p:"cbnuc",s:"marrow · gut · skin · hair · germ cells",m:["celltypes"]},
+  {id:"k4",l:"Chemotherapy hits labile cells",x:2220,y:180,p:"cbnuc",s:"hair loss · mucositis · low counts",m:["celltypes","chemophase"]},
+  {id:"kx",l:"→ Cell Cycle & Repair",x:2820,y:180,p:"neutral",k:"ghost",go:"cellcycle"},
+  {id:"t1",l:"Signal recognition particle",x:420,y:370,p:"cbtraf",s:"brings the ribosome to the RER",m:["vesicles"]},
+  {id:"t2",l:"Rough ER",x:1020,y:370,p:"cbtraf",s:"secreted proteins · N-linked sugars",m:["organelles"]},
+  {id:"t3",l:"COPII forward · COPI back",x:1620,y:370,p:"cbtraf",s:"ER → cis-Golgi · Golgi → ER",m:["vesicles"]},
+  {id:"t4",l:"Golgi apparatus",x:2220,y:370,p:"cbtraf",s:"O-linked sugars · sorting",m:["organelles"]},
+  {id:"t5",l:"Clathrin vesicles",x:2820,y:370,p:"cbtraf",s:"Golgi → lysosome · LDL endocytosis",m:["vesicles"]},
+  {id:"t6",l:"Free ribosomes",x:420,y:450,p:"cbtraf",s:"cytosolic, peroxisomal, mitochondrial proteins",m:["organelles"]},
+  {id:"t7",l:"Smooth ER",x:1020,y:450,p:"cbtraf",s:"steroids · detoxification · glucose-6-phosphatase",m:["organelles"]},
+  {id:"t8",l:"Endosomes",x:1620,y:450,p:"cbtraf",s:"sort to lysosome or back to the membrane",m:["organelles"]},
+  {id:"t9",l:"Mannose-6-phosphate tag",x:2220,y:450,p:"cbtraf",s:"marks enzymes for the lysosome",m:["organelles"]},
+  {id:"tx",l:"→ Lysosome",x:2820,y:450,p:"neutral",k:"ghost",go:"lysosome"},
+  {id:"t10",l:"Proteasome",x:420,y:530,p:"cbtraf",s:"degrades polyubiquitin-tagged proteins",m:["proteasome"]},
+  {id:"t11",l:"I-cell disease",x:2220,y:530,p:"cbtraf",s:"no tag → enzymes secreted · coarse face",m:["icell"]},
+  {id:"t12",l:"Peroxisome",x:420,y:610,p:"cbtraf",s:"VLCFA β-oxidation · branched-chain α-oxidation",m:["peroxreg"]},
+  {id:"t13",l:"Zellweger syndrome",x:1020,y:610,p:"cbtraf",s:"PEX genes — no peroxisomes",m:["zellweger"]},
+  {id:"t14",l:"Refsum disease",x:1620,y:610,p:"cbtraf",s:"phytanic acid · α-oxidation",m:["refsum"]},
+  {id:"t15",l:"Adrenoleukodystrophy",x:2220,y:610,p:"cbtraf",s:"X-linked · VLCFA buildup",m:["xald"]},
+  {id:"s1",l:"Microfilaments",x:420,y:790,p:"cbskel",s:"actin · microvilli · cytokinesis",m:["cytoskel"]},
+  {id:"s2",l:"Intermediate filaments",x:1020,y:790,p:"cbskel",s:"vimentin · desmin · cytokeratin · GFAP",m:["cytoskel"]},
+  {id:"s3",l:"Microtubules",x:1620,y:790,p:"cbskel",s:"α/β-tubulin · spindle · cilia",m:["motors"]},
+  {id:"s4",l:"Drugs on microtubules",x:2220,y:790,p:"cbskel",s:"mebendazole · griseofulvin · colchicine · vincas · taxanes",m:["motors","vinca","taxane","gout"]},
+  {id:"s5",l:"Dynein — retrograde",x:420,y:870,p:"cbskel",s:"plus end → minus end · toward the cell body",m:["motors"]},
+  {id:"s6",l:"Riding dynein inward",x:1020,y:870,p:"cbskel",s:"tetanus toxin · polio · rabies · HSV",m:["motors","tetanus","rabies","polio","hsvvzv"]},
+  {id:"s7",l:"Kinesin — anterograde",x:1620,y:870,p:"cbskel",s:"minus end → plus end · HSV reactivation",m:["motors"]},
+  {id:"s8",l:"Chédiak-Higashi syndrome",x:2220,y:870,p:"cbskel",s:"LYST · phagosome-lysosome fusion fails",m:["chediak"]},
+  {id:"s9",l:"Motile cilia",x:420,y:950,p:"cbskel",s:"9 + 2 axoneme · dynein arms bend it",m:["pcd"]},
+  {id:"s10",l:"Primary ciliary dyskinesia",x:1020,y:950,p:"cbskel",s:"Kartagener: + situs inversus · infertility",m:["pcd"]},
+  {id:"s11",l:"Bronchiectasis",x:1620,y:950,p:"cbskel",s:"mucus not cleared · recurrent infection",m:["bronchiectasis"]},
+  {id:"s12",l:"Primary (nonmotile) cilia",x:420,y:1030,p:"cbskel",s:"sensors · dysgenesis → PKD, MVP",m:["pcd","adpkd","mvp"]},
+  {id:"m1",l:"Na⁺/K⁺-ATPase",x:420,y:1210,p:"cbmem",s:"3 Na⁺ out · 2 K⁺ in · electrogenic",m:["nakpump"]},
+  {id:"m2",l:"Digoxin",x:1020,y:1210,p:"cbmem",s:"blocks the pump → ↑ Ca²⁺ → contractility",m:["digoxin","nakpump"]},
+  {id:"m3",l:"Exocrine glands",x:1620,y:1210,p:"cbmem",s:"merocrine · apocrine · holocrine",m:["exocrine"]},
+  {id:"mx",l:"→ Collagen & ECM",x:2220,y:1210,p:"neutral",k:"ghost",go:"collagen"},
+  {id:"m4",l:"Tight junction",x:420,y:1290,p:"cbmem",s:"claudins · occludins · seal",m:["celljunctions"]},
+  {id:"m5",l:"Adherens junction",x:1020,y:1290,p:"cbmem",s:"cadherins · actin",m:["celljunctions"]},
+  {id:"m6",l:"Desmosome",x:1620,y:1290,p:"cbmem",s:"desmoglein · intermediate filaments",m:["celljunctions"]},
+  {id:"m7",l:"Gap junction",x:2220,y:1290,p:"cbmem",s:"connexons · cell-to-cell signals",m:["celljunctions"]},
+  {id:"m8",l:"Hemidesmosome",x:2820,y:1290,p:"cbmem",s:"basal keratin → basement membrane",m:["celljunctions"]},
+  {id:"m9",l:"Loss of E-cadherin",x:1020,y:1370,p:"cbmem",s:"promotes metastasis",m:["celljunctions"]},
+  {id:"m10",l:"Pemphigus vulgaris",x:1620,y:1370,p:"cbmem",s:"IgG against desmoglein",m:["pemphigus"]},
+  {id:"m11",l:"Integrins",x:2220,y:1370,p:"cbmem",s:"bind collagen, laminin, fibronectin",m:["celljunctions"]},
+  {id:"m12",l:"Bullous pemphigoid",x:2820,y:1370,p:"cbmem",s:"IgG against hemidesmosomes",m:["pemphigoid"]}],
+ edges:[
+  {a:"k1",b:"k2",p:"cbnuc",arrow:"none",dash:true},
+  {a:"k2",b:"k3",p:"cbnuc",arrow:"none",dash:true},
+  {a:"k3",b:"k4",p:"cbnuc"},
+  {a:"t1",b:"t2",p:"cbtraf"},
+  {a:"t2",b:"t3",p:"cbtraf"},
+  {a:"t3",b:"t4",p:"cbtraf",arrow:"both"},
+  {a:"t4",b:"t5",p:"cbtraf"},
+  {a:"t4",b:"t9",p:"cbtraf"},
+  {a:"t9",b:"tx",p:"cbtraf"},
+  {a:"t9",b:"t11",p:"cbtraf",arrow:"none",dash:true},
+  {a:"t12",b:"t13",p:"cbtraf",arrow:"none",dash:true},
+  {a:"t13",b:"t14",p:"cbtraf",arrow:"none",dash:true},
+  {a:"t14",b:"t15",p:"cbtraf",arrow:"none",dash:true},
+  {a:"s3",b:"s4",p:"cbskel",arrow:"none",dash:true},
+  {a:"s5",b:"s6",p:"cbskel",arrow:"none"},
+  {a:"s9",b:"s10",p:"cbskel",arrow:"none",dash:true},
+  {a:"s10",b:"s11",p:"cbskel"},
+  {a:"m2",b:"m1",p:"cbmem",arrow:"inhib"},
+  {a:"m4",b:"m5",p:"cbmem",arrow:"none",dash:true},
+  {a:"m5",b:"m6",p:"cbmem",arrow:"none",dash:true},
+  {a:"m6",b:"m7",p:"cbmem",arrow:"none",dash:true},
+  {a:"m7",b:"m8",p:"cbmem",arrow:"none",dash:true},
+  {a:"m5",b:"m9",p:"cbmem",arrow:"none",dash:true},
+  {a:"m6",b:"m10",p:"cbmem"},
+  {a:"m8",b:"m12",p:"cbmem"}]
+};
+
+MAPS.htnrx = {
+ t:"Hypertension: Which Drug for Whom", sub:"The first-line choices · the second disease that changes the pick · the add-on and special agents · drugs for an emergency · the combinations to avoid",
+ w:3300, h:1410,
+ fa:"244, 321, 323, 626–628, 676",
+ src:["Katzung ch 11 — Antihypertensive Agents","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 13 — Drugs Used in Heart Failure","Robbins ch 11 — Blood vessels"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"First line for primary hypertension"},
+  {x:140,y:370,w:3020,h:200,l:"A second disease changes the pick"},
+  {x:140,y:630,w:3020,h:200,l:"Add-on and special agents"},
+  {x:140,y:890,w:3020,h:200,l:"Hypertensive emergency"},
+  {x:140,y:1150,w:3020,h:200,l:"Combinations to avoid"}],
+ panels:[],
+ nodes:[
+  {id:"f1",l:"Primary hypertension",x:420,y:170,p:"hxfirst",s:"about 90% of cases",m:["htn"]},
+  {id:"f2",l:"Thiazide",x:1020,y:170,p:"hxfirst",s:"chlorthalidone · hydrochlorothiazide",m:["thiazides"]},
+  {id:"f3",l:"ACE inhibitor or ARB",x:1620,y:170,p:"hxfirst",s:"cough on a -pril → switch to a -sartan",m:["raasdrugs"]},
+  {id:"f4",l:"Dihydropyridine CCB",x:2220,y:170,p:"hxfirst",s:"amlodipine · nifedipine",m:["ccbs"]},
+  {id:"f5",l:"β-blocker alone",x:2820,y:170,p:"hxfirst",s:"not first line unless another disease needs it",m:["class2","htncompelling"]},
+  {id:"f6",l:"Three drugs needed",x:1020,y:250,p:"hxfirst",s:"diuretic + ACEi or ARB + CCB",m:["htncompelling"]},
+  {id:"f7",l:"African American patients",x:1620,y:250,p:"hxfirst",s:"respond best to a diuretic or CCB",m:["htncompelling"]},
+  {id:"c1",l:"Heart failure",x:420,y:430,p:"hxpick",s:"ACEi/ARB · β-blocker · aldosterone antagonist",m:["hfdrugs","htncompelling"]},
+  {id:"c2",l:"Diabetes",x:1020,y:430,p:"hxpick",s:"ACEi or ARB protects the kidney",m:["diabetickidney","htncompelling"]},
+  {id:"c3",l:"CKD with proteinuria",x:1620,y:430,p:"hxpick",s:"ACEi or ARB",m:["ckd","htncompelling"]},
+  {id:"c4",l:"Asthma",x:2220,y:430,p:"hxpick",s:"ARB · CCB · thiazide · cardioselective β-blocker",m:["asthma","htncompelling"]},
+  {id:"c5",l:"Angina",x:2820,y:430,p:"hxpick",s:"β-blocker or CCB",m:["htncompelling"]},
+  {id:"c6",l:"Pregnancy",x:420,y:510,p:"hxpick",s:"hydralazine · methyldopa · labetalol · nifedipine",m:["gesthtn","preeclampsia","htncompelling"]},
+  {id:"c7",l:"Gout",x:1020,y:510,p:"hxpick",s:"losartan · ACEi · CCB",m:["gout","htncompelling"]},
+  {id:"c8",l:"Osteoporosis",x:1620,y:510,p:"hxpick",s:"thiazide — ↑ Ca²⁺ reabsorption",m:["osteoporosis","htncompelling"]},
+  {id:"c9",l:"Pheochromocytoma",x:2220,y:510,p:"hxpick",s:"α-blockade first, then β",m:["pheo","htncompelling"]},
+  {id:"c10",l:"BPH",x:2820,y:510,p:"hxpick",s:"α₁-blocker",m:["bph","alpha1drugs"]},
+  {id:"a1",l:"β-blockers",x:420,y:690,p:"hxother",s:"never stop abruptly — rebound",m:["class2"]},
+  {id:"a2",l:"α₂ agonists",x:1020,y:690,p:"hxother",s:"clonidine · methyldopa",m:["alpha2drugs"]},
+  {id:"a3",l:"α₁ blockers",x:1620,y:690,p:"hxother",s:"prazosin · doxazosin · terazosin",m:["alpha1drugs"]},
+  {id:"a4",l:"Hydralazine",x:2220,y:690,p:"hxother",s:"arterioles · given with a β-blocker",m:["hydralazine"]},
+  {id:"a5",l:"Minoxidil",x:2820,y:690,p:"hxother",s:"opens K⁺ channels · hypertrichosis",m:["minoxidil"]},
+  {id:"a6",l:"Primary aldosteronism",x:420,y:770,p:"hxother",s:"spironolactone or eplerenone",m:["conn","ksparing"]},
+  {id:"a7",l:"Diuretic side effects",x:1020,y:770,p:"hxother",s:"↓ K⁺ · ↑ glucose, lipids, uric acid",m:["thiazides"]},
+  {id:"a8",l:"Drug-induced lupus",x:2220,y:770,p:"hxother",s:"hydralazine — reverses when stopped",m:["hydralazine"]},
+  {id:"e1",l:"Emergency vs urgency",x:420,y:950,p:"hxemerg",s:"end-organ damage makes it an emergency",m:["htnemerg"]},
+  {id:"e2",l:"Labetalol",x:1020,y:950,p:"hxemerg",s:"α + β blockade",m:["class2"]},
+  {id:"e3",l:"Nicardipine · clevidipine",x:1620,y:950,p:"hxemerg",s:"IV dihydropyridines",m:["ccbs"]},
+  {id:"e4",l:"Nitroprusside",x:2220,y:950,p:"hxemerg",s:"arteries = veins · minutes on, minutes off",m:["nitroprusside"]},
+  {id:"e5",l:"Fenoldopam",x:2820,y:950,p:"hxemerg",s:"D1 agonist · natriuresis",m:["nitroprusside"]},
+  {id:"e6",l:"Cyanide toxicity",x:2220,y:1030,p:"hxemerg",s:"rhodanese → thiocyanate",m:["cyanide","nitroprusside"]},
+  {id:"w1",l:"ACEi or ARB in pregnancy",x:420,y:1210,p:"hxpick",s:"fetal renal damage",m:["raasdrugs"]},
+  {id:"w2",l:"ACEi with bilateral renal artery stenosis",x:1020,y:1210,p:"hxpick",s:"GFR falls · creatinine jumps",m:["renovascular","raasdrugs"]},
+  {id:"w3",l:"Nonselective β-blocker in asthma",x:1620,y:1210,p:"hxpick",s:"β₂ blockade → bronchospasm",m:["class2","asthma"]},
+  {id:"w4",l:"β-blocker before α-blocker",x:2220,y:1210,p:"hxpick",s:"pheochromocytoma → unopposed α",m:["pheo"]},
+  {id:"w5",l:"Hydralazine with angina",x:2820,y:1210,p:"hxpick",s:"reflex tachycardia",m:["hydralazine"]},
+  {id:"w6",l:"Thiazide or loop with gout",x:420,y:1290,p:"hxpick",s:"↑ uric acid → flares",m:["gout","thiazides","loopdiuretics"]},
+  {id:"w7",l:"ACEi + K⁺-sparing diuretic",x:1020,y:1290,p:"hxpick",s:"hyperkalemia, worse in renal failure",m:["ksparing","raasdrugs"]},
+  {id:"wx1",l:"→ Nephron",x:2220,y:1290,p:"neutral",k:"ghost",go:"nephron"},
+  {id:"wx2",l:"→ Autonomic Nervous System",x:2820,y:1290,p:"neutral",k:"ghost",go:"ans"}],
+ edges:[
+  {a:"f1",b:"f2",p:"hxfirst"},
+  {a:"a4",b:"a8",p:"hxother",arrow:"none",dash:true},
+  {a:"e4",b:"e6",p:"hxemerg"}]
+};
+
+MAPS.aging = {
+ t:"Aging & Geriatrics", sub:"What normal aging takes away · how older bodies handle drugs · the geriatric syndromes · assessing and treating the older adult, OMT included",
+ w:3300, h:1230,
+ fa:"225, 240, 269, 290, 534–536, 575, 593",
+ src:["Katzung ch 60 — Special Aspects of Geriatric Pharmacology","Kaplan & Sadock ch 3 — Neurocognitive Disorders","Foundations of Osteopathic Medicine ch 69 — Osteopathic Considerations in Geriatric Medicine","Somatic Dysfunction in Osteopathic Family Medicine ch 16 — The Geriatric Patient","OCOM OMM — OMS2 written midterm study guide"],
+ comps:[
+  {x:140,y:110,w:3020,h:280,l:"Normal aging — less reserve"},
+  {x:140,y:450,w:3020,h:200,l:"Drugs in older adults"},
+  {x:140,y:710,w:3020,h:200,l:"Geriatric syndromes"},
+  {x:140,y:970,w:3020,h:200,l:"Caring for the older adult"}],
+ panels:[],
+ nodes:[
+  {id:"b1",l:"Heart & vessels",x:420,y:170,p:"agbody",s:"stiff arteries · ↓ max heart rate · valve calcification",m:["normalaging"]},
+  {id:"b2",l:"Isolated systolic hypertension",x:1020,y:170,p:"agbody",s:"aortic stiffening widens pulse pressure",m:["normalaging","htn"]},
+  {id:"b3",l:"Lungs",x:1620,y:170,p:"agbody",s:"↑ RV, TLC unchanged · ↑ A-a gradient",m:["normalaging"]},
+  {id:"b4",l:"Kidneys",x:2220,y:170,p:"agbody",s:"↓ GFR — creatinine stays normal",m:["normalaging","geripk"]},
+  {id:"b5",l:"Immune system",x:2820,y:170,p:"agbody",s:"fewer naïve cells · weaker vaccine response",m:["normalaging"]},
+  {id:"b6",l:"Muscle & bone",x:420,y:250,p:"agbody",s:"sarcopenia · osteopenia",m:["normalaging","osteoporosis"]},
+  {id:"b7",l:"Eyes & ears",x:1020,y:250,p:"agbody",s:"presbyopia · presbycusis",m:["refractive","hearingloss"]},
+  {id:"b8",l:"Brain",x:1620,y:250,p:"agbody",s:"smaller, less blood flow — function preserved",m:["normalaging"]},
+  {id:"b9",l:"Skin",x:2220,y:250,p:"agbody",s:"senile purpura · xerosis · heat stroke",m:["normalaging"]},
+  {id:"b10",l:"Gut",x:2820,y:250,p:"agbody",s:"↓ LES tone · ↓ colonic motility",m:["normalaging"]},
+  {id:"b11",l:"Menopause",x:420,y:330,p:"agbody",s:"vulvovaginal atrophy",m:["menopause"]},
+  {id:"b12",l:"Prostate",x:1020,y:330,p:"agbody",s:"enlargement",m:["bph"]},
+  {id:"b13",l:"Lipofuscin",x:1620,y:330,p:"agbody",s:"wear-and-tear pigment",m:["normalaging"]},
+  {id:"d1",l:"Distribution",x:420,y:510,p:"agdrug",s:"less water and muscle, more fat",m:["geripk","vd"]},
+  {id:"d2",l:"Liver metabolism",x:1020,y:510,p:"agdrug",s:"phase I falls · phase II little changed",m:["geripk","drugmetab"]},
+  {id:"d3",l:"Renal clearance",x:1620,y:510,p:"agdrug",s:"Cockcroft-Gault · reduce the dose",m:["geripk","clearance"]},
+  {id:"d4",l:"Beers · STOPP/START",x:2220,y:510,p:"agdrug",s:"potentially inappropriate medications",m:["beers"]},
+  {id:"d5",l:"Polypharmacy",x:2820,y:510,p:"agdrug",s:"ADRs ~10% on 1 drug → ~100% on 10",m:["beers"]},
+  {id:"d6",l:"Anticholinergics",x:420,y:590,p:"agdrug",s:"confusion · urinary retention · glaucoma",m:["antimusc","beers"]},
+  {id:"d7",l:"Sedative-hypnotics",x:1020,y:590,p:"agdrug",s:"ataxia · falls · fractures",m:["benzos","falls"]},
+  {id:"d8",l:"Tricyclic antidepressants",x:1620,y:590,p:"agdrug",s:"confusion · nortriptyline better tolerated",m:["tca","beers"]},
+  {id:"d9",l:"Lithium",x:2220,y:590,p:"agdrug",s:"renally cleared · thiazides raise levels",m:["lithium","beers"]},
+  {id:"d10",l:"Opioids",x:2820,y:590,p:"agdrug",s:"more sensitive to respiratory depression",m:["geripk"]},
+  {id:"y1",l:"Delirium",x:420,y:770,p:"agsyn",s:"acute · fluctuating · often a drug",m:["delirium"]},
+  {id:"y2",l:"Dementia",x:1020,y:770,p:"agsyn",s:"Alzheimer most common · rule out reversible causes",m:["alzheimer","dementiarev"]},
+  {id:"y3",l:"Normal pressure hydrocephalus",x:1620,y:770,p:"agsyn",s:"wobbly, wacky, wet",m:["nph"]},
+  {id:"y4",l:"Falls",x:2220,y:770,p:"agsyn",s:"vision · sarcopenia · sedatives",m:["falls"]},
+  {id:"y5",l:"Urinary incontinence",x:2820,y:770,p:"agsyn",s:"stress · urgency · overflow",m:["incontinence"]},
+  {id:"y6",l:"Vision loss",x:420,y:850,p:"agsyn",s:"cataract · macular degeneration · glaucoma",m:["cataract","amd","glaucoma"]},
+  {id:"y7",l:"Hearing loss",x:1020,y:850,p:"agsyn",s:"presbycusis",m:["hearingloss"]},
+  {id:"y8",l:"Elder abuse",x:1620,y:850,p:"agsyn",s:"bruises · dehydration · missed doses",m:["elderabuse"]},
+  {id:"y9",l:"Osteoarthritis",x:2220,y:850,p:"agsyn",s:"weight-bearing joints",m:["oa"]},
+  {id:"r1",l:"The 4Ms",x:420,y:1030,p:"agcare",s:"What Matters · Medication · Mentation · Mobility",m:["fourms"]},
+  {id:"r2",l:"Start low, go slow",x:1020,y:1030,p:"agcare",s:"drugs and OMT alike",m:["geripk","geriomt"]},
+  {id:"r3",l:"Timed Up and Go",x:1620,y:1030,p:"agcare",s:"over 12 s = high fall risk",m:["falls"]},
+  {id:"r4",l:"OMT, adapted",x:2220,y:1030,p:"agcare",s:"physiologic age · gentle and indirect",m:["geriomt"]},
+  {id:"r5",l:"OMT contraindications",x:2820,y:1030,p:"agcare",s:"fracture · AAA · metastasis · cauda equina",m:["geriomt"]},
+  {id:"r6",l:"Advance care planning",x:420,y:1110,p:"agcare",s:"part of What Matters",m:["fourms"]},
+  {id:"rx1",l:"→ Pharmacokinetics & Dynamics",x:1020,y:1110,p:"neutral",k:"ghost",go:"pkpd"},
+  {id:"rx2",l:"→ Psychosis, Mood & Anxiety",x:1620,y:1110,p:"neutral",k:"ghost",go:"psychdx"},
+  {id:"rx3",l:"→ Basal Ganglia & Movement Disorders",x:2220,y:1110,p:"neutral",k:"ghost",go:"basal"}],
+ edges:[
+  {a:"b1",b:"b2",p:"agbody"},
+  {a:"d6",b:"y1",p:"agdrug"},
+  {a:"r4",b:"r5",p:"agcare",arrow:"none",dash:true}]
+};
+
+MAPS.iemlab = {
+ t:"Inborn Errors by Lab Pattern", sub:"Ammonia, anion gap, ketones, glucose and lactate sort the sick newborn · the odors, urine and eye clues · what the newborn screen catches",
+ w:3300, h:1630,
+ fa:"35, 58, 66, 75, 78, 80–88, 115",
+ src:["Robbins ch 10 — Diseases of infancy and childhood","Marks ch 26 — Formation and Degradation of Glycogen","Marks ch 30 — Oxidation of Fatty Acids and Ketone Bodies","Marks ch 36 — Fate of Amino Acid Nitrogen: Urea Cycle","Marks ch 37 — Synthesis and Degradation of Amino Acids"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"High ammonia, no acidosis — urea cycle"},
+  {x:140,y:370,w:3020,h:200,l:"Ammonia + anion-gap acidosis + ketones — organic acids"},
+  {x:140,y:630,w:3020,h:280,l:"Low glucose — are there ketones?"},
+  {x:140,y:970,w:3020,h:140,l:"High lactate"},
+  {x:140,y:1170,w:3020,h:200,l:"Bedside clues — odor, urine, eyes"},
+  {x:140,y:1430,w:3020,h:140,l:"Newborn screening"}],
+ panels:[],
+ nodes:[
+  {id:"u0",l:"Check five labs",x:420,y:170,p:"iemnh3",s:"ammonia · anion gap · ketones · glucose · lactate",m:["iempattern"]},
+  {id:"u1",l:"OTC deficiency",x:1020,y:170,p:"iemnh3",s:"↑ orotic acid · X-linked",m:["otc"]},
+  {id:"u2",l:"CPS I or NAGS deficiency",x:1620,y:170,p:"iemnh3",s:"normal orotic acid",m:["cps1"]},
+  {id:"u3",l:"Citrullinemia · ASA · arginase",x:2220,y:170,p:"iemnh3",s:"plasma amino acids find the block",m:["ureaother"]},
+  {id:"u4",l:"Lower the ammonia",x:2820,y:170,p:"iemnh3",s:"limit protein · lactulose · benzoate, phenylbutyrate",m:["ammonia"]},
+  {id:"u5",l:"Hereditary orotic aciduria",x:1020,y:250,p:"iemnh3",s:"↑ orotic acid · normal ammonia · megaloblastic",m:["oroticaciduria"]},
+  {id:"ux1",l:"→ Nitrogen",x:2220,y:250,p:"neutral",k:"ghost",go:"nitrogen"},
+  {id:"o1",l:"Propionic & methylmalonic acidemia",x:1020,y:430,p:"iemacid",s:"acidosis · ketosis · ↑ ammonia · low glucose",m:["organicacid"]},
+  {id:"o2",l:"Methylmalonic acid & B12",x:1620,y:430,p:"iemacid",s:"↑ MMA also in B12 deficiency",m:["mmacid"]},
+  {id:"o3",l:"Maple syrup urine disease",x:2220,y:430,p:"iemacid",s:"branched-chain α-ketoacids · sweet odor",m:["msud"]},
+  {id:"o4",l:"Anion gap",x:2820,y:430,p:"iemacid",s:"over 12 mEq/L",m:["agma"]},
+  {id:"o5",l:"Biotin deficiency",x:1020,y:510,p:"iemacid",s:"propionyl-CoA and pyruvate carboxylases stall",m:["b7def"]},
+  {id:"g1",l:"No ketones → fatty-acid oxidation",x:1020,y:690,p:"iemglu",s:"hypoketotic hypoglycemia · dicarboxylic aciduria",m:["faoxpattern"]},
+  {id:"g2",l:"MCAD deficiency",x:1620,y:690,p:"iemglu",s:"avoid fasting · can cause sudden death",m:["mcad"]},
+  {id:"g3",l:"Carnitine deficiency",x:2220,y:690,p:"iemglu",s:"↓ free carnitine",m:["carndef"]},
+  {id:"g4",l:"Lactate, triglycerides, uric acid up",x:1020,y:770,p:"iemglu",s:"von Gierke · big liver",m:["vongierke"]},
+  {id:"g5",l:"Cori disease",x:1620,y:770,p:"iemglu",s:"milder · normal lactate",m:["cori"]},
+  {id:"g6",l:"Insulin and C-peptide",x:2220,y:770,p:"iemglu",s:"the hypoglycemia workup",m:["insulinoma"]},
+  {id:"g7",l:"After fruit, juice or honey",x:1020,y:850,p:"iemglu",s:"hereditary fructose intolerance",m:["hfi"]},
+  {id:"g8",l:"After milk",x:1620,y:850,p:"iemglu",s:"classic galactosemia",m:["galactosemia"]},
+  {id:"g9",l:"Galactokinase deficiency",x:2220,y:850,p:"iemglu",s:"cataracts — milder",m:["galactokinase"]},
+  {id:"g10",l:"Essential fructosuria",x:2820,y:850,p:"iemglu",s:"benign",m:["essfruct"]},
+  {id:"gx1",l:"→ Core Carbon",x:2820,y:690,p:"neutral",k:"ghost",go:"core"},
+  {id:"l1",l:"PDH deficiency",x:1020,y:1040,p:"iemlact",s:"↑ lactate · ↑ alanine",m:["pdhdef"]},
+  {id:"l2",l:"Pyruvate carboxylase deficiency",x:1620,y:1040,p:"iemlact",s:"↑ lactate",m:["pyrcarb"]},
+  {id:"l3",l:"Mitochondrial myopathies",x:2220,y:1040,p:"iemlact",s:"ragged red fibers",m:["mito"]},
+  {id:"q0",l:"General clues",x:420,y:1230,p:"iemclue",s:"odor · tone · vomiting · liver · eyes",m:["iemclues"]},
+  {id:"q1",l:"Musty odor",x:1020,y:1230,p:"iemclue",s:"PKU",m:["pku"]},
+  {id:"q2",l:"Maple syrup odor",x:1620,y:1230,p:"iemclue",s:"MSUD",m:["msud"]},
+  {id:"q3",l:"Urine darkens in air",x:2220,y:1230,p:"iemclue",s:"alkaptonuria",m:["alkapton"]},
+  {id:"q4",l:"Orange sand in the diaper",x:2820,y:1230,p:"iemclue",s:"Lesch-Nyhan · self-mutilation",m:["leschnyhan"]},
+  {id:"q5",l:"Cataracts",x:1020,y:1310,p:"iemclue",s:"galactitol in the lens",m:["galactosemia","galactokinase"]},
+  {id:"q6",l:"Dislocated lens",x:1620,y:1310,p:"iemclue",s:"homocystinuria",m:["homocyst"]},
+  {id:"q7",l:"Cherry-red macula",x:2220,y:1310,p:"iemclue",s:"Tay-Sachs · Niemann-Pick",m:["taysachs","niemannpick"]},
+  {id:"q8",l:"Hepatosplenomegaly",x:2820,y:1310,p:"iemclue",s:"Gaucher · Niemann-Pick",m:["gaucher","niemannpick"]},
+  {id:"n0",l:"Newborn screen",x:420,y:1500,p:"iemclue",s:"treat before symptoms",m:["newbornscreen"]},
+  {id:"n1",l:"Phenylketonuria",x:1020,y:1500,p:"iemclue",s:"↑ phenylalanine",m:["pku"]},
+  {id:"n2",l:"Galactosemia",x:1620,y:1500,p:"iemclue",s:"GALT on a dried blood spot",m:["galactosemia"]},
+  {id:"n3",l:"Cystic fibrosis",x:2220,y:1500,p:"iemclue",s:"↑ immunoreactive trypsinogen",m:["cf"]},
+  {id:"n4",l:"SCID",x:2820,y:1500,p:"iemclue",s:"↓ TRECs",m:["scidx"]}],
+ edges:[
+  {a:"u1",b:"u2",p:"iemnh3",arrow:"none",dash:true},
+  {a:"u1",b:"u5",p:"iemnh3",arrow:"none",dash:true},
+  {a:"o1",b:"o2",p:"iemacid",arrow:"none",dash:true},
+  {a:"g1",b:"g2",p:"iemglu"},
+  {a:"g2",b:"g3",p:"iemglu",arrow:"none",dash:true},
+  {a:"g4",b:"g5",p:"iemglu",arrow:"none",dash:true},
+  {a:"g8",b:"g9",p:"iemglu",arrow:"none",dash:true},
+  {a:"n0",b:"n1",p:"iemclue"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
-  ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","nucleo","collagen","vitamins","cellcycle","signal","genetics"]],
-  ["cardio","Cardiac",["cardiac","valves","chd","vasc","vascshock","rhythm"]],
+  ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","iemlab","nucleo","collagen","vitamins","cellcycle","cellbio","molbio","signal","genetics"]],
+  ["cardio","Cardiac",["cardiac","valves","chd","vasc","vascshock","htnrx","rhythm"]],
   ["pulmo","Pulmonary",["pulm","lungdz"]],
   ["renal","Renal",["nephron","glom","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","liver","gitract"]],
@@ -22097,8 +22971,8 @@ const TOPICS = [
   ["eent","EENT",["eyecn","ent"]],
   ["msk","Musculoskeletal",["muscle","bone","arthritis","derm","plexus","orthoinj"]],
   ["omm","OMM",["vsomatic","chapman","omt","ommmech"]],
-  ["id","Infectious",["abx","antiviral","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite"]],
-  ["pharm","Pharm",["pkpd","cyp","tox","environ","anesth","pain"]],
+  ["id","Infectious",["microlab","abx","antiviral","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite"]],
+  ["pharm","Pharm",["pkpd","cyp","aging","tox","environ","anesth","pain"]],
   ["stats","Biostats & Ethics",["biostats","ethics"]],
   ["idx","Index",["index"]]];
 
@@ -22115,18 +22989,42 @@ const svg=document.getElementById('svg'), drawer=document.getElementById('drawer
 const state={view:"core",z:1,tx:0,ty:0,sel:null,quiz:"",reveal:new Set(),filter:null,q:""};
 /* pin quiz: PQ[view][cardId] = true (named correctly) or false */
 const PQ={};
-/* review progress, kept on this device only: cards marked reviewed, and every
-   quiz answer (pins and buzzwords). A card is a weak spot while its misses
-   outnumber its right answers. */
-const PROG_KEY="mla-progress";
-let PROG={rev:{},ok:{},miss:{}};
-try{ const p=JSON.parse(localStorage.getItem(PROG_KEY)||"null"); if(p&&typeof p==="object") PROG={rev:p.rev||{},ok:p.ok||{},miss:p.miss||{}}; }catch(e){}
+/* review progress, kept on this device only (the question bank shares it on the
+   same site): cards marked reviewed, every quiz answer, and a spaced-review
+   schedule. A miss puts a card in box 0, due now; each right answer moves it
+   up a box — due again in 1, 3, then 7 days — and one more right answer takes
+   it off the schedule. shared/app.js schedules the same way for question-bank
+   misses; keep the two in step. */
+const PROG_KEY="mla-progress", PROG_PARTS=["rev","ok","miss","box","due","qok","qmiss"];
+const DAY=864e5, BOX_DAYS=[0,1,3,7];
+let PROG={}; PROG_PARTS.forEach(k=>PROG[k]={});
+try{ const p=JSON.parse(localStorage.getItem(PROG_KEY)||"null"); if(p&&typeof p==="object") PROG_PARTS.forEach(k=>{ if(p[k]&&typeof p[k]==="object") PROG[k]=p[k]; }); }catch(e){}
+Object.keys(PROG.miss).forEach(id=>{ if(!(id in PROG.box)&&PROG.miss[id]>(PROG.ok[id]||0)){ PROG.box[id]=0; PROG.due[id]=0; } });
 function saveProg(){ try{ localStorage.setItem(PROG_KEY,JSON.stringify(PROG)); }catch(e){} }
+/* the question bank may update progress in another tab — take its copy */
+window.addEventListener("storage",ev=>{
+  if(ev.key!==PROG_KEY) return;
+  try{ const p=JSON.parse(ev.newValue||"null")||{}; PROG_PARTS.forEach(k=>{ PROG[k]=(p[k]&&typeof p[k]==="object")?p[k]:{}; }); }catch(e){}
+  try{ renderRail(); if(state.view==="index") renderIndex(); }catch(e){}
+});
 const isRev=id=>!!PROG.rev[id];
-const isWeak=id=>(PROG.miss[id]||0)>(PROG.ok[id]||0);
+const isWeak=id=>(id in PROG.box)&&(PROG.due[id]||0)<=Date.now();      // due for review now
+const isLater=id=>(id in PROG.box)&&(PROG.due[id]||0)>Date.now();      // scheduled, not yet due
+function schedule(id,right){
+  if(!right){ PROG.box[id]=0; PROG.due[id]=Date.now(); return; }
+  if(!(id in PROG.box)) return;
+  const b=PROG.box[id]+1;
+  if(b>=BOX_DAYS.length){ delete PROG.box[id]; delete PROG.due[id]; return; }
+  PROG.box[id]=b; PROG.due[id]=Date.now()+BOX_DAYS[b]*DAY;
+}
 function setRev(id,on){ if(on) PROG.rev[id]=Date.now(); else delete PROG.rev[id]; saveProg(); }
-function recordAnswer(id,right){ const b=right?PROG.ok:PROG.miss; b[id]=(b[id]||0)+1; saveProg(); }
-function clearProg(ids){ ids.forEach(id=>{ delete PROG.rev[id]; delete PROG.ok[id]; delete PROG.miss[id]; }); saveProg(); }
+function recordAnswer(id,right){ const b=right?PROG.ok:PROG.miss; b[id]=(b[id]||0)+1; schedule(id,right); saveProg(); }
+function clearProg(ids){ ids.forEach(id=>PROG_PARTS.forEach(k=>delete PROG[k][id])); saveProg(); }
+function dueText(id){
+  if(isWeak(id)) return "due now";
+  if(!isLater(id)) return "";
+  const d=Math.ceil((PROG.due[id]-Date.now())/DAY); return `next review in ${d} day${d===1?"":"s"}`;
+}
 let cam=null;
 
 Object.values(MAPS).forEach(m=>{m._n={};m.nodes.forEach(n=>m._n[n.id]=n);});
@@ -22356,15 +23254,20 @@ function practiceHtml(id){
 }
 const REPO="https://github.com/cojeda95/Q-bank";
 function quizNote(id){
-  const ok=PROG.ok[id]||0, miss=PROG.miss[id]||0;
-  if(!ok&&!miss) return "";
-  return `<span class="revnote${isWeak(id)?" weak":""}">Quiz: ${ok} right · ${miss} missed${isWeak(id)?" — on your review list":""}</span>`;
+  const ok=PROG.ok[id]||0, miss=PROG.miss[id]||0, qok=PROG.qok[id]||0, qmiss=PROG.qmiss[id]||0;
+  if(!ok&&!miss&&!qok&&!qmiss) return "";
+  const parts=[];
+  if(ok||miss) parts.push(`Atlas quiz: ${ok} right · ${miss} missed`);
+  if(qok||qmiss) parts.push(`Question bank: ${qok} right · ${qmiss} missed`);
+  const due=dueText(id);
+  return `<span class="revnote${isWeak(id)?" weak":""}">${parts.join(" · ")}${due?` — ${due}`:""}</span>`;
 }
 /* progress block for a set of cards — the rail, the phone drawer and the Index use it */
 function progHtml(ids,label){
-  const rev=ids.filter(isRev).length, weak=ids.filter(isWeak);
+  const rev=ids.filter(isRev).length, weak=ids.filter(isWeak), later=ids.filter(isLater).length;
   return `<div class="revbar"><span><b>${rev}</b> of <b>${ids.length}</b> ${label} reviewed</span><span class="qbar"><i style="width:${ids.length?Math.round(rev/ids.length*100):0}%"></i></span></div>
-    ${weak.length?`<div class="rsrc-b">Review these · ${weak.length}</div><div class="lesionlist">${weak.map(id=>{const L=LES[id];return `<button class="li weak" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="rec">${PROG.ok[id]||0} right · ${PROG.miss[id]||0} missed</span></span></button>`;}).join("")}</div>`:""}`;
+    ${weak.length?`<div class="rsrc-b">Review these · ${weak.length} due</div><div class="lesionlist">${weak.map(id=>{const L=LES[id];return `<button class="li weak" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="rec">${(PROG.miss[id]||0)+(PROG.qmiss[id]||0)} missed · ${(PROG.ok[id]||0)+(PROG.qok[id]||0)} right</span></span></button>`;}).join("")}</div>`:""}
+    ${later?`<p class="revnote" style="margin:6px 0 0">${later} more scheduled for later review</p>`:""}`;
 }
 function reportUrl(id){
   const L=LES[id]||{}, m=MAPS[state.view];
@@ -22397,6 +23300,8 @@ function openLes(id,center,pick){
        ${L.fa?`<span class="mtag fa" title="First Aid for the USMLE Step 1 2025">First Aid ${/[,–]/.test(L.fa)?"pp.":"p."} ${esc(L.fa)}</span>`:""}
        ${L.ref&&L.ref.length?`<span class="mtag fa" title="Checked against the PubMed-indexed articles listed at the bottom of this card">Literature ${L.ref.length===1?"ref":"refs"} ↓</span>`:""}
      </div>
+     ${(()=>{ const others=[...new Set((LOC[id]||[]).map(l=>l.v))].filter(v=>v!==state.view);
+       return others.length?`<div class="pagehits alsoon"><span class="revnote">${state.view==="index"?"On":"Also on"}</span>${others.map(v=>`<button class="pagehit" data-also="${v}">${esc((VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1])}</button>`).join("")}</div>`:""; })()}
      <div class="revrow"><button class="revbtn" id="drev" aria-pressed="${isRev(id)}" title="Saved on this device only">${isRev(id)?"✓ Reviewed":"Mark reviewed"}</button>${quizNote(id)}</div>
    </div>
    <div class="dbody">
@@ -22414,6 +23319,7 @@ function openLes(id,center,pick){
   drawer.scrollTop=0;
   document.getElementById("dclose").onclick=closeDrawer;
   document.getElementById("dlink").onclick=copyLink;
+  drawer.querySelectorAll("[data-also]").forEach(b=>b.onclick=()=>{ setView(b.dataset.also); openLes(id,true); });
   document.getElementById("drev").onclick=ev=>{ const on=!isRev(id); setRev(id,on);
     ev.currentTarget.setAttribute("aria-pressed",String(on)); ev.currentTarget.textContent=on?"✓ Reviewed":"Mark reviewed";
     renderRail(); if(state.view==="index") renderIndex(); };
@@ -22699,12 +23605,48 @@ function lesMatches(L,q){
     ...(L.find||[]),...(L.labs||[]),...(L.buzz||[]),...(L.tx||[]),...(L.q||[])].join(" ").toLowerCase();
   return hay.includes(q);
 }
+/* typo-tolerant fallback: when nothing matches exactly, every word of the query
+   may be one or two letters off a word in a card's name, alias or match terms */
+function editDist(a,b,max){
+  if(Math.abs(a.length-b.length)>max) return max+1;
+  let prev=[...Array(b.length+1).keys()], pp=null;
+  for(let i=1;i<=a.length;i++){
+    const cur=[i]; let best=i;
+    for(let j=1;j<=b.length;j++){
+      let v=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));
+      if(pp&&i>1&&j>1&&a[i-1]===b[j-2]&&a[i-2]===b[j-1]) v=Math.min(v,pp[j-2]+1);
+      cur.push(v); if(v<best) best=v;
+    }
+    if(best>max) return max+1;
+    pp=prev; prev=cur;
+  }
+  return prev[b.length];
+}
+let FZ=null;
+function fuzzyIds(q){
+  const qw=q.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>=3); if(!qw.length) return [];
+  if(!FZ) FZ=Object.keys(LES).map(id=>{ const L=LES[id];
+    return [id,[...new Set([L.n,L.alias||"",...(L.q||[]).map(t=>t.replace(/^=/,""))].join(" ").toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>=3))]]; });
+  const out=[];
+  for(const [id,words] of FZ){
+    let total=0, ok=true;
+    for(const w of qw){
+      const max=w.length>=8?2:w.length>=5?1:0; let best=max+1;
+      for(const t of words){ if(t.startsWith(w)){ best=0; break; } const d=editDist(w,t,max); if(d<best) best=d; }
+      if(best>max){ ok=false; break; } total+=best;
+    }
+    if(ok) out.push([total,id]);
+  }
+  return out.sort((a,b)=>a[0]-b[0]).slice(0,40).map(x=>x[1]);
+}
 function currentLesIds(){
-  const q=state.q.trim().toLowerCase();
+  const q=state.q.trim().toLowerCase(); state.fuzzy=false;
   let ids;
   if(q||state.view==="index") ids=Object.keys(LES);
   else ids=[...new Set(Object.keys(LOC).filter(id=>LOC[id].some(l=>l.v===state.view)))];
-  return ids.filter(id=>LES[id]&&lesMatches(LES[id],q)&&(!state.filter||state.view==="index"||LES[id].p===state.filter));
+  const out=ids.filter(id=>LES[id]&&lesMatches(LES[id],q)&&(!state.filter||state.view==="index"||LES[id].p===state.filter));
+  if(q&&!out.length&&pageQuery(q)==null){ const f=fuzzyIds(q); state.fuzzy=f.length>0; return f; }
+  return out;
 }
 function mapSrcList(m){
   const groups=[];
@@ -22776,7 +23718,7 @@ function renderRail(){
   if(pg!=null) html+=`<div class="rail-sec"><h3 class="rail-h">Maps citing First Aid p. ${pg}</h3>${pageHitsHtml(pg)||`<p class="rail-sub">No map lists this page.</p>`}</div>`;
   const onMap=!state.q&&state.view!=="index";
   if(onMap&&ids.length) html+=`<div class="rail-sec"><h3 class="rail-h">Your progress</h3>${progHtml(ids,"cards")}</div>`;
-  html+=`<div class="rail-sec"><h3 class="rail-h">${pg!=null?`Cards citing p. ${pg}`:state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${ids.length}</h3>
+  html+=`<div class="rail-sec"><h3 class="rail-h">${pg!=null?`Cards citing p. ${pg}`:state.fuzzy?"Closest matches":state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${ids.length}</h3>
     <div class="lesionlist">${ids.length?ids.map(id=>{const L=LES[id];
       return `<button class="li${isRev(id)?" rev":""}${isWeak(id)?" weak":""}" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
     }).join(""):`<p style="font-size:12.5px;color:var(--ink-3);padding:4px 7px">No match. Try “Heinz”, “orotic”, “second wind”.</p>`}</div>
@@ -22793,7 +23735,8 @@ function renderRail(){
 /* ── index view ─────────────────────────────────────── */
 function renderIndex(){
   const q=state.q.trim().toLowerCase();
-  const ids=Object.keys(LES).filter(id=>lesMatches(LES[id],q));
+  let ids=Object.keys(LES).filter(id=>lesMatches(LES[id],q)), fuzzy=false;
+  if(q&&!ids.length&&pageQuery(q)==null){ ids=fuzzyIds(q); fuzzy=ids.length>0; }
   const groups={};
   ids.forEach(id=>{(groups[LES[id].p]=groups[LES[id].p]||[]).push(id);});
   const cards=Object.entries(groups).map(([p,list])=>`
@@ -22802,7 +23745,8 @@ function renderIndex(){
       <span class="t">${esc(L.n)}</span><span class="e">${esc(L.enz||"")}</span>
       ${L.buzz&&L.buzz[0]?`<span class="b">${esc(L.buzz[0])}</span>`:""}</button></li>`;}).join("")}</ul></section>`).join("");
   const pg=pageQuery(q);
-  idxWrap.innerHTML=`<div class="idx-intro">${pg!=null?`<h2>First Aid 2025, p. ${pg}</h2>
+  idxWrap.innerHTML=`<div class="idx-intro">${fuzzy?`<h2>No exact match for “${esc(state.q.trim())}”</h2>
+    <p>Closest matches, allowing for a letter or two off:</p>`:pg!=null?`<h2>First Aid 2025, p. ${pg}</h2>
     <p>${ids.length} ${ids.length===1?"card cites":"cards cite"} this page${mapsOnPage(pg).length?`, and so ${mapsOnPage(pg).length===1?"does this map":"do these maps"}:`:"."}</p>${pageHitsHtml(pg)}`:`<h2>Every lesion on one page</h2>
     <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>
     ${!q?`<details class="idx-sources" ${Object.keys(LES).some(isWeak)?"open":""}><summary>Your progress (this device)</summary>${progHtml(Object.keys(LES),"cards")}</details>`:""}`}
@@ -22979,6 +23923,13 @@ qInput.addEventListener("keydown",ev=>{
   if(ev.key==="Enter"){ const ids=currentLesIds(); if(ids.length===1) gotoLes(ids[0]); else if(state.view!=="index") setView("index"); }
 });
 document.addEventListener("keydown",ev=>{
+  /* quizzes: 1–4 answer, Enter goes to the next question */
+  if(!drawer.hidden&&document.activeElement!==qInput&&!ev.metaKey&&!ev.ctrlKey&&!ev.altKey){
+    const opts=drawer.querySelectorAll(".pqopt");
+    if(opts.length&&/^[1-4]$/.test(ev.key)&&opts[+ev.key-1]){ ev.preventDefault(); opts[+ev.key-1].click(); return; }
+    const nx=drawer.querySelector("[data-next]");
+    if(nx&&ev.key==="Enter"){ ev.preventDefault(); nx.click(); return; }
+  }
   if(ev.key==="/"&&document.activeElement!==qInput){ ev.preventDefault(); qInput.focus(); }
   if(ev.key==="["&&document.activeElement!==qInput){ ev.preventDefault(); railBtn.click(); }
   if(ev.key==="Escape"){ if(!qmenu.hidden){ showQuizMenu(false); return; } if(!drawer.hidden) closeDrawer(); }

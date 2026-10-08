@@ -119,6 +119,48 @@ function atlasLinksHtml(q) {
     `<a class="atlas-link k-${c.k}" href="${ATLAS_URL}#${encodeURIComponent(c.id)}" target="_blank" rel="noopener"><span class="dot"></span>${escapeHtml(c.n)}</a>`).join('')}</div>`;
 }
 
+/* Missed questions feed the Lesion Atlas review list. The atlas keeps its
+   progress in localStorage ('mla-progress') on this same site. A miss puts the
+   question's top atlas card on the spaced-review schedule, due now; a right
+   answer moves a card already on the schedule forward — due again in 1, 3,
+   then 7 days, then off. Same rule as schedule() in tools/atlas-src.html —
+   keep the two in step. */
+const ATLAS_PROG_KEY = 'mla-progress';
+const ATLAS_BOX_DAYS = [0, 1, 3, 7];
+let QUESTION_INDEX = null;
+function questionById(id) {
+  if (!QUESTION_INDEX) {
+    QUESTION_INDEX = {};
+    ((window.QUIZ_DATA && window.QUIZ_DATA.exams) || []).forEach(e => (e.sdls || []).forEach(s =>
+      (s.questions || []).forEach(q => { QUESTION_INDEX[q.id] = q; })));
+  }
+  return QUESTION_INDEX[id];
+}
+function atlasNoteAnswer(rec) {
+  const q = rec && questionById(rec.id);
+  if (!q) return;
+  ATLAS_READY.then(() => {
+    const card = atlasLinksFor(q)[0];
+    if (!card) return;
+    let p = {};
+    try { p = JSON.parse(localStorage.getItem(ATLAS_PROG_KEY)) || {}; } catch (e) { p = {}; }
+    ['qok', 'qmiss', 'box', 'due'].forEach(k => { if (!p[k] || typeof p[k] !== 'object') p[k] = {}; });
+    const id = card.id, now = Date.now();
+    if (rec.correct) {
+      p.qok[id] = (p.qok[id] || 0) + 1;
+      if (id in p.box) {
+        const b = p.box[id] + 1;
+        if (b >= ATLAS_BOX_DAYS.length) { delete p.box[id]; delete p.due[id]; }
+        else { p.box[id] = b; p.due[id] = now + ATLAS_BOX_DAYS[b] * 864e5; }
+      }
+    } else {
+      p.qmiss[id] = (p.qmiss[id] || 0) + 1;
+      p.box[id] = 0; p.due[id] = now;
+    }
+    try { localStorage.setItem(ATLAS_PROG_KEY, JSON.stringify(p)); } catch (e) {}
+  });
+}
+
 /* ── localStorage helpers ────────────────────────────────────────────── */
 function loadFlags() {
   try { return JSON.parse(localStorage.getItem(LS_FLAGS)) || {}; }
@@ -179,6 +221,7 @@ function logAttempt(rec) {
   const list = loadAttempts();
   list.push(rec);
   saveAttempts(list);
+  atlasNoteAnswer(rec);
 }
 function lastAttemptMap() {
   // Later entries overwrite earlier ones, so this reflects the most recent
