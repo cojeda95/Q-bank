@@ -15,9 +15,9 @@
  */
 
 const ANNOUNCEMENT = {
-  text: 'Added OMM Midterm questions, Neprho exams 3 and 4 still under review; new atlas maps pushed, fixed PIN-sync error',
+  text: 'Nephro: Revisited Exam 2-4 Q generation with some new changes, piloting new question format w/ arrows and a test batch of new Qs; Atlas: worked on new maps and added sources for each card against OCOM library, PubMed articles, and First Aid 2025',
   // Optional short date label shown next to the message, e.g. 'Sep 8'. Leave '' to omit.
-  date: '10/6/26',
+  date: '10/7/26',
 };
 
 // Example of a populated announcement (for reference — delete or ignore):
