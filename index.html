@@ -112,6 +112,7 @@
   .block-meta:empty { display: none; }
   .bm { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--grey-border); color: var(--grey-text); }
   .bm.prog { color: var(--navy); border-color: var(--navy); }
+  .bm.exr { color: var(--navy); font-weight: 500; }
   .bm.saved { color: var(--green); border-color: currentColor; }
   .bm.newer { color: var(--amber-ink); border-color: var(--amber-line); background: var(--amber-bg); }
   .bm.unsaved { color: var(--text-faint); }
@@ -141,7 +142,7 @@
     <div class="block-grid">
       <a class="block-card featured" href="resources/metabolic-atlas.html">
         <div class="block-title">🗺️ Lesion Atlas</div>
-        <div class="block-desc">143 interactive maps &middot; 1,708 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
+        <div class="block-desc">148 interactive maps &middot; 1,752 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
         <div class="block-due" id="atlasDue" hidden></div>
       </a>
     </div>
@@ -279,7 +280,7 @@
     btn.addEventListener('click', function () {
       var urls = ['./', 'index.html', 'announcements.js', 'sync.js', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
         'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png',
-        'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js'];
+        'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js', 'resources/qbank-counts.js'];
       Array.prototype.forEach.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]'), function (a) {
         var dir = a.getAttribute('href').replace(/index\.html$/, '');
         urls.push(dir + 'index.html', dir + 'data.js');
@@ -348,9 +349,21 @@
         var ids = Object.keys(last), ok = ids.filter(function (id) { return last[id].correct; }).length;
         chip(a, 'prog', 'prog', ids.length ? ids.length.toLocaleString() + ' answered · ' + Math.round(100 * ok / ids.length) + '% right' : '',
           'Questions you have answered in this block on this device, and the share right on your latest try');
+        /* exam readiness: share of each exam's questions seen, and right on the latest try
+           (totals from resources/qbank-counts.js, built by tools/build-atlas.py; trial batches excluded) */
+        var C = window.QBANK_COUNTS && window.QBANK_COUNTS[dir];
+        if (C) C.exams.forEach(function (e) {
+          var seen = 0, right = 0;
+          ids.forEach(function (id) { var x = last[id]; if (x.examNumber === e[0] && C.trial.indexOf(x.batch) < 0) { seen++; if (x.correct) right++; } });
+          chip(a, 'ex' + e[0], 'exr', seen && e[1] ? 'Exam ' + e[0] + ' · ' + Math.min(100, Math.round(100 * seen / e[1])) + '% seen · ' + Math.round(100 * right / seen) + '% right' : '',
+            'Exam ' + e[0] + ': ' + seen + ' of its ' + e[1] + ' questions answered on this device; share right on your latest try');
+        });
       });
     }
     progress();
+    if (!window.QBANK_COUNTS) {
+      var qc = document.createElement('script'); qc.src = 'resources/qbank-counts.js'; qc.onload = progress; document.head.appendChild(qc);
+    }
     window.addEventListener('storage', function (e) { if (e.key && /_attempts_v1$/.test(e.key)) progress(); });
 
     /* Continue where you left off: the last place you were in any block ('qhub-last', written

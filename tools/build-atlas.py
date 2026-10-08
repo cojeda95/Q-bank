@@ -27,6 +27,7 @@ out = ROOT / "resources" / "metabolic-atlas.html"
 TERMS_OUT = ROOT / "resources" / "atlas-terms.js"
 PRACTICE_OUT = ROOT / "resources" / "atlas-practice.js"
 QLINKS_OUT = ROOT / "resources" / "atlas-qlinks.js"
+COUNTS_OUT = ROOT / "resources" / "qbank-counts.js"
 HOMES = TOOLS / "atlas-homes.json"
 art = src.read_text(encoding="utf-8")
 
@@ -369,9 +370,15 @@ for mid, (_, ids) in map_cards.items():
     for cid in ids:
         maps_of.setdefault(cid, set()).add(mid)
 nq = 0
+exam_counts = {}  # block folder -> {trial: [batches], exams: [[exam number, regular questions]]} for the hub's exam readiness
 for bi, (b, _) in enumerate(blocks):
     raw = (ROOT / b / "data.js").read_text(encoding="utf-8")
     data = json.loads(raw[raw.index("=") + 1:].strip().rstrip(";"))
+    # trial batches are opt-in and left out of exam totals, as in shared/app.js (isTrialQ):
+    # batch 3 always, batch 4 only where the block's QUIZ_CONFIG defines batch4
+    trial = [3] + ([4] if "batch4" in (ROOT / b / "index.html").read_text(encoding="utf-8") else [])
+    exam_counts[b] = {"trial": trial, "exams": [[ex.get("examNumber"), sum(1 for sdl in ex["sdls"] for q in sdl["questions"] if q.get("batch") not in trial)]
+                                                for ex in data["exams"]]}
     for ex in data["exams"]:
         for sdl in ex["sdls"]:
             for q in sdl["questions"]:
@@ -397,5 +404,8 @@ QLINKS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. card id
                           {"blocks": [list(b) for b in blocks],
                            "cards": {cid: sorted(v.items()) for cid, v in sorted(qlinks.items())}},
                           ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+COUNTS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. Per block: trial batches and regular questions per exam, for the hub's exam readiness */\n"
+                      "window.QBANK_COUNTS=" + json.dumps(exam_counts, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+print(f"built {COUNTS_OUT.relative_to(ROOT)}  —  exam totals for {len(exam_counts)} blocks")
 print(f"built {QLINKS_OUT.relative_to(ROOT)}  —  question ids for {len(qlinks)} cards ({QLINKS_OUT.stat().st_size // 1024} KB)")
 print(f"built {PRACTICE_OUT.relative_to(ROOT)}  —  {len(counts)} cards and {len(map_counts)} maps with practice questions from {nq} questions in {len(blocks)} blocks")

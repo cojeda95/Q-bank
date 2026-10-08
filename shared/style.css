@@ -172,6 +172,23 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   .amap-name { flex-basis: 100%; }
 }
 
+/* Atlas cards for one SDL (#sdlcards) and the "Atlas cards" link on SDL rows */
+.sdl-atlas { color: var(--atlas-ink); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.sdlc-maps { font-size: 0.88rem; color: var(--text-muted); margin: -4px 0 12px; }
+.sdlc-maps a { color: var(--atlas-ink); font-weight: 600; }
+.sdlc-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--atlas-line); border-radius: 12px; background: var(--atlas-bg); overflow: hidden; }
+.sdlc-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; padding: 8px 14px; border-top: 1px solid var(--atlas-line); }
+.sdlc-row:first-child { border-top: none; }
+.sdlc-row .atlas-link { flex: 1; min-width: 0; display: inline-flex; align-items: center; gap: 7px; color: var(--atlas-ink); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+.sdlc-row .atlas-link:hover { text-decoration: underline; }
+.sdlc-row .atlas-link::after { content: "\2197"; font-weight: 400; opacity: .6; }
+.sdlc-row .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--atlas-reg); flex: none; }
+.sdlc-row .k-dz .dot { background: var(--atlas-dz); }
+.sdlc-row .k-drug .dot { background: var(--atlas-drug); }
+.sdlc-n { font-size: 0.82rem; color: var(--text-muted); white-space: nowrap; }
+.sdlc-actions { margin-top: 14px; }
+@media (max-width: 480px) { .sdlc-row .atlas-link { flex-basis: 100%; } }
+
 /* ── Custom Exam Builder ── */
 .setup-card {
   background: var(--card-bg);

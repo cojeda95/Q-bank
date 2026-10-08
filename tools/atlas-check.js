@@ -105,7 +105,7 @@
     });
     /* graphs: the kinds tools/atlas-src.html can draw (PLOTS) — keep in step */
     (m.plots||[]).forEach(p=>{
-      if(!["pvloop","starling","odc","lungpv","glucose","doseresp","elim","mm","lb","flowvol","cofunc","apnerve","apcond","apnodal","apventric"].includes(p.kind)) err(`${where}: plot "${p.t}" has unknown kind "${p.kind}"`);
+      if(!["pvloop","starling","odc","lungpv","glucose","doseresp","elim","mm","lb","flowvol","cofunc","apnerve","apcond","apnodal","apventric","wiggers","menstrual","titration","lentension","forcevel"].includes(p.kind)) err(`${where}: plot "${p.t}" has unknown kind "${p.kind}"`);
       if(p.x<0||p.y<0||p.x+p.w>m.w||p.y+p.h>m.h) err(`${where}: plot "${p.t}" runs off the ${m.w}×${m.h} canvas`);
     });
     const pin=(arr,owner)=>{ const seen=new Set();

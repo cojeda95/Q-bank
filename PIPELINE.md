@@ -128,7 +128,8 @@ worth announcing gets a line in `WHATSNEW` the same way.
 A map can carry `plots:[{x,y,w,h,kind,t}]` — a schematic graph drawn by the engine, with a
 row of variants (tap a chip to shift the curve). The kinds live in `PLOTS` in
 `tools/atlas-src.html` (`pvloop`, `starling`, `odc`, `lungpv`, `glucose`, `doseresp`, `elim`, `mm`,
-`lb`, `flowvol`, `cofunc`, and the action potentials `apnerve`, `apcond`, `apnodal`, `apventric`);
+`lb`, `flowvol`, `cofunc`, the action potentials `apnerve`, `apcond`, `apnodal`, `apventric`, and `wiggers`,
+`menstrual`, `titration`, `lentension`, `forcevel`);
 `tools/atlas-check.js` keeps the same list and refuses an unknown kind or a plot off the
 canvas. Every graph says on its face that it is schematic; its caption carries the sourced
 facts, so check each caption against the map's sources like any card line.
@@ -147,6 +148,21 @@ used to say which ions move through which channels in each numbered phase. Smoot
 through a few keypoints come from `mono()`, a monotone cubic (Fritsch–Carlson), so a curve
 never overshoots between points; the nerve, SA-node and ventricular shapes are built that
 way (`AP_NERVE`, `nodal()`, `ventric()`). The key text is a sourced claim like any card line.
+A key label longer than two characters ("ECG", "Vmax", "3–4") is drawn as a pill instead of a
+circle.
+
+A kind can add **strips**: `strips: [{yl, yr, h, d: V => [...]}]` — smaller charts stacked
+under the main one that share its x axis (`h` px each; `yl` is a short label, about 10
+characters, written in the left margin). `d(V)` gets the chosen variant and returns curves
+(`{pts, lab, col}` — `col` overrides the colour, e.g. `var(--ink-2)` for an ECG) and text
+(`{txt: [[x, label, y?]]}` — wave names, heart sounds). Bands span the whole stack, the x
+ticks sit under the last strip, and strip curves join the legend. A variant can also carry
+`events: [[x, label]]` — dashed lines through every strip, labeled at the top (valve
+opening and closing on the Wiggers diagram). Place events where the drawn pressures actually
+cross: the m29 batch computed them from the curves, since `mono()` smoothing moves a crossing
+a little from its keypoints. Strips are used by `wiggers` (LV volume, ECG, heart sounds),
+`apventric` (an ECG under the action potential, on a time axis starting at −150 ms so the P
+wave shows) and `menstrual` (basal body temperature).
 
 ### Search abbreviations
 
@@ -160,8 +176,9 @@ atrium), the list follows First Aid; add entries by hand only with a source.
 
 `mla-hy` (High-yield only), `mla-hideknown`, `mla-seen` (New marks), `mla-streak`
 (Daily mix: last finished day and streak length), `mla-text` (Aa text size), `mla-mini`
-(overview map turned off) and `mla-review` live in localStorage on each device and are not
-synced; `mla-progress` (with `known` and `star`) syncs by PIN.
+(overview map turned off), `mla-review` and `mla-recent` (the last 12 cards opened, newest
+first — **Recently viewed** in the rail and on the Index) live in localStorage on each device
+and are not synced; `mla-progress` (with `known` and `star`) syncs by PIN.
 
 ### Search inside the maps
 
@@ -193,6 +210,16 @@ A map you have missed questions on also gets **Redo N missed**, which opens
 `#atlasmap/<map id>/missed`: the same linked questions, filtered to the ones whose latest
 try was wrong (`onlyMissed` in `shared/app.js`). `#atlas/<card id>/missed` does the same
 for one card. Both show an empty state when nothing is missed.
+
+The block's SDL list (Exam N) gives every SDL an **Atlas cards** link to `#sdlcards/<sdl>`
+(`renderSdlCards`): the cards its questions link to (`atlasLinksFor`, the same rule as the
+links under an answer), most often top-linked first, with the maps holding several of them
+and your latest-try record on each card's questions; a Practice button follows. The block
+home shows **Your weakest SDLs** (`fillWeakSdlsHome`) above Maps for this block: every SDL
+with at least `SDL_MIN` (3) answers, weakest first, each with Redo N missed
+(`#sdlmissed/<sdl>`, `renderSdlMissed` — the SDL's questions wrong on your latest try, as a
+review run), Atlas cards and Practice. Both routes have Continue-card labels in
+`rememberPlace`.
 
 ### Taking the reader to a pin
 
@@ -407,6 +434,16 @@ is not saved or a newer version is online, and the device is online. It caches t
 `index.html` and `data.js` (or the atlas files) plus `SHARED` — the hub, `shared/` and the
 two atlas link files every block page loads — then re-runs the status check, so the chip
 turns to *Saved offline* without saving every block.
+
+**Exam readiness.** Under the progress chip, each tile shows one chip per exam you have
+started: "Exam N · X% seen · Y% right" — questions answered (latest try per question, read
+from the same attempt log; every attempt record carries `examNumber`) over that exam's
+regular questions, and the share right. Totals come from `resources/qbank-counts.js`
+(`window.QBANK_COUNTS`), written by `tools/build-atlas.py` from every block's `data.js`:
+per block, the trial batches (3 always; 4 where the block's `index.html` defines `batch4`,
+as `isTrialQ` does) and each exam's count of non-trial questions — they match the block's
+exam cards. Re-run the build after syncing questions, as for `atlas-practice.js`. The file is
+in `CORE` in `sw.js` and in the hub's Save all list.
 
 **Continue where you left off.** Every block page records where you are (`rememberPlace`
 at the end of `render()` in `shared/app.js`) under `qhub-last` in localStorage: the block

@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 143 pan/zoom maps with 1708 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 148 pan/zoom maps with 1752 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="143 interactive maps. 1708 lesions pinned to the step they break.">
+<meta property="og:description" content="148 interactive maps. 1752 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -256,6 +256,10 @@ svg.map.drag{cursor:grabbing}
 .plot-c .pkcirc{fill:var(--surface);stroke:var(--accent);stroke-width:1.6}
 .plot-c .pkn{font-family:var(--font-ui);font-size:10.5px;font-weight:700;fill:var(--accent);text-anchor:middle}
 .plot-c .pkey{font-family:var(--font-ui);font-size:12.5px;fill:var(--ink-2)}
+.plot-c .pslab{font-family:var(--font-ui);font-size:12px;font-weight:600;fill:var(--ink-2)}
+.plot-c .pstxt{font-family:var(--font-ui);font-size:12px;font-weight:700;fill:var(--ink-2);text-anchor:middle}
+.plot-c .pevt{stroke:var(--ink-3);stroke-width:1.2;stroke-dasharray:3 4}
+.plot-c .pevl{font-family:var(--font-ui);font-size:11px;font-weight:700;fill:var(--ink-3);text-anchor:middle}
 .plot-c .pnote{font-family:var(--font-ui);font-size:10.5px;fill:var(--ink-3);font-style:italic}
 .plot-c .pax{stroke:var(--ink-3);stroke-width:1.4}
 .plot-c .pmark{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:4 4}
@@ -1249,6 +1253,23 @@ const PATHS = {
   pdx:{n:"Diagnosis",v:"--p-glycolysis"},
   ptx:{n:"Treatment",v:"--p-tca"},
   peth:{n:"Law & ethics",v:"--p-gluconeo"},
+  agGenes:{n:"Gonad & ducts",v:"--p-glycolysis"},
+  agMake:{n:"Making testosterone",v:"--p-tca"},
+  agAct:{n:"Androgen action",v:"--p-gluconeo"},
+  agPanel:{n:"Reading the panel",v:"--p-sugars"},
+  rvVessel:{n:"Vessels & hypertension",v:"--p-glycolysis"},
+  rvTma:{n:"Microangiopathy & progression",v:"--p-tca"},
+  rvCyst:{n:"Cystic kidneys",v:"--p-gluconeo"},
+  lbTriage:{n:"History & flags",v:"--p-glycolysis"},
+  lbExam:{n:"Examination",v:"--p-tca"},
+  lbCause:{n:"Sources of pain",v:"--p-gluconeo"},
+  lbTx:{n:"Treatment",v:"--p-sugars"},
+  efOrbit:{n:"Orbit & lids",v:"--p-glycolysis"},
+  efOptics:{n:"Optics & aqueous",v:"--p-tca"},
+  efPath:{n:"Lid & cornea disease",v:"--p-gluconeo"},
+  ptEx:{n:"Therapeutic exercise",v:"--p-glycolysis"},
+  ptMod:{n:"Modalities",v:"--p-tca"},
+  ptRx:{n:"Prescription",v:"--p-gluconeo"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -1954,7 +1975,7 @@ icell:{n:"I-cell disease (mucolipidosis II)",k:"dz",p:"traffic",enz:"GlcNAc-1-ph
  tx:["Supportive"]},
 
 /* ── steroidogenesis ────────────────────────────────── */
-cah21:{n:"21-Hydroxylase deficiency",alias:"Classic congenital adrenal hyperplasia",k:"dz",p:"gluco",q:["21 hydroxylase deficiency", "congenital adrenal hyperplasia"],enz:"21-Hydroxylase (CYP21A2)",inh:"—",gen:"Autosomal recessive",fa:"339, 353",hi:1,
+cah21:{n:"21-Hydroxylase deficiency",alias:"Classic congenital adrenal hyperplasia",k:"dz",p:"gluco",q:["21 hydroxylase deficiency", "congenital adrenal hyperplasia","=respond to androgens from any source","=precursors accumulate behind the block"],enz:"21-Hydroxylase (CYP21A2)",inh:"—",gen:"Autosomal recessive",fa:"339, 353",hi:1,
  mech:"Both cortisol and aldosterone synthesis are blocked, so ACTH rises unopposed and drives adrenal hyperplasia. The accumulated 17-OH-progesterone is shunted down the only open path — androgens. The most common CAH.",
  find:["Salt wasting in infancy: vomiting, dehydration, shock","46,XX: <b>ambiguous genitalia</b> / clitoromegaly at birth with normal internal female organs","46,XY: precocious puberty in childhood"],
  labs:["<b>↑ 17-Hydroxyprogesterone</b> — the newborn screen marker","↓ Cortisol, ↓ aldosterone, <b>↑ renin</b>","Hyponatremia, hyperkalemia","Hypotension"],
@@ -1987,7 +2008,7 @@ lipoidcah:{n:"Lipoid CAH (StAR / desmolase defect)",k:"dz",p:"steroid",enz:"StAR
  tx:["Glucocorticoid + mineralocorticoid replacement"],
  ref:[{a:"Kim CJ",t:"Congenital lipoid adrenal hyperplasia",j:"Ann Pediatr Endocrinol Metab",y:2014,pmid:"25654062",doi:"10.6065/apem.2014.19.4.179"}]},
 
-reductase5a:{n:"5α-Reductase deficiency",k:"dz",p:"sex",q:["5 alpha reductase deficiency"],enz:"5α-Reductase type 2",inh:"—",gen:"Autosomal recessive",fa:"640, 656",hi:1,
+reductase5a:{n:"5α-Reductase deficiency",k:"dz",p:"sex",q:["5 alpha reductase deficiency","=peripheral conversion of testosterone to dht","=normal testosterone with low dht","=46 xy with ambiguous genitalia and normal wolffian"],enz:"5α-Reductase type 2",inh:"—",gen:"Autosomal recessive",fa:"640, 656",hi:1,
  mech:"Testosterone is made normally but cannot be converted to dihydrotestosterone. DHT drives the <b>external</b> male genitalia and prostate; testosterone alone drives the internal Wolffian structures — so internal anatomy is male while external anatomy is not.",
  find:["46,XY with ambiguous or female-appearing external genitalia at birth","Normal internal male structures (epididymis, vas deferens, seminal vesicles), testes present","Masculinization at puberty, when testosterone drives growth of the external genitalia","Small prostate, scant facial and body hair, no androgenetic alopecia (all DHT-driven)"],
  labs:["<b>Normal or ↑ testosterone with ↓ DHT</b> → elevated testosterone:DHT ratio","LH normal or ↑; testosterone and estrogen normal","Contrast with androgen insensitivity, where testosterone, estrogen and LH are all high"],
@@ -2003,7 +2024,7 @@ aromatasedef:{n:"Aromatase deficiency & excess",k:"dz",p:"sex",enz:"Aromatase",i
  src:["Katzung ch 40 — The Gonadal Hormones & Inhibitors","Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones"],
  tx:["—"]},
 
-ais:{n:"Androgen insensitivity syndrome",k:"dz",p:"sex",q:["androgen insensitivity syndrome", "androgen insensitivity"],enz:"Androgen receptor (AR)",inh:"—",gen:"X-linked recessive",fa:"656",hi:1,
+ais:{n:"Androgen insensitivity syndrome",k:"dz",p:"sex",q:["androgen insensitivity syndrome", "androgen insensitivity","=absent or defective androgen receptors"],enz:"Androgen receptor (AR)",inh:"—",gen:"X-linked recessive",fa:"656",hi:1,
  mech:"Enzymes are intact — the receptor is not. Testosterone and DHT are made in normal or high amounts but cannot act, while anti-Müllerian hormone from the Sertoli cells still regresses the uterus and upper vagina.",
  find:["46,XY, phenotypically female external genitalia, normal breast development (peripheral aromatization)","<b>Scant or absent axillary and pubic hair</b>","<b>Blind-ending short vagina, no uterus, no cervix</b>; primary amenorrhea","Testes present, often in the labia majora — malignancy risk"],
  labs:["<b>↑ Testosterone, ↑ estrogen, ↑ LH</b>","Karyotype 46,XY; pelvic imaging shows absent uterus","No virilization at puberty — the discriminator from 5α-reductase deficiency"],
@@ -3483,7 +3504,7 @@ sexdevreg:{n:"How sex differentiation actually runs",k:"reg",p:"gonad",enz:"SRY 
  labs:["Read the anatomy backwards to find the level: <b>uterus present</b> means AMH never acted, so either there was no testis or AMH itself failed","<b>Uterus absent but external genitalia female</b> means AMH worked (so a testis existed) and androgen did not — a receptor or 5α-reductase problem","<b>Internal male, external female</b> isolates the step between testosterone and DHT"],
  buzz:["SRY makes the testis; the testis makes everything else","SEED — Seminal vesicles, Epididymis, Ejaculatory duct, Ductus deferens are the Wolffian derivatives","AMH destroys Müllerian, testosterone rescues Wolffian — one kills, one saves","Female is the default; male is the one that has to be actively built"],
  src:["Langman ch 16 — Urogenital System","Pawlina ch 22 — Male Reproductive System"],
- tx:["—"]},
+ tx:["—"],q:["=paramesonephric ducts persist and the mesonephric ducts regress","=testosterone binding its own androgen receptor","=same side testis"]},
 
 swyer:{n:"Swyer syndrome",alias:"46,XY complete gonadal dysgenesis",k:"dz",p:"gonad",enz:"SRY",inh:"—",gen:"Usually de novo",fa:"640, 655, 656",hi:1,
  mech:"The Y chromosome is present but <b>SRY fails</b>, so no testis forms — only a fibrous <b>streak gonad</b>. A streak makes neither AMH nor testosterone, so nothing is destroyed and nothing is preserved: the Müllerian system develops fully and the external genitalia stay female.",
@@ -3517,7 +3538,7 @@ mullerianfusion:{n:"Müllerian fusion anomalies",alias:"septate · bicornuate ·
  labs:["Uterine anomalies ↓ fertility and raise the risk of complicated pregnancy: spontaneous abortion, prematurity, fetal growth restriction, malpresentation"],
  buzz:["—"],
  src:["Robbins ch 22 — The female genital tract","Langman ch 16 — Urogenital System"],
- tx:["Septoplasty for a septate uterus"]},
+ tx:["Septoplasty for a septate uterus"],q:["=uterus didelphys","=fusion of the caudal paramesonephric ducts"]},
 
 ductremnants:{n:"Duct remnants — what is left behind",k:"reg",p:"ducts",enz:"Vestiges of the regressed duct",inh:"—",fa:"639",hi:0,
  mech:"Neither duct disappears completely. The remnants are clinically minor but are asked about precisely because naming them tests whether you know which duct is which.",
@@ -3558,7 +3579,7 @@ antiandrogens:{n:"Antiandrogens",alias:"finasteride · flutamide · spironolacto
  src:["Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists","Katzung ch 61 — Dermatologic Pharmacology"],
  tx:["—"]},
 
-gnrhanalogues:{n:"GnRH analogues — pulsatile versus continuous",alias:"leuprolide · goserelin · degarelix",k:"drug",p:"gonad",q:["leuprolide", "gnrh agonist", "gnrh agonists", "gnrh analog", "gnrh analogue", "gnrh analogues"],enz:"The GnRH receptor on the gonadotroph",inh:"—",fa:"674",hi:1,
+gnrhanalogues:{n:"GnRH analogues — pulsatile versus continuous",alias:"leuprolide · goserelin · degarelix",k:"drug",p:"gonad",q:["leuprolide", "gnrh agonist", "gnrh agonists", "gnrh analog", "gnrh analogue", "gnrh analogues","=down regulation of receptors that suppresses lh"],enz:"The GnRH receptor on the gonadotroph",inh:"—",fa:"674",hi:1,
  mech:"The pituitary responds to the <b>pattern</b> of GnRH, not just its presence. <b>Pulsatile</b> delivery stimulates LH and FSH release; <b>continuous</b> delivery downregulates the receptor and shuts the axis off after an initial surge. One drug does opposite things depending on how it is given.",
  find:["<b>Pulsatile</b> — used to induce ovulation or spermatogenesis, as in Kallmann syndrome","<b>Continuous</b> — chemical castration for prostate cancer, endometriosis, uterine fibroids, central precocious puberty","The initial flare: continuous agonist dosing transiently raises testosterone, which can worsen bone pain and cause neurologic symptoms with vertebral metastases. An androgen receptor antagonist (flutamide, bicalutamide) prevents it; testosterone reaches the castrate range in about 2 weeks","<b>Degarelix</b> is a GnRH <b>antagonist</b>, so it suppresses immediately with no flare"],
  labs:["Hypogonadism: hot flashes, ↓ libido, erectile dysfunction"],
@@ -10829,7 +10850,7 @@ tart:{n:"TART — diagnosing somatic dysfunction",alias:"tissue texture · asymm
  labs:["Reassess TART after every technique to judge its effect"],
  buzz:["TART"],
  src:["Foundations of Osteopathic Medicine ch 43 — Clinical Assessment: Viscerosomatic, Somatosomatic, Somatovisceral Reflexes; Counterstrain Points, Myofascial Trigger Points, and Chapman Reflexes","OCOM OMM — OMS2 written midterm study guide","Somatic Dysfunction in Osteopathic Family Medicine ch 16 — The Geriatric Patient","Foundations of Osteopathic Medicine ch 93 — Osteopathic Considerations in the Patient With Low Back Pain"],
- tx:["—"],q:["tart criteria","tart"]},
+ tx:["—"],q:["tart criteria","tart","=impaired or altered function of the body framework"]},
 
 sympathicotonia:{n:"Sustained sympathetic tone",alias:"sympathicotonia",k:"reg",p:"vsymp",enz:"Chronic sympathetic hyperactivity from somatic dysfunction or visceral disease",inh:"—",hi:1,
  mech:"When facilitation keeps sympathetic outflow high, each organ shifts in a predictable direction.",
@@ -14688,6 +14709,359 @@ psyethics:{n:"Psychiatric ethics — paternalism, honesty & boundaries",k:"reg",
  src:["Kaplan & Sadock ch 27 — Ethics and Professionalism","Kaplan & Sadock ch 28 — Forensic and Legal Issues"],
  tx:["—"],q:["weak paternalism","strong paternalism","paternalism","sexual boundary violations","boundary violation","capacity is clinical","competence is legal","sex with a current or former patient","unethical since apa"]},
 
+/* ── androgens & the testicular axis · renal vascular & cystic disease · low back pain (OMM) · the front of the eye · PT & rehab prescription (m29) ─── */
+sexgenes:{n:"Sex-determining genes — SRY, SOX9, SF1, WNT4 & DAX1",k:"reg",p:"agGenes",enz:"SRY → SOX9 → SF1 → AMH · WNT4 → DAX1 ⊣ SOX9",inh:"—",fa:"639–640",hi:1,
+ mech:"The <b>SRY</b> gene on the short arm of the Y chromosome (Yp11) makes the testis-determining factor, a transcription factor that starts a cascade of downstream genes. SRY, directly or through <b>SOX9</b>, makes the gonad secrete FGF9, which draws tubules from the mesonephric duct into the gonadal ridge, and upregulates <b>SF1</b> (steroidogenesis factor 1), which differentiates Sertoli and Leydig cells. SF1 working with SOX9 raises <b>AMH</b>, and in Leydig cells SF1 turns on the genes for the testosterone-synthesizing enzymes.",
+ find:["<b>Ovary</b>: develops without SRY and with <b>WNT4</b>, the ovary-determining gene. WNT4 upregulates <b>DAX1</b>, which inhibits SOX9 — cortical cords form, the medullary (testis) cords disappear and no tunica albuginea develops","The gonads look the same in both sexes until the <b>seventh week</b>; primordial germ cells must reach the genital ridges in weeks 4–6, or the gonad stays indifferent or is absent","Testosterone and DHT bind a high-affinity intracellular receptor: the testosterone complex differentiates the mesonephric duct (vas deferens, seminal vesicles, efferent ductules, epididymis); the DHT complex differentiates the external genitalia","<b>Estrogens</b> stimulate the paramesonephric ducts to form the uterine tubes, uterus, cervix and upper vagina"],
+ labs:["—"],
+ buzz:["SRY → SOX9 → SF1 → Sertoli, Leydig, AMH","WNT4 → DAX1 ⊣ SOX9 → ovary"],
+ src:["Langman ch 16 — Urogenital System"],
+ tx:["—"],q:["=sry","sox9","=sf1","dax1","steroidogenesis factor 1","testis determining factor","ovary determining gene"]},
+
+vaginadev:{n:"Vaginal development — dual origin & sinovaginal bulbs",k:"reg",p:"agGenes",enz:"Paramesonephric ducts above, urogenital sinus below",inh:"—",fa:"640",hi:0,
+ mech:"The vagina has a <b>dual origin</b>: the upper portion, including the fornices, comes from the paramesonephric (uterine) canal and the lower portion from the <b>urogenital sinus</b>. Two solid outgrowths of the sinus, the <b>sinovaginal bulbs</b>, form a solid vaginal plate that is fully canalized by the fifth month; the hymen separates the vaginal lumen from the urogenital sinus.",
+ find:["Sinovaginal bulbs fail to fuse → <b>double vagina</b>; fail to develop → <b>vaginal atresia</b>, with a small vaginal pouch of paramesonephric origin around the cervix","Atresia of one paramesonephric duct → its rudimentary horn usually does not communicate with the vagina, so complications are common (uterus bicornis unicollis with one rudimentary horn) · atresia of both → cervical atresia","Failed fusion of the paramesonephric ducts ranges from <b>uterus didelphys</b> (entirely double) to uterus arcuatus (slightly indented); <b>uterus bicornis</b> has two horns entering a common vagina"],
+ labs:["—"],
+ buzz:["Upper vagina = paramesonephric · lower vagina = urogenital sinus"],
+ src:["Langman ch 16 — Urogenital System"],
+ tx:["—"],q:["sinovaginal bulb","sinovaginal bulbs","=vaginal plate","=fused paramesonephric ducts","=partial atresia of one paramesonephric duct","vaginal atresia","uterus bicornis unicollis","double vagina"]},
+
+testsynth:{n:"Testicular steroidogenesis — desmolase & 17β-HSD",k:"reg",p:"agMake",enz:"LH → cholesterol desmolase … 17β-hydroxysteroid dehydrogenase → testosterone",inh:"—",fa:"646",hi:1,
+ mech:"LH makes Leydig cells synthesize testosterone by increasing the activity of <b>cholesterol desmolase</b> — the first step of the steroid pathway, as ACTH drives it in the adrenal cortex. The testes differ from the adrenal in two ways: they <b>lack 21β- and 11β-hydroxylase</b>, so they cannot make glucocorticoids or mineralocorticoids, and they have <b>17β-hydroxysteroid dehydrogenase</b>, which converts androstenedione to testosterone. The androgenic end product of the testes is therefore testosterone, not DHEA and androstenedione (the adrenal end products).",
+ find:["Target tissues that contain <b>5α-reductase</b> convert testosterone to dihydrotestosterone, the active androgen there","About <b>98%</b> of circulating testosterone is bound to sex hormone–binding globulin (SHBG) and albumin; only the free hormone is active, so SHBG works as a reservoir · estrogens increase SHBG synthesis, androgens decrease it","Failed testes: the adrenal cortex still makes DHEA and androstenedione but lacks 17β-hydroxysteroid dehydrogenase, so it cannot finish testosterone","Ovary: LH drives cholesterol desmolase in theca cells; FSH drives aromatase in granulosa cells, which converts testosterone to 17β-estradiol"],
+ labs:["—"],
+ buzz:["Testes: no 21- or 11β-hydroxylase, but 17β-HSD → testosterone"],
+ src:["Costanzo ch 10 — Reproductive physiology"],
+ tx:["—"],q:["testicular steroidogenesis","=desmolase activity","=17 beta hydroxysteroid dehydrogenase","=lack the 21 and 11 beta hydroxylases","=androgenic end product","=sex hormone binding globulin","=free testosterone","=adrenal cortex cannot convert androstenedione"]},
+
+hptfeedback:{n:"Testicular feedback — testosterone, inhibin & GnRH pulses",k:"reg",p:"agMake",enz:"Testosterone ⊣ hypothalamus and pituitary · inhibin ⊣ FSH",inh:"—",fa:"646, 655, 674",hi:1,
+ mech:"Testosterone feeds back on <b>both the hypothalamus and the anterior pituitary</b>, inhibiting GnRH and LH; at the hypothalamus it lowers both the <b>frequency and amplitude</b> of GnRH pulses. Sertoli cells secrete <b>inhibin</b>, a glycoprotein of the TGF-β superfamily that inhibits FSH secretion — the sperm-making cells make their own feedback signal. Remove the testes and the frequency and amplitude of GnRH, FSH and LH pulses all rise.",
+ find:["<b>Puberty</b> starts with <b>pulsatile GnRH</b>: large nocturnal LH pulses during REM sleep appear early, and GnRH <b>up-regulates its own receptors</b>, so a given GnRH dose releases more FSH and LH","FSH exceeds LH in childhood and senescence; LH exceeds FSH through the reproductive years","Seminiferous tubule failure lowers inhibin B → FSH rises (Klinefelter: ↓ inhibin B → ↑ FSH)","Continuous rather than pulsatile GnRH-receptor stimulation suppresses the axis (see GnRH analogues)"],
+ labs:["—"],
+ buzz:["Testosterone suppresses GnRH and LH · inhibin suppresses FSH"],
+ src:["Costanzo ch 10 — Reproductive physiology"],
+ tx:["—"],q:["=frequency and amplitude of gnrh pulses","=gnrh pulse frequency and amplitude","=on both the hypothalamus and the anterior pituitary","=pulsatile release","=up regulates its own receptors","=selective feedback on fsh","=nocturnal lh pulses"]},
+
+androgenact:{n:"Testosterone vs DHT — which androgen does what",k:"reg",p:"agAct",enz:"Tissues with 5α-reductase answer to DHT; the rest to testosterone",inh:"—",fa:"640, 676",hi:1,
+ mech:"Some androgen target tissues contain <b>5α-reductase</b> and respond to <b>dihydrotestosterone</b>; others lack it and respond to <b>testosterone</b> itself. The split explains the 5α-reductase deficiency phenotype and what a 5α-reductase inhibitor does.",
+ find:["<b>Testosterone itself</b>: the fetal internal male tract (epididymis, vas deferens, seminal vesicles), muscle mass, the pubertal growth spurt and closure of the epiphyseal plates, growth of the penis, deepening of the voice, spermatogenesis, libido","<b>DHT</b>: the external male genitalia, hair follicles, male-pattern baldness, sebaceous glands, growth of the prostate","So in <b>5α-reductase deficiency</b> puberty still brings a deeper voice and more muscle, and blocking 5α-reductase (finasteride) shrinks the prostate and slows hair loss without touching those testosterone actions"],
+ labs:["—"],
+ buzz:["Voice, muscle, growth spurt = testosterone · prostate, hair, sebaceous glands = DHT"],
+ src:["Costanzo ch 10 — Reproductive physiology","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)"],
+ tx:["—"],q:["testosterone vs dht","=deepening of the voice","=growth of the prostate","=growth spurt and voice via testosterone","=mediated by testosterone itself","=smaller prostate and slowed hair loss","=without dht conversion"]},
+
+steroidrec:{n:"Steroid receptor action — the androgen receptor",k:"reg",p:"agAct",enz:"Hormone → receptor → nucleus → dimer on response elements → transcription",inh:"—",fa:"656, 676",hi:1,
+ mech:"Steroid hormones diffuse into the target cell and bind a specific receptor in the <b>cytosol or nucleus</b>. Binding changes the receptor’s shape, and the hormone–receptor complex enters the nucleus, <b>dimerizes</b> and binds through its zinc-finger DNA-binding domain to <b>steroid-responsive elements</b> of target genes — it has become a transcription factor. New mRNA and protein follow, so steroid actions take hours, not minutes.",
+ find:["Prostate: testosterone is mostly converted to DHT, which binds a cytoplasmic receptor; the complex migrates to the nucleus, RNA polymerase activity rises within 30 minutes, then cellular protein — and over days, DNA and cell number","Testosterone induces the synthesis of skeletal muscle proteins","<b>Androgen insensitivity</b>: absent or defective androgen receptors — testosterone is high but cannot act","Androgen receptor antagonists (flutamide, bicalutamide) block androgen-responsive transcription"],
+ labs:["—"],
+ buzz:["Receptor + hormone → dimer on DNA → new protein"],
+ src:["Costanzo ch 9 — Endocrine physiology","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)"],
+ tx:["—"],q:["steroid receptor","steroid responsive elements","=androgen response elements","=forms homodimers","=receptor pair attachment","=binding of testosterone or dht to the receptor","=loss of androgen responsive gene transcription"]},
+
+gonadpanel:{n:"Testosterone & LH panel — primary vs secondary hypogonadism",k:"reg",p:"agPanel",enz:"Read testosterone with LH (and FSH)",inh:"—",fa:"655–656",hi:1,
+ mech:"Pair testosterone with LH to place the problem. <b>Low testosterone, high LH</b>: hypergonadotropic (primary) hypogonadism — the testis fails. <b>Low testosterone, low LH</b>: hypogonadotropic (secondary) — the hypothalamus or pituitary fails. <b>High testosterone, low LH</b>: a testosterone-secreting tumor or exogenous androgenic steroids. <b>High testosterone, high LH</b>: androgen insensitivity.",
+ find:["Primary: Klinefelter — dysgenetic tubules (↓ inhibin B → ↑ FSH) and abnormal Leydig cells (↓ testosterone → ↑ LH)","Secondary: Kallmann syndrome (GnRH neurons fail to migrate; anosmia) or a pituitary lesion","Exogenous androgens: feedback lowers LH and FSH (high testosterone, low LH); supraphysiologic doses cause azoospermia and smaller testes, which can take months to recover · hCG has LH-like activity on Leydig cells","Leydig (interstitial cell) tumors can make up to 100 times normal testosterone — in children rapid muscle and bone growth but early epiphyseal closure and a shorter final height"],
+ labs:["Testosterone ↓ + LH ↑ = primary · both ↓ = secondary · testosterone ↑ + LH ↓ = tumor or exogenous · both ↑ = androgen insensitivity"],
+ buzz:["Low T + high LH = the testis is the problem"],
+ src:["Costanzo ch 10 — Reproductive physiology","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)","Katzung ch 40 — The Gonadal Hormones & Inhibitors"],
+ tx:["—"],q:["=low testosterone with elevated lh and fsh","=low testosterone with low lh and fsh","=low lh and fsh with low intratesticular testosterone","=testosterone feedback at the hypothalamus and pituitary","=hypergonadotropic"]},
+
+nephrosclerosis:{n:"Benign nephrosclerosis — hyaline arteriolosclerosis",k:"dz",p:"rvVessel",enz:"Arteriolar hyalinization → focal ischemia",inh:"—",fa:"350",hi:1,
+ mech:"Nephrosclerosis is the nonspecific package of glomerulosclerosis, tubulointerstitial scarring, arteriosclerosis and arteriolosclerosis that is strongly associated with <b>hypertension</b> (also with advanced age and African descent, and sometimes seen without hypertension). Two vessel processes contribute: medial and intimal thickening, and <b>hyaline arteriolosclerosis</b> — plasma proteins leaking through injured endothelium into the arteriolar wall. The narrowed lumens cause focal ischemia, then glomerulosclerosis and chronic tubulointerstitial injury.",
+ find:["Gross: kidneys normal or moderately small (110–130 g) with a <b>fine, even granularity resembling grain leather</b>","<b>Unilateral renal artery stenosis</b>: the ischemic kidney is small with only mild arteriolosclerosis (protected from the high pressure), while the opposite kidney may show more severe arteriolosclerosis","Hyaline arteriolosclerosis is also the small-vessel lesion of diabetes"],
+ labs:["—"],
+ buzz:["Grain-leather kidneys of long-standing hypertension"],
+ src:["Robbins ch 20 — The kidney"],
+ tx:["—"],q:["benign nephrosclerosis","nephrosclerosis","hyaline arteriolosclerosis","=fine leathery cortex","=normal to moderately small kidneys","=small ischemic kidney with mild arteriolosclerosis"]},
+
+malignephro:{n:"Malignant hypertension in the kidney — onion skin & fibrinoid necrosis",k:"dz",p:"rvVessel",enz:"Hyperplastic arteriolosclerosis",inh:"—",hi:1,
+ mech:"Severe (malignant) hypertension means systolic pressure above 180 or diastolic above 120 mm Hg with renal failure and retinal hemorrhages and exudates, with or without papilledema. Interlobular arteries and larger arterioles show proliferating intimal cells in an <b>onion-skin</b> pattern — <b>hyperplastic arteriolosclerosis</b> — that can obliterate small arteries and arterioles; <b>fibrinoid necrosis</b> may involve arterioles and glomeruli, sometimes with glomerular microthrombi.",
+ find:["Overlaps with thrombotic microangiopathy — both injure endothelium and can cause microangiopathic hemolytic anemia — but the molecular defects of TMA are absent"],
+ labs:["—"],
+ buzz:["Onion-skin arterioles + fibrinoid necrosis = malignant hypertension"],
+ src:["Robbins ch 20 — The kidney"],
+ tx:["—"],q:["=onion skin","hyperplastic arteriolosclerosis","malignant nephrosclerosis","=fibrinoid necrosis of arterioles"]},
+
+ahus:{n:"Atypical HUS — complement-mediated thrombotic microangiopathy",k:"dz",p:"rvTma",enz:"Defective complement regulation injures endothelium",inh:"—",fa:"432",hi:1,
+ mech:"The thrombotic microangiopathies share two triggers: endothelial injury and excessive platelet activation. <b>Shiga toxin–mediated HUS</b> follows food contaminated by Shiga-like toxin–producing E coli or Shigella dysenteriae type 1. <b>Atypical (diarrhea-negative) HUS</b> comes from inherited mutations of, or autoantibodies to, <b>complement-regulatory proteins</b> — complement-mediated TMA — or from other endothelial injury: antiphospholipid antibodies, pregnancy complications, scleroderma, severe hypertension, chemotherapy and immunosuppressants, radiation. <b>TTP</b> is inherited or (more often) autoantibody-mediated <b>ADAMTS13</b> deficiency.",
+ find:["All share thrombocytopenia, microangiopathic hemolytic anemia (schistocytes, ↑ LDH) and acute kidney injury; normal PT and PTT separate them from DIC","TTP adds fever and neurologic symptoms; Shiga toxin HUS follows bloody diarrhea, typically in children"],
+ labs:["ADAMTS13 normal and Shiga toxin negative → think complement-mediated (atypical) HUS"],
+ buzz:["No diarrhea, normal ADAMTS13 = complement"],
+ src:["Robbins ch 20 — The kidney"],
+ tx:["TTP: plasma exchange, glucocorticoids, rituximab · Shiga toxin HUS: supportive care"],q:["atypical hus","atypical hemolytic uremic syndrome","complement mediated tma","=alternative pathway overactivation","=defective regulator","=thrombotic microangiopathy","=microangiopathic hemolytic anemia thrombocytopenia and kidney injury","=shiga like toxin injures endothelium"]},
+
+ckdprog:{n:"CKD progression — hyperfiltration, podocytes & fibrosis",k:"reg",p:"rvTma",enz:"Fewer nephrons → glomerular hypertension → sclerosis",inh:"—",hi:1,
+ mech:"Once any renal disease destroys enough nephrons to cut GFR to about <b>30–50% of normal</b>, progression to end-stage kidney disease proceeds at a steady rate, independent of the original insult. The surviving glomeruli hypertrophy, with increased blood flow, filtration and transcapillary pressure — <b>glomerular hypertension</b>. Endothelial and <b>podocyte injury</b> and podocyte loss raise protein leak, matrix accumulates in the mesangium, and segmental then global <b>glomerulosclerosis</b> follows: a vicious cycle.",
+ find:["<b>Tubulointerstitial fibrosis</b> correlates with the decline in function better than glomerular injury does: ischemia downstream of sclerotic glomeruli, interstitial inflammation, fewer peritubular capillaries — and <b>proteinuria</b> itself injures and activates tubular cells, which release cytokines, chemokines and growth factors","TGF-β, connective tissue growth factor and fibroblast growth factor drive matrix deposition and sclerosis","Renin-angiotensin inhibitors lower intraglomerular pressure and slow progressive sclerosis"],
+ labs:["—"],
+ buzz:["Hyperfiltration of the survivors is what keeps CKD progressing"],
+ src:["Robbins ch 20 — The kidney"],
+ tx:["ACE inhibitors or ARBs to lower intraglomerular pressure"],q:["ckd progression","glomerular hypertension","=hypertrophy with capillary hypertension","=filtered protein taken up by tubules","=nephron loss hyperfiltration","=hyperfiltration of surviving nephrons","=hypertrophy with raised capillary pressure","tubulointerstitial fibrosis"]},
+
+ciliopathy:{n:"Renal cilia & cyst formation — the ciliopathy model",k:"reg",p:"rvCyst",enz:"Primary cilium senses flow → Ca²⁺ signal restrains proliferation",inh:"—",fa:"622",hi:1,
+ mech:"The favored hypothesis puts the <b>cilium–centrosome complex</b> of tubular epithelial cells at the center of polycystic disease. Each tubular cell has one nonmotile <b>primary cilium</b> (2–3 µm of microtubules on a basal body derived from the centriole) that monitors <b>fluid flow and shear stress</b>; in response the sensors regulate ion flux, cell polarity and proliferation. <b>Polycystin-1 and -2</b> sit on the primary cilium, and cells lacking PKD1 keep normal cilia but lose the flow-induced Ca²⁺ flux.",
+ find:["ADPKD needs <b>both alleles</b> nonfunctional: each cyst is clonal — one inherited mutation plus an acquired somatic mutation of the second allele","Fibrocystin (PKHD1, the ARPKD gene) and the nephrocystins of nephronophthisis also localize to primary cilia, basal bodies or centrosomes"],
+ labs:["—"],
+ buzz:["Cyst disease = broken flow sensor"],
+ src:["Robbins ch 20 — The kidney"],
+ tx:["—"],q:["=cilium centrosome complex","=cilia centrosome complex","primary cilium","=fluid flow and shear stress","=cilium and basal body","=lost flow induced calcium signaling","=somatic mutation that disables the second allele","ciliopathy"]},
+
+nephronoph:{n:"Nephronophthisis",k:"dz",p:"rvCyst",enz:"Nephrocystins — a ciliopathy",inh:"—",hi:1,
+ mech:"Nephronophthisis is a group of progressive disorders with medullary cysts concentrated at the <b>corticomedullary junction</b>; as a group it is the most common genetic cause of end-stage kidney disease in children and young adults. The familial forms are autosomal recessive and appear in childhood or adolescence. Children first have <b>polyuria and polydipsia</b> — a marked concentrating defect — with sodium wasting and tubular acidosis, and progress to ESKD in 5–10 years.",
+ find:["Mutations in the NPHP genes encode <b>nephrocystins</b> found in primary cilia, basal bodies or the centrosome — a ciliopathy; the NPHP2 product, <b>inversin</b>, mediates left–right patterning in the embryo","Kidneys small and contracted with granular surfaces; cortical tubular atrophy, thickened tubular basement membranes and interstitial fibrosis; glomeruli preserved","Cysts may be too small to see: suspect it in a child or adolescent with unexplained chronic renal failure, a family history and chronic tubulointerstitial nephritis on biopsy"],
+ labs:["Salt wasting, polyuria, growth retardation, anemia"],
+ buzz:["Child with polyuria, small kidneys and corticomedullary cysts"],
+ src:["Robbins ch 20 — The kidney"],
+ tx:["—"],q:["nephronophthisis","nephrocystin","nephrocystins","inversin","=left right patterning","=polyuria and polydipsia with sodium wasting","=cortical tubular atrophy with interstitial fibrosis"]},
+
+medsponge:{n:"Medullary sponge kidney",k:"dz",p:"rvCyst",enz:"Dilated medullary collecting ducts",inh:"—",hi:0,
+ mech:"<b>Medullary sponge kidney</b> is multiple cystic dilations of the collecting ducts in the medulla — relatively common and usually innocuous. It occurs in adults, is usually found radiographically, and renal function is usually normal. The papillary ducts are dilated and small cysts, lined by <b>cuboidal or occasionally transitional epithelium</b>, may be present; there is no cortical scarring unless pyelonephritis is superimposed.",
+ find:["Presents with hematuria, urinary tract infection and recurrent kidney stones; benign outcome","Medullary cysts show on excretory urography"],
+ labs:["—"],
+ buzz:["Stones and infections with normal renal function"],
+ src:["Robbins ch 20 — The kidney"],
+ tx:["—"],q:["medullary sponge kidney","=cuboidal or occasionally transitional epithelium","=usually normal renal function with a benign course"]},
+
+mcdk:{n:"Multicystic renal dysplasia",k:"dz",p:"rvCyst",enz:"Ureteric bud fails to induce the metanephric mesenchyme",inh:"—",fa:"596–597",hi:1,
+ mech:"Renal dysplasia is a sporadic disorder, unilateral or bilateral and often cystic: an enlarged, very irregular, multicystic kidney with cysts from millimeters to centimeters lined by flattened epithelium. The hallmark is <b>islands of undifferentiated mesenchyme, often with cartilage</b>, and immature collecting ducts. Most cases come with <b>ureteropelvic obstruction</b>, ureteral agenesis or atresia, or other lower urinary tract anomalies.",
+ find:["Unilateral: may mimic a tumor; after nephrectomy the opposite kidney works normally and the prognosis is excellent · bilateral: renal failure","Embryology: the ureteric bud develops but fails to induce differentiation of the metanephric mesenchyme → a nonfunctional kidney of cysts and connective tissue; bilateral dysplasia → Potter sequence","The ureteropelvic junction is the last part of the ureter to canalize — the most common pathologic cause of prenatal hydronephrosis"],
+ labs:["—"],
+ buzz:["Cartilage in a cystic infant kidney"],
+ src:["Robbins ch 20 — The kidney"],
+ tx:["Nephrectomy when unilateral"],q:["multicystic renal dysplasia","multicystic dysplastic kidney","renal dysplasia","=undifferentiated mesenchyme with cartilage","=ureteropelvic obstruction"]},
+
+lbptriage:{n:"Low back pain triage — chronicity, red & yellow flags",k:"reg",p:"lbTriage",enz:"Acute < 6 wk · subacute 6–12 wk · chronic > 12 wk",inh:"—",fa:"520",hi:1,
+ mech:"Set the chronicity first — <b>acute < 6 weeks, subacute 6–12 weeks, chronic > 12 weeks</b> — then screen every patient for the four <b>red-flag</b> categories (a single flag has low sensitivity and specificity; clusters raise the probability of serious disease): <b>cauda equina</b> (urinary retention, incontinence, saddle anesthesia, lost rectal tone, severe or progressive deficits), <b>infection</b> (fever > 100.4 °F, immunosuppression, IV drug use, recent indwelling catheter), <b>fracture</b> (osteoporosis, chronic corticosteroids, older age, recent trauma) and <b>malignancy</b> (cancer history, unexplained weight loss, age > 50, no improvement after 1 month of conservative care).",
+ find:["<b>Yellow flags</b> — psychosocial risks for the move from acute to chronic pain and disability: high baseline pain or disability, job dissatisfaction, occupational stress, depression, anxiety, catastrophizing, <b>fear-avoidance</b>, poor social support, sleep problems, smoking, obesity — screened with the <b>STarT Back</b> tool or the <b>Örebro</b> Musculoskeletal Pain Screening Questionnaire","About <b>90%</b> of low back pain is nonspecific; it comes most often from the <b>posterior elements</b> (facet joints, ligaments, capsules, laminae, pedicles, processes)","Axial pain sits on or near the spine; radicular pain is sharp and searing in a dermatome; referred pain is dull and poorly localized, distant from its source","An emergent or urgent condition (cauda equina syndrome, fracture, infection, a leaking abdominal aortic aneurysm) needs referral or advanced imaging before any OMT"],
+ labs:["No routine labs or imaging for mechanical pain without red flags · ESR and CRP for infection or spondyloarthropathy · serum protein electrophoresis if total protein or globulins are high · urinalysis for a genitourinary source","Early, non-indicated MRI (within 4–6 weeks) → longer disability, worse outcomes and unnecessary cost"],
+ buzz:["Red flags = cauda equina, infection, fracture, cancer"],
+ src:["OCOM OMM — SDL 1 lecture: Low Back Pain I","OCOM OMM — SDL 4 lecture: Low Back Pain III","OCOM OMM — SDL 5 lecture: Low Back Pain IV"],
+ tx:["—"],q:["=yellow flag","=yellow flags","=start back","=orebro","fear avoidance beliefs","=posterior elements","=less than 6 weeks","=longer disability worse outcomes","=immediate referral or advanced imaging","=whether an emergent or urgent medical condition"]},
+
+discbio:{n:"Disc degeneration & discogenic pain",k:"reg",p:"lbCause",enz:"Endplate diffusion fails → annular fissures → nerve ingrowth",inh:"—",hi:1,
+ mech:"The intervertebral disc is <b>avascular</b>: it gets nutrients only by <b>diffusion from the capillaries of the adjacent vertebral endplates</b> and has no lymphatic scavenger cells. The nucleus pulposus is incompressible because its water is bound by proteoglycans made by a sparse population of cells; the annulus fibrosus contains its pressure. Degeneration runs: nutritional failure → fewer nucleus cells → less proteoglycan, lower hydrostatic pressure and water → the nucleus can no longer spread vertical loads, so the <b>annulus</b> is overloaded and <b>fissures</b>.",
+ find:["Only the <b>outer third of the healthy annulus</b> is innervated; vascular, highly innervated granulation tissue grows into tears, and its new nerve endings release <b>nerve growth factor</b> → axial back pain","<b>Chemical radiculitis</b>: acidic proinflammatory cytokines leaking through an annular tear irritate the nerve root — sharp, searing radicular pain without compression","<b>Mechanical radiculopathy</b>: herniated nucleus (protrusion, extrusion, sequestration) compresses the root → dermatomal sensory loss, reduced reflexes, then weakness","The breakdown disturbs the functional spinal unit → microinstability found on segmental palpation"],
+ labs:["—"],
+ buzz:["Outer third of the annulus hurts; the nucleus does not"],
+ src:["OCOM OMM — SDL 1 lecture: Low Back Pain I"],
+ tx:["—"],q:["disc degeneration","discogenic pain","annular tear","=diffusion from the capillaries of the adjacent vertebral endplates","=outer third of the annulus","=chemical radiculitis","=ingrown granulation tissue","=annulus fibrosus tears under overload"]},
+
+lumbarexam:{n:"Lumbar root & dural tension exam",k:"reg",p:"lbExam",enz:"L4 heel walk · L5 great toe · S1 toe walk",inh:"—",fa:"458",hi:1,
+ mech:"Test L1–S1 to localize root compromise. <b>L4</b>: medial leg and foot · tibialis anterior (ankle dorsiflexion, heel walking) · patellar reflex. <b>L5</b>: lateral leg, dorsum of foot, first two toes · extensor hallucis longus (great-toe extension) · tibialis posterior reflex (variable). <b>S1</b>: lateral foot, heel and sole · gastrocnemius–soleus (plantarflexion, toe walking) · Achilles reflex. L3: quadriceps (knee extension); L1–L2: iliopsoas, hip adductors, cremasteric reflex.",
+ find:["<b>Straight-leg raise</b>: supine, passive hip flexion with the knee extended; positive = sharp pain radiating past the knee in a dermatome, usually at 30–70°. To separate nerve from hamstring, lower the leg slightly and add ankle dorsiflexion, hip adduction or neck flexion — they tension only neural tissue","<b>Slump test</b>: seated, spine slumped, neck flexed; extend the knee and dorsiflex the ankle — reproduced radicular pain = neural and dural tension","<b>EMG</b> signs of nerve damage often do not appear until <b>21 days</b> after the injury","Superficial abdominal reflex: unilateral absence suggests an ipsilateral root lesion between T7 and L2","Cauda equina screen: saddle sensation (S2–S5), rectal tone, bulbocavernosus reflex and anal wink, post-void residual"],
+ labs:["—"],
+ buzz:["Neck flexion that worsens leg pain = dural tension"],
+ src:["OCOM OMM — SDL 1 lecture: Low Back Pain I","OCOM OMM — SDL 4 lecture: Low Back Pain III"],
+ tx:["—"],q:["=straight leg raise","=straight leg raising","slump test","=tibialis anterior for ankle dorsiflexion","=the l5 root","=tension of the neural and dural structures","=slightly lower the leg","=21 days post injury"]},
+
+lbpstruct:{n:"Osteopathic evaluation of back pain — the four steps",k:"reg",p:"lbExam",enz:"History → medical exam → neuro exam → structural exam",inh:"—",hi:1,
+ mech:"The evaluation runs: history with red and yellow flags → general medical exam (vitals; abdominal, genitourinary and leg vascular exams — vascular claudication mimics neurogenic) → neurologic exam → osteopathic structural exam. In the structural exam the <b>painful region is examined last</b>, to prevent guarding and compensation.",
+ find:["Active motion first (patient), then passive (physician) to feel the end-feel of each barrier; a “reluctance to motion” rather than a hard barrier suggests a viscerosomatic reflex","Standing: paravertebral humping on forward bending = scoliosis; lordosis and kyphosis from the side; iliac crests, greater trochanters and sacral sulci for a short leg — standing, the short side has a low crest, low trochanter and deep sulcus, with the pelvis shifted away from it","Palpation (TART): acute dysfunction is tender, warm, moist and tense with a vascular blush; chronic is less tender, cool, dry and diffusely restricted","Patterns: lower crossed syndrome (tight iliopsoas, rectus femoris, erector spinae, TFL; weak gluteals, rectus abdominis and obliques → anterior pelvic tilt, hyperlordosis) and Zink’s common compensatory pattern","Local lumbosacral dysfunction strains the myofascial kinetic chain (tensegrity), so the thoracic spine, ribs, pelvis, sacrum and legs are examined and treated too"],
+ labs:["—"],
+ buzz:["Examine the painful region last"],
+ src:["OCOM OMM — SDL 1 lecture: Low Back Pain I","OCOM OMM — SDL 4 lecture: Low Back Pain III","OCOM OMM — SDL 5 lecture: Low Back Pain IV"],
+ tx:["—"],q:["=last to prevent guarding","=compensatory strain through the myofascial kinetic chain","=thoracic spine costal cage pelvis sacrum and lower extremities","reluctance to motion","=somatic dysfunction can produce the symptoms or coexist"]},
+
+lbpvisceral:{n:"Visceral causes of back pain",k:"reg",p:"lbCause",enz:"Shared spinal pathways and sympathetic sensitization",inh:"—",hi:0,
+ mech:"Visceral disease refers pain to the back through close anatomical relationships, shared spinal cord pathways and sympathetic sensitization. Referred visceral pain is diffuse, poorly localized, aching or gnawing — without local numbness or tingling.",
+ find:["<b>Vascular</b>: a dilated, leaking or ruptured abdominal aortic aneurysm gives severe mid-back pain — an emergency; aortoiliac atherosclerosis (Leriche syndrome) gives low back and buttock pain with claudication; the right common iliac artery compressing the common iliac vein (May-Thurner) gives leg pain and swelling","<b>Genitourinary</b>: passing kidney stones stretch the retroperitoneum — excruciating flank pain with reflex thoracolumbar spasm; pyelonephritis and hydronephrosis","<b>Gastrointestinal</b>: Crohn disease, ulcerative colitis, peptic ulcer, pancreatitis, colon cancer, gallstones, IBS — via viscerosomatic reflexes and reflex psoas spasm","<b>Herpes zoster</b>: unilateral dermatomal back pain before the rash","<b>Pregnancy</b>: low back pain in 40–50%; lordosis rises, the sacrum flexes bilaterally and the pelvic ligaments strain"],
+ labs:["—"],
+ buzz:["Diffuse gnawing back pain without numbness — look at the viscera"],
+ src:["OCOM OMM — SDL 4 lecture: Low Back Pain III"],
+ tx:["—"],q:["leriche syndrome","may thurner syndrome","=visceral referred pain","=referred visceral pain"]},
+
+maigne:{n:"Thoracolumbar junction (Maigne) syndrome",k:"dz",p:"lbCause",enz:"T12–L2 facets irritate the posterior rami",inh:"—",hi:0,
+ mech:"An unrecognized, treatable cause of low back pain: pain at the <b>posterior iliac crest</b> (it can refer to the groin or inguinal region) with tenderness on palpation of the <b>thoracolumbar junction (T12–L2)</b>. Altered facet mechanics irritate the posterior rami. A central variant comes from facet arthropathy at the junction; a peripheral variant from impingement of the medial branch of the superior cluneal nerve.",
+ find:["Segmental manipulation of T10–L2 often resolves the referred pain completely — confirming the diagnosis"],
+ labs:["—"],
+ buzz:["Iliac crest pain, tender T12–L2"],
+ src:["OCOM OMM — SDL 1 lecture: Low Back Pain I","OCOM OMM — SDL 4 lecture: Low Back Pain III"],
+ tx:["Manipulation of the T10–L2 segments"],q:["maigne syndrome","thoracolumbar junction syndrome","=thoracolumbar junction"]},
+
+fbss:{n:"Failed back surgery syndrome — the dirty half-dozen",k:"dz",p:"lbCause",enz:"Somatic dysfunction persisting after decompression or fusion",inh:"—",hi:0,
+ mech:"<b>Failed back surgical syndrome</b> is intractable pain and neurosensory symptoms in the low back, pelvis and legs after a lumbar decompression or stabilization. From an osteopathic view a cluster of somatic dysfunctions — the <b>dirty half-dozen</b> — often underlies it.",
+ find:["1 · Muscle imbalance of the trunk and lower extremity (including psoas syndrome)","2 · Non-neutral (type II) lumbar dysfunction","3 · Pubic shear · 4 · Sacral shear · 5 · Superior innominate shear","6 · Short leg syndrome / pelvic tilt"],
+ labs:["—"],
+ buzz:["Dirty half-dozen after back surgery"],
+ src:["OCOM OMM — SDL 4 lecture: Low Back Pain III"],
+ tx:["—"],q:["failed back surgery syndrome","failed back surgical syndrome","dirty half dozen"]},
+
+lbpomt:{n:"Lumbar OMT — choosing the technique",k:"reg",p:"lbTx",enz:"Match the technique to acuity, tolerance and pathology",inh:"—",hi:1,
+ mech:"Technique choice depends on the patient’s age, tolerance, acute versus chronic state and the underlying spinal pathology.",
+ find:["<b>Counterstrain</b>: passive and indirect — ideal for acute flares (acute disc herniation, psoas spasm) and pain dominated by tender points","<b>Muscle energy</b>: lengthens psoas-iliacus, piriformis, hamstrings and quadratus lumborum; mobilizes FRS/ERS segments; treats sacral torsions","<b>Articulatory</b> (side-lying lumbar mobilization): chronic facet (zygapophysial) stiffness with lost passive range of motion","<b>HVLA</b> (side-lying thrust): localized subacute or chronic restriction, especially L5–S1, when no bony or neurologic contraindication exists","<b>Still technique</b>: from the position of ease through the barrier — rapid for pelvic, lumbar and sacral dysfunction and innominate upslips","<b>MFR and soft tissue</b>: paraspinal hypertonia and thoracolumbar fascia; abdominal diaphragm MFR improves pain and disability in chronic nonspecific low back pain","<b>OCMM, BLT, LAS</b>: chronic pain with central sensitization, anxiety, depression or poor sleep; BLT and LAS for ligamentous laxity and microinstability"],
+ labs:["—"],
+ buzz:["Acute flare → counterstrain · chronic facet stiffness → articulatory"],
+ src:["OCOM OMM — SDL 5 lecture: Low Back Pain IV"],
+ tx:["—"],q:["lumbar omt","=chronic facet stiffness","=side lying lumbar articulation"]},
+
+lbpcontra:{n:"OMT contraindications in low back pain",k:"reg",p:"lbTx",enz:"Absolute: no thrust at that region · relative: gentle and indirect, elsewhere",inh:"—",hi:1,
+ mech:"<b>Absolute</b> — no HVLA, and often no manipulation of the region at all: acute vertebral fracture, a medically unstable patient, ruptured or dissecting abdominal aortic aneurysm, <b>bony metastasis at the target segment</b>, acute spinal osteomyelitis or diskitis, cauda equina syndrome. <b>Relative</b> — no high-force direct technique at the involved level, but gentle indirect OMT (counterstrain, MFR, BLT) at associated or distant dysfunctions stays safe: acute herniated disc with radiculopathy, spondylolysis or spondylolisthesis, spinal stenosis with neurogenic claudication (avoid forced extension), active inflammatory joint disease such as sacroiliitis in ankylosing spondylitis.",
+ find:["Metastases (commonly breast, lung, prostate, renal, thyroid) weaken the vertebra — force can trigger a pathological fracture"],
+ labs:["—"],
+ buzz:["Metastasis at the segment = absolute"],
+ src:["OCOM OMM — SDL 1 lecture: Low Back Pain I","OCOM OMM — SDL 5 lecture: Low Back Pain IV"],
+ tx:["—"],q:["=bony metastasis at the target segment","=gentle indirect omt at associated or distant"]},
+
+lbpplan:{n:"Low back pain treatment plan & follow-up",k:"reg",p:"lbTx",enz:"A 6–8-week conservative trial, then reassess",inh:"—",hi:1,
+ mech:"For nonspecific mechanical low back pain the standard is a <b>6- to 8-week conservative trial</b>: education, home exercise (knee-to-chest, pelvic tilts, stretching), core stabilization, physical or occupational therapy and judicious OMT — with a written summary for the patient.",
+ find:["Acute outpatient: follow up within <b>2–3 days</b>; the interval between OMT sessions <b>lengthens</b> as dysfunction and inflammation resolve","Goals: homeostasis, somatic and postural change, pain control (the lowest effective NSAID or muscle relaxant dose), measurable functional milestones","Reassure: 90% of acute episodes resolve within 6 weeks; advise against bed rest beyond 3 days","Psoas syndrome: treat the L1–L2 FRS “key” dysfunction first; cold, not heat, for acute spasm","Spondylolisthesis: a TLSO brace in the acute phase limits shear; antilordotic therapy (core strengthening, hamstring stretching, avoid extension)","Short leg: OMT to maximize compensation, then a heel lift · sleep on the side with knees bent around a pillow"],
+ labs:["—"],
+ buzz:["6–8 weeks conservative · see acute patients again in 2–3 days"],
+ src:["OCOM OMM — SDL 5 lecture: Low Back Pain IV"],
+ tx:["—"],q:["=within 2 to 3 days","=progressively lengthens","=a tlso spinal orthosis","=lying on his side with knees bent around a pillow"]},
+
+lbpcase:{n:"Five-model analysis of a back pain case",k:"reg",p:"lbTx",enz:"Knee injury → gait change → sacral torsion → L5 dysfunction",inh:"—",hi:0,
+ mech:"The course case: a 52-year-old man with 3 weeks of right low back pain that began after a <b>left knee meniscus injury</b> made him limp. The altered gait (lost shock absorption, restricted ankle dorsiflexion) set off a compensatory chain: pelvic unleveling, a left-on-right sacral torsion, right piriformis hypertonicity and an L5 FRS-right dysfunction. MRI later showed a <b>2-mm broad-based L5–S1 protrusion</b> with mild right neuroforaminal stenosis; EMG and NCS were normal.",
+ find:["Biomechanical: <b>piriformis spasm</b> refers pain down the right posterior thigh (not past the knee), mimicking radiculopathy — MET/HVLA for L5, MET for the torsion, counterstrain for piriformis, treat the knee and ankle","Neurological: L5 facilitation and dural strain irritate the root; asthma keeps a T4–T5 viscerosomatic reflex — indirect OMT, serial neuro checks","Metabolic: scheduled short-term NSAIDs, no bed rest beyond 3 days, anti-inflammatory diet","Respiratory-circulatory: release the right 1st and 12th ribs and thoracic diaphragm to restore venous and lymphatic return; walking program","Behavioral: reassurance (90% resolve within 6 weeks), sleep ergonomics, goals tied to returning to tennis and golf"],
+ labs:["—"],
+ buzz:["Back pain that started with a knee"],
+ src:["OCOM OMM — SDL 5 lecture: Low Back Pain IV"],
+ tx:["—"],q:["=left knee meniscus injury","=2 mm broad based","=piriformis spasm refers pain"]},
+
+orbitwalls:{n:"Orbital walls — strong lateral, thin medial & floor",k:"reg",p:"efOrbit",enz:"Four walls of a quadrangular pyramid",inh:"—",hi:1,
+ mech:"The orbit is a quadrangular pyramid with its base anterolateral and apex posteromedial. <b>Roof</b>: orbital part of the frontal bone (lesser wing of the sphenoid near the apex) — separates the orbit from the anterior cranial fossa. <b>Medial wall</b>: mainly the <b>orbital plate of the ethmoid</b> — paper-thin, with the ethmoidal cells behind it. <b>Floor</b>: mainly the maxilla — thin, shared with the maxillary sinus. <b>Lateral wall</b>: frontal process of the zygomatic bone and <b>greater wing of the sphenoid</b> — the <b>strongest and thickest</b> wall, which matters because it is the most exposed to direct trauma.",
+ find:["A blow may fracture the thin medial and inferior walls while the strong rim stays intact (a blowout fracture): medial-wall fractures reach the ethmoidal and sphenoidal sinuses, floor fractures the maxillary sinus","The roof is stronger but thin enough that a sharp object can pass through it into the frontal lobe","Intraorbital bleeding after fracture pushes the eye forward (exophthalmos)","The medial walls of the two orbits are nearly parallel; the lateral walls are about 90° apart"],
+ labs:["—"],
+ buzz:["Lamina papyracea = paper-thin medial wall"],
+ src:["Moore ch 9 — Head"],
+ tx:["—"],q:["orbital walls","lamina papyracea","=orbital plate of the ethmoid","=greater wing of the sphenoid","=strongest and thickest"]},
+
+orbitapex:{n:"Orbital apex — optic canal & superior orbital fissure",k:"reg",p:"efOrbit",enz:"Optic canal medial to the superior orbital fissure",inh:"—",hi:1,
+ mech:"The apex of the orbit is the <b>optic canal</b> in the lesser wing of the sphenoid, just medial to the <b>superior orbital fissure</b>. The optic canal carries the <b>optic nerve and ophthalmic artery</b>. The superior orbital fissure carries the nerves to the extraocular muscles — <b>oculomotor (III), trochlear (IV) and abducent (VI)</b> — the frontal, lacrimal and nasociliary branches of the <b>ophthalmic nerve (V1)</b>, and the ophthalmic veins on their way to the cavernous sinus.",
+ find:["The four recti arise from the <b>common tendinous ring</b>, which encircles the optic canal and part of the superior orbital fissure; it surrounds the optic nerve sheath, both divisions of CN III, the nasociliary nerve and CN VI — they lie within the cone of recti","Lesion at the fissure → ophthalmoplegia, ptosis and lost corneal sensation (III, IV, V1, VI); if the optic canal is also involved, vision is lost (II and the ophthalmic artery)","Tumors from the middle cranial fossa enter the orbit most easily through the superior orbital fissure; from the temporal or infratemporal fossa through the inferior orbital fissure"],
+ labs:["—"],
+ buzz:["II in the canal; III, IV, V1, VI in the fissure"],
+ src:["Moore ch 9 — Head"],
+ tx:["—"],q:["superior orbital fissure","optic canal","common tendinous ring","orbital apex","=structures traversing both the optic canal"]},
+
+eyelids:{n:"Eyelids — muscles, glands & nerves",k:"reg",p:"efOrbit",enz:"Levator (III) + superior tarsal (sympathetic) open; orbicularis (VII) closes",inh:"—",hi:1,
+ mech:"The <b>tarsi</b> are the dense connective-tissue skeleton of the eyelids. Embedded in them, the <b>tarsal glands</b> make a lipid secretion that lubricates the lid margins, keeps them from sticking together and forms a barrier that normal amounts of lacrimal fluid do not cross. The <b>levator palpebrae superioris</b> (CN III) raises the upper lid; smooth muscle in its deep lamina, the <b>superior tarsal muscle</b>, is sympathetically innervated. The <b>orbicularis oculi</b> (CN VII) closes the lids.",
+ find:["Oculomotor lesion → levator paralysis → ptosis · lost sympathetic supply (Horner) → constant ptosis from the superior tarsal muscle","Facial nerve lesion → the lids cannot close fully, protective blinking is lost and the lower lid everts → the cornea dries, with excessive but inefficient tearing","The orbital septum, continuous with the periorbita, keeps orbital fat in and can limit the spread of infection to and from the orbit","Large sebaceous <b>ciliary glands</b> sit with the eyelashes at the lid margin"],
+ labs:["—"],
+ buzz:["Two muscles open the lid, one closes it"],
+ src:["Moore ch 9 — Head"],
+ tx:["—"],q:["=main striated muscle belly","levator palpebrae superioris","tarsal glands","=lipid rich secretion","orbital septum"]},
+
+lacrimal:{n:"Lacrimal apparatus — making and draining tears",k:"reg",p:"efOrbit",enz:"CN VII → pterygopalatine ganglion → lacrimal gland",inh:"—",hi:0,
+ mech:"The <b>lacrimal gland</b>, in the superolateral orbit, secretes lacrimal fluid (saline with lysozyme) through 8–12 ducts into the lateral superior conjunctival fornix. Secretion is driven by <b>parasympathetic</b> fibers of CN VII: <b>greater petrosal nerve → nerve of the pterygoid canal → pterygopalatine ganglion</b>, then postsynaptic fibers via the zygomatic nerve to the lacrimal nerve; sympathetic fibers (deep petrosal) are vasoconstrictive.",
+ find:["Drainage: blinking sweeps fluid lateral to medial into the <b>lacrimal lake</b> → lacrimal puncta → <b>canaliculi</b> → lacrimal sac → <b>nasolacrimal duct</b> → inferior nasal meatus; the orbicularis oculi helps pull fluid into the sac","Overflow tears form when production is excessive or the drainage apparatus is blocked"],
+ labs:["—"],
+ buzz:["Tears drain to the inferior meatus"],
+ src:["Moore ch 9 — Head"],
+ tx:["—"],q:["lacrimal gland","lacrimal apparatus","nasolacrimal duct","lacrimal canaliculi","=lacrimal gland excretory ducts"]},
+
+lidlumps:{n:"Eyelid lumps — hordeolum, chalazion & sebaceous carcinoma",k:"dz",p:"efPath",enz:"Infected gland vs blocked gland vs cancer that mimics both",inh:"—",fa:"559",hi:1,
+ mech:"A <b>hordeolum (sty)</b> is a painful, red, suppurative swelling from acute infection or an obstructed duct of an eyelid gland at the lash line. A <b>chalazion</b> is noninfectious: an obstructed tarsal (meibomian) or Zeis gland leaks lipid into the lid, provoking a <b>granulomatous lipogranuloma</b> — a small, firm, painless nodule.",
+ find:["<b>Sebaceous carcinoma</b> can form a mass mimicking a chalazion or diffusely thicken the lid; it spreads within the epithelium (<b>pagetoid spread</b>), mimicking blepharitis or ocular pemphigoid, and first reaches the parotid and submandibular nodes — mortality up to 22%","<b>Basal cell carcinoma</b> is the most common eyelid malignancy, with a predilection for the <b>lower lid and medial canthus</b>","A lid tumor that stops the lids closing exposes and damages the cornea"],
+ labs:["Sebaceous carcinoma can pass for a chalazion — histology (cytoplasmic vacuolization, pagetoid spread) makes the diagnosis"],
+ buzz:["Painful = hordeolum · painless = chalazion"],
+ src:["Moore ch 9 — Head","Robbins ch 29 — The eye"],
+ tx:["—"],q:["hordeolum","chalazion","chalazia","sebaceous carcinoma","=pagetoid","=meibomian gland","=zeis"]},
+
+corneadz:{n:"Corneal disease — keratoconus & Fuchs dystrophy",k:"dz",p:"efPath",enz:"Bowman layer breaks · endothelial cell loss",inh:"—",hi:1,
+ mech:"<b>Keratoconus</b> (about 1 in 2000) is progressive thinning and ectasia of the cornea without inflammation or vessels — a conical cornea with irregular astigmatism that spectacles correct poorly; rigid contact lenses help, and transplantation works well. It is usually bilateral and associated with Down syndrome, Marfan syndrome and atopy (eye rubbing). Hallmark: thinning with <b>breaks in the Bowman layer</b>; a Descemet rupture lets aqueous into the stroma (<b>corneal hydrops</b>).",
+ find:["<b>Fuchs endothelial dystrophy</b>: loss of endothelial cells → stromal edema and thickening; a leading indication for corneal transplantation. Early, endothelial cells make drop-like basement-membrane deposits (<b>guttata</b>) seen on slit lamp; the remaining cells cannot keep the stroma dehydrated → ground-glass, blurred cornea and bullous keratopathy"],
+ labs:["—"],
+ buzz:["Keratoconus = Bowman layer breaks · Fuchs = guttata and endothelial loss"],
+ src:["Robbins ch 29 — The eye"],
+ tx:["Rigid contact lenses or transplant for keratoconus · transplant for Fuchs"],q:["keratoconus","fuchs endothelial dystrophy","fuchs dystrophy","=bowman layer","guttata","corneal hydrops","bullous keratopathy"]},
+
+pterygium:{n:"Pterygium — sun-damaged tissue onto the cornea",k:"dz",p:"efPath",enz:"Actinic damage in the interpalpebral fissure",inh:"—",hi:0,
+ mech:"Both are submucosal conjunctival elevations from <b>actinic (sun) damage</b>, so they sit in the interpalpebral fissure. A <b>pinguecula</b> is small and yellowish, astride the limbus but not on the cornea. A <b>pterygium</b> is a wedge-shaped growth of fibrovascular connective tissue that starts at the limbus and migrates onto the cornea, dissecting into the plane of the Bowman layer.",
+ find:["A pterygium does not cross the pupillary axis; apart from mild astigmatism it does not threaten vision, though it can cause redness and irritation","Excised tissue is worth examining — precursors of squamous cell carcinoma and melanoma are occasionally found"],
+ labs:["—"],
+ buzz:["Farmer with a triangle growing onto the cornea"],
+ src:["Robbins ch 29 — The eye"],
+ tx:["—"],q:["pterygium","pinguecula","=fibrovascular connective tissue"]},
+
+eyeoptics:{n:"Optics of the eye — refraction & diopters",k:"reg",p:"efOptics",enz:"The cornea does most of the bending",inh:"—",fa:"549",hi:1,
+ mech:"The <b>refractive index</b> of a transparent substance is the ratio of the velocity of light in air to its velocity in the substance. Refractive power is measured in <b>diopters</b>: 1 meter divided by the focal length (a lens focusing at 1 m = 1 diopter). The reduced eye has a total power of <b>59 diopters</b> (lens accommodated for distance), and about <b>two-thirds</b> comes from the anterior surface of the <b>cornea</b> — because the cornea’s refractive index differs greatly from air, while the lens differs little from the aqueous and vitreous. The internal lens contributes about <b>20 diopters</b>.",
+ find:["The retinal image is <b>inverted and left–right reversed</b>; the brain is trained to read it as upright","Concave lenses (negative diopters) diverge light; a −2 D lens cancels a +2 D lens"],
+ labs:["—"],
+ buzz:["59 D total: cornea two-thirds, lens about 20 D"],
+ src:["Guyton ch 50 — The Eye: I. Optics of Vision"],
+ tx:["—"],q:["refractive index","diopter","diopters","=59 diopters","=20 diopters","=inverted and left right reversed","=air cornea interface","=velocity of light"]},
+
+lensaccom:{n:"Lens accommodation — ciliary muscle & zonules",k:"reg",p:"efOptics",enz:"Ciliary muscle contracts → zonules slacken → lens rounds up",inh:"—",fa:"550",hi:1,
+ mech:"At rest the suspensory ligaments (zonules) hold the lens fairly flat. Contracting the <b>ciliary muscle</b> relaxes the ligaments, and the <b>elastic lens capsule</b> lets the lens become more spherical — more convex, more refractive power, near focus. The ciliary muscle is controlled almost entirely by <b>parasympathetic</b> fibers of CN III; sympathetic stimulation relaxes it only weakly.",
+ find:["A child’s lens can go from 20 to about 34 diopters — an accommodation of <b>14 diopters</b>; with age the lens grows thicker and less elastic (protein denaturation), falling below 2 D by 45–50 and to essentially <b>0 at age 70</b> (presbyopia)","Looking up from near work: parasympathetic tone falls, the ciliary muscle relaxes, zonular tension flattens the lens","The pupil ranges from about 1.5 to 8 mm; light entry is proportional to its area, so it changes about <b>30-fold</b>","A small pupil increases <b>depth of focus</b> — rays pass through the center of the lens"],
+ labs:["—"],
+ buzz:["Near vision: ciliary muscle contracts, zonules slacken"],
+ src:["Guyton ch 50 — The Eye: I. Optics of Vision"],
+ tx:["—"],q:["lens accommodation","suspensory ligaments","depth of focus","=releasing tension on the suspensory ligaments","=70 years of age","=30 fold","=reduced parasympathetic tone to the ciliary muscle","=smaller pupil restricts light"]},
+
+aqueous:{n:"Aqueous humor — production, outflow & intraocular pressure",k:"reg",p:"efOptics",enz:"Ciliary processes → posterior chamber → pupil → angle → canal of Schlemm",inh:"—",fa:"550",hi:1,
+ mech:"Aqueous humor is formed at about <b>2–3 µL/min</b>, almost all by <b>active secretion</b> from the epithelium of the ciliary processes: Na⁺ is pumped into the intercellular spaces, pulling Cl⁻ and HCO₃⁻ with it, and water follows by osmosis. It flows from the <b>posterior chamber through the pupil</b> into the anterior chamber, to the iridocorneal angle, through the <b>trabecular meshwork</b> into the <b>canal of Schlemm</b>, which empties into extraocular veins.",
+ find:["Average intraocular pressure is about <b>15 mm Hg</b> (range 12–20), measured by tonometry","Trabecular outflow carries about 90%; uveoscleral outflow about 10% — prostaglandin analogs increase it","Production is cut by β-blockers, α₂-agonists and carbonic anhydrase inhibitors; muscarinic agonists open the trabecular route","Phagocytic cells keep the trabecular spaces clear; debris after hemorrhage or infection can block them and cause glaucoma"],
+ labs:["—"],
+ buzz:["Made by the ciliary processes, drained by the canal of Schlemm"],
+ src:["Guyton ch 50 — The Eye: I. Optics of Vision"],
+ tx:["—"],q:["aqueous humor","ciliary processes","=active secretion in which sodium"]},
+
+kinchain:{n:"Open vs closed kinetic chain exercise",k:"reg",p:"ptEx",enz:"Is the distal segment fixed or free?",inh:"—",hi:1,
+ mech:"<b>Closed kinetic chain</b>: the proximal segment moves on a <b>fixed distal segment</b> (leg press, squats, elliptical walker) — used for <b>shoulder and knee rehabilitation</b> and dynamic stability. <b>Open kinetic chain</b>: the distal segment moves about the proximal one (long-arc quadriceps extension, most arm weight-lifting) — for functional improvement in activities of daily living.",
+ find:["Home exercise is as good as supervised therapy after ACL reconstruction in some studies; supervised exercise is better for low back injury, knee osteoarthritis and claudication"],
+ labs:["—"],
+ buzz:["Squat = closed chain · leg extension = open chain"],
+ src:["OCOM Ortho — SDL 23 reading: The physical therapy prescription (Am Fam Physician 2007)"],
+ tx:["—"],q:["closed kinetic chain","open kinetic chain","kinetic chain exercise","=fixed distal segment"]},
+
+exercisetypes:{n:"Exercise by contraction type — concentric, eccentric, isometric, isotonic",k:"reg",p:"ptEx",enz:"What the muscle length does during the effort",inh:"—",hi:1,
+ mech:"<b>Concentric</b>: the muscle shortens as it contracts (flexion phase of a biceps or hamstring curl) — builds mass and strength. <b>Eccentric</b>: it contracts while <b>lengthening</b> (extension phase of the curl) — sport-specific strengthening to prevent injury. <b>Isometric</b>: contraction at <b>constant length</b> (holding a weight still) — toning and strengthening when joint motion is not advised, such as quadriceps work for patellofemoral pain. <b>Isotonic</b>: constant resistance through the range of motion (free weights) — general conditioning.",
+ find:["<b>Core stability</b> (sit-ups, back extension, abdominal crunches, Pilates) targets the low back, trunk and abdominal muscles — for low back pain and pregnancy-related pelvic pain"],
+ labs:["—"],
+ buzz:["Eccentric = contracting while lengthening"],
+ src:["OCOM Ortho — SDL 23 reading: The physical therapy prescription (Am Fam Physician 2007)"],
+ tx:["—"],q:["eccentric exercise","concentric exercise","isometric exercise","isotonic exercise","core stability","=contracts while simultaneously lengthening","=core stability exercises"]},
+
+ptultrasound:{n:"Therapeutic ultrasound — continuous vs pulsed",k:"reg",p:"ptMod",enz:"Thermal vs nonthermal effects",inh:"—",hi:1,
+ mech:"Therapeutic ultrasound works through <b>thermal</b> effects (continuous ultrasound heats tissue) and <b>nonthermal</b> effects (pulsed ultrasound is thought to speed healing by altering membrane permeability, ionic concentration gradients and cellular biochemical activity). Higher frequencies treat superficial tissue (patellar tendon); lower frequencies reach deeper, up to about 5 cm (deep bruising, spasm, strains).",
+ find:["Uses: tendon injuries, short-term relief of muscle strain or spasm; it may also help some fractures, venous and pressure ulcers and incisions","Evidence of clinical effectiveness is lacking — prescribe it only as symptomatic treatment; misapplied it can burn or damage endothelium","Do not use near malignant tumors, nerve tissue after laminectomy, joint replacements, pacemakers, thrombophlebitis, the eyes, reproductive organs, acute inflammation, epiphyseal plates or breast implants"],
+ labs:["—"],
+ buzz:["Continuous heats; pulsed does not"],
+ src:["OCOM Ortho — SDL 23 reading: The physical therapy prescription (Am Fam Physician 2007)"],
+ tx:["—"],q:["therapeutic ultrasound","pulsed ultrasound","continuous ultrasound","=nonthermal effects"]},
+
+phonoionto:{n:"Phonophoresis vs iontophoresis",k:"reg",p:"ptMod",enz:"Drive a drug through the skin with sound or with current",inh:"—",hi:0,
+ mech:"<b>Phonophoresis</b> uses ultrasound to drive topical medications (usually analgesics or steroids) through the skin — a corticosteroid or NSAID mixed into an aqueous base at 10% and applied at 1–2 W/cm²; risk of thermal injury. <b>Iontophoresis</b> uses an <b>electric current</b> to drive ionically charged substances in — the cathode for negatively charged drugs, the anode for positively charged ones; <b>dexamethasone 0.4%</b> is the most commonly prescribed.",
+ find:["Iontophoresis uses: arthritis, bursitis, tendinopathy, calcific tendinopathy, edema, hyperhidrosis, some dermatophytoses; with other modalities it can shorten treatment of plantar fasciitis","Iontophoresis cautions: allergy to the substance, open wounds, decreased sensation, nearby metal implants, wires or staples","Phonophoresis treats conditions that might otherwise get a local anesthetic or steroid injection"],
+ labs:["—"],
+ buzz:["Phono = sound · ionto = current"],
+ src:["OCOM Ortho — SDL 23 reading: The physical therapy prescription (Am Fam Physician 2007)"],
+ tx:["—"],q:["phonophoresis","iontophoresis"]},
+
+estim:{n:"Electrical stimulation & TENS",k:"reg",p:"ptMod",enz:"Fire an action potential: muscle contraction or altered sensory input",inh:"—",hi:1,
+ mech:"Electrical stimulation generates an action potential in nerve tissue, causing a muscle contraction or altering sensory input. <b>Electrical muscle stimulation</b> gives isometric activation — for spasm, atrophy and strengthening. <b>Transcutaneous electrical nerve stimulation (TENS)</b> relieves pain, thought to work by altering the <b>gate mechanism</b> and by releasing endogenous opioids and cortisol.",
+ find:["Currents may also alter vascular membrane permeability — less edema, better wound healing and drug penetration","Do not use with cardiac <b>pacemakers</b>, known arrhythmias, thrombophlebitis or thrombosis, or on the abdomen or pelvis of pregnant patients; caution with heart disease, tumors, open wounds, decreased sensation or communication","Adverse effects: burns from wrong settings, electrode allergy, pain; evidence is limited or conflicting"],
+ labs:["—"],
+ buzz:["TENS: gate control + endogenous opioids"],
+ src:["OCOM Ortho — SDL 23 reading: The physical therapy prescription (Am Fam Physician 2007)"],
+ tx:["—"],q:["transcutaneous electrical nerve stimulation","electrical muscle stimulation","=electrical stimulation is contraindicated","=gate control mechanism"]},
+
+lllt:{n:"Low-level laser therapy",k:"reg",p:"ptMod",enz:"Photochemical, not thermal",inh:"—",hi:0,
+ mech:"Low-level laser therapy appears to act through a <b>photochemical</b> rather than thermal effect: cytochrome oxidase may absorb photons in the 600–900 nm range, increasing ATP production and oxidative metabolism; one trial showed lower prostaglandin E2 in peritendinous fluid.",
+ find:["FDA approved for hand and wrist pain of <b>carpal tunnel syndrome</b> and for minor musculoskeletal pain; used for strains, epicondylitis, osteoarthritis and rheumatoid arthritis — Cochrane reviews show minimal, conflicting benefit in OA and limited short-term benefit in RA","No known adverse effects besides nausea with prolonged use; caution with tumors or anticoagulant, corticosteroid or immunosuppressive drugs; not over a pregnant uterus; goggles for patient and therapist"],
+ labs:["—"],
+ buzz:["FDA-approved for carpal tunnel pain"],
+ src:["OCOM Ortho — SDL 23 reading: The physical therapy prescription (Am Fam Physician 2007)"],
+ tx:["—"],q:["low level laser therapy","=lllt"]},
+
+ptphases:{n:"PT by phase of injury — acute, subacute, chronic",k:"reg",p:"ptRx",enz:"Cold and isometrics → heat and isotonics → strengthening",inh:"—",hi:1,
+ mech:"<b>Acute (< 72 hours)</b>: cold, electrical stimulation, <b>pulsed</b> ultrasound · isometric exercise and gentle active range of motion · gentle massage. <b>Subacute (3–14 days)</b>: <b>heat</b>, electrical stimulation, low-level laser therapy, iontophoresis · <b>isotonic</b> exercise, active range of motion, stretching · massage and joint mobilization. <b>Chronic (> 2 weeks)</b>: TENS, <b>continuous</b> ultrasound · strengthening and stabilization · myofascial release.",
+ find:["Acute strains often benefit from daily treatment over a short period; chronic injuries are treated less often over a longer period","Modalities are adjuncts — modalities alone are not considered physical therapy; the goal is long-term function through exercise, manual therapy and modalities"],
+ labs:["—"],
+ buzz:["Acute: cold + isometrics · subacute: heat + isotonics"],
+ src:["OCOM Ortho — SDL 23 reading: The physical therapy prescription (Am Fam Physician 2007)"],
+ tx:["—"],q:["=subacute injuries at 3 14 days","=in the subacute phase","phase of injury"]},
+
+ptrx:{n:"Writing the physical therapy prescription",k:"reg",p:"ptRx",enz:"Diagnosis · frequency and duration · protocol · precautions · signature",inh:"—",hi:1,
+ mech:"A physical therapy prescription should include the <b>diagnosis</b> (properly coded), the <b>frequency and duration</b> of therapy (e.g., three times a week for four weeks), the specific protocols or treatments wanted, <b>safety precautions</b> (range-of-motion and weight-bearing limits, illnesses that affect therapy) and the physician’s <b>signature and date</b>, which the therapist needs before treating.",
+ find:["Clinic forms often allow “evaluate and treat”, leaving the choice of interventions to the therapist","The therapist documents progress to the physician about every 30 days or before follow-up"],
+ labs:["—"],
+ buzz:["No frequency, no precautions, no signature → not a complete prescription"],
+ src:["OCOM Ortho — SDL 23 reading: The physical therapy prescription (Am Fam Physician 2007)"],
+ tx:["—"],q:["physical therapy prescription","pt prescription","=safety precautions are a required","=frequency and duration of therapy are missing","=physician signature and date"]},
+
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
  mech:"A seizure is synchronized, high-frequency firing of a population of neurons. It runs in three phases: <b>aura</b> (the early part — odd smells or tastes), <b>ictal</b> (first symptom to end of seizure activity) and <b>postictal</b> (gradual recovery to baseline). <b>Epilepsy</b> is a disorder of recurrent, <b>unprovoked</b> seizures.",
@@ -16106,7 +16480,7 @@ MAPS.nephron = {
 
 MAPS.cardiac = {
  t:"Cardiac", sub:"Conduction system and the ECG · action potential phases with the antiarrhythmic classes · contraction and cardiac output",
- w:2500, h:2338,
+ w:2500, h:2478,
  fa:"289–290, 295, 297–298, 303, 308, 311, 313, 323, 326–328, 459",
  src:["Robbins ch 12 — The heart","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 13 — Drugs Used in Heart Failure","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves","Costanzo ch 4 — Cardiovascular physiology"],
  comps:[
@@ -16141,8 +16515,8 @@ MAPS.cardiac = {
    ["Expiration","Left-sided murmurs louder"],
    ["Hand grip","↑ Afterload: MR, AR, VSD louder"]]}],
  plots:[
-  {x:240,y:1716,w:1070,h:560,kind:"apnodal",t:"Pacemaker (SA node) action potential"},
-  {x:1370,y:1716,w:1070,h:560,kind:"apventric",t:"Ventricular myocyte action potential"}],
+  {x:240,y:1716,w:1070,h:700,kind:"apnodal",t:"Pacemaker (SA node) action potential"},
+  {x:1370,y:1716,w:1070,h:700,kind:"apventric",t:"Ventricular myocyte action potential"}],
  nodes:[
   {id:"sa",l:"SA node",x:350,y:250,p:"conduction",s:"60–100/min · the pacemaker"},
   {id:"atria",l:"Atria",x:700,y:250,p:"conduction",s:"P wave"},
@@ -17721,7 +18095,7 @@ MAPS.signal = {
 
 MAPS.muscle = {
  t:"Muscle: Nerve to Contraction", sub:"The signal crosses the junction, runs down the T-tubule, releases calcium, and the sarcomere pulls · each disease is pinned to the step it breaks",
- w:3500, h:1840,
+ w:3500, h:2460,
  fa:"60, 136, 459–460, 477, 480, 566",
  src:["Robbins ch 5 — Genetic disorders","Robbins ch 6 — Diseases of the immune system","Robbins ch 20 — The kidney","Robbins ch 27 — Peripheral nerves and skeletal muscles","Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs","Katzung ch 27 — Skeletal Muscle Relaxants","Guyton ch 6 — Contraction of Skeletal Muscle","Costanzo ch 1 — Cellular physiology","Marks ch 24 — Oxidative Phosphorylation and Mitochondrial Function","Fundamental Neuroscience ch 24 — Motor System I: Peripheral Sensory, Brainstem, and Spinal Influence on Anterior Horn Neurons"],
  comps:[
@@ -17762,6 +18136,9 @@ MAPS.muscle = {
   {id:"energy",l:"Energy supply",x:1100,y:1380,p:"myopathy",s:"glycogen · fat · mitochondria",m:["mcardle","mito"]},
   {id:"immune",l:"Immune attack",x:1780,y:1380,p:"myopathy",s:"capillaries (DM) · fibers (PM)",m:["myositis"]},
   {id:"dmg",l:"Fiber breakdown",x:1100,y:1600,p:"myopathy",s:"CK and myoglobin leak out",m:["rhabdo","statin"]}],
+ plots:[
+  {x:140,y:1840,w:1580,h:560,kind:"lentension",t:"Length–tension relationship"},
+  {x:1780,y:1840,w:1580,h:560,kind:"forcevel",t:"Force–velocity relationship"}],
  edges:[
   {a:"spineconn",b:"mnap",p:"nmj"},
   {a:"mnap",b:"vgcc",p:"nmj",e:"Depolarizes the terminal",ly:-46},
@@ -17838,8 +18215,8 @@ MAPS.bone = {
 
 MAPS.repro = {
  t:"Menstrual Cycle & Pregnancy", sub:"FSH grows a follicle, the LH surge releases it, progesterone readies the lining · hCG keeps the corpus luteum alive until the placenta takes over",
- w:3500, h:1770,
- fa:"501, 651–654, 662, 673–675",
+ w:3500, h:2470,
+ fa:"501, 648, 650–654, 662, 673–675",
  src:["Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 22 — The female genital tract","Robbins ch 24 — The endocrine system","Katzung ch 18 — The Eicosanoids: Prostaglandins, Thromboxanes, Leukotrienes, & Related Compounds","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs","Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones","Costanzo ch 10 — Reproductive physiology","Langman ch 3 — First Week of Development: Ovulation to Implantation","Pawlina ch 23 — Female Reproductive System","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)","Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones","Guyton ch 83 — Pregnancy and Lactation"],
  comps:[
   {x:160,y:110,w:3180,h:520,l:"The ovarian cycle"},
@@ -17887,6 +18264,8 @@ MAPS.repro = {
   {id:"prec",l:"Precocious puberty",x:2910,y:1480,p:"puberty",s:"before 8 in girls or 9 in boys",m:["pubertydis"]},
   {id:"delay",l:"Delayed puberty",x:2910,y:1560,p:"puberty",s:"none by 13 in girls or 14 in boys",m:["pubertydis","kallmann"]},
   {id:"sdx",l:"→ Sexual Differentiation",x:2910,y:1640,p:"neutral",k:"ghost",go:"sexdev"}],
+ plots:[
+  {x:140,y:1770,w:2400,h:640,kind:"menstrual",t:"The menstrual cycle — hormones and basal temperature"}],
  edges:[
   {a:"gnrh",b:"fshlh",p:"follicular"},
   {a:"fshlh",b:"foll",p:"follicular",e:"FSH picks a follicle",ly:-46},
@@ -19652,7 +20031,7 @@ MAPS.glom = {
 
 MAPS.acidbase = {
  t:"Acid-Base & Electrolytes", sub:"Read the gas from pH to primary disorder to anion gap · RTAs by the segment that fails · K⁺ shifts and every electrolyte",
- w:3300, h:3698,
+ w:3300, h:4318,
  fa:"70, 224, 321, 348–350, 608–611, 626",
  src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 20 — The kidney","Robbins ch 24 — The endocrine system","Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs","Katzung ch 11 — Antihypertensive Agents","Katzung ch 13 — Drugs Used in Heart Failure","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Katzung ch 15 — Diuretic Agents","Katzung ch 23 — The Alcohols","Katzung ch 31 — Opioid Agonists & Antagonists","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists","Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis","Katzung ch 58 — Management of the Poisoned Patient","Guyton ch 31 — Acid–Base Regulation","Guyton ch 32 — Diuretics and Kidney Diseases","Guyton ch 78 — Adrenocortical Hormones","Costanzo ch 5 — Respiratory physiology","Costanzo ch 6 — Renal physiology","Costanzo ch 7 — Acid-base physiology","Costanzo ch 9 — Endocrine physiology","Kaplan & Sadock ch 21 — Psychopharmacology"],
  comps:[
@@ -19779,6 +20158,8 @@ MAPS.acidbase = {
   {id:"n98",l:"Osteomalacia, rickets, weakness",x:2820,y:2750,p:"abelectro"},
   {id:"n99",l:"Hyperphosphatemia",x:2220,y:2830,p:"abelectro",s:"renal failure, tumor lysis",m:["mgpo4","tls"]},
   {id:"n100",l:"Metastatic calcification · low Ca²⁺",x:2820,y:2830,p:"abelectro"}],
+ plots:[
+  {x:140,y:3698,w:1480,h:560,kind:"titration",t:"Buffer titration curves"}],
  edges:[
   {a:"ph",b:"acm",p:"abmetab"},
   {a:"ph",b:"alk",p:"abmetab"},
@@ -26808,7 +27189,7 @@ MAPS.ihd = {
 
 MAPS.cardcycle = {
  t:"Cardiac Cycle & Pressure-Volume Loops", sub:"Output equations and resistance · one beat on the pressure-volume loop · how preload, afterload, contractility and valve lesions bend it · heart sounds and the jugular pulse",
- w:3300, h:2590,
+ w:3300, h:3470,
  fa:"289–293",
  src:["Costanzo ch 4 — Cardiovascular physiology","Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves","Guyton ch 14 — Overview of the Circulation: Pressure, Flow, and Resistance","Guyton ch 20 — Cardiac Output, Venous Return, and Their Regulation","Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects"],
  comps:[
@@ -26832,7 +27213,8 @@ MAPS.cardcycle = {
  plots:[
   {x:140,y:1590,w:1480,h:440,kind:"pvloop",t:"Pressure–volume loop"},
   {x:1680,y:1590,w:1480,h:440,kind:"starling",t:"Frank-Starling curves"},
-  {x:140,y:2090,w:1480,h:440,kind:"cofunc",t:"Cardiac & vascular function curves"}],
+  {x:140,y:2090,w:1480,h:440,kind:"cofunc",t:"Cardiac & vascular function curves"},
+  {x:140,y:2590,w:2400,h:820,kind:"wiggers",t:"Wiggers diagram — one cardiac cycle"}],
  nodes:[
   {id:"q1",l:"Stroke volume",x:420,y:170,p:"cceq",s:"EDV − ESV",m:["cardiaceq"]},
   {id:"q2",l:"Ejection fraction",x:1020,y:170,p:"cceq",s:"SV ÷ EDV · normal 50–70%",m:["cardiaceq","hf"]},
@@ -29170,7 +29552,7 @@ MAPS.orthowork = {
   {id:"k4",l:"Knee osteoarthritis",x:2220,y:170,p:"okknee",s:"stiffness ≤ 30 min · age ≥ 45",m:["kneeoa"]},
   {id:"k5",l:"OARSI core care",x:2820,y:170,p:"okknee",s:"education + land-based exercise",m:["kneeoa"]},
   {id:"k6",l:"Patellofemoral pain",x:420,y:250,p:"okknee",s:"25–40% of knee visits",m:["pfpsrehab","patellofemoral"]},
-  {id:"k7",l:"Dynamic knee valgus",x:1020,y:250,p:"okknee",s:"weak hip abductors",m:["pfpsrehab"]},
+  {id:"k7",l:"Dynamic knee valgus",x:1020,y:250,p:"okknee",s:"single-leg movement tasks",m:["pfpsrehab"]},
   {id:"k8",l:"PCL & LCL injuries",x:1620,y:250,p:"okknee",s:"isolated → brace + PT",m:["pcllcl"]},
   {id:"k9",l:"ACL · MCL · menisci",x:2220,y:250,p:"okknee",s:"unhappy triad",m:["kneeinj"]},
   {id:"k10",l:"Knee dislocation",x:2820,y:250,p:"okknee",s:"check the ABI",m:["dislocs"]},
@@ -29324,7 +29706,308 @@ MAPS.psychtx = {
   {a:"e6",b:"e7",p:"peth"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["index","Index"]];
+MAPS.androgen = {
+ t:"Androgens & the Testicular Axis", sub:"The genes that decide the gonad and the vagina’s two origins · how the testis makes testosterone and what controls it · testosterone vs DHT and the receptor they share · and reading a testosterone–LH panel",
+ w:3300, h:1190,
+ fa:"639–640, 646, 655–656",
+ src:["Langman ch 16 — Urogenital System", "Costanzo ch 10 — Reproductive physiology", "Costanzo ch 9 — Endocrine physiology", "Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Deciding the gonad and the ducts"},
+  {x:140,y:370,w:3020,h:200,l:"Making testosterone and controlling it"},
+  {x:140,y:630,w:3020,h:120,l:"Testosterone, DHT and the receptor"},
+  {x:140,y:810,w:3020,h:120,l:"Reading testosterone with LH"}],
+ panels:[
+  {x:140,y:990,w:1480,h:138,kw:120,t:"Testosterone with LH",rows:[
+   ["↓ T · ↑ LH","primary (hypergonadotropic) hypogonadism"],
+   ["↓ T · ↓ LH","secondary (hypogonadotropic) hypogonadism"],
+   ["↑ T · ↓ LH","testosterone-secreting tumor or exogenous androgen"],
+   ["↑ T · ↑ LH","androgen insensitivity"]]},
+  {x:1680,y:990,w:1480,h:94,kw:127,t:"Testosterone or DHT?",rows:[
+   ["Testosterone","internal ducts, muscle, growth spurt, voice, sperm, libido"],
+   ["DHT","external genitalia, prostate, hair follicles, baldness, sebaceous glands"]]}],
+ nodes:[
+  {id:"g1",l:"SRY → SOX9 → SF1",x:420,y:170,p:"agGenes",k:"hub",s:"testis-determining cascade",m:["sexgenes"]},
+  {id:"g2",l:"WNT4 → DAX1",x:1020,y:170,p:"agGenes",s:"ovary · DAX1 blocks SOX9",m:["sexgenes"]},
+  {id:"g3",l:"AMH & testosterone",x:1620,y:170,p:"agGenes",s:"one duct destroyed, one kept",m:["sexdevreg"]},
+  {id:"g4",l:"Swyer · PMDS",x:2220,y:170,p:"agGenes",s:"no SRY · no AMH action",m:["swyer","pmds"]},
+  {id:"g5",l:"Androgen insensitivity",x:2820,y:170,p:"agGenes",s:"46,XY, female outside",m:["ais"]},
+  {id:"g6",l:"Vagina: two origins",x:420,y:250,p:"agGenes",k:"hub",s:"paramesonephric above, sinus below",m:["vaginadev"]},
+  {id:"g7",l:"Sinovaginal bulbs",x:1020,y:250,p:"agGenes",s:"fail → atresia or a double vagina",m:["vaginadev"]},
+  {id:"g8",l:"Müllerian fusion anomalies",x:1620,y:250,p:"agGenes",s:"didelphys · bicornuate · septate",m:["mullerianfusion"]},
+  {id:"g9",l:"MRKH",x:2220,y:250,p:"agGenes",s:"Müllerian agenesis",m:["mrkh"]},
+  {id:"gx1",l:"→ Sexual Differentiation",x:2820,y:250,p:"neutral",k:"ghost",go:"sexdev"},
+  {id:"m1",l:"LH → cholesterol desmolase",x:420,y:430,p:"agMake",k:"hub",s:"the first step, in Leydig cells",m:["testsynth","malehpg"]},
+  {id:"m2",l:"17β-HSD",x:1020,y:430,p:"agMake",s:"androstenedione → testosterone",m:["testsynth"]},
+  {id:"m3",l:"No 21- or 11β-hydroxylase",x:1620,y:430,p:"agMake",s:"no cortisol or aldosterone",m:["testsynth"]},
+  {id:"m4",l:"SHBG · free testosterone",x:2220,y:430,p:"agMake",s:"about 98% bound",m:["testsynth"]},
+  {id:"m5",l:"5α-reductase → DHT",x:2820,y:430,p:"agMake",s:"in target tissues",m:["testsynth","reductase5a"]},
+  {id:"m6",l:"GnRH pulses",x:420,y:510,p:"agMake",k:"hub",s:"puberty: nocturnal LH pulses",m:["hptfeedback","gnrhanalogues"]},
+  {id:"m7",l:"Testosterone feedback",x:1020,y:510,p:"agMake",s:"hypothalamus and pituitary",m:["hptfeedback"]},
+  {id:"m8",l:"Inhibin → FSH",x:1620,y:510,p:"agMake",s:"the Sertoli signal",m:["hptfeedback","malehpg"]},
+  {id:"m9",l:"Continuous GnRH",x:2220,y:510,p:"agMake",s:"receptor down-regulation",m:["gnrhanalogues"]},
+  {id:"m10",l:"Castration",x:2820,y:510,p:"agMake",s:"GnRH, LH, FSH pulses rise",m:["hptfeedback"]},
+  {id:"a1",l:"Testosterone targets",x:420,y:690,p:"agAct",k:"hub",s:"voice · muscle · growth spurt",m:["androgenact"]},
+  {id:"a2",l:"DHT targets",x:1020,y:690,p:"agAct",s:"prostate · hair · sebaceous glands",m:["androgenact"]},
+  {id:"a3",l:"5α-reductase deficiency",x:1620,y:690,p:"agAct",s:"virilizes at puberty",m:["reductase5a","androgenact"]},
+  {id:"a4",l:"Finasteride",x:2220,y:690,p:"agAct",s:"smaller prostate, slower hair loss",m:["antiandrogens","bph"]},
+  {id:"a5",l:"Receptor → dimer → DNA",x:2820,y:690,p:"agAct",s:"steroid-responsive elements",m:["steroidrec"]},
+  {id:"p1",l:"Testosterone & LH",x:420,y:870,p:"agPanel",k:"hub",s:"four patterns",m:["gonadpanel"]},
+  {id:"p2",l:"Primary: Klinefelter",x:1020,y:870,p:"agPanel",s:"↓ T, ↑ LH, ↑ FSH",m:["klinefelter","gonadpanel"]},
+  {id:"p3",l:"Secondary: Kallmann",x:1620,y:870,p:"agPanel",s:"all low · anosmia",m:["kallmann","gonadpanel"]},
+  {id:"p4",l:"Exogenous androgens",x:2220,y:870,p:"agPanel",s:"↑ T, ↓ LH · small testes",m:["anabolic","gonadpanel"]},
+  {id:"p5",l:"Leydig cell tumor",x:2820,y:870,p:"agPanel",s:"↑ T, ↓ LH",m:["testisstromal","gonadpanel"]}],
+ edges:[
+  {a:"g6",b:"g7",p:"agGenes"},
+  {a:"g7",b:"g8",p:"agGenes"},
+  {a:"m1",b:"m2",p:"agMake"},
+  {a:"m4",b:"m5",p:"agMake"},
+  {a:"m6",b:"m7",p:"agMake"},
+  {a:"m7",b:"m8",p:"agMake"},
+  {a:"a1",b:"a2",p:"agAct"},
+  {a:"p1",b:"p2",p:"agPanel"}]
+};
+
+MAPS.renvasc = {
+ t:"Renal Vascular & Cystic Disease", sub:"Hypertension in the kidney — benign and malignant nephrosclerosis and renal artery stenosis · the thrombotic microangiopathies · why chronic kidney disease keeps progressing · and the cystic kidneys, read through the primary cilium",
+ w:3300, h:1032,
+ fa:"350, 432, 596–597, 622–623",
+ src:["Robbins ch 20 — The kidney"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Vessels and hypertension"},
+  {x:140,y:290,w:3020,h:200,l:"Microangiopathy and CKD progression"},
+  {x:140,y:550,w:3020,h:200,l:"Cystic kidneys"}],
+ panels:[
+  {x:140,y:810,w:1480,h:160,kw:222,t:"Renal cystic diseases",rows:[
+   ["ADPKD","AD · liver cysts, berry aneurysms · renal failure at 40–60"],
+   ["ARPKD","AR · enlarged cystic kidneys at birth · hepatic fibrosis"],
+   ["Medullary sponge kidney","hematuria, infection, stones · benign"],
+   ["Nephronophthisis","AR · shrunken kidneys · salt wasting, polyuria"],
+   ["Multicystic dysplasia","sporadic · cartilage · curable if unilateral"]]},
+  {x:1680,y:810,w:1480,h:138,kw:153,t:"The thrombotic microangiopathies",rows:[
+   ["Shiga toxin HUS","E coli O157:H7 · bloody diarrhea"],
+   ["Atypical HUS","complement-regulator mutations or autoantibodies"],
+   ["TTP","ADAMTS13 deficiency (autoantibody > inherited)"],
+   ["All three","thrombocytopenia + MAHA + kidney injury"]]}],
+ nodes:[
+  {id:"v1",l:"Benign nephrosclerosis",x:420,y:170,p:"rvVessel",k:"hub",s:"hyaline arteriolosclerosis",m:["nephrosclerosis"]},
+  {id:"v2",l:"Grain-leather kidneys",x:1020,y:170,p:"rvVessel",s:"normal or moderately small",m:["nephrosclerosis"]},
+  {id:"v3",l:"Malignant hypertension",x:1620,y:170,p:"rvVessel",s:"onion skin · fibrinoid necrosis",m:["malignephro","htnemerg"]},
+  {id:"v4",l:"Renal artery stenosis",x:2220,y:170,p:"rvVessel",s:"renin from the ischemic kidney",m:["renovascular"]},
+  {id:"v5",l:"Two kidneys, two lesions",x:2820,y:170,p:"rvVessel",s:"the ischemic side is spared",m:["nephrosclerosis","renovascular"]},
+  {id:"t1",l:"Shiga toxin HUS",x:420,y:350,p:"rvTma",s:"bloody diarrhea · children",m:["ttp","ahus"]},
+  {id:"t2",l:"Atypical HUS",x:1020,y:350,p:"rvTma",k:"hub",s:"complement regulators",m:["ahus"]},
+  {id:"t3",l:"TTP",x:1620,y:350,p:"rvTma",s:"ADAMTS13 deficiency",m:["ttp"]},
+  {id:"t4",l:"Hyperfiltration",x:2220,y:350,p:"rvTma",k:"hub",s:"surviving glomeruli overwork",m:["ckdprog"]},
+  {id:"t5",l:"Proteinuria → fibrosis",x:2820,y:350,p:"rvTma",s:"tubular injury · TGF-β",m:["ckdprog"]},
+  {id:"t6",l:"Chronic kidney disease",x:420,y:430,p:"rvTma",s:"GFR < 60 for 3 months",m:["ckd"]},
+  {id:"t7",l:"Uremia",x:1020,y:430,p:"rvTma",s:"end-stage",m:["uremia"]},
+  {id:"t8",l:"Anemia of CKD",x:1620,y:430,p:"rvTma",s:"low erythropoietin",m:["ckdanemia"]},
+  {id:"t9",l:"Diabetic nephropathy",x:2220,y:430,p:"rvTma",s:"a leading cause",m:["diabetickidney"]},
+  {id:"t10",l:"RAS blockade",x:2820,y:430,p:"rvTma",s:"slows sclerosis",m:["ckdprog"]},
+  {id:"c1",l:"Primary cilium",x:420,y:610,p:"rvCyst",k:"hub",s:"flow sensor · Ca²⁺ signal",m:["ciliopathy"]},
+  {id:"c2",l:"ADPKD",x:1020,y:610,p:"rvCyst",s:"PKD1 · PKD2 · two hits",m:["adpkd","ciliopathy"]},
+  {id:"c3",l:"ARPKD",x:1620,y:610,p:"rvCyst",s:"PKHD1 · hepatic fibrosis",m:["arpkd"]},
+  {id:"c4",l:"Nephronophthisis",x:2220,y:610,p:"rvCyst",s:"corticomedullary cysts · polyuria",m:["nephronoph"]},
+  {id:"c5",l:"Medullary sponge kidney",x:2820,y:610,p:"rvCyst",s:"stones · benign",m:["medsponge"]},
+  {id:"c6",l:"Multicystic dysplasia",x:420,y:690,p:"rvCyst",k:"hub",s:"cartilage · UPJ obstruction",m:["mcdk"]},
+  {id:"c7",l:"Potter sequence",x:1020,y:690,p:"rvCyst",s:"bilateral agenesis or dysplasia",m:["potter"]},
+  {id:"c8",l:"Kidney development",x:1620,y:690,p:"rvCyst",s:"ureteric bud + metanephric mesenchyme",m:["kidneydev"]},
+  {id:"c9",l:"Berry aneurysm",x:2220,y:690,p:"rvCyst",s:"with ADPKD",m:["sah","adpkd"]},
+  {id:"cx1",l:"→ Glomerular Disease",x:2820,y:690,p:"neutral",k:"ghost",go:"glom"}],
+ edges:[
+  {a:"v1",b:"v2",p:"rvVessel"},
+  {a:"t2",b:"t3",p:"rvTma"},
+  {a:"t4",b:"t5",p:"rvTma"},
+  {a:"c1",b:"c2",p:"rvCyst"},
+  {a:"c6",b:"c7",p:"rvCyst"}]
+};
+
+MAPS.lbp = {
+ t:"Low Back Pain — Osteopathic Workup", sub:"Chronicity, red and yellow flags first · the four-step exam with root levels and dural tension signs · the disc, joint, muscle and visceral sources · and matching OMT, its contraindications and the follow-up plan",
+ w:3300, h:1190,
+ fa:"458, 520",
+ src:["OCOM OMM — SDL 1 lecture: Low Back Pain I", "OCOM OMM — SDL 4 lecture: Low Back Pain III", "OCOM OMM — SDL 5 lecture: Low Back Pain IV"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"History, red and yellow flags"},
+  {x:140,y:290,w:3020,h:200,l:"Examination"},
+  {x:140,y:550,w:3020,h:200,l:"Where the pain comes from"},
+  {x:140,y:810,w:3020,h:120,l:"Treatment and follow-up"}],
+ panels:[
+  {x:140,y:990,w:1480,h:116,kw:120,t:"Lumbar roots",rows:[
+   ["L4","medial leg · tibialis anterior · heel walk · patellar"],
+   ["L5","lateral leg, dorsum, first two toes · EHL · great toe"],
+   ["S1","lateral foot, sole · gastrocnemius · toe walk · Achilles"]]},
+  {x:1680,y:990,w:1480,h:138,kw:127,t:"Red flags",rows:[
+   ["Cauda equina","retention, incontinence, saddle anesthesia, rectal tone"],
+   ["Infection","fever > 100.4 °F, immunosuppression, IV drugs, catheter"],
+   ["Fracture","osteoporosis, steroids, older age, trauma"],
+   ["Cancer","history, weight loss, age > 50, no better in 1 month"]]}],
+ nodes:[
+  {id:"h1",l:"Chronicity",x:420,y:170,p:"lbTriage",k:"hub",s:"acute < 6 wk · chronic > 12 wk",m:["lbptriage"]},
+  {id:"h2",l:"Red flags",x:1020,y:170,p:"lbTriage",s:"cauda equina · infection · fracture · cancer",m:["lbptriage"]},
+  {id:"h3",l:"Cauda equina syndrome",x:1620,y:170,p:"lbTriage",s:"saddle anesthesia, retention",m:["caudaequina"]},
+  {id:"h4",l:"Yellow flags",x:2220,y:170,p:"lbTriage",s:"STarT Back · Örebro",m:["lbptriage"]},
+  {id:"h5",l:"No early MRI",x:2820,y:170,p:"lbTriage",s:"not in the first 4–6 weeks",m:["lbptriage"]},
+  {id:"e1",l:"Four steps",x:420,y:350,p:"lbExam",k:"hub",s:"history → medical → neuro → structural",m:["lbpstruct"]},
+  {id:"e2",l:"Painful region last",x:1020,y:350,p:"lbExam",s:"prevents guarding",m:["lbpstruct"]},
+  {id:"e3",l:"Root levels",x:1620,y:350,p:"lbExam",s:"L4 heel · L5 great toe · S1 toe",m:["lumbarexam"]},
+  {id:"e4",l:"SLR & slump",x:2220,y:350,p:"lbExam",s:"dural tension",m:["lumbarexam"]},
+  {id:"e5",l:"TART",x:2820,y:350,p:"lbExam",s:"acute vs chronic tissue",m:["tart","lbpstruct"]},
+  {id:"e6",l:"Short leg landmarks",x:420,y:430,p:"lbExam",s:"low crest, deep sulcus",m:["lld","lbpstruct"]},
+  {id:"e7",l:"Lower crossed syndrome",x:1020,y:430,p:"lbExam",s:"anterior tilt, hyperlordosis",m:["lcs"]},
+  {id:"e8",l:"Kinetic chain",x:1620,y:430,p:"lbExam",s:"examine above and below",m:["lbpstruct"]},
+  {id:"e9",l:"EMG at 21 days",x:2220,y:430,p:"lbExam",s:"not earlier",m:["lumbarexam"]},
+  {id:"ex1",l:"→ Spinal Cord",x:2820,y:430,p:"neutral",k:"ghost",go:"spine"},
+  {id:"c1",l:"Disc degeneration",x:420,y:610,p:"lbCause",k:"hub",s:"endplate diffusion fails",m:["discbio"]},
+  {id:"c2",l:"Annular tear pain",x:1020,y:610,p:"lbCause",s:"NGF · chemical radiculitis",m:["discbio"]},
+  {id:"c3",l:"Disc herniation",x:1620,y:610,p:"lbCause",s:"protrusion · extrusion · sequestration",m:["discdz"]},
+  {id:"c4",l:"Spondylolysis & listhesis",x:2220,y:610,p:"lbCause",s:"pars · step-off",m:["spondy"]},
+  {id:"c5",l:"Spinal stenosis",x:2820,y:610,p:"lbCause",s:"neurogenic claudication",m:["spinalstenosis"]},
+  {id:"c6",l:"Psoas syndrome",x:420,y:690,p:"lbCause",s:"L1–L2 FRS key lesion",m:["psoassyn"]},
+  {id:"c7",l:"Iliolumbar ligament",x:1020,y:690,p:"lbCause",s:"above and lateral to the PSIS",m:["iliolumbar"]},
+  {id:"c8",l:"Maigne syndrome",x:1620,y:690,p:"lbCause",s:"T12–L2 · iliac crest pain",m:["maigne"]},
+  {id:"c9",l:"Failed back surgery",x:2220,y:690,p:"lbCause",s:"the dirty half-dozen",m:["fbss"]},
+  {id:"c10",l:"Visceral sources",x:2820,y:690,p:"lbCause",s:"AAA · stones · zoster",m:["lbpvisceral","aaa","stones"]},
+  {id:"t1",l:"6–8-week conservative trial",x:420,y:870,p:"lbTx",k:"hub",s:"education, exercise, OMT",m:["lbpplan"]},
+  {id:"t2",l:"Follow up in 2–3 days",x:1020,y:870,p:"lbTx",s:"then lengthen the interval",m:["lbpplan"]},
+  {id:"t3",l:"Choosing the technique",x:1620,y:870,p:"lbTx",s:"acute flare → counterstrain",m:["lbpomt","counterstrain"]},
+  {id:"t4",l:"Contraindications",x:2220,y:870,p:"lbTx",s:"metastasis at the segment",m:["lbpcontra"]},
+  {id:"t5",l:"Five-model case",x:2820,y:870,p:"lbTx",s:"knee → gait → L5",m:["lbpcase","fivemodels"]}],
+ edges:[
+  {a:"h1",b:"h2",p:"lbTriage"},
+  {a:"h2",b:"h3",p:"lbTriage"},
+  {a:"e1",b:"e2",p:"lbExam"},
+  {a:"e3",b:"e4",p:"lbExam"},
+  {a:"c1",b:"c2",p:"lbCause"},
+  {a:"c2",b:"c3",p:"lbCause"},
+  {a:"t1",b:"t2",p:"lbTx"},
+  {a:"t3",b:"t4",p:"lbTx"}]
+};
+
+MAPS.anteye = {
+ t:"The Front of the Eye", sub:"The orbit’s walls and apex · the lids, their muscles and glands, and the tear pathway · how the cornea and lens focus and accommodate · where aqueous humor is made and drained · and lid lumps and corneal disease",
+ w:3300, h:1090,
+ fa:"549–550, 559",
+ src:["Moore ch 9 — Head", "Guyton ch 50 — The Eye: I. Optics of Vision", "Robbins ch 29 — The eye"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Orbit, lids and tears"},
+  {x:140,y:370,w:3020,h:200,l:"Optics and aqueous humor"},
+  {x:140,y:630,w:3020,h:200,l:"Lid and cornea disease"}],
+ panels:[
+  {x:140,y:890,w:1480,h:116,kw:230,t:"Through the orbital apex",rows:[
+   ["Optic canal","CN II · ophthalmic artery"],
+   ["Superior orbital fissure","III · IV · VI · V1 branches · ophthalmic veins"],
+   ["Common tendinous ring","origin of the recti · around CN II, III, nasociliary, VI"]]},
+  {x:1680,y:890,w:1480,h:138,kw:196,t:"Lid lumps",rows:[
+   ["Hordeolum","infected or obstructed gland · painful, red"],
+   ["Chalazion","blocked tarsal gland → lipogranuloma · painless"],
+   ["Sebaceous carcinoma","mimics a chalazion · pagetoid spread"],
+   ["Basal cell carcinoma","commonest lid cancer · lower lid, medial canthus"]]}],
+ nodes:[
+  {id:"o1",l:"Orbital walls",x:420,y:170,p:"efOrbit",k:"hub",s:"lateral strongest · medial paper-thin",m:["orbitwalls"]},
+  {id:"o2",l:"Blowout fracture",x:1020,y:170,p:"efOrbit",s:"thin floor and medial wall",m:["blowout","orbitwalls"]},
+  {id:"o3",l:"Optic canal",x:1620,y:170,p:"efOrbit",s:"CN II + ophthalmic artery",m:["orbitapex"]},
+  {id:"o4",l:"Superior orbital fissure",x:2220,y:170,p:"efOrbit",k:"hub",s:"III, IV, V1, VI",m:["orbitapex"]},
+  {id:"o5",l:"Cavernous sinus",x:2820,y:170,p:"efOrbit",s:"the orbital veins drain here",m:["cavernous"]},
+  {id:"o6",l:"Levator & superior tarsal",x:420,y:250,p:"efOrbit",k:"hub",s:"CN III · sympathetic",m:["eyelids"]},
+  {id:"o7",l:"Horner ptosis",x:1020,y:250,p:"efOrbit",s:"superior tarsal muscle",m:["horner","eyelids"]},
+  {id:"o8",l:"Orbicularis oculi",x:1620,y:250,p:"efOrbit",s:"CN VII · closes the lid",m:["eyelids","bell"]},
+  {id:"o9",l:"Lacrimal gland",x:2220,y:250,p:"efOrbit",s:"VII → pterygopalatine ganglion",m:["lacrimal"]},
+  {id:"o10",l:"Tear drainage",x:2820,y:250,p:"efOrbit",s:"puncta → nasolacrimal duct",m:["lacrimal"]},
+  {id:"p1",l:"Refraction",x:420,y:430,p:"efOptics",k:"hub",s:"59 D · cornea two-thirds",m:["eyeoptics"]},
+  {id:"p2",l:"Refractive errors",x:1020,y:430,p:"efOptics",s:"myopia · hyperopia · astigmatism",m:["refractive"]},
+  {id:"p3",l:"Accommodation",x:1620,y:430,p:"efOptics",k:"hub",s:"ciliary muscle · zonules",m:["lensaccom"]},
+  {id:"p4",l:"Presbyopia",x:2220,y:430,p:"efOptics",s:"0 D by age 70",m:["lensaccom","refractive"]},
+  {id:"p5",l:"Pupil & depth of focus",x:2820,y:430,p:"efOptics",s:"1.5–8 mm · 30-fold",m:["lensaccom"]},
+  {id:"p6",l:"Aqueous production",x:420,y:510,p:"efOptics",k:"hub",s:"ciliary processes · 2–3 µL/min",m:["aqueous"]},
+  {id:"p7",l:"Outflow",x:1020,y:510,p:"efOptics",s:"trabecular meshwork → Schlemm",m:["aqueous"]},
+  {id:"p8",l:"Glaucoma",x:1620,y:510,p:"efOptics",s:"outflow fails",m:["glaucoma"]},
+  {id:"p9",l:"Glaucoma drugs",x:2220,y:510,p:"efOptics",s:"less production, more outflow",m:["glaucomadrugs"]},
+  {id:"p10",l:"Cataract",x:2820,y:510,p:"efOptics",s:"lens opacity",m:["cataract"]},
+  {id:"d1",l:"Hordeolum",x:420,y:690,p:"efPath",s:"infected gland · painful",m:["lidlumps"]},
+  {id:"d2",l:"Chalazion",x:1020,y:690,p:"efPath",k:"hub",s:"lipogranuloma · painless",m:["lidlumps"]},
+  {id:"d3",l:"Sebaceous carcinoma",x:1620,y:690,p:"efPath",s:"mimics chalazion · pagetoid",m:["lidlumps"]},
+  {id:"d4",l:"Basal cell carcinoma",x:2220,y:690,p:"efPath",s:"lower lid, medial canthus",m:["bcc","lidlumps"]},
+  {id:"d5",l:"Conjunctivitis",x:2820,y:690,p:"efPath",s:"pink eye",m:["conjunctivitis"]},
+  {id:"d6",l:"Pterygium",x:420,y:770,p:"efPath",s:"grows onto the cornea",m:["pterygium"]},
+  {id:"d7",l:"Pinguecula",x:1020,y:770,p:"efPath",s:"beside the limbus",m:["pterygium"]},
+  {id:"d8",l:"Keratoconus",x:1620,y:770,p:"efPath",k:"hub",s:"Bowman layer breaks",m:["corneadz"]},
+  {id:"d9",l:"Fuchs dystrophy",x:2220,y:770,p:"efPath",s:"endothelial loss · guttata",m:["corneadz"]},
+  {id:"dx1",l:"→ Vision",x:2820,y:770,p:"neutral",k:"ghost",go:"vision"}],
+ edges:[
+  {a:"o1",b:"o2",p:"efOrbit"},
+  {a:"o3",b:"o4",p:"efOrbit"},
+  {a:"o6",b:"o7",p:"efOrbit"},
+  {a:"o9",b:"o10",p:"efOrbit"},
+  {a:"p1",b:"p2",p:"efOptics"},
+  {a:"p3",b:"p4",p:"efOptics"},
+  {a:"p6",b:"p7",p:"efOptics"},
+  {a:"p7",b:"p8",p:"efOptics"},
+  {a:"d1",b:"d2",p:"efPath"},
+  {a:"d2",b:"d3",p:"efPath"},
+  {a:"d8",b:"d9",p:"efPath"}]
+};
+
+MAPS.ptrehab = {
+ t:"PT & Rehab Prescription", sub:"Therapeutic exercise — kinetic chains and contraction types · the modalities: ultrasound, phonophoresis and iontophoresis, electrical stimulation, laser · and the phase-of-injury plan and the parts of a valid prescription",
+ w:3300, h:1032,
+ fa:"",
+ src:["OCOM Ortho — SDL 23 reading: The physical therapy prescription (Am Fam Physician 2007)"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Therapeutic exercise"},
+  {x:140,y:370,w:3020,h:200,l:"Modalities"},
+  {x:140,y:630,w:3020,h:120,l:"Phase of injury and the prescription"}],
+ panels:[
+  {x:140,y:810,w:1480,h:160,kw:213,t:"Exercise types (AFP 2007)",rows:[
+   ["Closed chain","proximal moves on a fixed distal segment · knee, shoulder"],
+   ["Open chain","distal segment moves · daily activities"],
+   ["Concentric · eccentric","shortening · lengthening"],
+   ["Isometric","constant length · when joint motion is not advised"],
+   ["Isotonic","constant resistance · general conditioning"]]},
+  {x:1680,y:810,w:1480,h:160,kw:196,t:"The PT prescription",rows:[
+   ["Diagnosis","properly coded"],
+   ["Frequency & duration","e.g., three times a week for four weeks"],
+   ["Protocols","the specific treatments wanted"],
+   ["Safety precautions","ROM and weight-bearing limits, illnesses"],
+   ["Signature & date","required"]]}],
+ nodes:[
+  {id:"x1",l:"Closed kinetic chain",x:420,y:170,p:"ptEx",k:"hub",s:"distal fixed · knee, shoulder",m:["kinchain"]},
+  {id:"x2",l:"Open kinetic chain",x:1020,y:170,p:"ptEx",s:"distal free · daily activities",m:["kinchain"]},
+  {id:"x3",l:"Eccentric",x:1620,y:170,p:"ptEx",s:"contracts while lengthening",m:["exercisetypes"]},
+  {id:"x4",l:"Isometric",x:2220,y:170,p:"ptEx",s:"constant length · PFPS quads",m:["exercisetypes","pfpsrehab"]},
+  {id:"x5",l:"Core stability",x:2820,y:170,p:"ptEx",s:"low back, pregnancy pelvic pain",m:["exercisetypes"]},
+  {id:"x6",l:"Concentric · isotonic",x:420,y:250,p:"ptEx",s:"strength · conditioning",m:["exercisetypes"]},
+  {id:"x7",l:"Muscle imbalance",x:1020,y:250,p:"ptEx",s:"Janda",m:["jandamodel"]},
+  {id:"x8",l:"Muscle energy",x:1620,y:250,p:"ptEx",s:"isometric against counterforce",m:["met"]},
+  {id:"x9",l:"Achilles tendinopathy",x:2220,y:250,p:"ptEx",s:"a tendon to load",m:["achilles"]},
+  {id:"xx1",l:"→ Muscle Imbalance (Janda)",x:2820,y:250,p:"neutral",k:"ghost",go:"janda"},
+  {id:"m1",l:"Continuous ultrasound",x:420,y:430,p:"ptMod",k:"hub",s:"thermal",m:["ptultrasound"]},
+  {id:"m2",l:"Pulsed ultrasound",x:1020,y:430,p:"ptMod",s:"nonthermal · healing",m:["ptultrasound"]},
+  {id:"m3",l:"Phonophoresis",x:1620,y:430,p:"ptMod",s:"sound drives the drug",m:["phonoionto"]},
+  {id:"m4",l:"Iontophoresis",x:2220,y:430,p:"ptMod",s:"current drives the drug",m:["phonoionto"]},
+  {id:"m5",l:"TENS",x:2820,y:430,p:"ptMod",s:"gate + endogenous opioids",m:["estim"]},
+  {id:"m6",l:"Muscle stimulation",x:420,y:510,p:"ptMod",s:"isometric activation",m:["estim"]},
+  {id:"m7",l:"No e-stim with pacemakers",x:1020,y:510,p:"ptMod",s:"or arrhythmias",m:["estim"]},
+  {id:"m8",l:"Low-level laser",x:1620,y:510,p:"ptMod",s:"photochemical",m:["lllt"]},
+  {id:"m9",l:"Carpal tunnel",x:2220,y:510,p:"ptMod",s:"FDA-approved laser use",m:["lllt","carpaltunnel"]},
+  {id:"m10",l:"Cold vs heat",x:2820,y:510,p:"ptMod",s:"acute vs subacute",m:["ptphases"]},
+  {id:"r1",l:"Acute < 72 h",x:420,y:690,p:"ptRx",k:"hub",s:"cold · pulsed US · isometrics",m:["ptphases"]},
+  {id:"r2",l:"Subacute 3–14 days",x:1020,y:690,p:"ptRx",s:"heat · iontophoresis · isotonics",m:["ptphases"]},
+  {id:"r3",l:"Chronic > 2 weeks",x:1620,y:690,p:"ptRx",s:"TENS · continuous US · strengthening",m:["ptphases"]},
+  {id:"r4",l:"The prescription",x:2220,y:690,p:"ptRx",k:"hub",s:"diagnosis · frequency · precautions",m:["ptrx"]},
+  {id:"r5",l:"Signature & date",x:2820,y:690,p:"ptRx",s:"required before treating",m:["ptrx"]}],
+ edges:[
+  {a:"x1",b:"x2",p:"ptEx"},
+  {a:"x3",b:"x4",p:"ptEx"},
+  {a:"m1",b:"m2",p:"ptMod"},
+  {a:"m3",b:"m4",p:"ptMod"},
+  {a:"m6",b:"m7",p:"ptMod"},
+  {a:"r1",b:"r2",p:"ptRx"},
+  {a:"r2",b:"r3",p:"ptRx"},
+  {a:"r4",b:"r5",p:"ptRx"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -29332,17 +30015,17 @@ const TOPICS = [
   ["path","Pathology",["genpath","neoplasia","thromboemb"]],
   ["cardio","Cardiac",["cardiac","cardcycle","valves","ihd","chd","vasc","vascshock","htnrx","rhythm"]],
   ["pulmo","Pulmonary",["pulm","lungmech","gasx","lungdz","respinf","respdrug"]],
-  ["renal","Renal",["nephron","renalphys","renalna","urineconc","histoembryo","glom","acidbase","akickd","endocrine"]],
+  ["renal","Renal",["nephron","renalphys","renalna","urineconc","histoembryo","glom","renvasc","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","liver","gitract","abdanat"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","tumark"]],
   ["immuno","Immunology",["immune","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
   ["endo","Endocrine",["axes","hormones","rclass","pancreas"]],
-  ["devrepro","Repro & Development",["sexdev","repro","obgyn","malerepro","embryo"]],
+  ["devrepro","Repro & Development",["sexdev","androgen","repro","obgyn","malerepro","embryo"]],
   ["neuro","Neuro",["neurotx","synapse","ans","membrane","spine","brainstem","chemvisc","motorctl","weakness","stroke","brainreg","basal","neuroer","seizhead"]],
   ["behav","Psych & Behavior",["psychmse","psychdx","psychtx","psychsom","substance","sleepdev"]],
-  ["eent","EENT",["eyecn","vision","ent","hearing","larynx"]],
-  ["msk","Musculoskeletal",["muscle","bone","bonehisto","arthritis","derm","plexus","orthoinj","sportsortho","orthowork"]],
-  ["omm","OMM",["vsomatic","neiomm","chapman","omt","chestomt","ommmech","janda","cranial","jones"]],
+  ["eent","EENT",["eyecn","anteye","vision","ent","hearing","larynx"]],
+  ["msk","Musculoskeletal",["muscle","bone","bonehisto","arthritis","derm","plexus","orthoinj","sportsortho","orthowork","ptrehab"]],
+  ["omm","OMM",["vsomatic","neiomm","chapman","omt","lbp","chestomt","ommmech","janda","cranial","jones"]],
   ["id","Infectious",["microlab","abx","antiviral","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
   ["pharm","Pharm",["pkpd","cyp","adr","aging","tox","environ","anesth","pain"]],
   ["stats","Biostats & Ethics",["biostats","ethics"]],
@@ -29599,8 +30282,143 @@ function nodal(mdp,thr,d4,end=1.7){
 }
 function nodalBands(d4){ return [[0,d4,"4"],[d4,d4+0.08,"0"],[d4+0.08,d4+0.28,"3"]]; }
 /* ventricular myocyte (ms, mV): up = upstroke time, rep = when phase 3 ends */
-function ventric(up,rep){ return mono([[0,-85],[40,-85],[40+up,25],[47+up,6],[60+up,9],[90,4],[rep-110,-3],[rep-55,-24],[rep-15,-76],[rep,-84],[rep+15,-85],[450,-85]],16); }
+function ventric(up,rep){ return mono([[-150,-85],[0,-85],[40,-85],[40+up,25],[47+up,6],[60+up,9],[90,4],[rep-110,-3],[rep-55,-24],[rep-15,-76],[rep,-84],[rep+15,-85],[450,-85]],16); }
+/* Wiggers diagram (time in s over one 0.8-s beat; pressures mm Hg, volume mL). w = variant tweaks */
+function wiggers(w={}){
+  const ao=w.ao||[[0,86],[0.22,80],[0.30,116],[0.36,120],[0.47,100],[0.48,95],[0.50,100],[0.80,86]];
+  const lv=w.lv||[[0,4],[0.10,6],[0.135,8],[0.17,10],[0.22,80],[0.30,121],[0.36,123],[0.47,98],[0.55,12],[0.60,4],[0.80,5]];
+  const la=w.la||[[0,6],[0.10,10],[0.14,9],[0.17,9.6],[0.21,11],[0.30,4],[0.55,13],[0.62,5],[0.80,6]];
+  return [{pts:mono(ao,14),lab:"Aortic pressure"},{pts:mono(lv,14),lab:"LV pressure"},{pts:mono(la,14),lab:"LA pressure"}];
+}
+function lvVol(v){ return mono(v||[[0,110],[0.10,117],[0.17,120],[0.22,120],[0.33,75],[0.47,50],[0.55,50],[0.68,100],[0.80,110]],14); }
+const WIG_ECG=mono([[0,0],[0.02,0],[0.045,0.16],[0.07,0],[0.15,0],[0.165,-0.12],[0.18,1.1],[0.195,-0.3],[0.21,0],[0.37,0],[0.42,0.3],[0.47,0],[0.80,0]],10);
+const WIG_BANDS=[[0.05,0.17,"1"],[0.17,0.22,"2"],[0.22,0.33,"3"],[0.33,0.47,"4"],[0.47,0.55,"5"],[0.55,0.68,"6"],[0.68,0.80,"7"]];
+const WIG_EVENTS=[[0.17,"MC"],[0.22,"AO"],[0.465,"AC"],[0.55,"MO"]];
+/* ECG under the ventricular action potential (ms): e moves the QRS and T */
+function ecgV(e={}){ const r=e.r||58, sw=e.s||70, j=e.j||85, t0=e.t0||200, tp=e.tp||255, te=e.te||300;
+  return mono([[-150,0],[-120,0],[-95,0.15],[-70,0],[40,0],[48,-0.12],[r,1.1],[sw,-0.3],[j,0],[t0,0],[tp,0.32],[te,0],[450,0]],10); }
+/* menstrual cycle (day 0 = onset of menses), relative levels */
+const MEN={
+  fsh:[[0,40],[3,55],[7,42],[11,32],[13.6,60],[15,30],[21,20],[26,30],[28,40]],
+  lh:[[0,20],[11,22],[12.8,40],[13.6,100],[14.6,30],[16,20],[28,18]],
+  e2:[[0,12],[5,20],[9,45],[12.3,82],[14,50],[15.5,35],[21,55],[25.5,30],[28,12]],
+  p4:[[0,5],[13,6],[15,15],[18,60],[21,88],[24,60],[27,12],[28,5]],
+  bbt:[[0,0.3],[13.6,0.25],[15.2,0.75],[26.5,0.72],[28,0.32]]};
+/* Henderson-Hasselbalch titration: pH against the percent of buffer in the base form */
+function titr(pk){ const out=[]; for(let f=1;f<=99;f+=1) out.push([f,pk+Math.log10(f/(100-f))]); return out; }
+/* sarcomere length–tension (Guyton points A–D) and passive stretch */
+const LT_ACT=[[1.27,0],[1.65,55],[2.0,100],[2.2,100],[2.9,50],[3.65,0],[4.0,0]];
+const LT_PAS=[[1.2,0],[2.3,0],[2.8,6],[3.2,22],[3.6,55],[3.85,90],[4.0,105]];
+function addCurves(a,b){ const pa=mono(a,10), pb=mono(b,10), xs=[...new Set([...pa,...pb].map(p=>+p[0].toFixed(3)))].sort((x,y)=>x-y);
+  const at=(pts,x)=>{ for(let i=1;i<pts.length;i++) if(pts[i][0]>=x){ const [x0,y0]=pts[i-1],[x1,y1]=pts[i]; return y0+(y1-y0)*((x-x0)/((x1-x0)||1)); } return pts[pts.length-1][1]; };
+  return xs.map(x=>[x,at(pa,x)+at(pb,x)]); }
+/* force–velocity (Hill hyperbola): velocity % of Vmax at afterload f, max force f0 */
+function fv(f0){ const out=[]; for(let f=0;f<=f0;f+=f0/60) out.push([f,100*(1-f/f0)/(1+4*f/f0)]); return out; }
 const PLOTS={
+  wiggers:{xl:"Time (s) — one beat at 75/min",yl:"Pressure (mm Hg)",xr:[0,0.8],yr:[0,190],xt:[0,0.2,0.4,0.6,0.8],yt:[0,40,80,120,160],
+   strips:[{yl:"LV volume",yr:[25,170],h:110,d:V=>[{pts:lvVol(V.vol),lab:"LV volume"}]},
+           {yl:"ECG",yr:[-0.45,1.25],h:80,d:()=>[{pts:WIG_ECG,lab:"ECG",col:"var(--ink-2)"},{txt:[[0.045,"P",0.55],[0.18,"QRS",1.35],[0.42,"T",0.7]]}]},
+           {yl:"Sounds",yr:[0,1],h:40,d:V=>[{txt:V.snd||[[0.17,"S1"],[0.47,"S2"]]}]}],vars:[
+    {l:"Normal",cap:"One left-heart cycle. Valve events: MC mitral closes, AO aortic opens, AC aortic closes, MO mitral opens.",
+     bands:WIG_BANDS,events:WIG_EVENTS,
+     key:[["1","Atrial systole: preceded by the P wave; LA pressure rises (the a wave) and tops up the ventricle — an S4 here means a stiff LV"],
+          ["2","Isovolumetric contraction: begins during the QRS; LV pressure passes LA → mitral closes (S1); all valves shut, volume constant"],
+          ["3","Rapid ejection: LV pressure passes aortic → aortic valve opens; most of the stroke volume leaves"],
+          ["4","Reduced ejection: repolarization begins (T wave); LV and aortic pressures fall as blood runs off"],
+          ["5","Isovolumetric relaxation: after the T wave; LV falls below aortic → aortic valve closes (S2, dicrotic notch)"],
+          ["6","Rapid filling: LV falls below LA → mitral opens; an S3 here (normal in the young)"],
+          ["7","Reduced filling (diastasis): slow filling before the next atrial beat"]],
+     d:()=>wiggers()},
+    {l:"Aortic stenosis",cap:"Aortic stenosis: LV pressure far above aortic pressure during ejection.",
+     events:[[0.17,"MC"],[0.24,"AO"],[0.47,"AC"],[0.55,"MO"]],
+     key:[["3–4","A pressure gradient across the valve: ↑ LV pressure, ↑ ESV, ↓ stroke volume"],
+          ["→","The hypertrophied LV is stiff — higher filling pressure for the same volume"]],
+     d:()=>wiggers({ao:[[0,84],[0.24,76],[0.34,104],[0.40,110],[0.47,96],[0.48,92],[0.50,96],[0.80,84]],
+       lv:[[0,8],[0.10,12],[0.135,14],[0.17,16],[0.24,78],[0.32,170],[0.37,178],[0.47,95],[0.55,15],[0.60,7],[0.80,9]],
+       la:[[0,10],[0.10,16],[0.14,15],[0.17,15.5],[0.21,16],[0.30,7],[0.55,16],[0.62,9],[0.80,10]]}),
+     vol:[[0,115],[0.10,123],[0.17,125],[0.24,125],[0.36,92],[0.47,72],[0.55,72],[0.68,108],[0.80,115]]},
+    {l:"Mitral stenosis",cap:"Mitral stenosis: LA pressure stays above LV pressure through diastole.",
+     events:[[0.183,"MC"],[0.22,"AO"],[0.46,"AC"],[0.525,"MO"]],
+     key:[["6–7","LA > LV pressure while the mitral valve is open — a diastolic gradient"],
+          ["→","↑ LA pressure; ↓ EDV because filling is impaired; ↓ stroke volume"]],
+     d:()=>wiggers({la:[[0,22],[0.10,28],[0.15,22],[0.20,20],[0.30,17],[0.55,26],[0.68,22],[0.80,22]],
+       lv:[[0,6],[0.10,9],[0.13,11],[0.17,12],[0.22,80],[0.30,118],[0.36,120],[0.47,97],[0.55,6],[0.60,5],[0.80,7]]}),
+     vol:[[0,92],[0.10,96],[0.17,98],[0.22,98],[0.33,62],[0.47,45],[0.55,45],[0.68,80],[0.80,92]]},
+    {l:"Mitral regurgitation",cap:"Mitral regurgitation: blood flows back into the LA during systole.",
+     events:[[0.17,"MC"],[0.24,"AO"],[0.465,"AC"],[0.52,"MO"]],
+     key:[["2–5","No true isovolumetric phases — the leaking mitral valve lets volume change"],
+          ["v","A tall v wave in the LA; ↑ EDV, ↓ ESV, ↑ total stroke volume (forward flow plus backflow)"]],
+     d:()=>wiggers({ao:[[0,82],[0.24,74],[0.31,100],[0.36,104],[0.47,90],[0.48,86],[0.50,90],[0.80,82]],
+       la:[[0,10],[0.10,14],[0.15,13],[0.17,13.5],[0.30,28],[0.45,38],[0.55,26],[0.62,12],[0.80,10]],
+       lv:[[0,8],[0.10,11],[0.14,12],[0.17,14],[0.24,74],[0.30,108],[0.36,111],[0.47,88],[0.53,24],[0.58,8],[0.80,9]]}),
+     vol:[[0,140],[0.10,146],[0.17,148],[0.22,135],[0.33,80],[0.47,42],[0.55,52],[0.68,118],[0.80,140]]},
+    {l:"Aortic regurgitation",cap:"Aortic regurgitation: blood flows back from the aorta into the LV in diastole.",
+     events:[[0.165,"MC"],[0.22,"AO"],[0.465,"AC"],[0.525,"MO"]],
+     key:[["→","Large pulse pressure — high systolic, low diastolic aortic pressure; the dicrotic notch is lost"],
+          ["5–7","No true isovolumetric relaxation; ↑ EDV, ↑ stroke volume"]],
+     d:()=>wiggers({ao:[[0,60],[0.22,52],[0.30,130],[0.36,140],[0.47,108],[0.60,78],[0.80,60]],
+       lv:[[0,11],[0.10,13],[0.14,14],[0.17,16],[0.22,54],[0.30,135],[0.36,142],[0.47,104],[0.53,10],[0.58,6],[0.80,11]],
+       la:[[0,10],[0.10,14],[0.14,15],[0.17,15.4],[0.21,16],[0.30,8],[0.55,14],[0.62,9],[0.80,10]]}),
+     vol:[[0,160],[0.10,165],[0.17,168],[0.22,168],[0.33,105],[0.47,70],[0.55,100],[0.68,145],[0.80,160]]}]},
+  menstrual:{xl:"Day of cycle (day 0 = onset of menses)",yl:"Relative hormone level",xr:[0,28],yr:[0,105],xt:[0,7,14,21,28],yt:[],
+   strips:[{yl:"Basal temp",yr:[0,1],h:70,d:V=>[{pts:mono(V.bbt||MEN.bbt,10),lab:"Basal body temperature",col:"var(--ink-2)"}]}],vars:[
+    {l:"28-day cycle",cap:"Day 0 is the onset of menses. Cycles run 21–35 days; the follicular phase varies and the luteal phase does not.",
+     bands:[[0,5,"1"],[5,13.4,"2"],[13.4,14.6,"3"],[14.6,28,"4"]],
+     key:[["1","Menses: the corpus luteum has regressed, estradiol and progesterone fall abruptly, and the endometrium sloughs (about 4–5 days)"],
+          ["2","Follicular (proliferative): FSH and LH drive estradiol from the dominant follicle; estradiol proliferates the endometrium and feeds back negatively"],
+          ["3","Ovulation: a burst of estradiol turns feedback positive → the LH and FSH surge → ovulation, about 14 days before the next menses; cervical mucus thins"],
+          ["4","Luteal (secretory): the corpus luteum makes progesterone and estradiol — secretory endometrium, thick mucus, and a higher basal temperature (progesterone raises the hypothalamic set point)"]],
+     d:()=>[{pts:mono(MEN.fsh,10),lab:"FSH"},{pts:mono(MEN.lh,10),lab:"LH"},{pts:mono(MEN.e2,10),lab:"Estradiol"},{pts:mono(MEN.p4,10),lab:"Progesterone"}]},
+    {l:"Combined pill",cap:"Endogenous hormones on combined hormonal contraception (the pill’s own estrogen and progestin are not drawn).",
+     key:[["→","Estrogen + progestin → ↓ GnRH → ↓ LH and FSH → no estrogen surge, no LH surge → no ovulation"],
+          ["+","Progestins also thicken cervical mucus and thin the endometrium"]],
+     bbt:[[0,0.3],[28,0.3]],
+     d:()=>[{pts:mono([[0,22],[28,22]],2),lab:"FSH"},{pts:mono([[0,16],[28,16]],2),lab:"LH"},{pts:mono([[0,12],[28,12]],2),lab:"Estradiol"},{pts:mono([[0,5],[28,5]],2),lab:"Progesterone"}]},
+    {l:"Early pregnancy",cap:"If the ovum is fertilized, hCG rescues the corpus luteum and menses does not come.",
+     bands:[[13.4,14.6,"O"],[20,28,"h"]],
+     key:[["O","Ovulation as before"],
+          ["h","The trophoblast secretes hCG from about 8 days after ovulation; hCG has LH-like activity, so the corpus luteum keeps making progesterone and estradiol (without it, the corpus luteum regresses about 12 days after ovulation)"]],
+     bbt:[[0,0.3],[13.6,0.25],[15.2,0.75],[28,0.78]],
+     d:()=>[{pts:mono([[0,20],[11,22],[12.8,40],[13.6,100],[14.6,30],[16,20],[28,14]],10),lab:"LH"},{pts:mono([[0,12],[5,20],[9,45],[12.3,82],[14,50],[15.5,35],[21,55],[28,70]],10),lab:"Estradiol"},
+            {pts:mono([[0,5],[13,6],[15,15],[18,60],[21,88],[28,100]],10),lab:"Progesterone"},{pts:mono([[0,0],[21.5,0],[24,10],[28,45]],10),lab:"hCG"}]}]},
+  titration:{xl:"% of the buffer in the base form (A⁻)",yl:"pH",xr:[0,100],yr:[2,12],xt:[0,25,50,75,100],yt:[3,5,7,9,11],all:true,vars:[
+    {l:"HCO₃⁻ / CO₂ (pK 6.1)",cap:"pH = pK + log [A⁻]/[HA]. At pH = pK half the buffer is in each form; the flat middle, pK ± 1, is where buffering works best.",
+     bands:[[9.1,90.9,"pK ± 1"]],
+     key:[["pK","6.1 — its best range (5.1–7.1) lies below blood pH, yet it is the main ECF buffer: the base form is abundant (HCO₃⁻ 24 mEq/L) and the acid form, CO₂, is breathed off"],
+          ["7.4","At pH 7.4, HCO₃⁻ : CO₂ = 20 : 1"]],
+     d:()=>[{pts:titr(6.1),lab:"HCO₃⁻ / CO₂",marks:[[95.2,7.4,"20 : 1"]]},{y:7.4,lab:"blood pH 7.4"}]},
+    {l:"Phosphate (pK 6.8)",cap:"Phosphate’s pK sits close to blood pH, so it buffers near its maximum power there.",
+     bands:[[9.1,90.9,"pK ± 1"]],
+     key:[["pK","6.8 — best range 5.8–7.8, which includes 7.4; at 7.4, HPO₄²⁻ : H₂PO₄⁻ ≈ 4 : 1"],
+          ["→","But its ECF concentration is only about 8% of bicarbonate’s, so its total ECF buffering power is small"]],
+     d:()=>[{pts:titr(6.8),lab:"HPO₄²⁻ / H₂PO₄⁻",marks:[[79.9,7.4,"4 : 1"]]},{y:7.4,lab:"blood pH 7.4"}]},
+    {l:"NH₃ / NH₄⁺ (pK 9.2)",cap:"Ammonia’s pK is far above body pH, so almost all of it is NH₄⁺.",
+     bands:[[9.1,90.9,"pK ± 1"]],
+     key:[["pK","9.2 — titrating urine back to 7.4 cannot remove the H⁺ carried as NH₄⁺, so NH₄⁺ is not counted in titratable acid"],
+          ["→","Diffusion trapping: lipid-soluble NH₃ diffuses into the tubular fluid, takes up secreted H⁺ and is trapped there as NH₄⁺"]],
+     d:()=>[{pts:titr(9.2),lab:"NH₃ / NH₄⁺"},{y:7.4,lab:"blood pH 7.4"}]}]},
+  lentension:{xl:"Sarcomere length (µm)",yl:"Tension (% of maximum)",xr:[1.2,4],yr:[0,110],xt:[1.5,2,2.5,3,3.5,4],yt:[0,50,100],vars:[
+    {l:"Single sarcomere",cap:"Active tension follows the number of cross-bridges that can form — the overlap of thick and thin filaments.",
+     key:[["D","No actin–myosin overlap: no tension"],
+          ["C","About 2.2 µm: actin overlaps every cross-bridge — full tension"],
+          ["B","About 2.0 µm: the actin ends start to overlap each other; full tension holds from B to C"],
+          ["A","About 1.65 µm: the Z disks abut the myosin ends; tension falls toward zero below B"]],
+     d:()=>[{pts:mono(LT_ACT,12),lab:"Active tension",marks:[[1.65,55,"A"],[2.0,100,"B"],[2.2,100,"C"],[3.65,0,"D"]]}]},
+    {l:"Active, passive & total",cap:"Measured isometrically at each preset length (preload).",
+     key:[["P","Passive tension: stretching the muscle alone, like a rubber band"],
+          ["T","Total tension: the muscle stimulated at each preload — active plus passive"],
+          ["A","Active tension = total − passive: the force of cross-bridge cycling"]],
+     d:()=>[{pts:mono(LT_ACT,12),lab:"Active"},{pts:mono(LT_PAS,10),lab:"Passive"},{pts:addCurves(LT_ACT,LT_PAS),lab:"Total"}]}]},
+  forcevel:{xl:"Afterload (% of maximum force)",yl:"Velocity of shortening (% of Vmax)",xr:[0,100],yr:[0,110],xt:[0,25,50,75,100],yt:[0,50,100],vars:[
+    {l:"One preload",cap:"Measured isotonically: the force is fixed and the muscle shortens. Velocity reflects how fast the cross-bridges cycle.",
+     key:[["Vmax","Zero afterload → maximal velocity of shortening"],
+          ["→","As afterload rises the cross-bridges cycle more slowly, and velocity falls"],
+          ["0","Afterload equal to the maximum force → no shortening (isometric)"]],
+     d:()=>[{pts:fv(100),lab:"Velocity",marks:[[0,100,"Vmax"],[100,0,"no shortening"]]}]},
+    {l:"Different preloads",cap:"A family of curves, one for each preload, all meeting at Vmax.",
+     key:[["Vmax","Every curve meets at zero afterload — Vmax"],
+          ["→","Each preset length (preload) gives its own curve"]],
+     d:()=>[{pts:fv(100),lab:"Higher preload"},{pts:fv(70),lab:"Middle preload"},{pts:fv(45),lab:"Lower preload"}]}]},
   apnerve:{xl:"Time (ms)",yl:"Membrane potential (mV)",xr:[0,6],yr:[-100,50],xt:[0,1,2,3,4,5,6],yt:[-80,-40,0,40],zero:true,vars:[
     {l:"Phases & ions",cap:"A nerve action potential: Na⁺ in, then K⁺ out — each ion moving down its electrochemical gradient through voltage-gated channels.",
      bands:[[0,1,"1"],[1,1.2,"2"],[1.2,1.55,"3"],[1.55,2.75,"4"],[2.75,3.9,"5"],[3.9,6,"6"]],
@@ -29643,14 +30461,16 @@ const PLOTS={
      bands:nodalBands(0.68),
      key:[["4","Flatter phase 4 → slower rate, with no change in contractility"]],
      d:()=>[{pts:nodal(-60,-40,0.68),lab:"Ivabradine"}]}]},
-  apventric:{xl:"Time (ms)",yl:"Membrane potential (mV)",xr:[0,450],yr:[-100,40],xt:[0,100,200,300,400],yt:[-80,-40,0,40],ref:true,zero:true,vars:[
+  apventric:{xl:"Time (ms)",yl:"Membrane potential (mV)",xr:[-150,450],yr:[-100,40],xt:[-100,0,100,200,300,400],yt:[-80,-40,0,40],ref:true,zero:true,
+   strips:[{yl:"ECG",yr:[-0.45,1.35],h:110,d:V=>[{pts:ecgV(V.e),lab:"ECG (surface)",col:"var(--ink-2)"},{txt:[[-95,"P",0.6],[58,"QRS",1.3],[(V.e&&V.e.tp)||255,"T",0.75]]}]}],vars:[
     {l:"Ventricular myocyte",cap:"Working myocardium fires with Na⁺ and holds a Ca²⁺ plateau — a long refractory period, so cardiac muscle cannot tetanize.",
-     bands:[[0,40,"4"],[40,48,"0"],[48,72,"1"],[72,190,"2"],[190,300,"3"],[300,450,"4"]],
+     bands:[[-150,40,"4"],[40,48,"0"],[48,72,"1"],[72,190,"2"],[190,300,"3"],[300,450,"4"]],
      key:[["0","Upstroke: fast voltage-gated Na⁺ channels — Na⁺ in"],
           ["1","Initial repolarization: Na⁺ inactivation gates close; K⁺ out"],
           ["2","Plateau: Ca²⁺ in through L-type channels balances K⁺ out; the Ca²⁺ triggers Ca²⁺-induced Ca²⁺ release from the SR"],
           ["3","Repolarization: Ca²⁺ channels close; K⁺ out through delayed-rectifier K⁺ channels"],
-          ["4","Rest ≈ −85 mV: high K⁺ permeability"]],
+          ["4","Rest ≈ −85 mV: high K⁺ permeability"],
+          ["ECG","QRS = ventricular depolarization · ST segment = the plateau · T wave = repolarization · QT = first depolarization to last repolarization"]],
      d:()=>[{pts:ventric(8,300),lab:"Ventricular myocyte"}]},
     {l:"Class I — Na⁺ block",cap:"Class I antiarrhythmics block fast Na⁺ channels.",
      bands:[[40,62,"0"]],
@@ -29659,6 +30479,7 @@ const PLOTS={
     {l:"Class III — K⁺ block",cap:"Class III antiarrhythmics (amiodarone, sotalol, dofetilide) block K⁺ channels.",
      bands:[[190,360,"3"]],
      key:[["3","Slower repolarization → longer action potential and refractory period → longer QT interval"]],
+     e:{t0:250,tp:315,te:362},
      d:()=>[{pts:ventric(8,360),lab:"Class III"}]}]},
   pvloop:{xl:"Left ventricular volume (mL)",yl:"LV pressure (mm Hg)",xr:[0,200],yr:[0,200],xt:[0,50,100,150,200],yt:[0,50,100,150,200],ref:true,vars:[
     {l:"Normal",cap:"One beat: MC mitral closes → isovolumetric contraction → AO aortic opens → ejection → AC aortic closes → isovolumetric relaxation → MO mitral opens → filling. Width = stroke volume.",d:()=>[pvLoop({edv:120,esv:50,edp:8,po:80,pk:125,pc:100})]},
@@ -29724,7 +30545,8 @@ function plotSVG(p,i){
   const key=state.view+":"+i, vi=sat(PLOTVAR[key]||0,0,K.vars.length-1), V=K.vars[vi];
   /* chart on the left, a text column on the right */
   const side=Math.round(Math.min(560,p.w*0.38)), cw=p.w-side;
-  const L=p.x+80, R=p.x+cw-28, T=p.y+60, B=p.y+p.h-60;
+  /* strips: smaller charts stacked under the main one, sharing its x axis (ECG, volume, sounds) */
+  const STR=K.strips||[], SG=16, BB=p.y+p.h-60, L=p.x+80, R=p.x+cw-28, T=p.y+60, B=BB-STR.reduce((a,st)=>a+st.h+SG,0);
   const X=v=>L+(v-K.xr[0])/(K.xr[1]-K.xr[0])*(R-L), Y=v=>B-(sat(v,K.yr[0],K.yr[1])-K.yr[0])/(K.yr[1]-K.yr[0])*(B-T);
   const path=(pts,close)=>"M"+pts.map(([a,b])=>X(a).toFixed(1)+" "+Y(b).toFixed(1)).join(" L")+(close?" Z":"");
   /* an open curve that leaves the top of the chart stops at the edge instead of flattening along it */
@@ -29738,12 +30560,12 @@ function plotSVG(p,i){
     <text class="pt" x="${p.x+20}" y="${p.y+34}">${esc(p.t)}</text>
     <line class="pdiv" x1="${p.x+cw}" y1="${p.y+18}" x2="${p.x+cw}" y2="${p.y+p.h-18}"/>`;
   /* gridlines, axes, ticks, axis labels */
-  K.xt.forEach(t=>{ s+=`<line class="pgrid" x1="${X(t)}" y1="${T}" x2="${X(t)}" y2="${B}"/><text class="ptick" x="${X(t)}" y="${B+19}" text-anchor="middle">${t}</text>`; });
+  K.xt.forEach(t=>{ s+=`<line class="pgrid" x1="${X(t)}" y1="${T}" x2="${X(t)}" y2="${BB}"/><text class="ptick" x="${X(t)}" y="${BB+19}" text-anchor="middle">${t}</text>`; });
   K.yt.forEach(t=>{ s+=`<line class="pgrid" x1="${L}" y1="${Y(t)}" x2="${R}" y2="${Y(t)}"/><text class="ptick" x="${L-10}" y="${Y(t)+4}" text-anchor="end">${t}</text>`; });
   s+=`<line class="pax" x1="${L}" y1="${B}" x2="${R}" y2="${B}"/><line class="pax" x1="${L}" y1="${T}" x2="${L}" y2="${B}"/>`;
   if(K.y0) s+=`<line class="pax" x1="${X(0)}" y1="${T}" x2="${X(0)}" y2="${B}"/>`;
   if(K.zero) s+=`<line class="pax" x1="${L}" y1="${Y(0)}" x2="${R}" y2="${Y(0)}"/>`;
-  s+=`<text class="plab" x="${(L+R)/2}" y="${B+42}" text-anchor="middle">${esc(K.xl)}</text>
+  s+=`<text class="plab" x="${(L+R)/2}" y="${BB+42}" text-anchor="middle">${esc(K.xl)}</text>
     <text class="plab" x="${p.x+28}" y="${(T+B)/2}" text-anchor="middle" transform="rotate(-90 ${p.x+28} ${(T+B)/2})">${esc(K.yl)}</text>`;
   /* curves: other variants faint, the normal one dashed, the chosen one in colour */
   const draw=(items,cls,colored)=>{ let n=0; items.forEach(c=>{
@@ -29752,7 +30574,7 @@ function plotSVG(p,i){
     if(c.y!=null) s+=`<line class="pmark" x1="${L}" y1="${Y(c.y)}" x2="${R}" y2="${Y(c.y)}"/>`+lab(L,Y(c.y),c.lab,8,-7); }); };
   /* shaded, labeled phases behind the curves (action potentials) */
   (V.bands||[]).forEach(([a,b,t],j)=>{ const xa=X(Math.max(a,K.xr[0])), xb=X(Math.min(b,K.xr[1]));
-    s+=`<rect class="pband${j%2?" alt":""}" x="${xa.toFixed(1)}" y="${T}" width="${Math.max(0,xb-xa).toFixed(1)}" height="${B-T}"/><text class="pbnum" x="${((xa+xb)/2).toFixed(1)}" y="${T+16}">${esc(t)}</text>`; });
+    s+=`<rect class="pband${j%2?" alt":""}" x="${xa.toFixed(1)}" y="${T}" width="${Math.max(0,xb-xa).toFixed(1)}" height="${BB-T}"/><text class="pbnum" x="${((xa+xb)/2).toFixed(1)}" y="${T+16}">${esc(t)}</text>`; });
   if(K.all) K.vars.forEach((v,j)=>{ if(j!==vi) draw(v.d(),"pother",false); });
   else if(K.ref&&vi>0) draw(K.vars[0].d(),"pref",false);
   const cur=V.d(); draw(cur,"pcur",true);
@@ -29763,6 +30585,20 @@ function plotSVG(p,i){
     if(c.drop){ const [a,b,t]=c.drop; s+=`<line class="pmark" x1="${L}" y1="${Y(b)}" x2="${X(a)}" y2="${Y(b)}"/><line class="pmark" x1="${X(a)}" y1="${Y(b)}" x2="${X(a)}" y2="${B}"/>`+lab(X(a),B,t,6,-6)+lab(L,Y(b),"½ Vmax",6,-7); }
     (c.dots||[]).forEach(([po,t])=>{ const f=hill(27,2.7)(po); s+=`<circle class="pdot" cx="${X(po)}" cy="${Y(f)}" r="4.5"/>`+lab(X(po),Y(f),t,-9,18).replace('text-anchor="start"','text-anchor="end"'); });
   });
+  /* valve or other events: a dashed line through the chart and every strip, labeled at the top */
+  (V.events||[]).forEach(([a,t])=>{ s+=`<line class="pevt" x1="${X(a).toFixed(1)}" y1="${T+22}" x2="${X(a).toFixed(1)}" y2="${BB}"/><text class="pevl" x="${X(a).toFixed(1)}" y="${T+34}">${esc(t)}</text>`; });
+  let sy=B, sci=cur.filter(c=>c.pts).length; const sleg=[];
+  STR.forEach(st=>{ const top=sy+SG, bot=top+st.h; sy=bot;
+    const Ys=v=>bot-(sat(v,st.yr[0],st.yr[1])-st.yr[0])/(st.yr[1]-st.yr[0])*(bot-top);
+    s+=`<line class="pgrid" x1="${L}" y1="${top}" x2="${R}" y2="${top}"/><line class="pax" x1="${L}" y1="${top}" x2="${L}" y2="${bot}"/>
+      <text class="pslab" x="${L-10}" y="${((top+bot)/2+4).toFixed(1)}" text-anchor="end">${esc(st.yl)}</text>`;
+    (st.d(V)||[]).forEach(c=>{
+      if(c.pts){ const col=c.col||PSER[sci%PSER.length]; sci++;
+        s+=`<path class="pcur" d="M${c.pts.map(([a,b])=>X(a).toFixed(1)+" "+Ys(b).toFixed(1)).join(" L")}" style="stroke:${col}"/>`; if(c.lab) sleg.push({col,t:c.lab}); }
+      (c.txt||[]).forEach(([a,t,yv])=>{ s+=`<text class="pstxt ph" x="${X(a).toFixed(1)}" y="${(yv==null?(top+bot)/2+4:Ys(yv)).toFixed(1)}">${esc(t)}</text>`; });
+    });
+  });
+  if(STR.length) s+=`<line class="pax" x1="${L}" y1="${BB}" x2="${R}" y2="${BB}"/>`;
   /* right column: variant chips (wrapping), caption, legend, note */
   const x0=p.x+cw+24, colW=side-44;
   let cx=x0, cy=p.y+18;
@@ -29774,10 +30610,13 @@ function plotSVG(p,i){
   wrapWords(V.cap,Math.floor(colW/6.9)).forEach(line=>{ s+=`<text class="pcap" x="${x0}" y="${ty}">${esc(line)}</text>`; ty+=19; });
   /* key: what each numbered phase is — the ions moving and the channels open */
   if(V.key){ ty+=8;
-    V.key.forEach(([k,t])=>{ s+=`<circle class="pkcirc" cx="${x0+10}" cy="${ty-4.5}" r="10"/><text class="pkn" x="${x0+10}" y="${ty-0.5}">${esc(k)}</text>`;
-      wrapWords(t,Math.floor((colW-30)/6.7)).forEach(line=>{ s+=`<text class="pkey" x="${x0+28}" y="${ty}">${esc(line)}</text>`; ty+=18; }); ty+=6; }); }
+    V.key.forEach(([k,t])=>{ const kw=String(k).length>2?Math.round(String(k).length*6.6+12):20;
+      s+=kw>20?`<rect class="pkcirc" x="${x0}" y="${ty-14.5}" width="${kw}" height="20" rx="10"/><text class="pkn" x="${x0+kw/2}" y="${ty-0.5}">${esc(k)}</text>`
+              :`<circle class="pkcirc" cx="${x0+10}" cy="${ty-4.5}" r="10"/><text class="pkn" x="${x0+10}" y="${ty-0.5}">${esc(k)}</text>`;
+      wrapWords(t,Math.floor((colW-kw-10)/6.7)).forEach(line=>{ s+=`<text class="pkey" x="${x0+kw+8}" y="${ty}">${esc(line)}</text>`; ty+=18; }); ty+=6; }); }
   const leg=[]; let ci=0;
   cur.forEach(c=>{ if(c.pts){ leg.push({cls:"pcur",col:PSER[ci%PSER.length],t:c.lab||V.l}); ci++; } });
+  sleg.forEach(g=>leg.push({cls:"pcur",col:g.col,t:g.t}));
   if(K.ref&&vi>0) leg.push({cls:"pref",t:K.vars[0].l+" (for comparison)"});
   if(K.all&&K.vars.length>1) leg.push({cls:"pother",t:"The other variants"});
   ty+=10;
@@ -30074,8 +30913,13 @@ function reportUrl(id){
   const body=`Card: ${L.n} (${id})\nMap: ${m?m.t:"Index"}\nLink: ${cardLink(id)}\n\nWhat looks wrong:\n\n\nWhat the source says (book and chapter or First Aid page, if you have it):\n\n\n---\nSources listed on this card:\n${srcs.map(x=>"- "+x).join("\n")}`;
   return `${REPO}/issues/new?title=${encodeURIComponent("Atlas: "+L.n)}&body=${encodeURIComponent(body)}`;
 }
+/* recently opened cards, newest first, on this device only */
+let RECENT=(()=>{ try{ const a=JSON.parse(localStorage.getItem("mla-recent")||"[]"); return Array.isArray(a)?a.filter(x=>typeof x==="string"):[]; }catch(e){ return []; } })();
+function noteRecent(id){ RECENT=[id,...RECENT.filter(x=>x!==id)].slice(0,12); try{ localStorage.setItem("mla-recent",JSON.stringify(RECENT)); }catch(e){} }
+function recentIds(){ return RECENT.filter(id=>LES[id]); }
 function openLes(id,center,pick){
   const L=LES[id]; if(!L) return;
+  noteRecent(id);
   state.sel=id; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
   const res=pick===undefined?"":pick===id
     ?`<div class="pqres ok"><span>✓ Right.${state.quiz==="due"?` ${esc((t=>t?t[0].toUpperCase()+t.slice(1)+".":"Off the review schedule.")(dueText(id)))}`:""}</span><button data-next>${NEXT_LABEL()} →</button></div>`
@@ -30992,6 +31836,8 @@ function renderRail(){
   if(!state.q){ const st=starAll(); if(st.length) html+=`<div class="rail-sec"><h3 class="rail-h">Starred · ${st.length}</h3>
     <div class="lesionlist">${st.slice(0,8).map(id=>{const L=LES[id];return `<button class="li" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">★ ${esc(L.n)}</span></span></button>`;}).join("")}</div>
     ${st.length>8?`<p class="revnote" style="margin:6px 7px 0">${st.length-8} more on the Index</p>`:""}</div>`; }
+  if(!state.q){ const rc=recentIds().filter(id=>id!==state.sel).slice(0,6); if(rc.length) html+=`<div class="rail-sec"><h3 class="rail-h">Recently viewed</h3>
+    <div class="lesionlist">${rc.map(id=>{const L=LES[id];return `<button class="li" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span></span></button>`;}).join("")}</div></div>`; }
   html+=`<div class="rail-sec"><h3 class="rail-h">${pg!=null?`Cards citing p. ${pg}`:cq?`Cards citing ${esc(cq.label)}`:state.fuzzy?"Closest matches":state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${shown.length}${shown.length<ids.length?` <span class="hidn">· ${ids.length-shown.length} hidden</span>`:""}</h3>
     <div class="lesionlist">${ids.length?shown.map(id=>{const L=LES[id];
       return `<button class="li${isRev(id)?" rev":""}${isWeak(id)?" weak":""}${isKnown(id)?" known":""}" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
@@ -31031,6 +31877,11 @@ function topicProgressHtml(){
     <p>A card counts once you’ve answered it right more often than you’ve missed it — atlas quizzes and question-bank questions together — or marked it known. This device only.</p>
     <div class="weakmaps">${rows.map(r=>`<button class="weakmap" data-view="${r.v}"><span class="wm-t">${esc(r.l)}</span><span class="qbar"><i style="width:${Math.round(r.solid/r.n*100)}%"></i></span><span class="wm-n">${r.solid} of ${r.n}</span></button>`).join("")}</div></details>`;
 }
+function recentIdxHtml(){
+  const rc=recentIds(); if(!rc.length) return "";
+  return `<details class="idx-sources" open><summary>Recently viewed · ${rc.length}</summary>
+    <div class="pagehits">${rc.map(id=>`<button class="pagehit" data-les="${id}">${esc(LES[id].n)}</button>`).join("")}</div></details>`;
+}
 function starredIdxHtml(){
   const st=starAll(); if(!st.length) return "";
   return `<details class="idx-sources" open><summary>Starred cards · ${st.length}</summary>
@@ -31057,7 +31908,7 @@ function renderIndex(){
     <p>Closest matches, allowing for a letter or two off:</p>`:pg!=null?`<h2>First Aid 2025, p. ${pg}</h2>
     <p>${ids.length} ${ids.length===1?"card cites":"cards cite"} this page${mapsOnPage(pg).length?`, and so ${mapsOnPage(pg).length===1?"does this map":"do these maps"}:`:"."}</p>${pageHitsHtml(pg)}`:`<h2>Every lesion on one page</h2>
     <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>
-    ${!q?`${whatsNewHtml()}<details class="idx-sources" ${Object.keys(LES).some(isWeak)?"open":""}><summary>Your progress (this device)</summary>${progHtml(Object.keys(LES),"cards")}</details>${weakSpotsHtml()}${topicProgressHtml()}${starredIdxHtml()}`:""}`}
+    ${!q?`${whatsNewHtml()}<details class="idx-sources" ${Object.keys(LES).some(isWeak)?"open":""}><summary>Your progress (this device)</summary>${progHtml(Object.keys(LES),"cards")}</details>${recentIdxHtml()}${weakSpotsHtml()}${topicProgressHtml()}${starredIdxHtml()}`:""}`}
     <details class="idx-sources"><summary>Sources</summary>
       <p>Every card was written from and checked against the sources below, line by line. Each card carries its own <b>Sources</b> section naming the exact First Aid pages and book chapters it rests on, so you can see why a fact is stated where it is; the pins on every map open the card that carries those citations, and each map's side panel lists the First Aid pages and chapters the map itself was checked against. Where sources disagree, the card says so or leaves the number out, and anything no source supported was cut. The First Aid page on each card points to the 2025 edition.</p>
       <ul>
@@ -31094,8 +31945,12 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   membrane:"2026-10-08",urineconc:"2026-10-08",hearing:"2026-10-08",vision:"2026-10-08",larynx:"2026-10-08",
   sportsortho:"2026-10-08",gasx:"2026-10-08",bonehisto:"2026-10-08",hormones:"2026-10-08",psychmse:"2026-10-08",
   janda:"2026-10-08",chestomt:"2026-10-08",histoembryo:"2026-10-08",brainstem:"2026-10-08",chemvisc:"2026-10-08",renalna:"2026-10-08",
-  synapse:"2026-10-08",motorctl:"2026-10-08",neiomm:"2026-10-08",orthowork:"2026-10-08",respinf:"2026-10-08",psychtx:"2026-10-08"};
+  synapse:"2026-10-08",motorctl:"2026-10-08",neiomm:"2026-10-08",orthowork:"2026-10-08",respinf:"2026-10-08",psychtx:"2026-10-08",
+  androgen:"2026-10-08",renvasc:"2026-10-08",lbp:"2026-10-08",anteye:"2026-10-08",ptrehab:"2026-10-08"};
 const WHATSNEW=[
+  ["2026-10-08","New maps: <b>Androgens &amp; the Testicular Axis</b> (Repro), <b>Renal Vascular &amp; Cystic Disease</b> (Renal), <b>Low Back Pain — Osteopathic Workup</b> (OMM), <b>The Front of the Eye</b> (EENT) and <b>PT &amp; Rehab Prescription</b> (MSK)."],
+  ["2026-10-08","New graphs: the <b>Wiggers diagram</b> on Cardiac Cycle, an <b>ECG</b> under the ventricular action potential, the <b>menstrual cycle</b> hormones on Repro, <b>buffer titration curves</b> on Acid-Base, and <b>length–tension</b> and <b>force–velocity</b> curves on Muscle."],
+  ["2026-10-08","From the question bank: <b>Cards for this SDL</b> on each block page, <b>your weakest SDLs</b> first, exam readiness on the hub tiles — and <b>Recently viewed</b> in the atlas."],
   ["2026-10-08","New maps: <b>Synaptic Transmission &amp; Receptors</b> and <b>Motor Control — Cortex to Muscle</b> (Neuro), <b>Neuroendocrine-Immune &amp; Autonomic Balance</b> (OMM), <b>Knee, Hip &amp; Hand Workups</b> (MSK), <b>Respiratory Infections by Site</b> (Pulmonary) and <b>Depression Care, Psychotherapy &amp; Forensic Psychiatry</b> (Psych)."],
   ["2026-10-08","New graphs: the nerve action potential and Na⁺/K⁺ conductances on <b>Membrane Potentials</b>, and the pacemaker and ventricular action potentials on <b>Cardiac</b> — each phase labeled with the ions moving and the channels open."],
   ["2026-10-08","From the question bank: <b>Redo misses</b> on each map in Maps for this block, and the atlas card now shows your record on its questions."],

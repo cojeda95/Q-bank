@@ -666,6 +666,10 @@ function render() {
     renderAtlasPractice(decodeURIComponent(parts[1]), parts[2] === 'missed');
   } else if (parts[0] === 'atlasmap' && parts[1]) {
     renderAtlasMapPractice(decodeURIComponent(parts[1]), parts[2] === 'missed');
+  } else if (parts[0] === 'sdlcards' && parts[1]) {
+    renderSdlCards(parseInt(parts[1], 10));
+  } else if (parts[0] === 'sdlmissed' && parts[1]) {
+    renderSdlMissed(parseInt(parts[1], 10));
   } else {
     renderHome();
   }
@@ -684,6 +688,10 @@ function rememberPlace(parts) {
   else if (parts[0] === 'review') save('Review: missed & flagged');
   else if (parts[0] === 'flagged') save('Flagged questions');
   else if (parts[0] === 'toughest') save('Toughest questions');
+  else if ((parts[0] === 'sdlcards' || parts[0] === 'sdlmissed') && parts[1]) {
+    const f = findSdl(parseInt(parts[1], 10));
+    if (f) save((parts[0] === 'sdlcards' ? 'Atlas cards: ' : 'Your misses: ') + f.sdl.title);
+  }
   else if ((parts[0] === 'atlas' || parts[0] === 'atlasmap') && parts[1]) {
     const id = decodeURIComponent(parts[1]), route = window.location.hash, miss = parts[2] === 'missed' ? ' — your misses' : '';
     ATLAS_READY.then(() => {
@@ -783,6 +791,42 @@ function fillAtlasMapsHome() {
       <ul class="amap-list">${top.map(row).join('')}</ul>
       ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} maps</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}`;
   });
+}
+
+/* "Your weakest SDLs" on the block home: every SDL you have answered at least SDL_MIN of its
+   questions in, ranked by your latest try (lastAttemptMap), weakest first — with Redo missed
+   (#sdlmissed/<sdl>), Atlas cards (#sdlcards/<sdl>) and Practice. */
+const SDL_MIN = 3;
+function sdlAccuracy() {
+  const last = lastAttemptMap(), out = [];
+  DATA.exams.forEach(e => e.sdls.forEach(sdl => {
+    let n = 0, ok = 0;
+    sdl.questions.forEach(q => { const a = last[q.id]; if (a) { n++; if (a.correct) ok++; } });
+    if (n) out.push({ sdl, examNumber: e.examNumber, n, ok, total: sdl.questions.length });
+  }));
+  return out;
+}
+function fillWeakSdlsHome() {
+  const el = document.getElementById('weakSdlsHome');
+  if (!el) return;
+  const rows = sdlAccuracy().filter(r => r.n >= SDL_MIN)
+    .sort((a, b) => a.ok / a.n - b.ok / b.n || b.n - a.n || a.sdl.sdlNumber - b.sdl.sdlNumber);
+  if (!rows.length) { el.innerHTML = ''; return; }
+  const row = r => {
+    const p = Math.round(100 * r.ok / r.n), miss = r.n - r.ok;
+    return `<li class="amap-row">
+      <a class="amap-name" href="#practice/${r.sdl.sdlNumber}">${escapeHtml(r.sdl.title)}</a>
+      <span class="amap-acc ${p < 60 ? 'lo' : p < 80 ? 'mid' : 'hi'}" title="Your latest try on ${r.n} of its ${r.total} questions">${r.ok}/${r.n} · ${p}%</span>
+      <span class="amap-n">Exam ${r.examNumber}</span>
+      ${miss ? `<a class="amap-go amap-miss" href="#sdlmissed/${r.sdl.sdlNumber}" title="Run only the questions you missed on your latest try">Redo ${miss} missed</a>` : ''}
+      ${ATLAS_URL ? `<a class="amap-go" href="#sdlcards/${r.sdl.sdlNumber}" title="The atlas cards this SDL’s questions link to">Atlas cards</a>` : ''}
+      <a class="amap-go" href="#practice/${r.sdl.sdlNumber}">Practice</a></li>`;
+  };
+  const top = rows.slice(0, 6), rest = rows.slice(6);
+  el.innerHTML = `<div class="section-label">Your weakest SDLs</div>
+    <p class="amap-note">Ranked by your latest answer to each question, once you have answered ${SDL_MIN} in an SDL — weakest first. This device only.</p>
+    <ul class="amap-list">${top.map(row).join('')}</ul>
+    ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} SDLs you have started</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}`;
 }
 
 function renderHome() {
@@ -898,6 +942,7 @@ function renderHome() {
         <div class="action-label">${flagCount} question${flagCount === 1 ? '' : 's'} currently flagged, across all SDLs</div>
       </div>
     </div>
+    <div id="weakSdlsHome"></div>
     <div id="atlasMapsHome"></div>
 
     <div class="section-label">Settings</div>
@@ -914,6 +959,7 @@ function renderHome() {
       <span>💥 Wrong-Answer Flash — red screen flash and image burst when you miss a question (applies to every block)</span>
     </label>
   `;
+  fillWeakSdlsHome();
   fillAtlasMapsHome();
 
   main.querySelectorAll('.exam-card').forEach(card => {
@@ -1022,7 +1068,7 @@ function renderExamSdlList(examNumber) {
       <div class="sdl-row" data-sdl="${sdl.sdlNumber}">
         <div>
           <div class="sdl-title">${escapeHtml(sdl.title)}</div>
-          <div class="sdl-meta">${regularCount} questions${trialMeta}</div>
+          <div class="sdl-meta">${regularCount} questions${trialMeta}${ATLAS_URL ? ` &middot; <a class="sdl-atlas" href="#sdlcards/${sdl.sdlNumber}" title="The atlas cards this SDL’s questions link to">Atlas cards</a>` : ''}</div>
         </div>
         ${scoreHtml}
       </div>`;
@@ -1049,7 +1095,7 @@ function renderExamSdlList(examNumber) {
   if (fullSimCard) fullSimCard.addEventListener('click', () => setRoute(`examsetup/${examNumber}`));
   bindSplitCards();
   main.querySelectorAll('.sdl-row:not(.pending)').forEach(row => {
-    row.addEventListener('click', () => setRoute(`practice/${row.dataset.sdl}`));
+    row.addEventListener('click', e => { if (e.target.closest('a')) return; setRoute(`practice/${row.dataset.sdl}`); });
   });
 }
 
@@ -2749,6 +2795,77 @@ function renderAtlasPractice(id, missedOnly) {
     };
     renderReviewQuestion();
   });
+}
+
+/* ── Atlas cards for one SDL ───────────────────────────────────────────
+   #sdlcards/<sdl>: the atlas cards this SDL's questions link to (atlasLinksFor — the
+   same rule as the links under an answered question), most-linked first, with the maps
+   that hold most of them and your record on each card's questions. Read the cards, then
+   drill the SDL. */
+function renderSdlCards(sdlNumber) {
+  const f = findSdl(sdlNumber);
+  if (!f) { renderHome(); return; }
+  const route = window.location.hash;
+  main.innerHTML = `<p class="loading">Finding cards…</p>`;
+  ATLAS_READY.then(() => {
+    if (window.location.hash !== route) return;
+    const qs = f.sdl.questions, last = lastAttemptMap(), tally = new Map();
+    let linked = 0;
+    qs.forEach(q => {
+      const cs = atlasLinksFor(q);
+      if (cs.length) linked++;
+      cs.forEach((c, i) => {
+        const t = tally.get(c.id) || { c, n: 0, top: 0, ans: 0, ok: 0 };
+        t.n++; if (i === 0) t.top++;
+        if (last[q.id]) { t.ans++; if (last[q.id].correct) t.ok++; }
+        tally.set(c.id, t);
+      });
+    });
+    const rows = [...tally.values()].sort((a, b) => b.top - a.top || b.n - a.n || a.c.n.localeCompare(b.c.n));
+    const back = `<button class="back-link" id="backList">&larr; Exam ${f.examNumber}</button>`;
+    if (!rows.length) {
+      main.innerHTML = `${back}<h1>Atlas cards</h1><p class="empty-state">No atlas cards link to ${escapeHtml(f.sdl.title)} yet.</p>`;
+      document.getElementById('backList').addEventListener('click', () => setRoute(`exam-sdls/${f.examNumber}`));
+      return;
+    }
+    const mapHits = Object.keys(ATLAS_MAPS || {}).map(m => {
+      const on = new Set(ATLAS_MAPS[m][1] || []);
+      return [m, rows.filter(r => on.has(r.c.id)).length];
+    }).filter(x => x[1] > 1).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    const link = c => `<a class="atlas-link k-${c.k}" href="${ATLAS_URL}#${encodeURIComponent(c.id)}" target="_blank" rel="noopener"><span class="dot"></span>${escapeHtml(c.n)}</a>`;
+    main.innerHTML = `${back}
+      <h1>Atlas cards</h1>
+      <p class="subtitle">${escapeHtml(f.sdl.title)} — ${rows.length} card${rows.length === 1 ? '' : 's'} linked from ${linked} of its ${qs.length} questions, most-linked first. Read them, then drill the SDL.</p>
+      ${mapHits.length ? `<p class="sdlc-maps">Most of them sit on: ${mapHits.map(([m, n]) => `<a href="${ATLAS_URL}#${encodeURIComponent(m)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[m][0])}</a> <span class="sdlc-n">(${n})</span>`).join(' · ')}</p>` : ''}
+      <ul class="sdlc-list">${rows.map(r => `<li class="sdlc-row">${link(r.c)}
+        <span class="sdlc-n">${r.n} question${r.n === 1 ? '' : 's'}</span>
+        ${r.ans ? `<span class="amap-acc ${r.ok / r.ans < 0.6 ? 'lo' : r.ok / r.ans < 0.8 ? 'mid' : 'hi'}" title="Your latest try on this card’s questions in this SDL">${r.ok}/${r.ans} right</span>` : ''}</li>`).join('')}</ul>
+      <p class="sdlc-actions"><a class="amap-go" href="#practice/${sdlNumber}">Practice this SDL</a></p>`;
+    document.getElementById('backList').addEventListener('click', () => setRoute(`exam-sdls/${f.examNumber}`));
+  });
+}
+/* #sdlmissed/<sdl>: the SDL's questions you got wrong on your latest try, as a review run. */
+function renderSdlMissed(sdlNumber) {
+  const f = findSdl(sdlNumber);
+  if (!f) { renderHome(); return; }
+  const qs = onlyMissed(f.sdl.questions).map(q => Object.assign({}, q, { sdlNumber, sdlTitle: f.sdl.title, examNumber: f.examNumber }));
+  if (!qs.length) {
+    main.innerHTML = `
+      <button class="back-link" id="backHome">&larr; Home</button>
+      <h1>${escapeHtml(f.sdl.title)}</h1>
+      <p class="empty-state">No misses left in this SDL — your latest try on each question you answered was right.</p>`;
+    document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+    return;
+  }
+  session = {
+    mode: 'review',
+    queueLabel: f.sdl.title + ' · your misses',
+    questions: shuffle(qs),
+    index: 0,
+    records: new Array(qs.length).fill(null),
+    pendingLetter: null,
+  };
+  renderReviewQuestion();
 }
 
 /* ── Practice a whole atlas map ──────────────────────────────────────────

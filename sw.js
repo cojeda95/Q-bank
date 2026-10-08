@@ -8,7 +8,7 @@
    alone, so sync and Live Session still need a connection. */
 const CACHE = 'qhub-v1';
 const CORE = ['./', 'index.html', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
-  'announcements.js', 'sync.js', 'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js'];
+  'announcements.js', 'sync.js', 'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js', 'resources/qbank-counts.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)
