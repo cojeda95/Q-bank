@@ -159,6 +159,8 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 .amap-name { flex: 1; min-width: 0; color: var(--atlas-ink); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
 .amap-name:hover { text-decoration: underline; }
 .amap-n { font-size: 0.82rem; color: var(--text-muted); white-space: nowrap; }
+.amap-acc { font-size: 0.8rem; font-weight: 700; white-space: nowrap; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; }
+.amap-acc.lo { color: var(--red); } .amap-acc.mid { color: var(--amber-ink); } .amap-acc.hi { color: var(--green); }
 .amap-go { flex: none; font-size: 0.82rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--atlas-line); background: var(--input-bg); color: var(--atlas-ink); text-decoration: none; }
 .amap-go:hover { border-color: var(--atlas-ink); }
 .amap-more { margin-top: 8px; }
@@ -526,6 +528,25 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 .info-block.atlas .atlas-picked .atlas-link { margin-right: 0; }
 .info-block.atlas .atlas-cmp { font-size: 0.84rem; font-weight: 600; color: var(--atlas-ink); text-decoration: underline; text-underline-offset: 2px; }
 .info-block.atlas .atlas-cmp::before { content: "\21C4\00a0"; text-decoration: none; display: inline-block; }
+/* After a miss: the atlas card for every answer choice (shared/app.js atlasChoicesHtml) */
+.info-block.atlas .atlas-choices { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--atlas-line); }
+.info-block.atlas .atlas-ctab { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 0.86rem; }
+.info-block.atlas .atlas-ctab th, .info-block.atlas .atlas-ctab td { text-align: left; vertical-align: top; padding: 6px 6px; border-top: 1px solid var(--atlas-line); }
+.info-block.atlas .atlas-ctab tr:first-child th, .info-block.atlas .atlas-ctab tr:first-child td { border-top: none; }
+.info-block.atlas .atlas-ctab th { width: 1.6em; font-weight: 700; }
+.info-block.atlas .atlas-ctab .ac-opt { color: var(--text); width: 45%; }
+.info-block.atlas .atlas-ctab .ac-card .atlas-link { margin: 0 6px 0 0; white-space: normal; text-align: left; }
+.info-block.atlas .atlas-ctab tr.is-right th, .info-block.atlas .atlas-ctab tr.is-right .ac-opt { color: var(--green); }
+.info-block.atlas .atlas-ctab tr.is-pick th, .info-block.atlas .atlas-ctab tr.is-pick .ac-opt { color: var(--red); }
+.info-block.atlas .ac-tag { display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px; font-size: 0.74rem; font-weight: 700; border: 1px solid currentColor; white-space: nowrap; }
+.info-block.atlas .ac-none { color: var(--text-muted); font-size: 0.82rem; }
+@media (max-width: 480px) {
+  .info-block.atlas .atlas-ctab tr { display: grid; grid-template-columns: 1.6em 1fr; column-gap: 6px; border-top: 1px solid var(--atlas-line); padding: 6px 0; }
+  .info-block.atlas .atlas-ctab tr:first-child { border-top: none; }
+  .info-block.atlas .atlas-ctab th, .info-block.atlas .atlas-ctab td { border-top: none; padding: 0; width: auto; }
+  .info-block.atlas .atlas-ctab .ac-opt { width: auto; }
+  .info-block.atlas .atlas-ctab .ac-card { grid-column: 2; margin-top: 4px; }
+}
 
 .next-row {
   display: flex;

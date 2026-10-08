@@ -122,25 +122,52 @@ function atlasLinksFor(q) {
    a correct answer, and its best card — one not already linked for the right answer —
    is shown with a Compare link that opens it beside the correct card in the atlas
    (#cmp/<picked>/<correct>). */
+// The best card for one answer option, matched on its leading phrase — what it names —
+// not the reasoning that follows, which mentions other things in passing
+// ("X, which …", "X because …", "X — …").
+function atlasOptionCard(q, letter) {
+  const head = String(choiceText(q, letter)).split(/[,;:(]| [—–-] | (?:which|because|since|due to|caused by|as|so|while|whereas|that) /i)[0];
+  return atlasMatch([head])[0] || null;
+}
 function atlasPickedFor(q, picked, have) {
   if (!ATLAS_INDEX || !q || !q.choices || !picked || picked === q.correct) return null;
-  // Only the option's leading phrase — what it names — not the reasoning that follows,
-  // which mentions other things in passing ("X, which …", "X because …", "X — …").
-  const head = String(choiceText(q, picked)).split(/[,;:(]| [—–-] | (?:which|because|since|due to|caused by|as|so|while|whereas|that) /i)[0];
   // If the option's best card is already one linked for the right answer, the option is
   // about the same thing (a wrong statement about it) — nothing to compare.
-  const top = atlasMatch([head])[0];
+  const top = atlasOptionCard(q, picked);
   return top && !(have || []).some(c => c.id === top.id) ? top : null;
+}
+/* After a miss, a table gives the atlas card for every answer choice: the right answer
+   shows its top linked card, each other option its own best card (or "same card as the
+   answer" when it names the same thing), and the row you picked carries the Compare
+   link (#cmp/<picked>/<correct>). Single-answer questions only. */
+function atlasChoicesHtml(q, picked, cards, link) {
+  const letters = Object.keys(q.choices || {});
+  if (letters.length < 2 || typeof picked !== 'string' || typeof q.correct !== 'string' || !letters.includes(picked)) return '';
+  const short = t => { t = String(t || '').replace(/\s+/g, ' ').trim(); return t.length > 90 ? t.slice(0, 88).replace(/\s+\S*$/, '') + '…' : t; };
+  const rows = letters.map(L => {
+    const right = L === q.correct, mine = L === picked;
+    const c = right ? cards[0] : atlasOptionCard(q, L);
+    const same = !right && c && cards.some(x => x.id === c.id);
+    const tag = right ? '<span class="ac-tag ok">answer</span>' : mine ? '<span class="ac-tag pick">your pick</span>' : '';
+    const cmp = mine && c && !same && cards.length
+      ? `<a class="atlas-cmp" href="${ATLAS_URL}#cmp/${encodeURIComponent(c.id)}/${encodeURIComponent(cards[0].id)}" target="_blank" rel="noopener">Compare</a>` : '';
+    const cell = !c ? '<span class="ac-none">—</span>' : same ? '<span class="ac-none">same card as the answer</span>' : link(c) + cmp;
+    return `<tr class="${right ? 'is-right' : mine ? 'is-pick' : ''}"><th scope="row">${escapeHtml(L)}</th>
+      <td class="ac-opt">${escapeHtml(short(choiceText(q, L)))}${tag}</td><td class="ac-card">${cell}</td></tr>`;
+  }).join('');
+  return `<div class="atlas-choices"><div class="atlas-picked-lbl">Every answer choice on the atlas</div><table class="atlas-ctab"><tbody>${rows}</tbody></table></div>`;
 }
 function atlasLinksHtml(q, picked) {
   if (!ATLAS_URL) return '';
   const cards = atlasLinksFor(q);
-  const wrong = atlasPickedFor(q, picked, cards);
-  if (!cards.length && !wrong) return '';
   const link = c => `<a class="atlas-link k-${c.k}" href="${ATLAS_URL}#${encodeURIComponent(c.id)}" target="_blank" rel="noopener"><span class="dot"></span>${escapeHtml(c.n)}</a>`;
+  const table = picked && ATLAS_INDEX && q && q.choices && picked !== q.correct ? atlasChoicesHtml(q, picked, cards, link) : '';
+  // No table (e.g. a select-all question): fall back to the single "You picked" line.
+  const wrong = table ? null : atlasPickedFor(q, picked, cards);
+  if (!cards.length && !wrong && !table) return '';
   const pickedHtml = wrong ? `<div class="atlas-picked"><span class="atlas-picked-lbl">You picked ${escapeHtml(picked)}:</span>${link(wrong)}${cards.length
     ? `<a class="atlas-cmp" href="${ATLAS_URL}#cmp/${encodeURIComponent(wrong.id)}/${encodeURIComponent(cards[0].id)}" target="_blank" rel="noopener">Compare with ${escapeHtml(cards[0].n)}</a>` : ''}</div>` : '';
-  return `<div class="info-block atlas"><b>On the Lesion Atlas</b>${cards.map(link).join('')}${pickedHtml}</div>`;
+  return `<div class="info-block atlas"><b>On the Lesion Atlas</b>${cards.map(link).join('')}${pickedHtml}${table}</div>`;
 }
 
 /* Missed questions feed the Lesion Atlas review list. The atlas keeps its
@@ -671,6 +698,27 @@ function blockDirName() {
   if (parts.length && /\.html?$/i.test(parts[parts.length - 1])) parts.pop();
   return parts.length ? decodeURIComponent(parts[parts.length - 1]) : '';
 }
+/* Your accuracy per map: each question you have answered in this block counts toward
+   every map holding one of its linked atlas cards (the same rule the map's Practice run
+   uses), scored on your latest try. Linked cards are worked out once per question per
+   page load. */
+const ATLAS_Q_CARDS = new Map();
+function atlasMapAccuracy() {
+  const cardMaps = {};
+  Object.keys(ATLAS_MAPS || {}).forEach(m => (ATLAS_MAPS[m][1] || []).forEach(c => { (cardMaps[c] = cardMaps[c] || []).push(m); }));
+  const acc = {};
+  const last = lastAttemptMap();
+  Object.keys(last).forEach(id => {
+    const q = questionById(id);
+    if (!q) return;
+    if (!ATLAS_Q_CARDS.has(id)) ATLAS_Q_CARDS.set(id, atlasLinksFor(q).map(c => c.id));
+    const maps = new Set();
+    ATLAS_Q_CARDS.get(id).forEach(c => (cardMaps[c] || []).forEach(m => maps.add(m)));
+    maps.forEach(m => { const a = acc[m] = acc[m] || { n: 0, ok: 0 }; a.n++; if (last[id].correct) a.ok++; });
+  });
+  return acc;
+}
+const AMAP_MIN = 3;   // answers on a map before it is ranked by accuracy
 function fillAtlasMapsHome() {
   const el = document.getElementById('atlasMapsHome');
   if (!el || !ATLAS_URL) return;
@@ -678,16 +726,30 @@ function fillAtlasMapsHome() {
     if (!document.body.contains(el) || !P || !P.maps || !ATLAS_MAPS) return;
     const bi = (P.blocks || []).findIndex(b => b[0] === blockDirName());
     if (bi < 0) return;
+    const acc = atlasMapAccuracy();
+    const pct = a => a.ok / a.n;
+    const ranked = id => !!(acc[id] && acc[id].n >= AMAP_MIN);
+    // Weakest first among maps you have answered enough of; the rest by question count.
     const rows = Object.keys(P.maps).map(id => [id, ((P.maps[id] || []).find(x => x[0] === bi) || [0, 0])[1]])
-      .filter(([id, n]) => n > 0 && ATLAS_MAPS[id]).sort((a, b) => b[1] - a[1] || ATLAS_MAPS[a[0]][0].localeCompare(ATLAS_MAPS[b[0]][0]));
+      .filter(([id, n]) => n > 0 && ATLAS_MAPS[id])
+      .sort((a, b) => (ranked(b[0]) - ranked(a[0]))
+        || (ranked(a[0]) ? pct(acc[a[0]]) - pct(acc[b[0]]) || acc[b[0]].n - acc[a[0]].n : 0)
+        || b[1] - a[1] || ATLAS_MAPS[a[0]][0].localeCompare(ATLAS_MAPS[b[0]][0]));
     if (!rows.length) return;
-    const row = ([id, n]) => `<li class="amap-row">
+    const row = ([id, n]) => {
+      const a = acc[id], p = a ? Math.round(100 * pct(a)) : 0;
+      const chip = a ? `<span class="amap-acc ${p < 60 ? 'lo' : p < 80 ? 'mid' : 'hi'}" title="Your latest try on ${a.n} of this map’s questions">${a.ok}/${a.n} · ${p}%</span>` : '';
+      return `<li class="amap-row">
         <a class="amap-name" href="${ATLAS_URL}#${encodeURIComponent(id)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[id][0])}</a>
-        <span class="amap-n">${n} question${n === 1 ? '' : 's'}</span>
+        ${chip}<span class="amap-n">${n} question${n === 1 ? '' : 's'}</span>
         <a class="amap-go" href="#atlasmap/${encodeURIComponent(id)}">Practice</a></li>`;
+    };
+    const anyRanked = rows.some(r => ranked(r[0]));
     const top = rows.slice(0, 8), rest = rows.slice(8);
     el.innerHTML = `<div class="section-label">Maps for this block</div>
-      <p class="amap-note">Lesion Atlas maps ranked by how many of this block’s questions link to their cards. Open a map, or practice its questions here.</p>
+      <p class="amap-note">${anyRanked
+        ? `Your weakest maps first — ranked by your latest answer to each question linked to the map, once you have answered ${AMAP_MIN}. The rest follow by how many of this block’s questions link to them.`
+        : 'Lesion Atlas maps ranked by how many of this block’s questions link to their cards. Once you answer a few questions, your weakest maps move to the top.'} Open a map, or practice its questions here.</p>
       <ul class="amap-list">${top.map(row).join('')}</ul>
       ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} maps</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}`;
   });

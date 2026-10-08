@@ -38,6 +38,7 @@
   .block-title { font-weight: 700; font-size: 1.15rem; color: var(--navy); }
   .block-desc { font-size: 0.9rem; color: var(--grey-text); margin-top: 4px; }
   .block-due { display: inline-block; margin-top: 10px; padding: 4px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; color: var(--navy); border: 1px solid var(--navy); }
+  .block-due[hidden] { display: none; }
   .footer { text-align: center; padding: 20px; font-size: 0.8rem; color: var(--text-faint); }
 
   .section-label {
@@ -105,6 +106,15 @@
   .offline-bar { margin-top: 10px; height: 6px; border-radius: 999px; background: var(--track, #e0e0e0); overflow: hidden; }
   .offline-bar span { display: block; height: 100%; width: 0; background: var(--navy-fill); transition: width .2s; }
   @media (max-width: 520px) { .offline-card { flex-direction: column; align-items: stretch; } .offline-btn { width: 100%; } }
+  .offline-detail { margin-top: 6px; }
+  /* Block tiles: your progress and offline status (script at the end) */
+  .block-meta { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: 10px; }
+  .block-meta:empty { display: none; }
+  .bm { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--grey-border); color: var(--grey-text); }
+  .bm.prog { color: var(--navy); border-color: var(--navy); }
+  .bm.saved { color: var(--green); border-color: currentColor; }
+  .bm.newer { color: var(--amber-ink); border-color: var(--amber-line); background: var(--amber-bg); }
+  .bm.unsaved { color: var(--text-faint); }
 </style>
 <link rel="stylesheet" href="shared/theme.css">
 <script src="shared/theme.js"></script>
@@ -118,7 +128,7 @@
     <div class="block-grid">
       <a class="block-card featured" href="resources/metabolic-atlas.html">
         <div class="block-title">🗺️ Lesion Atlas</div>
-        <div class="block-desc">131 interactive maps &middot; 1,620 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
+        <div class="block-desc">137 interactive maps &middot; 1,665 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
         <div class="block-due" id="atlasDue" hidden></div>
       </a>
     </div>
@@ -187,6 +197,7 @@
       <div class="offline-text">
         <div class="block-title">Save everything for offline</div>
         <div class="block-desc" id="offlineStatus">Downloads every block, the Lesion Atlas and the shared files to this device (about 21&nbsp;MB) so they all work without signal.</div>
+        <div class="block-desc offline-detail" id="offlineDetail" hidden></div>
         <div class="offline-bar" id="offlineBar" hidden><span id="offlineFill"></span></div>
       </div>
       <button class="offline-btn" id="offlineBtn" type="button">Save all</button>
@@ -279,10 +290,121 @@
         if (failed) { status.textContent = failed + ' of ' + urls.length + ' files could not be saved — check your connection and try again.'; return; }
         try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {}
         showSaved(); setTimeout(function () { bar.hidden = true; }, 1200);
+        if (window.qhubOfflineCheck) window.qhubOfflineCheck();
       }, function () {
         btn.disabled = false; bar.hidden = true; status.textContent = 'Saving failed — this browser may be blocking storage for this site.';
       });
     });
+  })();
+</script>
+<script>
+  /* Block tiles show your progress and offline status on this device.
+     Progress: questions answered and % right on your latest try, from each block's attempt
+     log ('<folder>_attempts_v1' — every block's storageKey is its folder name).
+     Offline: a block counts as saved when its page and questions (index.html, data.js) are
+     in the cache sw.js serves from (CACHE must match sw.js) — Save all puts them there, and
+     so does opening a block online. When online, each saved file's size is checked against
+     the copy online (the size half of GitHub Pages' "mtime-size" ETag, or Content-Length);
+     a different size means a newer version is online. The mtime half changes on every
+     deploy even for unchanged files, so it is ignored. */
+  (function () {
+    var CACHE = 'qhub-v1';
+    var tiles = [].slice.call(document.querySelectorAll('.block-grid a.block-card[href$=".html"]'));
+    var blocks = tiles.filter(function (a) { return /\/index\.html$/.test(a.getAttribute('href')); });
+    var atlas = tiles.filter(function (a) { return a.getAttribute('href') === 'resources/metabolic-atlas.html'; })[0];
+    var detail = document.getElementById('offlineDetail');
+    function meta(a) {
+      var m = a.querySelector('.block-meta');
+      if (!m) { m = document.createElement('div'); m.className = 'block-meta'; a.appendChild(m); }
+      return m;
+    }
+    function chip(a, kind, cls, text, title) {
+      var m = meta(a), el = m.querySelector('[data-k="' + kind + '"]');
+      if (!text) { if (el) el.remove(); return; }
+      if (!el) { el = document.createElement('span'); el.setAttribute('data-k', kind); if (kind === 'prog') m.insertBefore(el, m.firstChild); else m.appendChild(el); }
+      el.className = 'bm ' + cls; el.textContent = text; if (title) el.title = title; else el.removeAttribute('title');
+    }
+    function name(a) { var t = a.querySelector('.block-title'); return t ? t.textContent.replace(/^\W+\s*/, '').trim() : ''; }
+
+    function progress() {
+      blocks.forEach(function (a) {
+        var dir = a.getAttribute('href').replace(/\/index\.html$/, ''), list = [];
+        try { list = JSON.parse(localStorage.getItem(dir + '_attempts_v1')) || []; } catch (e) { list = []; }
+        var last = {};
+        (Array.isArray(list) ? list : []).forEach(function (x) { if (x && x.id != null) last[x.id] = x; });
+        var ids = Object.keys(last), ok = ids.filter(function (id) { return last[id].correct; }).length;
+        chip(a, 'prog', 'prog', ids.length ? ids.length.toLocaleString() + ' answered · ' + Math.round(100 * ok / ids.length) + '% right' : '',
+          'Questions you have answered in this block on this device, and the share right on your latest try');
+      });
+    }
+    progress();
+    window.addEventListener('storage', function (e) { if (e.key && /_attempts_v1$/.test(e.key)) progress(); });
+    window.addEventListener('pageshow', progress);
+
+    if (!('caches' in window) || !window.fetch) return;
+    function abs(u) { return new URL(u, location.href).href; }
+    function netSize(url) {
+      return fetch(url, { method: 'HEAD', cache: 'no-store' }).then(function (r) {
+        if (!r.ok) return null;
+        var m = (r.headers.get('etag') || '').match(/-([0-9a-f]+)"?\s*$/i);
+        if (m) return parseInt(m[1], 16);
+        var cl = r.headers.get('content-length');
+        return cl && !r.headers.get('content-encoding') ? +cl : null;
+      }).catch(function () { return null; });
+    }
+    // -> {saved: all files cached, newer: some saved file differs in size from the copy online}
+    function check(cache, files, online) {
+      var st = { saved: true, newer: false };
+      return files.reduce(function (p, u) {
+        return p.then(function () {
+          return cache.match(abs(u), { ignoreSearch: true }).then(function (res) {
+            if (!res) { st.saved = false; return; }
+            if (!online) return;
+            return Promise.all([res.blob().then(function (b) { return b.size; }), netSize(abs(u))]).then(function (v) {
+              if (v[1] != null && v[0] !== v[1]) st.newer = true;
+            });
+          });
+        });
+      }, Promise.resolve()).then(function () { return st; });
+    }
+    var running = null;
+    function run() {
+      if (running) return running;
+      var online = navigator.onLine !== false;
+      running = caches.open(CACHE).then(function (cache) {
+        var jobs = blocks.map(function (a) {
+          var dir = a.getAttribute('href').replace(/index\.html$/, '');
+          return [a, [dir + 'index.html', dir + 'data.js']];
+        });
+        if (atlas) jobs.push([atlas, ['resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js']]);
+        var res = [];
+        return jobs.reduce(function (p, j) {
+          return p.then(function () { return check(cache, j[1], online); }).then(function (st) {
+            res.push([j[0], st]);
+            chip(j[0], 'off', st.saved ? (st.newer ? 'newer' : 'saved') : 'unsaved',
+              st.saved ? (st.newer ? '↻ Newer version online' : '✓ Saved offline') : 'Not saved offline',
+              st.newer ? 'The copy saved on this device is older than the one online — Save again (Use Offline, below) to update it' : '');
+          });
+        }, Promise.resolve()).then(function () { return check(cache, ['shared/app.js', 'shared/style.css'], online); }).then(function (core) {
+          if (!detail) return;
+          var b = res.filter(function (x) { return x[0] !== atlas; });
+          var saved = b.filter(function (x) { return x[1].saved; }).length;
+          var newer = res.filter(function (x) { return x[1].saved && x[1].newer; }).map(function (x) { return x[0] === atlas ? 'Lesion Atlas' : name(x[0]); });
+          if (core.saved && core.newer) newer.push('the shared app files');
+          var atlasSaved = atlas && res.some(function (x) { return x[0] === atlas && x[1].saved; });
+          var txt = 'On this device: ' + saved + ' of ' + b.length + ' blocks saved' + (atlas ? (atlasSaved ? ', Lesion Atlas saved' : ', Lesion Atlas not saved') : '') + '.';
+          if (newer.length) txt += ' Newer version online for ' + newer.join(', ') + ' — tap Save again to update.';
+          else if (online && saved) txt += ' Saved copies match what is online.';
+          else if (!online) txt += ' You are offline, so updates cannot be checked right now.';
+          detail.textContent = txt; detail.hidden = false;
+        });
+      }).catch(function () {}).then(function () { running = null; });
+      return running;
+    }
+    window.qhubOfflineCheck = run;
+    var start = function () { run(); };
+    if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 2500 }); else setTimeout(start, 800);
+    window.addEventListener('online', start);
   })();
 </script>
 </body>

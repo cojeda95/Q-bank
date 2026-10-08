@@ -169,10 +169,14 @@ side panel and the Info sheet show a button per block that opens
 with the same linking rule, so the counts match.
 
 Each block's home page also lists **Maps for this block** (`fillAtlasMapsHome` in
-`shared/app.js`): the maps ranked by that block's count in `atlas-practice.js`, each with a
-link to the map and a Practice button for the same `#atlasmap/<map id>` session. The block
-is read from the page's folder name, which must match the block's first entry in
-`blocks` of `atlas-practice.js` (the build takes it from the hub's block links).
+`shared/app.js`), each with a link to the map and a Practice button for the same
+`#atlasmap/<map id>` session. Every map also shows **your accuracy** on it
+(`atlasMapAccuracy`): each question you have answered in the block counts toward every map
+that holds one of its linked cards — the Practice rule again — scored on your latest try
+(`lastAttemptMap`). Maps with at least `AMAP_MIN` (3) answers come first, weakest first;
+the rest follow by that block's question count in `atlas-practice.js`. The block is read
+from the page's folder name, which must match the block's first entry in `blocks` of
+`atlas-practice.js` (the build takes it from the hub's block links).
 
 ### Taking the reader to a pin
 
@@ -229,6 +233,13 @@ appears under the links with **Compare with …**, which opens
 `metabolic-atlas.html#cmp/<picked card>/<correct card>`: the atlas opens on the correct
 card's home map with both cards side by side (`readHash` → `openCompare`). About one wrong
 option in five gets a card.
+
+**Every answer choice.** On single-answer questions the "You picked" line is replaced by a
+table (`atlasChoicesHtml`) giving the card for every option: the right answer shows its top
+linked card; each other option its own best card from its leading phrase
+(`atlasOptionCard`, the same matching), or "same card as the answer" when that card is
+already linked for the right answer; the row you picked carries the Compare link.
+Select-all and grid questions keep the single "You picked" line.
 
 ### Practice buttons on atlas cards
 
@@ -354,6 +365,17 @@ worker controls the tab. The cache name is written in the hub's script too: **if
 worker no longer reads (and its activate step deletes). The time of the last full save is
 kept per device under `qhub-offline-at`. Pages needing a CDN (the sacral explorer's three.js)
 are left out — they cannot work offline anyway.
+
+**Block tiles** on the hub show, per device, your progress (questions answered and % right on
+your latest try, read from each block's `<folder>_attempts_v1` — so a block's `storageKey`
+must equal its folder name) and its offline status: *Saved offline* when its `index.html`
+and `data.js` are in the cache (the atlas tile checks the three atlas files), *Not saved
+offline* otherwise, and *Newer version online* when a saved file's size differs from the copy
+online. Online size comes from a `HEAD` request — the size half of GitHub Pages'
+`"mtime-size"` ETag, or `Content-Length` — because the mtime half (and `Last-Modified`)
+changes for every file on every deploy. An edit that keeps a file's byte size identical is
+not flagged. The same script fills the summary line under Save all, and reruns after a
+save. It has its own copy of `CACHE` too.
 
 ## Cross-device sync
 
