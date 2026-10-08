@@ -95,7 +95,7 @@ runtime, so the build **refuses** rather than warns:
   stray tags in the HTML fields.
 - **An unknown source.** Every `src` entry must start with a known textbook or course
   name (`KNOWN_SRC` in the build — Robbins, Katzung, … `OCOM OMM`, `OCOM Ortho`,
-  `OCOM Psych`, `Osmosis`). Add a new course's prefix there when its first card ships.
+  `OCOM Psych`, `OCOM Rheum`, `Osmosis`). Add a new course's prefix there when its first card ships.
 - **A card's first home moving.** A card pinned on several maps opens on its first home
   (the earliest map in `MAPS` definition order) from the Index and from `#card` links —
   including every question-bank link. **Define new maps last**, just before `const VIEWS`.
@@ -193,6 +193,17 @@ baseline, low-dose and high-dose dexamethasone — a category axis whose `xr` is
 chart but not at the sides: keep every point inside `xr` (a shifted curve that runs past the
 right edge draws into the text column). `PSER` has six series colours for graphs with five or
 six curves.
+The m32 kinds: `phh` ([H⁺] = 10^(9 − pH) from `phH()`, with the ±0.2 steps Costanzo quotes, the
+0.3-unit doubling and the normal range as bands), `ccprof` (tubular fluid osmolality along the
+nephron with high ADH, no ADH and a loop diuretic — a category axis of nephron segments, points
+joined by straight lines), `gradap` (passive decay e^(−x/λ) from `decay()` for strong and weak
+graded potentials, the flat action potential, myelin and a Cl⁻ shunt), `co2dc` (Guyton's CO₂
+dissociation curves at PO₂ 40 and 100 with points A and B, without the Haldane shift, and
+dissolved CO₂), `eyetrace` (eye position over time — saccade step, pursuit ramp, optokinetic
+sawtooth and vergence — from the speeds and latencies of Fundamental Neuroscience Table 28.1)
+and `cortrhythm` (plasma cortisol over the day: normal, night shift, Cushing syndrome, chronic
+steroids). A mark can put its label under the point with a fourth element, `[x, y, "B",
+"below"]` — for two curves only a few pixels apart.
 
 **Graph quiz and gallery.** Any kind with three or more versions shows a **Quiz me** chip.
 `PLOTQ["view:index"]` holds `{ans, pick, n, right}`; `plotQuiz()` starts, answers, moves on
@@ -202,6 +213,18 @@ mark label that only that version carries (`told()` counts labels across version
 curves by what they measure ("Blood glucose", "Cortisol"), not by the version, or the legend
 gives the answer away. The Index page lists every graph by system (`graphsIdxHtml()`); a
 button calls `goPlot(view, i)`, which frames the graph on its map and flashes its border.
+
+**Graph mix, graph search and compare (m32).** Quiz → **Graph mix** (`setQuiz("graphs")`)
+takes ten random graphs with two or more versions (`graphPool()`), and for each sets a
+`PLOTQ` entry flagged `mix:true` and calls `goPlot()`; the score lives in `GQ` `{list, k, n,
+right}` and shows in the quiz bar, and the plot's own chips become **Next graph** and **End
+mix**. `clearGraphQ()` removes mix entries whenever the mode changes. Search finds graphs:
+`graphMatches(q)` needs every word in the title, axis labels or one version's name, caption
+or key, and opens on the version whose name matches best (`goPlot(view, i, version)`); hits
+show on the Index page and in the side panel. **Compare** (any graph with two or more
+versions) opens a row of overlay chips; `PLOTCMP["view:index"]` `{open, j}` draws version `j`
+dashed (`.pcmp`) over the chosen one, in place of the reference curve, and is hidden during a
+quiz.
 
 ### Search abbreviations
 
@@ -321,6 +344,13 @@ ventricle"` took medulla questions ("…flares into the fourth ventricle"), so p
 long enough to be specific. A card scores with the *first* of its terms that matches, in list
 order — when one term contains another ("sinus thrombosis", "superior sagittal sinus
 thrombosis"), list the longer first or a shorter rival card's term can outrank it.
+The m32 sweep (pulmonary blood flow, the loop of Henle and distal nephron, diuretic
+foundations, the DSM-5 introduction, somatic symptom disorders, the visual system) linked 62
+of 71 unlinked questions; the rest had no textbook source for their point. Terms are matched
+against the correct answer and the first explanation sentence only — never the question
+stem — so a plain term must come from one of those two. A plain term can also catch a
+distractor named in that first sentence: `"psychological factors affecting other medical
+conditions"` took a conversion question until it was made answer-only.
 
 **You picked.** After a miss, `atlasLinksHtml(q, picked)` also matches the option the person
 chose (`atlasPickedFor`): only its leading phrase — the text before the first comma, colon,

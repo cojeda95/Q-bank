@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 163 pan/zoom maps with 1857 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 170 pan/zoom maps with 1894 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="163 interactive maps. 1857 lesions pinned to the step they break.">
+<meta property="og:description" content="170 interactive maps. 1894 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -266,6 +266,7 @@ svg.map.drag{cursor:grabbing}
 .plot-c .pcur{fill:none;stroke:var(--accent);stroke-width:3.2;stroke-linejoin:round}
 .plot-c .pref{fill:none;stroke:var(--ink-3);stroke-width:2;stroke-dasharray:7 5;opacity:.7}
 .plot-c .pother{fill:none;stroke:var(--ink-3);stroke-width:2;opacity:.35}
+.plot-c .pcmp{fill:none;stroke:var(--ink-2);stroke-width:2.6;stroke-dasharray:9 5;opacity:.85}
 .plot-c .pdot{fill:var(--ink);stroke:var(--surface);stroke-width:2}
 .pvar{cursor:pointer}
 .pvar rect{fill:var(--surface);stroke:var(--line)}
@@ -557,6 +558,7 @@ body{display:flex;flex-direction:column}
           <button class="qopt" role="menuitemradio" data-q="pins" aria-checked="false">Name the pins<span>Tap a pin, then pick the lesion it marks</span></button>
           <button class="qopt" role="menuitemradio" data-q="buzz" aria-checked="false">Buzzword → card<span>Read a buzzword, pick the card it belongs to</span></button>
           <button class="qopt" role="menuitemradio" data-q="mix" aria-checked="false">Daily mix<span id="qmixn">10 cards from every map — due, starred, missed and new</span></button>
+          <button class="qopt" role="menuitemradio" data-q="graphs" aria-checked="false">Graph mix<span>10 random graphs — name each version, with a score</span></button>
           <button class="qopt" role="menuitemradio" data-q="case" aria-checked="false">Case vignettes<span>Findings from a disease card, its name hidden — pick the diagnosis</span></button>
           <button class="qopt" role="menuitemradio" data-q="star" aria-checked="false">Starred cards<span id="qstarn">Every card you’ve starred, across all maps</span></button>
           <button class="qopt" role="menuitemradio" data-q="due" aria-checked="false">Due cards<span id="qduen">Every card due for review, across all maps</span></button>
@@ -1327,6 +1329,23 @@ const PATHS = {
   lfBone:{n:"Bone basics",v:"--p-glycolysis"},
   lfKnee:{n:"Knee & leg",v:"--p-tca"},
   lfAnkle:{n:"Ankle",v:"--p-gluconeo"},
+  emTypes:{n:"Kinds of movement",v:"--p-glycolysis"},
+  emGaze:{n:"Gaze centers",v:"--p-tca"},
+  emPupil:{n:"Pupil",v:"--p-gluconeo"},
+  npCerv:{n:"Neck",v:"--p-glycolysis"},
+  npLumb:{n:"Low back",v:"--p-tca"},
+  icRest:{n:"At rest",v:"--p-glycolysis"},
+  icChan:{n:"Channels",v:"--p-tca"},
+  icSignal:{n:"Signals",v:"--p-gluconeo"},
+  prPrin:{n:"Choosing",v:"--p-glycolysis"},
+  prFail:{n:"When it fails",v:"--p-tca"},
+  scDx:{n:"Recognizing",v:"--p-glycolysis"},
+  scCare:{n:"Care",v:"--p-tca"},
+  gcAct:{n:"Actions",v:"--p-glycolysis"},
+  gcUse:{n:"Stopping",v:"--p-tca"},
+  ldGenes:{n:"Receptor genes",v:"--p-glycolysis"},
+  ldB:{n:"B cells",v:"--p-tca"},
+  ldT:{n:"T cells",v:"--p-gluconeo"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -2480,12 +2499,12 @@ diabetickidney:{n:"Diabetic nephropathy",k:"dz",p:"glomerulus",q:["diabetic neph
 
 nsaidkidney:{n:"NSAIDs and the kidney",k:"drug",p:"glomerulus",enz:"Cyclooxygenase → afferent arteriolar prostaglandins",inh:"—",fa:"601, 607, 620",hi:1,
  mech:"Prostaglandins keep the <b>afferent</b> arteriole dilated. When renal perfusion is already low — hypovolemia, heart failure, cirrhosis, renal artery stenosis — that dilation is the only thing preserving GFR. Blocking it closes the inflow.",
- find:["<b>Acute kidney injury</b> from afferent constriction, worst in the volume-depleted","Acute interstitial nephritis","Papillary necrosis (analgesic nephropathy)","Sodium and water retention → edema and worsened hypertension","Hyperkalemia"],
+ find:["<b>Acute kidney injury</b> from afferent constriction, worst in the volume-depleted","Acute interstitial nephritis","Papillary necrosis (analgesic nephropathy)","Sodium and water retention → edema and worsened hypertension","Hyperkalemia","PGE2 blunts Na⁺ reabsorption in the thick ascending limb and ADH-mediated water transport in the collecting tubule — so NSAIDs also weaken loop diuretics (Katzung ch 15)"],
  labs:["NSAID + ACE inhibitor/ARB + diuretic is a classic AKI setup","Calcineurin inhibitors (cyclosporine, tacrolimus) constrict the afferent arteriole too"],
  buzz:["ACE inhibitors dilate the EFFERENT; NSAIDs constrict the AFFERENT — both drop GFR"],
  src:["Robbins ch 20 — The kidney","Katzung ch 15 — Diuretic Agents","Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout"],
  tx:["Stop the NSAID, restore volume"],
- ref:[{a:"Naesens M, Kuypers DR, Sarwal M",t:"Calcineurin inhibitor nephrotoxicity",j:"Clin J Am Soc Nephrol",y:2009,pmid:"19218475",doi:"10.2215/CJN.04800908"}]},
+ ref:[{a:"Naesens M, Kuypers DR, Sarwal M",t:"Calcineurin inhibitor nephrotoxicity",j:"Clin J Am Soc Nephrol",y:2009,pmid:"19218475",doi:"10.2215/CJN.04800908"}],q:["=they inhibit nkcc2 mediated na+ reabsorption lowering","=they block the prostaglandin synthesis that protects renal flow","=prostaglandin e2 and prostacyclin"]},
 
 acetazolamide:{n:"Acetazolamide",k:"drug",p:"nephron",enz:"Carbonic anhydrase (proximal tubule)",inh:"—",fa:"626",hi:1,
  mech:"Blocking carbonic anhydrase prevents bicarbonate reabsorption in the PCT, so NaHCO₃ is lost in the urine. The effect is <b>self-limiting</b> — once serum bicarbonate falls, the drug has little left to block.",
@@ -2509,11 +2528,11 @@ mannitol:{n:"Mannitol",k:"drug",p:"nephron",enz:"Osmotic diuretic — filtered b
  labs:["Dehydration; hypo- or hypernatremia"],
  buzz:["Pulls water out of the brain — but can flood the lungs first"],
  src:["Katzung ch 15 — Diuretic Agents","Guyton ch 32 — Diuretics and Kidney Diseases"],
- tx:["—"]},
+ tx:["—"],q:["=osmotic diuretics","effect of osmotic diuretics is most marked"]},
 
-loopdiuretics:{n:"Loop diuretics",k:"drug",p:"nephron",q:["loop diuretic", "loop diuretics", "furosemide", "bumetanide", "torsemide", "ethacrynic acid","=lumen positive potential"],enz:"Na⁺-K⁺-2Cl⁻ cotransporter (NKCC2), thick ascending limb",inh:"—",fa:"626",hi:1,
+loopdiuretics:{n:"Loop diuretics",k:"drug",p:"nephron",q:["loop diuretic", "loop diuretics", "furosemide", "bumetanide", "torsemide", "ethacrynic acid","=lumen positive potential","=proximal tubule s2 segment"],enz:"Na⁺-K⁺-2Cl⁻ cotransporter (NKCC2), thick ascending limb",inh:"—",fa:"626",hi:1,
  mech:"NKCC2 drives the countercurrent multiplier, so blocking it abolishes the medullary concentration gradient — the most powerful diuresis available. It also abolishes the lumen-positive potential that drives <b>paracellular Ca²⁺ and Mg²⁺</b> reabsorption, so both are wasted.",
- find:["Furosemide, bumetanide, torsemide; ethacrynic acid is the non-sulfa option (more ototoxic)","Uses: edematous states (heart failure, cirrhosis, nephrotic syndrome, pulmonary edema), hypertension, hypercalcemia","Action depends on prostaglandins (PGE) → NSAIDs blunt it"],
+ find:["Furosemide, bumetanide, torsemide; ethacrynic acid is the non-sulfa option (more ototoxic)","Uses: edematous states (heart failure, cirrhosis, nephrotic syndrome, pulmonary edema), hypertension, hypercalcemia","Action depends on prostaglandins (PGE) → NSAIDs blunt it","Organic acid secretion in the S2 segment (middle third of the straight proximal tubule) delivers most diuretics into the lumen, where they act (Katzung ch 15)"],
  labs:["OHH DAANG — Ototoxicity, Hypokalemia, Hypomagnesemia, Dehydration, Allergy (sulfa), metabolic Alkalosis, Nephritis (interstitial), Gout","<b>Hypocalcemia</b> and hypomagnesemia — opposite of thiazides","Hypochloremic metabolic alkalosis"],
  buzz:["Loops LOSE calcium; thiazides KEEP calcium"],
  src:["Katzung ch 15 — Diuretic Agents","Costanzo ch 6 — Renal physiology","Guyton ch 32 — Diuretics and Kidney Diseases"],
@@ -2527,9 +2546,9 @@ bartter:{n:"Bartter syndrome",k:"dz",p:"nephron",enz:"NKCC2 (thick ascending lim
  src:["Katzung ch 15 — Diuretic Agents","Costanzo ch 6 — Renal physiology"],
  tx:["Potassium and magnesium replacement, NSAIDs (block the prostaglandin drive), K⁺-sparing diuretics"]},
 
-thiazides:{n:"Thiazide diuretics",k:"drug",p:"nephron",q:["thiazide", "thiazides", "hydrochlorothiazide", "chlorthalidone"],enz:"Na⁺-Cl⁻ cotransporter (NCC), distal convoluted tubule",inh:"—",fa:"627",hi:1,
+thiazides:{n:"Thiazide diuretics",k:"drug",p:"nephron",q:["thiazide", "thiazides", "hydrochlorothiazide", "chlorthalidone","=one na+ and one cl move together"],enz:"Na⁺-Cl⁻ cotransporter (NCC), distal convoluted tubule",inh:"—",fa:"627",hi:1,
  mech:"Blocking NCC lowers intracellular sodium in the DCT cell, which <b>increases</b> basolateral Na⁺/Ca²⁺ exchange and therefore calcium reabsorption — the reason thiazides raise serum calcium and lower urinary calcium.",
- find:["Hydrochlorothiazide, chlorthalidone (longer acting), metolazone, indapamide","Uses: hypertension, heart failure, idiopathic hypercalciuria, nephrogenic diabetes insipidus, osteoporosis"],
+ find:["Hydrochlorothiazide, chlorthalidone (longer acting), metolazone, indapamide","Uses: hypertension, heart failure, idiopathic hypercalciuria, nephrogenic diabetes insipidus, osteoporosis","NCC carries two ions (Na⁺ and Cl⁻), not three like NKCC2, and is electroneutral (Costanzo)"],
  labs:["<b>hyperGLUC</b> — hyperGlycemia, hyperLipidemia, hyperUricemia, hyperCalcemia","Hyponatremia, hypokalemic metabolic alkalosis","Sulfa allergy; thought to be ineffective when GFR falls below 30 mL/min"],
  buzz:["Thiazides KEEP calcium, loops LOSE it","Paradoxically treat nephrogenic DI by causing mild volume depletion"],
  src:["Katzung ch 15 — Diuretic Agents","Costanzo ch 6 — Renal physiology","Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis"],
@@ -2543,9 +2562,9 @@ gitelman:{n:"Gitelman syndrome",k:"dz",p:"nephron",enz:"NCC (distal convoluted t
  src:["Katzung ch 15 — Diuretic Agents","Costanzo ch 6 — Renal physiology"],
  tx:["—"]},
 
-ksparing:{n:"Potassium-sparing diuretics",k:"drug",p:"cd",q:["spironolactone", "eplerenone", "amiloride", "triamterene", "potassium sparing diuretic", "potassium sparing diuretics"],enz:"ENaC (amiloride, triamterene) · mineralocorticoid receptor (spironolactone, eplerenone)",inh:"—",fa:"627",hi:1,
+ksparing:{n:"Potassium-sparing diuretics",k:"drug",p:"cd",q:["spironolactone", "eplerenone", "amiloride", "triamterene", "potassium sparing diuretic", "potassium sparing diuretics","=they inhibit a modest fraction of na+ reabsorption","=lumen negative potential from na+ reabsorption","k+ sparing diuretics act in the principal cells"],enz:"ENaC (amiloride, triamterene) · mineralocorticoid receptor (spironolactone, eplerenone)",inh:"—",fa:"627",hi:1,
  mech:"Sodium entering the principal cell through ENaC creates the lumen-negative potential that drives K⁺ and H⁺ secretion. Block ENaC directly, or block the aldosterone receptor that transcribes it, and you keep potassium instead of losing it.",
- find:["<b>Amiloride, triamterene</b>: ENaC blockers — used in Liddle syndrome and lithium-induced nephrogenic DI","Spironolactone, eplerenone: MR antagonists — hyperaldosteronism, heart failure, hepatic ascites","Spironolactone also blocks androgen receptors: <b>gynecomastia</b>, impotence, irregular menses — eplerenone does not"],
+ find:["<b>Amiloride, triamterene</b>: ENaC blockers — used in Liddle syndrome and lithium-induced nephrogenic DI","Spironolactone, eplerenone: MR antagonists — hyperaldosteronism, heart failure, hepatic ascites","Spironolactone also blocks androgen receptors: <b>gynecomastia</b>, impotence, irregular menses — eplerenone does not","The collecting tubule handles only 2–5% of filtered NaCl, so blocking it gives only a modest natriuresis (Katzung)"],
  labs:["Hyperkalemia is the danger (arrhythmias), especially with an ACE inhibitor, ARB or NSAID; metabolic acidosis","Can cause a type 4 (hyperkalemic) RTA"],
  buzz:["Spironolactone for ascites: aldosterone is high in cirrhosis","Switch to eplerenone when gynecomastia appears"],
  src:["Katzung ch 15 — Diuretic Agents","Costanzo ch 6 — Renal physiology"],
@@ -2567,9 +2586,9 @@ ame:{n:"Apparent mineralocorticoid excess",k:"dz",p:"cd",enz:"11β-Hydroxysteroi
  src:["Guyton ch 78 — Adrenocortical Hormones","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists"],
  tx:["Stop the licorice; K⁺-sparing diuretics, or corticosteroids to suppress endogenous cortisol"],q:["=without functional 11 beta hsd2"]},
 
-adhdrugs:{n:"ADH, its receptors and the drugs",k:"drug",p:"cd",q:["desmopressin", "conivaptan", "tolvaptan", "demeclocycline", "vaptan", "vaptans"],enz:"V2 receptor → cAMP → aquaporin-2 insertion",inh:"—",fa:"333, 342, 360, 538",hi:1,
+adhdrugs:{n:"ADH, its receptors and the drugs",k:"drug",p:"cd",q:["desmopressin", "conivaptan", "tolvaptan", "demeclocycline", "vaptan", "vaptans","=circulating adh levels which control aqp2","adh binding to the v2 receptor","=vesicles containing aqp2 channels are shuttled","=existing aqp2 vesicles are shuttled"],enz:"V2 receptor → cAMP → aquaporin-2 insertion",inh:"—",fa:"333, 342, 360, 538",hi:1,
  mech:"ADH acting on V2 receptors inserts aquaporin-2 into the apical membrane of the principal cell, letting water follow the medullary gradient. V1 receptors on vascular smooth muscle mediate vasoconstriction instead.",
- find:["<b>Desmopressin</b> — V2 agonist: central DI, von Willebrand disease, mild hemophilia A, nocturnal enuresis","Conivaptan, tolvaptan — V2 antagonists: SIADH; tolvaptan also slows ADPKD","<b>Lithium and demeclocycline</b> block the V2 pathway → nephrogenic DI (demeclocycline was once used to treat SIADH)"],
+ find:["<b>Desmopressin</b> — V2 agonist: central DI, von Willebrand disease, mild hemophilia A, nocturnal enuresis","Conivaptan, tolvaptan — V2 antagonists: SIADH; tolvaptan also slows ADPKD","<b>Lithium and demeclocycline</b> block the V2 pathway → nephrogenic DI (demeclocycline was once used to treat SIADH)","V2 receptor → Gs → adenylyl cyclase → cAMP → protein kinase A; phosphorylation shuttles vesicles holding AQP2 into the luminal membrane of the principal cell (Costanzo)"],
  labs:["Tolvaptan can raise liver enzymes","Correct chronic hyponatremia slowly"],
  buzz:["Too fast correction of hyponatremia → osmotic demyelination (locked-in syndrome)","Too fast correction of hypernatremia → cerebral edema"],
  src:["Katzung ch 15 — Diuretic Agents","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Costanzo ch 6 — Renal physiology","Pawlina ch 21 — Endocrine Organs","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
@@ -2614,7 +2633,7 @@ atn:{n:"Acute tubular necrosis",k:"dz",p:"nephron",enz:"Proximal tubule and thic
  labs:["<b>Muddy brown granular casts</b> — the classic urinary finding","<b>FENa > 2%</b>, urine osmolality < 350, BUN:Cr < 15 (contrast prerenal: FENa < 1%, BUN:Cr > 20)"],
  buzz:["Muddy brown casts","Watch for hyperkalemia in the maintenance phase and hypokalemia in recovery"],
  src:["Robbins ch 20 — The kidney","Guyton ch 32 — Diuretics and Kidney Diseases"],
- tx:["Supportive: volume, stop the toxin, avoid further insults; dialysis when needed"]},
+ tx:["Supportive: volume, stop the toxin, avoid further insults; dialysis when needed"],q:["=its active nkcc2 transport creates high oxygen demand"]},
 
 ain:{n:"Acute interstitial nephritis",k:"dz",p:"nephron",enz:"Drug-induced hypersensitivity of the renal interstitium",inh:"Acquired",fa:"620",hi:1,
  mech:"A delayed hypersensitivity reaction to a drug hapten in the interstitium — not dose-dependent, and it can begin days to weeks after exposure.",
@@ -7855,11 +7874,11 @@ incontinence:{n:"Urinary incontinence",alias:"stress · urgency · overflow inco
 
 ckd:{n:"Chronic kidney disease",alias:"MAD HUNGER",k:"dz",p:"kckd",enz:"Progressive loss of nephrons",inh:"Diabetes, hypertension, glomerular and cystic disease",fa:"616, 621, 622",hi:1,
  mech:"As GFR falls in stages, the kidney stops excreting acid, potassium, salt, water and nitrogenous waste, and stops making erythropoietin and calcitriol. Early on, <b>FGF23</b> rises and keeps phosphate normal by pushing it into the urine — it also suppresses 1α-hydroxylase.",
- find:["Consequences — <b>MAD HUNGER</b>: <b>M</b>etabolic <b>A</b>cidosis, <b>D</b>yslipidemia (especially triglycerides), <b>H</b>igh potassium, <b>U</b>remia, <b>N</b>a⁺ and water retention (hypertension, heart failure, pulmonary edema), <b>G</b>rowth retardation and developmental delay, <b>E</b>rythropoietin deficiency (anemia), <b>R</b>enal osteodystrophy","Diabetes and hypertension are the leading causes; diabetic nephropathy is the most common cause of ESRD in the US"],
+ find:["Consequences — <b>MAD HUNGER</b>: <b>M</b>etabolic <b>A</b>cidosis, <b>D</b>yslipidemia (especially triglycerides), <b>H</b>igh potassium, <b>U</b>remia, <b>N</b>a⁺ and water retention (hypertension, heart failure, pulmonary edema), <b>G</b>rowth retardation and developmental delay, <b>E</b>rythropoietin deficiency (anemia), <b>R</b>enal osteodystrophy","Diabetes and hypertension are the leading causes; diabetic nephropathy is the most common cause of ESRD in the US","Creatinine and urea depend mostly on filtration, so they rise almost in proportion to the nephrons lost, while Na⁺ and Cl⁻ stay near normal (Guyton ch 32)"],
  labs:["Staged by GFR; albuminuria marks damage and risk","Normocytic anemia, ↑ K⁺, ↑ PO₄³⁻, ↓ Ca²⁺, ↑ PTH, anion gap metabolic acidosis"],
  buzz:["FGF23 fights f(ph)osphate","MAD HUNGER"],
  src:["Robbins ch 20 — The kidney","Guyton ch 32 — Diuretics and Kidney Diseases","Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors"],
- tx:["ACE inhibitors or ARBs reduce proteinuria; erythropoietin; phosphate binders, calcitriol, cinacalcet; dialysis or transplant"],q:["chronic kidney disease","chronic renal failure","end stage renal disease","end stage kidney disease","esrd","fgf23"]},
+ tx:["ACE inhibitors or ARBs reduce proteinuria; erythropoietin; phosphate binders, calcitriol, cinacalcet; dialysis or transplant"],q:["chronic kidney disease","chronic renal failure","end stage renal disease","end stage kidney disease","esrd","fgf23","=creatinine and urea"]},
 
 uremia:{n:"Uremia",alias:"uremic syndrome",k:"dz",p:"kckd",enz:"Retained nitrogenous waste",inh:"Advanced kidney failure",fa:"319, 432, 621",hi:1,
  mech:"A syndrome of high blood urea and other retained toxins once kidney function is very low. The toxins also impair platelet function.",
@@ -9026,11 +9045,11 @@ factitious:{n:"Factitious disorder",alias:"Munchausen syndrome · Munchausen by 
 
 somaticsx:{n:"Somatic symptom disorder & illness anxiety",alias:"somatic symptom disorder · illness anxiety disorder",k:"dz",p:"somat",enz:"Unconscious symptoms · unconscious motivation",inh:"—",fa:"583",hi:1,
  mech:"The symptoms are not faked. In <b>somatic symptom disorder</b> real bodily symptoms come with excessive, persistent worry and time spent on them; in <b>illness anxiety disorder</b> there are few symptoms but a fixed fear of having a serious disease.",
- find:["Somatic symptom disorder: one or more distressing symptoms for months to years, disproportionate thoughts and behavior about them — may coexist with real illness","Illness anxiety disorder (formerly hypochondriasis): fear of disease despite reassurance, minimal symptoms","Symptoms unconscious · motivation unconscious"],
+ find:["Somatic symptom disorder: one or more distressing symptoms for months to years, disproportionate thoughts and behavior about them — may coexist with real illness","Illness anxiety disorder (formerly hypochondriasis): fear of disease despite reassurance, minimal symptoms","Symptoms unconscious · motivation unconscious","<b>Psychological factors affecting other medical conditions</b>: a real medical condition made worse by psychological factors or behavior — refusing treatment for an MI, anxiety worsening asthma or IBS, a diabetic skipping insulin or a hypertensive overusing diuretics to lose weight (Kaplan & Sadock)"],
  labs:["Repeated negative workups do not reassure"],
  buzz:["Sure her headaches are a tumor after three normal MRIs = illness anxiety"],
  src:["Kaplan & Sadock ch 12 — Somatic Symptom and Related Disorders"],
- tx:["<b>Regular scheduled visits with one physician</b>; address symptoms, reassure, limit tests; CBT"],q:["somatic symptom disorder","illness anxiety disorder","hypochondriasis","somatization"]},
+ tx:["<b>Regular scheduled visits with one physician</b>; address symptoms, reassure, limit tests; CBT"],q:["somatic symptom disorder","illness anxiety disorder","hypochondriasis","somatization","=one or more somatic symptoms with severity graded","=psychological factors affecting other medical conditions"]},
 
 conversion:{n:"Conversion disorder",alias:"functional neurologic symptom disorder",k:"dz",p:"somat",enz:"Neurologic loss with no neurologic lesion",inh:"Women, adolescents and young adults",fa:"583",hi:1,
  mech:"Loss of motor or sensory function that does not fit any neurologic disease, often after an acute stressor. The patient is not faking.",
@@ -9503,11 +9522,11 @@ blowout:{n:"Orbital floor (blowout) fracture",k:"dz",p:"eyemove",enz:"Inferior r
 
 vfdefects:{n:"Visual field defects",alias:"bitemporal hemianopia · homonymous hemianopia · quadrantanopia",k:"reg",p:"eyepath",enz:"Where along the visual pathway",inh:"—",fa:"557",hi:1,
  mech:"Nasal retinal fibers (temporal fields) cross at the chiasm. So lesions in front of the chiasm affect one eye, at the chiasm both temporal fields, and behind it the same half-field of both eyes.",
- find:["<b>Optic nerve</b>: blindness of that eye (anopia)","<b>Optic chiasm</b>: <b>bitemporal hemianopia</b> — pituitary adenoma, craniopharyngioma","<b>Optic tract</b>: contralateral homonymous hemianopia","<b>Meyer loop</b> (temporal lobe, lower retina): contralateral <b>upper</b> quadrantanopia — 'pie in the sky'","<b>Dorsal optic radiation</b> (parietal lobe): contralateral <b>lower</b> quadrantanopia","<b>Visual cortex</b> (PCA infarct): contralateral homonymous hemianopia with <b>macular sparing</b>","<b>Macula</b>: central scotoma — macular degeneration"],
+ find:["<b>Optic nerve</b>: blindness of that eye (anopia)","<b>Optic chiasm</b>: <b>bitemporal hemianopia</b> — pituitary adenoma, craniopharyngioma","<b>Optic tract</b>: contralateral homonymous hemianopia","<b>Meyer loop</b> (temporal lobe, lower retina): contralateral <b>upper</b> quadrantanopia — 'pie in the sky'","<b>Dorsal optic radiation</b> (parietal lobe): contralateral <b>lower</b> quadrantanopia","<b>Visual cortex</b> (PCA infarct): contralateral homonymous hemianopia with <b>macular sparing</b>","<b>Macula</b>: central scotoma — macular degeneration","A lesion of the lateral chiasm interrupts only the uncrossed temporal-retina fibers — an ipsilateral nasal hemianopia; rare, and more often a central scotoma (Fundamental Neuroscience)"],
  labs:["Formal perimetry localizes the lesion"],
  buzz:["Bumps into door frames on both sides = bitemporal hemianopia from a pituitary tumor"],
  src:["Fundamental Neuroscience ch 20 — The Visual System"],
- tx:["—"],q:["visual field defect","visual field defects","bitemporal hemianopia","homonymous hemianopia","quadrantanopia","quadrantanopsia","meyer loop","central scotoma","=optic chiasm","=optic tract","=optic radiation","=visual field","=complete blindness limited to the right eye","=monocular loss confined to one eye","=monocular visual loss","=homonymous visual loss"]},
+ tx:["—"],q:["visual field defect","visual field defects","bitemporal hemianopia","homonymous hemianopia","quadrantanopia","quadrantanopsia","meyer loop","central scotoma","=optic chiasm","=optic tract","=optic radiation","=visual field","=complete blindness limited to the right eye","=monocular loss confined to one eye","=monocular visual loss","=homonymous visual loss","=the nasal retina corresponding to the temporal visual hemifield","nasal hemianopia"]},
 
 migraine:{n:"Migraine",k:"dz",p:"eyehead",enz:"Trigeminovascular activation · CGRP and substance P",inh:"Women · family history",fa:"532",hi:1,
  mech:"Activation of trigeminal afferents to meningeal vessels releases vasoactive neuropeptides — <b>CGRP</b> and substance P — causing neurogenic inflammation and throbbing pain. Aura is a wave of cortical spreading depression.",
@@ -12243,7 +12262,7 @@ cortexlesions:{n:"Cortical lesion syndromes",k:"reg",p:"brcortex",enz:"Where the
  labs:["—"],
  buzz:["Eyes look toward a cortical lesion, away from a pontine one"],
  src:["Fundamental Neuroscience ch 32 — The Cerebral Cortex","Fundamental Neuroscience ch 28 — Visual Motor Systems","Kaplan & Sadock ch 3 — Neurocognitive Disorders","Robbins ch 28 — The central nervous system"],
- tx:["—"],q:["gerstmann syndrome","hemispatial neglect","hemineglect","frontal lobe syndrome","frontal eye field","frontal eye fields","paramedian pontine reticular formation","=reticular activating system"]},
+ tx:["—"],q:["gerstmann syndrome","hemispatial neglect","hemineglect","frontal lobe syndrome","frontal eye field","frontal eye fields","paramedian pontine reticular formation","=reticular activating system","=contralateral neglect reflects impaired spatial attention"]},
 
 posturing:{n:"Decorticate & decerebrate posturing",k:"reg",p:"brcortex",enz:"Which brainstem tracts are left unopposed",inh:"—",fa:"524",hi:0,
  mech:"After severe brain injury the posture shows how low the lesion reaches. Above the red nucleus, the rubrospinal and vestibulospinal tracts are left in charge; below it, only the vestibulospinal tract is.",
@@ -12693,7 +12712,7 @@ pulmcirc:{n:"Pulmonary circulation & diffusion",k:"reg",p:"lmcirc",enz:"Low pres
  labs:["—"],
  buzz:["The lung is the one bed that constricts to hypoxia"],
  src:["Costanzo ch 5 — Respiratory physiology","Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid","Guyton ch 40 — Principles of Gas Exchange; Diffusion of Oxygen and Carbon Dioxide Through Respiratory Membranes"],
- tx:["—"],q:["hypoxic vasoconstriction","hypoxic pulmonary vasoconstriction","perfusion limited","diffusion limited","dlco","pulmonary vascular resistance"]},
+ tx:["—"],q:["hypoxic vasoconstriction","hypoxic pulmonary vasoconstriction","perfusion limited","diffusion limited","dlco","pulmonary vascular resistance","=to distribute blood to lung segments where alveoli"]},
 
 odc:{n:"Oxygen content & the hemoglobin dissociation curve",k:"reg",p:"lmgas",enz:"Sigmoid because hemoglobin binds O₂ cooperatively",inh:"—",fa:"687, 688",hi:1,
  mech:"Hemoglobin binds O₂ cooperatively, so its curve is sigmoid; myoglobin, a single chain, binds more tightly and its curve is not sigmoid. Shifts in the curve match unloading to what the tissue needs.",
@@ -13369,11 +13388,11 @@ fluidshifts:{n:"Fluid shifts — volume contraction & expansion",k:"reg",p:"ufsh
 
 countercurrent:{n:"Countercurrent multiplication & urea recycling",k:"reg",p:"ufconc",enz:"Building the medullary osmotic gradient",inh:"—",fa:"608",hi:1,
  mech:"The loop of Henle deposits NaCl in the deep medulla. The thick ascending limb pumps NaCl out but is impermeable to water (the single effect); flow of tubular fluid carries the effect deeper, building the corticopapillary osmotic gradient. Urea recycling adds to it, and the vasa recta preserve it.",
- find:["<b>Countercurrent multiplication</b> is active (the thick ascending limb); <b>countercurrent exchange</b> in the vasa recta is passive and maintains the gradient","<b>Urea recycling</b>: ADH raises water permeability in the cortical and outer medullary collecting ducts, so urea stays behind and concentrates; in the inner medullary collecting duct ADH also adds the urea transporter, and urea diffuses into the interstitium","<b>Vasa recta</b>: hairpin capillaries with slow flow — about 5% of renal blood flow serves the medulla; freely permeable to water and small solutes","The gradient lets ADH concentrate urine: water leaves the collecting duct into the hyperosmotic medulla"],
+ find:["<b>Countercurrent multiplication</b> is active (the thick ascending limb); <b>countercurrent exchange</b> in the vasa recta is passive and maintains the gradient","<b>Urea recycling</b>: ADH raises water permeability in the cortical and outer medullary collecting ducts, so urea stays behind and concentrates; in the inner medullary collecting duct ADH also adds the urea transporter, and urea diffuses into the interstitium","<b>Vasa recta</b>: hairpin capillaries with slow flow — about 5% of renal blood flow serves the medulla; freely permeable to water and small solutes","The gradient lets ADH concentrate urine: water leaves the collecting duct into the hyperosmotic medulla","Thin descending limb: highly permeable to water (AQP1), much less to NaCl and urea — fluid concentrates on the way down to match the interstitium. Thin ascending limb: essentially impermeable to water, NaCl diffuses out passively (Guyton)","The size of the gradient depends on loop length: about 1200 mOsm/L at the bend in humans, up to 3000 in desert rodents with longer loops (Costanzo)"],
  labs:["—"],
  buzz:["Thick ascending limb: salt out, water stays"],
  src:["Costanzo ch 6 — Renal physiology","Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration"],
- tx:["—"],q:["countercurrent multiplication","countercurrent multiplier","countercurrent exchange","corticopapillary","urea recycling","vasa recta","medullary osmotic gradient","medullary interstitium"]},
+ tx:["—"],q:["countercurrent multiplication","countercurrent multiplier","countercurrent exchange","corticopapillary","urea recycling","vasa recta","medullary osmotic gradient","medullary interstitium","=high water permeability lets water leave the lumen","=it is impermeable to water but highly permeable to nacl","=the fluid is less concentrated than with more segment length","=the descending limb is water permeable while the ascending limb","=tubular fluid at the bend would be far less concentrated"]},
 
 freewater:{n:"Free water — concentrated vs dilute urine",k:"reg",p:"ufconc",enz:"ADH decides whether free water is kept",inh:"—",fa:"608",hi:1,
  mech:"Free water — water without solute — is generated in the diluting segments (thick ascending limb and early distal tubule), where solute is reabsorbed without water. With little ADH it is excreted: dilute urine, positive free-water clearance. With high ADH the collecting ducts reabsorb it: concentrated urine, negative free-water clearance.",
@@ -13381,7 +13400,7 @@ freewater:{n:"Free water — concentrated vs dilute urine",k:"reg",p:"ufconc",en
  labs:["C(H₂O) = V − C(osm): urine flow minus osmolar clearance"],
  buzz:["Diluting segments: thick ascending limb and early distal tubule"],
  src:["Costanzo ch 6 — Renal physiology","Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration"],
- tx:["—"],q:["free water clearance","free water","solute free water","osmolar clearance","diluting segment"]},
+ tx:["—"],q:["free water clearance","free water","solute free water","osmolar clearance","diluting segment","=it reabsorbs a large fraction of filtered solute while remaining impermeable to water","=it reabsorbs nacl while staying water impermeable"]},
 
 polyuriadx:{n:"Polyuria — primary polydipsia vs diabetes insipidus",k:"reg",p:"ufdis",enz:"Water restriction, then desmopressin",inh:"—",fa:"342",hi:1,
  mech:"Primary polydipsia and diabetes insipidus all produce large volumes of dilute urine (specific gravity under 1.006, osmolality usually under 300 mOsm/kg). Serum osmolality, a water restriction test and a dose of desmopressin sort them.",
@@ -13465,11 +13484,11 @@ accommodation:{n:"Accommodation & the near response",k:"reg",p:"vsopt",enz:"Cili
 
 retinacells:{n:"Retinal layers & photoreceptors",k:"reg",p:"vsret",enz:"Rods for dim light, cones for color and detail",inh:"—",fa:"192, 549, 552",hi:1,
  mech:"Light passes through the inner retina to reach the photoreceptors at the back, against the pigment epithelium. Photoreceptors synapse on bipolar cells, which synapse on ganglion cells whose axons form the optic nerve; horizontal and amacrine cells connect neighbors.",
- find:["<b>Pigment epithelium</b>: absorbs stray light and converts all-trans retinal back to 11-cis retinal for the photoreceptors","<b>Rods</b>: very sensitive, dim-light and night vision, no color · <b>cones</b>: color and fine detail in bright light; three types sensitive to blue, green and red light","<b>Fovea</b>: a tiny central area packed for acute, detailed vision — the inner layers are pulled aside","Vitamin A is needed to make retinal — deficiency causes night blindness; retinitis pigmentosa also starts with night blindness","Ethambutol optic neuropathy causes red-green color blindness","Convergence: on average about 60 rods and 2 cones feed each ganglion cell, fewer toward the fovea — pooled rods gain sensitivity, the fovea keeps acuity (Guyton)","Cone pigments peak at 445 (blue), 535 (green) and 570 nm (red); colour is read from the ratio of stimulation — orange light 99 : 42 : 0, yellow about equal red and green with no blue (Guyton)","<b>Protanopia</b> (no red cones) shortens the spectrum at the long end; <b>deuteranopia</b> (no green cones) does not; both are X-linked red–green blindness, almost only in males (Guyton)"],
+ find:["<b>Pigment epithelium</b>: absorbs stray light and converts all-trans retinal back to 11-cis retinal for the photoreceptors","<b>Rods</b>: very sensitive, dim-light and night vision, no color · <b>cones</b>: color and fine detail in bright light; three types sensitive to blue, green and red light","<b>Fovea</b>: a tiny central area packed for acute, detailed vision — the inner layers are pulled aside","Vitamin A is needed to make retinal — deficiency causes night blindness; retinitis pigmentosa also starts with night blindness","Ethambutol optic neuropathy causes red-green color blindness","Convergence: on average about 60 rods and 2 cones feed each ganglion cell, fewer toward the fovea — pooled rods gain sensitivity, the fovea keeps acuity (Guyton)","Cone pigments peak at 445 (blue), 535 (green) and 570 nm (red); colour is read from the ratio of stimulation — orange light 99 : 42 : 0, yellow about equal red and green with no blue (Guyton)","<b>Protanopia</b> (no red cones) shortens the spectrum at the long end; <b>deuteranopia</b> (no green cones) does not; both are X-linked red–green blindness, almost only in males (Guyton)","Seven layers: the ganglion cell layer holds ganglion cell bodies, just outside the nerve fiber layer of their axons, which converge at the optic disc as the optic nerve; the inner nuclear layer holds second- and some third-order cells (Fundamental Neuroscience)","Horizontal cells take photoreceptor input and feed GABA back onto neighboring rods and cones, building the center–surround receptive field; amacrine cells contact bipolar, ganglion and other amacrine cells and add information about transience (Fundamental Neuroscience)"],
  labs:["—"],
  buzz:["Rods = night · cones = color"],
- src:["Costanzo ch 3 — Neurophysiology","Guyton ch 51 — The Eye: II. Receptor and Neural Function of the Retina"],
- tx:["—"],q:["photoreceptors","rod photoreceptors","cone photoreceptors","retinal pigment epithelium","fovea","color vision","bipolar cells","=approximately 60 rods converge","=445 nm 535 nm and 570 nm","=cousin a has protanopia","=approximately equal and high activation of both red and green cones","protanopia","deuteranopia","color blindness","colour blindness"]},
+ src:["Costanzo ch 3 — Neurophysiology","Guyton ch 51 — The Eye: II. Receptor and Neural Function of the Retina","Fundamental Neuroscience ch 20 — The Visual System"],
+ tx:["—"],q:["photoreceptors","rod photoreceptors","cone photoreceptors","retinal pigment epithelium","fovea","color vision","bipolar cells","=approximately 60 rods converge","=445 nm 535 nm and 570 nm","=cousin a has protanopia","=approximately equal and high activation of both red and green cones","protanopia","deuteranopia","color blindness","colour blindness","=the ganglion cell layer","=horizontal cells modulating input","=amacrine cells interneurons modulating","=ganglion cell retinal output neuron type","=rods which are more numerous","=rod photoreceptor scotopic vision type"]},
 
 phototrans:{n:"Phototransduction",k:"reg",p:"vsphoto",enz:"Light closes Na⁺ channels — the photoreceptor hyperpolarizes",inh:"—",hi:1,
  mech:"Rhodopsin is opsin (a G protein–coupled receptor) plus 11-cis retinal, an aldehyde of vitamin A. Light converts 11-cis to all-trans retinal, forming metarhodopsin II, which activates the G protein transducin. Transducin turns on a phosphodiesterase that breaks down cGMP; cGMP-gated Na⁺ channels close and the photoreceptor hyperpolarizes, releasing less glutamate.",
@@ -13546,19 +13565,19 @@ bronchcirc:{n:"Bronchial circulation & lung lymphatics",k:"reg",p:"gxflow",enz:"
 
 pulmpress:{n:"Pulmonary pressures & blood volume",k:"reg",p:"gxflow",enz:"Low pressure, high compliance",inh:"—",fa:"300, 684",hi:1,
  mech:"The pulmonary circulation carries the whole cardiac output at about one-fifth of systemic pressure. Its arteries are short, thin-walled and wide — even the smallest arterioles are wider than their systemic counterparts — so the tree is distensible and resistance is low.",
- find:["Right ventricle about 25/0–1 mm Hg — one-fifth of the left ventricle’s systolic pressure","Pulmonary artery about 25/8 mm Hg, mean 15 · mean capillary pressure about 7 · left atrium and large pulmonary veins about 2 (1–5)","Pulmonary artery wall is one-third as thick as the aorta · arterial compliance about 7 mL/mm Hg, similar to the whole systemic arterial tree","<b>Wedge pressure</b> — a catheter pushed until it wedges in a small pulmonary artery branch — about 5 mm Hg, only 2–3 mm Hg above left atrial pressure, so it tracks left atrial pressure in heart failure","Lung blood volume about 450 mL (about 9% of the total), about 70 mL of it in the capillaries · it can range from half to twice normal: forceful blowing (as on a trumpet) pushes up to 250 mL into the systemic circulation; left heart failure or mitral valve disease can raise it 100%","Left atrial pressure up to about 7 mm Hg barely affects the lung; above 7–8 mm Hg, each further rise raises pulmonary arterial and capillary pressure almost equally — a load on the right heart","The pulmonary artery wall is one-third as thick as the aorta’s, and pulmonary vessels are wider and more distensible than their systemic counterparts (Guyton)"],
+ find:["Right ventricle about 25/0–1 mm Hg — one-fifth of the left ventricle’s systolic pressure","Pulmonary artery about 25/8 mm Hg, mean 15 · mean capillary pressure about 7 · left atrium and large pulmonary veins about 2 (1–5)","Pulmonary artery wall is one-third as thick as the aorta · arterial compliance about 7 mL/mm Hg, similar to the whole systemic arterial tree","<b>Wedge pressure</b> — a catheter pushed until it wedges in a small pulmonary artery branch — about 5 mm Hg, only 2–3 mm Hg above left atrial pressure, so it tracks left atrial pressure in heart failure","Lung blood volume about 450 mL (about 9% of the total), about 70 mL of it in the capillaries · it can range from half to twice normal: forceful blowing (as on a trumpet) pushes up to 250 mL into the systemic circulation; left heart failure or mitral valve disease can raise it 100%","Left atrial pressure up to about 7 mm Hg barely affects the lung; above 7–8 mm Hg, each further rise raises pulmonary arterial and capillary pressure almost equally — a load on the right heart","The pulmonary artery wall is one-third as thick as the aorta’s, and pulmonary vessels are wider and more distensible than their systemic counterparts (Guyton)","The pulmonary artery runs only about 5 cm beyond the apex of the right ventricle before dividing into right and left main branches, one to each lung (Guyton)"],
  labs:["PCWP approximates left atrial pressure — except in mitral stenosis, where it exceeds left ventricular end-diastolic pressure"],
  buzz:["25/8, mean 15 · capillary 7 · left atrium 2","Wedge pressure ≈ left atrial pressure"],
  src:["Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid","Costanzo ch 5 — Respiratory physiology"],
- tx:["—"],q:["pulmonary arterial pressure","pulmonary capillary pressure","=wedge pressure","pulmonary wedge pressure","pulmonary blood volume","blood volume of the lungs","right ventricular systolic pressure","pulmonary arterial compliance","blood reservoir","=the pulmonary artery wall is about one third","=one third that of the aortic wall","=thin walls and large diameters","=large diameters thin walls and high distensibility"]},
+ tx:["—"],q:["pulmonary arterial pressure","pulmonary capillary pressure","=wedge pressure","pulmonary wedge pressure","pulmonary blood volume","blood volume of the lungs","right ventricular systolic pressure","pulmonary arterial compliance","blood reservoir","=the pulmonary artery wall is about one third","=one third that of the aortic wall","=thin walls and large diameters","=large diameters thin walls and high distensibility","pulmonary artery extends only","=from one half normal to twice normal","=the pulmonary capillaries where gas exchange occurs","=approximately one fifth of left ventricle","=it allows greater blood flow with low pressure"]},
 
 westzones:{n:"Zones of pulmonary blood flow",alias:"West zones",k:"reg",p:"gxflow",enz:"Whether capillary pressure beats alveolar air pressure",inh:"—",fa:"685",hi:1,
  mech:"In an upright lung, gravity adds hydrostatic pressure toward the base and takes it away at the apex: the lung is about 30 cm tall, a 23 mm Hg difference — about 15 mm Hg above the heart and 8 below. Whether an alveolar capillary carries blood depends on whether the pressure inside it beats the alveolar air pressure around it.",
- find:["<b>Zone 1 — no flow</b> at any point in the cardiac cycle: alveolar pressure exceeds arterial pressure. Not seen in health; appears when arterial pressure falls (hemorrhage) or alveolar pressure rises (positive-pressure breathing) → ventilated but not perfused, added to dead space","<b>Zone 2 — intermittent flow</b>: systolic arterial pressure exceeds alveolar pressure but diastolic pressure does not. The apices of an upright person at rest: apical systolic pressure is only about 10 mm Hg, and diastolic pressure cannot lift blood the 15 mm Hg to the apex","<b>Zone 3 — continuous flow</b>: arterial and capillary pressures exceed alveolar pressure throughout the cycle — all the lower lung, and the whole lung when lying down","Normal lungs have only zones 2 and 3; exercise raises pulmonary pressures enough to turn the apices from zone 2 into zone 3"],
+ find:["<b>Zone 1 — no flow</b> at any point in the cardiac cycle: alveolar pressure exceeds arterial pressure. Not seen in health; appears when arterial pressure falls (hemorrhage) or alveolar pressure rises (positive-pressure breathing) → ventilated but not perfused, added to dead space","<b>Zone 2 — intermittent flow</b>: systolic arterial pressure exceeds alveolar pressure but diastolic pressure does not. The apices of an upright person at rest: apical systolic pressure is only about 10 mm Hg, and diastolic pressure cannot lift blood the 15 mm Hg to the apex","<b>Zone 3 — continuous flow</b>: arterial and capillary pressures exceed alveolar pressure throughout the cycle — all the lower lung, and the whole lung when lying down","Normal lungs have only zones 2 and 3; exercise raises pulmonary pressures enough to turn the apices from zone 2 into zone 3","Standing at rest, flow per unit of lung at the base is about 5 times that at the apex; exercise raises flow in every part (Guyton)"],
  labs:["Zone 1: alveolar ≥ arterial > venous · zone 2: arterial > alveolar > venous · zone 3: arterial > venous > alveolar"],
  buzz:["Zone 1 is dead space","Healthy lungs: zone 2 at the apex, zone 3 below"],
  src:["Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid","Costanzo ch 5 — Respiratory physiology"],
- tx:["—"],q:["west zones","blood flow zones","zones of the lung","zone 1 blood flow","zone 2 blood flow","zone 3 blood flow","intermittent blood flow","=intermittent flow","=alveolar air pressure","zone 2 pattern","zone 3 pattern"]},
+ tx:["—"],q:["west zones","blood flow zones","zones of the lung","zone 1 blood flow","zone 2 blood flow","zone 3 blood flow","intermittent blood flow","=intermittent flow","=alveolar air pressure","zone 2 pattern","zone 3 pattern","30 cm below the highest point","blood flow in all parts of the lung increases during exercise"]},
 
 pulmex:{n:"Pulmonary blood flow in exercise",k:"reg",p:"gxflow",enz:"More flow at almost the same pressure",inh:"—",hi:1,
  mech:"In heavy exercise, pulmonary blood flow can rise 4- to 7-fold while pulmonary arterial pressure barely rises. The lung takes the extra flow by opening capillaries that were collapsed (up to 3-fold more) and by distending all of them (flow through each more than doubles); both lower vascular resistance, so a rise in pressure is the minor, third mechanism.",
@@ -13566,7 +13585,7 @@ pulmex:{n:"Pulmonary blood flow in exercise",k:"reg",p:"gxflow",enz:"More flow a
  labs:["—"],
  buzz:["Recruit and distend — resistance falls"],
  src:["Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid","Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids"],
- tx:["—"],q:["capillary recruitment","open capillaries","previously closed capillaries","pulmonary capillary transit","capillary transit time","pulmonary blood flow during exercise","=transit time decreases to as little as 0 3 seconds","=additional capillaries open up"]},
+ tx:["—"],q:["capillary recruitment","open capillaries","previously closed capillaries","pulmonary capillary transit","capillary transit time","pulmonary blood flow during exercise","=transit time decreases to as little as 0 3 seconds","=additional capillaries open up","blood passes through the pulmonary capillaries","=approximately 6 mm hg during most strenuous exercise","=approximately one fourth of the total transit time"]},
 
 pulmedema:{n:"Lung fluid balance & pulmonary edema",k:"dz",p:"gxfluid",enz:"A safety factor of about 21 mm Hg",inh:"—",fa:"316",hi:1,
  mech:"Fluid exchange in the lung follows the same Starling forces as other tissues, but the numbers keep the lung dry: capillary pressure is low, interstitial pressure is negative and lymphatics pump continually. The alveolar epithelium is so thin that any positive interstitial pressure ruptures it, so excess interstitial fluid floods the alveoli.",
@@ -13574,7 +13593,7 @@ pulmedema:{n:"Lung fluid balance & pulmonary edema",k:"dz",p:"gxfluid",enz:"A sa
  labs:["Heart failure: ↑ pulmonary venous pressure → venous distention and transudation of fluid; hemosiderin-laden macrophages (“heart failure cells”) in the lungs"],
  buzz:["Safety factor ≈ 28 − 7 = 21 mm Hg","Chronic: lymphatics expand"],
  src:["Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid"],
- tx:["—"],q:["pulmonary edema safety factor","safety factor against pulmonary edema","pulmonary interstitial fluid","pulmonary interstitium","lung interstitium","pulmonary capillary dynamics","=pulmonary edema","plasma colloid osmotic pressure","=when left atrial pressure exceeds 23 mm hg"]},
+ tx:["—"],q:["pulmonary edema safety factor","safety factor against pulmonary edema","pulmonary interstitial fluid","pulmonary interstitium","lung interstitium","pulmonary capillary dynamics","=pulmonary edema","plasma colloid osmotic pressure","=when left atrial pressure exceeds 23 mm hg","=negative pressure of 8 mm hg","=interstitial fluid hydrostatic pressure of 8 mm hg"]},
 
 pleura:{n:"Pleural fluid & pleural pressure",k:"reg",p:"gxfluid",enz:"Lymphatic pumping keeps it negative",inh:"—",hi:1,
  mech:"A few milliliters of mucoid fluid lie between the visceral and parietal pleura, so the lungs slide easily as they move. The pleural membrane is porous, interstitial fluid transudes into the space continually, and lymphatics opening from the pleural cavity pump the excess away — which keeps the space a potential space under negative pressure.",
@@ -13582,7 +13601,7 @@ pleura:{n:"Pleural fluid & pleural pressure",k:"reg",p:"gxfluid",enz:"Lymphatic 
  labs:["—"],
  buzz:["Pleural pressure ≈ −7 mm Hg; collapse pressure ≈ −4"],
  src:["Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid"],
- tx:["—"],q:["pleural fluid pressure","=pleural cavity","=potential space","collapse pressure","collapse tendency","edema of the pleural cavity"]},
+ tx:["—"],q:["pleural fluid pressure","=pleural cavity","=potential space","collapse pressure","collapse tendency","edema of the pleural cavity","=negative pressure of approximately 4 to 7 mm hg","=infection increases membrane permeability allowing protein leakage"]},
 
 tissueo2:{n:"O₂ & CO₂ exchange in the tissues",k:"reg",p:"gxtis",enz:"Delivery versus use",inh:"—",fa:"687",hi:1,
  mech:"In the tissues the gradients run the other way: arterial blood (PO₂ about 95, PCO₂ 40 mm Hg) meets interstitial fluid at a PO₂ of about 40 and a PCO₂ of about 45. Tissue PO₂ is a balance between O₂ delivery (blood flow) and O₂ use (metabolism); tissue PCO₂ is its mirror image.",
@@ -13997,7 +14016,7 @@ psychformul:{n:"Primary vs secondary presentations & the social evaluation",k:"r
  labs:["—"],
  buzz:["Not alert or nonauditory hallucinations → look for organic disease"],
  src:["DeGowin ch 15 — The Mental Status, Psychiatric, and Social Evaluations","Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient"],
- tx:["—"],q:["=primary psychiatric","=secondary psychiatric","=organic cause","=substance induced","social evaluation","psychosocial stressors","psychosocial and environmental problems","axis iv","economic problems"]},
+ tx:["—"],q:["=primary psychiatric","=secondary psychiatric","=organic cause","=substance induced","social evaluation","psychosocial stressors","psychosocial and environmental problems","axis iv","economic problems","=they are social determinants shaping her presentation","=consider how cultural context shapes symptom expression","=problems related to interaction with the legal system"]},
 
 childassess:{n:"Assessing children — rating scales & soft signs",k:"reg",p:"pssafe",enz:"Several informants, standardized scales",inh:"—",hi:1,
  mech:"Child assessment pulls information from parents, teachers and the child, and adds standardized rating scales and a focused neurologic and physical exam.",
@@ -14813,7 +14832,7 @@ steroidrec:{n:"Steroid receptor action — the androgen receptor",k:"reg",p:"agA
  labs:["—"],
  buzz:["Receptor + hormone → dimer on DNA → new protein"],
  src:["Costanzo ch 9 — Endocrine physiology","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)"],
- tx:["—"],q:["steroid receptor","steroid responsive elements","=androgen response elements","=forms homodimers","=receptor pair attachment","=binding of testosterone or dht to the receptor","=loss of androgen responsive gene transcription"]},
+ tx:["—"],q:["steroid receptor","steroid responsive elements","=androgen response elements","=forms homodimers","=receptor pair attachment","=binding of testosterone or dht to the receptor","=loss of androgen responsive gene transcription","binds an intracellular mineralocorticoid receptor"]},
 
 gonadpanel:{n:"Testosterone & LH panel — primary vs secondary hypogonadism",k:"reg",p:"agPanel",enz:"Read testosterone with LH (and FSH)",inh:"—",fa:"655–656",hi:1,
  mech:"Pair testosterone with LH to place the problem. <b>Low testosterone, high LH</b>: hypergonadotropic (primary) hypogonadism — the testis fails. <b>Low testosterone, low LH</b>: hypogonadotropic (secondary) — the hypothalamus or pituitary fails. <b>High testosterone, low LH</b>: a testosterone-secreting tumor or exogenous androgenic steroids. <b>High testosterone, high LH</b>: androgen insensitivity.",
@@ -15969,6 +15988,303 @@ anklestab:{n:"Unstable ankle fractures — Weber, Maisonneuve & the posterior ma
  src:["OCOM Ortho — SDL 9 lecture: Lower extremity fracture"],
  tx:["Weber A: boot or brace · B and C, bimalleolar, trimalleolar: usually surgery"],q:["weber classification","danis weber","weber a","weber b","weber c","maisonneuve","maisonneuve fracture","posterior malleolus","bimalleolar fracture","trimalleolar fracture","medial clear space"],
  ref:[{a:"Goost H, Wimmer MD, Barg A, et al",t:"Fractures of the ankle joint: investigation and treatment options",j:"Dtsch Arztebl Int",y:2014,pmid:"24939377",doi:"10.3238/arztebl.2014.0377"},{a:"Hermans JJ, Beumer A, de Jong TA, Kleinrensink GJ",t:"Anatomy of the distal tibiofibular syndesmosis in adults: a pictorial essay with a multimodality approach",j:"J Anat",y:2010,pmid:"21108526",doi:"10.1111/j.1469-7580.2010.01302.x"},{a:"Gougoulias N, Sakellariou A",t:"When is a simple fracture of the lateral malleolus not so simple? How to assess stability, which ones to fix and the role of the deltoid ligament",j:"Bone Joint J",y:2017,pmid:"28663388",doi:"10.1302/0301-620X.99B7.BJJ-2016-1087.R1"},{a:"Gardner MJ, Brodsky A, Briggs SM, et al",t:"Fixation of posterior malleolar fractures provides greater syndesmotic stability",j:"Clin Orthop Relat Res",y:2006,pmid:"16467626",doi:"10.1097/01.blo.0000203489.21206.a9"}]},
+
+/* ── eye movements · neck pain · ion channels · psychopharmacology principles · somatic symptom care · glucocorticoids · lymphocyte development (m32) ─── */
+eyemovtypes:{n:"Five kinds of eye movement",k:"reg",p:"emTypes",enz:"Saccade · pursuit · vergence · VOR · optokinetic",inh:"—",fa:"524",hi:1,
+ mech:"Three “targeting” movements put the fovea on a target: <b>saccades</b> (fast jumps to each new target), <b>smooth pursuit</b> (following a moving target) and <b>vergence</b> (changing the angle between the eyes for distance). Two reflexes keep the image steady while the head moves: the <b>vestibulo-ocular reflex</b> answers head acceleration sensed by the labyrinth, and the <b>optokinetic reflex</b> answers continuous motion of the whole visual scene (retinal slip). Saccades and pursuit are <b>conjugate</b>; vergence is <b>disconjugate</b> (Fundamental Neuroscience).",
+ find:["Saccade: 100–700 degrees/s, latency about 200 ms, sensitive to sedatives — test by looking between two points","Smooth pursuit: under 100 degrees/s (usually 30 or less), latency about 100 ms — test by following a slow target","Vergence: about 15 degrees/s, latency about 150 ms, with lens and pupil changes (the near triad)","VOR: under 500 degrees/s with a latency under 15 ms — tested with calorics · OKR: under 100 degrees/s, tested with a moving striped drum","Nystagmic fast phase (about 500 degrees/s) recenters the eye during a continuous VOR or OKR; between movements the brain gathers visual information during fixation"],
+ labs:["—"],
+ buzz:["Saccade fastest · VOR quickest to start · vergence the only disconjugate one"],
+ src:["Fundamental Neuroscience ch 28 — Visual Motor Systems"],
+ tx:["—"],q:["saccade","saccades","saccadic","smooth pursuit","vergence","optokinetic","optokinetic reflex","optokinetic nystagmus","conjugate eye movements","=the rapid conjugate class","=the disconjugate class","=the visually driven compensatory class"]},
+
+hgaze:{n:"Horizontal gaze center — PPRF, abducens nucleus & MLF",k:"reg",p:"emGaze",enz:"PPRF → abducens nucleus → MLF → opposite medial rectus",inh:"—",fa:"524, 558",hi:1,
+ mech:"The <b>paramedian pontine reticular formation (PPRF)</b> is the horizontal gaze center. Its <b>excitatory burst neurons</b> (rostral to the abducens nucleus) drive the abducens nucleus on the same side, while <b>inhibitory burst neurons</b> (caudal to it) silence the opposite abducens nucleus; without that inhibition of the antagonists, eye movements are slowed and undershoot. The <b>abducens nucleus</b> holds both lateral rectus motor neurons and <b>internuclear neurons</b> whose axons cross and ascend in the opposite <b>MLF</b> to the medial rectus neurons of the oculomotor nucleus (Fundamental Neuroscience).",
+ find:["<b>PPRF lesion</b>: horizontal gaze palsy toward that side; horizontal vergence is spared","<b>Abducens nerve lesion</b>: only the ipsilateral lateral rectus is weak","<b>Abducens nucleus lesion</b>: the ipsilateral lateral rectus <b>and</b> the contralateral medial rectus fail on gaze to that side — a gaze palsy","<b>MLF lesion</b>: internuclear ophthalmoplegia — the eye on the side of the lesion cannot adduct; convergence is intact because CN III and its nucleus are fine","<b>One-and-a-half syndrome</b>: abducens nucleus plus the crossing MLF fibers from the other side — the eye on that side cannot move horizontally at all, and the other eye can only abduct"],
+ labs:["—"],
+ buzz:["Nucleus = gaze palsy · nerve = one muscle · MLF = INO","One-and-a-half: one eye frozen, the other only abducts"],
+ src:["Fundamental Neuroscience ch 28 — Visual Motor Systems"],
+ tx:["—"],q:["paramedian pontine reticular formation","pprf","horizontal gaze center","abducens nucleus","internuclear neurons","one and a half syndrome","horizontal gaze palsy","=abducens internuclear neurons","=the right paramedian pontine reticular formation","=right abducens nucleus lesion"]},
+
+pulsestep:{n:"The saccade signal — pulse, step & omnipause cells",k:"reg",p:"emGaze",enz:"Burst neurons give the pulse · an integrator holds the step",inh:"—",fa:"524",hi:1,
+ mech:"A saccade needs two motor-neuron signals. The <b>pulse</b> — a burst of firing — overcomes orbital viscosity and throws the eye toward the target: burst frequency codes speed, the number of spikes codes amplitude. The <b>step</b> — a new tonic rate — holds the eye in its new position; the antagonist is silenced during the saccade and then resumes at a lower rate. Burst neurons of the PPRF (horizontal) and riMLF (vertical) make the pulse; the “where the eye is going” signal is <b>integrated</b> into a “keep it there” signal by the <b>nucleus prepositus hypoglossi</b> (horizontal) and the <b>interstitial nucleus of Cajal</b> (vertical) (Fundamental Neuroscience).",
+ find:["<b>Omnipause cells</b>: glycinergic neurons in the midline pontine tegmentum that fire steadily during fixation and fall silent during a saccade in any direction — the burst is partly release from their inhibition","The superior colliculus and frontal eye fields send the command the burst neurons turn into a pulse","Smooth pursuit and optokinetic movements use graded firing without a pulse-and-step pattern"],
+ labs:["—"],
+ buzz:["Pulse = go there · step = stay there"],
+ src:["Fundamental Neuroscience ch 28 — Visual Motor Systems"],
+ tx:["—"],q:["omnipause cells","omnipause neurons","burst neurons","excitatory burst neurons","inhibitory burst neurons","nucleus prepositus hypoglossi","pulse and step","=the nucleus prepositus hypoglossi","=the tonic step signal"]},
+
+vgaze:{n:"Vertical gaze center — riMLF, interstitial nucleus of Cajal & posterior commissure",k:"reg",p:"emGaze",enz:"Midbrain–diencephalon junction",inh:"—",fa:"542, 558",hi:1,
+ mech:"Vertical gaze palsies come from lesions at the <b>midbrain–diencephalon junction</b>. The <b>rostral interstitial nucleus of the MLF (riMLF)</b> is the vertical gaze center: its burst neurons make the pulse for vertical saccades, and the <b>interstitial nucleus of Cajal</b> provides the step. Because the superior and inferior recti act in pairs during vertical movements, the riMLF and Cajal nuclei of both sides must work together — activating one side alone produces torsion. Their crossing connections, and crossed projections to the oculomotor nucleus, run in the <b>posterior commissure</b>, so a <b>pinealoma</b> pressing on it causes vertical gaze deficits (Fundamental Neuroscience).",
+ find:["riMLF receives input from the superior colliculus and frontal eye field and inhibition from omnipause cells","Oblique saccades combine the horizontal and vertical centers","Cells in or near the PPRF, riMLF and interstitial nucleus of Cajal also turn the head with the eyes (reticulospinal and interstitiospinal fibers)","Dorsal midbrain compression also weakens the pupillary light reflex on both sides (Parinaud syndrome)"],
+ labs:["—"],
+ buzz:["Vertical gaze = midbrain · horizontal gaze = pons"],
+ src:["Fundamental Neuroscience ch 28 — Visual Motor Systems"],
+ tx:["—"],q:["rostral interstitial nucleus","rimlf","interstitial nucleus of cajal","vertical gaze center","vertical gaze palsy","=the posterior commissure"]},
+
+corteye:{n:"Cortical eye fields & the superior colliculus",k:"reg",p:"emGaze",enz:"Voluntary saccades from cortex · reflexive saccades from the colliculus",inh:"—",fa:"524",hi:1,
+ mech:"Stimulating the cortical eye fields or the superior colliculus triggers <b>contralateral</b> saccades. The <b>frontal eye field</b> (caudal middle frontal gyrus, area 6 extending into 8) drives <b>voluntary and memory-guided</b> saccades through the superior colliculus and the gaze centers — its path to the horizontal gaze center is <b>crossed</b>. The <b>superior colliculus</b>, whose intermediate layer holds a map of all possible saccades, directs <b>reflexive orienting</b> through the crossed tectoreticulospinal tract (Fundamental Neuroscience).",
+ find:["Supplementary and parietal eye fields (area 7) are interconnected with the frontal eye field and all project to the colliculus — so losing one produces few deficits; losing both the frontal eye field and the colliculus is profound","GABAergic cells of the substantia nigra pars reticulata inhibit the colliculus until just before a saccade — in Parkinson disease that unmodulated inhibition leaves few spontaneous eye movements","The colliculus is supplied by the quadrigeminal artery from the posterior cerebral artery"],
+ labs:["—"],
+ buzz:["Stimulate an eye field → eyes go the opposite way"],
+ src:["Fundamental Neuroscience ch 28 — Visual Motor Systems"],
+ tx:["—"],q:["frontal eye field","frontal eye fields","parietal eye field","supplementary eye field","=the frontal eye field"]},
+
+pursuitokn:{n:"Smooth pursuit & the optokinetic reflex",k:"reg",p:"emTypes",enz:"Cortex → pons → flocculus → vestibular nuclei → eye nuclei",inh:"—",fa:"524",hi:1,
+ mech:"<b>Smooth pursuit</b> follows slow, predictable targets (usually 30 degrees/s or less, up to 100). Lateral parietal and middle temporal cortex — and part of the frontal eye field — sense target speed and direction and project through the dorsolateral pons to the <b>flocculus and paraflocculus</b>, which feed premotor cells in the <b>vestibular nuclei</b> that drive the eye-muscle nuclei. Pursuit cells fire in a graded way, without a pulse and step; <b>floccular lesions</b> impair pursuit, and pursuit is altered in schizophrenia (Fundamental Neuroscience).",
+ find:["<b>Optokinetic reflex</b>: whole-field motion (retinal slip) excites wide-field ganglion cells that end in the accessory optic system — the nucleus of the optic tract senses temporal-to-nasal slip — which projects to the vestibulocerebellum and vestibular nuclei","<b>Optokinetic nystagmus</b>: slow following phases alternate with fast saccadic resets; it is named for the fast phase and tested with a moving striped drum","The VOR compensates head acceleration and the OKR continuous velocity; the cerebellum adapts the gain of both, and vestibular nuclear lesions impair both"],
+ labs:["—"],
+ buzz:["Pursuit runs through the flocculus"],
+ src:["Fundamental Neuroscience ch 28 — Visual Motor Systems","Fundamental Neuroscience ch 22 — The Vestibular System"],
+ tx:["—"],q:["retinal slip","accessory optic system","nucleus of the optic tract","=smooth pursuit which can follow targets","=optokinetic response"]},
+
+neartriad:{n:"Vergence & the near triad — the midbrain near-response region",k:"reg",p:"emTypes",enz:"Converge, round the lens, constrict the pupil",inh:"—",hi:1,
+ mech:"Looking from far to near, the eyes <b>converge</b> (both medial recti, a disconjugate movement), the <b>lens</b> rounds up for more refractive power, and the <b>pupil constricts</b> for depth of field — the <b>near triad</b>. Its premotor neurons lie in a midbrain near-response region in the <b>supraoculomotor area</b> and adjacent midbrain reticular formation, lateral to the oculomotor nucleus, projecting to medial and lateral rectus motor neurons and the Edinger-Westphal nucleus (Fundamental Neuroscience).",
+ find:["Cues: the vergence angle sets accommodation; image blur; and retinal disparity read by binocular cells in visual cortex","Vergence is slower than a saccade, with little initial burst","The light reflex runs through the pretectum and the near response through the supraoculomotor area — which is why a pretectal lesion spares the near response (light–near dissociation)","After a PPRF lesion, horizontal saccades fail but horizontal vergence is normal"],
+ labs:["—"],
+ buzz:["Near triad = converge + accommodate + constrict"],
+ src:["Fundamental Neuroscience ch 28 — Visual Motor Systems"],
+ tx:["—"],q:["near triad","supraoculomotor area","retinal disparity","=vergence coupled with","=neurons in the supraoculomotor area","=convergence is driven by the midbrain near response"]},
+
+pupilpath:{n:"Pupillary light reflex — the four-neuron arc",k:"reg",p:"emPupil",enz:"Retina → pretectum → both Edinger-Westphal nuclei → CN III → ciliary ganglion",inh:"—",fa:"554",hi:1,
+ mech:"Luminance-coding retinal ganglion cells project through the optic nerve and tract (about half cross at the chiasm) to the <b>olivary pretectal nucleus</b>, which projects to <b>both</b> Edinger-Westphal nuclei, crossing in the posterior commissure. Preganglionic parasympathetic fibers leave with the <b>oculomotor nerve</b> to the ipsilateral <b>ciliary ganglion</b>, whose postganglionic fibers constrict the pupil. Light in one eye constricts both pupils — <b>direct and consensual</b> responses (Fundamental Neuroscience).",
+ find:["Partial optic nerve lesion: weaker direct and consensual responses when that eye is lit, normal when the other is — a <b>relative afferent pupillary defect</b>; a total lesion leaves a blind eye with no response when it is lit","Optic tract or pretectal lesion: neither response is lost; a large dorsal midbrain lesion (pinealoma) weakens pupillary responses on both sides","<b>Oculomotor nucleus or nerve lesion</b>: direct and consensual responses lost in that eye, preserved in the other — an efferent defect","<b>Adie tonic pupil</b>: damage to the postganglionic fibers from the ciliary ganglion — a dilated pupil supersensitive to cholinergic drops","Sympathetic path: superior cervical ganglion → along the internal carotid → briefly with CN VI, then CN III (superior tarsal muscle) and the nasociliary nerve → long ciliary nerves → dilator; its loss is Horner syndrome (partial ptosis, miosis), confirmed with cocaine drops","Less than 1% of ganglion cells contain <b>melanopsin</b> and respond to light directly, without photoreceptor input — they can drive the light reflex, which is why advanced retinitis pigmentosa may spare it (Fundamental Neuroscience)","A CN III (efferent) lesion leaves that pupil dilated and fixed — uneven pupils (anisocoria); in uncal herniation the superficial pupillary fibers are hit early (Fundamental Neuroscience)"],
+ labs:["Swinging flashlight test"],
+ buzz:["Afferent defect = RAPD · efferent (CN III) defect = that pupil never constricts"],
+ src:["Fundamental Neuroscience ch 28 — Visual Motor Systems"],
+ tx:["—"],q:["pupillary light reflex","consensual response","olivary pretectal nucleus","pretectal nucleus","edinger westphal","ciliary ganglion","adie tonic pupil","adie pupil","tonic pupil","=adie tonic pupil","=right oculomotor nerve damaging the efferent limb","=the pupillary light reflex pathway is fully intact","melanopsin","=a subset of ganglion cells are intrinsically photosensitive","=anisocoria at rest with the right pupil larger","=the left pupil constricts normally the right pupil stays dilated"]},
+
+cervspond:{n:"Cervical spondylosis & cervical stenosis",k:"dz",p:"npCerv",enz:"Wear and tear of discs, facets and ligaments",inh:"—",fa:"458",hi:1,
+ mech:"Age-related (sometimes post-traumatic) <b>degeneration</b> of the cervical spine: disc degeneration, facet arthropathy, osteophytes, and ossification or hypertrophy of the posterior longitudinal ligament and ligamenta flava. It is present on imaging in about <b>95% of people by age 65</b> and does not correlate with symptoms. Symptoms: neck, periscapular or shoulder pain with stiff range of motion, sometimes radiating to the arms; arm weakness, numbness or tingling; and, with cord involvement, leg weakness and bowel or bladder dysfunction (course lecture).",
+ find:["<b>Cervical spinal stenosis</b>: central stenosis compresses the cord, foraminal stenosis the nerve root; congenital or acquired; 14–24% prevalence, rising sharply after 65; presents and is treated like spondylosis","Imaging: X-ray; MRI is preferred over CT; nerve conduction studies in selected cases","Treatment (adapted from osteoarthritis guidance): collar, avoiding high-risk activity, NSAIDs, muscle relaxants, antidepressants, physical therapy, osteopathic manipulation, acupuncture, injections; surgical decompression when needed"],
+ labs:["MRI over CT"],
+ buzz:["Spondylosis on films ≠ the cause of the pain"],
+ src:["OCOM Ortho — SDL 19 lecture: Neck and back pain and injury"],
+ tx:["NSAIDs, muscle relaxants, antidepressants, physical therapy, OMM and acupuncture; injections or surgical decompression for some (course lecture)"],q:["cervical spondylosis","cervical stenosis","cervical spinal stenosis","foraminal stenosis","=radiographic cervical spondylosis is present","=axial neck pain periscapular aching"]},
+
+cervradic:{n:"Cervical radiculopathy — which root?",k:"dz",p:"npCerv",enz:"C5 shoulder · C6 thumb · C7 middle finger · C8 little finger",inh:"—",fa:"458",hi:1,
+ mech:"Impaired function of one or more cervical nerve roots from inflammation, ischemia or both — structural or not, often from spondylosis; about 107 per 100,000 men and 64 per 100,000 women. Almost every patient has neck or arm pain (it can mimic chest pain); sensory loss is absent or mild, and weakness appears in severe cases. The diagnosis is clinical, with imaging for the underlying cause and nerve studies as needed (course lecture).",
+ find:["<b>C5</b>: numb lateral arm (axillary territory) · weak shoulder abduction, external rotation, elbow flexion · biceps and brachioradialis reflexes","<b>C6</b>: numb lateral forearm, thumb and index finger · weak elbow flexion, supination and pronation · biceps and brachioradialis reflexes","<b>C7</b>: numb index and middle fingers and palm · weak elbow and radial wrist extension, pronation, wrist flexion · <b>triceps</b> reflex","<b>C8</b>: numb medial forearm, hand, fourth and fifth digits · weak finger extension and flexion, ulnar wrist extension, intrinsic hand muscles · no reflex · <b>T1</b>: medial arm and forearm, thumb abduction and finger abduction","<b>Spurling sign</b>: extending the neck and tilting it toward the painful side while pressing on the head reproduces arm pain — about 90% specific, 45% sensitive; abducting the shoulder may ease radicular pain; Valsalva can worsen it (Tintinalli)"],
+ labs:["Clinical diagnosis; MRI for the cause"],
+ buzz:["Spurling: specific, not sensitive"],
+ src:["OCOM Ortho — SDL 19 lecture: Neck and back pain and injury","OCOM Ortho — SDL 19 reading: Neck and back pain (Tintinalli’s Emergency Medicine 9e ch 279)"],
+ tx:["Activity modification, collar, analgesics, muscle relaxants, oral glucocorticoids, physical therapy, osteopathic manipulation, traction; injections if not improving"],q:["cervical radiculopathy","spurling","spurling sign","spurlings sign","spurlings test","c6 radiculopathy","c7 radiculopathy","=c6 radiculopathy produces","=triceps reflex loss with weakness of elbow extension","=spurlings test has approximately"]},
+
+cervmyel:{n:"Cervical myelopathy — signs of cord compression",k:"dz",p:"npCerv",enz:"Hands clumsy, legs stiff, reflexes brisk",inh:"—",fa:"458",hi:1,
+ mech:"Compression of the cervical cord adds upper motor neuron signs to neck pain: weakness, impaired fine hand movement, and spasticity of the arms and legs. Look for <b>Lhermitte sign</b> — flexing the neck sends an electric-shock sensation down the spine into the arms — a sign of possible cord compression, and <b>Hoffman sign</b> — flicking the middle fingertip makes the thumb and index finger flex in a pinch — an upper motor neuron sign (Tintinalli).",
+ find:["Tintinalli sorts neck pain into two groups: uncomplicated pain from the joints, ligaments and muscles, and pain with radiculopathy (one nerve root) and/or myelopathy (a cord lesion, stenosis or compression)","Cord compression with neurologic deficit is managed with a spine surgeon (Tintinalli); central cervical stenosis compresses the cord (course lecture)"],
+ labs:["MRI"],
+ buzz:["Lhermitte + Hoffman + clumsy hands = cervical cord"],
+ src:["OCOM Ortho — SDL 19 reading: Neck and back pain (Tintinalli’s Emergency Medicine 9e ch 279)","OCOM Ortho — SDL 19 lecture: Neck and back pain and injury"],
+ tx:["Spine surgery referral for progressive myelopathy"],q:["cervical myelopathy","lhermitte","lhermitte sign","lhermittes sign","hoffman sign","hoffmans sign","=upper motor neuron signs including hyperreflexia"]},
+
+backflags:{n:"Neck & back pain — red flags, timing & imaging",k:"reg",p:"npLumb",enz:"Most resolve in 6 weeks · look for the dangerous few",inh:"—",fa:"458",hi:1,
+ mech:"Neck and back pain come from trauma and biomechanical injury, degeneration, inflammation, <b>infection</b> (diskitis, meningitis, epidural abscess), <b>infiltration</b> (metastasis, cord tumors) and <b>compression</b> (epidural hematoma or abscess); often no specific cause is found. Back pain is acute under 6 weeks, subacute 6–12 and chronic beyond 12; <b>80–90% of nonspecific episodes resolve within 6 weeks</b>, so pain lasting longer points to more serious disease (Tintinalli).",
+ find:["Radiographs are generally not indicated unless pain has lasted at least 4–6 weeks or trauma raises concern for fracture or malignancy; MRI is better justified with neurologic signs or suspected malignancy (course lecture)","Labs only when malignancy or infection is suspected","Saddle anesthesia, bladder or bowel change, leg weakness and reduced reflexes = cauda equina syndrome — emergent MRI","Low back pain is the leading cause of disability in the US; neck pain is fourth (Tintinalli)"],
+ labs:["—"],
+ buzz:["Under 6 weeks and no red flags → no imaging"],
+ src:["OCOM Ortho — SDL 19 reading: Neck and back pain (Tintinalli’s Emergency Medicine 9e ch 279)","OCOM Ortho — SDL 19 lecture: Neck and back pain and injury"],
+ tx:["—"],q:["back pain red flags","=without red flag symptoms routine imaging","=routine imaging is not indicated"]},
+
+mechlbp:{n:"Mechanical low back pain & lumbosacral spondylosis",k:"dz",p:"npLumb",enz:"Pain from the spine’s own support structures",inh:"—",fa:"458",hi:1,
+ mech:"<b>Mechanical low back pain</b> arises from the spine, discs or surrounding soft tissues — degenerative or post-traumatic — with a lifetime risk of up to 80%. Pain may worsen with flexion or extension and radiate, with stiffness and guarded motion. Risk factors: tobacco, obesity, age, female sex, physically strenuous, sedentary or psychologically strenuous work, low education, workers’ compensation, job dissatisfaction, and psychological factors such as somatization, anxiety and depression (course lecture).",
+ find:["<b>Lumbosacral spondylosis</b> (degenerative disc disease, osteoarthritis): discs dehydrate and thin, vertebrae degenerate with Modic changes and osteophytes; 38–85% prevalence, mostly middle-aged and older; pain worst in the morning, improving through the day; MRI shows disc integrity, Modic changes and root involvement","Treatment: relative rest, anti-inflammatories, ± muscle relaxants, antidepressants, heat or ice, physical therapy, acupuncture, osteopathic manipulation, trigger point injections; injections or surgical consultation for recalcitrant cases"],
+ labs:["—"],
+ buzz:["Morning stiffness that eases with activity = spondylosis"],
+ src:["OCOM Ortho — SDL 19 lecture: Neck and back pain and injury"],
+ tx:["Conservative care first; for advanced or recalcitrant cases, injection-based therapy and surgical consultation (course lecture)"],q:["mechanical low back pain","mechanical back pain","lumbosacral spondylosis","lumbar spondylosis","degenerative disc disease","modic changes","=lumbosacral spondylosis presents with morning stiffness","=up to 80 of people experience"]},
+
+lumbradic:{n:"Lumbosacral radiculopathy — reading the deficit",k:"dz",p:"npLumb",enz:"Herniated disc or spondylosis pinching a root",inh:"—",fa:"458",hi:1,
+ mech:"Impaired function of one or more lumbar roots — traumatic or insidious, from inflammation or ischemia, sometimes infectious or metabolic (diabetes); the commonest causes are a herniated nucleus pulposus and degenerative spondylosis. Radiating pain, numbness or tingling of the buttock, hip or leg, and weakness of the back or leg (course lecture).",
+ find:["Bedside clues: L2–L4 — cannot rise from a chair (iliopsoas or quadriceps) · L3–L4 — knee buckling (quadriceps) · <b>L5 — toe drag</b> (tibialis anterior) · S2–S4 — urinary or fecal incontinence (sphincters)","Workup: CSF, CBC, ESR or CRP if indicated; X-ray for degeneration; MRI for disc and root; nerve conduction and EMG","Treatment: analgesics, NSAIDs or oral glucocorticoids and activity modification first; then physical therapy, osteopathic manipulation, acupuncture, <b>epidural steroid injection</b>","<b>Lumbosacral stenosis</b>: central, lateral recess or foraminal narrowing — part of one spectrum with spondylosis and radiculopathy"],
+ labs:["MRI · EMG and nerve conduction"],
+ buzz:["Toe drag = L5"],
+ src:["OCOM Ortho — SDL 19 lecture: Neck and back pain and injury"],
+ tx:["First analgesics, NSAIDs or oral glucocorticoids and activity modification; then physical therapy, OMM, acupuncture or an epidural steroid injection (course lecture)"],q:["lumbosacral radiculopathy","lumbar radiculopathy","epidural steroid injection","=epidural steroid injection is an appropriate"]},
+
+osmobal:{n:"Cell volume — impermeant protein & osmotic balance",k:"reg",p:"icRest",enz:"Fixed intracellular protein pulls water in · effectively impermeant Na⁺ outside pulls back",inh:"—",fa:"504",hi:1,
+ mech:"Proteins cannot cross the membrane, and the cell holds about 10 times the protein of the interstitium and 100 times that of CSF. These <b>impermeant molecules exert an osmotic force</b> that draws water in — the cell would swell and burst unless something opposed it. Cells balance it chiefly by keeping <b>Na⁺ effectively impermeant</b> and concentrated outside (pumped out by the Na⁺/K⁺-ATPase) and by keeping chloride low inside, so that all the osmotically active particles sum to nearly zero (Fundamental Neuroscience).",
+ find:["Many cell proteins carry negative charge; electroneutrality then forces intracellular anions such as Cl⁻ down, which works with Na⁺ to limit water flux","Metabolically compromised cells swell — the systems that counter the protein load have failed","Typical neuron vs ECF (mM): Na⁺ 10 vs 142 · K⁺ 100 vs 4 · Ca²⁺ 0.0001 vs 1.2 · Cl⁻ 5.5 vs 103"],
+ labs:["—"],
+ buzz:["Pump fails → Na⁺ leaks in → water follows → cell swells"],
+ src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
+ tx:["—"],q:["impermeant anions","impermeant proteins","osmotic force","cell volume","=it exerts a continuous osmotic force","=keeping sodium impermeant and concentrated outside","=the cell gains additional water","=the two forces largely cancel"]},
+
+aquaporins:{n:"Aquaporins",k:"reg",p:"icRest",enz:"Water-only pores",inh:"—",fa:"237, 333",hi:1,
+ mech:"<b>Aquaporins</b> let cells reach osmotic equilibrium quickly: each pore passes single water molecules — about 3 × 10⁹ a second — while excluding all other molecules, making the membrane semipermeable. There are at least 10 aquaporins, distributed in a tissue-specific way (Fundamental Neuroscience).",
+ find:["Absence of specific aquaporins: AQP0 → cataracts · AQP4 → deafness (needed for cochlear function) · AQP1 → needed for normal intraocular pressure","ADH inserts aquaporin-2 into principal cells of the collecting duct (First Aid)"],
+ labs:["—"],
+ buzz:["Aquaporin = water only, no ions"],
+ src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
+ tx:["—"],q:["aquaporins","aqp4","aqp1","aqp0","=a narrow transmembrane pore that admits only single water molecules"]},
+
+restk:{n:"Why the resting potential is negative — K⁺ leak & fixed anions",k:"reg",p:"icRest",enz:"Tandem-pore K⁺ channels set it",inh:"—",fa:"504",hi:1,
+ mech:"At rest the membrane is far more permeable to K⁺ than to Na⁺: <b>tandem-pore (two-pore-domain, K2P) K⁺ channels establish the resting membrane potential</b>. K⁺ diffuses out down its concentration gradient, leaving behind negatively charged proteins that cannot follow, so the inside goes negative until the electrical pull balances the chemical push. Equilibrium potentials for a typical neuron: K⁺ −86 mV, Cl⁻ −78 mV, Na⁺ +70 mV, Ca²⁺ +126 mV (Fundamental Neuroscience).",
+ find:["At an ion’s equilibrium potential there is no net movement — chemical and electrical forces are equal and opposite","An ion moves toward its own equilibrium potential: opening Na⁺ channels drives the membrane toward +70 mV, opening K⁺ channels toward −86 mV","Lowering extracellular K⁺ makes E_K more negative and hyperpolarizes the resting membrane; raising it depolarizes","The Na⁺/K⁺-ATPase (3 Na⁺ out, 2 K⁺ in) maintains the gradients; without it they run down slowly"],
+ labs:["—"],
+ buzz:["Resting potential sits near E_K because K⁺ leaks"],
+ src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
+ tx:["—"],q:["k2p","k2p channels","tandem pore","two pore domain","leak channels","potassium leak channels","=high resting k permeability through k2p","=k leak channels of the k2p","=k diffuses down its concentration gradient out of the cell","=no net movement because the electrical and chemical"]},
+
+ionchanfam:{n:"Ion channel families — what each one does",k:"reg",p:"icChan",enz:"Voltage, ligand, cyclic-nucleotide, mechanical, acid, temperature",inh:"—",fa:"504",hi:1,
+ mech:"Fundamental Neuroscience’s channel families: <b>voltage-gated Na⁺, K⁺ and Ca²⁺</b> channels make action potentials and transmitter release; <b>tandem-pore K⁺</b> channels set the resting potential; <b>CNG</b> (cyclic-nucleotide-gated) channels link smell and vision to voltage; <b>HCN</b> (hyperpolarization-activated) channels set the rate of firing — the pacemaker current; <b>Piezo2</b> opens with membrane stretch for touch; <b>TRP</b> channels serve heat, cold and chemical senses; <b>ASIC</b> channels sense acid; <b>ENaC</b> moves fluid by osmotic forces; transmitter-gated channels such as the nicotinic receptor (blocked by curare) carry fast synaptic signals.",
+ find:["Senses and their channels: vision — CNG, cGMP falls, hyperpolarizes · smell — CNG, cAMP opens · hearing — TRP stretch-opened · touch — ENaC (and Piezo) · salt taste — ENaC · sour — OTOP1 (H⁺) · heat — TRPV (capsaicin) · cold — TRPM and TRPA (menthol)","All senses except vision depolarize the receptor; bigger stimuli give bigger generator potentials and more action potentials","Anion channels include ClC and Ca²⁺-activated Cl⁻ channels; CFTR is an ABC transporter that acts as a channel"],
+ labs:["—"],
+ buzz:["HCN = pacemaker · CNG = eyes and nose · Piezo = touch · ASIC = acid"],
+ src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
+ tx:["—"],q:["cng channels","hcn channels","hcn channel","piezo","piezo2","asic","acid sensing ion channel","trp channels","trpv1 channel","=cng channels link olfactory and visual signals","=the piezo channel family","=the enac and asic family"]},
+
+gradedap:{n:"Graded potentials vs action potentials",k:"reg",p:"icSignal",enz:"One decays with distance · the other regenerates",inh:"—",fa:"504",hi:1,
+ mech:"Sensations begin as <b>graded potentials</b>: continuous changes in membrane conductance whose size follows stimulus strength — bigger stimuli, bigger generator potentials, more action potentials. Synaptic potentials are graded too, and they <b>summate</b>. A graded potential spreads passively and fades: the <b>length constant</b> is the distance over which it decays to 37% (1/e), and the <b>time constant</b> the time for it to change by 63% (Fundamental Neuroscience). The action potential is all-or-none and regenerates at each point, so it arrives undiminished.",
+ find:["Myelin lengthens the length constant — each node’s depolarization reaches farther — and speeds conduction","Inhibitory synapses that raise Cl⁻ conductance lower dendritic membrane resistance and shorten the length constant, so nearby excitatory inputs fade before the axon initial segment","τ = RC: more membrane capacitance or access resistance slows the change"],
+ labs:["—"],
+ buzz:["Graded = local, decremental, summating · AP = all-or-none, propagated"],
+ src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
+ tx:["—"],q:["graded potential","graded potentials","generator potential","length constant","time constant","=a graded potentials amplitude varies","=a graded postsynaptic potential that decays","=the graded potential would have decayed"]},
+
+nachtox:{n:"Sodium-channel blockers & toxins",k:"drug",p:"icChan",enz:"Use-dependent block vs pore block vs slowed inactivation",inh:"—",fa:"246",hi:1,
+ mech:"<b>Local anesthetics</b> (and some antiarrhythmics and phenytoin) bind a site inside the Na⁺ channel pore reachable only when the channel is open — so the block is <b>use-dependent</b>: the more the channel opens, the more channels are plugged. <b>Tetrodotoxin</b> (puffer fish, a salamander) and <b>saxitoxin</b> (red-tide dinoflagellates) bind the closed channel from outside and prevent it opening. <b>Scorpion venom</b> slows Na⁺ inactivation and shifts activation to more negative voltages — pain, spasms and eventually paralysis (Fundamental Neuroscience).",
+ find:["Use-dependent block lets these drugs target the high-frequency firing of a seizure while sparing normal activity (Fundamental Neuroscience)","Inherited Na⁺ channel defects cause periodic paralysis"],
+ labs:["—"],
+ buzz:["TTX: closed channel, outside · local anesthetic: open channel, inside"],
+ src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
+ tx:["—"],q:["use dependent block","saxitoxin","scorpion venom","=use dependent block in which the drug binds","=they bind the extracellular pore","=the venom slows fast inactivation"]},
+
+demyelin:{n:"Demyelination & conduction block",k:"dz",p:"icSignal",enz:"Three reasons the action potential fails",inh:"—",hi:1,
+ mech:"Losing myelin, as in multiple sclerosis, interrupts saltatory conduction for three reasons: the <b>internodal membrane has no Na⁺ channels</b> to regenerate the signal; without insulation the internode’s <b>capacitance rises and resistance falls</b>; and <b>K⁺ channels clustered beside the nodes</b>, normally insulated, now oppose the nodal Na⁺ current. Together they shorten the length constant; once it is shorter than the distance to the next node, threshold is never reached and conduction stops (Fundamental Neuroscience).",
+ find:["The action potential normally spans about 72 mm (about 36 nodes) of a 10-µm axon conducting 60 m/s at body temperature","Myelin raises membrane resistance and lowers capacitance, lengthening the length constant"],
+ labs:["—"],
+ buzz:["Demyelination: no Na⁺ channels in the internode, leaky membrane, exposed K⁺ channels"],
+ src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
+ tx:["—"],q:["conduction block","=exposed internodal membrane lacks na channels","=loss of myelin insulation decreases membrane resistance"]},
+
+psyrxchoose:{n:"Choosing a psychotropic — drug, patient & illness factors",k:"reg",p:"prPrin",enz:"Pharmacokinetics, pharmacodynamics and the patient’s history",inh:"—",hi:1,
+ mech:"Outcome depends on the drug, the patient and the illness. Pharmacodynamic considerations include receptor mechanisms, the dose–response curve, the therapeutic index, and tolerance, dependence and withdrawal; genetic and environmental factors make response and tolerability vary between patients. Drugs in a class differ in molecular structure, transmitter interactions, pharmacokinetics, active metabolites and protein binding (Kaplan & Sadock).",
+ find:["Choose by the patient’s own history of response and side effects and the family’s history of response; a drug that worked before should be used again","A past severe side effect strongly predicts noncompliance with that drug","Misdiagnosis can worsen illness: treating the depressed phase of bipolar disorder as unipolar depression can induce mania or rapid cycling"],
+ labs:["—"],
+ buzz:["Worked before for the patient or family → use it again"],
+ src:["Kaplan & Sadock ch 21 — Psychopharmacology"],
+ tx:["—"],q:["psychotropic selection","=pharmacokinetics is what the body does","=the patient is exposed to the risk of side effects without"]},
+
+combaug:{n:"Combination vs augmentation & fixed-dose combinations",k:"reg",p:"prPrin",enz:"Same indication = combination · different indication = augmentation",inh:"—",hi:1,
+ mech:"Two psychotropics with the <b>same approved indication</b> used together is <b>combination therapy</b>; adding a drug with <b>another indication</b> is <b>augmentation</b> — often a drug not primarily psychotropic, such as thyroid hormone added to an antidepressant. Psychiatric inpatients take about three psychotropics on average, and almost all patients with bipolar disorder take more than one (Kaplan & Sadock).",
+ find:["<b>Fixed-dose combinations</b> (fluoxetine–olanzapine for bipolar depression; perphenazine–amitriptyline) simplify the regimen and may help compliance, but one ingredient’s dose cannot be adjusted on its own — and both drugs keep coming when only one is still needed","Combinations, high doses and unconventional agents are the strategies for treatment resistance, with limited comparative evidence"],
+ labs:["—"],
+ buzz:["Thyroid hormone + antidepressant = augmentation"],
+ src:["Kaplan & Sadock ch 21 — Psychopharmacology"],
+ tx:["—"],q:["combination therapy","fixed dose combination","fixed combination","polypharmacy","=combination therapy pairs two drugs","=augmentation since","=the clinician has less flexibility","=monotherapy is the guideline ideal"]},
+
+txfail:{n:"When a psychotropic fails — five questions",k:"reg",p:"prFail",enz:"Diagnosis · side effect or symptom · dose and time · interaction · adherence",inh:"—",hi:1,
+ mech:"Plan the next step before starting, because the drug may not work. Repeated failures prompt reassessment (Kaplan & Sadock): <b>1</b> Was the diagnosis right — including an undiagnosed medical condition or recreational drug use? <b>2</b> Are the symptoms the illness or an adverse effect? <b>3</b> Was the dose adequate for long enough — measuring plasma levels if needed? <b>4</b> Did a pharmacokinetic or pharmacodynamic interaction reduce efficacy? <b>5</b> Did the patient take it as directed?",
+ find:["Side effects that mimic the illness: antipsychotic akinesia looks like psychotic withdrawal; akathisia and NMS look like agitation; long-term SSRI emotional blunting looks like depression","Intolerance of side effects may be the most common reason for treatment failure","Noncompliance comes from complicated regimens (more than one drug, more than one daily dose), unnoticed side effects, poor education, and stopping once well","<b>Treatment resistance</b>: no single factor explains it; combinations, high-dose therapy and unconventional drugs are tried"],
+ labs:["Plasma levels when absorption or metabolism is in doubt"],
+ buzz:["Before calling it resistant: diagnosis, dose, time, interactions, adherence"],
+ src:["Kaplan & Sadock ch 21 — Psychopharmacology"],
+ tx:["—"],q:["treatment failure","=whether the diagnosis was correct","=that the drug was given at an adequate dose","=drug noncompliance arising from a complicated regimen","=a pharmacokinetic or pharmacodynamic interaction with the newly added drug","=it may be a medication side effect that mimics relapse","=treatment resistance for which"]},
+
+discont:{n:"Half-life, withdrawal & discontinuation syndromes",k:"reg",p:"prFail",enz:"Short half-life + abrupt stop = withdrawal",inh:"—",hi:1,
+ mech:"As a rule, the more abruptly a drug is stopped and the <b>shorter its elimination half-life</b>, the more likely clinically significant withdrawal is; with short-acting drugs, withdrawal can follow missed doses or occur between doses. Taper after prolonged use — it lowers but does not remove the risk (Kaplan & Sadock).",
+ find:["SSRI discontinuation is most frequent and severe with <b>paroxetine</b> (and venlafaxine); <b>fluoxetine</b>’s long-lived active metabolite delays and softens it, sometimes for weeks","Paroxetine is metabolized by CYP2D6 and inhibits it — autoinhibition keeps its levels high, so lowering the dose drops levels steeply","Stopping a second drug can cause withdrawal: stopping nefazodone (a CYP3A4 inhibitor) speeds alprazolam metabolism and its levels fall","Sedative-hypnotics and opioids are the drugs most associated with withdrawal"],
+ labs:["—"],
+ buzz:["Paroxetine worst, fluoxetine mildest"],
+ src:["Kaplan & Sadock ch 21 — Psychopharmacology"],
+ tx:["Taper gradually"],q:["discontinuation syndrome","discontinuation symptoms","ssri discontinuation","=the shorter the half life and the more abrupt","=it attenuates and delays discontinuation symptoms","=paroxetines autoinhibition of cyp2d6","=stopping cyp3a4 inhibiting nefazodone"]},
+
+somcause:{n:"Why somatic symptoms persist — amplification & the sick role",k:"reg",p:"scDx",enz:"Amplified sensations · a learned request for the sick role",inh:"—",fa:"583",hi:1,
+ mech:"Two models (Kaplan & Sadock). <b>Somatic amplification</b>: people with somatic symptom disorder amplify bodily sensations — low threshold and tolerance for discomfort — so ordinary abdominal pressure becomes pain; they focus on sensations, misread them and are alarmed by them through a <b>faulty cognitive scheme</b>. The <b>social learning model</b> sees the symptoms as a request for the <b>sick role</b> by someone facing seemingly unsolvable problems — the sick role offers escape from obligations, challenges and duties.",
+ find:["Factitious disorder: predisposing factors include real childhood illness with extensive treatment, a grudge against medicine, health-care employment, or a past significant relationship with a physician","Symptoms of somatic symptom disorder must persist (typically more than 6 months); severity is graded by the number of symptoms and the distress"],
+ labs:["—"],
+ buzz:["Amplify the sensation · escape into the sick role"],
+ src:["Kaplan & Sadock ch 12 — Somatic Symptom and Related Disorders"],
+ tx:["—"],q:["somatic amplification","social learning model","=the social learning model","=somatic amplification of bodily sensations","=reinforcement via the sick roles escape"]},
+
+funcsigns:{n:"Functional neurologic signs at the bedside",k:"reg",p:"scDx",enz:"Findings that don’t fit anatomy",inh:"—",fa:"583",hi:1,
+ mech:"Kaplan & Sadock’s distinctive exam findings in conversion disorder: <b>Hoover test</b> — pressure is felt under the “paralyzed” leg as the other leg lifts; <b>give-away weakness</b>; a “paralyzed” hand dropped toward the face falls beside it, not on it; sensory loss that ignores dermatomes or splits exactly at the midline; <b>astasia–abasia</b> — a gait that cannot walk yet may dance, with findings that change with suggestion; and in “coma,” resistance to eye opening.",
+ find:["Functional blindness: the patient walks about without collisions, the pupils react to light, cortical evoked potentials are normal and there is no relative afferent pupillary defect (Kaplan & Sadock)","Rule out disease that is easy to miss: multiple sclerosis, SLE, myasthenia gravis, and substance intoxication or withdrawal","La belle indifférence: apparent unconcern about a dramatic deficit"],
+ labs:["Workup to exclude neurologic disease (labs, EEG, MRI)"],
+ buzz:["Hoover sign = functional leg weakness"],
+ src:["Kaplan & Sadock ch 12 — Somatic Symptom and Related Disorders"],
+ tx:["—"],q:["hoover test","hoover sign","give away weakness","giveaway weakness","astasia abasia","functional weakness","functional paralysis","=a positive hoover test","=give away weakness","=astasia abasia","=functional nonorganic blindness"]},
+
+somcare:{n:"Managing somatic symptom disorder",k:"reg",p:"scCare",enz:"One physician · scheduled visits · fewer tests · CBT",inh:"—",fa:"583",hi:1,
+ mech:"Kaplan & Sadock: see patients at <b>regularly scheduled appointments</b> rather than symptom-driven ones, do a brief exam focused on the complaint at each visit, <b>avoid unnecessary diagnostic procedures</b>, invasive treatments and hospitalizations, never say “it’s all in your head,” and let patients talk briefly about stressors. Of the treatments studied, <b>cognitive-behavioral therapy</b> showed the highest efficacy; antidepressants help painful syndromes (tricyclics more than SSRIs).",
+ find:["A psychiatric consultation letter to the primary physician, brief psychodynamic therapy, exercise and biofeedback have also helped","Goals start modest — fewer medical visits, one primary physician, no unnecessary tests — and the physician prepares for a long-term commitment (Kaplan & Sadock)","Build the alliance first: respect and acknowledge the symptoms; active, receptive listening, tolerance for repetition and a neutral stance — neither dismissive, confrontational nor overly reassuring. Premature reassurance reads as disinterest (Kaplan & Sadock)","“Thick” charts: keep an open mind despite the records and do an independent assessment, including a fresh physical and neurologic exam; hold psychological interpretation for later (Kaplan & Sadock)"],
+ labs:["—"],
+ buzz:["Scheduled, not symptom-triggered, visits"],
+ src:["Kaplan & Sadock ch 12 — Somatic Symptom and Related Disorders"],
+ tx:["CBT; antidepressants for comorbid depression or pain"],q:["=regularly scheduled appointments","=committing her to one physician","=improved functional capacity and decreased health service utilization","=cbt is strongest for somatic symptom disorder","=receptive listening tolerance for repetition","=keeping an open mind and doing an independent assessment","=premature reassurance can be perceived as dismissiveness"]},
+
+factcare:{n:"Managing factitious disorder",k:"reg",p:"scCare",enz:"Team meetings · empathic, face-saving · no ambush",inh:"—",fa:"583",hi:1,
+ mech:"Kaplan & Sadock: treat by clinical judgment, remembering subjective complaints may be deceptive; hold <b>regular interdisciplinary meetings</b> to reduce staff conflict and <b>splitting</b>; manage staff <b>countertransference</b>; steer the patient toward psychiatric care in an <b>empathic, nonconfrontational, face-saving</b> way and avoid aggressive direct confrontation; treat underlying psychiatric disturbance; appoint a primary care gatekeeper; involve risk management and bioethics early.",
+ find:["Patients may sign out abruptly when they sense confrontation coming and start the cycle again at another hospital","Factitious disorder imposed on another (by proxy) is abuse","Conversion disorder care: reassure that key tests are normal and symptoms are likely to improve; psychological interpretations early on do not work well; physical therapy, behavioral techniques and relaxation help"],
+ labs:["—"],
+ buzz:["Confront gently, as a team"],
+ src:["Kaplan & Sadock ch 12 — Somatic Symptom and Related Disorders"],
+ tx:["—"],q:["=regular team meetings to reduce staff splitting","=an empathic nonconfrontational face saving","=long term management without expectation of cure","=a good liaison between psychiatry"]},
+
+gcmech:{n:"How glucocorticoids act — receptor, GREs & transrepression",k:"drug",p:"gcAct",enz:"Cytoplasmic receptor → nucleus → gene transcription",inh:"—",fa:"119",hi:1,
+ mech:"Without hormone, the glucocorticoid receptor sits in the cytoplasm bound to chaperone <b>heat-shock proteins</b> (two hsp90 molecules). Free steroid enters the cell, binds, releases the chaperones; the receptor dimerizes, moves into the nucleus and binds <b>glucocorticoid response elements (GREs)</b> in target-gene promoters. The ligand-bound receptor also complexes with other transcription factors such as <b>NF-κB and AP-1</b>, changing transcription of growth factors and proinflammatory cytokines — much of the anti-inflammatory effect (Katzung).",
+ find:["Glucocorticoids induce annexin A1 (lipocortin), which inhibits phospholipase A₂ — see the eicosanoid card","In the kidney, <b>11β-hydroxysteroid dehydrogenase type 2</b> converts cortisol to cortisone, which barely binds the mineralocorticoid receptor — this is what keeps cortisol from acting as a mineralocorticoid there","Steroid travels bound to corticosteroid-binding globulin but enters the cell free"],
+ labs:["—"],
+ buzz:["GRE = transactivation · NF-κB/AP-1 = transrepression"],
+ src:["Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists"],
+ tx:["—"],q:["=intracellular glucocorticoid receptor","=cytoplasmic glucocorticoid receptor","=cytosolic glucocorticoid receptor","glucocorticoid response element","glucocorticoid response elements","heat shock protein","hsp90","=glucocorticoids diffuse across the cell membrane","=the glucocorticoid receptor complex binds glucocorticoid response elements","=methylprednisolone binds cytosolic glucocorticoid receptors"]},
+
+gcpotency:{n:"Corticosteroid potency & duration",k:"drug",p:"gcAct",enz:"Short · intermediate · long acting",inh:"—",fa:"353",hi:1,
+ mech:"Relative to cortisol (anti-inflammatory : salt-retaining, equivalent oral dose), Katzung Table 39-1: <b>hydrocortisone</b> 1 : 1, 20 mg · cortisone 0.8 : 0.8, 25 mg · <b>prednisone</b> 4 : 0.3, 5 mg · prednisolone 5 : 0.3, 5 mg · <b>methylprednisolone</b> 5 : 0.25, 4 mg (short to medium acting) · triamcinolone 5 : 0, 4 mg (intermediate) · <b>betamethasone</b> 25–40 : 0, 0.6 mg · <b>dexamethasone</b> 30 : 0, 0.75 mg (long acting) · <b>fludrocortisone</b> 10 : 250, 2 mg (mineralocorticoid).",
+ find:["<b>Prednisone</b> is a prodrug, rapidly converted to active prednisolone in the body","Fludrocortisone is the mineralocorticoid replacement in adrenal insufficiency; dexamethasone has essentially no salt-retaining effect","Local delivery limits systemic effects: topical, ophthalmic, intra-articular, inhaled (beclomethasone, budesonide, flunisolide, mometasone) and enema forms"],
+ labs:["—"],
+ buzz:["Dex: long, strong, no salt · fludro: salt"],
+ src:["Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists"],
+ tx:["—"],q:["betamethasone","triamcinolone","corticosteroid potency","glucocorticoid potency","=dexamethasone with approximately 30 times","=fludrocortisone a synthetic mineralocorticoid","=prednisone is a prodrug","=fludrocortisone for mineralocorticoid replacement"]},
+
+gcmetab:{n:"Glucocorticoid effects — metabolism, bone, blood & lungs",k:"drug",p:"gcAct",enz:"Catabolic, diabetogenic, anti-inflammatory",inh:"—",fa:"353",hi:1,
+ mech:"Glucocorticoids raise blood glucose through <b>gluconeogenesis</b> and by inhibiting glucose uptake by muscle; they stimulate hormone-sensitive lipase (lipolysis), while the insulin they provoke drives lipogenesis — a net <b>increase in fat deposition</b> with more fatty acids and glycerol released. They break down muscle (weakness) and thin the skin; their catabolic and antianabolic effects on <b>bone</b> cause osteoporosis and limit long-term use; in children they <b>reduce growth</b> (Katzung).",
+ find:["Blood: after a dose, <b>neutrophils rise</b> (more released from marrow, less leaving the vessels) while lymphocytes, monocytes, eosinophils and basophils fall — maximal at 6 hours, gone by 24","Fetal lungs: glucocorticoids stimulate the structural and functional changes near term, including surfactant production","Anti-inflammatory and immunosuppressive: fewer leukocytes at the inflamed site and less cytokine production"],
+ labs:["—"],
+ buzz:["Steroids: ↑ neutrophils, ↓ everything else"],
+ src:["Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists"],
+ tx:["—"],q:["steroid myopathy","glucocorticoid induced osteoporosis","=glucocorticoids stimulate hepatic gluconeogenesis","=glucocorticoids promote both lipolysis and lipogenesis","=prednisone causes neutrophilia through demargination","=excess cortisol demarginating neutrophils","=betamethasone crosses the placenta","=glucocorticoids inhibit osteoblast activity","=reduced linear growth velocity"]},
+
+gcsupp:{n:"Adrenal suppression, stress dosing & tapering",k:"drug",p:"gcUse",enz:"More than 2 weeks of steroids can suppress the HPA axis",inh:"—",fa:"248, 353",hi:1,
+ mech:"Corticosteroids given for <b>more than 2 weeks</b> may suppress the adrenal. After weeks to months of therapy, cover stress: about twice the dose for 24–48 hours for minor stress, up to ten times for 48–72 hours for severe stress such as trauma or major surgery. Reduce the dose <b>slowly</b>, and slower still near replacement levels — the hypothalamic–pituitary–adrenal axis may take <b>2–12 months</b> to recover (Katzung).",
+ find:["Exogenous glucocorticoid suppresses CRH and ACTH by negative feedback, so the patient’s own cortisol production shuts down","An adrenal adenoma making cortisol suppresses ACTH the same way and the other adrenal atrophies (First Aid)","Salt and water retention from steroids with mineralocorticoid activity can cause heart failure — use non-salt-retaining steroids, restrict sodium and supplement potassium"],
+ labs:["—"],
+ buzz:["On steroids > 2 weeks → stress-dose and taper"],
+ src:["Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists"],
+ tx:["Taper slowly; stress-dose for illness and surgery"],q:["adrenal suppression","hpa axis suppression","stress dose","stress dosing","steroid taper","=prolonged exogenous glucocorticoid administration suppresses crh"]},
+
+vdj:{n:"V(D)J recombination — RAG, TdT & allelic exclusion",k:"reg",p:"ldGenes",enz:"Cut-and-join gene segments make each receptor unique",inh:"—",fa:"100, 103",hi:1,
+ mech:"Antigen receptors are assembled by <b>V(D)J recombination</b>. The heavy chain (and TCR β) joins <b>D to J first, then V to DJ</b>; light chains (κ, λ) and TCR α join only V and J. <b>RAG-1 and RAG-2</b> recognize recombination signal sequences, pairing a 12- with a 23-base spacer (the 12/23 rule), nick and break the DNA, and the ends are rejoined; <b>TdT</b> adds random N-nucleotides at the junctions — extra diversity (Male et al.).",
+ find:["About 50 functional VH segments recombine with DH and one of six JH segments","The new μ heavy chain is tested on the surface with a <b>surrogate light chain</b> (VpreB and λ5) and Igα/Igβ — the <b>pre-B-cell receptor</b>; if it works the cell rearranges κ, and if κ fails, λ","<b>Allelic exclusion</b>: each B cell uses either the maternal or the paternal chromosome","Loss of RAG function blocks both B and T cells — a form of SCID"],
+ labs:["—"],
+ buzz:["Heavy: VDJ · light: VJ · D–J first"],
+ src:["OCOM Rheum — SDL 28 reading: B-cell development and the antibody response (Male, Peebles & Male, Immunology ch 9)","OCOM Rheum — SDL 28 reading: T-cell receptors and MHC molecules (Male, Peebles & Male, Immunology ch 6)"],
+ tx:["—"],q:["v d j recombination","vdj recombination","rag1","rag 1","rag2","recombination activating gene","terminal deoxynucleotidyl transferase","n nucleotides","allelic exclusion","surrogate light chain","pre b cell receptor","pre bcr","vpreb","=heavy chains use v d and j segments","=the heavy chain protein must pair successfully","=d j joining at the heavy chain locus"]},
+
+gcenter:{n:"Germinal center reaction — hypermutation, class switching & affinity maturation",k:"reg",p:"ldB",enz:"AID drives both",inh:"—",fa:"103",hi:1,
+ mech:"After antigen and T-cell help, B cells in the <b>germinal centers</b> of lymph nodes, Peyer patches and other secondary lymphoid tissue proliferate and undergo <b>somatic hypermutation</b> of their V regions, receptor editing, <b>class-switch recombination</b>, affinity maturation and selection by antigen; memory B cells also form there. Both hypermutation and class switching require <b>activation-induced cytidine deaminase (AID)</b> (Male et al.).",
+ find:["Mutants that bind antigen with higher affinity are selected — affinity rises over the course of a T-dependent response","Dark zone (centroblasts) and light zones (centrocytes)","Receptor editing also rescues self-reactive immature B cells in the marrow by new light-chain rearrangement"],
+ labs:["—"],
+ buzz:["AID = hypermutation + switching"],
+ src:["OCOM Rheum — SDL 28 reading: B-cell development and the antibody response (Male, Peebles & Male, Immunology ch 9)"],
+ tx:["—"],q:["germinal center reaction","somatic hypermutation","class switch recombination","affinity maturation","activation induced cytidine deaminase","receptor editing","=somatic hypermutation in germinal center b cells","=receptor editing in which rag genes"]},
+
+tdti:{n:"T-dependent vs T-independent antigens & the carrier effect",k:"reg",p:"ldB",enz:"Why polysaccharide vaccines are conjugated to protein",inh:"—",fa:"103, 109",hi:1,
+ mech:"<b>T-independent antigens</b> activate B cells without T-cell help: TI-1 antigens are polyclonal stimulators, TI-2 antigens are polymers that cross-link the B-cell receptor. Responses to <b>T-dependent</b> antigens show class switching and rising affinity. Hapten–carrier experiments showed that helper T cells recognize the <b>carrier</b> while B cells recognize the hapten — the carrier effect (Male et al.).",
+ find:["Conjugate vaccines join a polysaccharide to a protein so that T-cell help is recruited (First Aid)","B cells need CD40L on the helper T cell binding CD40 for class switching"],
+ labs:["—"],
+ buzz:["Polysaccharide alone = T-independent, IgM, little memory"],
+ src:["OCOM Rheum — SDL 28 reading: B-cell development and the antibody response (Male, Peebles & Male, Immunology ch 9)"],
+ tx:["—"],q:["t independent antigen","t independent antigens","t dependent antigen","thymus independent","carrier effect","hapten carrier","conjugate vaccine","conjugate vaccines","=conjugating polysaccharide to a carrier protein"]},
+
+tcrcd3:{n:"The T-cell receptor complex",k:"reg",p:"ldT",enz:"αβ or γδ TCR + CD3 for signaling",inh:"—",fa:"100",hi:1,
+ mech:"The <b>TCR</b> is a heterodimer of <b>α and β</b> (most T cells) or <b>γ and δ</b> chains, each generated by random gene rearrangement; αβ T cells recognize antigen presented on MHC molecules. The TCR has only a short cytoplasmic tail and cannot signal alone — it forms a complex with <b>CD3 γ, δ, ε and ζ</b>, and the ζ chain’s <b>ITAMs</b> are phosphorylated to signal (Male et al.).",
+ find:["MAIT cells have αβ TCRs of limited diversity and recognize non-peptide antigen on MHC class I-like molecules","TCRB rearranges D–J first, then V–DJ, as at the heavy-chain locus","Thymic selection and the CD4/CD8 decision are on the thymus card"],
+ labs:["—"],
+ buzz:["TCR sees antigen · CD3 signals"],
+ src:["OCOM Rheum — SDL 28 reading: T-cell receptors and MHC molecules (Male, Peebles & Male, Immunology ch 6)"],
+ tx:["—"],q:["t cell receptor complex","tcr complex","cd3 complex","gamma delta t cells","cd3 zeta"]},
 
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
@@ -21074,7 +21390,8 @@ MAPS.acidbase = {
   {id:"n99",l:"Hyperphosphatemia",x:2220,y:2830,p:"abelectro",s:"renal failure, tumor lysis",m:["mgpo4","tls"]},
   {id:"n100",l:"Metastatic calcification · low Ca²⁺",x:2820,y:2830,p:"abelectro"}],
  plots:[
-  {x:140,y:3698,w:1480,h:560,kind:"titration",t:"Buffer titration curves"}],
+  {x:140,y:3698,w:1480,h:560,kind:"titration",t:"Buffer titration curves"},
+  {x:1680,y:3698,w:1480,h:560,kind:"phh",t:"pH and [H⁺] — a log scale"}],
  edges:[
   {a:"ph",b:"acm",p:"abmetab"},
   {a:"ph",b:"alk",p:"abmetab"},
@@ -29299,9 +29616,9 @@ MAPS.membrane = {
 
 MAPS.urineconc = {
  t:"Urine Concentration & Body Fluids", sub:"Where the body’s water sits and how it shifts · how the loop of Henle and ADH concentrate or dilute the urine · and the disorders of too much or too little water",
- w:3300, h:2020,
+ w:3300, h:2700,
  fa:"342, 599, 606, 608",
- src:["Costanzo ch 6 — Renal physiology","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema","Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema","Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration","Guyton ch 32 — Diuretics and Kidney Diseases"],
  comps:[
   {x:140,y:110,w:3020,h:140,l:"Body fluid compartments"},
   {x:140,y:310,w:3020,h:200,l:"Fluid shifts — water follows osmolarity"},
@@ -29354,7 +29671,8 @@ MAPS.urineconc = {
   {id:"w6",l:"Sickle cell trait",x:420,y:970,p:"ufdis",s:"cannot concentrate urine (hyposthenuria)",m:["sickletrait"]},
   {id:"wx1",l:"→ Nephron",x:1020,y:970,p:"neutral",k:"ghost",go:"nephron"}],
  plots:[
-  {x:140,y:1340,w:2400,h:620,kind:"dditest",t:"Water deprivation, then desmopressin"}],
+  {x:140,y:1340,w:2400,h:620,kind:"dditest",t:"Water deprivation, then desmopressin"},
+  {x:140,y:2020,w:2400,h:620,kind:"ccprof",t:"Tubular fluid osmolality along the nephron"}],
  edges:[
   {a:"n1",b:"n2",p:"ufconc"},
   {a:"n2",b:"n3",p:"ufconc",arrow:"none",dash:true}]
@@ -29624,7 +29942,7 @@ MAPS.sportsortho = {
 
 MAPS.gasx = {
  t:"Gas Exchange & Pulmonary Blood Flow", sub:"Partial pressures set every gradient · gases cross a thin, vast membrane · the lung’s low-pressure circulation and its zones · how the lung stays dry · and where O₂ and CO₂ go in the tissues",
- w:3300, h:1494,
+ w:3300, h:2154,
  fa:"300, 316, 684–688",
  src:["Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid","Guyton ch 40 — Principles of Gas Exchange; Diffusion of Oxygen and Carbon Dioxide Through Respiratory Membranes","Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids","Costanzo ch 5 — Respiratory physiology"],
  comps:[
@@ -29686,6 +30004,8 @@ MAPS.gasx = {
   {id:"t6",l:"Methemoglobinemia",x:420,y:1130,p:"gxtis",s:"Fe³⁺ cannot carry O₂",m:["methb"]},
   {id:"t7",l:"Response to exercise",x:1020,y:1130,p:"gxtis",s:"more O₂ extracted and delivered",m:["exercisephys"]},
   {id:"tx1",l:"→ Acid-Base & Electrolytes",x:1620,y:1130,p:"neutral",k:"ghost",go:"acidbase"}],
+ plots:[
+  {x:140,y:1494,w:2400,h:600,kind:"co2dc",t:"CO₂ dissociation curve and the Haldane effect"}],
  edges:[
   {a:"g1",b:"g2",p:"gxlaw"},
   {a:"m1",b:"m2",p:"gxmem"},
@@ -31827,7 +32147,353 @@ MAPS.legfx = {
   {a:"a3",b:"a4",p:"lfAnkle"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["index","Index"]];
+MAPS.gaze = {
+ t:"Eye Movements & Gaze Centers", sub:"The five kinds of eye movement · the horizontal and vertical gaze centers, the pulse-and-step saccade signal and where lesions put a gaze palsy, INO or one-and-a-half · the cortical eye fields, pursuit and the optokinetic reflex · and the pupillary light reflex and near triad",
+ w:3300, h:1612,
+ fa:"524, 554, 558",
+ src:["Fundamental Neuroscience ch 28 — Visual Motor Systems", "Fundamental Neuroscience ch 22 — The Vestibular System"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Kinds of eye movement"},
+  {x:140,y:290,w:3020,h:200,l:"Gaze centers and lesions"},
+  {x:140,y:550,w:3020,h:120,l:"Pupil"}],
+ panels:[
+  {x:140,y:730,w:1480,h:160,kw:144,t:"Eye movements (Fundamental Neuroscience Table 28.1)",rows:[
+   ["Saccade","100–700°/s · latency 200 ms · conjugate"],
+   ["Smooth pursuit","< 100°/s · 100 ms · conjugate"],
+   ["Vergence","≈ 15°/s · 150 ms · disconjugate"],
+   ["VOR","< 500°/s · < 15 ms · head acceleration"],
+   ["Optokinetic","< 100°/s · 50–100 ms · retinal slip"]]},
+  {x:1680,y:730,w:1480,h:160,kw:377,t:"Where is the lesion?",rows:[
+   ["One eye cannot abduct","abducens nerve"],
+   ["Neither eye looks to one side","abducens nucleus or PPRF"],
+   ["One eye cannot adduct, convergence normal","MLF (INO)"],
+   ["One eye frozen, other only abducts","one-and-a-half"],
+   ["Cannot look up · light–near dissociation","dorsal midbrain (Parinaud)"]]}],
+ nodes:[
+  {id:"t1",l:"Five eye movements",x:420,y:170,p:"emTypes",k:"hub",s:"saccade · pursuit · vergence · VOR · OKR",m:["eyemovtypes"]},
+  {id:"t2",l:"Saccade",x:1020,y:170,p:"emTypes",s:"100–700°/s · sedative-sensitive",m:["eyemovtypes","pulsestep"]},
+  {id:"t3",l:"Smooth pursuit",x:1620,y:170,p:"emTypes",s:"< 100°/s · via the flocculus",m:["pursuitokn"]},
+  {id:"t4",l:"Vergence · near triad",x:2220,y:170,p:"emTypes",s:"disconjugate · supraoculomotor area",m:["neartriad","accommodation"]},
+  {id:"t5",l:"VOR · optokinetic",x:2820,y:170,p:"emTypes",s:"acceleration · retinal slip",m:["pursuitokn","vestibular","nystagmus"]},
+  {id:"g1",l:"Horizontal gaze center",x:420,y:350,p:"emGaze",k:"hub",s:"PPRF → abducens nucleus → MLF",m:["hgaze"]},
+  {id:"g2",l:"Abducens nucleus",x:1020,y:350,p:"emGaze",s:"gaze palsy, not one muscle",m:["hgaze"]},
+  {id:"g3",l:"INO",x:1620,y:350,p:"emGaze",s:"MLF · cannot adduct",m:["ino","hgaze"]},
+  {id:"g4",l:"One-and-a-half",x:2220,y:350,p:"emGaze",s:"nucleus + crossing MLF",m:["hgaze"]},
+  {id:"g5",l:"CN VI palsy",x:2820,y:350,p:"emGaze",s:"one lateral rectus",m:["cn46palsy"]},
+  {id:"g6",l:"Pulse and step",x:420,y:430,p:"emGaze",k:"hub",s:"burst · integrator · omnipause",m:["pulsestep"]},
+  {id:"g7",l:"Vertical gaze center",x:1020,y:430,p:"emGaze",k:"hub",s:"riMLF · Cajal",m:["vgaze"]},
+  {id:"g8",l:"Posterior commissure",x:1620,y:430,p:"emGaze",s:"pinealoma → vertical gaze palsy",m:["vgaze","lightnear"]},
+  {id:"g9",l:"Frontal eye field",x:2220,y:430,p:"emGaze",k:"hub",s:"voluntary · crossed drive",m:["corteye"]},
+  {id:"g10",l:"Superior colliculus",x:2820,y:430,p:"emGaze",s:"reflexive orienting",m:["corteye"]},
+  {id:"p1",l:"Light reflex",x:420,y:610,p:"emPupil",k:"hub",s:"retina → pretectum → both EW",m:["pupilpath"]},
+  {id:"p2",l:"RAPD",x:1020,y:610,p:"emPupil",s:"afferent defect",m:["rapd"]},
+  {id:"p3",l:"CN III efferent defect",x:1620,y:610,p:"emPupil",s:"that pupil never constricts",m:["pupilpath","cn3palsy"]},
+  {id:"p4",l:"Adie tonic pupil",x:2220,y:610,p:"emPupil",s:"postganglionic · cholinergic supersensitive",m:["pupilpath"]},
+  {id:"p5",l:"Horner syndrome",x:2820,y:610,p:"emPupil",s:"ptosis · miosis",m:["horner"]}],
+ plots:[
+  {x:140,y:952,w:2400,h:600,kind:"eyetrace",t:"Eye-movement recordings — step, ramp, sawtooth"}],
+ edges:[
+  {a:"t1",b:"t2",p:"emTypes"},
+  {a:"t2",b:"t3",p:"emTypes"},
+  {a:"t3",b:"t4",p:"emTypes"},
+  {a:"g1",b:"g2",p:"emGaze"},
+  {a:"g2",b:"g3",p:"emGaze"},
+  {a:"g3",b:"g4",p:"emGaze"},
+  {a:"g6",b:"g7",p:"emGaze"},
+  {a:"g7",b:"g8",p:"emGaze"},
+  {a:"g9",b:"g10",p:"emGaze"},
+  {a:"p1",b:"p2",p:"emPupil"},
+  {a:"p2",b:"p3",p:"emPupil"},
+  {a:"p3",b:"p4",p:"emPupil"}]
+};
+
+MAPS.neckpain = {
+ t:"Neck Pain & Cervical Radiculopathy", sub:"Cervical spondylosis and stenosis · which cervical root, and the Spurling test · myelopathy signs · red flags, timing and imaging for neck and back pain · mechanical low back pain, spondylosis and lumbosacral radiculopathy",
+ w:3300, h:772,
+ fa:"458",
+ src:["OCOM Ortho — SDL 19 lecture: Neck and back pain and injury", "OCOM Ortho — SDL 19 reading: Neck and back pain (Tintinalli’s Emergency Medicine 9e ch 279)"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"The neck"},
+  {x:140,y:290,w:3020,h:200,l:"The low back"}],
+ panels:[
+  {x:140,y:550,w:1480,h:160,kw:120,t:"Cervical roots (course lecture)",rows:[
+   ["C5","lateral arm · shoulder abduction · biceps"],
+   ["C6","thumb, index · elbow flexion, supination · biceps, brachioradialis"],
+   ["C7","middle finger · elbow and wrist extension · triceps"],
+   ["C8","little finger · finger flexion and extension · none"],
+   ["T1","medial arm · finger abduction · none"]]},
+  {x:1680,y:550,w:1480,h:138,kw:187,t:"Radiculopathy vs myelopathy",rows:[
+   ["Radiculopathy","one root: dermatome, myotome, reflex ↓"],
+   ["Myelopathy","cord: clumsy hands, spasticity, reflexes ↑"],
+   ["Spurling","reproduces root pain"],
+   ["Lhermitte · Hoffman","cord compression · UMN sign"]]}],
+ nodes:[
+  {id:"c1",l:"Cervical spondylosis",x:420,y:170,p:"npCerv",k:"hub",s:"95% by 65 · stenosis",m:["cervspond"]},
+  {id:"c2",l:"Cervical radiculopathy",x:1020,y:170,p:"npCerv",k:"hub",s:"which root?",m:["cervradic"]},
+  {id:"c3",l:"Spurling sign",x:1620,y:170,p:"npCerv",s:"90% specific · 45% sensitive",m:["cervradic"]},
+  {id:"c4",l:"C6 · C7",x:2220,y:170,p:"npCerv",s:"thumb · middle finger, triceps",m:["cervradic","reflexroots"]},
+  {id:"c5",l:"Cervical myelopathy",x:2820,y:170,p:"npCerv",k:"hub",s:"Lhermitte · Hoffman",m:["cervmyel"]},
+  {id:"l1",l:"Red flags & timing",x:420,y:350,p:"npLumb",k:"hub",s:"80–90% resolve in 6 weeks",m:["backflags"]},
+  {id:"l2",l:"Imaging",x:1020,y:350,p:"npLumb",s:"not before 4–6 weeks without flags",m:["backflags","lbptriage"]},
+  {id:"l3",l:"Cauda equina",x:1620,y:350,p:"npLumb",s:"saddle anesthesia · emergent MRI",m:["caudaequina"]},
+  {id:"l4",l:"Mechanical LBP",x:2220,y:350,p:"npLumb",k:"hub",s:"up to 80% lifetime",m:["mechlbp"]},
+  {id:"l5",l:"Lumbosacral spondylosis",x:2820,y:350,p:"npLumb",s:"morning stiffness eases",m:["mechlbp"]},
+  {id:"l6",l:"Lumbosacral radiculopathy",x:420,y:430,p:"npLumb",k:"hub",s:"disc or spondylosis",m:["lumbradic"]},
+  {id:"l7",l:"L4 · L5 · S1",x:1020,y:430,p:"npLumb",s:"patellar · foot drop · Achilles",m:["reflexroots","lumbarexam"]},
+  {id:"l8",l:"Disc herniation",x:1620,y:430,p:"npLumb",s:"straight leg raise",m:["discdz"]},
+  {id:"l9",l:"Spinal stenosis",x:2220,y:430,p:"npLumb",s:"neurogenic claudication",m:["spinalstenosis"]},
+  {id:"l10",l:"Epidural steroid injection",x:2820,y:430,p:"npLumb",s:"after conservative care",m:["lumbradic"]}],
+ edges:[
+  {a:"c1",b:"c2",p:"npCerv"},
+  {a:"c2",b:"c3",p:"npCerv"},
+  {a:"c3",b:"c4",p:"npCerv"},
+  {a:"l1",b:"l2",p:"npLumb"},
+  {a:"l2",b:"l3",p:"npLumb"},
+  {a:"l4",b:"l5",p:"npLumb"},
+  {a:"l6",b:"l7",p:"npLumb"},
+  {a:"l7",b:"l8",p:"npLumb"}]
+};
+
+MAPS.ionchan = {
+ t:"Resting Potential, Ion Channels & Graded Potentials", sub:"How cells keep their volume and why the resting potential is negative · the channel families — K2P, CNG, HCN, Piezo, TRP, ASIC, ENaC and aquaporins · graded vs action potentials, sodium-channel blockers and toxins, and why demyelination blocks conduction",
+ w:3300, h:1532,
+ fa:"504",
+ src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"At rest"},
+  {x:140,y:290,w:3020,h:120,l:"Channel families"},
+  {x:140,y:470,w:3020,h:120,l:"Signals"}],
+ panels:[
+  {x:140,y:650,w:1480,h:138,kw:120,t:"Typical neuron (Fundamental Neuroscience Table 3.2)",rows:[
+   ["Na⁺","10 in · 142 out · E = +70 mV"],
+   ["K⁺","100 in · 4 out · E = −86 mV"],
+   ["Ca²⁺","0.0001 in · 1.2 out · E = +126 mV"],
+   ["Cl⁻","5.5 in · 103 out · E = −78 mV"]]},
+  {x:1680,y:650,w:1480,h:160,kw:179,t:"Sense → channel (Table 3.4)",rows:[
+   ["Vision · smell","CNG"],
+   ["Touch · salt taste","ENaC (and Piezo)"],
+   ["Heat · capsaicin","TRPV"],
+   ["Cold · menthol","TRPM, TRPA"],
+   ["Sour","OTOP1 (H⁺)"]]}],
+ nodes:[
+  {id:"r1",l:"Cell volume",x:420,y:170,p:"icRest",k:"hub",s:"impermeant protein vs outside Na⁺",m:["osmobal"]},
+  {id:"r2",l:"Aquaporins",x:1020,y:170,p:"icRest",s:"water only",m:["aquaporins"]},
+  {id:"r3",l:"Resting potential",x:1620,y:170,p:"icRest",k:"hub",s:"K2P leak · fixed anions",m:["restk","rmp"]},
+  {id:"r4",l:"Equilibrium potentials",x:2220,y:170,p:"icRest",s:"K⁺ −86 · Na⁺ +70",m:["eqpot","restk"]},
+  {id:"r5",l:"Na⁺/K⁺-ATPase",x:2820,y:170,p:"icRest",s:"3 out, 2 in",m:["rmp"]},
+  {id:"c1",l:"Channel families",x:420,y:350,p:"icChan",k:"hub",s:"what each one does",m:["ionchanfam"]},
+  {id:"c2",l:"CNG · HCN",x:1020,y:350,p:"icChan",s:"vision, smell · pacemaker",m:["ionchanfam"]},
+  {id:"c3",l:"Piezo · TRP · ASIC",x:1620,y:350,p:"icChan",s:"touch · temperature · acid",m:["ionchanfam"]},
+  {id:"c4",l:"Na⁺-channel blockers",x:2220,y:350,p:"icChan",k:"hub",s:"use-dependent · TTX · venom",m:["nachtox","localanes"]},
+  {id:"c5",l:"Seafood toxins",x:2820,y:350,p:"icChan",s:"tetrodotoxin · ciguatoxin",m:["seafoodtox"]},
+  {id:"s1",l:"Graded vs action potential",x:420,y:530,p:"icSignal",k:"hub",s:"decays vs regenerates",m:["gradedap"]},
+  {id:"s2",l:"Action potential",x:1020,y:530,p:"icSignal",s:"all-or-none",m:["nerveap"]},
+  {id:"s3",l:"Refractory periods",x:1620,y:530,p:"icSignal",s:"absolute · relative",m:["refractory"]},
+  {id:"s4",l:"Conduction velocity",x:2220,y:530,p:"icSignal",s:"diameter · myelin",m:["conduction","fibertypes"]},
+  {id:"s5",l:"Demyelination",x:2820,y:530,p:"icSignal",k:"hub",s:"conduction block",m:["demyelin","ms"]}],
+ plots:[
+  {x:140,y:872,w:2400,h:600,kind:"gradap",t:"Graded vs action potentials over distance"}],
+ edges:[
+  {a:"r1",b:"r2",p:"icRest"},
+  {a:"r3",b:"r4",p:"icRest"},
+  {a:"r4",b:"r5",p:"icRest"},
+  {a:"c1",b:"c2",p:"icChan"},
+  {a:"c2",b:"c3",p:"icChan"},
+  {a:"c4",b:"c5",p:"icChan"},
+  {a:"s1",b:"s2",p:"icSignal"},
+  {a:"s2",b:"s3",p:"icSignal"},
+  {a:"s3",b:"s4",p:"icSignal"},
+  {a:"s4",b:"s5",p:"icSignal"}]
+};
+
+MAPS.psyrxprin = {
+ t:"Psychopharmacology Principles", sub:"Choosing a psychotropic from drug, patient and illness factors · combination vs augmentation and fixed-dose combinations · the five questions when a drug fails · half-life, withdrawal and discontinuation syndromes",
+ w:3300, h:692,
+ fa:"",
+ src:["Kaplan & Sadock ch 21 — Psychopharmacology"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Choosing and combining"},
+  {x:140,y:290,w:3020,h:120,l:"Failure and stopping"}],
+ panels:[
+  {x:140,y:470,w:1480,h:160,kw:120,t:"Treatment failure checklist (Kaplan & Sadock)",rows:[
+   ["1","Right diagnosis? medical or drug cause?"],
+   ["2","Symptom, or a side effect that mimics it?"],
+   ["3","Adequate dose for long enough? levels?"],
+   ["4","A PK or PD interaction?"],
+   ["5","Taken as directed?"]]},
+  {x:1680,y:470,w:1480,h:138,kw:153,t:"Combination vs augmentation",rows:[
+   ["Combination","two drugs, same approved indication"],
+   ["Augmentation","add a drug with another indication"],
+   ["Example","thyroid hormone + antidepressant"],
+   ["Fixed-dose pill","simpler, but no separate titration"]]}],
+ nodes:[
+  {id:"a1",l:"Choosing a drug",x:420,y:170,p:"prPrin",k:"hub",s:"past response predicts",m:["psyrxchoose"]},
+  {id:"a2",l:"Potency vs efficacy",x:1020,y:170,p:"prPrin",s:"haloperidol vs chlorpromazine",m:["efficacypotency"]},
+  {id:"a3",l:"Agonist spectrum",x:1620,y:170,p:"prPrin",s:"full · partial · inverse",m:["antagonists"]},
+  {id:"a4",l:"Therapeutic index",x:2220,y:170,p:"prPrin",s:"TD50 / ED50",m:["ti"]},
+  {id:"a5",l:"Combination vs augmentation",x:2820,y:170,p:"prPrin",k:"hub",s:"same vs different indication",m:["combaug"]},
+  {id:"f1",l:"Five questions",x:420,y:350,p:"prFail",k:"hub",s:"diagnosis · side effect · dose · interaction · adherence",m:["txfail"]},
+  {id:"f2",l:"Interactions",x:1020,y:350,p:"prFail",s:"PK vs PD",m:["druginteract"]},
+  {id:"f3",l:"CYP2D6",x:1620,y:350,p:"prFail",s:"poor and ultrarapid metabolizers",m:["cyp2d6"]},
+  {id:"f4",l:"Discontinuation",x:2220,y:350,p:"prFail",k:"hub",s:"short half-life, abrupt stop",m:["discont"]},
+  {id:"f5",l:"Half-life · steady state",x:2820,y:350,p:"prFail",s:"about 5 half-lives",m:["clearance"]}],
+ edges:[
+  {a:"a1",b:"a2",p:"prPrin"},
+  {a:"a2",b:"a3",p:"prPrin"},
+  {a:"a3",b:"a4",p:"prPrin"},
+  {a:"f1",b:"f2",p:"prFail"},
+  {a:"f2",b:"f3",p:"prFail"},
+  {a:"f4",b:"f5",p:"prFail"}]
+};
+
+MAPS.somatcare = {
+ t:"Somatic Symptom & Factitious Disorders — Care", sub:"Why somatic symptoms persist · functional neurologic signs at the bedside · managing somatic symptom disorder, conversion and factitious disorder · and telling them from malingering",
+ w:3300, h:772,
+ fa:"583",
+ src:["Kaplan & Sadock ch 12 — Somatic Symptom and Related Disorders"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Recognizing"},
+  {x:140,y:370,w:3020,h:120,l:"Care"}],
+ panels:[
+  {x:140,y:550,w:1480,h:138,kw:153,t:"Intentional? Why? (Kaplan & Sadock)",rows:[
+   ["Somatic symptom","not intentional · unconscious motivation"],
+   ["Conversion","not intentional · unconscious motivation"],
+   ["Factitious","intentional · the sick role"],
+   ["Malingering","intentional · external gain"]]},
+  {x:1680,y:550,w:1480,h:160,kw:120,t:"Primary-care plan for somatic symptoms",rows:[
+   ["Visits","regular, scheduled — not symptom-triggered"],
+   ["Exam","brief, focused on the complaint"],
+   ["Tests","avoid unnecessary workups and procedures"],
+   ["Language","never “it’s all in your head”"],
+   ["Therapy","CBT; antidepressants for pain or depression"]]}],
+ nodes:[
+  {id:"d1",l:"Somatic symptom disorder",x:420,y:170,p:"scDx",k:"hub",s:"real symptoms, excessive worry",m:["somaticsx"]},
+  {id:"d2",l:"Why it persists",x:1020,y:170,p:"scDx",s:"amplification · sick role",m:["somcause"]},
+  {id:"d3",l:"Conversion disorder",x:1620,y:170,p:"scDx",s:"deficit that fits no anatomy",m:["conversion"]},
+  {id:"d4",l:"Functional signs",x:2220,y:170,p:"scDx",k:"hub",s:"Hoover · give-away · astasia–abasia",m:["funcsigns"]},
+  {id:"d5",l:"Nonepileptic events",x:2820,y:170,p:"scDx",s:"prolactin, video EEG",m:["pnes"]},
+  {id:"d6",l:"Factitious disorder",x:420,y:250,p:"scDx",k:"hub",s:"intentional · for the sick role",m:["factitious"]},
+  {id:"d7",l:"Malingering",x:1020,y:250,p:"scDx",s:"intentional · external gain",m:["malingering"]},
+  {id:"d8",l:"Rule out",x:1620,y:250,p:"scDx",s:"MS · SLE · myasthenia",m:["funcsigns"]},
+  {id:"d9",l:"Illness anxiety",x:2220,y:250,p:"scDx",s:"few symptoms, fixed fear",m:["somaticsx"]},
+  {id:"d10",l:"Risk factors",x:2820,y:250,p:"scDx",s:"childhood illness · health-care work",m:["somcause"]},
+  {id:"c1",l:"Somatic symptom care",x:420,y:430,p:"scCare",k:"hub",s:"one physician · scheduled visits",m:["somcare"]},
+  {id:"c2",l:"CBT",x:1020,y:430,p:"scCare",s:"best evidence",m:["somcare"]},
+  {id:"c3",l:"Conversion care",x:1620,y:430,p:"scCare",s:"reassure · physical therapy",m:["factcare","conversion"]},
+  {id:"c4",l:"Factitious care",x:2220,y:430,p:"scCare",k:"hub",s:"team · face-saving",m:["factcare"]},
+  {id:"c5",l:"Countertransference",x:2820,y:430,p:"scCare",s:"staff splitting",m:["factcare"]}],
+ edges:[
+  {a:"d1",b:"d2",p:"scDx"},
+  {a:"d3",b:"d4",p:"scDx"},
+  {a:"d4",b:"d5",p:"scDx"},
+  {a:"d6",b:"d7",p:"scDx"},
+  {a:"c1",b:"c2",p:"scCare"},
+  {a:"c4",b:"c5",p:"scCare"}]
+};
+
+MAPS.gcpharm = {
+ t:"Glucocorticoid Pharmacology", sub:"How glucocorticoids act through their receptor and transcription factors · potency and duration from hydrocortisone to dexamethasone · metabolic, bone, blood and lung effects · adrenal suppression, stress dosing and tapering",
+ w:3300, h:1432,
+ fa:"119, 248, 353, 340, 352",
+ src:["Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists", "Guyton ch 78 — Adrenocortical Hormones","Robbins ch 24 — The endocrine system"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Actions"},
+  {x:140,y:370,w:3020,h:120,l:"Suppression and withdrawal"}],
+ panels:[
+  {x:140,y:550,w:1480,h:160,kw:179,t:"Relative potency (Katzung Table 39-1)",rows:[
+   ["Hydrocortisone","1 : 1 · 20 mg"],
+   ["Prednisone","4 : 0.3 · 5 mg"],
+   ["Methylprednisolone","5 : 0.25 · 4 mg"],
+   ["Dexamethasone","30 : 0 · 0.75 mg"],
+   ["Fludrocortisone","10 : 250 · 2 mg"]]},
+  {x:1680,y:550,w:1480,h:138,kw:213,t:"After a single dose (Katzung)",rows:[
+   ["Neutrophils","rise"],
+   ["Lymphocytes, monocytes","fall"],
+   ["Eosinophils, basophils","fall"],
+   ["Timing","peak 6 h · gone by 24 h"]]}],
+ nodes:[
+  {id:"a1",l:"Mechanism",x:420,y:170,p:"gcAct",k:"hub",s:"receptor → GRE · NF-κB",m:["gcmech"]},
+  {id:"a2",l:"Annexin A1 → PLA₂",x:1020,y:170,p:"gcAct",s:"upstream of COX and LOX",m:["cortico"]},
+  {id:"a3",l:"11β-HSD2",x:1620,y:170,p:"gcAct",s:"kidney inactivates cortisol",m:["gcmech","ame"]},
+  {id:"a4",l:"Potency table",x:2220,y:170,p:"gcAct",k:"hub",s:"hydrocortisone → dexamethasone",m:["gcpotency"]},
+  {id:"a5",l:"Fludrocortisone",x:2820,y:170,p:"gcAct",s:"salt-retaining",m:["gcpotency","addison"]},
+  {id:"a6",l:"Effects",x:420,y:250,p:"gcAct",k:"hub",s:"glucose, fat, muscle, bone",m:["gcmetab"]},
+  {id:"a7",l:"Blood counts",x:1020,y:250,p:"gcAct",s:"↑ neutrophils · ↓ lymphocytes, eosinophils",m:["gcmetab"]},
+  {id:"a8",l:"Fetal lung",x:1620,y:250,p:"gcAct",s:"surfactant near term",m:["gcmetab"]},
+  {id:"a9",l:"Inhaled steroids",x:2220,y:250,p:"gcAct",s:"local, first-pass",m:["gcpotency","asthmadrugs"]},
+  {id:"a10",l:"Cushing syndrome",x:2820,y:250,p:"gcAct",s:"exogenous is commonest",m:["cushing"]},
+  {id:"s1",l:"Adrenal suppression",x:420,y:430,p:"gcUse",k:"hub",s:"> 2 weeks",m:["gcsupp"]},
+  {id:"s2",l:"Stress dosing",x:1020,y:430,p:"gcUse",s:"2× minor · up to 10× severe",m:["gcsupp"]},
+  {id:"s3",l:"Taper",x:1620,y:430,p:"gcUse",s:"recovery 2–12 months",m:["gcsupp"]},
+  {id:"s4",l:"HPA feedback",x:2220,y:430,p:"gcUse",s:"cortisol ⊣ CRH and ACTH",m:["axisreg"]},
+  {id:"s5",l:"Adrenal crisis",x:2820,y:430,p:"gcUse",s:"abrupt withdrawal",m:["addison"]}],
+ plots:[
+  {x:140,y:772,w:2400,h:600,kind:"cortrhythm",t:"Daily cortisol rhythm"}],
+ edges:[
+  {a:"a1",b:"a2",p:"gcAct"},
+  {a:"a2",b:"a3",p:"gcAct"},
+  {a:"a4",b:"a5",p:"gcAct"},
+  {a:"a6",b:"a7",p:"gcAct"},
+  {a:"a7",b:"a8",p:"gcAct"},
+  {a:"s1",b:"s2",p:"gcUse"},
+  {a:"s2",b:"s3",p:"gcUse"}]
+};
+
+MAPS.lymphdev = {
+ t:"Lymphocyte Development & Antigen Receptors", sub:"V(D)J recombination, RAG and TdT, and the pre-B receptor · B-cell maturation, germinal centers, hypermutation and class switching · T-dependent and T-independent antigens · the TCR complex, thymic selection, costimulation and where inherited defects block the line",
+ w:3300, h:952,
+ fa:"100, 101, 103, 114, 115",
+ src:["OCOM Rheum — SDL 28 reading: B-cell development and the antibody response (Male, Peebles & Male, Immunology ch 9)", "OCOM Rheum — SDL 28 reading: T-cell receptors and MHC molecules (Male, Peebles & Male, Immunology ch 6)"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Building the receptor"},
+  {x:140,y:290,w:3020,h:120,l:"B cells"},
+  {x:140,y:470,w:3020,h:200,l:"T cells"}],
+ panels:[
+  {x:140,y:730,w:1480,h:160,kw:120,t:"Where development stops (First Aid; Male et al.)",rows:[
+   ["RAG1/RAG2","no V(D)J → no B or T cells (SCID)"],
+   ["BTK","pro-B → pre-B blocked (XLA)"],
+   ["CD40L","no class switch (hyper-IgM)"],
+   ["AIRE","no negative selection (APS-1)"],
+   ["FOXP3","no Tregs (IPEX)"]]},
+  {x:1680,y:730,w:1480,h:138,kw:196,t:"Receptor genes",rows:[
+   ["Heavy chain · TCR β","V, D and J"],
+   ["Light chain · TCR α","V and J"],
+   ["Junctional diversity","TdT N-nucleotides"],
+   ["Allelic exclusion","one parental allele per cell"]]}],
+ nodes:[
+  {id:"g1",l:"V(D)J recombination",x:420,y:170,p:"ldGenes",k:"hub",s:"RAG · 12/23 rule · TdT",m:["vdj"]},
+  {id:"g2",l:"Heavy VDJ · light VJ",x:1020,y:170,p:"ldGenes",s:"D–J first",m:["vdj"]},
+  {id:"g3",l:"Pre-B receptor",x:1620,y:170,p:"ldGenes",s:"μ + VpreB, λ5",m:["vdj","bcellreg"]},
+  {id:"g4",l:"RAG loss",x:2220,y:170,p:"ldGenes",s:"no B or T cells",m:["scidx","vdj"]},
+  {id:"g5",l:"TdT⁺ blasts",x:2820,y:170,p:"ldGenes",s:"precursor leukemia",m:["alleuk"]},
+  {id:"b1",l:"B-cell development",x:420,y:350,p:"ldB",k:"hub",s:"marrow → periphery",m:["bcellreg"]},
+  {id:"b2",l:"BTK block",x:1020,y:350,p:"ldB",s:"X-linked agammaglobulinemia",m:["xla"]},
+  {id:"b3",l:"Germinal center",x:1620,y:350,p:"ldB",k:"hub",s:"AID · hypermutation · switching",m:["gcenter"]},
+  {id:"b4",l:"CD40L defect",x:2220,y:350,p:"ldB",s:"hyper-IgM",m:["hyperigm"]},
+  {id:"b5",l:"T-dependent vs independent",x:2820,y:350,p:"ldB",s:"conjugate vaccines",m:["tdti"]},
+  {id:"t1",l:"TCR complex",x:420,y:530,p:"ldT",k:"hub",s:"αβ or γδ + CD3",m:["tcrcd3"]},
+  {id:"t2",l:"Thymic selection",x:1020,y:530,p:"ldT",k:"hub",s:"positive cortex · negative medulla",m:["tcellreg"]},
+  {id:"t3",l:"AIRE",x:1620,y:530,p:"ldT",s:"APS-1",m:["aps1","tcellreg"]},
+  {id:"t4",l:"22q11 deletion",x:2220,y:530,p:"ldT",s:"no thymus",m:["digeorge"]},
+  {id:"t5",l:"Two signals",x:2820,y:530,p:"ldT",s:"TCR + B7–CD28 · anergy",m:["tcellact"]},
+  {id:"t6",l:"Tregs · FOXP3",x:420,y:610,p:"ldT",s:"IPEX when lost",m:["ipex","thelperreg"]},
+  {id:"t7",l:"CTLA-4 · abatacept",x:1020,y:610,p:"ldT",s:"blocks B7",m:["ctla4ig"]},
+  {id:"t8",l:"PD-1 checkpoint",x:1620,y:610,p:"ldT",s:"pembrolizumab",m:["checkpoint"]},
+  {id:"t9",l:"MHC II deficiency",x:2220,y:610,p:"ldT",s:"bare lymphocyte",m:["blsyn"]},
+  {id:"t10",l:"Common γ chain",x:2820,y:610,p:"ldT",s:"X-linked SCID",m:["scidx"]}],
+ edges:[
+  {a:"g1",b:"g2",p:"ldGenes"},
+  {a:"g2",b:"g3",p:"ldGenes"},
+  {a:"g3",b:"g4",p:"ldGenes"},
+  {a:"b1",b:"b2",p:"ldB"},
+  {a:"b3",b:"b4",p:"ldB"},
+  {a:"t1",b:"t2",p:"ldT"},
+  {a:"t2",b:"t3",p:"ldT"},
+  {a:"t6",b:"t7",p:"ldT"},
+  {a:"t7",b:"t8",p:"ldT"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -31838,13 +32504,13 @@ const TOPICS = [
   ["renal","Renal",["nephron","renalphys","gfrk","renalna","urineconc","histoembryo","glom","renvasc","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","liver","gitract","abdanat"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","softtissue","tumark"]],
-  ["immuno","Immunology",["immune","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
-  ["endo","Endocrine",["axes","hormones","rclass","pancreas"]],
+  ["immuno","Immunology",["immune","lymphdev","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
+  ["endo","Endocrine",["axes","hormones","gcpharm","rclass","pancreas"]],
   ["devrepro","Repro & Development",["sexdev","androgen","repro","placenta","obgyn","malerepro","embryo"]],
-  ["neuro","Neuro",["neurotx","synapse","ans","membrane","spine","brainstem","chemvisc","motorctl","cerebellum","weakness","stroke","brainvessels","brainreg","meninges","basal","neuroer","seizhead"]],
-  ["behav","Psych & Behavior",["limbmem","psychmse","dsmdx","psychdx","psychtx","psychsom","substance","sleepdev","neurodev"]],
+  ["neuro","Neuro",["neurotx","synapse","ans","membrane","ionchan","spine","brainstem","chemvisc","motorctl","cerebellum","gaze","weakness","stroke","brainvessels","brainreg","meninges","basal","neuroer","seizhead"]],
+  ["behav","Psych & Behavior",["limbmem","psychmse","dsmdx","psychdx","psychtx","psyrxprin","psychsom","somatcare","substance","sleepdev","neurodev"]],
   ["eent","EENT",["eyecn","anteye","vision","ent","hearing","larynx"]],
-  ["msk","Musculoskeletal",["muscle","bone","bonehisto","arthritis","crystals","derm","plexus","orthoinj","sportsortho","legfx","orthowork","ptrehab","integrative"]],
+  ["msk","Musculoskeletal",["muscle","bone","bonehisto","arthritis","crystals","derm","plexus","orthoinj","sportsortho","legfx","orthowork","neckpain","ptrehab","integrative"]],
   ["omm","OMM",["vsomatic","neiomm","chapman","omt","lbp","agingomt","chestomt","ommmech","janda","cranial","jones"]],
   ["id","Infectious",["microlab","abx","antiviral","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
   ["pharm","Pharm",["pkpd","cyp","adr","aging","tox","environ","anesth","pain"]],
@@ -32044,7 +32710,9 @@ function panelSVG(p,pi){
    drawn from the relationships the cited sources state — shapes, not measured data.
    tools/atlas-check.js keeps a list of these kinds; add a new one there too. */
 const PLOTVAR={};   // "view:index" → chosen variant
-const PLOTQ={};     // "view:index" → graph quiz {ans: hidden variant, pick: the answer given or null, n, right}
+const PLOTQ={};     // "view:index" → graph quiz {ans: hidden variant, pick: the answer given or null, n, right, mix}
+const PLOTCMP={};   // "view:index" → compare {open: chips showing, j: the version overlaid or null}
+let GQ=null;        // graph mix {list: [[view, plot index]], k: current, n: answered, right}
 const lin=n=>Array.from({length:n+1},(_,i)=>i/n);
 const hill=(p50,n)=>p=>100*Math.pow(p,n)/(Math.pow(p,n)+Math.pow(p50,n));
 function pvLoop(o){
@@ -32208,6 +32876,30 @@ const DDI={pp:[[0,150],[1,260],[2,410],[3,560],[4,680],[5,740],[6,760],[7,770],[
   cdi:[[0,120],[2,150],[4,180],[6,200],[6.5,290],[7,380],[8,450]],
   ndi:[[0,120],[2,150],[4,170],[6,180],[7,193],[8,200]]};
 const DDI_BANDS=[[0,6,"Water restriction"],[6,8,"Desmopressin"]];
+/* pH = −log[H⁺] (Costanzo ch 7; Guyton ch 31): [H⁺] in nEq/L = 10^(9 − pH) */
+const phH=()=>{ const pts=[]; for(let k=0;k<=60;k++){ const p=6.8+k*0.02; pts.push([p,Math.pow(10,9-p)]); } return pts; };
+const hAt=p=>Math.round(Math.pow(10,9-p));
+/* tubular fluid osmolality along the nephron, mOsm/L (Costanzo Figs 6.43, 6.44; the bend without ADH and the loop-diuretic line are schematic) */
+const CCP={adh:[[0,300],[1,300],[2,1200],[3,100],[4,80],[5,300],[6,1200]],
+  none:[[0,300],[1,300],[2,600],[3,120],[4,110],[5,95],[6,75]],
+  loop:[[0,300],[1,300],[2,420],[3,290],[4,285],[5,300],[6,320]]};
+/* a passive signal decays as e^(−x/λ) (Fundamental Neuroscience ch 3); x in resting length constants */
+function decay(a,l){ const pts=[]; for(let k=0;k<=80;k++){ const x=k*0.05; pts.push([x,a*Math.exp(-x/l)]); } return pts; }
+/* CO₂ content of blood, volume % (Guyton Figs 41.14, 41.15; shape approximate) */
+const CO2C={t40:[[0,0],[5,18],[10,28],[20,39],[30,46],[40,50],[45,52],[50,54],[60,57.5],[70,60.5],[80,63],[90,65.5],[100,68]],
+  t100:[[0,0],[5,16.5],[10,26],[20,37],[30,44],[40,48],[45,50],[50,52],[60,55.5],[70,58.5],[80,61],[90,63.5],[100,66]],
+  dis:[[0,0],[100,6]]};
+/* horizontal eye position, degrees (right +), from the speeds and latencies of Fundamental Neuroscience Table 28.1 */
+const EYE={tstep:[[0,0],[100,0],[100,15],[1000,15]],
+  sacc:[[0,0],[300,0],[310,2],[320,6],[330,10],[340,13.5],[350,15],[1000,15]],
+  tramp:[[0,0],[100,0],[1000,18]], purs:[[0,0],[200,0],[1000,16]],
+  okn:[[0,-3],[300,3],[312,-3],[612,3],[624,-3],[924,3],[936,-3],[1000,-1.7]],
+  vl:[[0,0],[250,0],[583,5],[1000,5]], vr:[[0,0],[250,0],[583,-5],[1000,-5]]};
+/* plasma cortisol across the day, µg/dL (Guyton ch 78: about 20 an hour before waking, about 5 at midnight); the other days are schematic */
+const CORT={norm:[[0,5],[2,6],[4,11],[6,20],[8,18],[10,14],[12,12],[14,11.5],[16,9.5],[18,8],[20,7],[22,6],[24,5]],
+  shift:[[0,9],[4,8],[8,7],[10,8],[12,11],[14,14],[16,17],[18,15],[20,12],[22,10],[24,9]],
+  cush:[[0,19],[4,20],[6,23],[8,23],[12,22],[16,21],[20,20],[24,19]],
+  supp:[[0,2],[6,3],[12,2.5],[18,2.2],[24,2]]};
 const PLOTS={
   glomcap:{xl:"Distance along the glomerular capillary",yl:"Pressure (mm Hg)",xr:[0,1],yr:[0,60],xt:[0,0.5,1],xtl:["afferent end","halfway","efferent end"],yt:[0,10,20,30,40,50,60],ref:true,vars:[
     {l:"Normal",cap:"Costanzo’s values. PGC stays at 45 mm Hg along the capillary because the efferent arteriole holds it up; PBS is 10; πGC climbs as protein-free fluid is filtered out. Filtration happens wherever the net pressure is above zero.",
@@ -32415,6 +33107,83 @@ const PLOTS={
     {l:"Adrenal tumor",cap:"An adrenal adenoma or carcinoma makes cortisol on its own: ACTH is suppressed and dexamethasone changes nothing (First Aid).",
      key:[["ACTH","Suppressed — ACTH-independent"],["atrophy","The uninvolved adrenal atrophies"],["CT","Adrenal CT"]],
      d:()=>[{pts:[[0,85],[1,85],[2,85]],lab:"Cortisol"},{pts:[[0,8],[1,8],[2,8]],lab:"ACTH"}]}]},
+  phh:{xl:"pH",yl:"[H⁺] (nEq/L)",xr:[6.75,8.05],yr:[0,170],xt:[6.8,7,7.2,7.4,7.6,7.8,8],xtl:["6.8","7.0","7.2","7.4","7.6","7.8","8.0"],yt:[0,40,80,120,160],vars:[
+    {l:"Down to 7.2",cap:"Costanzo Fig 7.1: [H⁺] and pH are related logarithmically, not linearly. Normal arterial [H⁺] is 40 nEq/L — pH 7.40.",
+     key:[["+23","pH 7.4 → 7.2 raises [H⁺] by 23 nEq/L"],["acid","A given pH change on the acid side is a bigger change in [H⁺] than the same change on the alkaline side"]],
+     d:()=>[{pts:phH(),lab:"[H⁺]",marks:[[7.4,40,"40"],[7.2,hAt(7.2),"63 (+23)"]]}]},
+    {l:"Up to 7.6",cap:"The same 0.2 step on the alkaline side lowers [H⁺] by only 15 nEq/L (Costanzo).",
+     key:[["−15","pH 7.4 → 7.6 lowers [H⁺] by 15 nEq/L"],["−log","pH = −log₁₀[H⁺]: as [H⁺] rises, pH falls"]],
+     d:()=>[{pts:phH(),lab:"[H⁺]",marks:[[7.4,40,"40"],[7.6,hAt(7.6),"25 (−15)"]]}]},
+    {l:"Doubling",cap:"Because pH is a base-10 log, every 0.3 pH units (log₁₀ 2) doubles or halves [H⁺].",
+     key:[["7.1","[H⁺] about 80 nEq/L — twice normal"],["7.7","[H⁺] about 20 nEq/L — half normal"]],
+     d:()=>[{pts:phH(),lab:"[H⁺]",marks:[[7.4,40,"40"],[7.1,hAt(7.1),"≈80 — double"],[7.7,hAt(7.7),"≈20 — half"]]}]},
+    {l:"Normal range",cap:"Arterial pH 7.35–7.45 (First Aid); venous blood and interstitial fluid run about 7.35. Life beyond a few hours is possible only between about 6.8 and 8.0 (Guyton ch 31).",
+     bands:[[6.75,7.35,"acidemia"],[7.45,8.05,"alkalemia"]],
+     key:[["7.40","Arterial: [H⁺] 40 nEq/L"],["7.35","Venous and interstitial: about 45 nEq/L, from the extra CO₂"],["6.8–8.0","The limits compatible with more than a few hours of life"]],
+     d:()=>[{pts:phH(),lab:"[H⁺]",marks:[[7.4,40,"arterial"],[7.35,hAt(7.35),"venous"]]}]}]},
+  ccprof:{xl:"Along the nephron",yl:"Tubular fluid osmolality (mOsm/L)",xr:[-0.4,6.4],yr:[0,1300],xt:[0,1,2,3,4,5,6],xtl:["Filtrate","Proximal tubule","Loop bend","Thick ascending","Early distal","Late distal","Final urine"],yt:[0,300,600,900,1200],ref:true,vars:[
+    {l:"High ADH",cap:"Costanzo Fig 6.43: filtrate stays at 300 through the proximal tubule; the descending limb equilibrates with the 1200 mOsm/L interstitium at the bend; the water-tight thick limb dilutes to 100 and the early distal tubule to 80. With ADH the late distal tubule re-equilibrates to 300 and the collecting duct to 1200.",
+     key:[["PT","Isosmotic — water follows solute"],["TAL","The diluting segment: Na⁺-K⁺-2Cl⁻ moves NaCl out, water stays"],["CD","Equilibrates with the papilla — final urine equals the osmolality at the bend"],["max","Guyton: up to 1200–1400 mOsm/L"]],
+     d:()=>[{pts:CCP.adh,lab:"Tubular fluid"},{y:300,lab:"plasma 300"}]},
+    {l:"No ADH",cap:"Costanzo Fig 6.44: the gradient at the bend is smaller (height here schematic). Fluid leaves the thick limb at 120 and the early distal tubule at 110; the water-tight distal tubule and collecting duct keep reabsorbing NaCl, so urine falls to 75 mOsm/L — Guyton: as low as 50.",
+     key:[["CD","Impermeable to water without ADH — no equilibration"],["DI","Central DI (no ADH) and nephrogenic DI (no response) both give this curve"],["water","The normal response to drinking water"]],
+     d:()=>[{pts:CCP.none,lab:"Tubular fluid"},{y:300,lab:"plasma 300"}]},
+    {l:"Loop diuretic",cap:"Schematic. Blocking Na⁺-K⁺-2Cl⁻ in the thick ascending limb disrupts countercurrent multiplication and lowers medullary osmolality, so the kidney can neither concentrate nor dilute the urine well (Guyton ch 32).",
+     key:[["NKCC2","Furosemide, bumetanide and ethacrynic acid bind its Cl⁻ site (Costanzo)"],["≈300","Urine stays near plasma osmolality"]],
+     d:()=>[{pts:CCP.loop,lab:"Tubular fluid"},{y:300,lab:"plasma 300"}]}]},
+  gradap:{xl:"Distance from the stimulus (resting length constants, λ)",yl:"Depolarization (% of the start)",xr:[0,4],yr:[0,105],xt:[0,1,2,3,4],yt:[0,37,100],ref:true,vars:[
+    {l:"Graded potential",cap:"Fundamental Neuroscience ch 3: a passive signal decays with distance; the length constant λ is the distance over which it falls to 1/e — 37%. Graded potentials scale with the stimulus.",
+     key:[["λ","At one length constant, 37% is left"],["size","Bigger stimuli give bigger generator potentials — and more action potentials"]],
+     d:()=>[{pts:decay(100,1),lab:"Strong stimulus",marks:[[1,37,"37% at 1 λ"]]},{pts:decay(50,1),lab:"Weak stimulus"}]},
+    {l:"Action potential",cap:"The action potential regenerates itself, so it travels a meter or more without decrement or distortion; stimulus strength is sent as frequency, not size (Fundamental Neuroscience ch 3).",
+     key:[["=","Same size at every point"],["speed","Raised by a wider axon or by myelin"]],
+     d:()=>[{pts:[[0,100],[4,100]],lab:"Action potential"}]},
+    {l:"Myelinated",cap:"Myelin raises membrane resistance and lowers capacitance, dramatically lengthening λ — each node's depolarization reaches the next node sooner, so conduction is faster (Fundamental Neuroscience ch 3; λ here schematic).",
+     key:[["10 µm","A 10-µm myelinated fiber is as fast as a 500-µm unmyelinated axon in 1/2500 of the space"],["demyelination","Shorter λ — slowing or conduction block"]],
+     d:()=>[{pts:decay(100,3),lab:"Myelinated"}]},
+    {l:"Cl⁻ shunt",cap:"Inhibitory input that opens Cl⁻ channels lowers dendritic membrane resistance and shortens λ, so a nearby excitatory potential decays fast and has less say over firing at the initial segment (Fundamental Neuroscience ch 3).",
+     key:[["λ↓","Shunting inhibition"]],
+     d:()=>[{pts:decay(100,0.5),lab:"With Cl⁻ conductance"}]}]},
+  co2dc:{xl:"PCO₂ (mm Hg)",yl:"Blood CO₂ content (volume %)",xr:[0,100],yr:[0,70],xt:[0,20,40,60,80,100],yt:[0,10,20,30,40,50,60,70],vars:[
+    {l:"Haldane effect",cap:"Guyton Fig 41.15: tissue blood (PCO₂ 45, PO₂ 40) holds 52 volume % CO₂ — point A. In the lungs PCO₂ falls to 40 and PO₂ rises to 100; oxygenated hemoglobin is a stronger acid, so the curve drops and content falls to 48 — point B.",
+     key:[["A→B","4 volume % unloaded per pass — half of it from the Haldane shift"],["O₂","Oxygenated Hb releases H⁺ (→ CO₂ from HCO₃⁻) and binds less carbamino CO₂"],["Bohr","The mirror image: CO₂ and H⁺ release O₂ in the tissues"]],
+     d:()=>[{pts:mono(CO2C.t40,10),lab:"Tissues, PO₂ 40",marks:[[45,52,"A"]]},{pts:mono(CO2C.t100,10),lab:"Lungs, PO₂ 100",marks:[[40,48,"B","below"]]}]},
+    {l:"Without Haldane",cap:"If oxygenation did not shift the curve, lowering PCO₂ from 45 to 40 would drop content only from 52 to 50 volume % — half the normal exchange (Guyton).",
+     key:[["2 vs 4","The Haldane effect about doubles CO₂ release in the lungs and pickup in the tissues"]],
+     d:()=>[{pts:mono(CO2C.t40,10),lab:"Tissues, PO₂ 40",marks:[[45,52,"A"],[40,50,"50"]]}]},
+    {l:"Dissolved CO₂",cap:"Guyton: dissolved CO₂ is 2.7 mL/dL at 45 mm Hg and 2.4 at 40 — only 0.3 of the 4 mL exchanged, about 7%. Most travels as bicarbonate made by red-cell carbonic anhydrase; carbamino Hb carries the rest.",
+     key:[["HCO₃⁻","About 70% by Guyton, about 90% by First Aid"],["Cl⁻","HCO₃⁻ leaves the red cell in exchange for Cl⁻ — the chloride shift"]],
+     d:()=>[{pts:mono(CO2C.t40,10),lab:"Total CO₂"},{pts:CO2C.dis,lab:"Dissolved CO₂",marks:[[45,2.7,"2.7"]]}]}]},
+  eyetrace:{xl:"Time (ms)",yl:"Eye position (degrees, right +)",xr:[0,1000],yr:[-8,20],xt:[0,200,400,600,800,1000],yt:[-5,0,5,10,15,20],zero:true,vars:[
+    {l:"Saccade",cap:"A step: about 200 ms after the target jumps, the eye moves at 100–700 degrees/s and stops on it (Fundamental Neuroscience Table 28.1). The burst neurons' pulse moves the eye; the integrator's step holds it there.",
+     events:[[100,"target jumps"]],
+     key:[["200 ms","Latency"],["speed","Larger saccades are faster; sedatives slow them"],["test","Look between two points"]],
+     d:()=>[{pts:EYE.tstep,lab:"Target"},{pts:EYE.sacc,lab:"Eye"}]},
+    {l:"Smooth pursuit",cap:"A ramp: about 100 ms after the target starts moving, the eye matches its speed — under 100 degrees/s, usually much slower (Fundamental Neuroscience Table 28.1).",
+     events:[[100,"target moves"]],
+     key:[["100 ms","Latency"],["test","Follow a slow-moving target"]],
+     d:()=>[{pts:EYE.tramp,lab:"Target"},{pts:EYE.purs,lab:"Eye"}]},
+    {l:"Optokinetic nystagmus",cap:"A sawtooth: the eye follows the moving stripes (slow phase), then a 500 degrees/s fast phase resets it — nystagmus is named by the fast phase (Fundamental Neuroscience ch 28).",
+     key:[["slow","Follows the visual scene — retinal slip drives it"],["fast","Saccadic reset; here leftward, so left-beating"],["test","A striped drum or cloth"]],
+     d:()=>[{pts:EYE.okn,lab:"Eye"}]},
+    {l:"Vergence",cap:"Disconjugate: for a near target both eyes turn inward at about 15 degrees/s, after about 150 ms (Fundamental Neuroscience Table 28.1), with accommodation and pupil constriction.",
+     events:[[100,"target nears"]],
+     key:[["in","Left eye turns right, right eye turns left"],["test","Move a target toward the nose"]],
+     d:()=>[{pts:EYE.vl,lab:"Left eye"},{pts:EYE.vr,lab:"Right eye"}]}]},
+  cortrhythm:{xl:"Time of day",yl:"Plasma cortisol (µg/dL)",xr:[0,24],yr:[0,30],xt:[0,4,8,12,16,20,24],xtl:["Midnight","4 am","8 am","Noon","4 pm","8 pm","Midnight"],yt:[0,5,10,15,20,25,30],ref:true,vars:[
+    {l:"Normal",cap:"Guyton ch 78: CRH, ACTH and cortisol are high in the early morning and low late in the evening — about 20 µg/dL an hour before waking, about 5 µg/dL near midnight. ACTH pulses also follow meals (Katzung).",
+     key:[["am","Peak before waking"],["pm","Nadir around midnight — a cortisol level means little without the time"]],
+     d:()=>[{pts:mono(CORT.norm,10),lab:"Cortisol",marks:[[6,20,"≈20"],[0,5,"≈5"]]}]},
+    {l:"Night shift",cap:"Schematic. The cycle follows the sleep pattern, so night workers' cortisol shifts with it — though rarely completely, partly because most revert to daytime habits on days off (Guyton).",
+     key:[["shift","Peak moves toward the new waking time"]],
+     d:()=>[{pts:mono(CORT.shift,10),lab:"Cortisol"}]},
+    {l:"Cushing syndrome",cap:"Schematic. The normal diurnal pattern is lost, so late-night (midnight) salivary cortisol is high — one of the screening tests, with 24-hour urine free cortisol and the overnight dexamethasone test (Robbins ch 24; First Aid).",
+     key:[["night","Late-night cortisol stays high"],["screen","24-h urine free cortisol · late-night salivary cortisol · 1 mg overnight dexamethasone"]],
+     d:()=>[{pts:mono(CORT.cush,10),lab:"Cortisol",marks:[[22,20,"late night"]]}]},
+    {l:"Chronic steroids",cap:"Schematic: the adrenal's own cortisol. Excess glucocorticoid feeds back to lower CRH and ACTH (First Aid); after more than 2 weeks of therapy the axis may stay suppressed — 2–12 months to recover, cortisol another 6–9 — so taper slowly and cover stress (Katzung).",
+     events:[[8,"daily dose"]],
+     key:[["HPA","Suppressed — the risk is adrenal crisis on stopping"],["am","Large doses: a single morning dose if possible; alternate-day dosing leaves a recovery period (Katzung)"]],
+     d:()=>[{pts:mono(CORT.supp,10),lab:"Cortisol"}]}]},
   wiggers:{xl:"Time (s) — three beats at 75/min",yl:"Pressure (mm Hg)",xr:[0,2.4],yr:[0,190],xt:[0,0.4,0.8,1.2,1.6,2,2.4],yt:[0,40,80,120,160],
    strips:[{yl:"LV volume",yr:[25,170],h:110,d:V=>[{pts:lvVol(V.vol),lab:"LV volume"}]},
            {yl:"ECG",yr:[-0.45,1.25],h:80,d:()=>[{pts:WIG_ECG,lab:"ECG",col:"var(--ink-2)"},{txt:wigEach([[0.045,"P",0.55],[0.18,"QRS",1.35],[0.42,"T",0.7]])}]},
@@ -32647,13 +33416,24 @@ function plotQuiz(pi,act,j){
   const fresh=prev=>{ let a; do{ a=Math.floor(Math.random()*n); }while(n>1&&a===prev); return a; };
   if(act==="start") PLOTQ[key]={ans:fresh(sat(PLOTVAR[key]||0,0,n-1)),pick:null,n:0,right:0};
   else if(!Q) return;
-  else if(act==="pick"){ if(Q.pick==null){ Q.pick=j; Q.n++; if(j===Q.ans) Q.right++; } }
+  else if(act==="pick"){ if(Q.pick==null){ Q.pick=j; Q.n++; if(j===Q.ans) Q.right++;
+    if(Q.mix&&GQ){ GQ.n=Q.n; GQ.right=Q.right; updateScore(); } } }
+  else if(act==="gnext"){ if(GQ) GQ.k++; showGraph(); return; }
+  else if(act==="gdone"){ PLOTVAR[key]=Q.ans; if(GQ) GQ.k=GQ.list.length; showGraph(); return; }
   else if(act==="next"){ Q.ans=fresh(Q.ans); Q.pick=null; }
   else if(act==="done"){ PLOTVAR[key]=Q.ans; delete PLOTQ[key]; }
   render();
 }
-/* frame one graph on its map (from the gallery) and flash its border */
-function goPlot(v,i){
+/* compare: open or close the overlay chips, or overlay (again: remove) a version */
+function plotCmp(pi,act,j){
+  const key=state.view+":"+pi, C=PLOTCMP[key]||(PLOTCMP[key]={open:false,j:null});
+  if(act==="toggle"){ C.open=!C.open; if(!C.open) C.j=null; }
+  else if(act==="pick") C.j=C.j===j?null:j;
+  render();
+}
+/* frame one graph on its map (from the gallery or a search) and flash its border; j picks a version */
+function goPlot(v,i,j){
+  if(j!=null&&j!=="") PLOTVAR[v+":"+i]=+j;
   setView(v);
   const m=MAPS[v], p=m&&m.plots&&m.plots[i]; if(!p) return;
   setTimeout(()=>{   /* after setView has laid the map out (a timer also runs in a background tab) */
@@ -32673,6 +33453,8 @@ function plotSVG(p,i){
   const hide=!!Q&&Q.pick==null, shared={};
   if(hide) K.vars.forEach(v=>new Set(v.d().map(c=>c.lab).filter(Boolean)).forEach(l=>{ shared[l]=(shared[l]||0)+1; }));
   const told=t=>!hide||(shared[t]||0)>1;
+  /* compare: a second version drawn dashed over the chosen one (not during a quiz) */
+  const C=!Q&&PLOTCMP[key], cj=C&&C.j!=null&&C.j!==vi?C.j:null;
   /* chart on the left, a text column on the right */
   const side=Math.round(Math.min(560,p.w*0.38)), cw=p.w-side;
   /* strips: smaller charts stacked under the main one, sharing its x axis (ECG, volume, sounds) */
@@ -32706,13 +33488,14 @@ function plotSVG(p,i){
   (V.bands||[]).forEach(([a,b,t],j)=>{ const xa=X(Math.max(a,K.xr[0])), xb=X(Math.min(b,K.xr[1]));
     s+=`<rect class="pband${j%2?" alt":""}" x="${xa.toFixed(1)}" y="${T}" width="${Math.max(0,xb-xa).toFixed(1)}" height="${BB-T}"/><text class="pbnum" x="${((xa+xb)/2).toFixed(1)}" y="${T+16}">${hide?"":esc(t)}</text>`; });
   if(hide){}
+  else if(cj!=null) draw(K.vars[cj].d().filter(c=>c.pts),"pcmp",false);
   else if(K.all) K.vars.forEach((v,j)=>{ if(j!==vi) draw(v.d(),"pother",false); });
   else if(K.ref&&vi>0) draw(K.vars[0].d(),"pref",false);
   const cur=V.d(); draw(cur,"pcur",true);
   cur.forEach(c=>{
     (c.corners||[]).forEach(([a,b,t])=>{ const left=t==="MO"||t==="AC"; s+=`<circle class="pdot" cx="${X(a)}" cy="${Y(b)}" r="4.5"/>`+lab(X(a),Y(b),t,left?-9:9,t==="MO"||t==="MC"?14:-9).replace('text-anchor="start"',left?'text-anchor="end"':'text-anchor="start"'); });
     if(c.p50!=null){ s+=`<line class="pmark" x1="${L}" y1="${Y(50)}" x2="${X(c.p50)}" y2="${Y(50)}"/><line class="pmark" x1="${X(c.p50)}" y1="${Y(50)}" x2="${X(c.p50)}" y2="${B}"/>`+lab(X(c.p50),B,"P50",6,-6); }
-    (c.marks||[]).forEach(([a,b,t])=>{ s+=`<circle class="pdot" cx="${X(a)}" cy="${Y(b)}" r="5"/>`+lab(X(a),Y(b),t,9,-10); });
+    (c.marks||[]).forEach(([a,b,t,pos])=>{ s+=`<circle class="pdot" cx="${X(a)}" cy="${Y(b)}" r="5"/>`+lab(X(a),Y(b),t,9,pos==="below"?20:-10); });
     if(c.drop){ const [a,b,t]=c.drop; s+=`<line class="pmark" x1="${L}" y1="${Y(b)}" x2="${X(a)}" y2="${Y(b)}"/><line class="pmark" x1="${X(a)}" y1="${Y(b)}" x2="${X(a)}" y2="${B}"/>`+lab(X(a),B,t,6,-6)+lab(L,Y(b),"½ Vmax",6,-7); }
     (c.dots||[]).forEach(([po,t])=>{ const f=hill(27,2.7)(po); s+=`<circle class="pdot" cx="${X(po)}" cy="${Y(f)}" r="4.5"/>`+lab(X(po),Y(f),t,-9,18).replace('text-anchor="start"','text-anchor="end"'); });
   });
@@ -32741,11 +33524,15 @@ function plotSVG(p,i){
   K.vars.forEach((v,j)=>chip(v.l,Q?`data-pq="pick" data-pv="${j}"`:`data-pv="${j}" aria-pressed="${j===vi}"`,
     Q?(hide?"":j===Q.ans?" ok":j===Q.pick?" bad":""):(j===vi?" on":"")));
   if(!Q&&K.vars.length>=3) chip("Quiz me",'data-pq="start" data-pv="q"'," pqz");
-  if(Q&&!hide){ chip("Next one",'data-pq="next" data-pv="n"'," pqz"); chip("Done",'data-pq="done" data-pv="d"'," pqz"); }
+  if(!Q&&K.vars.length>=2) chip(C&&C.open?"Close compare":"Compare",'data-pc="toggle" data-pv="c"'," pqz");
+  if(C&&C.open){ cx=x0; cy+=34; s+=`<text class="pcap" x="${x0}" y="${cy+17.5}">Overlay</text>`; cx=x0+64;
+    K.vars.forEach((v,j)=>{ if(j!==vi) chip(v.l,`data-pc="pick" data-pv="${j}"`,j===cj?" on":""); }); }
+  if(Q&&!hide){ if(Q.mix){ chip(GQ&&GQ.k+1<GQ.list.length?"Next graph":"Finish",'data-pq="gnext" data-pv="n"'," pqz"); chip("End mix",'data-pq="gdone" data-pv="d"'," pqz"); }
+    else { chip("Next one",'data-pq="next" data-pv="n"'," pqz"); chip("Done",'data-pq="done" data-pv="d"'," pqz"); } }
   let ty=cy+26+28;
   if(Q){ const msg=hide?"Which version is this? Pick one above.":(Q.pick===Q.ans?"Right — ":"Not quite — this is ")+V.l;
     s+=`<text class="pqhead" x="${x0}" y="${ty}">${esc(msg)}</text>`; ty+=21;
-    if(Q.n){ s+=`<text class="pcap" x="${x0}" y="${ty}">${Q.right} of ${Q.n} right so far</text>`; ty+=21; } ty+=6; }
+    if(Q.n||Q.mix){ s+=`<text class="pcap" x="${x0}" y="${ty}">${Q.mix&&GQ?`Graph mix ${GQ.k+1} of ${GQ.list.length} · `:""}${Q.right} of ${Q.n} right so far</text>`; ty+=21; } ty+=6; }
   if(!hide) wrapWords(V.cap,Math.floor(colW/6.9)).forEach(line=>{ s+=`<text class="pcap" x="${x0}" y="${ty}">${esc(line)}</text>`; ty+=19; });
   /* key: what each numbered phase is — the ions moving and the channels open */
   if(V.key&&!hide){ ty+=8;
@@ -32756,8 +33543,9 @@ function plotSVG(p,i){
   const leg=[]; let ci=0;
   cur.forEach(c=>{ if(c.pts){ leg.push({cls:"pcur",col:PSER[ci%PSER.length],t:hide?(c.lab&&told(c.lab)?c.lab:"Curve "+(ci+1)):c.lab||V.l}); ci++; } });
   sleg.forEach(g=>leg.push({cls:"pcur",col:g.col,t:g.t}));
-  if(K.ref&&vi>0&&!hide) leg.push({cls:"pref",t:K.vars[0].l+" (for comparison)"});
-  if(K.all&&K.vars.length>1&&!hide) leg.push({cls:"pother",t:"The other variants"});
+  if(cj!=null) leg.push({cls:"pcmp",t:K.vars[cj].l+" (overlay)"});
+  else { if(K.ref&&vi>0&&!hide) leg.push({cls:"pref",t:K.vars[0].l+" (for comparison)"});
+    if(K.all&&K.vars.length>1&&!hide) leg.push({cls:"pother",t:"The other variants"}); }
   ty+=10;
   leg.forEach(g=>{ s+=`<line class="${g.cls}" x1="${x0}" y1="${ty-4}" x2="${x0+26}" y2="${ty-4}"${g.col?` style="stroke:${g.col}"`:""}/><text class="pleg" x="${x0+36}" y="${ty}">${esc(g.t)}</text>`; ty+=22; });
   s+=`<text class="pnote" x="${x0}" y="${p.y+p.h-20}">Schematic — drawn from the stated relationships, not measured data</text>`;
@@ -33286,6 +34074,17 @@ function updateScore(){
     const n=box.querySelector("[data-qnext]"); if(n) n.onclick=nextDue;
     return;
   }
+  if(state.quiz==="graphs"){
+    if(!GQ) GQ={list:[],k:0,n:0,right:0};
+    const total=GQ.list.length, done=GQ.k>=total;
+    box.hidden=false;
+    box.innerHTML=done?`<span>Graph mix done — <b>${GQ.right}</b> of <b>${GQ.n}</b> right</span><button class="go" data-gagain>Another 10</button>`
+      :`<span>Graph mix <b>${GQ.k+1}/${total}</b> · <b>${GQ.right}</b> right</span>
+        <span class="qbar"><i style="width:${Math.round(GQ.k/total*100)}%"></i></span><button class="go" data-gnext>Next graph</button>`;
+    const a=box.querySelector("[data-gagain]"); if(a) a.onclick=startGraphMix;
+    const g=box.querySelector("[data-gnext]"); if(g) g.onclick=()=>{ GQ.k++; showGraph(); };
+    return;
+  }
   if(state.quiz==="buzz"&&state.view!=="index"){
     const total=buzzIds().length, done=BQ[buzzKey()]||{};
     const named=Object.keys(done).length, right=Object.values(done).filter(Boolean).length;
@@ -33365,8 +34164,8 @@ function setQuiz(mode){
   state.quiz=mode; state.reveal.clear();
   const b=document.getElementById("quizBtn");
   b.classList.toggle("on",!!mode);
-  b.textContent=mode==="steps"?"Quiz: steps":mode==="fill"?"Quiz: fill in":mode==="case"?"Quiz: cases":mode==="mix"?"Quiz: daily mix":mode==="star"?"Quiz: starred":mode==="pins"?"Quiz: pins":mode==="buzz"?"Quiz: buzzwords":mode==="due"?"Quiz: due cards":"Quiz";
-  DQ=null; SQ=null; MQ=null;
+  b.textContent=mode==="steps"?"Quiz: steps":mode==="fill"?"Quiz: fill in":mode==="case"?"Quiz: cases":mode==="mix"?"Quiz: daily mix":mode==="star"?"Quiz: starred":mode==="pins"?"Quiz: pins":mode==="buzz"?"Quiz: buzzwords":mode==="due"?"Quiz: due cards":mode==="graphs"?"Quiz: graph mix":"Quiz";
+  DQ=null; SQ=null; MQ=null; clearGraphQ(); GQ=null;
   document.querySelectorAll("#qmenu [data-q]").forEach(o=>o.setAttribute("aria-checked",String(o.dataset.q===mode)));
   if(mode==="pins"){ drawer.hidden=true; state.sel=null; writeHash(); }
   if(state.view!=="index") render();
@@ -33376,6 +34175,7 @@ function setQuiz(mode){
   if(mode==="case") nextCase();
   if(mode==="star") nextStar();
   if(mode==="mix") nextMix();
+  if(mode==="graphs") startGraphMix();
 }
 
 /* ── due-card review ────────────────────────────────────
@@ -33454,6 +34254,23 @@ function nextMix(){
   updateScore();
   if(!left.length){ closeDrawer(); return; }
   openDue(left[0],"mix");
+}
+
+/* ── graph mix: ten random graphs from across the atlas. Each opens framed on its map showing one
+   of its versions with the name, caption, key and telling labels hidden (the graph quiz); name the
+   version, then go on to the next graph. The score runs across the round. ── */
+function graphPool(){ const out=[];
+  VIEWS.forEach(([v])=>{ const m=MAPS[v]; ((m&&m.plots)||[]).forEach((p,i)=>{ const K=PLOTS[p.kind]; if(K&&K.vars.length>=2) out.push([v,i]); }); });
+  return out; }
+function clearGraphQ(){ Object.keys(PLOTQ).forEach(k=>{ if(PLOTQ[k].mix) delete PLOTQ[k]; }); }
+function startGraphMix(){ clearGraphQ(); GQ={list:shuffle(graphPool()).slice(0,10),k:0,n:0,right:0}; showGraph(); }
+function showGraph(){
+  clearGraphQ();
+  if(!GQ||GQ.k>=GQ.list.length){ if(state.view!=="index") render(); updateScore(); return; }
+  const [v,i]=GQ.list[GQ.k], K=PLOTS[MAPS[v].plots[i].kind];
+  PLOTQ[v+":"+i]={ans:Math.floor(Math.random()*K.vars.length),pick:null,n:GQ.n,right:GQ.right,mix:true};
+  if(!drawer.hidden) closeDrawer();
+  goPlot(v,i);
 }
 
 /* ── starred round: every starred card, shuffled, each once ── */
@@ -33757,7 +34574,7 @@ function locate(pts,minR){
    caption or a panel row. Matches (word starts; whole words for three letters or fewer)
    are listed under the cards, current map first; choosing one opens that map, centres
    the spot and rings it. */
-let BOXIDX=null, BOXHITS=[];
+let BOXIDX=null, BOXHITS=[], GHITS=[];
 function boxIndex(){
   if(BOXIDX) return BOXIDX;
   BOXIDX=[];
@@ -33775,6 +34592,29 @@ function boxMatches(q){
   const e=q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"), re=new RegExp("(^|[^a-z0-9])"+e+(q.length<=3?"($|[^a-z0-9])":""));
   return boxIndex().filter(b=>re.test(b.hay))
     .sort((a,b)=>(a.v===state.view?0:1)-(b.v===state.view?0:1)||(a.kind==="node"?0:1)-(b.kind==="node"?0:1));
+}
+/* graphs whose title, axes, version names, captions or keys hold every word of the search; the
+   version that matches best (by its name first) is the one a hit opens on */
+function graphMatches(q){
+  q=(q||"").trim().toLowerCase();
+  if(q.length<2||pageQuery(q)!=null||chapterQuery(q)) return [];
+  const words=q.split(/\s+/).filter(Boolean).map(w=>{ const e=w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    return new RegExp("(^|[^a-z0-9])"+e+(w.length<=3?"($|[^a-z0-9])":"")); });
+  const out=[];
+  VIEWS.forEach(([v])=>{ const m=MAPS[v]; ((m&&m.plots)||[]).forEach((p,i)=>{ const K=PLOTS[p.kind]; if(!K) return;
+    const base=(p.t+" "+K.xl+" "+K.yl).toLowerCase(); let best=null;
+    K.vars.forEach((V,j)=>{ const nm=V.l.toLowerCase(), own=(nm+" "+V.cap+" "+(V.key||[]).map(k=>k.join(" ")).join(" ")).toLowerCase();
+      if(!words.every(re=>re.test(base)||re.test(own))) return;
+      const sc=words.filter(re=>re.test(nm)).length*2+words.filter(re=>!re.test(base)&&re.test(own)).length;
+      if(!best||sc>best.sc) best={sc,j}; });
+    if(best) out.push({v,i,p,j:best.sc?best.j:null,vl:best.sc?K.vars[best.j].l:"",t:words.every(re=>re.test(p.t.toLowerCase()))?1:0});
+  }); });
+  return out.sort((a,b)=>b.t-a.t||(a.v===state.view?0:1)-(b.v===state.view?0:1));
+}
+function graphRowHtml(g,cls){
+  const where=(g.v===state.view?"this map":(VIEWS.find(x=>x[0]===g.v)||[g.v,MAPS[g.v].t])[1])+(g.vl?" — "+g.vl:""), go=g.v+":"+g.i+(g.j!=null?":"+g.j:"");
+  return cls==="li"?`<button class="li bx" data-plotgo="${go}" style="--c:var(--accent)"><span class="dot"></span><span><span class="nm">${esc(g.p.t)}</span><span class="bz">Graph · ${esc(where)}</span></span></button>`
+    :`<li><button class="idxrow" data-plotgo="${go}"><span class="t">${esc(g.p.t)}</span><span class="e">Graph · ${esc(where)}</span></button></li>`;
 }
 function boxRowHtml(b,i,cls){
   const c=b.kind==="node"?pc(b.p):"var(--ink-3)", where=(b.kind==="row"?b.s+" · ":"")+(b.v===state.view?"this map":b.title);
@@ -33984,7 +34824,10 @@ function renderRail(){
     ${onMap&&ids.some(id=>isRev(id)||PROG.ok[id]||PROG.miss[id])?`<p style="margin:10px 7px 0"><button class="linkbtn" data-resetprog>Reset this map’s progress</button></p>`:""}</div>`;
   BOXHITS=state.q?boxMatches(state.q):[];
   if(BOXHITS.length) html+=`<div class="rail-sec"><h3 class="rail-h">In map boxes · ${BOXHITS.length}</h3><div class="lesionlist">${BOXHITS.slice(0,8).map((b,i)=>boxRowHtml(b,i,"li")).join("")}</div>${BOXHITS.length>8?`<p class="revnote" style="margin:6px 7px 0">${BOXHITS.length-8} more — add a word to narrow it</p>`:""}</div>`;
+  const GR=state.q?graphMatches(state.q):[];
+  if(GR.length) html+=`<div class="rail-sec"><h3 class="rail-h">Graphs · ${GR.length}</h3><div class="lesionlist">${GR.slice(0,6).map(g=>graphRowHtml(g,"li")).join("")}</div>${GR.length>6?`<p class="revnote" style="margin:6px 7px 0">${GR.length-6} more on the Index page</p>`:""}</div>`;
   rail.innerHTML=html+(state.q?"":mapSrcHtml(m));
+  rail.querySelectorAll("[data-plotgo]").forEach(b=>b.onclick=()=>{ const [v,i,j]=b.dataset.plotgo.split(":"); goPlot(v,+i,j); });
   bindSrcJump();
   rail.querySelectorAll("[data-box]").forEach(b=>b.onclick=()=>goBox(BOXHITS[+b.dataset.box]));
   rail.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{state.filter=b.dataset.f||null;render();renderRail();if(state.view==="index")renderIndex();});
@@ -34059,12 +34902,13 @@ function renderIndex(){
       </ul>
       <p>A study aid, not a replacement for these texts. If something looks wrong, tap <b>Report</b> on that card or <a href="${REPO}/issues/new" target="_blank" rel="noopener">open an issue</a> so it can be fixed.</p>
     </details></div>
+    ${(()=>{ GHITS=q?graphMatches(q):[]; return GHITS.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Graphs · ${GHITS.length}</h3><ul>${GHITS.slice(0,20).map(g=>graphRowHtml(g,"idx")).join("")}</ul></section>`:""; })()}
     ${(()=>{ BOXHITS=q?boxMatches(q):[]; return BOXHITS.length?`<section class="idxcard" style="--c:var(--ink-3)"><h3><span class="bar"></span>In map boxes · ${BOXHITS.length}</h3><ul>${BOXHITS.slice(0,30).map((b,i)=>boxRowHtml(b,i,"idx")).join("")}</ul>${BOXHITS.length>30?`<p class="revnote">${BOXHITS.length-30} more — add a word to narrow it</p>`:""}</section>`:""; })()}
-    ${cards||(BOXHITS.length?"":`<p class="empty">Nothing matches “${esc(state.q)}”.</p>`)}`;
+    ${cards||(BOXHITS.length||GHITS.length?"":`<p class="empty">Nothing matches “${esc(state.q)}”.</p>`)}`;
   idxWrap.querySelectorAll("[data-box]").forEach(b=>b.onclick=()=>goBox(BOXHITS[+b.dataset.box]));
   idxWrap.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
   idxWrap.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
-  idxWrap.querySelectorAll("[data-plotgo]").forEach(b=>b.onclick=()=>{ const [v,i]=b.dataset.plotgo.split(":"); goPlot(v,+i); });
+  idxWrap.querySelectorAll("[data-plotgo]").forEach(b=>b.onclick=()=>{ const [v,i,j]=b.dataset.plotgo.split(":"); goPlot(v,+i,j); });
 }
 
 /* ── navigation: broad topics, then the maps inside the chosen one ── */
@@ -34088,8 +34932,12 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   synapse:"2026-10-08",motorctl:"2026-10-08",neiomm:"2026-10-08",orthowork:"2026-10-08",respinf:"2026-10-08",psychtx:"2026-10-08",
   androgen:"2026-10-08",renvasc:"2026-10-08",lbp:"2026-10-08",anteye:"2026-10-08",ptrehab:"2026-10-08",
   limbmem:"2026-10-08",placenta:"2026-10-08",agingomt:"2026-10-08",softtissue:"2026-10-08",integrative:"2026-10-08",gfrk:"2026-10-08",highalt:"2026-10-08",
-  cerebellum:"2026-10-08",meninges:"2026-10-08",brainvessels:"2026-10-08",neurodev:"2026-10-08",dsmdx:"2026-10-08",crystals:"2026-10-08",hypoxia:"2026-10-08",legfx:"2026-10-08"};
+  cerebellum:"2026-10-08",meninges:"2026-10-08",brainvessels:"2026-10-08",neurodev:"2026-10-08",dsmdx:"2026-10-08",crystals:"2026-10-08",hypoxia:"2026-10-08",legfx:"2026-10-08",
+  gaze:"2026-10-08",neckpain:"2026-10-08",ionchan:"2026-10-08",psyrxprin:"2026-10-08",somatcare:"2026-10-08",gcpharm:"2026-10-08",lymphdev:"2026-10-08"};
 const WHATSNEW=[
+  ["2026-10-08","New maps: <b>Eye Movements &amp; Gaze Centers</b> and <b>Resting Potential, Ion Channels &amp; Graded Potentials</b> (Neuro), <b>Psychopharmacology Principles</b> and <b>Somatic Symptom &amp; Factitious Disorders — Care</b> (Psych), <b>Neck Pain &amp; Cervical Radiculopathy</b> (MSK), <b>Glucocorticoid Pharmacology</b> (Endocrine) and <b>Lymphocyte Development &amp; Antigen Receptors</b> (Immunology)."],
+  ["2026-10-08","New graphs: <b>pH vs [H⁺]</b>, the <b>countercurrent osmolality profile</b>, <b>graded vs action potentials</b>, the <b>CO₂ dissociation curve and Haldane effect</b>, <b>eye-movement traces</b> and the <b>daily cortisol rhythm</b>."],
+  ["2026-10-08","<b>Quiz → Graph mix</b>: ten random graphs, name each version. Search now finds graphs (try “desmopressin”), and any graph can <b>overlay a second version</b> to compare. More of your questions link to cards."],
   ["2026-10-08","New maps: <b>Cerebellum</b>, <b>Meninges, Venous Sinuses &amp; CSF</b> and <b>Brain Arteries &amp; Circle of Willis</b> (Neuro), <b>ADHD, Autism &amp; Tics</b> and <b>DSM-5 Diagnosis &amp; Suicide Risk</b> (Psych), <b>Crystal Arthropathies</b> and <b>Lower-Limb Fractures &amp; Fixation</b> (MSK), and <b>Hypoxia &amp; Oxygen Delivery</b> (Pulmonary)."],
   ["2026-10-08","New graphs: <b>hepatitis B serology</b>, the <b>antibody response</b>, <b>cone sensitivity and color blindness</b>, <b>brain blood flow autoregulation</b>, <b>O₂ content in anemia, CO and polycythemia</b>, the <b>glucose tolerance test</b>, the <b>water deprivation and desmopressin test</b> and the <b>dexamethasone suppression test</b>."],
   ["2026-10-08","<b>Every graph on one page</b>: the Index lists all graphs by system — tap one to jump to it. Each graph with three or more versions has a <b>Quiz</b> chip that hides the name and asks you to pick it. More of your questions now link to cards."],
@@ -34135,7 +34983,7 @@ function graphsIdxHtml(){
   const groups=TOPICS.map(([,l,vs])=>[l,vs.flatMap(v=>((MAPS[v]&&MAPS[v].plots)||[]).map((p,i)=>({v,i,p})))]).filter(g=>g[1].length);
   const n=groups.reduce((a,g)=>a+g[1].length,0); if(!n) return "";
   return `<details class="idx-sources graphs-idx"><summary>All graphs · ${n}</summary>
-    <p>Every graph in the atlas, by system. Tap one to jump to it. A graph with three or more versions has a <b>Quiz me</b> chip that hides the name and asks you to pick it.</p>
+    <p>Every graph in the atlas, by system. Tap one to jump to it. A graph with three or more versions has a <b>Quiz me</b> chip that hides the name and asks you to pick it; <b>Compare</b> overlays a second version, dashed. <b>Quiz → Graph mix</b> runs ten at random.</p>
     ${groups.map(([l,list])=>`<div class="gal-sec"><h4>${esc(l)}</h4><div class="pagehits">${list.map(({v,i,p})=>`<button class="pagehit" data-plotgo="${v}:${i}">${esc(p.t)}<span class="galn"> · ${esc(name(v))}${PLOTS[p.kind]&&PLOTS[p.kind].vars.length>=3?" · quiz":""}</span></button>`).join("")}</div></div>`).join("")}
   </details>`;
 }
@@ -34254,6 +35102,8 @@ svg.addEventListener("gesturestart",ev=>ev.preventDefault());   // Safari: keep 
 svg.addEventListener("click",ev=>{
   if(dragged){ dragged=false; return; }   // the end of a pan is not a tap
   const pv=ev.target.closest(".pvar");
+  const pcz=ev.target.closest("[data-pc]");
+  if(pcz){ plotCmp(pcz.dataset.plot,pcz.dataset.pc,+pcz.dataset.pv); return; }
   const pqz=ev.target.closest("[data-pq]");
   if(pqz){ plotQuiz(pqz.dataset.plot,pqz.dataset.pq,+pqz.dataset.pv); return; }
   if(pv){ PLOTVAR[state.view+":"+pv.dataset.plot]=+pv.dataset.pv; render(); return; }
