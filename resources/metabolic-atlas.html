@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 95 pan/zoom maps with 1361 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 98 pan/zoom maps with 1382 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="95 interactive maps. 1361 lesions pinned to the step they break.">
+<meta property="og:description" content="98 interactive maps. 1382 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -29,7 +29,7 @@ img{max-width:100%}
   --p-glycolysis:#2C6E9B; --p-gluconeo:#7A55A0; --p-ppp:#17796E; --p-glycogen:#94701F;
   --p-sugars:#9B4278; --p-tca:#39784F; --p-etc:#55646F; --p-neutral:#6B7570;
   --m-dz:#BE3A4B; --m-drug:#C05A21; --m-reg:#42539E;
-  --ok:#2E7D4F; --bad:#B8323F;
+  --ok:#2E7D4F; --bad:#B8323F; --due:#C27C14;
   --compartment:#F2F4EF; --compartment-line:#BCC9BC; --comp-text:#2F5F4E; --comp-badge:#D7E6DC;
   --shadow:0 1px 2px rgba(34,36,31,.05),0 12px 32px -18px rgba(34,36,31,.22);
   --font-ui:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
@@ -44,7 +44,7 @@ img{max-width:100%}
   --p-glycolysis:#79B2DB; --p-gluconeo:#BFA0E2; --p-ppp:#4CC4B0; --p-glycogen:#D3AC55;
   --p-sugars:#E08FC0; --p-tca:#6FC492; --p-etc:#A3B0A8; --p-neutral:#94A099;
   --m-dz:#EE7386; --m-drug:#EE9556; --m-reg:#94A2F2;
-  --ok:#6FC492; --bad:#EE7386;
+  --ok:#6FC492; --bad:#EE7386; --due:#E9B25B;
   --compartment:#232B24; --compartment-line:#46584B; --comp-text:#8FD3B4; --comp-badge:#2B3E33;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 14px 34px -18px rgba(0,0,0,.7);
 }}
@@ -57,7 +57,7 @@ img{max-width:100%}
   --p-glycolysis:#79B2DB; --p-gluconeo:#BFA0E2; --p-ppp:#4CC4B0; --p-glycogen:#D3AC55;
   --p-sugars:#E08FC0; --p-tca:#6FC492; --p-etc:#A3B0A8; --p-neutral:#94A099;
   --m-dz:#EE7386; --m-drug:#EE9556; --m-reg:#94A2F2;
-  --ok:#6FC492; --bad:#EE7386;
+  --ok:#6FC492; --bad:#EE7386; --due:#E9B25B;
   --compartment:#232B24; --compartment-line:#46584B; --comp-text:#8FD3B4; --comp-badge:#2B3E33;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 14px 34px -18px rgba(0,0,0,.7);
 }
@@ -193,6 +193,14 @@ svg.map.drag{cursor:grabbing}
 @keyframes pulse{0%{stroke-width:0;stroke-opacity:0}45%{stroke-width:8;stroke-opacity:.45}100%{stroke-width:0;stroke-opacity:0}}
 @media (prefers-reduced-motion:reduce){.flash .pshape{animation:none;stroke:var(--ink);stroke-width:3}}
 
+.pin .duering{fill:none;stroke:var(--due);stroke-width:2.6;pointer-events:none}
+.pin.due .duering{animation:duepulse 2.4s ease-in-out infinite}
+@keyframes duepulse{0%,100%{stroke-opacity:.95}50%{stroke-opacity:.3}}
+@media (prefers-reduced-motion:reduce){.pin.due .duering{animation:none}}
+.duego{display:block;width:100%;margin:8px 0 2px;padding:8px 12px;border-radius:9px;border:1px solid color-mix(in srgb,var(--due) 55%,var(--line));
+  background:color-mix(in srgb,var(--due) 12%,var(--surface));color:var(--ink);font-size:12.5px;font-weight:600;text-align:left}
+.duego:hover{border-color:var(--due)}
+
 /* ── detail drawer ──────────────────────────────────── */
 .drawer{position:absolute;top:0;right:0;bottom:0;width:404px;max-width:92%;background:var(--surface);
   border-left:1px solid var(--line);box-shadow:var(--shadow);overflow-y:auto;z-index:20;padding:0 0 36px}
@@ -310,6 +318,46 @@ svg.map.drag{cursor:grabbing}
 .pagehits{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
 .pagehit{padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:12px;color:var(--ink-2)}
 .pagehit:hover{border-color:var(--ink-3);color:var(--ink)}
+/* compare two cards */
+.drawer.cmp{width:min(900px,96%)}
+.cmpgrid{display:grid;grid-template-columns:120px 1fr 1fr;border-top:1px solid var(--line-2)}
+.cmpgrid > div{padding:10px 12px;border-bottom:1px solid var(--line-2);font-size:13px;line-height:1.45;min-width:0}
+.cmpgrid .rh{font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding-left:0}
+.cmpgrid .ch{font-family:var(--font-dis);font-size:16px;font-weight:600}
+.cmpgrid .ch button{all:unset;cursor:pointer;color:var(--ink)}
+.cmpgrid .ch button:hover{text-decoration:underline}
+.cmpgrid ul{margin:0;padding-left:17px}
+.cmpgrid li{margin:0 0 4px}
+.cmppick input{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);font:inherit;font-size:13.5px;margin:0 0 12px}
+@media (max-width:620px){ .cmpgrid{grid-template-columns:1fr} .cmpgrid .rh{padding-top:14px;border-bottom:none}
+  .cmpgrid [data-who]::before{content:attr(data-who);display:block;font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--ink-3);margin:0 0 3px} }
+/* printable sheet: hidden on screen, the only thing on paper */
+#printsheet{display:none}
+@media print{
+  :root,:root[data-theme]{
+    --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F7F7F3; --surface-3:#EBEBE5;
+    --ink:#22241F; --ink-2:#585A52; --ink-3:#8C8E85; --line:#DCDCD4; --line-2:#EAEAE3;
+    --map-bg:#FFFFFF; --tint:7%; --accent:#1F6F68;
+    --p-glycolysis:#2C6E9B; --p-gluconeo:#7A55A0; --p-ppp:#17796E; --p-glycogen:#94701F;
+    --p-sugars:#9B4278; --p-tca:#39784F; --p-etc:#55646F; --p-neutral:#6B7570;
+    --m-dz:#BE3A4B; --m-drug:#C05A21; --m-reg:#42539E; --ok:#2E7D4F; --bad:#B8323F; --due:#C27C14;
+    --compartment:#F2F4EF; --compartment-line:#BCC9BC; --comp-text:#2F5F4E; --comp-badge:#D7E6DC;
+  }
+  body.printing > *:not(#printsheet){display:none!important}
+  body.printing #printsheet{display:block;font-family:var(--font-ui);color:#22241F;background:#fff}
+  #printsheet h1{font-family:var(--font-dis);font-size:20pt;margin:0 0 4pt}
+  #printsheet .ps-sub{font-size:10pt;color:#585A52;margin:0 0 10pt}
+  #printsheet .ps-map{break-after:page}
+  #printsheet .ps-map svg{width:100%;height:auto;max-height:90vh}
+  #printsheet .ps-cards{columns:2;column-gap:18pt}
+  #printsheet .ps-card{break-inside:avoid;margin:0 0 9pt;font-size:8.6pt;line-height:1.35}
+  #printsheet .ps-card h3{font-size:10pt;margin:0 0 2pt}
+  #printsheet .ps-card .k{font-size:7pt;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8C8E85}
+  #printsheet .ps-card ul{margin:2pt 0 0;padding-left:12pt}
+  #printsheet .ps-src{break-before:page;font-size:8.6pt}
+  #printsheet .ps-foot{font-size:7.5pt;color:#8C8E85;margin-top:10pt}
+  .pin.due .duering{animation:none}
+}
 
 /* ── responsive ─────────────────────────────────────── */
 @media (max-width:1000px){
@@ -360,7 +408,7 @@ body{display:flex;flex-direction:column}
     <div class="hdr-right">
       <div class="search">
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
-        <input id="q" type="search" placeholder="Search disease, enzyme, buzzword, p. 295…" title="Search cards — or type a First Aid page, eg p. 295" autocomplete="off" spellcheck="false">
+        <input id="q" type="search" placeholder="Search disease, buzzword, p. 295, Katzung ch 11…" title="Search cards — or type a First Aid page (p. 295) or a textbook chapter (Katzung ch 11)" autocomplete="off" spellcheck="false">
       </div>
       <button class="btn" id="railBtn" aria-pressed="false" title="Hide the side panel  ( [ )" aria-label="Toggle the side panel">◧</button>
       <div class="qwrap">
@@ -370,6 +418,7 @@ body{display:flex;flex-direction:column}
           <button class="qopt" role="menuitemradio" data-q="steps" aria-checked="false">Hide the step names<span>Tap a chip to reveal its enzyme</span></button>
           <button class="qopt" role="menuitemradio" data-q="pins" aria-checked="false">Name the pins<span>Tap a pin, then pick the lesion it marks</span></button>
           <button class="qopt" role="menuitemradio" data-q="buzz" aria-checked="false">Buzzword → card<span>Read a buzzword, pick the card it belongs to</span></button>
+          <button class="qopt" role="menuitemradio" data-q="due" aria-checked="false">Due cards<span id="qduen">Every card due for review, across all maps</span></button>
         </div>
       </div>
       <button class="btn" id="themeBtn" title="Toggle light / dark">◐</button>
@@ -386,6 +435,7 @@ body{display:flex;flex-direction:column}
         <button class="tbtn" id="zout" title="Zoom out" aria-label="Zoom out">−</button>
         <button class="tbtn wide" id="zfit" title="Fit map to screen">Fit</button>
         <button class="tbtn wide" id="zsrc" title="This map’s progress, weak spots and sources">Info</button>
+        <button class="tbtn wide" id="zprint" title="Print this map with a one-page summary of its cards">Print</button>
       </div>
       <div class="qscore" id="qscore" hidden></div>
       <div class="hint" id="hint">drag to pan · scroll to zoom · click any pin</div>
@@ -395,6 +445,7 @@ body{display:flex;flex-direction:column}
   </div>
 </div>
 
+<div id="printsheet" aria-hidden="true"></div>
 <script>
 /* ═══════════════════════════════════════════════════════════════
    PATHWAY PALETTE
@@ -834,6 +885,23 @@ const PATHS = {
   iemglu:{n:"Hypoglycemia",v:"--p-glycolysis"},
   iemlact:{n:"Lactic acidosis",v:"--p-glycogen"},
   iemclue:{n:"Clues & screening",v:"--p-ppp"},
+  rdopen:{n:"Open the airway",v:"--p-glycolysis"},
+  rdcalm:{n:"Calm the inflammation",v:"--p-tca"},
+  rdupper:{n:"Nose, allergy & cough",v:"--p-ppp"},
+  rdpah:{n:"Pulmonary hypertension",v:"--p-gluconeo"},
+  rdwhen:{n:"Which drug when",v:"--p-glycogen"},
+  adrcv:{n:"Heart & vessels",v:"--p-gluconeo"},
+  adrendo:{n:"Endocrine & reproductive",v:"--p-ppp"},
+  adrgi:{n:"Gut & liver",v:"--p-glycogen"},
+  adrheme:{n:"Blood",v:"--p-glycolysis"},
+  adrmsk:{n:"Muscle, bone & skin",v:"--p-tca"},
+  adrneuro:{n:"Nerves, brain & eyes",v:"--p-sugars"},
+  adrrenal:{n:"Kidney, bladder & lung",v:"--p-gluconeo"},
+  adrmulti:{n:"Whole body",v:"--p-ppp"},
+  tmserum:{n:"Serum tumor markers",v:"--p-tca"},
+  tmstain:{n:"Immunostains",v:"--p-glycolysis"},
+  mlid:{n:"Identifying bacteria",v:"--p-tca"},
+  puberty:{n:"Puberty",v:"--p-sugars"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -1962,7 +2030,7 @@ fhh:{n:"Familial hypocalciuric hypercalcemia",k:"dz",p:"calcium",q:["familial hy
 
 calciumdrugs:{n:"Drugs acting on bone & calcium",k:"drug",p:"calcium",q:["bisphosphonate", "bisphosphonates", "alendronate", "zoledronic acid", "denosumab", "teriparatide", "calcitonin", "cinacalcet", "raloxifene"],enz:"Farnesyl-PP synthase · RANKL · PTH receptor · CaSR",inh:"—",fa:"336, 361, 462, 467, 496",hi:1,
  mech:"Bone turnover is a balance between osteoclasts (resorb) and osteoblasts (build), and RANKL from osteoblasts is the signal that activates osteoclasts. Nearly every drug here pushes on one side of that pair.",
- find:["Bisphosphonates (alendronate): pyrophosphate analogs that bind hydroxyapatite and inhibit osteoclasts; esophagitis, osteonecrosis of the jaw, atypical femoral fracture","Denosumab: monoclonal anti-RANKL; bone resorption surges when it is stopped","<b>Teriparatide</b>: recombinant PTH given <b>pulsatile</b>, which paradoxically builds bone (continuous PTH resorbs it)","<b>Cinacalcet</b>: CaSR agonist — tricks the parathyroid into seeing high calcium, so PTH falls","Calcitonin: inhibits osteoclasts","<b>Raloxifene</b>: SERM — agonist at bone, antagonist at breast; raises VTE risk"],
+ find:["Bisphosphonates (alendronate): pyrophosphate analogs that bind hydroxyapatite and inhibit osteoclasts; esophagitis, osteonecrosis of the jaw, atypical femoral fracture","Denosumab: monoclonal anti-RANKL; bone resorption surges when it is stopped","<b>Teriparatide</b>: recombinant PTH given <b>pulsatile</b>, which paradoxically builds bone (continuous PTH resorbs it)","<b>Cinacalcet</b>: CaSR agonist — tricks the parathyroid into seeing high calcium, so PTH falls","Calcitonin: inhibits osteoclasts","<b>Raloxifene</b>: SERM — agonist at bone, antagonist at breast; raises VTE risk","<b>Romosozumab</b>: antibody against sclerostin, which normally holds back osteoblasts — builds bone"],
  labs:["Acute severe hypercalcemia: <b>IV normal saline first</b>, then calcitonin for speed and a bisphosphonate for durability"],
  buzz:["Pulsatile PTH builds bone, continuous PTH destroys it"],
  src:["Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis","Pawlina ch 8 — Bone","Guyton ch 80 — Parathyroid Hormone, Calcitonin, Calcium and Phosphate Metabolism, Vitamin D, Bone, and Teeth","Costanzo ch 9 — Endocrine physiology"],
@@ -11468,6 +11536,173 @@ newbornscreen:{n:"Newborn screening",k:"reg",p:"iemclue",enz:"Find treatable dis
  src:["Robbins ch 10 — Diseases of infancy and childhood"],
  tx:["—"],q:["newborn screening","newborn screen","neonatal screening","immunoreactive trypsinogen","trec","trecs"]},
 
+/* ── respiratory drugs · drug reactions by organ · bacterial ID · tumor markers · puberty & pregnancy · dermatomes (m19) */
+h1blockers:{n:"H1 blockers (antihistamines)",k:"drug",p:"rdupper",enz:"H1 histamine receptor — reversible inverse agonists",inh:"—",fa:"705, 250",hi:1,
+ mech:"Reversible inhibitors of the H1 histamine receptor (inverse agonists). <b>First-generation</b> drugs enter the CNS and block muscarinic and α-adrenergic receptors as well; <b>second-generation</b> drugs enter the CNS far less, so they sedate far less.",
+ find:["First generation: diphenhydramine, dimenhydrinate, chlorpheniramine, doxylamine — names often contain -en/-ine or -en/-ate","First-generation uses: allergy, motion sickness, vomiting in pregnancy, sleep aid","First-generation adverse effects: sedation, antimuscarinic and anti-α-adrenergic effects","Second generation: loratadine, fexofenadine, desloratadine, cetirizine — names usually end in -adine; used for allergy"],
+ labs:["H1 blockers are among the drugs that cause antimuscarinic toxicity and dilate the pupils"],
+ buzz:["Drowsy after an allergy pill = first generation","-adine = less sedating"],
+ src:["Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids"],
+ tx:["—"],q:["diphenhydramine","dimenhydrinate","chlorpheniramine","doxylamine","loratadine","fexofenadine","desloratadine","cetirizine","h1 blocker","h1 blockers","h1 antihistamine","=antihistamine","=antihistamines"]},
+
+coughcold:{n:"Dextromethorphan & nasal decongestants",k:"drug",p:"rdupper",enz:"NMDA antagonist antitussive · α-agonist decongestants",inh:"—",fa:"706",hi:0,
+ mech:"<b>Dextromethorphan</b> is an antitussive — a synthetic codeine analog that antagonizes NMDA glutamate receptors. <b>Pseudoephedrine</b> and <b>phenylephrine</b> activate α-adrenergic receptors in the nasal mucosa, constricting its vessels.",
+ find:["Dextromethorphan: mild opioid effect in excess (naloxone reverses an overdose); ketamine-like dissociation at high doses; mild abuse potential","Dextromethorphan with other serotonergic drugs → serotonin syndrome","Decongestants reduce hyperemia and edema and open obstructed eustachian tubes","Decongestant adverse effects: hypertension; pseudoephedrine also causes CNS stimulation and anxiety","Rebound congestion (rhinitis medicamentosa) after more than 4–6 days of use, with tachyphylaxis"],
+ labs:["—"],
+ buzz:["Decongestant spray for two weeks, now worse congestion → rhinitis medicamentosa"],
+ src:["Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs","Katzung ch 31 — Opioid Agonists & Antagonists"],
+ tx:["—"],q:["dextromethorphan","pseudoephedrine","rhinitis medicamentosa","nasal decongestant","nasal decongestants"]},
+
+pahdrugs:{n:"Pulmonary hypertension drugs",k:"drug",p:"rdpah",enz:"Block endothelin · boost NO-cGMP · replace prostacyclin",inh:"—",fa:"706",hi:1,
+ mech:"Three pathways set pulmonary vascular tone. Endothelin-1 constricts the vessels and drives smooth-muscle proliferation; nitric oxide (through cGMP) and prostacyclin dilate them. Each drug class pushes on one pathway.",
+ find:["<b>Endothelin receptor antagonists</b> (bosentan): competitively block endothelin-1 receptors → ↓ pulmonary vascular resistance; hepatotoxic — monitor LFTs","<b>PDE-5 inhibitors</b> (sildenafil): ↑ cGMP → prolong the vasodilating effect of NO; also used for erectile dysfunction","<b>Prostacyclin analogs</b> (epoprostenol, iloprost): dilate pulmonary and systemic arteries and inhibit platelet aggregation; flushing, jaw pain"],
+ labs:["PDE-5 inhibitors are contraindicated with nitroglycerin or other nitrates — severe hypotension"],
+ buzz:["Bosentan → check liver enzymes","Sildenafil + a nitrate = dangerous hypotension"],
+ src:["Katzung ch 17 — Vasoactive Peptides","Katzung ch 18 — The Eicosanoids: Prostaglandins, Thromboxanes, Leukotrienes, & Related Compounds","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes"],
+ tx:["—"],q:["endothelin receptor antagonist","endothelin receptor antagonists","epoprostenol","iloprost","prostacyclin analog","prostacyclin analogs"]},
+
+adrcv:{n:"Drug reactions — heart & vessels",k:"reg",p:"adrcv",enz:"Vasospasm · flushing · cardiomyopathy · edema · torsades",inh:"—",fa:"247",hi:1,
+ mech:"A handful of drug classes account for most cardiovascular drug reactions. Learn them as reaction → drugs.",
+ find:["<b>Coronary vasospasm</b>: cocaine, amphetamines, sumatriptan, ergot alkaloids (CASE)","<b>Cutaneous flushing</b>: vancomycin, adenosine, niacin, Ca²⁺ channel blockers, echinocandins, nitrates","<b>Dilated cardiomyopathy</b>: alcohol, anthracyclines (doxorubicin, daunorubicin — prevent with dexrazoxane), trastuzumab","<b>Peripheral edema</b>: dihydropyridine Ca²⁺ channel blockers (amlodipine)","<b>Torsades de pointes</b> from QT prolongation: methadone, class IA and III antiarrhythmics, macrolides, fluoroquinolones, antipsychotics, TCAs, ondansetron, azole antifungals"],
+ labs:["Vancomycin infusion reaction: histamine release → widespread itchy erythema; rate dependent — slow the infusion, give diphenhydramine"],
+ buzz:["QT drugs: ABCDEF — antiArrhythmics, antiBiotics, antiCychotics, antiDepressants, antiEmetics, antiFungals"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Katzung ch 54 — Cancer Chemotherapy"],
+ tx:["—"],q:["coronary vasospasm","vancomycin infusion reaction","red man syndrome","drug induced qt prolongation"]},
+
+adrendo:{n:"Drug reactions — endocrine & reproductive",k:"reg",p:"adrendo",enz:"Hormone axes that drugs switch on or off",inh:"—",fa:"248",hi:1,
+ mech:"Drugs disturb hormone axes by suppressing them, blocking receptors, or acting on the target gland directly.",
+ find:["<b>Adrenal insufficiency</b>: HPA suppression from chronic glucocorticoids — abrupt withdrawal → adrenal crisis","<b>Diabetes insipidus</b>: lithium, demeclocycline","<b>Gynecomastia</b>: ketoconazole, cimetidine, spironolactone, GnRH analogs and antagonists, androgen receptor inhibitors, 5α-reductase inhibitors","<b>Hot flashes</b>: SERMs (tamoxifen, clomiphene, raloxifene)","<b>Hyperglycemia</b>: tacrolimus, protease inhibitors, niacin, HCTZ, glucocorticoids","<b>Hyperprolactinemia</b>: typical and atypical antipsychotics, metoclopramide, methyldopa, verapamil — hypogonadism and galactorrhea","<b>Hyperthyroidism</b>: amiodarone, iodine, lithium · <b>hypothyroidism</b>: amiodarone, lithium","<b>SIADH</b>: carbamazepine, cyclophosphamide, SSRIs"],
+ labs:["—"],
+ buzz:["SIADH drugs: Can’t Concentrate Serum Sodium — carbamazepine, cyclophosphamide, SSRIs"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Katzung ch 29 — Antipsychotic Agents & Lithium","Katzung ch 38 — Thyroid & Antithyroid Drugs","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists"],
+ tx:["—"],q:["drug induced hyperprolactinemia","drug induced gynecomastia","drug induced siadh","drug induced diabetes insipidus"]},
+
+adrgi:{n:"Drug reactions — gut & liver",k:"reg",p:"adrgi",enz:"Hepatitis · necrosis · pancreatitis · pill esophagitis · C diff",inh:"—",fa:"248",hi:1,
+ mech:"Grouped by where along the gut the injury lands — liver, pancreas, esophagus, colon.",
+ find:["<b>Hepatitis</b>: rifampin, isoniazid, pyrazinamide, statins, fibrates","<b>Focal to massive hepatic necrosis</b>: acetaminophen, valproate, Amanita phalloides (death cap mushroom)","<b>Acute cholestatic hepatitis, jaundice</b>: macrolides (eg, erythromycin)","<b>Pancreatitis</b>: diuretics (furosemide, HCTZ), glucocorticoids, alcohol, valproate, azathioprine","<b>Pill esophagitis</b>: potassium chloride, NSAIDs, bisphosphonates, ferrous sulfate, tetracyclines — at sites of esophageal narrowing; prevent with upright posture and plenty of water","<b>Pseudomembranous colitis</b>: ampicillin, cephalosporins, clindamycin, fluoroquinolones, PPIs","<b>Constipation</b>: antimuscarinics, antipsychotics, opioids, non-dihydropyridine CCBs, ondansetron, vincristine, loperamide","<b>Diarrhea</b>: metformin, acarbose, colchicine, cholinesterase inhibitors, macrolides, SSRIs, orlistat, irinotecan"],
+ labs:["—"],
+ buzz:["Pancreatitis drugs: Drugs generate a violent abdominal distress","Pill esophagitis: Pills Not beneficial for food tube"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 18 — Liver and gallbladder"],
+ tx:["—"],q:["drug induced hepatitis","drug induced liver injury","pill esophagitis","medication induced esophagitis","drug induced pancreatitis"]},
+
+adrheme:{n:"Drug reactions — blood",k:"reg",p:"adrheme",enz:"Marrow failure · hemolysis · low platelets · clots",inh:"—",fa:"249",hi:1,
+ mech:"Drugs injure blood cells by suppressing the marrow, by triggering antibodies against the cells, or by oxidizing red cells that cannot protect themselves.",
+ find:["<b>Agranulocytosis</b>: clozapine, carbamazepine, propylthiouracil, methimazole, dapsone, ganciclovir, colchicine","<b>Aplastic anemia</b>: carbamazepine, methimazole, NSAIDs, benzene, chloramphenicol, propylthiouracil","<b>Direct Coombs-positive hemolytic anemia</b>: penicillin, cephalosporins, methyldopa","<b>Hemolysis in G6PD deficiency</b>: sulfonamides, dapsone, primaquine, aspirin, nitrofurantoin","<b>Megaloblastic anemia</b>: hydroxyurea, phenytoin, methotrexate, sulfa drugs","<b>Thrombocytopenia</b>: heparin, quinidine, ganciclovir, vancomycin, linezolid","<b>Thrombosis</b>: combined oral contraceptives, hormone replacement therapy, SERMs, testosterone, epoetin alfa","<b>DRESS</b> (drug reaction with eosinophilia and systemic symptoms, a T cell–mediated hypersensitivity): phenytoin, carbamazepine, minocycline, sulfa drugs, allopurinol, vancomycin"],
+ labs:["—"],
+ buzz:["Megaloblastic: having a mega blast with PMS — Phenytoin, Methotrexate, Sulfa"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 14 — Red blood cell and bleeding disorders"],
+ tx:["—"],q:["drug induced agranulocytosis","drug induced aplastic anemia","drug induced hemolytic anemia","drug induced thrombocytopenia","dress syndrome","drug reaction with eosinophilia"]},
+
+adrskin:{n:"Drug reactions — muscle, bone & skin",k:"reg",p:"adrmsk",enz:"Lupus · gums · gout · myopathy · bone loss · rashes",inh:"—",fa:"249",hi:1,
+ mech:"Musculoskeletal, skin and connective-tissue reactions range from cosmetic (teeth, gums) to life-threatening (Stevens-Johnson syndrome, malignant hyperthermia).",
+ find:["<b>Drug-induced lupus</b>: hydralazine, procainamide, quinidine","<b>Gingival hyperplasia</b>: cyclosporine, Ca²⁺ channel blockers, phenytoin","<b>Hyperuricemia (gout)</b>: pyrazinamide, thiazides, furosemide, niacin, cyclosporine","<b>Myopathy</b>: statins, fibrates, niacin, colchicine, daptomycin, hydroxychloroquine, interferon-α, penicillamine, glucocorticoids","<b>Osteoporosis</b>: glucocorticoids, depot medroxyprogesterone, GnRH agonists, aromatase inhibitors, anticonvulsants, heparin, PPIs","<b>Photosensitivity</b>: sulfonamides, amiodarone, tetracyclines, fluoroquinolones","<b>Stevens-Johnson syndrome</b>: antiepileptics (especially lamotrigine), allopurinol, sulfa drugs, penicillin","<b>Teeth discoloration</b>: tetracyclines · <b>tendon and cartilage damage</b>: fluoroquinolones","<b>Fat redistribution</b>: protease inhibitors, glucocorticoids","<b>Malignant hyperthermia</b>: inhaled anesthetics in people with a ryanodine receptor mutation — dantrolene"],
+ labs:["—"],
+ buzz:["Photosensitivity: Sat for photo — Sulfonamides, Amiodarone, Tetracyclines, Fluoroquinolones"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 25 — The skin","Katzung ch 35 — Agents Used in Dyslipidemia"],
+ tx:["—"],q:["drug induced lupus","photosensitivity","gingival hyperplasia","drug induced myopathy","statin myopathy"]},
+
+adrneuro:{n:"Drug reactions — nerves, brain & eyes",k:"reg",p:"adrneuro",enz:"Movement disorders · neuropathy · seizures · vision",inh:"—",fa:"250",hi:1,
+ mech:"Neurologic reactions cluster in a few classes: dopamine blockers cause movement disorders, several anticancer and TB drugs damage peripheral nerves, and a short list provokes seizures.",
+ find:["<b>Parkinson-like syndrome and tardive dyskinesia</b>: antipsychotics, metoclopramide","<b>Peripheral neuropathy</b>: platinum agents (cisplatin), isoniazid, vincristine, paclitaxel, phenytoin","<b>Seizures</b>: isoniazid, bupropion, imipenem/cilastatin, tramadol","<b>Idiopathic intracranial hypertension</b>: corticosteroids, danazol, vitamin A, growth hormone, tetracyclines","<b>Cinchonism</b>: quinidine, quinine — tinnitus, hearing and vision loss, psychosis, cognitive impairment","<b>Visual changes</b>: digoxin (yellow-tinged vision), PDE-5 inhibitors (blue-tinged), ethambutol (color vision), isoniazid (optic neuritis), hydroxychloroquine (↓ acuity, field defects), topiramate (blurred vision, haloes), ivabradine (luminous phenomena)"],
+ labs:["—"],
+ buzz:["Seizure drugs: With seizures, I bit my tongue — isoniazid, bupropion, imipenem, tramadol"],
+ src:["Katzung ch 29 — Antipsychotic Agents & Lithium","Katzung ch 47 — Antimycobacterial Drugs","Katzung ch 54 — Cancer Chemotherapy"],
+ tx:["—"],q:["drug induced neuropathy","drug induced seizures","cinchonism","drug induced parkinsonism"]},
+
+adrrenal:{n:"Drug reactions — kidney, bladder & lung",k:"reg",p:"adrrenal",enz:"Interstitial nephritis · tubular toxicity · cystitis · cough · fibrosis",inh:"—",fa:"250",hi:1,
+ mech:"Kidney reactions range from inflammation (interstitial nephritis) to direct tubular toxicity; in the lung, drugs cause cough or fibrosis.",
+ find:["<b>Interstitial nephritis</b>: diuretics, NSAIDs, penicillins and cephalosporins, PPIs, rifampin, sulfa drugs (the 5 P’s)","<b>Nephrotoxicity</b>: cisplatin, aminoglycosides, amphotericin, vancomycin","<b>Fanconi syndrome</b>: cisplatin, ifosfamide, expired tetracyclines, tenofovir","<b>Hemorrhagic cystitis</b>: cyclophosphamide, ifosfamide — prevent with mesna","<b>Dry cough</b>: ACE inhibitors","<b>Pulmonary fibrosis</b>: methotrexate, nitrofurantoin, carmustine, bleomycin, busulfan, amiodarone"],
+ labs:["—"],
+ buzz:["Pulmonary fibrosis: My nose cannot breathe bad air"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 20 — The kidney","Robbins ch 15 — The lung"],
+ tx:["—"],q:["drug induced interstitial nephritis","drug induced nephrotoxicity","hemorrhagic cystitis","drug induced pulmonary fibrosis"]},
+
+adrmulti:{n:"Drug reactions — whole body",k:"reg",p:"adrmulti",enz:"Antimuscarinic · disulfiram-like · sulfa allergy · pupils",inh:"—",fa:"250, 251",hi:1,
+ mech:"Some reactions span many organs at once — blocking muscarinic receptors throughout the body, or a disulfiram-like reaction to alcohol.",
+ find:["<b>Antimuscarinic effects</b>: atropine, TCAs, H1 blockers, antipsychotics","<b>Disulfiram-like reaction</b> with alcohol: metronidazole, procarbazine, 1st-generation sulfonylureas, griseofulvin, certain cephalosporins","<b>Sulfa drugs</b>: sulfonamide antibiotics, sulfasalazine, probenecid, furosemide, acetazolamide, celecoxib, thiazides, sulfonylureas","Sulfa allergy: fever, urticaria, Stevens-Johnson syndrome, hemolytic anemia, thrombocytopenia, agranulocytosis, interstitial nephritis, photosensitivity","<b>Mydriasis</b>: anticholinergics (atropine, TCAs, scopolamine, antihistamines), indirect sympathomimetics (amphetamines, cocaine, LSD), meperidine, direct sympathomimetics","<b>Miosis</b>: opioids (except meperidine), sympatholytics (α₂-agonists), parasympathomimetics (pilocarpine), organophosphates"],
+ labs:["—"],
+ buzz:["Disulfiram-like: Sorry pals, can’t go mingle"],
+ src:["Katzung ch 8 — Cholinoceptor-Blocking Drugs","Katzung ch 46 — Sulfonamides, Trimethoprim, & Quinolones"],
+ tx:["—"],q:["disulfiram like reaction","disulfiram like","sulfa allergy","sulfa drugs"]},
+
+gpid:{n:"Identifying gram-positive cocci",k:"reg",p:"mlid",enz:"Catalase → coagulase → novobiocin · hemolysis → optochin, bacitracin",inh:"—",fa:"132–135",hi:1,
+ mech:"A short run of bench tests sorts gram-positive cocci. <b>Catalase</b> splits staphylococci (positive, clusters) from streptococci (negative, pairs or chains). <b>Coagulase</b> picks out S aureus, and <b>hemolysis</b> on blood agar sorts the streptococci.",
+ find:["Coagulase-negative staph: <b>novobiocin</b> sensitive = S epidermidis · resistant = S saprophyticus","α-hemolytic (partial, green): <b>optochin</b> sensitive and bile soluble = S pneumoniae · resistant and bile insoluble = viridans streptococci","β-hemolytic (complete, clear): <b>bacitracin</b> sensitive, PYR positive = group A (S pyogenes) · bacitracin resistant = group B (S agalactiae), which is CAMP and hippurate positive","γ (no hemolysis, grows in bile): grows in 6.5% NaCl and PYR positive = Enterococcus · neither = S gallolyticus"],
+ labs:["Enterococcus can be α- or γ-hemolytic","S aureus ferments mannitol; S epidermidis does not"],
+ buzz:["Gram-positive cocci in clusters, coagulase negative, novobiocin resistant → S saprophyticus"],
+ tx:["—"],q:["optochin","bacitracin sensitive","bacitracin resistant","novobiocin","camp factor","camp test","bile soluble","pyr positive"]},
+
+gnid:{n:"Identifying gram-negative bacteria",k:"reg",p:"mlid",enz:"Shape first, then lactose, oxidase, H₂S, maltose",inh:"—",fa:"139, 140, 142",hi:1,
+ mech:"Gram-negative organisms are sorted first by shape — diplococci, curved rods, rods, coccobacilli — and then by a few metabolic tests.",
+ find:["Diplococci: N meningitidis makes acid from <b>maltose</b> and glucose; N gonorrhoeae from glucose only","Curved rods (oxidase positive): Campylobacter grows at 42°C · H pylori makes urease · Vibrio cholerae grows in alkaline media","<b>Lactose fermenters</b> (pink on MacConkey): fast — E coli, Klebsiella, Enterobacter · slow — Citrobacter, Serratia","Lactose nonfermenters: <b>oxidase positive</b> = Pseudomonas · oxidase negative, <b>H₂S on TSI agar</b> = Salmonella, Proteus · no H₂S = Shigella","Coccobacilli: H influenzae, Pasteurella, Brucella, Bordetella pertussis, Francisella tularensis, Acinetobacter"],
+ labs:["EMB agar: lactose fermenters grow purple-black; E coli has a green sheen"],
+ buzz:["Gram-negative rod, lactose nonfermenter, oxidase positive, grapelike odor → Pseudomonas"],
+ tx:["—"],q:["lactose fermenter","lactose fermenters","lactose fermenting","non lactose fermenter","nonlactose fermenter","oxidase positive","maltose fermentation","tsi agar"]},
+
+serummarkers:{n:"Serum tumor markers",k:"reg",p:"tmserum",enz:"Monitor response and recurrence — biopsy makes the diagnosis",inh:"—",fa:"222",hi:1,
+ mech:"Serum tumor markers lack the sensitivity and specificity to diagnose or screen for cancer. They help follow a tumor’s response to treatment and detect recurrence, and several rise in non-neoplastic conditions too.",
+ find:["<b>α-fetoprotein</b>: hepatocellular carcinoma, yolk sac tumor, mixed germ cell tumor, ataxia-telangiectasia, neural tube defects — made by the fetus","<b>hCG</b>: hydatidiform mole, choriocarcinoma, testicular and mixed germ cell tumors — made by syncytiotrophoblast","<b>CEA</b>: colorectal and pancreatic cancer (minor: gastric, breast, medullary thyroid) — very nonspecific","<b>CA 19-9</b>: pancreatic adenocarcinoma · <b>CA 125</b>: epithelial ovarian cancer · <b>CA 15-3 / CA 27-29</b>: breast cancer","<b>PSA</b>: prostate cancer — also up in BPH and prostatitis; used for recurrence after treatment","<b>Calcitonin</b>: medullary thyroid carcinoma (alone or in MEN2A, MEN2B)","<b>Chromogranin</b> and <b>neuron-specific enolase</b>: neuroendocrine tumors — small cell lung cancer, carcinoid, neuroblastoma","<b>LDH</b>: testicular germ cell tumors, ovarian dysgerminoma — a gauge of tumor burden","<b>Alkaline phosphatase</b>: bone or liver metastases, Paget disease of bone, seminoma (PLAP) — check GGT to exclude the liver"],
+ labs:["AFP is high in neural tube and abdominal wall defects and low in Down syndrome"],
+ buzz:["A marker follows the tumor; the biopsy names it"],
+ src:["Robbins ch 7 — Neoplasia"],
+ tx:["—"],q:["tumor marker","tumor markers","alpha fetoprotein","afp","carcinoembryonic antigen","cea","ca 19 9","ca 125","ca 15 3","neuron specific enolase"]},
+
+ihcstains:{n:"Immunohistochemical stains",k:"reg",p:"tmstain",enz:"Which protein the tumor cell still makes tells you where it came from",inh:"—",fa:"223",hi:1,
+ mech:"Immunohistochemistry stains tissue for proteins typical of a cell lineage. It finds the primary site of a metastasis and classifies tumors that look alike under the microscope. Intermediate filaments are especially useful because tumors keep the filament of their cell of origin.",
+ find:["<b>Cytokeratin</b>: epithelial cells → carcinomas","<b>Desmin</b>: muscle → muscle tumors (rhabdomyosarcoma)","<b>Vimentin</b>: mesenchymal tissue → sarcomas, but also endometrial carcinoma, renal cell carcinoma, meningioma","<b>GFAP</b>: glia → astrocytoma, glioblastoma","<b>Neurofilament</b>: neurons → neuronal tumors (neuroblastoma)","<b>Chromogranin, synaptophysin</b>: neuroendocrine cells → small cell lung cancer, carcinoid, neuroblastoma","<b>S-100</b>: neural crest cells → melanoma, schwannoma, Langerhans cell histiocytosis","<b>PSA</b>: prostatic epithelium → prostate cancer · <b>CD31 (PECAM-1)</b>: endothelium → angiosarcoma","<b>TRAP</b> (tartrate-resistant acid phosphatase): hairy cell leukemia"],
+ labs:["P-glycoprotein (MDR1) is an ATP-dependent efflux pump some cancer cells express to pump out chemotherapy — one cause of resistance"],
+ buzz:["Undifferentiated tumor, S-100 positive → melanoma or schwannoma"],
+ src:["Robbins ch 7 — Neoplasia","Pawlina ch 2 — Cell Cytoplasm"],
+ tx:["—"],q:["=immunohistochemistry","immunohistochemical stain","gfap","s 100","synaptophysin","chromogranin","desmin","trap stain","tartrate resistant acid phosphatase","p glycoprotein"]},
+
+hcghpl:{n:"hCG & human placental lactogen",k:"reg",p:"pregnancy",enz:"Placental hormones made by syncytiotrophoblast",inh:"—",fa:"652",hi:1,
+ mech:"<b>hCG</b> acts like LH to keep the corpus luteum — and so its progesterone — alive for the first 8–10 weeks, until the placenta makes its own estriol and progesterone. <b>Human placental lactogen</b> (chorionic somatomammotropin) makes the mother insulin resistant so glucose and amino acids reach the fetus.",
+ find:["hCG appears early in urine — the basis of pregnancy tests","Same α subunit as LH, FSH and TSH; the β subunit is unique (what tests detect) but resembles TSH, so very high hCG can cause hyperthyroidism","↑ hCG: multifetal gestation, hydatidiform mole, choriocarcinoma, Down syndrome","↓ hCG: ectopic or failing pregnancy, Edwards and Patau syndromes","hPL also stimulates insulin secretion; failing to overcome its insulin resistance → gestational diabetes"],
+ labs:["—"],
+ buzz:["hCG keeps the corpus luteum alive until the luteal-placental shift at 8–10 weeks"],
+ src:["Guyton ch 83 — Pregnancy and Lactation"],
+ tx:["—"],q:["human chorionic gonadotropin","beta hcg","human placental lactogen","chorionic somatomammotropin","luteal placental shift"]},
+
+pregphys:{n:"Physiologic changes of pregnancy",k:"reg",p:"pregnancy",enz:"More volume, more output, more clotting, more insulin resistance",inh:"—",fa:"651",hi:1,
+ mech:"Nearly every organ adapts to pregnancy. Knowing the normal changes keeps them from being mistaken for disease.",
+ find:["Cardiovascular: ↑ cardiac output, ↑ heart rate (late), peripheral edema","Renal: ↑ GFR → ↓ BUN and creatinine; mild glucosuria and proteinuria; hydronephrosis and hydroureter, more on the right","Respiratory: mild respiratory alkalosis","Hematologic: dilutional anemia, hypercoagulable state, ↑ micronutrient needs","Metabolic: ↑ insulin resistance and secretion, ↑ lipolysis; pituitary enlargement","GI: constipation, GERD, gallstones","Skin: melasma, linea nigra, darker areolae, striae gravidarum, palmar erythema, varicose veins","Musculoskeletal: lordosis, joint laxity"],
+ labs:["Lower BUN and creatinine are normal in pregnancy — GFR rises"],
+ buzz:["Pregnancy is a hypercoagulable state"],
+ src:["Guyton ch 83 — Pregnancy and Lactation"],
+ tx:["—"],q:["physiologic changes of pregnancy","dilutional anemia","physiologic anemia of pregnancy","melasma","linea nigra"]},
+
+lactphys:{n:"Lactation & breast milk",k:"reg",p:"lactation",enz:"Falling estrogen and progesterone release prolactin",inh:"—",fa:"653, 648",hi:1,
+ mech:"After delivery of the placenta, the rapid fall in estrogen and progesterone disinhibits prolactin and lactation begins. Suckling keeps it going: nipple stimulation raises <b>prolactin</b> (milk production) and <b>oxytocin</b> (milk letdown, plus uterine contraction).",
+ find:["Breast milk is the ideal food before 6 months — it carries immunoglobulins (mostly IgA), macrophages and lymphocytes","Breastfeeding lowers the child’s risk of infections, asthma, allergies, diabetes and obesity","Exclusively breastfed infants need vitamin D (± iron) supplements","Breastfeeding lowers the mother’s risk of breast and ovarian cancer"],
+ labs:["—"],
+ buzz:["Prolactin is pro-lactation; oxytocin is letdown"],
+ src:["Guyton ch 83 — Pregnancy and Lactation"],
+ tx:["—"],q:["=lactation","=breastfeeding","breast milk","milk letdown"]},
+
+tanner:{n:"Tanner stages of puberty",k:"reg",p:"puberty",enz:"Sexual maturity rating, I to V",inh:"—",fa:"654",hi:0,
+ mech:"The sexual maturity rating is assigned separately to genitalia, pubic hair and breasts, so a person can be stage 2 in one and stage 3 in another. The earliest sign is breast budding (thelarche) in girls and testicular enlargement in boys.",
+ find:["Stage I: prepubertal — no sexual hair, flat chest with raised nipple","Stage II (~8–11.5 y): pubic hair appears (pubarche), testicular enlargement, breast bud (thelarche)","Stage III (~11.5–13 y): coarser pubic hair, penis lengthens, breast enlarges","Stage IV (~13–15 y): coarse hair across the pubis sparing the thighs, penis widens, raised areola (mound on mound)","Stage V (usually > 15 y): hair onto the medial thigh, adult genitalia, adult breast contour"],
+ labs:["—"],
+ buzz:["First sign of puberty: breast bud in girls, testicular enlargement in boys"],
+ src:["Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)"],
+ tx:["—"],q:["tanner stage","tanner stages","sexual maturity rating","thelarche","pubarche"]},
+
+pubertydis:{n:"Precocious & delayed puberty",k:"dz",p:"puberty",enz:"Early or absent sex-hormone exposure",inh:"—",fa:"654",hi:1,
+ mech:"<b>Precocious puberty</b> is secondary sexual development before age 8 in girls or 9 in boys. Early sex hormones speed linear growth and skeletal maturation, then close the epiphyses early, causing short stature. <b>Delayed puberty</b> is no secondary sexual development by 13 in girls or 14 in boys.",
+ find:["Central precocious puberty (↑ GnRH): idiopathic early activation of the axis (most common), CNS tumors","Peripheral precocious puberty (GnRH-independent): congenital adrenal hyperplasia, estrogen-secreting ovarian tumors (granulosa cell), Leydig cell tumor, McCune-Albright syndrome, exogenous sex steroids","Delayed puberty, hypergonadotropic (primary): Klinefelter, Turner, gonadal injury from chemotherapy, radiation or infection","Delayed puberty, hypogonadotropic (secondary): constitutional delay (“late bloomer”), Kallmann syndrome, CNS lesions"],
+ labs:["—"],
+ buzz:["Tall for age now, short as an adult → precocious puberty"],
+ src:["Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Robbins ch 24 — The endocrine system"],
+ tx:["Central precocious puberty: long-acting (continuous) GnRH analogs suppress the axis"],q:["=precocious puberty","=delayed puberty","constitutional delay"]},
+
+dermatomes:{n:"Dermatomes — the landmark levels",k:"reg",p:"periph",enz:"One spinal nerve, one strip of skin",inh:"—",fa:"523",hi:1,
+ mech:"A dermatome is the strip of skin supplied by one spinal nerve. There is no C1 dermatome — C1 carries almost no sensory fibers. Neighboring dermatomes overlap, so cutting a single root may cause little sensory loss, but an irritated root still causes sharp, shooting pain in its dermatome.",
+ find:["C2: back of the skull · C3: high turtleneck line · C4: low collar line","C6: includes the thumb","T4: nipple · T7: xiphoid process · T10: umbilicus (early appendicitis pain)","L1: inguinal ligament · L4: includes the kneecap","S2–S4: penile and anal sensation","Diaphragm and gallbladder pain refer to the right shoulder through the phrenic nerve (C3–C5)"],
+ labs:["—"],
+ buzz:["T4 at the teat pore · T10 at the belly button","Thumbs-up on the left hand looks like a 6"],
+ src:["Moore ch 1 — Overview and Basic Concepts","Fundamental Neuroscience ch 9 — The Spinal Cord"],
+ tx:["—"],q:["=dermatome","=dermatomes","=dermatomal"]},
+
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
  mech:"A seizure is synchronized, high-frequency firing of a population of neurons. It runs in three phases: <b>aura</b> (the early part — odd smells or tastes), <b>ictal</b> (first symptom to end of seizure activity) and <b>postictal</b> (gradual recovery to baseline). <b>Epilepsy</b> is a disorder of recurrent, <b>unprovoked</b> seizures.",
@@ -14233,7 +14468,7 @@ MAPS.spine = {
  t:"Spinal Cord: Tracts and Lesions", sub:"Three long tracts, each crossing at a different level · a lesion's deficits follow the tracts it cuts and which side they have reached",
  w:3500, h:1720,
  fa:"145, 502, 521–523, 543–544",
- src:["Robbins ch 8 — Infectious diseases","Robbins ch 27 — Peripheral nerves and skeletal muscles","Robbins ch 28 — The central nervous system","Guyton ch 48 — Somatic Sensations: I. General Organization, Tactile and Position Senses","Moore ch 2 — Back","Fundamental Neuroscience ch 9 — The Spinal Cord","Fundamental Neuroscience ch 17 — The Somatosensory System I: Tactile Discrimination and Position Sense","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Fundamental Neuroscience ch 33 — The Neurologic Examination"],
+ src:["Robbins ch 8 — Infectious diseases","Robbins ch 27 — Peripheral nerves and skeletal muscles","Robbins ch 28 — The central nervous system","Guyton ch 48 — Somatic Sensations: I. General Organization, Tactile and Position Senses","Moore ch 2 — Back","Fundamental Neuroscience ch 9 — The Spinal Cord","Fundamental Neuroscience ch 17 — The Somatosensory System I: Tactile Discrimination and Position Sense","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Fundamental Neuroscience ch 33 — The Neurologic Examination","Moore ch 1 — Overview and Basic Concepts"],
  comps:[
   {x:160,y:110,w:3180,h:560,l:"Three long tracts — what each carries and where it crosses"},
   {x:160,y:750,w:3180,h:620,l:"Lesion patterns — the deficits follow the tracts that are cut"}],
@@ -14284,7 +14519,9 @@ MAPS.spine = {
   {id:"lphemi",l:"One half of the cord",x:2040,y:1060,p:"cordlesion",s:"same-side motor and position · opposite-side pain",m:["brownsequard"]},
   {id:"lpant",l:"Anterior two-thirds",x:2780,y:1060,p:"cordlesion",s:"everything but the dorsal columns",m:["asa"]},
   {id:"lpcauda",l:"Roots below the conus",x:560,y:1240,p:"periph",s:"cauda equina — L2 and below",m:["caudaequina"]},
-  {id:"lproots",l:"Peripheral nerves & roots",x:1300,y:1240,p:"periph",s:"demyelinated after an infection",m:["gbs"]}],
+  {id:"lproots",l:"Peripheral nerves & roots",x:1300,y:1240,p:"periph",s:"demyelinated after an infection",m:["gbs"]},
+  {id:"derm",l:"Dermatome landmarks",x:2040,y:1240,p:"periph",s:"C6 thumb · T4 nipple · T10 umbilicus · L4 kneecap",m:["dermatomes"]},
+  {id:"dermpain",l:"Root irritation",x:2780,y:1240,p:"periph",s:"shooting pain along one dermatome",m:["dermatomes"]}],
  edges:[
   {a:"dcrec",b:"dcdrg",p:"dcml"},
   {a:"dcdrg",b:"dccol",p:"dcml",e:"Ascends on the same side",ly:-46},
@@ -14597,12 +14834,13 @@ MAPS.bone = {
 MAPS.repro = {
  t:"Menstrual Cycle & Pregnancy", sub:"FSH grows a follicle, the LH surge releases it, progesterone readies the lining · hCG keeps the corpus luteum alive until the placenta takes over",
  w:3500, h:1770,
- fa:"501, 652–653, 662, 673–675",
- src:["Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 22 — The female genital tract","Robbins ch 24 — The endocrine system","Katzung ch 18 — The Eicosanoids: Prostaglandins, Thromboxanes, Leukotrienes, & Related Compounds","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs","Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones","Costanzo ch 10 — Reproductive physiology","Langman ch 3 — First Week of Development: Ovulation to Implantation","Pawlina ch 23 — Female Reproductive System"],
+ fa:"501, 651–654, 662, 673–675",
+ src:["Robbins ch 10 — Diseases of infancy and childhood","Robbins ch 22 — The female genital tract","Robbins ch 24 — The endocrine system","Katzung ch 18 — The Eicosanoids: Prostaglandins, Thromboxanes, Leukotrienes, & Related Compounds","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs","Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones","Costanzo ch 10 — Reproductive physiology","Langman ch 3 — First Week of Development: Ovulation to Implantation","Pawlina ch 23 — Female Reproductive System","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)","Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones","Guyton ch 83 — Pregnancy and Lactation"],
  comps:[
   {x:160,y:110,w:3180,h:520,l:"The ovarian cycle"},
   {x:160,y:710,w:2240,h:500,l:"Pregnancy"},
-  {x:160,y:1290,w:2240,h:420,l:"Delivery and lactation"}],
+  {x:160,y:1290,w:2240,h:420,l:"Delivery and lactation"},
+  {x:2480,y:1330,w:860,h:380,l:"Puberty"}],
  panels:[
   {x:2480,y:710,w:860,h:150,kw:150,t:"Pregnancy hormones",rows:[
    ["hCG","from about day 8 · doubles every ~2 days · peaks 8–10 weeks"],
@@ -14630,15 +14868,20 @@ MAPS.repro = {
   {id:"lyse",l:"Luteolysis",x:2240,y:470,p:"follicular",s:"no hCG — progesterone falls, menses"},
   {id:"meno",l:"Follicles run out",x:940,y:470,p:"follicular",s:"no feedback — FSH climbs",m:["menopause"]},
   {id:"implant",l:"Implantation",x:420,y:870,p:"pregnancy",s:"about 6 days after ovulation",m:["ectopic"]},
-  {id:"hcg",l:"hCG",x:940,y:870,p:"pregnancy",s:"syncytiotrophoblast — rescues the corpus luteum",m:["gtd"]},
+  {id:"hcg",l:"hCG",x:940,y:870,p:"pregnancy",s:"syncytiotrophoblast — rescues the corpus luteum",m:["gtd","hcghpl"]},
   {id:"plac",l:"Placenta",x:1460,y:870,p:"pregnancy",s:"makes progesterone from ~10 weeks"},
   {id:"prr",l:"Progesterone receptor",x:1980,y:870,p:"pregnancy",s:"keeps the myometrium quiet",m:["abortifacient"]},
   {id:"spiral",l:"Spiral artery remodeling",x:1460,y:1060,p:"pregnancy",s:"trophoblast widens maternal arteries",m:["preeclampsia"]},
-  {id:"hpl",l:"hPL and placental hormones",x:1980,y:1060,p:"pregnancy",s:"insulin resistance feeds the fetus",m:["gdm"]},
+  {id:"hpl",l:"hPL and placental hormones",x:1980,y:1060,p:"pregnancy",s:"insulin resistance feeds the fetus",m:["gdm","hcghpl"]},
   {id:"ppit",l:"Enlarged pituitary",x:420,y:1450,p:"lactation",s:"no spare blood supply",m:["sheehan"]},
-  {id:"prl",l:"Prolactin",x:1000,y:1450,p:"lactation",s:"dopamine holds it down",m:["prolactinoma"]},
-  {id:"oxy",l:"Oxytocin",x:1620,y:1450,p:"lactation",s:"contractions · milk let-down"},
-  {id:"lact",l:"Lactation",x:1310,y:1620,p:"lactation",s:"suckling keeps both hormones up"}],
+  {id:"prl",l:"Prolactin",x:1000,y:1450,p:"lactation",s:"dopamine holds it down",m:["prolactinoma","lactphys"]},
+  {id:"oxy",l:"Oxytocin",x:1620,y:1450,p:"lactation",s:"contractions · milk let-down",m:["lactphys"]},
+  {id:"lact",l:"Lactation",x:1310,y:1620,p:"lactation",s:"suckling keeps both hormones up",m:["lactphys"]},
+  {id:"mphys",l:"Maternal physiology",x:420,y:1060,p:"pregnancy",s:"↑ cardiac output · ↑ GFR · dilutional anemia · hypercoagulable",m:["pregphys"]},
+  {id:"tan",l:"Tanner stages",x:2910,y:1400,p:"puberty",s:"breast bud and testicular growth come first",m:["tanner"]},
+  {id:"prec",l:"Precocious puberty",x:2910,y:1480,p:"puberty",s:"before 8 in girls or 9 in boys",m:["pubertydis"]},
+  {id:"delay",l:"Delayed puberty",x:2910,y:1560,p:"puberty",s:"none by 13 in girls or 14 in boys",m:["pubertydis","kallmann"]},
+  {id:"sdx",l:"→ Sexual Differentiation",x:2910,y:1640,p:"neutral",k:"ghost",go:"sexdev"}],
  edges:[
   {a:"gnrh",b:"fshlh",p:"follicular"},
   {a:"fshlh",b:"foll",p:"follicular",e:"FSH picks a follicle",ly:-46},
@@ -22505,8 +22748,8 @@ MAPS.environ = {
 
 MAPS.microlab = {
  t:"Microbiology Lab & Virulence", sub:"What the stain is seeing · which stain and which medium for which bug · oxygen and life inside cells · the organism groups worth memorizing · how bacteria dodge the immune system",
- w:3300, h:1960,
- fa:"122–127, 133, 139",
+ w:3300, h:2600,
+ fa:"122–127, 132–135, 139–140, 142",
  src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 8 — Infectious diseases","Robbins ch 20 — The kidney","Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics","Katzung ch 45 — Aminoglycosides & Spectinomycin"],
  comps:[
   {x:140,y:110,w:3020,h:280,l:"Structure — what the stain is seeing"},
@@ -22514,9 +22757,11 @@ MAPS.microlab = {
   {x:140,y:790,w:3020,h:200,l:"Culture media"},
   {x:140,y:1050,w:3020,h:200,l:"Oxygen, and living inside cells"},
   {x:140,y:1310,w:3020,h:200,l:"Groups worth memorizing"},
-  {x:140,y:1570,w:3020,h:200,l:"Virulence and how genes spread"}],
+  {x:140,y:1570,w:3020,h:200,l:"Virulence and how genes spread"},
+  {x:140,y:1830,w:3020,h:280,l:"Identifying gram-positive cocci"},
+  {x:140,y:2170,w:3020,h:200,l:"Identifying gram-negative bacteria"}],
  panels:[
-  {x:140,y:1830,w:1480,h:110,kw:150,t:"Hemolysis on blood agar",rows:[
+  {x:140,y:2430,w:1480,h:110,kw:150,t:"Hemolysis on blood agar",rows:[
    ["α — partial, green","S pneumoniae · viridans streptococci"],
    ["β — complete, clear","S aureus · group A and B strep · Listeria"]]}],
  nodes:[
@@ -22569,6 +22814,19 @@ MAPS.microlab = {
   {id:"v3",l:"M protein",x:1620,y:1630,p:"mlvir",s:"group A strep · mimics cardiac myosin",m:["virulence","gas","rheumfever"]},
   {id:"v4",l:"Coagulase",x:2220,y:1630,p:"mlvir",s:"fibrin clot around the organism · abscess",m:["virulence","saureus"]},
   {id:"v5",l:"Gene transfer",x:420,y:1710,p:"mlvir",s:"transformation · conjugation · transduction",m:["transform","conjugation","transduction"]},
+  {id:"d1",l:"Catalase",x:420,y:1890,p:"mlid",s:"positive = staphylococci · negative = streptococci",m:["gpid","catalasepos"]},
+  {id:"d2",l:"Coagulase",x:1020,y:1890,p:"mlid",s:"positive = S aureus",m:["gpid","saureus"]},
+  {id:"d3",l:"Novobiocin",x:1620,y:1890,p:"mlid",s:"sensitive = S epidermidis · resistant = S saprophyticus",m:["gpid","sepi","ssapro"]},
+  {id:"d4",l:"α-hemolytic → optochin",x:420,y:1970,p:"mlid",s:"sensitive = S pneumoniae · resistant = viridans",m:["gpid","spneumo","viridans"]},
+  {id:"d5",l:"β-hemolytic → bacitracin",x:1020,y:1970,p:"mlid",s:"sensitive = group A · resistant = group B",m:["gpid","gas","gbsstrep"]},
+  {id:"d6",l:"γ-hemolytic → 6.5% NaCl",x:1620,y:1970,p:"mlid",s:"grows = Enterococcus · no growth = S gallolyticus",m:["gpid","enterococcus"]},
+  {id:"d7",l:"CAMP test",x:1020,y:2050,p:"mlid",s:"group B enlarges S aureus hemolysis",m:["gpid","gbsstrep"]},
+  {id:"f1",l:"Maltose",x:420,y:2230,p:"mlid",s:"meningococcus makes acid from it · gonococcus does not",m:["gnid","meningococcus","gonococcus"]},
+  {id:"f2",l:"Lactose fermenters",x:1020,y:2230,p:"mlid",s:"fast: E coli, Klebsiella, Enterobacter · slow: Citrobacter, Serratia",m:["gnid","ecoli","klebsiella"]},
+  {id:"f3",l:"Oxidase-positive nonfermenter",x:1620,y:2230,p:"mlid",s:"Pseudomonas",m:["gnid","pseudomonas"]},
+  {id:"f4",l:"H₂S on TSI agar",x:2220,y:2230,p:"mlid",s:"Salmonella, Proteus make it · Shigella does not",m:["gnid","salmonella","proteus","shigella"]},
+  {id:"f5",l:"Curved rods",x:2820,y:2230,p:"mlid",s:"42°C Campylobacter · urease H pylori · alkaline Vibrio",m:["gnid","campylobacter","hpylori","vibrio"]},
+  {id:"f6",l:"Coccobacilli",x:420,y:2310,p:"mlid",s:"H influenzae · Bordetella · Brucella · Francisella",m:["gnid","hflu","pertussis"]},
   {id:"gx1",l:"→ Bacterial Toxins & Gene Transfer",x:1020,y:1710,p:"neutral",k:"ghost",go:"toxins"},
   {id:"gx2",l:"→ Gram-Positive Bacteria",x:1620,y:1710,p:"neutral",k:"ghost",go:"gpos"},
   {id:"gx3",l:"→ Gram-Negative Bacteria & Poor Stainers",x:2220,y:1710,p:"neutral",k:"ghost",go:"gneg"}],
@@ -22588,7 +22846,10 @@ MAPS.microlab = {
   {a:"o6",b:"o7",p:"mllife"},
   {a:"v1",b:"v2",p:"mlvir",arrow:"none",dash:true},
   {a:"v2",b:"v3",p:"mlvir",arrow:"none",dash:true},
-  {a:"v3",b:"v4",p:"mlvir",arrow:"none",dash:true}]
+  {a:"v3",b:"v4",p:"mlvir",arrow:"none",dash:true},
+  {a:"d1",b:"d2",p:"mlid"},
+  {a:"d2",b:"d3",p:"mlid"},
+  {a:"d5",b:"d7",p:"mlid",arrow:"none",dash:true}]
 };
 
 MAPS.molbio = {
@@ -22953,16 +23214,208 @@ MAPS.iemlab = {
   {a:"n0",b:"n1",p:"iemclue"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["index","Index"]];
+MAPS.respdrug = {
+ t:"Respiratory Drugs", sub:"Open the airway · calm the inflammation · the nose, allergy and cough · pulmonary hypertension · which drug for which patient",
+ w:3300, h:1410,
+ fa:"240, 250, 704–706",
+ src:["Katzung ch 20 — Drugs Used in Asthma & Chronic Obstructive Pulmonary Disease","Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids","Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs","Katzung ch 31 — Opioid Agonists & Antagonists","Katzung ch 17 — Vasoactive Peptides","Katzung ch 18 — The Eicosanoids: Prostaglandins, Thromboxanes, Leukotrienes, & Related Compounds","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Open the airway — relax bronchial smooth muscle"},
+  {x:140,y:370,w:3020,h:200,l:"Calm the inflammation"},
+  {x:140,y:630,w:3020,h:200,l:"Nose, allergy & cough"},
+  {x:140,y:890,w:3020,h:200,l:"Pulmonary arterial hypertension"},
+  {x:140,y:1150,w:3020,h:200,l:"Which drug when"}],
+ panels:[],
+ nodes:[
+  {id:"o1",l:"β₂-agonists",x:420,y:170,p:"rdopen",s:"albuterol rescue · salmeterol, formoterol long-acting",m:["asthmadrugs"]},
+  {id:"o2",l:"↑ cAMP",x:1020,y:170,p:"rdopen",s:"bronchial smooth muscle relaxes",m:["asthmadrugs"]},
+  {id:"o3",l:"Theophylline",x:1620,y:170,p:"rdopen",s:"phosphodiesterase inhibitor · blocks adenosine",m:["asthmadrugs"]},
+  {id:"o4",l:"Roflumilast",x:2220,y:170,p:"rdopen",s:"PDE-4 inhibitor · COPD exacerbations",m:["pdeinh"]},
+  {id:"o5",l:"Muscarinic antagonists",x:2820,y:170,p:"rdopen",s:"ipratropium · tiotropium (long-acting)",m:["asthmadrugs","antimusc"]},
+  {id:"o6",l:"Tremor, arrhythmia",x:420,y:250,p:"rdopen",s:"β₂-agonist adverse effects",m:["asthmadrugs"]},
+  {id:"o7",l:"Narrow therapeutic index",x:1620,y:250,p:"rdopen",s:"cardiotoxic, neurotoxic · CYP450 metabolism",m:["asthmadrugs"]},
+  {id:"i1",l:"Inhaled glucocorticoids",x:420,y:430,p:"rdcalm",s:"fluticasone, budesonide · inactivate NF-κB",m:["asthmadrugs","cortico"]},
+  {id:"i2",l:"Oral thrush",x:1020,y:430,p:"rdcalm",s:"use a spacer or rinse the mouth",m:["asthmadrugs"]},
+  {id:"i3",l:"Leukotriene receptor blockers",x:1620,y:430,p:"rdcalm",s:"montelukast, zafirlukast · CysLT1",m:["loxdrugs"]},
+  {id:"i4",l:"Zileuton",x:2220,y:430,p:"rdcalm",s:"5-lipoxygenase inhibitor · hepatotoxic",m:["loxdrugs"]},
+  {id:"i5",l:"Cromolyn",x:2820,y:430,p:"rdcalm",s:"prevents mast cell degranulation",m:["asthmadrugs"]},
+  {id:"i6",l:"Omalizumab",x:420,y:510,p:"rdcalm",s:"anti-IgE · blocks binding to FcεRI",m:["igedrugs"]},
+  {id:"i7",l:"Anti-IL-5",x:1020,y:510,p:"rdcalm",s:"mepolizumab, reslizumab · benralizumab (IL-5Rα)",m:["asthmadrugs"]},
+  {id:"i8",l:"Dupilumab",x:1620,y:510,p:"rdcalm",s:"blocks IL-4 and IL-13 signaling",m:["asthmadrugs"]},
+  {id:"ix",l:"→ Eicosanoids",x:2220,y:510,p:"neutral",k:"ghost",go:"eicosanoid"},
+  {id:"u1",l:"First-generation H1 blockers",x:420,y:690,p:"rdupper",s:"diphenhydramine, chlorpheniramine · sedating",m:["h1blockers"]},
+  {id:"u2",l:"Second-generation H1 blockers",x:1020,y:690,p:"rdupper",s:"loratadine, fexofenadine, cetirizine · less sedating",m:["h1blockers"]},
+  {id:"u3",l:"Dextromethorphan",x:1620,y:690,p:"rdupper",s:"antitussive · NMDA antagonist",m:["coughcold"]},
+  {id:"u4",l:"Pseudoephedrine · phenylephrine",x:2220,y:690,p:"rdupper",s:"α-agonist nasal decongestants",m:["coughcold","alpha1drugs"]},
+  {id:"u5",l:"Rhinitis medicamentosa",x:2820,y:690,p:"rdupper",s:"rebound congestion after 4–6 days",m:["coughcold"]},
+  {id:"u6",l:"Antimuscarinic effects",x:420,y:770,p:"rdupper",s:"first-generation H1 blockers",m:["h1blockers","antimusc"]},
+  {id:"u7",l:"Serotonin syndrome",x:1620,y:770,p:"rdupper",s:"dextromethorphan + serotonergic drugs",m:["coughcold","serotoninsyndrome"]},
+  {id:"p1",l:"Endothelin-1",x:420,y:950,p:"rdpah",s:"vasoconstriction · smooth-muscle proliferation"},
+  {id:"p2",l:"Bosentan",x:1020,y:950,p:"rdpah",s:"endothelin receptor antagonist · hepatotoxic",m:["pahdrugs","pulmhtn"]},
+  {id:"p3",l:"NO → cGMP",x:1620,y:950,p:"rdpah",s:"vasodilation"},
+  {id:"p4",l:"Sildenafil",x:2220,y:950,p:"rdpah",s:"PDE-5 inhibitor · never with nitrates",m:["pahdrugs","pde5"]},
+  {id:"p5",l:"Prostacyclin analogs",x:2820,y:950,p:"rdpah",s:"epoprostenol, iloprost · flushing, jaw pain",m:["pahdrugs"]},
+  {id:"p6",l:"Pulmonary hypertension",x:420,y:1030,p:"rdpah",s:"the disease these drugs treat",m:["pulmhtn"]},
+  {id:"w1",l:"Acute asthma attack",x:420,y:1210,p:"rdwhen",s:"albuterol",m:["asthmadrugs","asthma"]},
+  {id:"w2",l:"Chronic asthma",x:1020,y:1210,p:"rdwhen",s:"inhaled glucocorticoid first",m:["asthmadrugs","asthma"]},
+  {id:"w3",l:"Aspirin- or exercise-induced asthma",x:1620,y:1210,p:"rdwhen",s:"antileukotriene",m:["loxdrugs"]},
+  {id:"w4",l:"Allergic asthma, high IgE",x:2220,y:1210,p:"rdwhen",s:"omalizumab",m:["igedrugs"]},
+  {id:"w5",l:"Severe eosinophilic asthma",x:2820,y:1210,p:"rdwhen",s:"anti-IL-5",m:["asthmadrugs"]},
+  {id:"w6",l:"COPD",x:420,y:1290,p:"rdwhen",s:"tiotropium · roflumilast cuts exacerbations",m:["copd","asthmadrugs","pdeinh"]},
+  {id:"wx1",l:"→ Pulmonary",x:1020,y:1290,p:"neutral",k:"ghost",go:"pulm"},
+  {id:"wx2",l:"→ Lung Disease & PFTs",x:1620,y:1290,p:"neutral",k:"ghost",go:"lungdz"}],
+ edges:[
+  {a:"o1",b:"o2",p:"rdopen"},
+  {a:"o3",b:"o2",p:"rdopen"},
+  {a:"o1",b:"o6",p:"rdopen",arrow:"none",dash:true},
+  {a:"o3",b:"o7",p:"rdopen",arrow:"none",dash:true},
+  {a:"i1",b:"i2",p:"rdcalm",arrow:"none",dash:true},
+  {a:"i3",b:"i4",p:"rdcalm",arrow:"none",dash:true},
+  {a:"u1",b:"u6",p:"rdupper",arrow:"none",dash:true},
+  {a:"u3",b:"u7",p:"rdupper",arrow:"none",dash:true},
+  {a:"u4",b:"u5",p:"rdupper"},
+  {a:"p2",b:"p1",p:"rdpah",arrow:"inhib"},
+  {a:"p4",b:"p3",p:"rdpah"}]
+};
+
+MAPS.adr = {
+ t:"Drug Reactions by Organ", sub:"First Aid’s adverse-reaction tables, organ by organ — each reaction pinned to the drugs that cause it",
+ w:3300, h:2270,
+ fa:"247–251",
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Robbins ch 14 — Red blood cell and bleeding disorders","Robbins ch 18 — Liver and gallbladder","Robbins ch 20 — The kidney","Robbins ch 25 — The skin","Katzung ch 8 — Cholinoceptor-Blocking Drugs","Katzung ch 14 — Agents Used in Cardiac Arrhythmias","Katzung ch 29 — Antipsychotic Agents & Lithium","Katzung ch 35 — Agents Used in Dyslipidemia","Katzung ch 38 — Thyroid & Antithyroid Drugs","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists","Katzung ch 46 — Sulfonamides, Trimethoprim, & Quinolones","Katzung ch 47 — Antimycobacterial Drugs","Katzung ch 54 — Cancer Chemotherapy"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Heart & vessels"},
+  {x:140,y:370,w:3020,h:200,l:"Endocrine & reproductive"},
+  {x:140,y:630,w:3020,h:200,l:"Gut & liver"},
+  {x:140,y:890,w:3020,h:200,l:"Blood"},
+  {x:140,y:1150,w:3020,h:280,l:"Muscle, bone & skin"},
+  {x:140,y:1490,w:3020,h:200,l:"Nerves, brain & eyes"},
+  {x:140,y:1750,w:3020,h:200,l:"Kidney, bladder & lung"},
+  {x:140,y:2010,w:3020,h:200,l:"Whole body"}],
+ panels:[],
+ nodes:[
+  {id:"c1",l:"Coronary vasospasm",x:420,y:170,p:"adrcv",s:"cocaine · amphetamines · sumatriptan · ergots",m:["adrcv","cocaine","stimulants","serodrugs"]},
+  {id:"c2",l:"Flushing",x:1020,y:170,p:"adrcv",s:"vancomycin · adenosine · niacin · CCBs · nitrates",m:["adrcv","adenosinemg"]},
+  {id:"c3",l:"Dilated cardiomyopathy",x:1620,y:170,p:"adrcv",s:"alcohol · anthracyclines · trastuzumab",m:["adrcv","anthracycline","her2","dcm"]},
+  {id:"c4",l:"Peripheral edema",x:2220,y:170,p:"adrcv",s:"dihydropyridine CCBs",m:["adrcv","ccbs"]},
+  {id:"c5",l:"Torsades de pointes",x:2820,y:170,p:"adrcv",s:"class IA and III · macrolides · antipsychotics · methadone",m:["adrcv","longqt"]},
+  {id:"c6",l:"Vancomycin infusion reaction",x:1020,y:250,p:"adrcv",s:"histamine release · slow the infusion",m:["vancomycin","adrcv"]},
+  {id:"c7",l:"Dexrazoxane",x:1620,y:250,p:"adrcv",s:"prevents anthracycline cardiotoxicity",m:["anthracycline","adrcv"]},
+  {id:"e1",l:"Adrenal crisis",x:420,y:430,p:"adrendo",s:"abrupt stop of chronic glucocorticoids",m:["adrendo","addison"]},
+  {id:"e2",l:"Diabetes insipidus",x:1020,y:430,p:"adrendo",s:"lithium · demeclocycline",m:["adrendo","lithium","adhdrugs"]},
+  {id:"e3",l:"Gynecomastia",x:1620,y:430,p:"adrendo",s:"ketoconazole · cimetidine · spironolactone · antiandrogens",m:["adrendo","azoles","ksparing","antiandrogens"]},
+  {id:"e4",l:"Hyperglycemia",x:2220,y:430,p:"adrendo",s:"tacrolimus · protease inhibitors · niacin · HCTZ · steroids",m:["adrendo","calcineurin","hivpi"]},
+  {id:"e5",l:"Hyperprolactinemia",x:2820,y:430,p:"adrendo",s:"antipsychotics · metoclopramide · methyldopa · verapamil",m:["adrendo","antipsychotics","laxatives"]},
+  {id:"e6",l:"Thyroid swings",x:420,y:510,p:"adrendo",s:"amiodarone · lithium · iodine",m:["adrendo","class3","lithium"]},
+  {id:"e7",l:"SIADH",x:1020,y:510,p:"adrendo",s:"carbamazepine · cyclophosphamide · SSRIs",m:["adrendo","siadh","carbamazepine","ssri"]},
+  {id:"e8",l:"Hot flashes",x:1620,y:510,p:"adrendo",s:"SERMs — tamoxifen, clomiphene, raloxifene",m:["adrendo","serm"]},
+  {id:"g1",l:"Hepatitis",x:420,y:690,p:"adrgi",s:"rifampin · isoniazid · pyrazinamide · statins · fibrates",m:["adrgi","tbdrugs","rifamycins","statin"]},
+  {id:"g2",l:"Hepatic necrosis",x:1020,y:690,p:"adrgi",s:"acetaminophen · valproate · death cap mushroom",m:["adrgi","acetaminophen","valproate"]},
+  {id:"g3",l:"Cholestatic hepatitis",x:1620,y:690,p:"adrgi",s:"macrolides",m:["adrgi","macrolides"]},
+  {id:"g4",l:"Pancreatitis",x:2220,y:690,p:"adrgi",s:"diuretics · steroids · alcohol · valproate · azathioprine",m:["adrgi","thiopurine"]},
+  {id:"g5",l:"Pill esophagitis",x:2820,y:690,p:"adrgi",s:"KCl · NSAIDs · bisphosphonates · iron · tetracyclines",m:["adrgi","calciumdrugs","tetracyclines"]},
+  {id:"g6",l:"Pseudomembranous colitis",x:420,y:770,p:"adrgi",s:"clindamycin · ampicillin · cephalosporins · FQs · PPIs",m:["adrgi","cdiff","clindamycin"]},
+  {id:"g7",l:"Constipation",x:1020,y:770,p:"adrgi",s:"opioids · antimuscarinics · verapamil · ondansetron · vincristine",m:["adrgi","opioids"]},
+  {id:"g8",l:"Diarrhea",x:1620,y:770,p:"adrgi",s:"metformin · colchicine · acarbose · macrolides · SSRIs",m:["adrgi","metformin"]},
+  {id:"h1",l:"Agranulocytosis",x:420,y:950,p:"adrheme",s:"clozapine · carbamazepine · PTU · methimazole · dapsone",m:["adrheme","antipsychotics","thyroiddrugs"]},
+  {id:"h2",l:"Aplastic anemia",x:1020,y:950,p:"adrheme",s:"chloramphenicol · carbamazepine · methimazole · benzene",m:["adrheme","chloramphenicol"]},
+  {id:"h3",l:"Coombs-positive hemolysis",x:1620,y:950,p:"adrheme",s:"penicillin · cephalosporins · methyldopa",m:["adrheme","warmaiha"]},
+  {id:"h4",l:"Hemolysis in G6PD deficiency",x:2220,y:950,p:"adrheme",s:"sulfonamides · dapsone · primaquine · nitrofurantoin",m:["adrheme","g6pd"]},
+  {id:"h5",l:"Megaloblastic anemia",x:2820,y:950,p:"adrheme",s:"hydroxyurea · phenytoin · methotrexate · sulfa",m:["adrheme","mtx"]},
+  {id:"h6",l:"Thrombocytopenia",x:420,y:1030,p:"adrheme",s:"heparin · quinidine · ganciclovir · vancomycin · linezolid",m:["adrheme","heparin"]},
+  {id:"h7",l:"Thrombosis",x:1020,y:1030,p:"adrheme",s:"OCPs · HRT · SERMs · testosterone · epoetin",m:["adrheme","ocp","esa"]},
+  {id:"h8",l:"DRESS",x:1620,y:1030,p:"adrheme",s:"phenytoin · carbamazepine · allopurinol · sulfa · vancomycin",m:["adrheme"]},
+  {id:"k1",l:"Drug-induced lupus",x:420,y:1210,p:"adrmsk",s:"hydralazine · procainamide · quinidine",m:["adrskin","hydralazine","sle"]},
+  {id:"k2",l:"Gingival hyperplasia",x:1020,y:1210,p:"adrmsk",s:"cyclosporine · CCBs · phenytoin",m:["adrskin","phenytoin","calcineurin"]},
+  {id:"k3",l:"Hyperuricemia",x:1620,y:1210,p:"adrmsk",s:"pyrazinamide · thiazides · furosemide · niacin · cyclosporine",m:["adrskin","gout"]},
+  {id:"k4",l:"Myopathy",x:2220,y:1210,p:"adrmsk",s:"statins · fibrates · colchicine · daptomycin · steroids",m:["adrskin","statin"]},
+  {id:"k5",l:"Osteoporosis",x:2820,y:1210,p:"adrmsk",s:"steroids · depot medroxyprogesterone · heparin · PPIs",m:["adrskin","osteoporosis"]},
+  {id:"k6",l:"Photosensitivity",x:420,y:1290,p:"adrmsk",s:"sulfonamides · amiodarone · tetracyclines · FQs",m:["adrskin"]},
+  {id:"k7",l:"Stevens-Johnson syndrome",x:1020,y:1290,p:"adrmsk",s:"lamotrigine · antiepileptics · allopurinol · sulfa · penicillin",m:["adrskin","sjs","lamotrigine"]},
+  {id:"k8",l:"Tendon rupture",x:1620,y:1290,p:"adrmsk",s:"fluoroquinolones",m:["adrskin","fluoroquinolones"]},
+  {id:"k9",l:"Teeth discoloration",x:2220,y:1290,p:"adrmsk",s:"tetracyclines",m:["adrskin","tetracyclines"]},
+  {id:"k10",l:"Fat redistribution",x:2820,y:1290,p:"adrmsk",s:"protease inhibitors · glucocorticoids",m:["adrskin","hivpi"]},
+  {id:"k11",l:"Malignant hyperthermia",x:420,y:1370,p:"adrmsk",s:"inhaled anesthetics · treat with dantrolene",m:["adrskin","mhyper"]},
+  {id:"n1",l:"Parkinsonism · tardive dyskinesia",x:420,y:1550,p:"adrneuro",s:"antipsychotics · metoclopramide",m:["adrneuro","eps","antipsychotics"]},
+  {id:"n2",l:"Peripheral neuropathy",x:1020,y:1550,p:"adrneuro",s:"cisplatin · isoniazid · vincristine · paclitaxel · phenytoin",m:["adrneuro","vinca","platinum","tbdrugs"]},
+  {id:"n3",l:"Seizures",x:1620,y:1550,p:"adrneuro",s:"isoniazid · bupropion · imipenem · tramadol",m:["adrneuro","atypicalad","carbapenems","tramadol"]},
+  {id:"n4",l:"Intracranial hypertension",x:2220,y:1550,p:"adrneuro",s:"steroids · vitamin A · tetracyclines · growth hormone",m:["adrneuro","iih"]},
+  {id:"n5",l:"Cinchonism",x:2820,y:1550,p:"adrneuro",s:"quinidine · quinine — tinnitus, psychosis",m:["adrneuro","class1"]},
+  {id:"n6",l:"Visual changes",x:420,y:1630,p:"adrneuro",s:"digoxin yellow · PDE-5 blue · ethambutol color",m:["adrneuro","digoxin","pde5","tbdrugs"]},
+  {id:"n7",l:"Hearing loss",x:1020,y:1630,p:"adrneuro",s:"aminoglycosides · loop diuretics · cisplatin",m:["ototox"]},
+  {id:"r1",l:"Interstitial nephritis",x:420,y:1810,p:"adrrenal",s:"diuretics · NSAIDs · penicillins · PPIs · rifampin · sulfa",m:["adrrenal","ain"]},
+  {id:"r2",l:"Nephrotoxicity",x:1020,y:1810,p:"adrrenal",s:"cisplatin · aminoglycosides · amphotericin · vancomycin",m:["adrrenal","aminoglycosides","amphotericin"]},
+  {id:"r3",l:"Fanconi syndrome",x:1620,y:1810,p:"adrrenal",s:"cisplatin · ifosfamide · expired tetracyclines · tenofovir",m:["adrrenal","fanconisyn"]},
+  {id:"r4",l:"Hemorrhagic cystitis",x:2220,y:1810,p:"adrrenal",s:"cyclophosphamide · ifosfamide → mesna",m:["adrrenal","cyclophos"]},
+  {id:"r5",l:"Dry cough",x:2820,y:1810,p:"adrrenal",s:"ACE inhibitors",m:["adrrenal","raasdrugs"]},
+  {id:"r6",l:"Pulmonary fibrosis",x:420,y:1890,p:"adrrenal",s:"bleomycin · busulfan · amiodarone · methotrexate · nitrofurantoin",m:["adrrenal","druglung"]},
+  {id:"m1",l:"Antimuscarinic effects",x:420,y:2070,p:"adrmulti",s:"atropine · TCAs · H1 blockers · antipsychotics",m:["adrmulti","antimusc","tca","h1blockers"]},
+  {id:"m2",l:"Disulfiram-like reaction",x:1020,y:2070,p:"adrmulti",s:"metronidazole · procarbazine · 1st-generation sulfonylureas",m:["adrmulti","metronidazole","procarbazine","sulfonylureas"]},
+  {id:"m3",l:"Sulfa drugs",x:1620,y:2070,p:"adrmulti",s:"sulfonamides · furosemide · thiazides · sulfonylureas · celecoxib",m:["adrmulti","sulfonamides"]},
+  {id:"m4",l:"Mydriasis",x:2220,y:2070,p:"adrmulti",s:"anticholinergics · sympathomimetics · meperidine",m:["adrmulti"]},
+  {id:"m5",l:"Miosis",x:2820,y:2070,p:"adrmulti",s:"opioids · α₂-agonists · pilocarpine · organophosphates",m:["adrmulti","organophosphate"]},
+  {id:"mx1",l:"→ CYP450 Interactions",x:420,y:2150,p:"neutral",k:"ghost",go:"cyp"},
+  {id:"mx2",l:"→ Toxicology & Antidotes",x:1020,y:2150,p:"neutral",k:"ghost",go:"tox"},
+  {id:"mx3",l:"→ Embryology (teratogens)",x:1620,y:2150,p:"neutral",k:"ghost",go:"embryo"}],
+ edges:[
+  {a:"c2",b:"c6",p:"adrcv",arrow:"none",dash:true},
+  {a:"c3",b:"c7",p:"adrcv",arrow:"inhib"}]
+};
+
+MAPS.tumark = {
+ t:"Tumor Markers & Stains", sub:"Serum markers follow a tumor but don’t diagnose it · immunostains name the cell a tumor came from",
+ w:3300, h:1250,
+ fa:"222–223",
+ src:["Robbins ch 7 — Neoplasia","Pawlina ch 2 — Cell Cytoplasm"],
+ comps:[
+  {x:140,y:110,w:3020,h:140,l:"Serum markers — what they are for"},
+  {x:140,y:310,w:3020,h:140,l:"Germ cell, placental & bone"},
+  {x:140,y:510,w:3020,h:140,l:"Carcinomas"},
+  {x:140,y:710,w:3020,h:140,l:"Neuroendocrine & thyroid"},
+  {x:140,y:910,w:3020,h:280,l:"Immunostains — the protein the tumor cell still makes"}],
+ panels:[],
+ nodes:[
+  {id:"t0",l:"Follow the tumor, don’t diagnose it",x:420,y:180,p:"tmserum",s:"monitor response and recurrence · biopsy makes the diagnosis",m:["serummarkers"]},
+  {id:"a1",l:"α-fetoprotein",x:420,y:380,p:"tmserum",s:"HCC · yolk sac tumor · neural tube defects",m:["serummarkers","hcc","ovgerm","testisgct","ntd"]},
+  {id:"a2",l:"hCG",x:1020,y:380,p:"tmserum",s:"mole · choriocarcinoma · testicular cancer",m:["serummarkers","gtd","testisgct","hcghpl"]},
+  {id:"a3",l:"LDH",x:1620,y:380,p:"tmserum",s:"germ cell tumors · dysgerminoma · tumor burden",m:["serummarkers","testisgct","ovgerm"]},
+  {id:"a4",l:"Alkaline phosphatase",x:2220,y:380,p:"tmserum",s:"bone or liver metastases · Paget · seminoma",m:["serummarkers","paget"]},
+  {id:"b1",l:"CEA",x:420,y:580,p:"tmserum",s:"colorectal, pancreatic · very nonspecific",m:["serummarkers","crc","pancca"]},
+  {id:"b2",l:"CA 19-9",x:1020,y:580,p:"tmserum",s:"pancreatic adenocarcinoma",m:["serummarkers","pancca"]},
+  {id:"b3",l:"CA 125",x:1620,y:580,p:"tmserum",s:"epithelial ovarian cancer",m:["serummarkers","ovepi"]},
+  {id:"b4",l:"CA 15-3 · CA 27-29",x:2220,y:580,p:"tmserum",s:"breast cancer",m:["serummarkers","breastca"]},
+  {id:"b5",l:"PSA",x:2820,y:580,p:"tmserum",s:"prostate cancer · also BPH, prostatitis",m:["serummarkers","prostateca","bph"]},
+  {id:"d1",l:"Calcitonin",x:420,y:780,p:"tmserum",s:"medullary thyroid carcinoma · MEN2A, MEN2B",m:["serummarkers","medullary","men"]},
+  {id:"d2",l:"Chromogranin",x:1020,y:780,p:"tmserum",s:"neuroendocrine tumors",m:["serummarkers","carcinoid"]},
+  {id:"d3",l:"Neuron-specific enolase",x:1620,y:780,p:"tmserum",s:"small cell lung cancer · carcinoid · neuroblastoma",m:["serummarkers","lungca","neuroblastoma"]},
+  {id:"s1",l:"Cytokeratin",x:420,y:970,p:"tmstain",s:"epithelium → carcinoma",m:["ihcstains","cytoskel"]},
+  {id:"s2",l:"Desmin",x:1020,y:970,p:"tmstain",s:"muscle → rhabdomyosarcoma",m:["ihcstains","cytoskel"]},
+  {id:"s3",l:"Vimentin",x:1620,y:970,p:"tmstain",s:"mesenchyme → sarcoma · also RCC, meningioma",m:["ihcstains","cytoskel","rcc","meningioma"]},
+  {id:"s4",l:"GFAP",x:2220,y:970,p:"tmstain",s:"glia → astrocytoma, glioblastoma",m:["ihcstains","gbm"]},
+  {id:"s5",l:"Neurofilament",x:2820,y:970,p:"tmstain",s:"neurons → neuroblastoma",m:["ihcstains","neuroblastoma"]},
+  {id:"s6",l:"S-100",x:420,y:1050,p:"tmstain",s:"neural crest → melanoma, schwannoma, LCH",m:["ihcstains","melanoma","schwannoma","lch"]},
+  {id:"s7",l:"Chromogranin · synaptophysin",x:1020,y:1050,p:"tmstain",s:"small cell lung · carcinoid · neuroblastoma",m:["ihcstains","lungca","carcinoid"]},
+  {id:"s8",l:"PSA stain",x:1620,y:1050,p:"tmstain",s:"prostatic epithelium",m:["ihcstains","prostateca"]},
+  {id:"s9",l:"CD31 (PECAM-1)",x:2220,y:1050,p:"tmstain",s:"endothelium → angiosarcoma",m:["ihcstains","angiosarcoma"]},
+  {id:"s10",l:"TRAP",x:2820,y:1050,p:"tmstain",s:"hairy cell leukemia",m:["ihcstains","hairycell"]},
+  {id:"s11",l:"P-glycoprotein",x:420,y:1130,p:"tmstain",s:"MDR1 efflux pump · chemotherapy resistance",m:["ihcstains"]},
+  {id:"sx1",l:"→ Brain, Thyroid, Skin & Bone Tumors",x:1020,y:1130,p:"neutral",k:"ghost",go:"tumcns"},
+  {id:"sx2",l:"→ GU & Gynecologic Tumors",x:1620,y:1130,p:"neutral",k:"ghost",go:"tumgu"},
+  {id:"sx3",l:"→ GI & Breast Tumors",x:2220,y:1130,p:"neutral",k:"ghost",go:"tumgut"},
+  {id:"sx4",l:"→ Heme Malignancies",x:2820,y:1130,p:"neutral",k:"ghost",go:"hemeonc"}],
+ edges:[]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
   ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","iemlab","nucleo","collagen","vitamins","cellcycle","cellbio","molbio","signal","genetics"]],
   ["cardio","Cardiac",["cardiac","valves","chd","vasc","vascshock","htnrx","rhythm"]],
-  ["pulmo","Pulmonary",["pulm","lungdz"]],
+  ["pulmo","Pulmonary",["pulm","lungdz","respdrug"]],
   ["renal","Renal",["nephron","glom","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","liver","gitract"]],
-  ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns"]],
+  ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","tumark"]],
   ["immuno","Immunology",["immune","hypimm","cytokine","eicosanoid","transplant","vaccines"]],
   ["endo","Endocrine",["axes","rclass","pancreas"]],
   ["devrepro","Repro & Development",["sexdev","repro","obgyn","malerepro","embryo"]],
@@ -22972,7 +23425,7 @@ const TOPICS = [
   ["msk","Musculoskeletal",["muscle","bone","arthritis","derm","plexus","orthoinj"]],
   ["omm","OMM",["vsomatic","chapman","omt","ommmech"]],
   ["id","Infectious",["microlab","abx","antiviral","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite"]],
-  ["pharm","Pharm",["pkpd","cyp","aging","tox","environ","anesth","pain"]],
+  ["pharm","Pharm",["pkpd","cyp","adr","aging","tox","environ","anesth","pain"]],
   ["stats","Biostats & Ethics",["biostats","ethics"]],
   ["idx","Index",["index"]]];
 
@@ -23066,9 +23519,10 @@ function pinSVG(id,i,x,y){
   else if(L.k==="drug") shape=`<rect class="pshape" x="-8" y="-8" width="16" height="16" rx="2" fill="${c}" transform="rotate(45)"/>`;
   else shape=`<rect class="pshape" x="-8.5" y="-8.5" width="17" height="17" rx="4.5" fill="${c}"/>`;
   const pq=state.quiz==="pins", done=pq&&PQ[state.view]&&(id in PQ[state.view]);
-  const cls="pin"+(done?(PQ[state.view][id]?" pq-ok":" pq-bad"):"");
-  const tip=pq&&!done?"Which lesion is this?":L.n;
-  return `<g class="${cls}" data-les="${id}" transform="translate(${px.toFixed(1)} ${y.toFixed(1)})"><title>${esc(tip)}</title>${shape}<text>${g}</text></g>`;
+  const due=!pq&&isWeak(id);
+  const cls="pin"+(done?(PQ[state.view][id]?" pq-ok":" pq-bad"):"")+(due?" due":"");
+  const tip=pq&&!done?"Which lesion is this?":L.n+(due?" — due for review":"");
+  return `<g class="${cls}" data-les="${id}" transform="translate(${px.toFixed(1)} ${y.toFixed(1)})"><title>${esc(tip)}</title>${due?'<circle class="duering" r="14"/>':""}${shape}<text>${g}</text></g>`;
 }
 /* While naming pins, a label beside an unanswered pin must not spell out the
    answer ("Vancomycin caps D-Ala-D-Ala"), so its name words are blanked. */
@@ -23266,7 +23720,7 @@ function quizNote(id){
 function progHtml(ids,label){
   const rev=ids.filter(isRev).length, weak=ids.filter(isWeak), later=ids.filter(isLater).length;
   return `<div class="revbar"><span><b>${rev}</b> of <b>${ids.length}</b> ${label} reviewed</span><span class="qbar"><i style="width:${ids.length?Math.round(rev/ids.length*100):0}%"></i></span></div>
-    ${weak.length?`<div class="rsrc-b">Review these · ${weak.length} due</div><div class="lesionlist">${weak.map(id=>{const L=LES[id];return `<button class="li weak" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="rec">${(PROG.miss[id]||0)+(PROG.qmiss[id]||0)} missed · ${(PROG.ok[id]||0)+(PROG.qok[id]||0)} right</span></span></button>`;}).join("")}</div>`:""}
+    ${weak.length?`<button class="duego" data-duego>Review every due card · ${dueAll().length} →</button><div class="rsrc-b">Review these · ${weak.length} due</div><div class="lesionlist">${weak.map(id=>{const L=LES[id];return `<button class="li weak" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="rec">${(PROG.miss[id]||0)+(PROG.qmiss[id]||0)} missed · ${(PROG.ok[id]||0)+(PROG.qok[id]||0)} right</span></span></button>`;}).join("")}</div>`:""}
     ${later?`<p class="revnote" style="margin:6px 0 0">${later} more scheduled for later review</p>`:""}`;
 }
 function reportUrl(id){
@@ -23277,10 +23731,10 @@ function reportUrl(id){
 }
 function openLes(id,center,pick){
   const L=LES[id]; if(!L) return;
-  state.sel=id; state.info=false; drawer.hidden=false;
+  state.sel=id; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
   const res=pick===undefined?"":pick===id
-    ?`<div class="pqres ok"><span>✓ Right.</span><button data-next>${state.quiz==="buzz"?"Next buzzword":"Next pin"} →</button></div>`
-    :`<div class="pqres bad"><span>✗ You picked ${esc(LES[pick].n)}.</span><button data-next>${state.quiz==="buzz"?"Next buzzword":"Next pin"} →</button></div>`;
+    ?`<div class="pqres ok"><span>✓ Right.${state.quiz==="due"?` ${esc((t=>t?t[0].toUpperCase()+t.slice(1)+".":"Off the review schedule.")(dueText(id)))}`:""}</span><button data-next>${NEXT_LABEL()} →</button></div>`
+    :`<div class="pqres bad"><span>✗ You picked ${esc(LES[pick].n)}.${state.quiz==="due"?" It stays due — it will come back.":""}</span><button data-next>${NEXT_LABEL()} →</button></div>`;
   const rel=Object.entries(LES).filter(([k,v])=>v.p===L.p&&k!==id).slice(0,7);
   drawer.innerHTML=`
    <div class="dhead">
@@ -23302,7 +23756,7 @@ function openLes(id,center,pick){
      </div>
      ${(()=>{ const others=[...new Set((LOC[id]||[]).map(l=>l.v))].filter(v=>v!==state.view);
        return others.length?`<div class="pagehits alsoon"><span class="revnote">${state.view==="index"?"On":"Also on"}</span>${others.map(v=>`<button class="pagehit" data-also="${v}">${esc((VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1])}</button>`).join("")}</div>`:""; })()}
-     <div class="revrow"><button class="revbtn" id="drev" aria-pressed="${isRev(id)}" title="Saved on this device only">${isRev(id)?"✓ Reviewed":"Mark reviewed"}</button>${quizNote(id)}</div>
+     <div class="revrow"><button class="revbtn" id="drev" aria-pressed="${isRev(id)}" title="Saved on this device only">${isRev(id)?"✓ Reviewed":"Mark reviewed"}</button><button class="revbtn" id="dcmp" title="Set this card beside another, line by line">Compare…</button>${quizNote(id)}</div>
    </div>
    <div class="dbody">
      ${res}
@@ -23319,6 +23773,7 @@ function openLes(id,center,pick){
   drawer.scrollTop=0;
   document.getElementById("dclose").onclick=closeDrawer;
   document.getElementById("dlink").onclick=copyLink;
+  document.getElementById("dcmp").onclick=()=>openComparePick(id);
   drawer.querySelectorAll("[data-also]").forEach(b=>b.onclick=()=>{ setView(b.dataset.also); openLes(id,true); });
   document.getElementById("drev").onclick=ev=>{ const on=!isRev(id); setRev(id,on);
     ev.currentTarget.setAttribute("aria-pressed",String(on)); ev.currentTarget.textContent=on?"✓ Reviewed":"Mark reviewed";
@@ -23388,7 +23843,7 @@ function quizOptions(id){
 }
 function openQuiz(id){
   const L=LES[id]; if(!L) return;
-  state.sel=null; drawer.hidden=false;
+  state.sel=null; drawer.hidden=false; drawer.classList.remove("cmp");
   const red=redactor(L);
   const clue=((L.find&&L.find.length)?L.find:(L.labs||[])).slice(0,2).map(red);
   drawer.innerHTML=`
@@ -23412,8 +23867,10 @@ function openQuiz(id){
   });
   render(); flashPins(id,false); writeHash();
 }
+const NEXT_LABEL=()=>state.quiz==="buzz"?"Next buzzword":state.quiz==="due"?"Next due card":"Next pin";
 function nextQuiz(){
   if(state.quiz==="buzz") return nextBuzz();
+  if(state.quiz==="due") return nextDue();
   const done=PQ[state.view]||{}, left=mapIds(state.view).filter(k=>!(k in done));
   if(!left.length){ closeDrawer(); return; }
   const id=left[Math.floor(Math.random()*left.length)];
@@ -23446,7 +23903,7 @@ function openBuzz(id){
   const L=LES[id], pool=buzzIds(), bz=buzzOf(id); if(!L||!bz.length) return;
   const clue=bz[Math.floor(Math.random()*bz.length)];
   const from=BSCOPE==="topic"?(TOPICS.find(t=>t[0]===TOPIC_OF[state.view])||[0,""])[1]:MAPS[state.view].t;
-  state.sel=null; state.info=false; drawer.hidden=false;
+  state.sel=null; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
   drawer.innerHTML=`
    <div class="dhead">
      <button class="dclose" id="dclose" aria-label="Close">×</button>
@@ -23475,6 +23932,17 @@ function nextBuzz(){
 }
 function updateScore(){
   const box=document.getElementById("qscore");
+  if(state.quiz==="due"){
+    if(!DQ) DQ={list:dueSorted(),done:{}};
+    const total=DQ.list.length, named=Object.keys(DQ.done).length, right=Object.values(DQ.done).filter(Boolean).length;
+    box.hidden=false;
+    box.innerHTML=total?`<span>Due cards <b>${named}/${total}</b> · <b>${right}</b> right</span>
+      <span class="qbar"><i style="width:${Math.round(named/total*100)}%"></i></span>
+      ${named<total?`<button class="go" data-qnext>Next due card</button>`:`<span>All caught up</span>`}`
+      :`<span>Nothing is due right now. Missed quiz answers and missed question-bank questions put cards here.</span>`;
+    const n=box.querySelector("[data-qnext]"); if(n) n.onclick=nextDue;
+    return;
+  }
   if(state.quiz==="buzz"&&state.view!=="index"){
     const total=buzzIds().length, done=BQ[buzzKey()]||{};
     const named=Object.keys(done).length, right=Object.values(done).filter(Boolean).length;
@@ -23504,13 +23972,165 @@ function setQuiz(mode){
   state.quiz=mode; state.reveal.clear();
   const b=document.getElementById("quizBtn");
   b.classList.toggle("on",!!mode);
-  b.textContent=mode==="steps"?"Quiz: steps":mode==="pins"?"Quiz: pins":mode==="buzz"?"Quiz: buzzwords":"Quiz";
+  b.textContent=mode==="steps"?"Quiz: steps":mode==="pins"?"Quiz: pins":mode==="buzz"?"Quiz: buzzwords":mode==="due"?"Quiz: due cards":"Quiz";
+  DQ=null;
   document.querySelectorAll("#qmenu [data-q]").forEach(o=>o.setAttribute("aria-checked",String(o.dataset.q===mode)));
   if(mode==="pins"){ drawer.hidden=true; state.sel=null; writeHash(); }
   if(state.view!=="index") render();
   renderRail(); updateScore();
   if(mode==="buzz") nextBuzz();
+  if(mode==="due") nextDue();
 }
+
+/* ── due-card review ────────────────────────────────────
+   Every card that is due — a missed atlas quiz answer or a missed question-bank
+   question puts it there — across all maps, most overdue first, each once per
+   round. A right answer moves it to the next 1-, 3-, 7-day step; a miss keeps
+   it due. The card opens on its own map so the answer shows where it lives. */
+let DQ=null;   // {list:[ids], done:{id:true/false}}
+const dueAll=()=>Object.keys(LES).filter(isWeak);
+const dueSorted=()=>dueAll().sort((a,b)=>(PROG.due[a]||0)-(PROG.due[b]||0));
+function homeOf(id){ return state.view!=="index"&&livesOn(id,state.view)?state.view:((LOC[id]||[])[0]||{}).v; }
+function openDue(id){
+  const L=LES[id]; if(!L) return;
+  const v=homeOf(id); if(v&&v!==state.view) setView(v);
+  const red=redactor(L), bz=buzzOf(id), pool=mapIds(v||state.view);
+  const head=bz.length?`<h2 class="dtitle bzq">“${esc(bz[Math.floor(Math.random()*bz.length)])}”</h2>`:`<h2 class="dtitle">Which card is this?</h2>`;
+  const clue=bz.length?"":`${L.enz?sec("Enzyme / step",`<p><b>${esc(red(L.enz))}</b></p>`):""}${sec("Clue",ul(((L.find&&L.find.length)?L.find:(L.labs||[])).slice(0,2).map(red)))}`;
+  state.sel=null; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
+  drawer.innerHTML=`
+   <div class="dhead">
+     <button class="dclose" id="dclose" aria-label="Close">×</button>
+     <span class="dkind" style="--k:var(--due)">Due for review</span>
+     ${head}
+     <p class="pqwhere">Which card is this? It lives on <b>${esc(MAPS[v]?MAPS[v].t:"")}</b></p>
+   </div>
+   <div class="dbody">${clue}${sec("Your answer",`<div class="pqopts">${buzzOptions(id,pool).map(k=>`<button class="pqopt" data-a="${k}">${esc(LES[k].n)}</button>`).join("")}</div>`)}</div>`;
+  drawer.scrollTop=0;
+  document.getElementById("dclose").onclick=closeDrawer;
+  drawer.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
+    const right=b.dataset.a===id; if(!DQ) DQ={list:[id],done:{}};
+    DQ.done[id]=right; recordAnswer(id,right);
+    openLes(id,true,b.dataset.a); updateScore();
+  });
+  writeHash();
+}
+function nextDue(){
+  if(!DQ) DQ={list:dueSorted(),done:{}};
+  const left=DQ.list.filter(k=>LES[k]&&!(k in DQ.done));
+  updateScore();
+  if(!left.length){ closeDrawer(); return; }
+  openDue(left[0]);
+}
+document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-duego]"); if(b){ ev.preventDefault(); setQuiz("due"); } });
+
+/* ── textbook chapter lookup ─────────────────────────────
+   "Katzung ch 11", "robbins 7", "Guyton chapter 83": every card and map whose
+   sources cite that chapter, the same way "p. 295" finds First Aid pages. */
+const BOOKS=[["robbins","Robbins"],["katzung","Katzung"],["guyton","Guyton"],["costanzo","Costanzo"],["marks","Marks"],
+  ["langman","Langman"],["moore","Moore"],["pawlina","Pawlina"],["kaplan & sadock","Kaplan & Sadock"],["kaplan and sadock","Kaplan & Sadock"],
+  ["kaplan","Kaplan & Sadock"],["fundamental neuroscience","Fundamental Neuroscience"],["neuroscience","Fundamental Neuroscience"],
+  ["foundations of osteopathic medicine","Foundations of Osteopathic Medicine"],["foundations","Foundations of Osteopathic Medicine"],
+  ["somatic dysfunction","Somatic Dysfunction in Osteopathic Family Medicine"],["somatic","Somatic Dysfunction in Osteopathic Family Medicine"]];
+function chapterQuery(q){
+  const m=(q||"").trim().toLowerCase().replace(/\s+/g," ").match(/^([a-z& ]+?) ?(?:ch\.?|chapter)? ?(\d{1,3})$/);
+  if(!m) return null;
+  const name=m[1].trim(), b=BOOKS.find(([k])=>k===name)||BOOKS.find(([k])=>k.length>=5&&editDist(k,name,1)<=1); if(!b) return null;
+  const ch=+m[2], re=new RegExp("^"+b[1].replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?: \\(4e\\))? ch "+ch+" — ");
+  const any=Object.values(LES).flatMap(L=>L.src||[]).concat(Object.values(MAPS).flatMap(m=>m.src||[])).find(s=>re.test(s));
+  return {re,label:`${b[1]} ch ${ch}`,full:any||`${b[1]} ch ${ch}`};
+}
+const citesChapter=(srcs,cq)=>(srcs||[]).some(s=>cq.re.test(s));
+function mapsOnChapter(cq){ return Object.keys(MAPS).filter(k=>citesChapter(MAPS[k].src,cq)); }
+function chapterHitsHtml(cq){
+  const ms=mapsOnChapter(cq);
+  return ms.length?`<div class="pagehits">${ms.map(k=>`<button class="pagehit" data-view="${k}">${esc((VIEWS.find(v=>v[0]===k)||[k,MAPS[k].t])[1])}</button>`).join("")}</div>`:"";
+}
+
+/* ── compare two cards ───────────────────────────────────
+   Pick a second card — look-alikes first: cards pinned at the same spot,
+   then the same pathway, then cards sharing a name word — or search any card. */
+function cmpSuggest(id){
+  const L=LES[id], spots=(LOC[id]||[]).map(l=>l.n||l.e);
+  const near=Object.keys(LOC).filter(k=>k!==id&&LES[k]&&(LOC[k]||[]).some(l=>spots.includes(l.n||l.e)));
+  const words=L.n.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>=5&&!PQ_STOP.has(w));
+  const named=words.length?Object.keys(LES).filter(k=>k!==id&&words.some(w=>LES[k].n.toLowerCase().includes(w))):[];
+  const same=Object.keys(LES).filter(k=>k!==id&&LES[k].p===L.p);
+  const here=mapIds(homeOf(id)||state.view).filter(k=>k!==id&&LES[k].k===L.k);
+  return [...new Set([...near,...named,...same,...here])].slice(0,14);
+}
+function openComparePick(id){
+  const L=LES[id]; if(!L) return;
+  state.sel=null; drawer.hidden=false; drawer.classList.remove("cmp");
+  const row=k=>`<button class="li" data-cmpb="${k}" style="--c:${mkc(LES[k].k)}"><span class="dot"></span><span><span class="nm">${esc(LES[k].n)}</span><span class="rec">${esc((PATHS[LES[k].p]||PATHS.neutral).n)}</span></span></button>`;
+  drawer.innerHTML=`
+   <div class="dhead">
+     <button class="dclose" id="dclose" aria-label="Close">×</button>
+     <span class="dkind" style="--k:${mkc(L.k)}">Compare</span>
+     <h2 class="dtitle">${esc(L.n)} vs …</h2>
+     <p class="pqwhere">Pick the card to set beside it</p>
+   </div>
+   <div class="dbody cmppick"><input type="search" id="cmpq" placeholder="Search any card…" autocomplete="off" spellcheck="false">
+     <div class="lesionlist" id="cmplist">${cmpSuggest(id).map(row).join("")}</div></div>`;
+  drawer.scrollTop=0;
+  document.getElementById("dclose").onclick=closeDrawer;
+  const list=document.getElementById("cmplist"), inp=document.getElementById("cmpq");
+  const bind=()=>list.querySelectorAll("[data-cmpb]").forEach(b=>b.onclick=()=>openCompare(id,b.dataset.cmpb));
+  inp.oninput=()=>{ const q=inp.value.trim().toLowerCase();
+    const ids=q?Object.keys(LES).filter(k=>k!==id&&(LES[k].n+" "+(LES[k].alias||"")).toLowerCase().includes(q)).slice(0,30):cmpSuggest(id);
+    list.innerHTML=ids.map(row).join("")||`<p class="revnote">No card matches.</p>`; bind(); };
+  bind(); inp.focus();
+}
+function openCompare(a,b){
+  const A=LES[a], B=LES[b]; if(!A||!B) return;
+  state.sel=null; drawer.hidden=false; drawer.classList.add("cmp");
+  const cell=(L,f)=>{ const v=L[f]; if(!v||(Array.isArray(v)&&(!v.length||v[0]==="—"))||v==="—") return `<div class="revnote" data-who="${esc(L.n)}">—</div>`;
+    return `<div data-who="${esc(L.n)}">${Array.isArray(v)?ul(f==="buzz"?v.map(esc):v):f==="mech"?v:esc(v)}</div>`; };
+  const fa=L=>`<div data-who="${esc(L.n)}">${L.fa?`First Aid ${/[,–]/.test(L.fa)?"pp.":"p."} ${esc(L.fa)}`:"—"}${(L.src||[]).length?`<ul>${L.src.map(s=>`<li>${esc(s)}</li>`).join("")}</ul>`:""}</div>`;
+  const rows=[["Enzyme / step","enz"],["Mechanism","mech"],["Presentation","find"],["Labs & studies","labs"],["Buzzwords","buzz"],["Management","tx"]];
+  drawer.innerHTML=`
+   <div class="dhead">
+     <button class="dclose" id="dclose" aria-label="Close">×</button>
+     <span class="dkind" style="--k:var(--accent)">Compare</span>
+     <h2 class="dtitle">${esc(A.n)} <span style="color:var(--ink-3);font-weight:400">vs</span> ${esc(B.n)}</h2>
+   </div>
+   <div class="dbody"><div class="cmpgrid">
+     <div class="rh"></div><div class="ch" style="--k:${mkc(A.k)}"><button data-open="${a}">${esc(A.n)}</button></div><div class="ch"><button data-open="${b}">${esc(B.n)}</button></div>
+     ${rows.map(([t,f])=>`<div class="rh">${esc(t)}</div>${cell(A,f)}${cell(B,f)}`).join("")}
+     <div class="rh">Sources</div>${fa(A)}${fa(B)}
+   </div>
+   <p style="margin:12px 0 0"><button class="linkbtn" data-cmpagain="${a}">Compare ${esc(A.n)} with a different card</button></p></div>`;
+  drawer.scrollTop=0;
+  document.getElementById("dclose").onclick=closeDrawer;
+  drawer.querySelectorAll("[data-open]").forEach(x=>x.onclick=()=>gotoLes(x.dataset.open));
+  drawer.querySelectorAll("[data-cmpagain]").forEach(x=>x.onclick=()=>openComparePick(x.dataset.cmpagain));
+  writeHash();
+}
+
+/* ── print a map ─────────────────────────────────────────
+   The whole map on page one, then every card pinned on it in two columns,
+   then the map's sources — always in light colours. */
+function printMap(){
+  const v=state.view, m=MAPS[v]; if(!m) return;
+  const keepF=state.filter; if(keepF){ state.filter=null; render(); }
+  const clone=svg.cloneNode(true);
+  clone.removeAttribute("id"); const cm=clone.querySelector("#cam"); if(cm){ cm.removeAttribute("transform"); cm.removeAttribute("id"); }
+  const svgHtml=clone.outerHTML.replace(/(id="|url\(#)(ah|in)-/g,"$1p$2-");
+  if(keepF){ state.filter=keepF; render(); }
+  const ids=mapIds(v).sort((x,y)=>LES[x].n.localeCompare(LES[y].n));
+  const top=(a,n)=>(a||[]).filter(x=>x&&x!=="—").slice(0,n);
+  const sheet=document.getElementById("printsheet");
+  sheet.innerHTML=`<h1>${esc(m.t)}</h1>${m.sub?`<p class="ps-sub">${esc(m.sub)}</p>`:""}
+    <div class="ps-map">${svgHtml}</div>
+    <div class="ps-cards">${ids.map(id=>{ const L=LES[id];
+      return `<div class="ps-card"><span class="k">${esc(MK[L.k].n)}${L.fa?` · First Aid ${/[,–]/.test(L.fa)?"pp.":"p."} ${esc(L.fa)}`:""}</span><h3>${esc(L.n)}</h3>
+        ${L.enz?`<div><b>${esc(L.enz)}</b></div>`:""}${ul(top(L.find,4))}${ul(top(L.labs,2))}${top(L.buzz,2).length?`<div><i>${top(L.buzz,2).map(esc).join(" · ")}</i></div>`:""}</div>`; }).join("")}</div>
+    ${(m.fa||(m.src&&m.src.length))?`<div class="ps-src"><h3>Sources for this map</h3>${mapSrcList(m)}<p>Each card lists the First Aid pages and chapters for its own lines; open it in the atlas for the full card.</p></div>`:""}
+    <p class="ps-foot">Lesion Atlas · ${esc(location.href.split("#")[0])}#${esc(v)} · printed ${new Date().toLocaleDateString()}</p>`;
+  document.body.classList.add("printing");
+  setTimeout(()=>window.print(),60);
+}
+window.addEventListener("afterprint",()=>{ document.body.classList.remove("printing"); const s=document.getElementById("printsheet"); if(s) s.innerHTML=""; });
 
 /* ── deep links ─────────────────────────────────────────
    #view · #view/card · #card. The hash mirrors the screen, so any map or open
@@ -23601,6 +24221,7 @@ function pageHitsHtml(pg){
 function lesMatches(L,q){
   if(!q) return true;
   const pg=pageQuery(q); if(pg!=null) return faPages(L.fa).has(pg);
+  const cq=chapterQuery(q); if(cq) return citesChapter(L.src,cq);
   const hay=[L.n,L.alias||"",L.enz||"",L.gen||"",L.mech||"",(PATHS[L.p]||{}).n||"",
     ...(L.find||[]),...(L.labs||[]),...(L.buzz||[]),...(L.tx||[]),...(L.q||[])].join(" ").toLowerCase();
   return hay.includes(q);
@@ -23645,7 +24266,7 @@ function currentLesIds(){
   if(q||state.view==="index") ids=Object.keys(LES);
   else ids=[...new Set(Object.keys(LOC).filter(id=>LOC[id].some(l=>l.v===state.view)))];
   const out=ids.filter(id=>LES[id]&&lesMatches(LES[id],q)&&(!state.filter||state.view==="index"||LES[id].p===state.filter));
-  if(q&&!out.length&&pageQuery(q)==null){ const f=fuzzyIds(q); state.fuzzy=f.length>0; return f; }
+  if(q&&!out.length&&pageQuery(q)==null&&!chapterQuery(q)){ const f=fuzzyIds(q); state.fuzzy=f.length>0; return f; }
   return out;
 }
 function mapSrcList(m){
@@ -23667,7 +24288,7 @@ function mapSrcHtml(m){
 /* phones and a hidden rail: the same subtitle and sources, in the drawer */
 function openMapInfo(){
   const m=MAPS[state.view]; if(!m) return;
-  state.sel=null; state.info=true; drawer.hidden=false;
+  state.sel=null; state.info=true; drawer.hidden=false; drawer.classList.remove("cmp");
   drawer.innerHTML=`
    <div class="dhead">
      <button class="dclose" id="dclose" aria-label="Close">×</button>
@@ -23705,6 +24326,7 @@ function renderRail(){
     }<text x="0" y="0.5" text-anchor="middle" dominant-baseline="central" fill="#fff" style="font:700 10px sans-serif">${v.g}</text></svg>${v.n}</div>`).join("")}
     <div class="lg"><svg width="19" height="19" viewBox="0 0 20 20"><line x1="4" y1="3" x2="4" y2="17" stroke="var(--ink)" stroke-width="3.4" stroke-linecap="round"/></svg>Rate-limiting step</div>
     <div class="lg"><svg width="19" height="19" viewBox="0 0 20 20"><line x1="1" y1="10" x2="19" y2="10" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="5 4"/></svg>Multi-step, transport or regulation</div>
+    <div class="lg"><svg width="19" height="19" viewBox="-10 -10 20 20"><circle r="7.5" fill="none" stroke="var(--due)" stroke-width="2.4"/></svg>Due for review</div>
   </div></div>`;
   const ids=currentLesIds();
   if(state.quiz==="pins"&&!state.q&&state.view!=="index"){
@@ -23716,9 +24338,11 @@ function renderRail(){
   }
   const pg=pageQuery(state.q);
   if(pg!=null) html+=`<div class="rail-sec"><h3 class="rail-h">Maps citing First Aid p. ${pg}</h3>${pageHitsHtml(pg)||`<p class="rail-sub">No map lists this page.</p>`}</div>`;
+  const cq=pg==null?chapterQuery(state.q):null;
+  if(cq) html+=`<div class="rail-sec"><h3 class="rail-h">Maps citing ${esc(cq.label)}</h3><p class="rail-sub">${esc(cq.full)}</p>${chapterHitsHtml(cq)||`<p class="rail-sub">No map lists this chapter.</p>`}</div>`;
   const onMap=!state.q&&state.view!=="index";
   if(onMap&&ids.length) html+=`<div class="rail-sec"><h3 class="rail-h">Your progress</h3>${progHtml(ids,"cards")}</div>`;
-  html+=`<div class="rail-sec"><h3 class="rail-h">${pg!=null?`Cards citing p. ${pg}`:state.fuzzy?"Closest matches":state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${ids.length}</h3>
+  html+=`<div class="rail-sec"><h3 class="rail-h">${pg!=null?`Cards citing p. ${pg}`:cq?`Cards citing ${esc(cq.label)}`:state.fuzzy?"Closest matches":state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${ids.length}</h3>
     <div class="lesionlist">${ids.length?ids.map(id=>{const L=LES[id];
       return `<button class="li${isRev(id)?" rev":""}${isWeak(id)?" weak":""}" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
     }).join(""):`<p style="font-size:12.5px;color:var(--ink-3);padding:4px 7px">No match. Try “Heinz”, “orotic”, “second wind”.</p>`}</div>
@@ -23736,7 +24360,7 @@ function renderRail(){
 function renderIndex(){
   const q=state.q.trim().toLowerCase();
   let ids=Object.keys(LES).filter(id=>lesMatches(LES[id],q)), fuzzy=false;
-  if(q&&!ids.length&&pageQuery(q)==null){ ids=fuzzyIds(q); fuzzy=ids.length>0; }
+  if(q&&!ids.length&&pageQuery(q)==null&&!chapterQuery(q)){ ids=fuzzyIds(q); fuzzy=ids.length>0; }
   const groups={};
   ids.forEach(id=>{(groups[LES[id].p]=groups[LES[id].p]||[]).push(id);});
   const cards=Object.entries(groups).map(([p,list])=>`
@@ -23744,8 +24368,9 @@ function renderIndex(){
     <ul>${list.map(id=>{const L=LES[id];return `<li><button class="idxrow${isRev(id)?" rev":""}" data-les="${id}">
       <span class="t">${esc(L.n)}</span><span class="e">${esc(L.enz||"")}</span>
       ${L.buzz&&L.buzz[0]?`<span class="b">${esc(L.buzz[0])}</span>`:""}</button></li>`;}).join("")}</ul></section>`).join("");
-  const pg=pageQuery(q);
-  idxWrap.innerHTML=`<div class="idx-intro">${fuzzy?`<h2>No exact match for “${esc(state.q.trim())}”</h2>
+  const pg=pageQuery(q), cq=pg==null?chapterQuery(q):null;
+  idxWrap.innerHTML=`<div class="idx-intro">${cq?`<h2>${esc(cq.full)}</h2>
+    <p>${ids.length} ${ids.length===1?"card cites":"cards cite"} this chapter${mapsOnChapter(cq).length?`, and so ${mapsOnChapter(cq).length===1?"does this map":"do these maps"}:`:"."}</p>${chapterHitsHtml(cq)}`:fuzzy?`<h2>No exact match for “${esc(state.q.trim())}”</h2>
     <p>Closest matches, allowing for a letter or two off:</p>`:pg!=null?`<h2>First Aid 2025, p. ${pg}</h2>
     <p>${ids.length} ${ids.length===1?"card cites":"cards cite"} this page${mapsOnPage(pg).length?`, and so ${mapsOnPage(pg).length===1?"does this map":"do these maps"}:`:"."}</p>${pageHitsHtml(pg)}`:`<h2>Every lesion on one page</h2>
     <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>
@@ -23903,7 +24528,11 @@ function setRail(off,save){
 railBtn.onclick=()=>setRail(document.documentElement.getAttribute("data-rail")!=="off");
 const quizBtn=document.getElementById("quizBtn"), qmenu=document.getElementById("qmenu");
 function showQuizMenu(open){ qmenu.hidden=!open; quizBtn.setAttribute("aria-expanded",String(open)); }
-quizBtn.onclick=ev=>{ ev.stopPropagation(); showQuizMenu(qmenu.hidden); };
+quizBtn.onclick=ev=>{ ev.stopPropagation();
+  const n=dueAll().length, el=document.getElementById("qduen");
+  if(el) el.textContent=n?`${n} card${n===1?"":"s"} due for review, across all maps`:"Nothing due right now — missed answers land here";
+  showQuizMenu(qmenu.hidden); };
+document.getElementById("zprint").onclick=printMap;
 qmenu.querySelectorAll("[data-q]").forEach(o=>o.onclick=()=>{ showQuizMenu(false); setQuiz(o.dataset.q); });
 document.addEventListener("click",ev=>{ if(!qmenu.hidden&&!ev.target.closest(".qwrap")) showQuizMenu(false); });
 document.getElementById("themeBtn").onclick=()=>{
@@ -23951,6 +24580,10 @@ if(!readHash()){
   openLes("g6pd",false);
 }
 booted=true;
+/* offline support: the site-wide service worker (sw.js at the site root) keeps a copy of
+   this page and its data, so the atlas works without signal once it has been opened */
+try{ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))
+  addEventListener("load",()=>navigator.serviceWorker.register("../sw.js",{scope:"../"}).catch(()=>{})); }catch(e){}
 </script>
 </body>
 </html>

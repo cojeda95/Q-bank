@@ -53,4 +53,16 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addButton);
   else addButton();
+
+  // Offline support: every page that loads this file registers the site-wide
+  // service worker (sw.js, at the site root next to index.html). It keeps a
+  // copy of each page you open so the hub, the atlas and any block you have
+  // opened before still work without signal.
+  var me = document.currentScript && document.currentScript.src;
+  if (me && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register(new URL('../sw.js', me).href, { scope: new URL('../', me).href })
+        .catch(function () { /* offline support is optional */ });
+    });
+  }
 })();

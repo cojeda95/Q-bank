@@ -244,6 +244,19 @@ out as everywhere else, but High-Yield Only Mode is ignored: the split's size is
 the objective count, and some objectives have no high-yield questions. Nephro's Moorjani
 Split covers Exam 1 (SDLs 1-12, 47 objectives), so a run is 47 + 3 = 50 questions.
 
+### Offline mode
+
+`sw.js`, at the site root, is a service worker that `shared/theme.js` registers on every
+page that loads it; the atlas registers it itself, since it doesn't load `theme.js`. It works
+network first, so online visitors always get the newest files. Every same-origin file a
+visitor opens is saved as it loads, so the hub, the atlas and any block they have opened
+once keep working without signal. A page never opened before shows a short "you're offline"
+notice. Requests to other sites (the Firestore sync, CDNs) pass straight through.
+
+Nothing extra is needed when you publish. If a shared file is renamed, update the `CORE`
+list at the top of `sw.js`, which pre-saves the hub, `shared/` and the atlas on first visit.
+To throw away everyone's saved copies, change `CACHE` (`qhub-v1` → `qhub-v2`).
+
 ## Cross-device sync
 
 `sync.js` (on the hub page) syncs every block's flags, scores, answers and settings through
