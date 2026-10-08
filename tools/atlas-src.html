@@ -122,6 +122,8 @@ svg.map.drag{cursor:grabbing}
 .tbtn{width:32px;height:30px;display:grid;place-items:center;border-radius:8px;color:var(--ink-2);font-size:15px}
 .tbtn:hover{background:var(--surface-2);color:var(--ink)}
 .tbtn.wide{width:auto;padding:0 12px;font-size:12px;font-weight:500}
+#zsrc{display:none}
+:root[data-rail="off"] #zsrc{display:grid}
 .hint{position:absolute;right:16px;bottom:16px;font-size:11px;color:var(--ink-3);
   background:var(--surface);border:1px solid var(--line-2);border-radius:9px;padding:6px 11px;z-index:5;pointer-events:none;box-shadow:var(--shadow)}
 
@@ -267,9 +269,16 @@ svg.map.drag{cursor:grabbing}
 .pqres button{padding:6px 11px;border-radius:8px;background:var(--surface);border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink)}
 .dlink{position:absolute;top:13px;right:45px;height:28px;padding:0 9px;border-radius:9px;font-size:11.5px;font-weight:500;color:var(--ink-3);display:flex;align-items:center;gap:5px}
 .dlink:hover{background:var(--surface-2);color:var(--ink)}
+.dacts{position:absolute;top:13px;right:45px;display:flex;gap:2px}
+.dacts .dlink{position:static;text-decoration:none}
+.drawer .rsrc li,.drawer .rsrc-b{font-size:13px}
+.pagehits{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.pagehit{padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:12px;color:var(--ink-2)}
+.pagehit:hover{border-color:var(--ink-3);color:var(--ink)}
 
 /* ── responsive ─────────────────────────────────────── */
 @media (max-width:1000px){
+  #zsrc{display:grid}
   .shell{grid-template-columns:minmax(0,1fr)}
   .rail{display:none}
   #railBtn{display:none}
@@ -297,7 +306,7 @@ svg.map.drag{cursor:grabbing}
     <div class="hdr-right">
       <div class="search">
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
-        <input id="q" type="search" placeholder="Search disease, enzyme, buzzword…" autocomplete="off" spellcheck="false">
+        <input id="q" type="search" placeholder="Search disease, enzyme, buzzword, p. 295…" title="Search cards — or type a First Aid page, eg p. 295" autocomplete="off" spellcheck="false">
       </div>
       <button class="btn" id="railBtn" aria-pressed="false" title="Hide the side panel  ( [ )" aria-label="Toggle the side panel">◧</button>
       <div class="qwrap">
@@ -321,6 +330,7 @@ svg.map.drag{cursor:grabbing}
         <button class="tbtn" id="zin" title="Zoom in" aria-label="Zoom in">+</button>
         <button class="tbtn" id="zout" title="Zoom out" aria-label="Zoom out">−</button>
         <button class="tbtn wide" id="zfit" title="Fit map to screen">Fit</button>
+        <button class="tbtn wide" id="zsrc" title="What this map covers and the sources it was checked against">Sources</button>
       </div>
       <div class="qscore" id="qscore" hidden></div>
       <div class="hint" id="hint">drag to pan · scroll to zoom · click any pin</div>
@@ -713,6 +723,17 @@ const PATHS = {
   mmrib:{n:"Ribs",v:"--p-tca"},
   mmsac:{n:"Sacrum",v:"--p-glycolysis"},
   mmpelv:{n:"Innominates & pubes",v:"--p-glycogen"},
+  vxactive:{n:"Active — what the vaccine is made of",v:"--p-glycolysis"},
+  vxlimits:{n:"Who should not get a live vaccine",v:"--p-etc"},
+  vxpassive:{n:"Passive immunization",v:"--p-ppp"},
+  vxpep:{n:"After an exposure",v:"--p-tca"},
+  vxspleen:{n:"Spleen & encapsulated bacteria",v:"--p-gluconeo"},
+  enheat:{n:"Heat",v:"--p-glycolysis"},
+  encold:{n:"Cold",v:"--p-tca"},
+  enpress:{n:"Pressure, water & air",v:"--p-ppp"},
+  enenergy:{n:"Electricity & radiation",v:"--p-etc"},
+  enbite:{n:"Bites & stings",v:"--p-gluconeo"},
+  ennutr:{n:"Starvation & malnutrition",v:"--p-glycogen"},
   szclass:{n:"Seizure types and mimics",v:"--p-glycolysis"},
   szdrug:{n:"Where anticonvulsants act",v:"--p-tca"},
   szstat:{n:"Status epilepticus",v:"--p-gluconeo"},
@@ -10780,6 +10801,198 @@ pubicshear:{n:"Pubic symphysis shear",alias:"superior or inferior pubic shear",k
  buzz:["Cystitis-like burning with a tender pubic tubercle"],
  src:["Foundations of Osteopathic Medicine ch 37 — Pelvis","Foundations of Osteopathic Medicine ch 31 — Osteopathic Segmental Examination"],
  tx:["—"],q:["pubic shear","superior pubic shear","inferior pubic shear","pubic symphysis shear","pubic symphysis dysfunction"]},
+
+/* ── vaccines, the spleen, environmental injury & malnutrition (m17) ──── */
+vxlive:{n:"Live attenuated vaccines",alias:"live vaccines",k:"drug",p:"vxactive",enz:"A weakened organism that still replicates briefly",inh:"—",fa:"109, 114, 116",hi:1,
+ mech:"A live vaccine is a microorganism made nonpathogenic that can still grow transiently in the host. It induces both <b>cellular and humoral</b> immunity — strong and often lifelong — but it can revert to a virulent form.",
+ find:["First Aid list: MMR, varicella, yellow fever, rotavirus, oral polio (Sabin), intranasal influenza, BCG, oral typhoid (Ty21a), smallpox; adenovirus is given live but not attenuated, to military recruits","Contraindicated in pregnancy and in immunodeficiency — no live vaccines in Bruton agammaglobulinemia, and no live poliovirus vaccine in B-cell deficiency","MMR and varicella may be given in HIV with a CD4+ count ≥ 200 cells/mm³, in consultation with a specialist","Live intranasal influenza is not given before age 2"],
+ labs:["—"],
+ buzz:["Strong, lasting immunity — never in pregnancy or immunodeficiency"],
+ src:["Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["—"],q:["live attenuated vaccine","live vaccine","mmr vaccine","varicella vaccine","sabin","oral polio vaccine"]},
+
+vxkilled:{n:"Inactivated (killed) vaccines",alias:"killed vaccines",k:"drug",p:"vxactive",enz:"Pathogen inactivated by heat or chemicals",inh:"—",fa:"109",hi:1,
+ mech:"The pathogen is inactivated by heat or chemicals, keeping the structure of its surface epitopes. The response is mainly <b>humoral</b>, with weaker cell-mediated immunity, so boosters are usually needed — but the vaccine cannot revert to a virulent form.",
+ find:["Hepatitis A, typhoid (Vi polysaccharide, intramuscular), rabies, influenza (intramuscular), polio (Salk) — \"A TRIP could Kill you\"","Safer than live vaccines","Duration of immunity tends to be shorter than with live vaccines"],
+ labs:["—"],
+ buzz:["A TRIP could Kill you"],
+ src:["Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["—"],q:["inactivated vaccine","killed vaccine","salk","inactivated polio vaccine","inactivated poliovirus vaccine"]},
+
+vxsub:{n:"Subunit & recombinant vaccines",k:"drug",p:"vxactive",enz:"Only the antigens that best stimulate immunity",inh:"—",fa:"109",hi:0,
+ mech:"These vaccines use only the specific antigens that best stimulate the immune system — a recombinant protein, toxin components or capsular polysaccharide. They target chosen epitopes with fewer adverse reactions, but they cost more and the response is weaker.",
+ find:["Hepatitis B: recombinant HBsAg, three doses at 0, 1 and 6 months","HPV: virus-like particles of the major capsid protein","Zoster: recombinant vaccine, two doses, for adults 50 and older","Acellular pertussis rides with the diphtheria and tetanus toxoids (DTaP, Tdap)","Hib, pneumococcal and meningococcal vaccines are capsular polysaccharides, most of them conjugated to protein"],
+ labs:["—"],
+ buzz:["HBsAg, HPV capsid, zoster — just the antigen"],
+ src:["Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["—"],q:["subunit vaccine","recombinant vaccine","hepatitis b vaccine","hpv vaccine","zoster vaccine","recombinant zoster vaccine"]},
+
+vxconj:{n:"Conjugate vs polysaccharide vaccines",alias:"PCV vs PPSV23",k:"drug",p:"vxactive",enz:"Carrier protein turns a T-independent antigen into a T-dependent one",inh:"—",fa:"109, 125",hi:1,
+ mech:"A capsular polysaccharide alone cannot be presented to T cells, so it raises only a <b>T-cell–independent</b> response. Conjugating the capsule to a carrier protein brings in T-cell help and a <b>T-cell–dependent</b> response.",
+ find:["PPSV23 (pneumococcal polysaccharide, 23 serotypes): mainly T-cell–independent","PCV13, PCV15 and PCV20 (pneumococcal conjugates): T-cell–dependent","Hib and meningococcal ACWY vaccines are conjugates — the meningococcal one is conjugated to diphtheria toxoid","Infants get the conjugates (Hib, PCV) in the routine series at 2, 4 and 6 months"],
+ labs:["—"],
+ buzz:["Conjugating the capsule recruits T-cell help"],
+ src:["Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["—"],q:["conjugate vaccine","polysaccharide vaccine","ppsv23","pcv13","pcv20","pneumococcal vaccine","pneumococcal conjugate vaccine","meningococcal vaccine","hib vaccine"]},
+
+vxtoxoid:{n:"Toxoid vaccines",alias:"tetanus and diphtheria toxoids",k:"drug",p:"vxactive",enz:"Denatured toxin with an intact receptor-binding site",inh:"—",fa:"109",hi:1,
+ mech:"A toxoid is a bacterial toxin denatured so it keeps its receptor-binding site but cannot cause disease. It raises antibodies against the toxin; antitoxin levels fall with time, so boosters are needed.",
+ find:["Clostridium tetani and Corynebacterium diphtheriae","DTaP in childhood; Td or Tdap every 10 years in adults","Tdap in every pregnancy, preferably at 27–36 weeks","After a wound: a booster if more than 5 years have passed since the last dose"],
+ labs:["—"],
+ buzz:["Booster every 10 years, Tdap every pregnancy"],
+ src:["Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["—"],q:["toxoid","tetanus toxoid","diphtheria toxoid","tdap","dtap","td booster"]},
+
+vxmrna:{n:"mRNA vaccines",k:"drug",p:"vxactive",enz:"Lipid nanoparticle carries mRNA into the patient’s cells",inh:"—",fa:"109",hi:0,
+ mech:"A lipid nanoparticle delivers mRNA, and the patient’s own cells make the foreign protein — for SARS-CoV-2, the spike protein. Both cellular and humoral immunity follow.",
+ find:["High efficacy; safe in pregnancy","Local and brief systemic reactions (fatigue, headache, myalgia) are common","Rare myocarditis or pericarditis, particularly in young males"],
+ labs:["—"],
+ buzz:["Rare myocarditis in young males"],
+ tx:["—"],q:["mrna vaccine"]},
+
+passiveimm:{n:"Passive immunization & immune globulins",k:"drug",p:"vxpassive",enz:"Preformed antibodies — immediate, short-lived, no memory",inh:"—",fa:"103, 108",hi:1,
+ mech:"Passive immunity transfers preformed antibodies. Protection starts at once but lasts only as long as the antibody does (IgG half-life about 3 weeks), and no memory forms. Active immunity — infection, vaccines, toxoids — starts slowly but lasts.",
+ find:["Natural: maternal IgG across the placenta (the only isotype that crosses) and IgA in breast milk","Given: IVIG and specific immune globulins, antitoxins, humanized monoclonal antibodies","Used for antibody deficiency, exposure with no time to vaccinate, toxin disease (tetanus, botulism) and snake bite","Animal-derived sera can cause anaphylaxis or serum sickness; human IgG lasts about 23 days, animal antibody 5–7 days"],
+ labs:["—"],
+ buzz:["Fast but short — no memory"],
+ src:["Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["—"],q:["passive immunization","passive immunity","immune globulin","ivig","antitoxin"]},
+
+pep:{n:"Postexposure immunization",k:"drug",p:"vxpep",enz:"Immune globulin now, vaccine for later",inh:"—",fa:"108",hi:1,
+ mech:"After certain exposures, passive and active immunization are given together: the immune globulin protects at once while the vaccine builds lasting immunity. Hepatitis B and rabies are the classic pairs.",
+ find:["Rabies, never vaccinated: rabies immune globulin infiltrated around the wound, plus vaccine on days 0, 3, 7 and 14 at a distant site","Hepatitis B: HBIG plus vaccine after percutaneous, mucosal, sexual or perinatal exposure — a newborn of an HBsAg-positive mother gets both within 12 hours","Tetanus: tetanus immune globulin for dirty or major wounds when toxoid doses are incomplete, plus a booster if more than 5 years have passed","Varicella: VZIG within 96 hours for exposed immunocompromised hosts, some pregnant women and exposed newborns","Measles: immune globulin within 6 days for nonimmune contacts"],
+ labs:["—"],
+ buzz:["Rabies: immune globulin into the wound, vaccine in the arm"],
+ src:["Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["—"],q:["rabies immune globulin","tetanus immune globulin","hepatitis b immune globulin","hbig","varicella zoster immune globulin","vzig"]},
+
+asplenia:{n:"Asplenia & splenic dysfunction",alias:"postsplenectomy · autosplenectomy",k:"dz",p:"vxspleen",enz:"Loss of IgM, C3b opsonization and splenic filtering",inh:"—",fa:"96, 125",hi:1,
+ mech:"Without a working spleen — after splenectomy or sickle cell autosplenectomy — IgM falls, complement activation and C3b opsonization drop, and the main filter for opsonized <b>encapsulated</b> bacteria is gone. The result is a higher risk of sepsis from those organisms.",
+ find:["Organisms, most to least common: pneumococci, meningococci, Hib","Thrombocytosis and lymphocytosis — the spleen no longer sequesters them","Sickle cell disease: repeated infarction leaves a small fibrotic nubbin by adolescence or early adulthood (autosplenectomy)"],
+ labs:["Smear: Howell-Jolly bodies (nuclear remnants) and target cells"],
+ buzz:["Howell-Jolly bodies after a splenectomy"],
+ src:["Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 14 — Red blood cell and bleeding disorders","Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["Vaccinate against pneumococcus, meningococcus (ACWY and serogroup B) and Hib"],q:["asplenia","splenectomy","postsplenectomy","autosplenectomy","howell jolly bodies","functional asplenia"]},
+
+encaps:{n:"Encapsulated bacteria",alias:"SHiNE SKiS",k:"reg",p:"vxspleen",enz:"Polysaccharide capsule resists phagocytosis",inh:"—",fa:"116, 125",hi:1,
+ mech:"A polysaccharide capsule is an antiphagocytic virulence factor. Encapsulated bacteria are cleared once they are opsonized and filtered by the spleen, so a patient without a spleen — with less opsonizing ability — gets severe infections from them.",
+ find:["SHiNE SKiS: Pseudomonas aeruginosa, Streptococcus pneumoniae, Haemophilus influenzae type b, Neisseria meningitidis, Escherichia coli, Salmonella, Klebsiella pneumoniae, group B strep","The capsular polysaccharide, alone or conjugated to protein, is the antigen in their vaccines","Early complement deficiencies also predispose to encapsulated species"],
+ labs:["—"],
+ buzz:["Please SHiNE my SKiS"],
+ src:["Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus"],
+ tx:["—"],q:["encapsulated bacteria","encapsulated organisms","encapsulated organism"]},
+
+heatillness:{n:"Heat cramps & heat exhaustion",k:"dz",p:"enheat",enz:"Electrolyte loss (cramps) · dehydration and hypovolemia (exhaustion)",inh:"—",hi:0,
+ mech:"Two milder heat syndromes, short of heat stroke. <b>Heat cramps</b> come from electrolytes lost in sweat — cramping of voluntary muscles during hard exercise, with a normal core temperature. <b>Heat exhaustion</b>, probably the most common, is sudden prostration and collapse because the circulation cannot compensate for dehydration and hypovolemia.",
+ find:["Heat cramps: muscle cramps with vigorous exercise; core temperature stays normal","Heat exhaustion: brief collapse; equilibrium returns once the person rehydrates"],
+ labs:["—"],
+ buzz:["Cramps with a normal core temperature"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases"],
+ tx:["Rehydration"],q:["heat exhaustion","heat cramps"]},
+
+heatstroke:{n:"Heat stroke",k:"dz",p:"enheat",enz:"Failure to dissipate heat — core temperature over 40°C",inh:"—",fa:"225, 433, 530",hi:1,
+ mech:"Thermoregulation fails and the core temperature passes 40°C (104°F); Guyton puts the critical range at 105–108°F. Fever comes from cytokines resetting the hypothalamus — heat stroke is a failure to get rid of heat. Generalized vasodilation pools blood peripherally, and RYR1 dysfunction lets calcium leak in skeletal muscle, driving contraction, more heat and rhabdomyolysis.",
+ find:["Risk: heat, humidity and exertion — older adults, athletes, military recruits, people with heart disease","CNS dysfunction (confusion, delirium), rhabdomyolysis, acute kidney injury, ARDS, DIC","Hyperkalemia, tachycardia and arrhythmias","Older skin has fewer sweat glands"],
+ labs:["—"],
+ buzz:["Confused recruit, core temperature over 40°C"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases","Guyton ch 74 — Body Temperature Regulation and Fever"],
+ tx:["Rapid external cooling — a cold-water bath, or spraying the skin and blowing air across it — with rehydration and electrolyte correction"],q:["heat stroke","heatstroke","exertional heat stroke","classic heat stroke"]},
+
+hypothermia:{n:"Accidental hypothermia",k:"dz",p:"encold",enz:"Heat production and hypothalamic control fail together",inh:"—",hi:1,
+ mech:"Prolonged cold — worse with wet clothing, humidity, or alcohol dilating skin vessels — lowers the core temperature. Below about 94°F the hypothalamus regulates temperature poorly, and below about 85°F it loses control: heat production in each cell roughly halves for every 10°F drop, and sleepiness and then coma suppress shivering.",
+ find:["Consciousness is lost around 90°F, then bradycardia and atrial fibrillation as the temperature falls further","After 20–30 minutes in ice water, death from cardiac standstill or fibrillation near 77°F","People experiencing homelessness are at particular risk"],
+ labs:["—"],
+ buzz:["Found outside in winter: slow pulse, atrial fibrillation"],
+ src:["Guyton ch 74 — Body Temperature Regulation and Fever","Robbins ch 9 — Environmental and nutritional diseases"],
+ tx:["Rapid external rewarming can save someone pulled from ice water"],q:["accidental hypothermia","environmental hypothermia"]},
+
+frostbite:{n:"Frostbite & trench foot",k:"dz",p:"encold",enz:"Ice crystals in tissue vs slow, wet chilling",inh:"—",hi:0,
+ mech:"Cold injures tissue directly and through its blood supply. In <b>frostbite</b>, ice crystals form inside and between cells — the ear lobes, fingers and toes first — and extensive crystal formation leaves permanent damage. In <b>trench foot</b>, slow, wet chilling causes vasoconstriction, leaky vessels, edema and hypoxia.",
+ find:["Gangrene often follows thawing, and frostbitten tissue may have to be removed surgically","With sudden, persistent chilling, vascular injury and edema appear only as the tissue rewarms","Cold-induced vasodilation near freezing — a flush as vascular smooth muscle is paralyzed — partly protects the skin"],
+ labs:["—"],
+ buzz:["Black toes after a night out in the cold"],
+ src:["Guyton ch 74 — Body Temperature Regulation and Fever","Robbins ch 9 — Environmental and nutritional diseases"],
+ tx:["—"],q:["frostbite","trench foot"]},
+
+dcs:{n:"Decompression sickness",alias:"the bends · caisson disease",k:"dz",p:"enpress",enz:"Dissolved nitrogen bubbles out on a fast ascent",inh:"—",fa:"691",hi:1,
+ mech:"Breathing compressed air at depth saturates body water and fat with nitrogen. Surface too fast and the nitrogen comes out of solution as bubbles in tissues and blood — a form of gas embolism. Divers, underwater construction workers and people in unpressurized aircraft that climb fast are at risk.",
+ find:["Joint and limb pain in 85–90% — the \"bends\"","Nervous system symptoms in 5–10%, from dizziness to paralysis","About 2% get \"the chokes\": microbubbles plug lung capillaries, then dyspnea and pulmonary edema","A slow ascent lets the lungs breathe the nitrogen off","Nitrogen narcosis is different: euphoria and impaired judgment at depth from high nitrogen pressure"],
+ labs:["—"],
+ buzz:["Diver with joint pain after a fast ascent"],
+ src:["Guyton ch 45 — Physiology of Deep-Sea Diving and Other Hyperbaric Conditions","Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock"],
+ tx:["Recompression at once, then decompression over several times the usual period — hyperbaric oxygen"],q:["decompression sickness","caisson disease","the bends","nitrogen narcosis"]},
+
+elecinj:{n:"Electrical injury",alias:"lightning strike",k:"dz",p:"enenergy",enz:"Burns plus disrupted cardiac and neural conduction",inh:"—",hi:0,
+ mech:"Current does two kinds of damage: <b>burns</b> at the entry and exit sites and along its path, and <b>ventricular fibrillation</b> or failure of the cardiac and respiratory centers from disrupted nerve conduction. Severity depends on the amperage, the duration and the path through the body.",
+ find:["Household 120–220 V can kill through wet, low-resistance skin","Alternating current causes tetanic spasm: the hand clamps onto the wire and prolongs contact; chest-wall spasm can cause asphyxia","High voltage and lightning: paralysis of the medullary centers and extensive burns"],
+ labs:["—"],
+ buzz:["Grabbed a live wire and could not let go"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases"],
+ tx:["—"],q:["electrical injury","electrocution","lightning strike","electrical burn"]},
+
+ars:{n:"Acute radiation syndrome",alias:"radiation sickness",k:"dz",p:"enenergy",enz:"DNA double-strand breaks in fast-dividing stem cells",inh:"—",fa:"207",hi:1,
+ mech:"Ionizing radiation breaks DNA (double-strand breaks) directly and through free radicals. Stem cells of rapidly renewing tissues — bone marrow, gut, skin, gonads — are the most vulnerable, so a sudden high whole-body dose knocks them out in order of dose.",
+ find:["1–2 Sv: lymphopenia and moderate granulocytopenia","2–10 Sv: marrow failure over 2–6 weeks — leukopenia, bleeding, hair loss, vomiting","10–20 Sv: gut syndrome in 5–14 days — diarrhea, fever, electrolyte loss; uniformly fatal","Over 50 Sv: brain syndrome within hours — ataxia, convulsions, coma","Late effects: fibrosis and narrowed vessels in the field; cancers such as leukemia and thyroid cancer"],
+ labs:["Lymphocytes fall within hours of a high dose; neutrophils bottom out in the second week, platelets a little later; anemia after 2–3 weeks"],
+ buzz:["Vomiting and falling lymphocytes after a nuclear accident"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases"],
+ tx:["—"],q:["acute radiation syndrome","radiation sickness"]},
+
+marasmus:{n:"Marasmus",k:"dz",p:"ennutr",enz:"Calorie deficit — somatic protein and fat consumed",inh:"—",fa:"69",hi:1,
+ mech:"A diet short of calories, with no nutrient entirely absent. The body consumes the <b>somatic</b> protein compartment (skeletal muscle) and subcutaneous fat while sparing the visceral compartment, so albumin stays normal or near-normal and there is <b>no edema</b>.",
+ find:["Weight at or below 60% of normal for sex, height and age","Emaciated limbs; the head looks too large for the body","Anemia, vitamin deficiencies and impaired T-cell immunity, with frequent infections","Low leptin may drive cortisol-mediated lipolysis"],
+ labs:["Midarm circumference falls as muscle is lost"],
+ buzz:["Wasted child with a normal albumin and no edema"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases"],
+ tx:["—"],q:["marasmus"]},
+
+kwashiorkor:{n:"Kwashiorkor",k:"dz",p:"ennutr",enz:"Protein deficit — visceral protein and albumin lost",inh:"—",fa:"69",hi:1,
+ mech:"Protein deprivation out of proportion to the calorie deficit — classically a child weaned early onto an almost all-carbohydrate diet. The <b>visceral</b> protein compartment is depleted: low albumin lowers plasma oncotic pressure and causes <b>edema</b>, and too little apolipoprotein leaves fat trapped in the liver.",
+ find:["MEALS: Malnutrition, Edema, Anemia, Liver (fatty), Skin lesions","\"Flaky paint\" skin — alternating hyperpigmentation, desquamation and hypopigmentation","Pale or banded, straight, loosely attached hair","Fat and muscle are relatively spared, and the edema hides how much weight is lost","Apathy, listlessness and poor appetite","Milder forms with chronic protein loss — protein-losing enteropathy, nephrotic syndrome, extensive burns"],
+ labs:["Low serum albumin"],
+ buzz:["Swollen-bellied child with flaky-paint skin"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases"],
+ tx:["—"],q:["kwashiorkor"]},
+
+cachexia:{n:"Cachexia & secondary malnutrition",k:"dz",p:"ennutr",enz:"Wasting driven by disease rather than lack of food",inh:"—",fa:"106",hi:0,
+ mech:"In cancer and AIDS, factors released by the tumor or by host immune cells — TNF-α among them — cause progressive loss of muscle and often fat, with profound weakness, anorexia and anemia. Secondary malnutrition is common in chronically ill, older and bedridden patients.",
+ find:["Robbins estimates that more than half of US nursing-home residents are malnourished","Signs: lost fat over the arms, chest and shoulders; wasted quadriceps and deltoids; ankle or sacral edema","Raises the risk of infection, sepsis, poor wound healing and death after surgery"],
+ labs:["—"],
+ buzz:["Muscle wasting in advanced cancer"],
+ src:["Robbins ch 7 — Neoplasia","Robbins ch 9 — Environmental and nutritional diseases"],
+ tx:["—"],q:["cachexia","cancer cachexia","secondary malnutrition"]},
+
+starvation:{n:"Starvation — the fuel timeline",k:"reg",p:"ennutr",enz:"Glucose for brain and red cells first, protein last",inh:"—",fa:"88, 89",hi:1,
+ mech:"Starvation is organized to keep glucose flowing to the brain and red cells and to preserve protein. Glycogen runs out after about a day; gluconeogenesis and fatty acids carry days 1–3; after day 3 ketone bodies from fat become the brain’s main fuel, so gluconeogenesis and protein breakdown slow. When fat is gone, protein breakdown accelerates and organs fail.",
+ find:["Day 1: hepatic glycogenolysis; glycogen reserves are gone by the end of it","Days 1–3: gluconeogenesis from lactate, alanine, glycerol and propionyl-CoA; muscle and liver switch to fatty acids","After day 3: ketone bodies feed the brain; red cells still need glucose — they have no mitochondria","Survival time depends on the size of the fat stores"],
+ labs:["—"],
+ buzz:["Ketones feed the brain after day 3"],
+ src:["Marks ch 3 — Fasting"],
+ tx:["—"],q:["starvation","prolonged fasting","starved state"]},
+
+animalbite:{n:"Dog & cat bites",alias:"Pasteurella multocida",k:"dz",p:"enbite",enz:"Pasteurella multocida from animal mouths",inh:"—",fa:"147",hi:0,
+ mech:"<b>Pasteurella multocida</b> from cat and dog bites causes cellulitis and osteomyelitis, and a cat scratch can transmit <b>Bartonella</b> (cat scratch disease, bacillary angiomatosis). Rabies and tetanus prophylaxis follow the postexposure rules.",
+ find:["Pasteurella multocida: cellulitis, osteomyelitis after a cat or dog bite","Bartonella henselae: cat scratch disease, bacillary angiomatosis","Rabies, never vaccinated: immune globulin into the wound plus vaccine on days 0, 3, 7 and 14","Tetanus: a toxoid booster if more than 5 years since the last dose; immune globulin too for dirty wounds when doses are incomplete"],
+ labs:["—"],
+ buzz:["Cellulitis within a day of a cat bite"],
+ src:["Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["—"],q:["pasteurella multocida","pasteurella","cat bite","dog bite","animal bite"]},
+
+snakebite:{n:"Snake envenomation",k:"dz",p:"enbite",enz:"Venom coagulopathy · antivenom is passive immunization",inh:"—",fa:"433",hi:0,
+ mech:"Snake bite is on First Aid’s list of causes of DIC. Antivenom is a form of passive immunization: ovine Fab antibodies for North American pit vipers, and equine antivenin for coral snakes.",
+ find:["Pit vipers (Crotalidae): crotalid polyvalent immune Fab, 4–6 vials IV over an hour, repeated until control is achieved","Coral snake (Micrurus): equine antivenin, 3–5 vials IV within 4 hours of the bite","Serum sickness follows in almost everyone who gets more than 7 vials of the equine coral-snake antivenin"],
+ labs:["DIC: schistocytes, raised D-dimer, low fibrinogen"],
+ buzz:["Bleeding from puncture sites after a rattlesnake bite"],
+ src:["Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["Antivenom"],q:["snake bite","snakebite","rattlesnake bite","antivenom","antivenin","crotalidae"]},
+
+venom:{n:"Black widow & scorpion envenomation",k:"dz",p:"enbite",enz:"α-Latrotoxin and scorpion venom",inh:"—",fa:"320, 404",hi:0,
+ mech:"Black widow venom contains <b>α-latrotoxin</b>, which causes explosive release of transmitter from cholinergic and adrenergic vesicles. Scorpion sting is on the list of causes of acute pancreatitis.",
+ find:["Black widow venom is one of First Aid’s toxic causes of myocarditis","Black widow antivenin (Latrodectus mactans, equine): one vial IV or IM — only symptomatic patients need it","Scorpion (Centruroides): scorpion immune F(ab′)₂, 3 vials IV, as soon as possible in symptomatic patients","Scorpion sting is the S in I GET SMASHED, the causes of acute pancreatitis"],
+ labs:["—"],
+ buzz:["Explosive transmitter release — α-latrotoxin"],
+ src:["Katzung ch 6 — Introduction to Autonomic Pharmacology","Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ tx:["—"],q:["black widow","latrodectus","latrotoxin","scorpion sting"]},
 
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
@@ -21600,7 +21813,221 @@ MAPS.ommmech = {
   {a:"i5",b:"i6",p:"mmpelv",arrow:"none",dash:true}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["index","Index"]];
+MAPS.vaccines = {
+ t:"Vaccines & the Spleen", sub:"What each vaccine type is made of and the immunity it buys · who cannot get a live vaccine · passive immunization and immune globulins · postexposure pairs · asplenia and encapsulated bacteria",
+ w:3300, h:1880,
+ fa:"96, 103, 108–109, 114, 116, 125",
+ src:["Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus","Robbins ch 14 — Red blood cell and bleeding disorders","Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ comps:[
+  {x:140,y:110,w:3020,h:280,l:"Active immunization — what the vaccine is made of"},
+  {x:140,y:450,w:3020,h:200,l:"Who should not get a live vaccine"},
+  {x:140,y:710,w:3020,h:200,l:"Passive immunization — borrowed antibodies"},
+  {x:140,y:970,w:3020,h:120,l:"After an exposure — immune globulin now, vaccine for later"},
+  {x:140,y:1150,w:3020,h:280,l:"The spleen and encapsulated bacteria"}],
+ panels:[
+  {x:140,y:1500,w:1480,h:180,kw:150,t:"Routine childhood schedule (Katzung, Table A–2)",rows:[
+   ["Birth","hepatitis B — with HBIG within 12 hours if the mother is HBsAg positive"],
+   ["2, 4, 6 months","DTaP · Hib · pneumococcal conjugate · rotavirus · IPV (third IPV dose at 6–18 months)"],
+   ["12–15 months","MMR · varicella · last Hib and PCV doses"],
+   ["12–23 months","hepatitis A, two doses at least 6 months apart"],
+   ["4–6 years","DTaP · IPV · MMR · varicella"],
+   ["11–12 years","Tdap · HPV · meningococcal ACWY (booster at 16)"]]},
+  {x:1680,y:1500,w:1480,h:180,kw:170,t:"The immunity each type buys",rows:[
+   ["Live attenuated","cellular and humoral · strong, often lifelong"],
+   ["Killed","mainly humoral · boosters needed"],
+   ["Polysaccharide","T-cell–independent"],
+   ["Conjugate","T-cell–dependent"],
+   ["Toxoid","antitoxin antibodies · boosters needed"],
+   ["mRNA","cellular and humoral"]]}],
+ nodes:[
+  {id:"v1",l:"Live attenuated",x:420,y:170,p:"vxactive",s:"weakened organism that still replicates",m:["vxlive"]},
+  {id:"v2",l:"Cellular + humoral",x:1020,y:170,p:"vxactive",s:"strong, often lifelong",m:["vxlive"]},
+  {id:"v3",l:"MMR · varicella · yellow fever",x:1620,y:170,p:"vxactive",s:"rotavirus · Sabin polio · intranasal flu · BCG",m:["measles","rota","polio"]},
+  {id:"v4",l:"Can revert to virulence",x:2220,y:170,p:"vxactive",s:"never in pregnancy or immunodeficiency",m:["vxlive"]},
+  {id:"v5",l:"Killed (inactivated)",x:420,y:250,p:"vxactive",s:"heat or chemicals · epitopes kept",m:["vxkilled"]},
+  {id:"v6",l:"Mainly humoral",x:1020,y:250,p:"vxactive",s:"boosters needed · cannot revert",m:["vxkilled"]},
+  {id:"v7",l:"Hep A · typhoid Vi · rabies",x:1620,y:250,p:"vxactive",s:"injected influenza · Salk polio",m:["hav","rabies"]},
+  {id:"v8",l:"Toxoid",x:2220,y:250,p:"vxactive",s:"denatured toxin, binding site intact",m:["vxtoxoid"]},
+  {id:"v9",l:"Tetanus · diphtheria",x:2820,y:250,p:"vxactive",s:"Td every 10 years · Tdap each pregnancy",m:["tetanus","diphtheria"]},
+  {id:"v10",l:"Subunit · recombinant",x:420,y:330,p:"vxactive",s:"HBsAg · HPV capsid · zoster · acellular pertussis",m:["vxsub","hbv","hpv"]},
+  {id:"v11",l:"Polysaccharide — PPSV23",x:1020,y:330,p:"vxactive",s:"T-cell–independent",m:["vxconj"]},
+  {id:"v12",l:"Conjugated to a protein",x:1620,y:330,p:"vxactive",s:"PCV · Hib · meningococcal — T-cell–dependent",m:["vxconj","spneumo","hflu"]},
+  {id:"v13",l:"mRNA in a lipid nanoparticle",x:2220,y:330,p:"vxactive",s:"spike protein · rare myocarditis in young males",m:["vxmrna","corona"]},
+  {id:"l1",l:"Pregnancy",x:420,y:510,p:"vxlimits",s:"live vaccines contraindicated",m:["vxlive"]},
+  {id:"l2",l:"Bruton agammaglobulinemia",x:1020,y:510,p:"vxlimits",s:"no live vaccines",m:["xla"]},
+  {id:"l3",l:"B-cell deficiency",x:1620,y:510,p:"vxlimits",s:"no live poliovirus vaccine",m:["polio"]},
+  {id:"l4",l:"Other immunodeficiency",x:2220,y:510,p:"vxlimits",s:"eg, SCID, DiGeorge — live vaccines contraindicated",m:["scidx","digeorge"]},
+  {id:"l5",l:"HIV with CD4 ≥ 200",x:420,y:590,p:"vxlimits",s:"MMR and varicella allowed, with a specialist",m:["hiv"]},
+  {id:"l6",l:"Under age 2",x:1020,y:590,p:"vxlimits",s:"no live intranasal influenza",m:["flu"]},
+  {id:"p1",l:"Preformed antibodies",x:420,y:770,p:"vxpassive",s:"immediate · no memory · IgG half-life ~3 weeks",m:["passiveimm"]},
+  {id:"p2",l:"Maternal IgG",x:1020,y:770,p:"vxpassive",s:"the only isotype that crosses the placenta"},
+  {id:"p3",l:"IgA in breast milk",x:1620,y:770,p:"vxpassive",s:"passive protection at mucous membranes"},
+  {id:"p4",l:"IVIG",x:2220,y:770,p:"vxpassive",s:"antibody deficiency · ITP · Kawasaki disease",m:["passiveimm","kawasaki","itp"]},
+  {id:"p5",l:"Antitoxins & antivenoms",x:420,y:850,p:"vxpassive",s:"tetanus · botulism · snake, spider, scorpion",m:["passiveimm","botulinum"]},
+  {id:"p6",l:"Animal serum",x:1020,y:850,p:"vxpassive",s:"anaphylaxis or serum sickness",m:["hs3"]},
+  {id:"p7",l:"Monoclonal antibody",x:1620,y:850,p:"vxpassive",s:"eg, RSV prophylaxis in high-risk infants",m:["rsvab"]},
+  {id:"e1",l:"Rabies",x:420,y:1030,p:"vxpep",s:"immune globulin into the wound + vaccine days 0, 3, 7, 14",m:["pep","rabies"]},
+  {id:"e2",l:"Hepatitis B",x:1020,y:1030,p:"vxpep",s:"HBIG + vaccine · newborn within 12 hours",m:["pep","hbv"]},
+  {id:"e3",l:"Tetanus",x:1620,y:1030,p:"vxpep",s:"immune globulin for dirty wounds · booster if > 5 years",m:["pep","tetanus"]},
+  {id:"e4",l:"Varicella",x:2220,y:1030,p:"vxpep",s:"VZIG within 96 h · immunocompromised, pregnant",m:["pep","hsvvzv"]},
+  {id:"e5",l:"Measles",x:2820,y:1030,p:"vxpep",s:"immune globulin within 6 days",m:["pep","measles"]},
+  {id:"s1",l:"Encapsulated bacteria",x:420,y:1210,p:"vxspleen",s:"the capsule resists phagocytosis",m:["encaps"]},
+  {id:"s2",l:"Opsonized, then filtered",x:1020,y:1210,p:"vxspleen",s:"IgM and C3b · cleared by the spleen"},
+  {id:"s3",l:"No working spleen",x:1620,y:1210,p:"vxspleen",s:"splenectomy · sickle cell autosplenectomy",m:["asplenia","sickle"]},
+  {id:"s4",l:"Sepsis from encapsulated organisms",x:2220,y:1210,p:"vxspleen",s:"pneumococcus > meningococcus > Hib",m:["asplenia","spneumo","meningococcus"]},
+  {id:"s5",l:"Vaccinate",x:2820,y:1210,p:"vxspleen",s:"pneumococcal · meningococcal ACWY and B · Hib",m:["asplenia","vxconj"]},
+  {id:"s6",l:"SHiNE SKiS",x:420,y:1290,p:"vxspleen",s:"the encapsulated organisms",m:["encaps","klebsiella","salmonella"]},
+  {id:"s7",l:"Early complement deficiency",x:1020,y:1290,p:"vxspleen",s:"encapsulated species too",m:["encaps"]},
+  {id:"s8",l:"Smear after splenectomy",x:1620,y:1290,p:"vxspleen",s:"Howell-Jolly bodies · target cells",m:["asplenia","hs"]},
+  {id:"s9",l:"Platelets and lymphocytes rise",x:2220,y:1290,p:"vxspleen",s:"no longer sequestered",m:["asplenia"]},
+  {id:"s10",l:"Late complement (C5–C9)",x:1020,y:1370,p:"vxspleen",s:"recurrent Neisseria · meningococcal vaccine",m:["c5c9"]}],
+ edges:[
+  {a:"v1",b:"v2",p:"vxactive"},
+  {a:"v2",b:"v3",p:"vxactive",arrow:"none",dash:true},
+  {a:"v3",b:"v4",p:"vxactive",arrow:"none",dash:true},
+  {a:"v5",b:"v6",p:"vxactive"},
+  {a:"v6",b:"v7",p:"vxactive",arrow:"none",dash:true},
+  {a:"v8",b:"v9",p:"vxactive",arrow:"none",dash:true},
+  {a:"v11",b:"v12",p:"vxactive",e:"add a carrier protein"},
+  {a:"l1",b:"l2",p:"vxlimits",arrow:"none",dash:true},
+  {a:"l2",b:"l3",p:"vxlimits",arrow:"none",dash:true},
+  {a:"l3",b:"l4",p:"vxlimits",arrow:"none",dash:true},
+  {a:"p1",b:"p2",p:"vxpassive",arrow:"none",dash:true},
+  {a:"p2",b:"p3",p:"vxpassive",arrow:"none",dash:true},
+  {a:"p3",b:"p4",p:"vxpassive",arrow:"none",dash:true},
+  {a:"p5",b:"p6",p:"vxpassive"},
+  {a:"p6",b:"p7",p:"vxpassive",arrow:"none",dash:true},
+  {a:"s1",b:"s2",p:"vxspleen"},
+  {a:"s2",b:"s3",p:"vxspleen",arrow:"none",dash:true},
+  {a:"s3",b:"s4",p:"vxspleen"},
+  {a:"s4",b:"s5",p:"vxspleen"},
+  {a:"s3",b:"s8",p:"vxspleen"},
+  {a:"s8",b:"s9",p:"vxspleen",arrow:"none",dash:true},
+  {a:"s7",b:"s10",p:"vxspleen",arrow:"none",dash:true}]
+};
+
+MAPS.environ = {
+ t:"Environment & Nutrition — Heat, Cold, Pressure, Bites & Starvation", sub:"Heat illness from cramps to heat stroke and its look-alikes · hypothermia and frostbite · diving, drowning and altitude · electrical and radiation injury · bites and stings · starvation, marasmus and kwashiorkor",
+ w:3300, h:2140,
+ fa:"69, 88–89, 106, 110, 147, 207, 225, 320, 404, 433, 493, 530, 584, 688–689, 691, 697",
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock","Robbins ch 7 — Neoplasia","Robbins ch 9 — Environmental and nutritional diseases","Katzung ch 6 — Introduction to Autonomic Pharmacology","Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products","Guyton ch 45 — Physiology of Deep-Sea Diving and Other Hyperbaric Conditions","Guyton ch 74 — Body Temperature Regulation and Fever","Marks ch 3 — Fasting"],
+ comps:[
+  {x:140,y:110,w:3020,h:280,l:"Heat — when the body cannot shed it"},
+  {x:140,y:450,w:3020,h:200,l:"Cold"},
+  {x:140,y:710,w:3020,h:200,l:"Pressure, water & air"},
+  {x:140,y:970,w:3020,h:200,l:"Electricity & radiation"},
+  {x:140,y:1230,w:3020,h:200,l:"Bites & stings"},
+  {x:140,y:1490,w:3020,h:280,l:"Starvation & malnutrition"}],
+ panels:[
+  {x:140,y:1850,w:1480,h:210,kw:150,t:"Marasmus vs kwashiorkor",rows:[
+   ["","marasmus · kwashiorkor"],
+   ["Deficit","calories · protein out of proportion to calories"],
+   ["Protein lost","somatic (muscle) · visceral (liver, albumin)"],
+   ["Edema","none · generalized or dependent"],
+   ["Albumin","normal or slightly low · low"],
+   ["Liver","normal · enlarged and fatty"],
+   ["Skin, hair","— · flaky-paint skin, pale banded hair"]]},
+  {x:1680,y:1850,w:1480,h:150,kw:110,t:"Radiation dose and the tissue that fails (Robbins)",rows:[
+   ["1–2 Sv","lymphocytes · lymphopenia, moderate granulocytopenia"],
+   ["2–10 Sv","bone marrow · leukopenia, bleeding, hair loss · 2–6 weeks"],
+   ["10–20 Sv","small bowel · diarrhea, fever, electrolyte loss · 5–14 days · fatal"],
+   ["> 50 Sv","brain · ataxia, convulsions, coma · 1–4 hours · fatal"]]}],
+ nodes:[
+  {id:"h1",l:"Heat cramps",x:420,y:170,p:"enheat",s:"electrolytes lost in sweat · core temperature normal",m:["heatillness"]},
+  {id:"h2",l:"Heat exhaustion",x:1020,y:170,p:"enheat",s:"collapse from dehydration · recovers with fluids",m:["heatillness"]},
+  {id:"h3",l:"Heat stroke",x:1620,y:170,p:"enheat",s:"core > 40°C · thermoregulation fails",m:["heatstroke"]},
+  {id:"h4",l:"Multiorgan injury",x:2220,y:170,p:"enheat",s:"confusion · rhabdomyolysis · AKI · ARDS · DIC",m:["heatstroke","rhabdo","dic"]},
+  {id:"h5",l:"Rapid external cooling",x:2820,y:170,p:"enheat",s:"cold water, or spray and fan · fluids",m:["heatstroke"]},
+  {id:"h6",l:"Fever is different",x:420,y:250,p:"enheat",s:"cytokines raise the set point · usually < 40°C",m:["acutephase"]},
+  {id:"h7",l:"Heat, humidity, exertion",x:1020,y:250,p:"enheat",s:"older adults · athletes · military recruits",m:["heatstroke"]},
+  {id:"h8",l:"RYR1 calcium leak",x:1620,y:250,p:"enheat",s:"sustained contraction makes more heat",m:["heatstroke"]},
+  {id:"h9",l:"Malignant hyperthermia",x:420,y:330,p:"enheat",s:"RYR1 mutation · anesthetics, succinylcholine",m:["mhyper"]},
+  {id:"h10",l:"Neuroleptic malignant syndrome",x:1020,y:330,p:"enheat",s:"antipsychotics · lead-pipe rigidity",m:["nms"]},
+  {id:"h11",l:"Serotonin syndrome",x:1620,y:330,p:"enheat",s:"serotonergic drugs · clonus",m:["serotoninsyndrome"]},
+  {id:"h12",l:"Anticholinergic toxicity",x:2220,y:330,p:"enheat",s:"hot, dry, flushed skin",m:["antimusc"]},
+  {id:"h13",l:"Thyroid storm",x:2820,y:330,p:"enheat",s:"thyrotoxicosis",m:["hyperthyroid"]},
+  {id:"c1",l:"Cold, wet, alcohol",x:420,y:510,p:"encold",s:"wet clothing · humidity · dilated skin vessels",m:["hypothermia"]},
+  {id:"c2",l:"Below about 94°F",x:1020,y:510,p:"encold",s:"hypothalamic control falters",m:["hypothermia"]},
+  {id:"c3",l:"Below about 85°F",x:1620,y:510,p:"encold",s:"control lost · shivering stops",m:["hypothermia"]},
+  {id:"c4",l:"Bradycardia, atrial fibrillation",x:2220,y:510,p:"encold",s:"unconscious near 90°F · arrest near 77°F",m:["hypothermia"]},
+  {id:"c5",l:"Rapid rewarming",x:2820,y:510,p:"encold",s:"can save someone pulled from ice water",m:["hypothermia"]},
+  {id:"c6",l:"Frostbite",x:420,y:590,p:"encold",s:"ice crystals in cells · ears, fingers, toes",m:["frostbite"]},
+  {id:"c7",l:"Gangrene after thawing",x:1020,y:590,p:"encold",s:"may need surgical removal",m:["frostbite"]},
+  {id:"c8",l:"Trench foot",x:1620,y:590,p:"encold",s:"slow, wet chilling · edema, hypoxia",m:["frostbite"]},
+  {id:"c9",l:"Cold-induced vasodilation",x:2220,y:590,p:"encold",s:"a flush near freezing protects the skin",m:["frostbite"]},
+  {id:"d1",l:"Diving on compressed air",x:420,y:770,p:"enpress",s:"nitrogen dissolves in body water and fat",m:["dcs"]},
+  {id:"d2",l:"Fast ascent",x:1020,y:770,p:"enpress",s:"nitrogen bubbles out — gas embolism",m:["dcs"]},
+  {id:"d3",l:"Bends · nervous system · chokes",x:1620,y:770,p:"enpress",s:"joints 85–90% · nerves 5–10% · lungs ~2%",m:["dcs"]},
+  {id:"d4",l:"Recompression",x:2220,y:770,p:"enpress",s:"hyperbaric chamber, then slow decompression",m:["dcs"]},
+  {id:"d5",l:"Nitrogen narcosis",x:2820,y:770,p:"enpress",s:"euphoria and poor judgment at depth",m:["dcs"]},
+  {id:"d6",l:"Drowning",x:420,y:850,p:"enpress",s:"surfactant lost · ARDS",m:["ards"]},
+  {id:"d7",l:"High altitude",x:1020,y:850,p:"enpress",s:"low inspired PO₂ · hyperventilation, alkalosis",m:["altitude"]},
+  {id:"d8",l:"Carbon monoxide",x:1620,y:850,p:"enpress",s:"fires, heaters, exhaust",m:["cohb"]},
+  {id:"d9",l:"Burns & smoke inhalation",x:2220,y:850,p:"enpress",s:"singed nasal hairs, soot · CO and cyanide",m:["burns"]},
+  {id:"x1",l:"Electrical injury",x:420,y:1030,p:"enenergy",s:"burns along the path · VF · respiratory arrest",m:["elecinj","vfib"]},
+  {id:"x2",l:"Alternating current",x:1020,y:1030,p:"enenergy",s:"tetanic grip prolongs contact",m:["elecinj"]},
+  {id:"x3",l:"High voltage, lightning",x:1620,y:1030,p:"enenergy",s:"medullary paralysis · extensive burns",m:["elecinj","burns"]},
+  {id:"x4",l:"Ionizing radiation",x:420,y:1110,p:"enenergy",s:"DNA double-strand breaks · free radicals",m:["ars"]},
+  {id:"x5",l:"2–10 Sv: marrow",x:1020,y:1110,p:"enenergy",s:"cytopenias, bleeding · weeks",m:["ars"]},
+  {id:"x6",l:"10–20 Sv: gut",x:1620,y:1110,p:"enenergy",s:"diarrhea, fluid loss · days · fatal",m:["ars"]},
+  {id:"x7",l:"> 50 Sv: brain",x:2220,y:1110,p:"enenergy",s:"ataxia, convulsions, coma · hours",m:["ars"]},
+  {id:"x8",l:"Late effects",x:2820,y:1110,p:"enenergy",s:"fibrosis · leukemia · thyroid cancer",m:["ars","druglung"]},
+  {id:"b1",l:"Cat or dog bite",x:420,y:1290,p:"enbite",s:"Pasteurella multocida · cellulitis, osteomyelitis",m:["animalbite"]},
+  {id:"b2",l:"Cat scratch",x:1020,y:1290,p:"enbite",s:"Bartonella henselae",m:["animalbite"]},
+  {id:"b3",l:"Rabies prophylaxis",x:1620,y:1290,p:"enbite",s:"immune globulin into the wound + vaccine",m:["rabies","pep"]},
+  {id:"b4",l:"Tetanus prophylaxis",x:2220,y:1290,p:"enbite",s:"booster ± immune globulin",m:["tetanus","pep"]},
+  {id:"b5",l:"Snake bite",x:420,y:1370,p:"enbite",s:"DIC · antivenom",m:["snakebite","dic"]},
+  {id:"b6",l:"Black widow",x:1020,y:1370,p:"enbite",s:"α-latrotoxin → explosive transmitter release",m:["venom"]},
+  {id:"b7",l:"Scorpion sting",x:1620,y:1370,p:"enbite",s:"acute pancreatitis · F(ab′)₂ antivenom",m:["venom","acutepanc"]},
+  {id:"b8",l:"Bee sting",x:2220,y:1370,p:"enbite",s:"type I hypersensitivity — anaphylaxis",m:["hs1"]},
+  {id:"b9",l:"Equine antivenom",x:2820,y:1370,p:"enbite",s:"serum sickness after large doses",m:["hs3","snakebite"]},
+  {id:"n1",l:"Day 1",x:420,y:1550,p:"ennutr",s:"glycogenolysis · glycogen gone by day’s end",m:["starvation"]},
+  {id:"n2",l:"Days 1–3",x:1020,y:1550,p:"ennutr",s:"gluconeogenesis · muscle and liver burn fat",m:["starvation","lacticmech"]},
+  {id:"n3",l:"After day 3",x:1620,y:1550,p:"ennutr",s:"ketones feed the brain · protein spared",m:["starvation","ketones"]},
+  {id:"n4",l:"Fat exhausted",x:2220,y:1550,p:"ennutr",s:"protein breakdown → organ failure",m:["starvation"]},
+  {id:"n5",l:"Marasmus",x:420,y:1630,p:"ennutr",s:"calories short · muscle and fat wasted · no edema",m:["marasmus"]},
+  {id:"n6",l:"Kwashiorkor",x:1020,y:1630,p:"ennutr",s:"protein short · edema · fatty liver · flaky skin",m:["kwashiorkor"]},
+  {id:"n7",l:"Cachexia",x:1620,y:1630,p:"ennutr",s:"cancer, AIDS · TNF-α-driven wasting",m:["cachexia","acutephase"]},
+  {id:"n8",l:"Refeeding syndrome",x:2220,y:1630,p:"ennutr",s:"phosphate, K⁺ and Mg²⁺ crash when feeding restarts",m:["refeeding"]},
+  {id:"n9",l:"Anorexia nervosa",x:2820,y:1630,p:"ennutr",s:"self-starvation",m:["anorexia"]},
+  {id:"n10",l:"Somatic protein lost",x:420,y:1710,p:"ennutr",s:"muscle · midarm circumference falls",m:["marasmus"]},
+  {id:"n11",l:"Visceral protein lost",x:1020,y:1710,p:"ennutr",s:"low albumin → low oncotic pressure",m:["kwashiorkor"]},
+  {id:"n12",l:"Secondary malnutrition",x:1620,y:1710,p:"ennutr",s:"older, bedridden, chronically ill",m:["cachexia"]}],
+ edges:[
+  {a:"h1",b:"h2",p:"enheat",arrow:"none",dash:true},
+  {a:"h2",b:"h3",p:"enheat"},
+  {a:"h3",b:"h4",p:"enheat"},
+  {a:"h4",b:"h5",p:"enheat"},
+  {a:"h7",b:"h3",p:"enheat"},
+  {a:"h8",b:"h3",p:"enheat"},
+  {a:"c1",b:"c2",p:"encold"},
+  {a:"c2",b:"c3",p:"encold"},
+  {a:"c3",b:"c4",p:"encold"},
+  {a:"c4",b:"c5",p:"encold",arrow:"none",dash:true},
+  {a:"c6",b:"c7",p:"encold"},
+  {a:"c8",b:"c7",p:"encold"},
+  {a:"d1",b:"d2",p:"enpress"},
+  {a:"d2",b:"d3",p:"enpress"},
+  {a:"d3",b:"d4",p:"enpress"},
+  {a:"d4",b:"d5",p:"enpress",arrow:"none",dash:true},
+  {a:"x1",b:"x2",p:"enenergy",arrow:"none",dash:true},
+  {a:"x2",b:"x3",p:"enenergy",arrow:"none",dash:true},
+  {a:"x4",b:"x5",p:"enenergy"},
+  {a:"x5",b:"x6",p:"enenergy"},
+  {a:"x6",b:"x7",p:"enenergy"},
+  {a:"x7",b:"x8",p:"enenergy",arrow:"none",dash:true},
+  {a:"b1",b:"b2",p:"enbite",arrow:"none",dash:true},
+  {a:"b3",b:"b4",p:"enbite",arrow:"none",dash:true},
+  {a:"b5",b:"b6",p:"enbite",arrow:"none",dash:true},
+  {a:"b8",b:"b9",p:"enbite",arrow:"none",dash:true},
+  {a:"n1",b:"n2",p:"ennutr"},
+  {a:"n2",b:"n3",p:"ennutr"},
+  {a:"n3",b:"n4",p:"ennutr"},
+  {a:"n5",b:"n10",p:"ennutr"},
+  {a:"n6",b:"n11",p:"ennutr"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -21610,7 +22037,7 @@ const TOPICS = [
   ["renal","Renal",["nephron","glom","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","liver","gitract"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns"]],
-  ["immuno","Immunology",["immune","hypimm","cytokine","eicosanoid","transplant"]],
+  ["immuno","Immunology",["immune","hypimm","cytokine","eicosanoid","transplant","vaccines"]],
   ["endo","Endocrine",["axes","rclass","pancreas"]],
   ["devrepro","Repro & Development",["sexdev","repro","obgyn","malerepro","embryo"]],
   ["neuro","Neuro",["neurotx","ans","spine","stroke","basal","neuroer","seizhead"]],
@@ -21619,7 +22046,7 @@ const TOPICS = [
   ["msk","Musculoskeletal",["muscle","bone","arthritis","derm","plexus","orthoinj"]],
   ["omm","OMM",["vsomatic","chapman","omt","ommmech"]],
   ["id","Infectious",["abx","antiviral","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite"]],
-  ["pharm","Pharm",["pkpd","cyp","tox","anesth","pain"]],
+  ["pharm","Pharm",["pkpd","cyp","tox","environ","anesth","pain"]],
   ["stats","Biostats & Ethics",["biostats","ethics"]],
   ["idx","Index",["index"]]];
 
@@ -21863,9 +22290,16 @@ function practiceHtml(id){
     return `<a class="pqb" href="../${encodeURIComponent(dir)}/index.html#atlas/${encodeURIComponent(id)}" target="_blank" rel="noopener">${esc(label)} <span>· ${n}</span></a>`;
   }).join("")}</div>`);
 }
+const REPO="https://github.com/cojeda95/Q-bank";
+function reportUrl(id){
+  const L=LES[id]||{}, m=MAPS[state.view];
+  const srcs=[L.fa?`First Aid 2025, ${/[,–]/.test(L.fa)?"pp.":"p."} ${L.fa}`:"",...(L.src||[])].filter(Boolean);
+  const body=`Card: ${L.n} (${id})\nMap: ${m?m.t:"Index"}\nLink: ${cardLink(id)}\n\nWhat looks wrong:\n\n\nWhat the source says (book and chapter or First Aid page, if you have it):\n\n\n---\nSources listed on this card:\n${srcs.map(x=>"- "+x).join("\n")}`;
+  return `${REPO}/issues/new?title=${encodeURIComponent("Atlas: "+L.n)}&body=${encodeURIComponent(body)}`;
+}
 function openLes(id,center,pick){
   const L=LES[id]; if(!L) return;
-  state.sel=id; drawer.hidden=false;
+  state.sel=id; state.info=false; drawer.hidden=false;
   const res=pick===undefined?"":pick===id
     ?`<div class="pqres ok"><span>✓ Right.</span><button data-next>Next pin →</button></div>`
     :`<div class="pqres bad"><span>✗ You picked ${esc(LES[pick].n)}.</span><button data-next>Next pin →</button></div>`;
@@ -21873,7 +22307,10 @@ function openLes(id,center,pick){
   drawer.innerHTML=`
    <div class="dhead">
      <button class="dclose" id="dclose" aria-label="Close">×</button>
+     <div class="dacts">
+     <a class="dlink" id="dreport" href="${esc(reportUrl(id))}" target="_blank" rel="noopener" title="Report a mistake on this card (opens a GitHub issue)"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 14V2.5"/><path d="M3.5 3h8l-1.6 3 1.6 3h-8"/></svg><span>Report</span></a>
      <button class="dlink" id="dlink" title="Copy a link straight to this card"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6.5 9.5a3 3 0 0 0 4.2 0l2.4-2.4a3 3 0 0 0-4.2-4.2L7.8 4"/><path d="M9.5 6.5a3 3 0 0 0-4.2 0L2.9 8.9a3 3 0 0 0 4.2 4.2L8.2 12"/></svg><span>Link</span></button>
+     </div>
      <span class="dkind" style="--k:${mkc(L.k)}">${MK[L.k].g}&nbsp;&nbsp;${MK[L.k].n}</span>
      <h2 class="dtitle">${esc(L.n)}</h2>
      ${L.alias?`<p class="dalias">${esc(L.alias)}</p>`:""}
@@ -21908,7 +22345,7 @@ function openLes(id,center,pick){
   writeHash();
 }
 function closeDrawer(){
-  drawer.hidden=true; state.sel=null;
+  drawer.hidden=true; state.sel=null; state.info=false;
   if(state.view!=="index") render();
   renderRail(); writeHash();
 }
@@ -22092,8 +22529,22 @@ function centerOn(x,y){
 }
 
 /* ── rail ───────────────────────────────────────────── */
+/* "p. 295", "pp 295", "page 295" or "fa 295" looks up a First Aid page */
+function pageQuery(q){ const m=(q||"").trim().match(/^(?:pp?|pg|page|fa)\.?\s*(\d{1,3})$/i); return m?+m[1]:null; }
+function faPages(fa){
+  const out=new Set();
+  (fa||"").split(/,\s*/).forEach(part=>{ const m=part.trim().match(/^(\d+)(?:\s*[–-]\s*(\d+))?/);
+    if(m){ const a=+m[1], z=+(m[2]||m[1]); for(let p=a;p<=z&&p-a<60;p++) out.add(p); } });
+  return out;
+}
+function mapsOnPage(pg){ return Object.keys(MAPS).filter(k=>faPages(MAPS[k].fa).has(pg)); }
+function pageHitsHtml(pg){
+  const ms=mapsOnPage(pg);
+  return ms.length?`<div class="pagehits">${ms.map(k=>`<button class="pagehit" data-view="${k}">${esc((VIEWS.find(v=>v[0]===k)||[k,MAPS[k].t])[1])}</button>`).join("")}</div>`:"";
+}
 function lesMatches(L,q){
   if(!q) return true;
+  const pg=pageQuery(q); if(pg!=null) return faPages(L.fa).has(pg);
   const hay=[L.n,L.alias||"",L.enz||"",L.gen||"",L.mech||"",(PATHS[L.p]||{}).n||"",
     ...(L.find||[]),...(L.labs||[]),...(L.buzz||[]),...(L.tx||[]),...(L.q||[])].join(" ").toLowerCase();
   return hay.includes(q);
@@ -22105,19 +22556,37 @@ function currentLesIds(){
   else ids=[...new Set(Object.keys(LOC).filter(id=>LOC[id].some(l=>l.v===state.view)))];
   return ids.filter(id=>LES[id]&&lesMatches(LES[id],q)&&(!state.filter||state.view==="index"||LES[id].p===state.filter));
 }
-function mapSrcHtml(m){
-  if(!m||!(m.fa||(m.src&&m.src.length))) return "";
+function mapSrcList(m){
   const groups=[];
   (m.src||[]).forEach(s=>{
     const c=s.match(/^(.+?) ((?:\(4e\) )?(?:ch|Appendix) \d+) — (.+)$/), d=c?null:s.match(/^(.+?) — (.+)$/);
     const b=c?c[1]:d?d[1]:s, it={ch:c?c[2]:"",t:c?c[3]:d?d[2]:""};
     const g=groups.find(g=>g.b===b); g?g.items.push(it):groups.push({b,items:[it]});
   });
+  return `${m.fa?`<div class="rsrc-b">First Aid 2025</div><ul class="rsrc"><li>${/[,–]/.test(m.fa)?"pp.":"p."} ${esc(m.fa)}</li></ul>`:""}
+    ${groups.map(g=>`<div class="rsrc-b">${esc(g.b)}</div><ul class="rsrc">${g.items.map(it=>`<li>${it.ch?`<span class="ch">${esc(it.ch)}</span> `:""}${esc(it.t)}</li>`).join("")}</ul>`).join("")}`;
+}
+const MAPSRC_LEAD="The nodes, links and tables on this map were checked against these. Each pin opens a card that lists the sources for its own lines.";
+function mapSrcHtml(m){
+  if(!m||!(m.fa||(m.src&&m.src.length))) return "";
   return `<div class="rail-sec" id="mapsrc"><h3 class="rail-h">Sources for this map</h3>
-    <p class="rail-sub">The nodes, links and tables on this map were checked against these. Each pin opens a card that lists the sources for its own lines.</p>
-    ${m.fa?`<div class="rsrc-b">First Aid 2025</div><ul class="rsrc"><li>${/[,–]/.test(m.fa)?"pp.":"p."} ${esc(m.fa)}</li></ul>`:""}
-    ${groups.map(g=>`<div class="rsrc-b">${esc(g.b)}</div><ul class="rsrc">${g.items.map(it=>`<li>${it.ch?`<span class="ch">${esc(it.ch)}</span> `:""}${esc(it.t)}</li>`).join("")}</ul>`).join("")}
-  </div>`;
+    <p class="rail-sub">${MAPSRC_LEAD}</p>${mapSrcList(m)}</div>`;
+}
+/* phones and a hidden rail: the same subtitle and sources, in the drawer */
+function openMapInfo(){
+  const m=MAPS[state.view]; if(!m) return;
+  state.sel=null; state.info=true; drawer.hidden=false;
+  drawer.innerHTML=`
+   <div class="dhead">
+     <button class="dclose" id="dclose" aria-label="Close">×</button>
+     <span class="dkind" style="--k:var(--ink-3)">Map</span>
+     <h2 class="dtitle">${esc(m.t)}</h2>
+     ${m.sub?`<p class="dalias">${esc(m.sub)}</p>`:""}
+   </div>
+   <div class="dbody">${(m.fa||(m.src&&m.src.length))?sec("Sources for this map",`<p class="reflead">${MAPSRC_LEAD}</p>${mapSrcList(m)}`):""}</div>`;
+  drawer.scrollTop=0;
+  document.getElementById("dclose").onclick=closeDrawer;
+  render(); renderRail(); writeHash();
 }
 function bindSrcJump(){
   const b=rail.querySelector(".srcjump"), t=document.getElementById("mapsrc");
@@ -22152,7 +22621,9 @@ function renderRail(){
     rail.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{state.filter=b.dataset.f||null;render();renderRail();});
     return;
   }
-  html+=`<div class="rail-sec"><h3 class="rail-h">${state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${ids.length}</h3>
+  const pg=pageQuery(state.q);
+  if(pg!=null) html+=`<div class="rail-sec"><h3 class="rail-h">Maps citing First Aid p. ${pg}</h3>${pageHitsHtml(pg)||`<p class="rail-sub">No map lists this page.</p>`}</div>`;
+  html+=`<div class="rail-sec"><h3 class="rail-h">${pg!=null?`Cards citing p. ${pg}`:state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${ids.length}</h3>
     <div class="lesionlist">${ids.length?ids.map(id=>{const L=LES[id];
       return `<button class="li" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
     }).join(""):`<p style="font-size:12.5px;color:var(--ink-3);padding:4px 7px">No match. Try “Heinz”, “orotic”, “second wind”.</p>`}</div></div>`;
@@ -22160,6 +22631,7 @@ function renderRail(){
   bindSrcJump();
   rail.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{state.filter=b.dataset.f||null;render();renderRail();if(state.view==="index")renderIndex();});
   rail.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
+  rail.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
 }
 
 /* ── index view ─────────────────────────────────────── */
@@ -22173,8 +22645,10 @@ function renderIndex(){
     <ul>${list.map(id=>{const L=LES[id];return `<li><button class="idxrow" data-les="${id}">
       <span class="t">${esc(L.n)}</span><span class="e">${esc(L.enz||"")}</span>
       ${L.buzz&&L.buzz[0]?`<span class="b">${esc(L.buzz[0])}</span>`:""}</button></li>`;}).join("")}</ul></section>`).join("");
-  idxWrap.innerHTML=`<div class="idx-intro"><h2>Every lesion on one page</h2>
-    <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>
+  const pg=pageQuery(q);
+  idxWrap.innerHTML=`<div class="idx-intro">${pg!=null?`<h2>First Aid 2025, p. ${pg}</h2>
+    <p>${ids.length} ${ids.length===1?"card cites":"cards cite"} this page${mapsOnPage(pg).length?`, and so ${mapsOnPage(pg).length===1?"does this map":"do these maps"}:`:"."}</p>${pageHitsHtml(pg)}`:`<h2>Every lesion on one page</h2>
+    <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>`}
     <details class="idx-sources"><summary>Sources</summary>
       <p>Every card was written from and checked against the sources below, line by line. Each card carries its own <b>Sources</b> section naming the exact First Aid pages and book chapters it rests on, so you can see why a fact is stated where it is; the pins on every map open the card that carries those citations, and each map's side panel lists the First Aid pages and chapters the map itself was checked against. Where sources disagree, the card says so or leaves the number out, and anything no source supported was cut. The First Aid page on each card points to the 2025 edition.</p>
       <ul>
@@ -22184,10 +22658,11 @@ function renderIndex(){
         <li><b>Review literature and guidelines:</b> some cards cover topics that First Aid and the textbooks leave out or barely touch, or that move faster than a textbook edition. Those were checked against specialty-society guidelines and peer-reviewed reviews indexed in PubMed; roughly a hundred cards list those references, with PubMed and DOI links, at the bottom of the card.</li>
         <li><b>Topic coverage:</b> USMLE Content Outline · COMLEX-USA Level 1 Blueprint (2025)</li>
       </ul>
-      <p>A study aid, not a replacement for these texts. If something looks wrong, flag it so it can be fixed.</p>
+      <p>A study aid, not a replacement for these texts. If something looks wrong, tap <b>Report</b> on that card or <a href="${REPO}/issues/new" target="_blank" rel="noopener">open an issue</a> so it can be fixed.</p>
     </details></div>
     ${cards||`<p class="empty">Nothing matches “${esc(state.q)}”.</p>`}`;
   idxWrap.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.les));
+  idxWrap.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
 }
 
 /* ── navigation: broad topics, then the maps inside the chosen one ── */
@@ -22219,6 +22694,7 @@ function setView(v){
   renderNav();
   if(isIdx) renderIndex(); else render();
   renderRail(); updateScore(); writeHash();
+  if(state.info){ if(isIdx) closeDrawer(); else openMapInfo(); }
   try{localStorage.setItem("mla-view",v);}catch(e){}
 }
 function toVB(cx,cy){
@@ -22315,6 +22791,7 @@ svg.addEventListener("click",ev=>{
 document.getElementById("zin").onclick=()=>zoomBy(1.25);
 document.getElementById("zout").onclick=()=>zoomBy(1/1.25);
 document.getElementById("zfit").onclick=()=>{state.z=1;state.tx=0;state.ty=0;applyCam();};
+document.getElementById("zsrc").onclick=()=>{ if(state.info&&!drawer.hidden) closeDrawer(); else openMapInfo(); };
 const railBtn=document.getElementById("railBtn");
 function setRail(off,save){
   document.documentElement.setAttribute("data-rail",off?"off":"on");
