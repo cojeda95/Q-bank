@@ -180,6 +180,28 @@ response curves), `o2cascade` (PO₂ from air to the cell at sea level, 20,000 f
 points joined by straight lines, no `mono()`), `pthca` (PTH and calcitonin against plasma
 calcium, Guyton Fig 80.14, with FHH, primary hyperparathyroidism and hypoparathyroidism) and
 `hcvsero` (HCV RNA, ALT and anti-HCV after infection: clears, chronic, chronic then cured).
+The m31 kinds: `hbvsero` (HBsAg, HBeAg, IgM and IgG anti-HBc and anti-HBs: resolving with the
+window period, chronic, vaccinated), `abresp` (primary vs secondary antibody response, IgM and
+IgG), `cones` (Gaussian absorption curves from `coneC()` peaking at 445, 535 and 570 nm, rods
+at 505, with protanopia, deuteranopia and blue weakness), `cbfmap` and `cbfgas` (cerebral
+autoregulation against mean pressure; flow against PaCO₂ and tissue PO₂), `o2content`
+(content = 1.34 × Hb × SaO₂ + 0.003 × PO₂ from `o2cont()` for anemia, polycythemia and CO),
+`gtt` (Guyton's glucose tolerance curves plus First Aid cut-offs), `dditest` (urine
+osmolality through water restriction and desmopressin) and `dexsupp` (cortisol and ACTH at
+baseline, low-dose and high-dose dexamethasone — a category axis whose `xr` is padded to
+[−0.35, 2.35] so the end labels stay inside the chart). Curves are clipped at the top of the
+chart but not at the sides: keep every point inside `xr` (a shifted curve that runs past the
+right edge draws into the text column). `PSER` has six series colours for graphs with five or
+six curves.
+
+**Graph quiz and gallery.** Any kind with three or more versions shows a **Quiz me** chip.
+`PLOTQ["view:index"]` holds `{ans, pick, n, right}`; `plotQuiz()` starts, answers, moves on
+and finishes (Done leaves the answer selected in `PLOTVAR`). While a quiz is unanswered,
+`plotSVG()` hides the caption, key, reference curve, band and event labels, and any curve or
+mark label that only that version carries (`told()` counts labels across versions) — so name
+curves by what they measure ("Blood glucose", "Cortisol"), not by the version, or the legend
+gives the answer away. The Index page lists every graph by system (`graphsIdxHtml()`); a
+button calls `goPlot(view, i)`, which frames the graph on its map and flashes its border.
 
 ### Search abbreviations
 
@@ -292,6 +314,13 @@ mention the topic. The m30 sweep (Chapman points, osteoarthritis and JIA, cortis
 surfactant and ventilation, prostate, visual fields and pupils, fractures) linked 45 more
 questions. A card with an empty `q:[]` takes the first term without a leading comma — the
 build's JSON parse fails on `[,"…"]`.
+The m31 sweep (pain, temperature and facial pain pathways, dorsal columns, hearing and balance,
+retina and colour, male reproductive physiology, pulmonary circulation) linked about 54 more.
+Answer-only terms match anywhere in the answer, not only at its start: `"=the fourth
+ventricle"` took medulla questions ("…flares into the fourth ventricle"), so prefer phrases
+long enough to be specific. A card scores with the *first* of its terms that matches, in list
+order — when one term contains another ("sinus thrombosis", "superior sagittal sinus
+thrombosis"), list the longer first or a shorter rival card's term can outrank it.
 
 **You picked.** After a miss, `atlasLinksHtml(q, picked)` also matches the option the person
 chose (`atlasPickedFor`): only its leading phrase — the text before the first comma, colon,
