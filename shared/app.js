@@ -576,8 +576,8 @@ function renderHome() {
     const qCount = all.filter(q => !isTrialQ(q)).length;
     const trialMeta = TRIAL_KEYS.map(b => {
       const n = all.filter(q => q.batch === b).length;
-      return n ? `<span class="nowrap">${TRIAL_BATCHES[b].icon} ${n} ${escapeHtml(TRIAL_BATCHES[b].listLabel)}</span>` : '';
-    }).filter(Boolean).join(' · ');
+      return n ? `<span class="trial-count">${TRIAL_BATCHES[b].icon} ${n} ${escapeHtml(TRIAL_BATCHES[b].listLabel)}</span>` : '';
+    }).join('');
     return `
       <div class="exam-card" data-exam="${e.examNumber}">
         <div class="exam-num">Exam ${e.examNumber}</div>

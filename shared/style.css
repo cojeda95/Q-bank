@@ -132,7 +132,7 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 }
 /* Trial counts on a home exam card (kept out of the card's question total). */
 .exam-card .exam-label.exam-trial { margin-top: 2px; font-size: 0.78rem; }
-.exam-card .nowrap { white-space: nowrap; }
+.exam-card .trial-count { display: block; }
 
 .action-card {
   display: flex;
