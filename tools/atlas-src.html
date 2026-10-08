@@ -27179,7 +27179,7 @@ MAPS.cardcycle = {
   {x:140,y:1590,w:1480,h:440,kind:"pvloop",t:"Pressure–volume loop"},
   {x:1680,y:1590,w:1480,h:440,kind:"starling",t:"Frank-Starling curves"},
   {x:140,y:2090,w:1480,h:440,kind:"cofunc",t:"Cardiac & vascular function curves"},
-  {x:140,y:2590,w:2400,h:820,kind:"wiggers",t:"Wiggers diagram — one cardiac cycle"}],
+  {x:140,y:2590,w:3020,h:820,kind:"wiggers",t:"Wiggers diagram — three cardiac cycles"}],
  nodes:[
   {id:"q1",l:"Stroke volume",x:420,y:170,p:"cceq",s:"EDV − ESV",m:["cardiaceq"]},
   {id:"q2",l:"Ejection fraction",x:1020,y:170,p:"cceq",s:"SV ÷ EDV · normal 50–70%",m:["cardiaceq","hf"]},
@@ -30248,17 +30248,23 @@ function nodal(mdp,thr,d4,end=1.7){
 function nodalBands(d4){ return [[0,d4,"4"],[d4,d4+0.08,"0"],[d4+0.08,d4+0.28,"3"]]; }
 /* ventricular myocyte (ms, mV): up = upstroke time, rep = when phase 3 ends */
 function ventric(up,rep){ return mono([[-150,-85],[0,-85],[40,-85],[40+up,25],[47+up,6],[60+up,9],[90,4],[rep-110,-3],[rep-55,-24],[rep-15,-76],[rep,-84],[rep+15,-85],[450,-85]],16); }
-/* Wiggers diagram (time in s over one 0.8-s beat; pressures mm Hg, volume mL). w = variant tweaks */
+/* Wiggers diagram: three consecutive beats of 0.8 s (75/min); pressures mm Hg, volume mL.
+   Each curve is written as one beat of keypoints and repeated by cyc(); the middle beat carries
+   the numbered phases and the valve-event lines. w = variant tweaks */
+const WIG_T=0.8, WIG_N=3;
+function cyc(kp){ const out=[]; for(let k=0;k<WIG_N;k++) kp.forEach(([t,v])=>{ if(k<WIG_N-1&&t>=WIG_T) return; out.push([t+k*WIG_T,v]); }); return out; }
+const wigMid=ev=>ev.map(([t,l])=>[t+WIG_T,l]);
+const wigEach=ev=>[].concat(...Array.from({length:WIG_N},(_,k)=>ev.map(([t,...r])=>[t+k*WIG_T,...r])));
 function wiggers(w={}){
   const ao=w.ao||[[0,86],[0.22,80],[0.30,116],[0.36,120],[0.47,100],[0.48,95],[0.50,100],[0.80,86]];
   const lv=w.lv||[[0,4],[0.10,6],[0.135,8],[0.17,10],[0.22,80],[0.30,121],[0.36,123],[0.47,98],[0.55,12],[0.60,4],[0.80,5]];
   const la=w.la||[[0,6],[0.10,10],[0.14,9],[0.17,9.6],[0.21,11],[0.30,4],[0.55,13],[0.62,5],[0.80,6]];
-  return [{pts:mono(ao,14),lab:"Aortic pressure"},{pts:mono(lv,14),lab:"LV pressure"},{pts:mono(la,14),lab:"LA pressure"}];
+  return [{pts:mono(cyc(ao),14),lab:"Aortic pressure"},{pts:mono(cyc(lv),14),lab:"LV pressure"},{pts:mono(cyc(la),14),lab:"LA pressure"}];
 }
-function lvVol(v){ return mono(v||[[0,110],[0.10,117],[0.17,120],[0.22,120],[0.33,75],[0.47,50],[0.55,50],[0.68,100],[0.80,110]],14); }
-const WIG_ECG=mono([[0,0],[0.02,0],[0.045,0.16],[0.07,0],[0.15,0],[0.165,-0.12],[0.18,1.1],[0.195,-0.3],[0.21,0],[0.37,0],[0.42,0.3],[0.47,0],[0.80,0]],10);
-const WIG_BANDS=[[0.05,0.17,"1"],[0.17,0.22,"2"],[0.22,0.33,"3"],[0.33,0.47,"4"],[0.47,0.55,"5"],[0.55,0.68,"6"],[0.68,0.80,"7"]];
-const WIG_EVENTS=[[0.17,"MC"],[0.22,"AO"],[0.465,"AC"],[0.55,"MO"]];
+function lvVol(v){ return mono(cyc(v||[[0,110],[0.10,117],[0.17,120],[0.22,120],[0.33,75],[0.47,50],[0.55,50],[0.68,100],[0.80,110]]),14); }
+const WIG_ECG=mono(cyc([[0,0],[0.02,0],[0.045,0.16],[0.07,0],[0.15,0],[0.165,-0.12],[0.18,1.1],[0.195,-0.3],[0.21,0],[0.37,0],[0.42,0.3],[0.47,0],[0.80,0]]),10);
+const WIG_BANDS=[[0.05,0.17,"1"],[0.17,0.22,"2"],[0.22,0.33,"3"],[0.33,0.47,"4"],[0.47,0.55,"5"],[0.55,0.68,"6"],[0.68,0.80,"7"]].map(([a,b,l])=>[a+WIG_T,b+WIG_T,l]);
+const WIG_EVENTS=wigMid([[0.17,"MC"],[0.22,"AO"],[0.465,"AC"],[0.55,"MO"]]);
 /* ECG under the ventricular action potential (ms): e moves the QRS and T */
 function ecgV(e={}){ const r=e.r||58, sw=e.s||70, j=e.j||85, t0=e.t0||200, tp=e.tp||255, te=e.te||300;
   return mono([[-150,0],[-120,0],[-95,0.15],[-70,0],[40,0],[48,-0.12],[r,1.1],[sw,-0.3],[j,0],[t0,0],[tp,0.32],[te,0],[450,0]],10); }
@@ -30280,11 +30286,11 @@ function addCurves(a,b){ const pa=mono(a,10), pb=mono(b,10), xs=[...new Set([...
 /* force–velocity (Hill hyperbola): velocity % of Vmax at afterload f, max force f0 */
 function fv(f0){ const out=[]; for(let f=0;f<=f0;f+=f0/60) out.push([f,100*(1-f/f0)/(1+4*f/f0)]); return out; }
 const PLOTS={
-  wiggers:{xl:"Time (s) — one beat at 75/min",yl:"Pressure (mm Hg)",xr:[0,0.8],yr:[0,190],xt:[0,0.2,0.4,0.6,0.8],yt:[0,40,80,120,160],
+  wiggers:{xl:"Time (s) — three beats at 75/min",yl:"Pressure (mm Hg)",xr:[0,2.4],yr:[0,190],xt:[0,0.4,0.8,1.2,1.6,2,2.4],yt:[0,40,80,120,160],
    strips:[{yl:"LV volume",yr:[25,170],h:110,d:V=>[{pts:lvVol(V.vol),lab:"LV volume"}]},
-           {yl:"ECG",yr:[-0.45,1.25],h:80,d:()=>[{pts:WIG_ECG,lab:"ECG",col:"var(--ink-2)"},{txt:[[0.045,"P",0.55],[0.18,"QRS",1.35],[0.42,"T",0.7]]}]},
-           {yl:"Sounds",yr:[0,1],h:40,d:V=>[{txt:V.snd||[[0.17,"S1"],[0.47,"S2"]]}]}],vars:[
-    {l:"Normal",cap:"One left-heart cycle. Valve events: MC mitral closes, AO aortic opens, AC aortic closes, MO mitral opens.",
+           {yl:"ECG",yr:[-0.45,1.25],h:80,d:()=>[{pts:WIG_ECG,lab:"ECG",col:"var(--ink-2)"},{txt:wigEach([[0.045,"P",0.55],[0.18,"QRS",1.35],[0.42,"T",0.7]])}]},
+           {yl:"Sounds",yr:[0,1],h:40,d:V=>[{txt:wigEach(V.snd||[[0.17,"S1"],[0.47,"S2"]])}]}],vars:[
+    {l:"Normal",cap:"Three left-heart cycles at 75/min; the middle beat is numbered by phase. Valve events: MC mitral closes, AO aortic opens, AC aortic closes, MO mitral opens.",
      bands:WIG_BANDS,events:WIG_EVENTS,
      key:[["1","Atrial systole: preceded by the P wave; LA pressure rises (the a wave) and tops up the ventricle — an S4 here means a stiff LV"],
           ["2","Isovolumetric contraction: begins during the QRS; LV pressure passes LA → mitral closes (S1); all valves shut, volume constant"],
@@ -30295,7 +30301,7 @@ const PLOTS={
           ["7","Reduced filling (diastasis): slow filling before the next atrial beat"]],
      d:()=>wiggers()},
     {l:"Aortic stenosis",cap:"Aortic stenosis: LV pressure far above aortic pressure during ejection.",
-     events:[[0.17,"MC"],[0.24,"AO"],[0.47,"AC"],[0.55,"MO"]],
+     events:wigMid([[0.17,"MC"],[0.24,"AO"],[0.47,"AC"],[0.55,"MO"]]),
      key:[["3–4","A pressure gradient across the valve: ↑ LV pressure, ↑ ESV, ↓ stroke volume"],
           ["→","The hypertrophied LV is stiff — higher filling pressure for the same volume"]],
      d:()=>wiggers({ao:[[0,84],[0.24,76],[0.34,104],[0.40,110],[0.47,96],[0.48,92],[0.50,96],[0.80,84]],
@@ -30303,14 +30309,14 @@ const PLOTS={
        la:[[0,10],[0.10,16],[0.14,15],[0.17,15.5],[0.21,16],[0.30,7],[0.55,16],[0.62,9],[0.80,10]]}),
      vol:[[0,115],[0.10,123],[0.17,125],[0.24,125],[0.36,92],[0.47,72],[0.55,72],[0.68,108],[0.80,115]]},
     {l:"Mitral stenosis",cap:"Mitral stenosis: LA pressure stays above LV pressure through diastole.",
-     events:[[0.183,"MC"],[0.22,"AO"],[0.46,"AC"],[0.525,"MO"]],
+     events:wigMid([[0.183,"MC"],[0.22,"AO"],[0.46,"AC"],[0.525,"MO"]]),
      key:[["6–7","LA > LV pressure while the mitral valve is open — a diastolic gradient"],
           ["→","↑ LA pressure; ↓ EDV because filling is impaired; ↓ stroke volume"]],
      d:()=>wiggers({la:[[0,22],[0.10,28],[0.15,22],[0.20,20],[0.30,17],[0.55,26],[0.68,22],[0.80,22]],
        lv:[[0,6],[0.10,9],[0.13,11],[0.17,12],[0.22,80],[0.30,118],[0.36,120],[0.47,97],[0.55,6],[0.60,5],[0.80,7]]}),
      vol:[[0,92],[0.10,96],[0.17,98],[0.22,98],[0.33,62],[0.47,45],[0.55,45],[0.68,80],[0.80,92]]},
     {l:"Mitral regurgitation",cap:"Mitral regurgitation: blood flows back into the LA during systole.",
-     events:[[0.17,"MC"],[0.24,"AO"],[0.465,"AC"],[0.52,"MO"]],
+     events:wigMid([[0.17,"MC"],[0.24,"AO"],[0.465,"AC"],[0.52,"MO"]]),
      key:[["2–5","No true isovolumetric phases — the leaking mitral valve lets volume change"],
           ["v","A tall v wave in the LA; ↑ EDV, ↓ ESV, ↑ total stroke volume (forward flow plus backflow)"]],
      d:()=>wiggers({ao:[[0,82],[0.24,74],[0.31,100],[0.36,104],[0.47,90],[0.48,86],[0.50,90],[0.80,82]],
@@ -30318,7 +30324,7 @@ const PLOTS={
        lv:[[0,8],[0.10,11],[0.14,12],[0.17,14],[0.24,74],[0.30,108],[0.36,111],[0.47,88],[0.53,24],[0.58,8],[0.80,9]]}),
      vol:[[0,140],[0.10,146],[0.17,148],[0.22,135],[0.33,80],[0.47,42],[0.55,52],[0.68,118],[0.80,140]]},
     {l:"Aortic regurgitation",cap:"Aortic regurgitation: blood flows back from the aorta into the LV in diastole.",
-     events:[[0.165,"MC"],[0.22,"AO"],[0.465,"AC"],[0.525,"MO"]],
+     events:wigMid([[0.165,"MC"],[0.22,"AO"],[0.465,"AC"],[0.525,"MO"]]),
      key:[["→","Large pulse pressure — high systolic, low diastolic aortic pressure; the dicrotic notch is lost"],
           ["5–7","No true isovolumetric relaxation; ↑ EDV, ↑ stroke volume"]],
      d:()=>wiggers({ao:[[0,60],[0.22,52],[0.30,130],[0.36,140],[0.47,108],[0.60,78],[0.80,60]],

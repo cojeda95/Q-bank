@@ -163,6 +163,10 @@ cross: the m29 batch computed them from the curves, since `mono()` smoothing mov
 a little from its keypoints. Strips are used by `wiggers` (LV volume, ECG, heart sounds),
 `apventric` (an ECG under the action potential, on a time axis starting at −150 ms so the P
 wave shows) and `menstrual` (basal body temperature).
+The Wiggers diagram shows three consecutive beats, as conventional diagrams do: each curve
+is written as one 0.8-s beat of keypoints and repeated by `cyc()`; `wigMid()` moves the phase
+bands and valve events onto the middle beat, and `wigEach()` repeats the ECG wave names and
+heart sounds on every beat.
 
 ### Search abbreviations
 
