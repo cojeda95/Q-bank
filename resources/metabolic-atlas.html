@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 101 pan/zoom maps with 1408 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 104 pan/zoom maps with 1434 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="101 interactive maps. 1408 lesions pinned to the step they break.">
+<meta property="og:description" content="104 interactive maps. 1434 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -201,6 +201,22 @@ svg.map.drag{cursor:grabbing}
   background:color-mix(in srgb,var(--due) 12%,var(--surface));color:var(--ink);font-size:12.5px;font-weight:600;text-align:left}
 .duego:hover{border-color:var(--due)}
 .revtoggle{font-size:12px;color:var(--ink-3);margin:9px 0 0;line-height:1.45}
+.knownnote{margin:6px 0 0}
+.knownnote .linkbtn,.revnote .linkbtn{font-size:12px}
+.li.known,.idxrow.known{opacity:.55}
+.hidn{font-weight:400;color:var(--ink-3);text-transform:none;letter-spacing:0}
+.pin.known{opacity:.4}
+.pin:focus{outline:none}
+.pin:focus-visible .pshape{stroke:var(--accent);stroke-width:3.4px}
+.pin:focus-visible .duering{stroke:var(--accent)}
+.node.fillq{cursor:help}
+.node .ns.nshid{fill:var(--ink-3);letter-spacing:.18em}
+.tab .newdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-left:6px;vertical-align:2px}
+.newpill{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);
+  border:1px solid currentColor;border-radius:999px;padding:0 6px;margin-left:6px;line-height:15px;vertical-align:1px}
+.pagehit.isnew{border-color:var(--accent);color:var(--accent)}
+.wnlist{margin:10px 0 2px;padding-left:18px;font-size:13px;line-height:1.55}
+.wnlist li{margin:0 0 4px}
 .revtoggle .linkbtn{font-size:12px}
 .weakmaps{display:grid;gap:6px;margin:8px 0 10px}
 .weakmap{display:grid;grid-template-columns:minmax(0,1fr) 96px auto;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--line);
@@ -425,6 +441,7 @@ body{display:flex;flex-direction:column}
         <div class="qmenu" id="qmenu" role="menu" hidden>
           <button class="qopt" role="menuitemradio" data-q="" aria-checked="true">Off</button>
           <button class="qopt" role="menuitemradio" data-q="steps" aria-checked="false">Hide the step names<span>Tap a chip to reveal its enzyme</span></button>
+          <button class="qopt" role="menuitemradio" data-q="fill" aria-checked="false">Fill in the map<span>Every box’s caption hidden — tap a box to check yourself</span></button>
           <button class="qopt" role="menuitemradio" data-q="pins" aria-checked="false">Name the pins<span>Tap a pin, then pick the lesion it marks</span></button>
           <button class="qopt" role="menuitemradio" data-q="buzz" aria-checked="false">Buzzword → card<span>Read a buzzword, pick the card it belongs to</span></button>
           <button class="qopt" role="menuitemradio" data-q="due" aria-checked="false">Due cards<span id="qduen">Every card due for review, across all maps</span></button>
@@ -447,7 +464,7 @@ body{display:flex;flex-direction:column}
         <button class="tbtn wide" id="zprint" title="Print this map with a one-page summary of its cards">Print</button>
       </div>
       <div class="qscore" id="qscore" hidden></div>
-      <div class="hint" id="hint">drag to pan · scroll to zoom · click any pin</div>
+      <div class="hint" id="hint">drag to pan · scroll to zoom · click any pin · Tab through pins</div>
       <div class="indexwrap" id="indexwrap" hidden></div>
       <aside class="drawer" id="drawer" hidden></aside>
     </div>
@@ -926,6 +943,25 @@ const PATHS = {
   abperit:{n:"Peritoneum",v:"--p-glycogen"},
   abwall:{n:"Groin & wall",v:"--p-tca"},
   abanal:{n:"Gut wall & anal canal",v:"--p-ppp"},
+  gpadapt:{n:"Adaptation & injury",v:"--p-glycolysis"},
+  gpdeath:{n:"Cell death",v:"--p-tca"},
+  gpisch:{n:"Ischemia, radicals & calcium",v:"--p-gluconeo"},
+  gpinflam:{n:"Acute inflammation",v:"--p-sugars"},
+  gpchronic:{n:"Chronic inflammation",v:"--p-glycogen"},
+  gprepair:{n:"Repair",v:"--p-ppp"},
+  ihcoron:{n:"Coronary arteries",v:"--p-glycolysis"},
+  ihsynd:{n:"Ischemic syndromes",v:"--p-tca"},
+  ihmi:{n:"Infarct evolution",v:"--p-gluconeo"},
+  ihcomp:{n:"Complications",v:"--p-sugars"},
+  ihtx:{n:"Treatment",v:"--p-ppp"},
+  cceq:{n:"Equations",v:"--p-glycolysis"},
+  cccycle:{n:"Cardiac cycle",v:"--p-tca"},
+  ccshift:{n:"Shifting the loop",v:"--p-gluconeo"},
+  ccvalve:{n:"Valve lesions",v:"--p-sugars"},
+  ccsound:{n:"Heart sounds",v:"--p-glycogen"},
+  ccjvp:{n:"Jugular pulse",v:"--p-ppp"},
+  ablymph:{n:"Lymphatic drainage",v:"--p-sugars"},
+  brsense:{n:"Sensory receptors",v:"--p-glycogen"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -7523,7 +7559,7 @@ mitralregurg:{n:"Mitral & tricuspid regurgitation",k:"dz",p:"vsys",enz:"Incompet
  labs:["MR is louder with handgrip (↑ afterload) and squatting"],
  buzz:["New holosystolic murmur days after an MI → papillary muscle rupture","Blowing apical murmur radiating to the axilla = MR"],
  src:["Robbins ch 12 — The heart","Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects"],
- tx:["Treat the cause; afterload reduction; repair or replacement"],q:["mitral regurgitation","tricuspid regurgitation","holosystolic murmur","papillary muscle rupture"]},
+ tx:["Treat the cause; afterload reduction; repair or replacement"],q:["mitral regurgitation","tricuspid regurgitation","holosystolic murmur"]},
 
 mvp:{n:"Mitral valve prolapse",alias:"MVP",k:"dz",p:"vsys",enz:"Myxomatous leaflets billow into the left atrium",inh:"Primary, or connective tissue disease (Marfan, Ehlers-Danlos, ADPKD)",fa:"296",hi:1,
  mech:"Floppy myxomatous leaflets prolapse into the left atrium during systole. The chordae snap tight as they do — the <b>midsystolic click</b> — and a late regurgitant murmur follows.",
@@ -11940,6 +11976,215 @@ liverzones:{n:"Liver lobule zones",k:"reg",p:"abvasc",enz:"Zone 1 periportal · 
  src:["Pawlina ch 18 — Digestive System III: Liver, Gallbladder, and Pancreas","Robbins ch 18 — Liver and gallbladder"],
  tx:["—"],q:["zone 1","zone 3","centrilobular necrosis","kupffer cell","kupffer cells","stellate cells","space of disse"]},
 
+/* ── general pathology · ischemic heart disease · cardiac cycle · lymph drainage · sensory receptors (m21) ─── */
+celladapt:{n:"Cellular adaptations — hypertrophy to dysplasia",k:"reg",p:"gpadapt",enz:"Change size, number or type before the cell is injured",inh:"—",fa:"202",hi:1,
+ mech:"Cells adapt to stress in reversible ways that can be physiologic (the uterus in pregnancy) or pathologic (the myocardium in hypertension). If the stress is too great or lasts too long, adaptation gives way to injury.",
+ find:["<b>Hypertrophy</b>: more structural proteins and organelles → bigger cells (cardiac hypertrophy)","<b>Hyperplasia</b>: more cells (benign prostatic hyperplasia); pathologic hyperplasia (endometrial) can progress to dysplasia and cancer","<b>Atrophy</b>: smaller and/or fewer cells — ubiquitin-proteasome degradation and autophagy; from disuse, denervation, lost blood supply or hormones, poor nutrition","<b>Metaplasia</b>: one cell type replaced by another better suited to an irritant — Barrett esophagus (acid), squamous metaplasia of the bronchus (smoke); can progress to dysplasia; myositis ossificans is connective-tissue metaplasia","<b>Dysplasia</b>: disordered precancerous growth, not a true adaptation — pleomorphism, lost orientation, ↑ N:C ratio, clumped chromatin; mild and moderate can regress, severe becomes carcinoma in situ"],
+ labs:["—"],
+ buzz:["Barrett esophagus = metaplasia → dysplasia → adenocarcinoma"],
+ src:["Robbins ch 2 — Cell injury, cell death, and adaptations"],
+ tx:["—"],q:["metaplasia","cellular adaptation","cellular adaptations","myositis ossificans"]},
+
+cellinjury:{n:"Reversible vs irreversible cell injury",k:"reg",p:"gpadapt",enz:"Swelling is reversible; membrane and mitochondrial damage are not",inh:"—",fa:"203",hi:1,
+ mech:"Falling ATP shuts down the Na⁺/K⁺ and Ca²⁺ pumps, and the cell swells — the earliest visible change, still reversible. Once the plasma membrane breaks, mitochondria fail and lysosomes rupture, the cell is committed to die.",
+ find:["<b>Reversible</b>: cellular swelling (cytosol, mitochondria, ER/Golgi), ribosome detachment (↓ protein synthesis), membrane blebbing, chromatin clumping, myelin figures; rapid loss of function (myocytes stop contracting within 1–2 minutes of ischemia)","<b>Irreversible</b>: plasma membrane breakdown (enzymes such as troponin leak out; Ca²⁺ floods in and activates degradative enzymes), mitochondrial damage, lysosome rupture and autolysis, amorphous densities in mitochondria","Nuclear breakdown: pyknosis (condensation) → karyorrhexis (fragmentation) → karyolysis (dissolution)"],
+ labs:["Troponin in the blood means myocyte membranes have broken — irreversible injury"],
+ buzz:["Swelling = reversible · membrane rupture = point of no return"],
+ src:["Robbins ch 2 — Cell injury, cell death, and adaptations"],
+ tx:["—"],q:["reversible cell injury","irreversible cell injury","pyknosis","karyorrhexis","karyolysis","cellular swelling","myelin figures"]},
+
+apoptosis:{n:"Apoptosis pathways",k:"reg",p:"gpdeath",enz:"ATP-dependent programmed death through caspases",inh:"—",fa:"204",hi:1,
+ mech:"Programmed, ATP-dependent cell death. Three pathways activate caspases, and the cell shrinks, condenses its chromatin, blebs and breaks into apoptotic bodies that macrophages eat. The membrane stays intact, so there is little inflammation — unlike necrosis.",
+ find:["<b>Intrinsic (mitochondrial)</b>: growth-factor withdrawal, radiation, toxins, hypoxia, DNA damage (via p53) — Bax and Bak make mitochondrial pores, cytochrome c leaks out, caspases fire; Bcl-2 and Bcl-xL block it","<b>Extrinsic (death receptor)</b>: FasL–Fas (CD95) or TNF-α–TNF receptor; Fas–FasL is needed for thymic negative selection","<b>Perforin/granzyme B</b>: cytotoxic T cells and NK cells punch a pore and inject granzyme","Histology: deeply eosinophilic cytoplasm, pyknosis, karyorrhexis · DNA laddering (fragments in multiples of 180 bp)"],
+ labs:["Bcl-2 overexpression (follicular lymphoma, t(14;18)) blocks apoptosis","Defective Fas–FasL → autoimmune lymphoproliferative syndrome: lymphadenopathy, hepatosplenomegaly, autoimmune cytopenias"],
+ buzz:["Bax and Bak are bad for survival · Bcl-2 — be clever, live"],
+ src:["Robbins ch 2 — Cell injury, cell death, and adaptations"],
+ tx:["—"],q:["cytochrome c release","dna laddering","autoimmune lymphoproliferative syndrome","bcl 2"]},
+
+necrosis:{n:"Necrosis patterns — coagulative to gangrenous",k:"reg",p:"gpdeath",enz:"Membrane damage, leakage, inflammation",inh:"—",fa:"205",hi:1,
+ mech:"Exogenous injury damages the plasma membrane, contents leak, the cell is digested and its proteins denature, and inflammation follows. The pattern depends on the tissue and the cause.",
+ find:["<b>Coagulative</b>: ischemic infarcts in most tissues except the brain — enzymes denatured, so cell outlines remain but nuclei disappear; ↑ eosinophilia","<b>Liquefactive</b>: bacterial abscesses and CNS infarcts — neutrophil enzymes digest the tissue; cystic cavities late","<b>Caseous</b>: TB, systemic fungi (Histoplasma), Nocardia — cheeselike debris walled off in a granuloma","<b>Fat</b>: enzymatic in acute pancreatitis (lipase → fatty acids bind Ca²⁺, saponification) or traumatic (breast) — chalky white, dark blue on H&E","<b>Fibrinoid</b>: immune vasculitis (polyarteritis nodosa) or nonimmune (hypertensive emergency, preeclampsia) — eosinophilic protein in the vessel wall","<b>Gangrenous</b>: distal limbs and GI tract after chronic ischemia — dry is coagulative; wet is superinfected and liquefactive"],
+ labs:["Brain infarcts liquefy; every other infarct coagulates"],
+ buzz:["Caseous = TB granuloma · saponification = pancreatitis"],
+ src:["Robbins ch 2 — Cell injury, cell death, and adaptations"],
+ tx:["—"],q:["coagulative necrosis","liquefactive necrosis","caseous necrosis","fat necrosis","fibrinoid necrosis","gangrenous necrosis","saponification","gangrene"]},
+
+ischemiavuln:{n:"Ischemia-vulnerable zones & infarct types",k:"reg",p:"gpisch",enz:"Watershed and far-downstream cells die first",inh:"—",fa:"206",hi:1,
+ mech:"Ischemia is blood supply inadequate for demand — from reduced arterial flow, impaired venous drainage or shock. Cells at the end of the supply line, or between two arteries, go first.",
+ find:["Brain: ACA/MCA/PCA boundary zones; Purkinje cells and hippocampal and neocortical pyramidal neurons","Heart: subendocardium of the left ventricle","Kidney: straight proximal tubule and thick ascending limb (medulla)","Liver: around the central vein (zone 3)","Colon: splenic flexure and rectosigmoid junction","<b>Red infarcts</b>: venous occlusion or tissues with dual supply (liver, lung, intestine, testes), and reperfusion","<b>Pale infarcts</b>: solid organs with a single end-arterial supply (heart, kidney)"],
+ labs:["Reperfusion injury comes from free radicals"],
+ buzz:["Subendocardium, zone 3, splenic flexure — last in line, first to die"],
+ src:["Robbins ch 2 — Cell injury, cell death, and adaptations","Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock"],
+ tx:["—"],q:["watershed zone","watershed zones","red infarct","pale infarct","hemorrhagic infarct","anemic infarct","border zone"]},
+
+freeradical:{n:"Free radical injury",k:"reg",p:"gpisch",enz:"Lipid peroxidation, protein damage, DNA breaks",inh:"—",fa:"206, 207",hi:1,
+ mech:"Free radicals damage membranes (lipid peroxidation), proteins and DNA. They come from radiation, phase I drug metabolism, redox reactions, nitric oxide, transition metals (iron and copper, via the Fenton reaction) and the neutrophil and macrophage oxidative burst.",
+ find:["Cleared by catalase, superoxide dismutase, glutathione peroxidase, antioxidants (vitamins A, C, E) and metal carriers (transferrin, ceruloplasmin)","Oxygen toxicity: retinopathy of prematurity, bronchopulmonary dysplasia, reperfusion injury after thrombolysis","Drugs and chemicals: acetaminophen hepatotoxicity; CCl₄ → CCl₃ radical by cytochrome P-450 → fatty liver and centrilobular necrosis","Metal storage: hemochromatosis (iron), Wilson disease (copper)","Ionizing radiation: DNA double-strand breaks directly and through free radicals"],
+ labs:["—"],
+ buzz:["Fenton reaction — iron and copper make radicals"],
+ src:["Robbins ch 2 — Cell injury, cell death, and adaptations"],
+ tx:["—"],q:["free radical","free radicals","lipid peroxidation","fenton reaction","reperfusion injury"]},
+
+calcification:{n:"Dystrophic vs metastatic calcification",k:"reg",p:"gpisch",enz:"Damaged tissue with normal Ca²⁺ vs normal tissue with high Ca²⁺ or PO₄³⁻",inh:"—",fa:"207",hi:1,
+ mech:"Calcium deposits stain deeply basophilic. Where they form tells you the cause: in tissue that is already damaged, or throughout normal tissue because blood calcium or phosphate is high.",
+ find:["<b>Dystrophic</b>: in diseased tissue, usually localized, serum Ca²⁺ normal — calcific aortic stenosis, TB, chronic abscesses, fat necrosis, infarcts, thrombi, atherosclerotic plaques, congenital CMV and toxoplasmosis, psammoma bodies","<b>Metastatic</b>: in normal tissue, widespread — from hyperphosphatemia (CKD) or hypercalcemia (primary hyperparathyroidism, sarcoidosis, hypervitaminosis D); mainly kidney, lung and gastric mucosa, which lose acid and so run alkaline","Nephrocalcinosis of the collecting ducts → nephrogenic diabetes insipidus and renal failure","<b>Psammoma bodies</b>: laminated calcified spherules — papillary thyroid and renal carcinoma, somatostatinoma, meningioma, mesothelioma, serous ovarian carcinoma, prolactinoma"],
+ labs:["—"],
+ buzz:["PSaMMOMa: Papillary, Somatostatinoma, Meningioma, Mesothelioma, Ovarian, Milk (prolactinoma)"],
+ src:["Robbins ch 2 — Cell injury, cell death, and adaptations"],
+ tx:["—"],q:["dystrophic calcification","metastatic calcification","psammoma bodies","psammoma body"]},
+
+inflamsigns:{n:"Cardinal signs of inflammation & ESR",k:"reg",p:"gpinflam",enz:"Rubor, calor, tumor, dolor, functio laesa",inh:"—",fa:"209, 210",hi:1,
+ mech:"Inflammation removes the cause of injury and the dead cells and starts repair — but it harms the host when excessive (septic shock), prolonged (TB) or misdirected (SLE). Each cardinal sign has its own mediators.",
+ find:["<b>Rubor and calor</b>: arteriolar vasodilation → ↑ blood flow — histamine, prostaglandins, bradykinin, NO","<b>Tumor</b>: endothelial contraction → leaky postcapillary venules → protein-rich exudate — leukotrienes C4, D4, E4, histamine, serotonin, bradykinin","<b>Dolor</b>: sensitized nerve endings — bradykinin, PGE₂, histamine · <b>functio laesa</b>: loss of function","<b>Fever</b>: pyrogens (LPS) → IL-1 and TNF from macrophages → ↑ COX in the anterior hypothalamus → PGE₂ raises the set point","<b>ESR</b>: inflammatory proteins (fibrinogen) coat RBCs, cut their negative charge and let them stack (rouleaux) and settle faster","↑ ESR: most anemias, infection, inflammation (giant cell arteritis, PMR), cancer (metastases, myeloma), renal disease, pregnancy · ↓ ESR: sickle cell, polycythemia, HF, microcytosis, hypofibrinogenemia"],
+ labs:["ESR is often tested with CRP, the more specific marker of inflammation"],
+ buzz:["Fever: IL-1 and TNF → PGE₂ in the hypothalamus","Sickle cells and polycythemia keep the ESR low"],
+ src:["Robbins ch 3 — Inflammation and repair"],
+ tx:["—"],q:["cardinal signs of inflammation","erythrocyte sedimentation rate","rubor","calor","dolor","functio laesa"]},
+
+acuteinflam:{n:"Acute inflammation & leukocyte extravasation",k:"reg",p:"gpinflam",enz:"Neutrophils leave postcapillary venules in four steps",inh:"—",fa:"210, 211",hi:1,
+ mech:"An early, innate response — rapid onset (seconds to minutes), short duration (minutes to days). Vasodilation and leaky vessels deliver fluid and proteins, and neutrophils leave the blood at postcapillary venules. Macrophages predominate late (peak 2–3 days) and steer the outcome with cytokines.",
+ find:["Triggers: infection, trauma, necrosis, foreign bodies · mediators include Toll-like receptors, arachidonic acid products, complement, mast cells, Hageman factor (XII)","Inflammasome: senses dead-cell products, microbes and crystals (urate) → IL-1","<b>1. Margination and rolling</b>: E-selectin, P-selectin (from Weibel-Palade bodies) bind sialyl Lewis X — defective in LAD type 2","<b>2. Tight binding</b>: ICAM-1 and VCAM-1 bind CD11/18 integrins (LFA-1, Mac-1) and VLA-4 — defective CD18 in LAD type 1","<b>3. Diapedesis</b>: PECAM-1 (CD31) between endothelial cells","<b>4. Migration</b>: chemotaxis to C5a, IL-8, LTB₄, 5-HETE, kallikrein, platelet-activating factor, N-formylmethionyl peptides","Outcomes: resolution (IL-10, TGF-β), persistent acute inflammation (IL-8), abscess, chronic inflammation, scarring"],
+ labs:["—"],
+ buzz:["Chemotaxis: C5a, IL-8, LTB₄, kallikrein, PAF"],
+ src:["Robbins ch 3 — Inflammation and repair"],
+ tx:["—"],q:["acute inflammation","leukocyte extravasation","margination","diapedesis","chemotaxis","sialyl lewis x","weibel palade bodies"]},
+
+chronicinflam:{n:"Chronic & granulomatous inflammation",k:"reg",p:"gpchronic",enz:"Macrophages and T cells — destruction and repair at once",inh:"—",fa:"212, 213",hi:1,
+ mech:"Prolonged inflammation with macrophages, lymphocytes and plasma cells that destroys and repairs tissue at the same time. Granulomas are a pattern of it: activated macrophages wall off a stimulus they cannot clear.",
+ find:["Causes: persistent infections (TB, T pallidum, some fungi and viruses), autoimmunity, toxins (silica), foreign material","Th1 → IFN-γ → classically activated (proinflammatory) macrophages · Th2 → IL-4, IL-13 → alternatively activated (repair) macrophages","Granuloma: epithelioid macrophages ringed by lymphocytes and multinucleated giant cells — APCs secrete IL-12 → Th1 → IFN-γ → macrophages → TNF","<b>Caseating</b> (central necrosis): infections — TB, fungi · <b>noncaseating</b>: sarcoidosis, Crohn disease","Other granulomas: leprosy, cat scratch disease, Listeria, tertiary syphilis, schistosomiasis, CGD, primary biliary cholangitis, de Quervain thyroiditis, GPA, EGPA, giant cell and Takayasu arteritis, berylliosis, hypersensitivity pneumonitis","Outcomes: scarring, amyloidosis, cancer (chronic HCV → HCC; H pylori gastritis → gastric adenocarcinoma)"],
+ labs:["Granulomas make 1α-hydroxylase → ↑ vitamin D → hypercalcemia","Test for latent TB before anti-TNF therapy — granulomas can break down"],
+ buzz:["Caseating = infection · noncaseating = sarcoid or Crohn"],
+ src:["Robbins ch 3 — Inflammation and repair"],
+ tx:["—"],q:["caseating granuloma","caseating granulomas","noncaseating granuloma","noncaseating granulomas","chronic granulomatous inflammation"]},
+
+woundheal:{n:"Wound healing & scars",k:"reg",p:"gprepair",enz:"Inflammatory → proliferative → remodeling",inh:"—",fa:"212, 214",hi:1,
+ mech:"Tissue that cannot regenerate is replaced by connective tissue in three overlapping phases. About 70–80% of tensile strength returns by 3 months, and little more after that.",
+ find:["<b>Inflammatory</b> (up to 3 days): platelets, neutrophils, macrophages — clot, leaky vessels, debris cleared","<b>Proliferative</b> (day 3 to weeks): fibroblasts, myofibroblasts, endothelial cells, keratinocytes — granulation tissue, type III collagen, angiogenesis, wound contraction by myofibroblasts; delayed in vitamin C and copper deficiency","<b>Remodeling</b> (1 week to 6+ months): type III collagen replaced by type I by fibroblasts; zinc-dependent collagenases — zinc deficiency delays healing","Mediators: FGF and VEGF (angiogenesis), TGF-β (angiogenesis, fibrosis), PDGF (vascular remodeling, fibroblasts), metalloproteinases (remodeling), EGF (cell growth)","<b>Hypertrophic scar</b>: ↑ type III, parallel collagen, stays within the wound, seldom recurs","<b>Keloid</b>: ↑↑ types I and III, disorganized, spreads beyond the wound (earlobes, face, upper limbs), often recurs; more common in darker skin"],
+ labs:["Excess TGF-β → hypertrophic and keloid scars"],
+ buzz:["Type III early, type I late"],
+ src:["Robbins ch 3 — Inflammation and repair"],
+ tx:["—"],q:["wound healing","keloid","keloids","hypertrophic scar","scar formation","myofibroblast","myofibroblasts"]},
+
+coranat:{n:"Coronary arteries & dominance",k:"reg",p:"ihcoron",enz:"Who supplies which wall — and which artery gives off the PDA",inh:"—",fa:"288, 289, 309, 314",hi:1,
+ mech:"The left main coronary artery splits into the LAD and the circumflex; the right coronary artery runs in the right AV groove. Whichever artery gives off the posterior descending artery (PDA) is “dominant.”",
+ find:["<b>LAD</b>: anterior ⅔ of the septum, anterolateral papillary muscle, anterior LV","<b>PDA</b>: posterior ⅓ of the septum, posterior ⅔ of the ventricular walls, posteromedial papillary muscle, and the SA and AV nodes (depending on dominance) — an infarct can cause bradycardia or heart block","Right (acute) marginal artery supplies the right ventricle","<b>Right-dominant</b> (most common): PDA from the RCA · left-dominant (~5–10%): PDA from the LCX · codominant (~10–20%): from both","Coronary flow to the LV and septum peaks in early diastole","The coronary sinus runs in the left AV groove, drains into the right atrium and holds the most deoxygenated blood in the body","Most often occluded: LAD > RCA > circumflex"],
+ labs:["Posteromedial papillary muscle has one supply (PDA); anterolateral has two (LAD and LCX)"],
+ buzz:["PDA from the RCA = right-dominant"],
+ src:["Moore ch 4 — Thorax","Robbins ch 12 — The heart"],
+ tx:["—"],q:["left anterior descending","right coronary artery","left circumflex","posterior descending artery","right dominant","left dominant","coronary sinus","coronary dominance"]},
+
+ihdother:{n:"Coronary steal, sudden death, stunning & hibernation",k:"reg",p:"ihsynd",enz:"Other faces of ischemic heart disease",inh:"—",fa:"308",hi:0,
+ mech:"Ischemic heart disease is more than angina and infarction.",
+ find:["<b>Coronary steal</b>: vessels beyond a stenosis are already maximally dilated, so a vasodilator (dipyridamole, adenosine, regadenoson) dilates only normal vessels and diverts blood away — the basis of vasodilator stress tests","<b>Sudden cardiac death</b>: unexpected cardiac death within 1 hour of symptoms, usually from ventricular fibrillation — CAD (up to 70%), cardiomyopathies, myocarditis, coronary anomalies, long QT, Brugada; prevented with an ICD","<b>Chronic ischemic heart disease</b>: progressive exertional symptoms and heart failure","<b>Hibernation</b>: LV dysfunction from chronic ischemia that can recover with reperfusion · <b>stunning</b>: brief, reversible dysfunction after acute ischemia"],
+ labs:["—"],
+ buzz:["Vasodilation of healthy vessels steals blood from stenosed ones"],
+ src:["Robbins ch 12 — The heart","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes"],
+ tx:["—"],q:["coronary steal","=sudden cardiac death","myocardial hibernation","hibernating myocardium","myocardial stunning","stunned myocardium"]},
+
+mitimeline:{n:"MI evolution — what the heart looks like over time",k:"reg",p:"ihmi",enz:"Hours → days → weeks: necrosis, neutrophils, macrophages, scar",inh:"—",fa:"309, 310",hi:1,
+ mech:"After a coronary occlusion the myocardium passes through a fixed sequence, and each stage carries its own complications.",
+ find:["<b>0–24 h</b>: dark mottling (pale with tetrazolium) · wavy fibers (0–4 h), early coagulative necrosis (4–24 h), edema, hemorrhage; reperfusion → contraction bands · risk: arrhythmia, HF, cardiogenic shock","<b>1–3 days</b>: hyperemia · extensive coagulative necrosis, neutrophils at the edge · risk: fibrinous pericarditis","<b>3–14 days</b>: hyperemic border, yellow-brown softening · macrophages, then granulation tissue · risk: free wall, papillary muscle or septal rupture; pseudoaneurysm","<b>2 weeks to months</b>: gray-white scar · risk: postcardiac injury syndrome, HF, arrhythmia, true aneurysm with mural thrombus"],
+ labs:["Troponin I rises ~4 h, peaks 24 h, stays up 7–10 days · CK-MB normalizes by 48 h (reinfarction)"],
+ buzz:["Days 3–14: soft wall, macrophages — rupture risk"],
+ src:["Robbins ch 12 — The heart"],
+ tx:["—"],q:["wavy fibers","contraction bands","contraction band necrosis","mi timeline","tetrazolium"]},
+
+micomplic:{n:"MI complications by timeframe",k:"reg",p:"ihcomp",enz:"Arrhythmia early, rupture at 3–14 days, Dressler late",inh:"—",fa:"314",hi:1,
+ mech:"Each complication follows the healing stage it depends on — electrical instability first, mechanical rupture while macrophages soften the wall, autoimmune pericarditis weeks later.",
+ find:["<b>Arrhythmia</b> (first days to months): supraventricular, ventricular or conduction blocks — an important cause of death before reaching the hospital and in the first 48 h","<b>Peri-infarction pericarditis</b> (1–3 days): pleuritic pain, friction rub, small effusion","<b>Papillary muscle rupture</b> (2–7 days): acute mitral regurgitation, cardiogenic shock, pulmonary edema — posteromedial (single PDA supply) far more than anterolateral","<b>Interventricular septal rupture</b> (3–5 days): VSD with ↑ RV O₂ saturation and pressure","<b>Pseudoaneurysm</b> (3–14 days): free wall rupture contained by adherent pericardium or scar — no endocardium or myocardium in the wall; more likely to rupture than a true aneurysm","<b>Free wall rupture</b> (5–14 days): tamponade, often fatal — LV hypertrophy and prior MI protect","<b>True aneurysm</b> (2 weeks to months): outward bulge with contraction (dyskinesia), mural thrombus","<b>Postcardiac injury (Dressler) syndrome</b> (weeks to months): autoimmune pericarditis from released cardiac antigens"],
+ labs:["—"],
+ buzz:["Sudden pulmonary edema and a new murmur on day 4 → papillary muscle rupture"],
+ src:["Robbins ch 12 — The heart"],
+ tx:["—"],q:["mi complications","papillary muscle rupture","free wall rupture","ventricular free wall rupture","septal rupture","ventricular pseudoaneurysm","pseudoaneurysm","ventricular aneurysm"]},
+
+acstx:{n:"Acute coronary syndrome treatment",k:"reg",p:"ihtx",enz:"Antithrombotics for all; reperfusion for STEMI",inh:"—",fa:"308, 315",hi:1,
+ mech:"Every acute coronary syndrome gets anticoagulation and dual antiplatelet therapy; STEMI adds reperfusion, which matters most.",
+ find:["<b>Unstable angina / NSTEMI</b>: heparin, aspirin + a P2Y12 inhibitor (clopidogrel), β-blocker, ACE inhibitor, statin; nitroglycerin ± morphine for symptoms","<b>STEMI</b>: all of the above plus reperfusion — PCI preferred over fibrinolysis","RV infarct (RCA): support preload with IV fluids; avoid nitroglycerin","Vasospastic angina: calcium channel blockers, nitrates, stop smoking"],
+ labs:["—"],
+ buzz:["Inferior STEMI + hypotension after nitroglycerin → RV infarct; give fluids"],
+ src:["Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 34 — Drugs Used in Disorders of Coagulation"],
+ tx:["—"],q:["acute coronary syndrome treatment","percutaneous coronary intervention","reperfusion therapy","dual antiplatelet therapy"]},
+
+cardiaceq:{n:"Cardiac output equations",k:"reg",p:"cceq",enz:"SV = EDV − ESV · EF = SV/EDV · CO = SV × HR · MAP = CO × TPR",inh:"—",fa:"289, 290",hi:1,
+ mech:"A handful of equations link volumes, rates and pressures. Stroke volume rises with contractility and preload and falls with afterload.",
+ find:["Stroke volume: SV = EDV − ESV","Ejection fraction: EF = SV / EDV — normal 50–70%; ↓ in systolic HF, usually normal in diastolic HF","Cardiac output: CO = SV × HR; Fick: CO = O₂ consumption / (arterial − venous O₂ content)","Early exercise raises HR and SV; later only HR — SV plateaus; very fast HR shortens diastole and cuts CO","Pulse pressure = SBP − DBP: ∝ SV, ∝ 1/arterial compliance — ↑ in aortic regurgitation, aortic stiffening, high-output states; ↓ in aortic stenosis, cardiogenic shock, tamponade, advanced HF","MAP = CO × TPR ≈ DBP + ⅓ PP (at rest)"],
+ labs:["Myocardial O₂ demand rises with contractility, afterload, heart rate and ventricular diameter"],
+ buzz:["SV CAP — contractility, afterload, preload"],
+ src:["Costanzo ch 4 — Cardiovascular physiology","Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves"],
+ tx:["—"],q:["ejection fraction","stroke volume","fick principle","cardiac output equation","mean arterial pressure","pulse pressure"]},
+
+resistflow:{n:"Resistance, pressure & flow",k:"reg",p:"cceq",enz:"ΔP = Q × R, and R ∝ 1/r⁴",inh:"—",fa:"291",hi:0,
+ mech:"Flow obeys an Ohm’s-law analogy: pressure difference = flow × resistance. Resistance rises with viscosity and length and falls with the fourth power of the radius.",
+ find:["R = 8ηL / πr⁴ — halving the radius raises resistance 16-fold","Series: R = R₁ + R₂ + R₃ · parallel: 1/R = 1/R₁ + 1/R₂ + 1/R₃","Flow = velocity × cross-sectional area — capillaries have the most total area and slowest flow","Arterioles set most of TPR; veins store most of the blood","Viscosity depends mostly on hematocrit — ↑ in polycythemia and hyperproteinemia (myeloma), ↓ in anemia"],
+ labs:["—"],
+ buzz:["Radius to the fourth power"],
+ src:["Guyton ch 14 — Overview of the Circulation: Pressure, Flow, and Resistance","Costanzo ch 4 — Cardiovascular physiology"],
+ tx:["—"],q:["poiseuille","poiseuille law"]},
+
+cofunction:{n:"Cardiac & vascular function curves",k:"reg",p:"cceq",enz:"Where the curves cross is the operating point",inh:"—",fa:"291",hi:0,
+ mech:"The cardiac function curve (CO vs right atrial pressure) and the vascular function curve (venous return vs RAP) cross where CO equals venous return — the heart’s operating point.",
+ find:["<b>Inotropy</b> shifts the cardiac curve: ↑ with catecholamines, dobutamine, digoxin, exercise; ↓ in HFrEF, narcotic overdose, sympathetic inhibition","<b>Volume and venous tone</b> shift the vascular curve: ↑ with fluids, sympathetic activity, AV shunt; ↓ with hemorrhage, spinal anesthesia","<b>TPR</b> rotates the vascular curve: vasopressors ↑ TPR; exercise and AV shunts ↓ it","Changes can add up (exercise: ↑ inotropy, ↓ TPR) or compensate (HF: ↓ inotropy, fluid retention raises preload)"],
+ labs:["—"],
+ buzz:["Intersection = cardiac output = venous return"],
+ src:["Guyton ch 20 — Cardiac Output, Venous Return, and Their Regulation","Costanzo ch 4 — Cardiovascular physiology"],
+ tx:["—"],q:["cardiac function curve","vascular function curve","venous return curve","mean systemic filling pressure","mean systemic pressure"]},
+
+pvloop:{n:"Pressure-volume loop & the cardiac cycle",k:"reg",p:"cccycle",enz:"Fill → isovolumetric contraction → eject → isovolumetric relaxation",inh:"—",fa:"292",hi:1,
+ mech:"One heartbeat traced as LV pressure against LV volume. The valves open and close at the four corners of the loop, and its width is the stroke volume.",
+ find:["<b>Isovolumetric contraction</b>: mitral closes → aortic opens; highest O₂ consumption","<b>Systolic ejection</b>: aortic opens → aortic closes","<b>Isovolumetric relaxation</b>: aortic closes → mitral opens","<b>Rapid filling</b> just after the mitral valve opens · <b>reduced filling</b> just before it closes","↑ Preload widens the loop to the right (↑ SV) · ↑ afterload raises it and ↑ ESV (↓ SV) · ↑ contractility ↓ ESV (↑ SV, ↑ EF)"],
+ labs:["—"],
+ buzz:["Loop width = stroke volume"],
+ src:["Costanzo ch 4 — Cardiovascular physiology","Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves"],
+ tx:["—"],q:["pressure volume loop","pressure volume loops","isovolumetric contraction","isovolumetric relaxation","wiggers diagram"]},
+
+heartsounds:{n:"Heart sounds S1–S4",k:"reg",p:"ccsound",enz:"Valves close (S1, S2); filling turbulence (S3, S4)",inh:"—",fa:"292",hi:1,
+ mech:"S1 and S2 are valves closing; S3 and S4 are turbulence as blood fills the ventricle — S3 into a dilated, overfilled ventricle, S4 against a stiff one.",
+ find:["<b>S1</b>: mitral and tricuspid closure — loudest at the mitral area","<b>S2</b>: aortic and pulmonic closure — loudest at the left upper sternal border","<b>S3</b>: early diastole, rapid filling — ↑ filling pressures (MR, AR, HF, thyrotoxicosis), dilated ventricles; can be normal in children, young adults, athletes, pregnancy","<b>S4</b>: late diastole, “atrial kick” into a stiff LV (hypertrophy) — abnormal if palpable, common in older adults","S3 and S4 are best heard at the apex with the patient in left lateral decubitus"],
+ labs:["—"],
+ buzz:["S3 = volume (dilated) · S4 = stiffness (hypertrophy)"],
+ src:["Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects","Costanzo ch 4 — Cardiovascular physiology"],
+ tx:["—"],q:["heart sounds","s3 gallop","s4 gallop","third heart sound","fourth heart sound","first heart sound","second heart sound","atrial kick"]},
+
+jvp:{n:"Jugular venous pulse — a, c, x, v, y",k:"reg",p:"ccjvp",enz:"Right atrial pressure seen in the neck",inh:"—",fa:"292, 293",hi:1,
+ mech:"The JVP traces right atrial pressure. Its waves come from atrial contraction, RV contraction against a closed tricuspid valve, and atrial filling and emptying.",
+ find:["<b>a wave</b>: atrial contraction — absent in atrial fibrillation; cannon a waves in AV dissociation; prominent with ↑ RV end-diastolic pressure","<b>c wave</b>: RV contraction bulges the closed tricuspid valve into the atrium","<b>x descent</b>: atrial relaxation and the tricuspid valve pulled down during ejection — reduced or absent in tricuspid regurgitation and right HF","<b>v wave</b>: atrial filling against the closed tricuspid valve","<b>y descent</b>: atrium empties into the RV — prominent in constrictive pericarditis, absent in tamponade"],
+ labs:["—"],
+ buzz:["No a wave = atrial fibrillation · no y descent = tamponade"],
+ src:["Costanzo ch 4 — Cardiovascular physiology"],
+ tx:["—"],q:["jugular venous pulse","jugular venous pressure","jvp","=a wave","=v wave","y descent","x descent","cannon a waves","cannon a wave"]},
+
+pvvalve:{n:"PV loops in valve disease",k:"reg",p:"ccvalve",enz:"How each lesion bends the loop",inh:"—",fa:"293",hi:0,
+ mech:"Each valve lesion distorts the pressure-volume loop in a recognizable way.",
+ find:["<b>Aortic stenosis</b>: LV pressure far above aortic, ↑ ESV, ↓ SV; hypertrophy stiffens the LV (↑ EDP for a given EDV)","<b>Aortic regurgitation</b>: no true isovolumetric phase, ↑ EDV, ↑ SV, wide pulse pressure, lost dicrotic notch","<b>Mitral stenosis</b>: LA pressure above LV, ↓ EDV (poor filling), ↓ ESV, ↓ SV","<b>Mitral regurgitation</b>: no true isovolumetric phase, ↓ ESV, ↑ EDV, ↑ SV (forward plus backward), tall v wave"],
+ labs:["—"],
+ buzz:["Regurgitant lesions lose the isovolumetric phases"],
+ src:["Costanzo ch 4 — Cardiovascular physiology","Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects"],
+ tx:["—"],q:["pv loop","valvular pressure volume loop"]},
+
+lymphdrain:{n:"Lymphatic drainage by region",k:"reg",p:"ablymph",enz:"Which nodes a tumor or infection reaches first",inh:"—",fa:"95, 642",hi:1,
+ mech:"Each organ drains to a predictable node group, so an enlarged node points back to its source — and gonads drain with their blood supply, not with the skin over them.",
+ find:["Deep cervical: head, neck, oropharynx · mediastinal: trachea, esophagus · hilar: lungs · axillary: upper limb, breast, skin above the umbilicus","Celiac: liver, stomach, spleen, pancreas, upper duodenum · superior mesenteric: lower duodenum to the splenic flexure · inferior mesenteric: splenic flexure to upper rectum","<b>Para-aortic</b>: testes, ovaries, kidneys, fallopian tubes, uterine fundus","External iliac: body of the uterus, cervix, superior bladder · internal iliac: cervix, proximal vagina, corpus cavernosum, prostate, inferior bladder, lower rectum to the anal canal above the pectinate line","<b>Superficial inguinal</b>: distal vagina, vulva, scrotum, urethra, anal canal below the pectinate line, skin below the umbilicus (except the popliteal area) · deep inguinal: glans","Left supraclavicular (Virchow): left hemithorax, abdomen, pelvis · periumbilical (Sister Mary Joseph): abdomen, pelvis · epitrochlear: hand, forearm (secondary syphilis) · popliteal: dorsolateral foot, posterior calf"],
+ labs:["Testicular cancer spreads to para-aortic nodes; scrotal skin cancer to superficial inguinal nodes"],
+ buzz:["Testes → para-aortic · scrotum → superficial inguinal"],
+ src:["Moore ch 1 — Overview and Basic Concepts","Moore ch 5 — Abdomen","Moore ch 6 — Pelvis and Perineum","Pawlina ch 14 — Immune System and Lymphatic Tissues and Organs"],
+ tx:["—"],q:["para aortic lymph nodes","para aortic nodes","superficial inguinal nodes","superficial inguinal lymph nodes"]},
+
+sensoryrec:{n:"Sensory receptors",k:"reg",p:"brsense",enz:"Free endings for pain and temperature; corpuscles for touch, vibration, stretch",inh:"—",fa:"504",hi:0,
+ mech:"Each skin and joint receptor is tuned to one kind of stimulus and adapts quickly or slowly.",
+ find:["<b>Free nerve endings</b>: Aδ (fast, myelinated) and C (slow, unmyelinated) fibers — pain and temperature; everywhere except cartilage and the lens","<b>Meissner corpuscles</b>: fast-adapting — glabrous skin; dynamic fine touch, low-frequency vibration","<b>Pacinian corpuscles</b>: fast-adapting — deep skin, ligaments, joints; high-frequency vibration, pressure","<b>Merkel discs</b>: slow-adapting — fingertips, superficial skin; pressure, static touch (shapes, edges)","<b>Ruffini corpuscles</b>: slow-adapting — fingertips, joints; stretch, joint angle"],
+ labs:["—"],
+ buzz:["A delta plane is fast, but a taxC is slow","Pacinian = pressure cooker"],
+ src:["Guyton ch 48 — Somatic Sensations: I. General Organization, Tactile and Position Senses","Fundamental Neuroscience ch 17 — The Somatosensory System I: Tactile Discrimination and Position Sense"],
+ tx:["—"],q:["meissner corpuscle","meissner corpuscles","pacinian corpuscle","pacinian corpuscles","merkel disc","merkel discs","ruffini","free nerve endings"]},
+
+stretchrec:{n:"Muscle spindle & Golgi tendon organ",k:"reg",p:"brsense",enz:"Spindle senses stretch; tendon organ senses tension",inh:"—",fa:"461",hi:1,
+ mech:"Two receptors report on every muscle. The spindle in the muscle belly senses length and drives the stretch reflex; the Golgi tendon organ in the tendon senses tension and switches the muscle off.",
+ find:["<b>Muscle spindle</b>: muscle belly, type Ia and II afferents — stretch → α motor neuron contracts the agonist while an inhibitory interneuron relaxes the antagonist; the basis of deep tendon reflexes","<b>Golgi tendon organ</b>: tendon, type Ib afferents — ↑ tension → inhibitory interneuron relaxes the agonist, protecting muscle and tendon"],
+ labs:["—"],
+ buzz:["Spindle = stretch → contract · tendon organ = tension → relax"],
+ src:["Guyton ch 55 — Spinal Cord Motor Functions; The Cord Reflexes","Fundamental Neuroscience ch 24 — Motor System I: Peripheral Sensory, Brainstem, and Spinal Influence on Anterior Horn Neurons"],
+ tx:["—"],q:["muscle spindle","muscle spindles","golgi tendon organ","golgi tendon organs","stretch reflex","ia afferent","ib afferent"]},
+
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
  mech:"A seizure is synchronized, high-frequency firing of a population of neurons. It runs in three phases: <b>aura</b> (the early part — odd smells or tastes), <b>ictal</b> (first symptom to end of seizure activity) and <b>postictal</b> (gradual recovery to baseline). <b>Epilepsy</b> is a disorder of recurrent, <b>unprovoked</b> seizures.",
@@ -14031,14 +14276,15 @@ MAPS.sexdev = {
 };
 
 MAPS.axes = {
- t:"Endocrine Axes", sub:"Hypothalamus → pituitary → target gland · five axes side by side, and the two numbers that locate any lesion",
- w:3200, h:1720,
- fa:"331, 333–334, 339, 343, 345, 352, 356, 360, 542, 656, 674",
+ t:"Endocrine Axes", sub:"Hypothalamus → pituitary → target gland · five axes side by side, and the two numbers that locate any lesion · the test that settles it",
+ w:3200, h:1890,
+ fa:"331, 333–335, 339, 343, 345–346, 352–353, 356, 360, 542, 656, 674",
  src:["Robbins ch 24 — The endocrine system","Katzung ch 37 — Hypothalamic & Pituitary Hormones","Katzung ch 38 — Thyroid & Antithyroid Drugs","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists","Katzung ch 40 — The Gonadal Hormones & Inhibitors","Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration","Guyton ch 78 — Adrenocortical Hormones","Costanzo ch 9 — Endocrine physiology","Costanzo ch 10 — Reproductive physiology"],
  comps:[
   {x:190,y:110,w:2820,h:790,l:"Anterior pituitary — five axes, same three steps"},
   {x:190,y:980,w:1400,h:300,l:"Posterior pituitary — stored, not made"},
-  {x:1670,y:980,w:1340,h:300,l:"When the gland itself is the problem"}],
+  {x:1670,y:980,w:1340,h:300,l:"When the gland itself is the problem"},
+  {x:190,y:1690,w:2820,h:140,l:"Which test settles it"}],
  panels:[
   {x:240,y:1360,w:900,h:226,kw:178,t:"Two numbers locate the lesion",rows:[
    ["↓ cortisol · ↑ ACTH","Primary — the adrenal (Addison)"],
@@ -14102,7 +14348,12 @@ MAPS.axes = {
   {id:"adenoma",l:"Pituitary adenoma",x:1890,y:1080,p:"hpa",s:"prolactinoma commonest",m:["prolactinoma"]},
   {id:"masseffect",l:"Mass effect",x:2450,y:1080,p:"hpa",s:"bitemporal hemianopia",m:["craniopharyngioma"]},
   {id:"infarct",l:"Sheehan · apoplexy",x:1890,y:1210,p:"hpa",s:"the gland infarcts",m:["sheehan"]},
-  {id:"mennode",l:"MEN syndromes",x:2450,y:1210,p:"hpa",s:"MEN1 · RET",m:["men"]}],
+  {id:"mennode",l:"MEN syndromes",x:2450,y:1210,p:"hpa",s:"MEN1 · RET",m:["men"]},
+  {id:"tst1",l:"Dexamethasone suppression",x:400,y:1760,p:"hpa",s:"high dose suppresses the pituitary, not ectopic",m:["cushing"]},
+  {id:"tst2",l:"Cosyntropin stimulation",x:950,y:1760,p:"hpa",s:"confirms adrenal insufficiency",m:["addison"]},
+  {id:"tst3",l:"Subclinical hypothyroidism",x:1450,y:1760,p:"thyroidax",s:"↑ TSH · normal free T4",m:["hypothyroid"]},
+  {id:"tst4",l:"TBG changes",x:1980,y:1760,p:"thyroidax",s:"total T4 moves · free T4 and TSH don’t",m:["thyroidreg"]},
+  {id:"tst5",l:"Radioactive iodine uptake",x:2550,y:1760,p:"thyroidax",s:"low in thyroiditis or swallowed hormone",m:["hyperthyroid"]}],
  edges:[
   {a:"crh",b:"cortico",p:"hpa",e:"Hypophyseal portal system",ly:-46,m:["axisreg"]},
   {a:"cortico",b:"acthn",p:"hpa",ly:-46},
@@ -23708,16 +23959,17 @@ MAPS.zoonoses = {
 };
 
 MAPS.brainreg = {
- t:"Brain Regions & Lesions", sub:"What each hypothalamic and thalamic nucleus does · the limbic system · cortical and brainstem lesion syndromes · the cerebellum’s circuit",
- w:3300, h:1370,
- fa:"506, 508–510, 524",
- src:["Fundamental Neuroscience ch 30 — The Hypothalamus","Fundamental Neuroscience ch 15 — The Diencephalon","Fundamental Neuroscience ch 31 — The Limbic System","Fundamental Neuroscience ch 32 — The Cerebral Cortex","Fundamental Neuroscience ch 28 — Visual Motor Systems","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Fundamental Neuroscience ch 27 — The Cerebellum","Fundamental Neuroscience ch 6 — The Ventricles, Choroid Plexus, and Cerebrospinal Fluid","Kaplan & Sadock ch 3 — Neurocognitive Disorders","Robbins ch 28 — The central nervous system"],
+ t:"Brain Regions & Lesions", sub:"What each hypothalamic and thalamic nucleus does · the limbic system · cortical and brainstem lesion syndromes · the cerebellum’s circuit · sensory receptors and stretch reflexes",
+ w:3300, h:1570,
+ fa:"461, 504, 506, 508–510, 524",
+ src:["Fundamental Neuroscience ch 30 — The Hypothalamus","Fundamental Neuroscience ch 15 — The Diencephalon","Fundamental Neuroscience ch 31 — The Limbic System","Fundamental Neuroscience ch 32 — The Cerebral Cortex","Fundamental Neuroscience ch 28 — Visual Motor Systems","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Fundamental Neuroscience ch 27 — The Cerebellum","Fundamental Neuroscience ch 17 — The Somatosensory System I: Tactile Discrimination and Position Sense","Fundamental Neuroscience ch 24 — Motor System I: Peripheral Sensory, Brainstem, and Spinal Influence on Anterior Horn Neurons","Guyton ch 48 — Somatic Sensations: I. General Organization, Tactile and Position Senses","Guyton ch 55 — Spinal Cord Motor Functions; The Cord Reflexes","Fundamental Neuroscience ch 6 — The Ventricles, Choroid Plexus, and Cerebrospinal Fluid","Kaplan & Sadock ch 3 — Neurocognitive Disorders","Robbins ch 28 — The central nervous system"],
  comps:[
   {x:140,y:110,w:3020,h:200,l:"Hypothalamus & the blood-brain barrier"},
   {x:140,y:370,w:3020,h:140,l:"Thalamus — the sensory relay"},
   {x:140,y:570,w:3020,h:140,l:"Limbic system"},
   {x:140,y:770,w:3020,h:280,l:"Cortex & brainstem — lesion syndromes"},
-  {x:140,y:1110,w:3020,h:200,l:"Cerebellum"}],
+  {x:140,y:1110,w:3020,h:200,l:"Cerebellum"},
+  {x:140,y:1370,w:3020,h:140,l:"Sensory receptors & stretch reflexes"}],
  panels:[],
  nodes:[
   {id:"h1",l:"Lateral nucleus",x:420,y:170,p:"brhypo",s:"hunger · lesion → anorexia",m:["hypothalnuc"]},
@@ -23758,7 +24010,12 @@ MAPS.brainreg = {
   {id:"cx1",l:"→ Stroke, Brainstem and Bleeds",x:420,y:1250,p:"neutral",k:"ghost",go:"stroke"},
   {id:"cx2",l:"→ Basal Ganglia & Movement Disorders",x:1020,y:1250,p:"neutral",k:"ghost",go:"basal"},
   {id:"cx3",l:"→ Eye, Cranial Nerves & Headache",x:1620,y:1250,p:"neutral",k:"ghost",go:"eyecn"},
-  {id:"cx4",l:"→ Sleep & Development",x:2220,y:1250,p:"neutral",k:"ghost",go:"sleepdev"}],
+  {id:"cx4",l:"→ Sleep & Development",x:2220,y:1250,p:"neutral",k:"ghost",go:"sleepdev"},
+  {id:"sr1",l:"Free nerve endings",x:420,y:1440,p:"brsense",s:"Aδ fast · C slow — pain, temperature",m:["sensoryrec"]},
+  {id:"sr2",l:"Meissner · Pacinian",x:1020,y:1440,p:"brsense",s:"fast-adapting — touch, vibration",m:["sensoryrec"]},
+  {id:"sr3",l:"Merkel · Ruffini",x:1620,y:1440,p:"brsense",s:"slow-adapting — static touch, stretch",m:["sensoryrec"]},
+  {id:"sr4",l:"Muscle spindle",x:2220,y:1440,p:"brsense",s:"Ia, II · stretch → contract",m:["stretchrec","reflexroots"]},
+  {id:"sr5",l:"Golgi tendon organ",x:2820,y:1440,p:"brsense",s:"Ib · tension → relax",m:["stretchrec"]}],
  edges:[
   {a:"h7",b:"h8",p:"brhypo",arrow:"none",dash:true},
   {a:"cb1",b:"cb2",p:"brcereb"},
@@ -23766,16 +24023,17 @@ MAPS.brainreg = {
 };
 
 MAPS.abdanat = {
- t:"Abdominal Anatomy", sub:"Blood supply by embryonic gut · portal veins, varices and liver zones · peritoneum and its ligaments · the groin · the gut wall and anal canal",
- w:3300, h:1290,
- fa:"367–377",
- src:["Moore ch 5 — Abdomen","Moore ch 6 — Pelvis and Perineum","Moore ch 7 — Lower Limb","Langman ch 15 — Digestive System","Pawlina ch 17 — Digestive System II: Esophagus and Gastrointestinal Tract","Pawlina ch 18 — Digestive System III: Liver, Gallbladder, and Pancreas","Robbins ch 18 — Liver and gallbladder"],
+ t:"Abdominal Anatomy", sub:"Blood supply by embryonic gut · portal veins, varices and liver zones · peritoneum and its ligaments · the groin · the gut wall and anal canal · lymphatic drainage",
+ w:3300, h:1490,
+ fa:"95, 367–377, 642",
+ src:["Moore ch 5 — Abdomen","Moore ch 1 — Overview and Basic Concepts","Moore ch 6 — Pelvis and Perineum","Moore ch 7 — Lower Limb","Langman ch 15 — Digestive System","Pawlina ch 17 — Digestive System II: Esophagus and Gastrointestinal Tract","Pawlina ch 18 — Digestive System III: Liver, Gallbladder, and Pancreas","Pawlina ch 14 — Immune System and Lymphatic Tissues and Organs","Robbins ch 18 — Liver and gallbladder"],
  comps:[
   {x:140,y:110,w:3020,h:200,l:"Arteries — one per embryonic gut segment"},
   {x:140,y:370,w:3020,h:200,l:"Portal veins, varices & liver zones"},
   {x:140,y:630,w:3020,h:140,l:"Peritoneum & ligaments"},
   {x:140,y:830,w:3020,h:200,l:"Groin & abdominal wall"},
-  {x:140,y:1090,w:3020,h:140,l:"Gut wall & anal canal"}],
+  {x:140,y:1090,w:3020,h:140,l:"Gut wall & anal canal"},
+  {x:140,y:1290,w:3020,h:140,l:"Lymphatic drainage — where nodes point"}],
  panels:[],
  nodes:[
   {id:"a1",l:"Foregut — celiac trunk",x:420,y:170,p:"abvasc",s:"T12/L1 · esophagus to proximal duodenum",m:["gutarteries"]},
@@ -23805,7 +24063,12 @@ MAPS.abdanat = {
   {id:"g2",l:"Meissner · Auerbach plexuses",x:1020,y:1160,p:"abanal",s:"secretion · motility",m:["gutwall","hirschsprung"]},
   {id:"g3",l:"Pectinate line",x:1620,y:1160,p:"abanal",s:"endoderm above, ectoderm below",m:["pectinate"]},
   {id:"g4",l:"Internal vs external hemorrhoids",x:2220,y:1160,p:"abanal",s:"painless above · painful below",m:["pectinate","hemorrhoids"]},
-  {id:"g5",l:"Anal fissure",x:2820,y:1160,p:"abanal",s:"posterior midline · painful",m:["pectinate","hemorrhoids"]}],
+  {id:"g5",l:"Anal fissure",x:2820,y:1160,p:"abanal",s:"posterior midline · painful",m:["pectinate","hemorrhoids"]},
+  {id:"ly1",l:"Celiac · mesenteric nodes",x:420,y:1360,p:"ablymph",s:"follow the gut’s three arteries",m:["lymphdrain","gutarteries"]},
+  {id:"ly2",l:"Para-aortic nodes",x:1020,y:1360,p:"ablymph",s:"testes, ovaries, kidneys, uterine fundus",m:["lymphdrain","testisgct"]},
+  {id:"ly3",l:"Internal · external iliac",x:1620,y:1360,p:"ablymph",s:"pelvic organs · rectum above the pectinate line",m:["lymphdrain"]},
+  {id:"ly4",l:"Superficial inguinal",x:2220,y:1360,p:"ablymph",s:"below the pectinate line · scrotum · vulva",m:["lymphdrain","pectinate"]},
+  {id:"ly5",l:"Virchow · Sister Mary Joseph",x:2820,y:1360,p:"ablymph",s:"spread from abdominal and pelvic cancers",m:["lymphdrain","gastricca"]}],
  edges:[
   {a:"a1",b:"a2",p:"abvasc",arrow:"none",dash:true},
   {a:"a2",b:"a3",p:"abvasc",arrow:"none",dash:true},
@@ -23813,12 +24076,262 @@ MAPS.abdanat = {
   {a:"w2",b:"w3",p:"abwall",arrow:"none",dash:true}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["index","Index"]];
+MAPS.genpath = {
+ t:"Cell Injury, Inflammation & Repair", sub:"How cells adapt, are injured and die · where ischemia strikes first · free radicals and calcification · acute and chronic inflammation · wound healing and scars",
+ w:3300, h:2050,
+ fa:"202–214",
+ src:["Robbins ch 2 — Cell injury, cell death, and adaptations","Robbins ch 3 — Inflammation and repair","Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Adaptation & cell injury"},
+  {x:140,y:370,w:3020,h:280,l:"Cell death — apoptosis and necrosis"},
+  {x:140,y:710,w:3020,h:280,l:"Ischemia, free radicals & calcification"},
+  {x:140,y:1050,w:3020,h:200,l:"Acute inflammation"},
+  {x:140,y:1310,w:3020,h:200,l:"Chronic & granulomatous inflammation"},
+  {x:140,y:1570,w:3020,h:200,l:"Repair — wound healing & scars"}],
+ panels:[
+  {x:140,y:1830,w:1480,h:154,kw:190,t:"Apoptosis vs necrosis",rows:[
+   ["Apoptosis","ATP-dependent · caspases · the cell shrinks"],
+   ["","membrane stays intact · little inflammation"],
+   ["Necrosis","membrane damage · contents leak out"],
+   ["","enzymes digest the cell · inflammation follows"]]},
+  {x:1680,y:1830,w:1480,h:154,kw:190,t:"Hypertrophic scar vs keloid",rows:[
+   ["Collagen","↑ type III, parallel · ↑↑ types I and III, disorganized"],
+   ["Extent","stays within the wound · spreads beyond it"],
+   ["Recurrence","infrequent · frequent"],
+   ["Sites","anywhere · earlobes, face, upper limbs"]]}],
+ nodes:[
+  {id:"a1",l:"Hypertrophy",x:420,y:170,p:"gpadapt",s:"bigger cells · more organelles",m:["celladapt"]},
+  {id:"a2",l:"Hyperplasia",x:1020,y:170,p:"gpadapt",s:"more cells · BPH, endometrium",m:["celladapt","bph","endohyper"]},
+  {id:"a3",l:"Atrophy",x:1620,y:170,p:"gpadapt",s:"proteasome · autophagy",m:["celladapt"]},
+  {id:"a4",l:"Metaplasia",x:2220,y:170,p:"gpadapt",s:"Barrett · smoker’s bronchus",m:["celladapt","barrett"]},
+  {id:"a5",l:"Dysplasia",x:2820,y:170,p:"gpadapt",s:"disordered growth → carcinoma in situ",m:["celladapt","cervicalca"]},
+  {id:"a6",l:"Reversible injury",x:420,y:250,p:"gpadapt",s:"swelling · blebs · ribosomes detach",m:["cellinjury"]},
+  {id:"a7",l:"Irreversible injury",x:1020,y:250,p:"gpadapt",s:"membrane breaks · troponin leaks",m:["cellinjury"]},
+  {id:"a8",l:"Nuclear breakdown",x:1620,y:250,p:"gpadapt",s:"pyknosis → karyorrhexis → karyolysis",m:["cellinjury"]},
+  {id:"d1",l:"Intrinsic pathway",x:420,y:430,p:"gpdeath",s:"Bax · Bak → cytochrome c",m:["apoptosis","p53"]},
+  {id:"d2",l:"Extrinsic pathway",x:1020,y:430,p:"gpdeath",s:"Fas–FasL · TNF receptor",m:["apoptosis"]},
+  {id:"d3",l:"Perforin · granzyme B",x:1620,y:430,p:"gpdeath",s:"cytotoxic T and NK cells",m:["apoptosis"]},
+  {id:"d4",l:"Bcl-2 overexpression",x:2220,y:430,p:"gpdeath",s:"follicular lymphoma · t(14;18)",m:["follicular","apoptosis"]},
+  {id:"d5",l:"Defective Fas–FasL",x:2820,y:430,p:"gpdeath",s:"autoimmune lymphoproliferative syndrome",m:["apoptosis"]},
+  {id:"d6",l:"Coagulative necrosis",x:420,y:510,p:"gpdeath",s:"infarcts outside the brain",m:["necrosis","mi"]},
+  {id:"d7",l:"Liquefactive necrosis",x:1020,y:510,p:"gpdeath",s:"brain infarcts · abscesses",m:["necrosis","mcastroke"]},
+  {id:"d8",l:"Caseous necrosis",x:1620,y:510,p:"gpdeath",s:"TB · systemic fungi",m:["necrosis","tb"]},
+  {id:"d9",l:"Fat necrosis",x:2220,y:510,p:"gpdeath",s:"pancreatitis · saponification",m:["necrosis","acutepanc"]},
+  {id:"d10",l:"Fibrinoid necrosis",x:2820,y:510,p:"gpdeath",s:"vasculitis · hypertensive emergency",m:["necrosis","pan","preeclampsia"]},
+  {id:"d11",l:"Gangrenous necrosis",x:420,y:590,p:"gpdeath",s:"dry = coagulative · wet = infected",m:["necrosis"]},
+  {id:"dx1",l:"→ Cell Cycle & Repair",x:1020,y:590,p:"neutral",k:"ghost",go:"cellcycle"},
+  {id:"dx2",l:"→ Heme Malignancies",x:1620,y:590,p:"neutral",k:"ghost",go:"hemeonc"},
+  {id:"i1",l:"Brain",x:420,y:770,p:"gpisch",s:"watershed zones · Purkinje · hippocampus",m:["ischemiavuln"]},
+  {id:"i2",l:"Heart",x:1020,y:770,p:"gpisch",s:"LV subendocardium",m:["ischemiavuln","mi"]},
+  {id:"i3",l:"Kidney",x:1620,y:770,p:"gpisch",s:"straight proximal tubule · thick ascending limb",m:["ischemiavuln","atn"]},
+  {id:"i4",l:"Liver",x:2220,y:770,p:"gpisch",s:"zone 3 · around the central vein",m:["ischemiavuln","liverzones"]},
+  {id:"i5",l:"Colon",x:2820,y:770,p:"gpisch",s:"splenic flexure · rectosigmoid",m:["ischemiavuln","gutarteries"]},
+  {id:"i6",l:"Red vs pale infarcts",x:420,y:850,p:"gpisch",s:"dual supply or venous · single end artery",m:["ischemiavuln"]},
+  {id:"i7",l:"Free radicals",x:1020,y:850,p:"gpisch",s:"lipid peroxidation · Fenton reaction",m:["freeradical"]},
+  {id:"i8",l:"Drugs & toxins",x:1620,y:850,p:"gpisch",s:"acetaminophen · CCl₄",m:["freeradical","acetaminophen"]},
+  {id:"i9",l:"Metal storage",x:2220,y:850,p:"gpisch",s:"iron · copper",m:["freeradical","hemochrom","wilson"]},
+  {id:"i10",l:"Oxygen toxicity",x:2820,y:850,p:"gpisch",s:"retinopathy of prematurity · reperfusion",m:["freeradical","rop"]},
+  {id:"i11",l:"Dystrophic calcification",x:420,y:930,p:"gpisch",s:"damaged tissue · normal Ca²⁺",m:["calcification","aortstenosis"]},
+  {id:"i12",l:"Metastatic calcification",x:1020,y:930,p:"gpisch",s:"normal tissue · ↑ Ca²⁺ or PO₄³⁻",m:["calcification","hyperpara1","ckd"]},
+  {id:"i13",l:"Psammoma bodies",x:1620,y:930,p:"gpisch",s:"papillary thyroid · meningioma · serous ovary",m:["calcification","thyroidca","meningioma","ovepi"]},
+  {id:"n1",l:"Rolling",x:420,y:1110,p:"gpinflam",s:"E- and P-selectin · sialyl Lewis X",m:["acuteinflam"]},
+  {id:"n2",l:"Tight binding",x:1020,y:1110,p:"gpinflam",s:"ICAM-1 · CD18 integrins",m:["acuteinflam","lad1"]},
+  {id:"n3",l:"Diapedesis",x:1620,y:1110,p:"gpinflam",s:"PECAM-1",m:["acuteinflam"]},
+  {id:"n4",l:"Migration",x:2220,y:1110,p:"gpinflam",s:"C5a · IL-8 · LTB₄ · kallikrein",m:["acuteinflam"]},
+  {id:"n5",l:"Outcomes",x:2820,y:1110,p:"gpinflam",s:"resolution · abscess · chronic · scar",m:["acuteinflam"]},
+  {id:"n6",l:"Cardinal signs",x:420,y:1190,p:"gpinflam",s:"rubor · calor · tumor · dolor",m:["inflamsigns"]},
+  {id:"n7",l:"Fever",x:1020,y:1190,p:"gpinflam",s:"IL-1 · TNF → PGE₂",m:["inflamsigns","acutephase"]},
+  {id:"n8",l:"Acute-phase reactants",x:1620,y:1190,p:"gpinflam",s:"IL-6 → CRP, ferritin, hepcidin",m:["acutephase","acd"]},
+  {id:"n9",l:"ESR",x:2220,y:1190,p:"gpinflam",s:"fibrinogen stacks red cells",m:["inflamsigns"]},
+  {id:"n10",l:"Septic shock",x:2820,y:1190,p:"gpinflam",s:"inflammation out of control",m:["sepsistnf"]},
+  {id:"c1",l:"Chronic inflammation",x:420,y:1370,p:"gpchronic",s:"macrophages · lymphocytes · plasma cells",m:["chronicinflam"]},
+  {id:"c2",l:"Granuloma",x:1020,y:1370,p:"gpchronic",s:"IL-12 → Th1 → IFN-γ → macrophages",m:["chronicinflam"]},
+  {id:"c3",l:"Caseating",x:1620,y:1370,p:"gpchronic",s:"TB · fungi",m:["chronicinflam","tb"]},
+  {id:"c4",l:"Noncaseating",x:2220,y:1370,p:"gpchronic",s:"sarcoidosis · Crohn disease",m:["chronicinflam","sarcoid","crohn"]},
+  {id:"c5",l:"Other granulomas",x:2820,y:1370,p:"gpchronic",s:"CGD · GPA · cat scratch · berylliosis",m:["cgd","gpa","bartonella","pneumoconiosis"]},
+  {id:"c6",l:"Hypercalcemia",x:420,y:1450,p:"gpchronic",s:"granulomas make 1α-hydroxylase",m:["chronicinflam","sarcoid"]},
+  {id:"c7",l:"Before anti-TNF",x:1020,y:1450,p:"gpchronic",s:"test for latent TB",m:["chronicinflam","tb","tnfdrugs"]},
+  {id:"c8",l:"Amyloidosis",x:1620,y:1450,p:"gpchronic",s:"long-standing inflammation → AA",m:["amyloidosis"]},
+  {id:"c9",l:"Cancer",x:2220,y:1450,p:"gpchronic",s:"H pylori → gastric · HCV → HCC",m:["chronicinflam","hp","gastricca"]},
+  {id:"r1",l:"Inflammatory phase",x:420,y:1630,p:"gprepair",s:"up to 3 days · platelets, neutrophils",m:["woundheal"]},
+  {id:"r2",l:"Proliferative phase",x:1020,y:1630,p:"gprepair",s:"granulation tissue · type III collagen",m:["woundheal","scurvy"]},
+  {id:"r3",l:"Remodeling",x:1620,y:1630,p:"gprepair",s:"type III → type I · zinc collagenases",m:["woundheal","zinc"]},
+  {id:"r4",l:"Hypertrophic scar",x:2220,y:1630,p:"gprepair",s:"type III · stays in the wound",m:["woundheal"]},
+  {id:"r5",l:"Keloid",x:2820,y:1630,p:"gprepair",s:"types I and III · beyond the wound",m:["woundheal"]},
+  {id:"r6",l:"Growth factors",x:420,y:1710,p:"gprepair",s:"FGF · VEGF · TGF-β · PDGF",m:["woundheal"]},
+  {id:"r7",l:"Collagen types",x:1020,y:1710,p:"gprepair",s:"type III early, type I late",m:["collagentypes","woundheal"]},
+  {id:"rx1",l:"→ Collagen & ECM",x:1620,y:1710,p:"neutral",k:"ghost",go:"collagen"}],
+ edges:[
+  {a:"a4",b:"a5",p:"gpadapt"},
+  {a:"a6",b:"a7",p:"gpadapt"},
+  {a:"a7",b:"a8",p:"gpadapt"},
+  {a:"n1",b:"n2",p:"gpinflam"},
+  {a:"n2",b:"n3",p:"gpinflam"},
+  {a:"n3",b:"n4",p:"gpinflam"},
+  {a:"c1",b:"c2",p:"gpchronic"},
+  {a:"c2",b:"c3",p:"gpchronic"},
+  {a:"r1",b:"r2",p:"gprepair"},
+  {a:"r2",b:"r3",p:"gprepair"}]
+};
+
+MAPS.ihd = {
+ t:"Ischemic Heart Disease & MI", sub:"Coronary arteries and dominance · angina to infarction · how an infarct evolves · complications by day · treatment",
+ w:3300, h:1610,
+ fa:"288–289, 308–310, 314–315",
+ src:["Robbins ch 12 — The heart","Moore ch 4 — Thorax","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 34 — Drugs Used in Disorders of Coagulation"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Coronary arteries"},
+  {x:140,y:370,w:3020,h:200,l:"Ischemic syndromes"},
+  {x:140,y:630,w:3020,h:140,l:"How an infarct evolves"},
+  {x:140,y:830,w:3020,h:200,l:"Complications by day"},
+  {x:140,y:1090,w:3020,h:200,l:"Treatment"}],
+ panels:[
+  {x:140,y:1350,w:1480,h:182,kw:300,t:"ECG localization of STEMI",rows:[
+   ["Anteroseptal (LAD)","V1–V2"],
+   ["Anteroapical (distal LAD)","V3–V4"],
+   ["Anterolateral (LAD or LCX)","V5–V6"],
+   ["Lateral (LCX)","I, aVL"],
+   ["Inferior (RCA)","II, III, aVF"],
+   ["Posterior (PDA)","V7–V9 · ST depression in V1–V3 with tall R waves"]]},
+  {x:1680,y:1350,w:1480,h:182,kw:190,t:"Troponin vs CK-MB",rows:[
+   ["Troponin I","rises after 4 h · peaks at 24 h"],
+   ["","stays up 7–10 days · most specific"],
+   ["CK-MB","rises after 6–12 h · peaks at 16–24 h"],
+   ["","normal again by 48 h — catches reinfarction"],
+   ["First 6 hours","ECG is the gold standard"]]}],
+ nodes:[
+  {id:"k1",l:"Left main",x:420,y:170,p:"ihcoron",s:"splits into LAD and circumflex",m:["coranat"]},
+  {id:"k2",l:"LAD",x:1020,y:170,p:"ihcoron",s:"anterior ⅔ of septum · anterior LV",m:["coranat","mi"]},
+  {id:"k3",l:"Circumflex (LCX)",x:1620,y:170,p:"ihcoron",s:"gives the PDA in left dominance",m:["coranat"]},
+  {id:"k4",l:"Right coronary (RCA)",x:2220,y:170,p:"ihcoron",s:"acute marginal → RV",m:["coranat"]},
+  {id:"k5",l:"Posterior descending (PDA)",x:2820,y:170,p:"ihcoron",s:"posteromedial papillary muscle · SA and AV nodes",m:["coranat"]},
+  {id:"k6",l:"Dominance",x:420,y:250,p:"ihcoron",s:"whichever artery gives the PDA",m:["coranat"]},
+  {id:"k7",l:"Coronary sinus",x:1020,y:250,p:"ihcoron",s:"left AV groove → right atrium",m:["coranat"]},
+  {id:"k8",l:"Early diastole",x:1620,y:250,p:"ihcoron",s:"LV coronary flow peaks",m:["coranat"]},
+  {id:"k9",l:"Atherosclerosis",x:2220,y:250,p:"ihcoron",s:"LAD > RCA > circumflex",m:["athero","coranat"]},
+  {id:"k10",l:"Coronary steal",x:2820,y:250,p:"ihcoron",s:"vasodilators divert flow",m:["ihdother"]},
+  {id:"s1",l:"Stable angina",x:420,y:430,p:"ihsynd",s:"exertion · ≥ 70% stenosis · rest relieves",m:["mi"]},
+  {id:"s2",l:"Vasospastic angina",x:1020,y:430,p:"ihsynd",s:"at rest · smoking, cocaine, triptans",m:["mi","acstx"]},
+  {id:"s3",l:"Unstable angina",x:1620,y:430,p:"ihsynd",s:"at rest · troponin not raised",m:["mi"]},
+  {id:"s4",l:"NSTEMI",x:2220,y:430,p:"ihsynd",s:"subendocardial · ST depression",m:["mi"]},
+  {id:"s5",l:"STEMI",x:2820,y:430,p:"ihsynd",s:"transmural · ST elevation · Q waves",m:["mi"]},
+  {id:"s6",l:"Sudden cardiac death",x:420,y:510,p:"ihsynd",s:"usually VF · ICD prevents",m:["ihdother","vfib"]},
+  {id:"s7",l:"Stunning · hibernation",x:1020,y:510,p:"ihsynd",s:"reversible LV dysfunction",m:["ihdother"]},
+  {id:"s8",l:"Chronic ischemic heart disease",x:1620,y:510,p:"ihsynd",s:"progressive symptoms · HF",m:["ihdother","hf"]},
+  {id:"s9",l:"Takotsubo",x:2220,y:510,p:"ihsynd",s:"stress · apical ballooning",m:["takotsubo"]},
+  {id:"s10",l:"Cocaine",x:2820,y:510,p:"ihsynd",s:"vasospasm",m:["cocaine"]},
+  {id:"e1",l:"0–24 hours",x:420,y:700,p:"ihmi",s:"wavy fibers · early coagulative necrosis",m:["mitimeline"]},
+  {id:"e2",l:"1–3 days",x:1020,y:700,p:"ihmi",s:"neutrophils",m:["mitimeline"]},
+  {id:"e3",l:"3–14 days",x:1620,y:700,p:"ihmi",s:"macrophages · granulation tissue",m:["mitimeline"]},
+  {id:"e4",l:"2 weeks to months",x:2220,y:700,p:"ihmi",s:"gray-white scar",m:["mitimeline"]},
+  {id:"e5",l:"Reperfusion",x:2820,y:700,p:"ihmi",s:"contraction bands · free radicals",m:["mitimeline","freeradical"]},
+  {id:"x1",l:"Arrhythmia",x:420,y:890,p:"ihcomp",s:"first days to months",m:["micomplic","vfib","avblock"]},
+  {id:"x2",l:"Peri-infarction pericarditis",x:1020,y:890,p:"ihcomp",s:"1–3 days · friction rub",m:["micomplic","pericarditis"]},
+  {id:"x3",l:"Papillary muscle rupture",x:1620,y:890,p:"ihcomp",s:"2–7 days · acute MR",m:["micomplic","mitralregurg"]},
+  {id:"x4",l:"Septal rupture",x:2220,y:890,p:"ihcomp",s:"3–5 days · VSD, ↑ RV O₂",m:["micomplic"]},
+  {id:"x5",l:"Free wall rupture",x:2820,y:890,p:"ihcomp",s:"5–14 days · tamponade",m:["micomplic","tamponade"]},
+  {id:"x6",l:"Pseudoaneurysm",x:420,y:970,p:"ihcomp",s:"3–14 days · contained rupture",m:["micomplic"]},
+  {id:"x7",l:"True aneurysm",x:1020,y:970,p:"ihcomp",s:"2 weeks+ · mural thrombus",m:["micomplic"]},
+  {id:"x8",l:"Postcardiac injury syndrome",x:1620,y:970,p:"ihcomp",s:"weeks to months · autoimmune",m:["micomplic","pericarditis"]},
+  {id:"x9",l:"Cardiogenic shock",x:2220,y:970,p:"ihcomp",s:"from the first 24 hours",m:["cardioshock"]},
+  {id:"x10",l:"Heart failure",x:2820,y:970,p:"ihcomp",s:"early or late",m:["hf"]},
+  {id:"t1",l:"Aspirin",x:420,y:1150,p:"ihtx",s:"every ACS",m:["aspirin","acstx"]},
+  {id:"t2",l:"P2Y12 inhibitor",x:1020,y:1150,p:"ihtx",s:"clopidogrel · dual antiplatelet",m:["p2y12","acstx"]},
+  {id:"t3",l:"Heparin",x:1620,y:1150,p:"ihtx",s:"anticoagulation",m:["heparin","acstx"]},
+  {id:"t4",l:"PCI",x:2220,y:1150,p:"ihtx",s:"STEMI reperfusion — preferred",m:["acstx"]},
+  {id:"t5",l:"Fibrinolysis",x:2820,y:1150,p:"ihtx",s:"reperfusion — PCI is preferred",m:["tpa","acstx"]},
+  {id:"t6",l:"Nitroglycerin",x:420,y:1230,p:"ihtx",s:"symptoms · avoid in RV infarct",m:["nitrates","acstx"]},
+  {id:"t7",l:"β-blocker",x:1020,y:1230,p:"ihtx",s:"↓ O₂ demand",m:["class2","acstx"]},
+  {id:"t8",l:"ACE inhibitor",x:1620,y:1230,p:"ihtx",s:"part of ACS therapy",m:["raasdrugs","acstx"]},
+  {id:"t9",l:"Statin",x:2220,y:1230,p:"ihtx",s:"part of ACS therapy",m:["statin","acstx"]},
+  {id:"t10",l:"Calcium channel blocker",x:2820,y:1230,p:"ihtx",s:"vasospastic angina",m:["ccbs","acstx"]}],
+ edges:[
+  {a:"k1",b:"k2",p:"ihcoron"},
+  {a:"k4",b:"k5",p:"ihcoron"},
+  {a:"s3",b:"s4",p:"ihsynd",arrow:"none",dash:true},
+  {a:"s4",b:"s5",p:"ihsynd",arrow:"none",dash:true},
+  {a:"e1",b:"e2",p:"ihmi"},
+  {a:"e2",b:"e3",p:"ihmi"},
+  {a:"e3",b:"e4",p:"ihmi"}]
+};
+
+MAPS.cardcycle = {
+ t:"Cardiac Cycle & Pressure-Volume Loops", sub:"Output equations and resistance · one beat on the pressure-volume loop · how preload, afterload, contractility and valve lesions bend it · heart sounds and the jugular pulse",
+ w:3300, h:1590,
+ fa:"289–293",
+ src:["Costanzo ch 4 — Cardiovascular physiology","Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves","Guyton ch 14 — Overview of the Circulation: Pressure, Flow, and Resistance","Guyton ch 20 — Cardiac Output, Venous Return, and Their Regulation","Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Output, pressure & resistance"},
+  {x:140,y:370,w:3020,h:140,l:"One beat — the left ventricle"},
+  {x:140,y:570,w:3020,h:140,l:"Shifting the loop"},
+  {x:140,y:770,w:3020,h:140,l:"Valve disease on the loop"},
+  {x:140,y:970,w:3020,h:140,l:"Heart sounds"},
+  {x:140,y:1170,w:3020,h:140,l:"Jugular venous pulse"}],
+ panels:[
+  {x:140,y:1370,w:1480,h:154,kw:150,t:"Pulse pressure — wide or narrow",rows:[
+   ["Wide","aortic regurgitation · aortic stiffening (older adults)"],
+   ["","high-output states (anemia, hyperthyroidism) · exercise"],
+   ["Narrow","aortic stenosis · cardiogenic shock"],
+   ["","cardiac tamponade · advanced HF"]]},
+  {x:1680,y:1370,w:1480,h:154,kw:260,t:"What raises myocardial O₂ demand",rows:[
+   ["↑ Contractility","catecholamines, positive inotropes"],
+   ["↑ Afterload","proportional to arterial pressure"],
+   ["↑ Heart rate","also shortens diastolic filling"],
+   ["↑ Ventricular diameter","more wall tension — Laplace’s law"]]}],
+ nodes:[
+  {id:"q1",l:"Stroke volume",x:420,y:170,p:"cceq",s:"EDV − ESV",m:["cardiaceq"]},
+  {id:"q2",l:"Ejection fraction",x:1020,y:170,p:"cceq",s:"SV ÷ EDV · normal 50–70%",m:["cardiaceq","hf"]},
+  {id:"q3",l:"Cardiac output",x:1620,y:170,p:"cceq",s:"SV × HR · Fick principle",m:["cardiaceq"]},
+  {id:"q4",l:"Mean arterial pressure",x:2220,y:170,p:"cceq",s:"CO × TPR",m:["cardiaceq"]},
+  {id:"q5",l:"Pulse pressure",x:2820,y:170,p:"cceq",s:"SBP − DBP · ∝ stroke volume",m:["cardiaceq","aortregurg"]},
+  {id:"q6",l:"Preload · afterload",x:420,y:250,p:"cceq",s:"Frank-Starling",m:["starling"]},
+  {id:"q7",l:"Resistance",x:1020,y:250,p:"cceq",s:"∝ viscosity × length ÷ r⁴",m:["resistflow"]},
+  {id:"q8",l:"Function curves",x:1620,y:250,p:"cceq",s:"cardiac output meets venous return",m:["cofunction"]},
+  {id:"q9",l:"Inotropes",x:2220,y:250,p:"cceq",s:"dobutamine · digoxin",m:["cofunction","pressors","digoxin"]},
+  {id:"q10",l:"Exercise",x:2820,y:250,p:"cceq",s:"↑ HR and SV, then HR only",m:["cardiaceq"]},
+  {id:"w1",l:"Isovolumetric contraction",x:420,y:440,p:"cccycle",s:"mitral closes · highest O₂ use",m:["pvloop"]},
+  {id:"w2",l:"Systolic ejection",x:1020,y:440,p:"cccycle",s:"aortic valve opens",m:["pvloop"]},
+  {id:"w3",l:"Isovolumetric relaxation",x:1620,y:440,p:"cccycle",s:"aortic valve closes",m:["pvloop"]},
+  {id:"w4",l:"Rapid filling",x:2220,y:440,p:"cccycle",s:"just after the mitral valve opens",m:["pvloop"]},
+  {id:"w5",l:"Reduced filling",x:2820,y:440,p:"cccycle",s:"just before the mitral valve closes",m:["pvloop"]},
+  {id:"v1",l:"↑ Preload",x:420,y:640,p:"ccshift",s:"↑ EDV · ↑ SV",m:["pvloop","starling"]},
+  {id:"v2",l:"↑ Afterload",x:1020,y:640,p:"ccshift",s:"↑ ESV · ↓ SV",m:["pvloop","starling"]},
+  {id:"v3",l:"↑ Contractility",x:1620,y:640,p:"ccshift",s:"↓ ESV · ↑ SV and EF",m:["pvloop","starling"]},
+  {id:"vx1",l:"→ Cardiac",x:2220,y:640,p:"neutral",k:"ghost",go:"cardiac"},
+  {id:"vx2",l:"→ Vessels, Blood Pressure & Shock",x:2820,y:640,p:"neutral",k:"ghost",go:"vascshock"},
+  {id:"u1",l:"Aortic stenosis",x:420,y:840,p:"ccvalve",s:"LV pressure ≫ aortic · ↓ SV",m:["pvvalve","aortstenosis"]},
+  {id:"u2",l:"Aortic regurgitation",x:1020,y:840,p:"ccvalve",s:"no isovolumetric phase · ↑ EDV",m:["pvvalve","aortregurg"]},
+  {id:"u3",l:"Mitral stenosis",x:1620,y:840,p:"ccvalve",s:"LA > LV pressure · ↓ EDV",m:["pvvalve","mitralsten"]},
+  {id:"u4",l:"Mitral regurgitation",x:2220,y:840,p:"ccvalve",s:"no isovolumetric phase · tall v wave",m:["pvvalve","mitralregurg"]},
+  {id:"ux1",l:"→ Murmurs, Valves & Cardiomyopathy",x:2820,y:840,p:"neutral",k:"ghost",go:"valves"},
+  {id:"h1",l:"S1",x:420,y:1040,p:"ccsound",s:"mitral and tricuspid close",m:["heartsounds"]},
+  {id:"h2",l:"S2",x:1020,y:1040,p:"ccsound",s:"aortic and pulmonic close",m:["heartsounds"]},
+  {id:"h3",l:"S3",x:1620,y:1040,p:"ccsound",s:"early diastole · ↑ filling pressure",m:["heartsounds","hf"]},
+  {id:"h4",l:"S4",x:2220,y:1040,p:"ccsound",s:"late diastole · stiff ventricle",m:["heartsounds"]},
+  {id:"h5",l:"Left lateral decubitus",x:2820,y:1040,p:"ccsound",s:"S3 and S4 best at the apex",m:["heartsounds"]},
+  {id:"j1",l:"a wave",x:420,y:1240,p:"ccjvp",s:"atrial contraction · absent in AF",m:["jvp","afib"]},
+  {id:"j2",l:"c wave",x:1020,y:1240,p:"ccjvp",s:"tricuspid bulges as the RV contracts",m:["jvp"]},
+  {id:"j3",l:"x descent",x:1620,y:1240,p:"ccjvp",s:"lost in tricuspid regurgitation",m:["jvp","mitralregurg"]},
+  {id:"j4",l:"v wave",x:2220,y:1240,p:"ccjvp",s:"filling against a closed tricuspid",m:["jvp"]},
+  {id:"j5",l:"y descent",x:2820,y:1240,p:"ccjvp",s:"↑ in constriction · absent in tamponade",m:["jvp","constrictive","tamponade"]}],
+ edges:[
+  {a:"w1",b:"w2",p:"cccycle"},
+  {a:"w2",b:"w3",p:"cccycle"},
+  {a:"w3",b:"w4",p:"cccycle"},
+  {a:"w4",b:"w5",p:"cccycle"},
+  {a:"j1",b:"j2",p:"ccjvp"},
+  {a:"j2",b:"j3",p:"ccjvp"},
+  {a:"j3",b:"j4",p:"ccjvp"},
+  {a:"j4",b:"j5",p:"ccjvp"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
   ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","iemlab","nucleo","collagen","vitamins","cellcycle","cellbio","molbio","signal","genetics"]],
-  ["cardio","Cardiac",["cardiac","valves","chd","vasc","vascshock","htnrx","rhythm"]],
+  ["path","Pathology",["genpath"]],
+  ["cardio","Cardiac",["cardiac","cardcycle","valves","ihd","chd","vasc","vascshock","htnrx","rhythm"]],
   ["pulmo","Pulmonary",["pulm","lungdz","respdrug"]],
   ["renal","Renal",["nephron","glom","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","liver","gitract","abdanat"]],
@@ -23849,6 +24362,7 @@ const svg=document.getElementById('svg'), drawer=document.getElementById('drawer
 const state={view:"core",z:1,tx:0,ty:0,sel:null,quiz:"",reveal:new Set(),filter:null,q:""};
 /* pin quiz: PQ[view][cardId] = true (named correctly) or false */
 const PQ={};
+let FOCUS_QUIET=false;   // set while a re-render hands keyboard focus back to a pin
 /* review progress, kept on this device only (the question bank shares it on the
    same site): cards marked reviewed, every quiz answer, and a spaced-review
    schedule. A miss puts a card in box 0, due now; each right answer moves it
@@ -23857,7 +24371,7 @@ const PQ={};
    misses; keep the two in step. `at` records when each card's schedule last
    changed, so the hub's PIN sync (sync.js) keeps whichever device reviewed it
    more recently. */
-const PROG_KEY="mla-progress", PROG_PARTS=["rev","ok","miss","box","due","qok","qmiss","at"];
+const PROG_KEY="mla-progress", PROG_PARTS=["rev","ok","miss","box","due","qok","qmiss","at","known"];
 /* Card review — the spaced-review schedule and every "due" reminder — is opt-in.
    It stays off until a person turns it on, so anyone not interested in card
    quizzes never sees a due message. While it is off, quiz answers are still
@@ -23879,8 +24393,15 @@ window.addEventListener("storage",ev=>{
   try{ renderRail(); if(state.view==="index") renderIndex(); }catch(e){}
 });
 const isRev=id=>!!PROG.rev[id];
-const isWeak=id=>REVIEW_ON&&(id in PROG.box)&&(PROG.due[id]||0)<=Date.now();      // due for review now
-const isLater=id=>REVIEW_ON&&(id in PROG.box)&&(PROG.due[id]||0)>Date.now();      // scheduled, not yet due
+/* "I know this": a card marked known sits out every quiz and the due list.
+   PROG.known[id] is when it was marked; unmarking stores minus that time, so the
+   hub's PIN sync (sync.js) keeps whichever device acted last. HIDEKNOWN (this
+   device only) also drops known cards from the lists and dims their pins. */
+const isKnown=id=>(+PROG.known[id]||0)>0;
+let HIDEKNOWN=false; try{ HIDEKNOWN=localStorage.getItem("mla-hideknown")==="on"; }catch(e){}
+function setKnown(id,on){ PROG.known[id]=on?Date.now():-Date.now(); saveProg(); }
+const isWeak=id=>REVIEW_ON&&!isKnown(id)&&(id in PROG.box)&&(PROG.due[id]||0)<=Date.now();      // due for review now
+const isLater=id=>REVIEW_ON&&!isKnown(id)&&(id in PROG.box)&&(PROG.due[id]||0)>Date.now();      // scheduled, not yet due
 function schedule(id,right){
   if(!REVIEW_ON) return;
   if(!right){ PROG.box[id]=0; PROG.due[id]=Date.now(); PROG.at[id]=Date.now(); return; }
@@ -23938,18 +24459,19 @@ function pinSVG(id,i,x,y){
   if(L.k==="dz") shape=`<circle class="pshape" r="9.5" fill="${c}"/>`;
   else if(L.k==="drug") shape=`<rect class="pshape" x="-8" y="-8" width="16" height="16" rx="2" fill="${c}" transform="rotate(45)"/>`;
   else shape=`<rect class="pshape" x="-8.5" y="-8.5" width="17" height="17" rx="4.5" fill="${c}"/>`;
-  const pq=state.quiz==="pins", done=pq&&PQ[state.view]&&(id in PQ[state.view]);
+  const pq=state.quiz==="pins", kn=isKnown(id), done=pq&&PQ[state.view]&&(id in PQ[state.view]), ask=pq&&!done&&!kn;
   const due=!pq&&isWeak(id);
-  const cls="pin"+(done?(PQ[state.view][id]?" pq-ok":" pq-bad"):"")+(due?" due":"");
-  const tip=pq&&!done?"Which lesion is this?":L.n+(due?" — due for review":"");
-  return `<g class="${cls}" data-les="${id}" transform="translate(${px.toFixed(1)} ${y.toFixed(1)})"><title>${esc(tip)}</title>${due?'<circle class="duering" r="14"/>':""}${shape}<text>${g}</text></g>`;
+  const cls="pin"+(done?(PQ[state.view][id]?" pq-ok":" pq-bad"):"")+(due?" due":"")+(kn&&HIDEKNOWN?" known":"");
+  const tip=ask?"Which lesion is this?":L.n+(due?" — due for review":"")+(kn?" — marked known":"");
+  const aria=ask?"Unnamed pin — which lesion is this?":L.n+(due?", due for review":"");
+  return `<g class="${cls}" data-les="${id}" tabindex="0" role="button" aria-label="${esc(aria).replace(/"/g,"&quot;")}" transform="translate(${px.toFixed(1)} ${y.toFixed(1)})"><title>${esc(tip)}</title>${due?'<circle class="duering" r="14"/>':""}${shape}<text>${g}</text></g>`;
 }
 /* While naming pins, a label beside an unanswered pin must not spell out the
    answer ("Vancomycin caps D-Ala-D-Ala"), so its name words are blanked. */
 function quizMask(ids,text){
   if(state.quiz!=="pins"||!ids||!ids.length) return text;
   const done=PQ[state.view]||{};
-  return ids.filter(id=>LES[id]&&!(id in done)).reduce((t,id)=>redactor(LES[id])(t),text);
+  return ids.filter(id=>LES[id]&&!(id in done)&&!isKnown(id)).reduce((t,id)=>redactor(LES[id])(t),text);
 }
 function chipSVG(e,geo){
   const hidden=state.quiz==="steps"&&!state.reveal.has(e._k);
@@ -23973,10 +24495,11 @@ function chipSVG(e,geo){
 }
 function nodeSVG(n){
   const b=nodeBox(n),col=pc(n.p);
-  const cls="node"+(n.k==="hub"?" hub":"")+(n.k==="ghost"?" ghost":"");
+  const hide=state.quiz==="fill"&&n.s&&n.k!=="ghost"&&!state.reveal.has("n:"+n.id);   // fill-in quiz
+  const cls="node"+(n.k==="hub"?" hub":"")+(n.k==="ghost"?" ghost":"")+(hide?" fillq":"");
   let t;
   const nl=quizMask(n.m,n.l), ns=n.s&&quizMask(n.m,n.s);
-  if(n.s) t=`<text class="nl" y="-6">${esc(nl)}</text><text class="ns" y="13">${esc(ns)}</text>`;
+  if(n.s) t=`<text class="nl" y="-6">${esc(nl)}</text>${hide?`<text class="ns nshid" y="13">? ? ?</text>`:`<text class="ns" y="13">${esc(ns)}</text>`}`;
   else t=`<text class="nl" y="0">${esc(nl)}</text>`;
   const pins=(n.m||[]).map((id,i)=>pinSVG(id,i,b.w/2-4,-b.h/2-4)).join("");
   const fill=n.k==="ghost"?"":`style="stroke:${col};fill:var(--surface);fill:color-mix(in srgb, ${col} var(--tint), var(--surface))"`;
@@ -24028,10 +24551,15 @@ function render(){
     else if(e.m&&e.m.length) chips+=`<g data-p="${e.p}">${e.m.map((id,j)=>pinSVG(id,j,g.qx+(e.lx||0),g.qy+(e.ly||0))).join("")}</g>`;
   });
   const nodes=m.nodes.map(nodeSVG).join("");
+  const fe=document.activeElement, fp=fe&&svg.contains(fe)&&fe.closest?fe.closest(".pin"):null;
+  const focusPin=fp?[fp.dataset.les,[...svg.querySelectorAll(`.pin[data-les="${fp.dataset.les}"]`)].indexOf(fp)]:null;
   svg.setAttribute("viewBox",`0 0 ${m.w} ${m.h}`);
   svg.innerHTML=`<defs>${defs}</defs><g id="cam"><g class="bg-layer">${comps}${panels}</g><g class="edge-layer">${edges}</g><g class="node-layer">${nodes}</g><g class="chip-layer">${chips}</g><g class="tip-layer">${tips}</g></g>`;
   cam=svg.querySelector("#cam");
   fitChips(); fitPanels(); fitComps(); applyCam(); applyFilter(); markSelected();
+  /* a re-render replaces every pin; keep keyboard focus on the one that had it */
+  if(focusPin){ const ps=svg.querySelectorAll(`.pin[data-les="${focusPin[0]}"]`), p=ps[focusPin[1]]||ps[0];
+    if(p){ FOCUS_QUIET=true; try{ p.focus({preventScroll:true}); }catch(e){} FOCUS_QUIET=false; } }
 }
 /* Text measurement.
    Every box on every map is sized from measured text, so the measurement has to be
@@ -24138,8 +24666,9 @@ function quizNote(id){
 }
 /* progress block for a set of cards — the rail, the phone drawer and the Index use it */
 function progHtml(ids,label){
-  const rev=ids.filter(isRev).length, weak=ids.filter(isWeak), later=ids.filter(isLater).length;
+  const rev=ids.filter(isRev).length, weak=ids.filter(isWeak), later=ids.filter(isLater).length, known=ids.filter(isKnown).length;
   return `<div class="revbar"><span><b>${rev}</b> of <b>${ids.length}</b> ${label} reviewed</span><span class="qbar"><i style="width:${ids.length?Math.round(rev/ids.length*100):0}%"></i></span></div>
+    ${known?`<p class="revnote knownnote">${known} marked “I know this” — left out of quizzes · <button class="linkbtn" data-hideknown>${HIDEKNOWN?"show them again":"hide them"}</button></p>`:""}
     ${weak.length?`<button class="duego" data-duego>Review every due card · ${dueAll().length} →</button><div class="rsrc-b">Review these · ${weak.length} due</div><div class="lesionlist">${weak.map(id=>{const L=LES[id];return `<button class="li weak" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="rec">${(PROG.miss[id]||0)+(PROG.qmiss[id]||0)} missed · ${(PROG.ok[id]||0)+(PROG.qok[id]||0)} right</span></span></button>`;}).join("")}</div>`:""}
     ${later?`<p class="revnote" style="margin:6px 0 0">${later} more scheduled for later review</p>`:""}
     ${reviewToggleHtml()}`;
@@ -24174,6 +24703,11 @@ function openReviewIntro(){
   document.getElementById("dclose").onclick=closeDrawer;
   document.getElementById("revno").onclick=closeDrawer;
 }
+document.addEventListener("click",ev=>{ if(!ev.target.closest("[data-hideknown]")) return;
+  ev.preventDefault(); HIDEKNOWN=!HIDEKNOWN;
+  try{ if(HIDEKNOWN) localStorage.setItem("mla-hideknown","on"); else localStorage.removeItem("mla-hideknown"); }catch(e){}
+  if(state.view==="index") renderIndex(); else render();
+  renderRail(); if(state.info) openMapInfo(); });
 document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-review]"); if(!b) return;
   ev.preventDefault(); const on=b.dataset.review==="on"; setReview(on);
   if(on&&b.dataset.start){ setQuiz("due"); if(!dueAll().length) closeDrawer(); } });
@@ -24210,7 +24744,7 @@ function openLes(id,center,pick){
      </div>
      ${(()=>{ const others=[...new Set((LOC[id]||[]).map(l=>l.v))].filter(v=>v!==state.view);
        return others.length?`<div class="pagehits alsoon"><span class="revnote">${state.view==="index"?"On":"Also on"}</span>${others.map(v=>`<button class="pagehit" data-also="${v}">${esc((VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1])}</button>`).join("")}</div>`:""; })()}
-     <div class="revrow"><button class="revbtn" id="drev" aria-pressed="${isRev(id)}" title="Saved on this device only">${isRev(id)?"✓ Reviewed":"Mark reviewed"}</button><button class="revbtn" id="dcmp" title="Set this card beside another, line by line">Compare…</button>${quizNote(id)}</div>
+     <div class="revrow"><button class="revbtn" id="drev" aria-pressed="${isRev(id)}" title="Saved on this device only">${isRev(id)?"✓ Reviewed":"Mark reviewed"}</button><button class="revbtn" id="dknow" aria-pressed="${isKnown(id)}" title="Leave this card out of every quiz and the due list">${isKnown(id)?"✓ I know this":"I know this"}</button><button class="revbtn" id="dcmp" title="Set this card beside another, line by line">Compare…</button>${quizNote(id)}</div>
    </div>
    <div class="dbody">
      ${res}
@@ -24232,6 +24766,9 @@ function openLes(id,center,pick){
   document.getElementById("drev").onclick=ev=>{ const on=!isRev(id); setRev(id,on);
     ev.currentTarget.setAttribute("aria-pressed",String(on)); ev.currentTarget.textContent=on?"✓ Reviewed":"Mark reviewed";
     renderRail(); if(state.view==="index") renderIndex(); };
+  document.getElementById("dknow").onclick=ev=>{ const on=!isKnown(id); setKnown(id,on);
+    ev.currentTarget.setAttribute("aria-pressed",String(on)); ev.currentTarget.textContent=on?"✓ I know this":"I know this";
+    renderRail(); if(state.view==="index") renderIndex(); else render(); updateScore(); };
   drawer.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>gotoLes(b.dataset.go));
   drawer.querySelectorAll("[data-next]").forEach(b=>b.onclick=nextQuiz);
   renderRail();
@@ -24325,7 +24862,7 @@ const NEXT_LABEL=()=>state.quiz==="buzz"?"Next buzzword":state.quiz==="due"?"Nex
 function nextQuiz(){
   if(state.quiz==="buzz") return nextBuzz();
   if(state.quiz==="due") return nextDue();
-  const done=PQ[state.view]||{}, left=mapIds(state.view).filter(k=>!(k in done));
+  const done=PQ[state.view]||{}, left=mapIds(state.view).filter(k=>!(k in done)&&!isKnown(k));
   if(!left.length){ closeDrawer(); return; }
   const id=left[Math.floor(Math.random()*left.length)];
   openQuiz(id); flashPins(id,true);
@@ -24345,9 +24882,10 @@ function buzzOf(id){
 }
 const BZC={};   // card pools per scope — the cards never change while the page is open
 function buzzIds(){
-  const k=buzzKey(); if(BZC[k]) return BZC[k];
-  const ids=new Set(); topicViews().forEach(v=>mapIds(v).forEach(id=>ids.add(id)));
-  return BZC[k]=[...ids].filter(id=>buzzOf(id).length);
+  const k=buzzKey();
+  if(!BZC[k]){ const ids=new Set(); topicViews().forEach(v=>mapIds(v).forEach(id=>ids.add(id)));
+    BZC[k]=[...ids].filter(id=>buzzOf(id).length); }
+  return BZC[k].filter(id=>!isKnown(id));   // cards marked known sit out
 }
 function buzzOptions(id,pool){
   const L=LES[id];
@@ -24414,11 +24952,22 @@ function updateScore(){
     const r=box.querySelector("[data-qreset]"); if(r) r.onclick=()=>{ delete BQ[buzzKey()]; updateScore(); nextBuzz(); };
     return;
   }
+  if(state.quiz==="fill"&&state.view!=="index"){
+    const ns=MAPS[state.view].nodes.filter(n=>n.s&&n.k!=="ghost"), shown=ns.filter(n=>state.reveal.has("n:"+n.id)).length;
+    box.hidden=false;
+    box.innerHTML=`<span>Revealed <b>${shown}/${ns.length}</b> captions</span>
+      <span class="qbar"><i style="width:${ns.length?Math.round(shown/ns.length*100):0}%"></i></span>
+      ${shown<ns.length?`<button class="go" data-fillall>Reveal all</button>`:`<span>All revealed</span>`}
+      ${shown?`<button data-fillhide title="Hide every caption again">Hide again</button>`:""}`;
+    const a=box.querySelector("[data-fillall]"); if(a) a.onclick=()=>{ ns.forEach(n=>state.reveal.add("n:"+n.id)); render(); updateScore(); };
+    const h=box.querySelector("[data-fillhide]"); if(h) h.onclick=()=>{ state.reveal.clear(); render(); updateScore(); };
+    return;
+  }
   const on=state.quiz==="pins"&&state.view!=="index";
   box.hidden=!on; if(!on) return;
-  const total=mapIds(state.view).length, done=PQ[state.view]||{};
-  const named=Object.keys(done).length, right=Object.values(done).filter(Boolean).length;
-  box.innerHTML=`<span>Named <b>${named}/${total}</b> · <b>${right}</b> right</span>
+  const all=mapIds(state.view), ids=all.filter(k=>!isKnown(k)), total=ids.length, done=PQ[state.view]||{};
+  const named=ids.filter(k=>k in done).length, right=ids.filter(k=>done[k]).length;
+  box.innerHTML=`<span>Named <b>${named}/${total}</b> · <b>${right}</b> right${all.length>total?` · ${all.length-total} known skipped`:""}</span>
     <span class="qbar"><i style="width:${total?Math.round(named/total*100):0}%"></i></span>
     ${named<total?`<button class="go" data-qnext>Next pin</button>`:`<span>All done</span>`}
     ${named?`<button data-qreset title="Clear this map's answers">Reset</button>`:""}`;
@@ -24430,7 +24979,7 @@ function setQuiz(mode){
   state.quiz=mode; state.reveal.clear();
   const b=document.getElementById("quizBtn");
   b.classList.toggle("on",!!mode);
-  b.textContent=mode==="steps"?"Quiz: steps":mode==="pins"?"Quiz: pins":mode==="buzz"?"Quiz: buzzwords":mode==="due"?"Quiz: due cards":"Quiz";
+  b.textContent=mode==="steps"?"Quiz: steps":mode==="fill"?"Quiz: fill in":mode==="pins"?"Quiz: pins":mode==="buzz"?"Quiz: buzzwords":mode==="due"?"Quiz: due cards":"Quiz";
   DQ=null;
   document.querySelectorAll("#qmenu [data-q]").forEach(o=>o.setAttribute("aria-checked",String(o.dataset.q===mode)));
   if(mode==="pins"){ drawer.hidden=true; state.sel=null; writeHash(); }
@@ -24475,7 +25024,7 @@ function openDue(id){
 }
 function nextDue(){
   if(!DQ) DQ={list:dueSorted(),done:{}};
-  const left=DQ.list.filter(k=>LES[k]&&!(k in DQ.done));
+  const left=DQ.list.filter(k=>LES[k]&&!(k in DQ.done)&&!isKnown(k));
   updateScore();
   if(!left.length){ closeDrawer(); return; }
   openDue(left[0]);
@@ -24786,7 +25335,7 @@ function renderRail(){
     <div class="lg"><svg width="19" height="19" viewBox="0 0 20 20"><line x1="1" y1="10" x2="19" y2="10" stroke="var(--ink-3)" stroke-width="2" stroke-dasharray="5 4"/></svg>Multi-step, transport or regulation</div>
     ${REVIEW_ON?`<div class="lg"><svg width="19" height="19" viewBox="-10 -10 20 20"><circle r="7.5" fill="none" stroke="var(--due)" stroke-width="2.4"/></svg>Due for review</div>`:""}
   </div></div>`;
-  const ids=currentLesIds();
+  const ids=currentLesIds(), shown=(HIDEKNOWN&&!state.q)?ids.filter(id=>!isKnown(id)):ids;
   if(state.quiz==="pins"&&!state.q&&state.view!=="index"){
     html+=`<div class="rail-sec"><h3 class="rail-h">Lesions on this map · ${ids.length}</h3><p class="rail-sub">Hidden while you name the pins. Searching still works.</p></div>`;
     rail.innerHTML=html+mapSrcHtml(m);
@@ -24800,9 +25349,9 @@ function renderRail(){
   if(cq) html+=`<div class="rail-sec"><h3 class="rail-h">Maps citing ${esc(cq.label)}</h3><p class="rail-sub">${esc(cq.full)}</p>${chapterHitsHtml(cq)||`<p class="rail-sub">No map lists this chapter.</p>`}</div>`;
   const onMap=!state.q&&state.view!=="index";
   if(onMap&&ids.length) html+=`<div class="rail-sec"><h3 class="rail-h">Your progress</h3>${progHtml(ids,"cards")}</div>`;
-  html+=`<div class="rail-sec"><h3 class="rail-h">${pg!=null?`Cards citing p. ${pg}`:cq?`Cards citing ${esc(cq.label)}`:state.fuzzy?"Closest matches":state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${ids.length}</h3>
-    <div class="lesionlist">${ids.length?ids.map(id=>{const L=LES[id];
-      return `<button class="li${isRev(id)?" rev":""}${isWeak(id)?" weak":""}" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
+  html+=`<div class="rail-sec"><h3 class="rail-h">${pg!=null?`Cards citing p. ${pg}`:cq?`Cards citing ${esc(cq.label)}`:state.fuzzy?"Closest matches":state.q?"Search results":(state.view==="index"?"All lesions":"Lesions on this map")} · ${shown.length}${shown.length<ids.length?` <span class="hidn">· ${ids.length-shown.length} known hidden</span>`:""}</h3>
+    <div class="lesionlist">${ids.length?shown.map(id=>{const L=LES[id];
+      return `<button class="li${isRev(id)?" rev":""}${isWeak(id)?" weak":""}${isKnown(id)?" known":""}" data-les="${id}" style="--c:${mkc(L.k)}"><span class="dot"></span><span><span class="nm">${esc(L.n)}</span><span class="bz">${esc(L.buzz&&L.buzz[0]?L.buzz[0]:(L.enz||""))}</span></span></button>`;
     }).join(""):`<p style="font-size:12.5px;color:var(--ink-3);padding:4px 7px">No match. Try “Heinz”, “orotic”, “second wind”.</p>`}</div>
     ${onMap&&ids.some(id=>isRev(id)||PROG.ok[id]||PROG.miss[id])?`<p style="margin:10px 7px 0"><button class="linkbtn" data-resetprog>Reset this map’s progress</button></p>`:""}</div>`;
   rail.innerHTML=html+(state.q?"":mapSrcHtml(m));
@@ -24817,7 +25366,7 @@ function renderRail(){
 /* maps ranked by misses — atlas quiz misses plus question-bank misses on the
    cards pinned there — so the Index can point at the topic to review next */
 function weakSpotsHtml(){
-  const rows=VIEWS.map(v=>v[0]).filter(v=>MAPS[v]).map(v=>{ const ids=mapIds(v);
+  const rows=VIEWS.map(v=>v[0]).filter(v=>MAPS[v]).map(v=>{ const ids=mapIds(v).filter(id=>!isKnown(id));
     return {v, miss:ids.reduce((s,id)=>s+(PROG.miss[id]||0)+(PROG.qmiss[id]||0),0), due:ids.filter(isWeak).length}; })
     .filter(r=>r.miss||r.due).sort((a,b)=>b.miss-a.miss||b.due-a.due).slice(0,10);
   if(!rows.length) return "";
@@ -24831,13 +25380,13 @@ function weakSpotsHtml(){
 /* ── index view ─────────────────────────────────────── */
 function renderIndex(){
   const q=state.q.trim().toLowerCase();
-  let ids=Object.keys(LES).filter(id=>lesMatches(LES[id],q)), fuzzy=false;
+  let ids=Object.keys(LES).filter(id=>lesMatches(LES[id],q)&&!(HIDEKNOWN&&!q&&isKnown(id))), fuzzy=false;
   if(q&&!ids.length&&pageQuery(q)==null&&!chapterQuery(q)){ ids=fuzzyIds(q); fuzzy=ids.length>0; }
   const groups={};
   ids.forEach(id=>{(groups[LES[id].p]=groups[LES[id].p]||[]).push(id);});
   const cards=Object.entries(groups).map(([p,list])=>`
     <section class="idxcard" style="--c:${pc(p)}"><h3><span class="bar"></span>${esc((PATHS[p]||PATHS.neutral).n)}</h3>
-    <ul>${list.map(id=>{const L=LES[id];return `<li><button class="idxrow${isRev(id)?" rev":""}" data-les="${id}">
+    <ul>${list.map(id=>{const L=LES[id];return `<li><button class="idxrow${isRev(id)?" rev":""}${isKnown(id)?" known":""}" data-les="${id}">
       <span class="t">${esc(L.n)}</span><span class="e">${esc(L.enz||"")}</span>
       ${L.buzz&&L.buzz[0]?`<span class="b">${esc(L.buzz[0])}</span>`:""}</button></li>`;}).join("")}</ul></section>`).join("");
   const pg=pageQuery(q), cq=pg==null?chapterQuery(q):null;
@@ -24846,7 +25395,7 @@ function renderIndex(){
     <p>Closest matches, allowing for a letter or two off:</p>`:pg!=null?`<h2>First Aid 2025, p. ${pg}</h2>
     <p>${ids.length} ${ids.length===1?"card cites":"cards cite"} this page${mapsOnPage(pg).length?`, and so ${mapsOnPage(pg).length===1?"does this map":"do these maps"}:`:"."}</p>${pageHitsHtml(pg)}`:`<h2>Every lesion on one page</h2>
     <p>${ids.length} entries across the ${Object.keys(MAPS).length} maps — grouped by pathway, each with the enzyme it sits on and the phrase a question is most likely to hand you. Click any row to jump to its exact position on the map.</p>
-    ${!q?`<details class="idx-sources" ${Object.keys(LES).some(isWeak)?"open":""}><summary>Your progress (this device)</summary>${progHtml(Object.keys(LES),"cards")}</details>${weakSpotsHtml()}`:""}`}
+    ${!q?`${whatsNewHtml()}<details class="idx-sources" ${Object.keys(LES).some(isWeak)?"open":""}><summary>Your progress (this device)</summary>${progHtml(Object.keys(LES),"cards")}</details>${weakSpotsHtml()}`:""}`}
     <details class="idx-sources"><summary>Sources</summary>
       <p>Every card was written from and checked against the sources below, line by line. Each card carries its own <b>Sources</b> section naming the exact First Aid pages and book chapters it rests on, so you can see why a fact is stated where it is; the pins on every map open the card that carries those citations, and each map's side panel lists the First Aid pages and chapters the map itself was checked against. Where sources disagree, the card says so or leaves the number out, and anything no source supported was cut. The First Aid page on each card points to the 2025 edition.</p>
       <ul>
@@ -24867,16 +25416,44 @@ function renderIndex(){
 const topicsEl=document.getElementById("topics"), subbar=document.getElementById("subbar");
 const TOPIC_OF={}; TOPICS.forEach(([t,,vs])=>vs.forEach(v=>{ TOPIC_OF[v]=t; }));
 const lastInTopic={};
+/* ── what's new ── a map added in the last NEW_DAYS days carries a "New" mark (a dot on
+   its topic, a pill on its tab) until the person opens it. Add every new map to
+   NEW_MAPS with the date it went live, and a line to WHATSNEW for a new feature. */
+const NEW_DAYS=21;
+const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
+  microlab:"2026-10-08",molbio:"2026-10-08",cellbio:"2026-10-08",htnrx:"2026-10-08",aging:"2026-10-08",iemlab:"2026-10-08",
+  respdrug:"2026-10-08",adr:"2026-10-08",tumark:"2026-10-08",zoonoses:"2026-10-08",brainreg:"2026-10-08",abdanat:"2026-10-08",
+  genpath:"2026-10-08",ihd:"2026-10-08",cardcycle:"2026-10-08"};
+const WHATSNEW=[
+  ["2026-10-08","<b>Quiz → Fill in the map</b> hides the caption in every box; tap a box to check yourself."],
+  ["2026-10-08","<b>I know this</b> on any card leaves it out of every quiz and the due list; Your progress can hide those cards from the lists too."],
+  ["2026-10-08","<b>Keyboard</b>: Tab moves between pins, Enter or Space opens one."],
+  ["2026-10-08","New lanes: lymphatic drainage on Abdominal Anatomy, sensory receptors and stretch reflexes on Brain Regions, the test that settles it on Endocrine Axes."],
+  ["2026-10-08","Card review is optional — turn it on under Your progress to have missed cards come back after 1, 3 and 7 days."]];
+let SEEN={}; try{ SEEN=JSON.parse(localStorage.getItem("mla-seen")||"{}")||{}; }catch(e){ SEEN={}; }
+const newSince=d=>Date.now()-Date.parse(d+"T00:00:00")<NEW_DAYS*DAY;
+const isNewMap=v=>!!NEW_MAPS[v]&&!SEEN[v]&&newSince(NEW_MAPS[v]);
+function markSeen(v){ if(NEW_MAPS[v]&&!SEEN[v]){ SEEN[v]=Date.now(); try{ localStorage.setItem("mla-seen",JSON.stringify(SEEN)); }catch(e){} } }
+function whatsNewHtml(){
+  const maps=Object.keys(NEW_MAPS).filter(v=>MAPS[v]&&newSince(NEW_MAPS[v])).sort((a,b)=>NEW_MAPS[b].localeCompare(NEW_MAPS[a]));
+  const notes=WHATSNEW.filter(([d])=>newSince(d));
+  if(!maps.length&&!notes.length) return "";
+  const unseen=maps.filter(isNewMap).length;
+  return `<details class="idx-sources whatsnew" ${unseen?"open":""}><summary>What’s new</summary>
+    ${maps.length?`<p>Maps added in the last three weeks${unseen?` — ${unseen} you haven’t opened yet are marked <span class="newpill">New</span>`:""}:</p>
+    <div class="pagehits">${maps.map(v=>`<button class="pagehit${isNewMap(v)?" isnew":""}" data-view="${v}">${esc((VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1])}</button>`).join("")}</div>`:""}
+    ${notes.length?`<ul class="wnlist">${notes.map(([,t])=>`<li>${t}</li>`).join("")}</ul>`:""}</details>`;
+}
 function renderNav(){
   const t=TOPIC_OF[state.view]; lastInTopic[t]=state.view;
-  topicsEl.innerHTML=TOPICS.map(([id,l])=>`<button class="tab" role="tab" data-t="${id}" aria-selected="${id===t}">${esc(l)}</button>`).join("");
+  topicsEl.innerHTML=TOPICS.map(([id,l,vs])=>`<button class="tab" role="tab" data-t="${id}" aria-selected="${id===t}">${esc(l)}${vs.some(isNewMap)?'<span class="newdot" title="New maps inside"></span>':""}</button>`).join("");
   topicsEl.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
     const vs=TOPICS.find(x=>x[0]===b.dataset.t)[2];
     setView(lastInTopic[b.dataset.t]||vs[0]);
   });
   const vs=(TOPICS.find(x=>x[0]===t)||[0,0,[]])[2];
   subbar.hidden=vs.length<2;
-  tabsEl.innerHTML=vs.map(v=>`<button class="tab" role="tab" data-v="${v}" aria-selected="${v===state.view}">${esc((VIEWS.find(x=>x[0]===v)||[v,v])[1])}</button>`).join("");
+  tabsEl.innerHTML=vs.map(v=>`<button class="tab" role="tab" data-v="${v}" aria-selected="${v===state.view}">${esc((VIEWS.find(x=>x[0]===v)||[v,v])[1])}${isNewMap(v)?'<span class="newpill">New</span>':""}</button>`).join("");
   tabsEl.querySelectorAll(".tab").forEach(b=>b.onclick=()=>setView(b.dataset.v));
   [topicsEl,tabsEl].forEach(el=>{ const cur=el.querySelector('[aria-selected="true"]');
     if(cur) el.scrollLeft=Math.max(0,cur.offsetLeft-el.clientWidth/2+cur.offsetWidth/2); });
@@ -24884,6 +25461,8 @@ function renderNav(){
 
 /* ── views & camera ─────────────────────────────────── */
 function setView(v){
+  if(v!==state.view) state.reveal.clear();   // revealed steps and captions belong to one map
+  markSeen(v);
   state.view=v; state.filter=null; state.z=1; state.tx=0; state.ty=0;
   const isIdx=v==="index";
   svg.hidden=isIdx; idxWrap.hidden=!isIdx;
@@ -24968,7 +25547,7 @@ svg.addEventListener("gesturestart",ev=>ev.preventDefault());   // Safari: keep 
 svg.addEventListener("click",ev=>{
   if(dragged){ dragged=false; return; }   // the end of a pan is not a tap
   const pq=state.quiz==="pins";
-  const ask=id=>{ if(pq&&!(PQ[state.view]&&id in PQ[state.view])) openQuiz(id); else openLes(id,false); };
+  const ask=id=>{ if(pq&&!isKnown(id)&&!(PQ[state.view]&&id in PQ[state.view])) openQuiz(id); else openLes(id,false); };
   const pin=ev.target.closest(".pin");
   if(pin){ ask(pin.dataset.les); return; }
   const chip=ev.target.closest(".chip");
@@ -24981,9 +25560,24 @@ svg.addEventListener("click",ev=>{
   const nd=ev.target.closest(".node");
   if(nd){
     const n=MAPS[state.view]._n[nd.dataset.node];
+    if(state.quiz==="fill"&&n.s&&n.k!=="ghost"&&!state.reveal.has("n:"+n.id)){ state.reveal.add("n:"+n.id); render(); updateScore(); return; }
     if(n.m&&n.m.length){ ask(n.m[0]); return; }
     if(n.go){ setView(n.go); return; }
     if(n.hl){ const t=svg.querySelector(`.node[data-node="${n.hl}"] > rect`); if(t){ t.classList.add("hl"); setTimeout(()=>t.classList.remove("hl"),1800); centerOn(MAPS[state.view]._n[n.hl].x,MAPS[state.view]._n[n.hl].y);} }
+  }
+});
+/* keyboard: pins are focusable — Tab moves between them, Enter or Space opens one,
+   and a pin that gets focus off-screen is brought into view */
+svg.addEventListener("keydown",ev=>{
+  const pin=ev.target.closest&&ev.target.closest(".pin"); if(!pin) return;
+  if(ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); ev.stopPropagation(); dragged=false; pin.dispatchEvent(new MouseEvent("click",{bubbles:true})); }
+});
+svg.addEventListener("focusin",ev=>{
+  const pin=ev.target.closest&&ev.target.closest(".pin"); if(!pin||FOCUS_QUIET) return;
+  const r=pin.getBoundingClientRect(), s=svg.getBoundingClientRect(), pad=40;
+  if(r.left<s.left+pad||r.right>s.right-pad||r.top<s.top+pad||r.bottom>s.bottom-pad){
+    const p=toVB(r.left+r.width/2,r.top+r.height/2);
+    centerOn((p.x-state.tx)/state.z,(p.y-state.ty)/state.z);
   }
 });
 document.getElementById("zin").onclick=()=>zoomBy(1.25);

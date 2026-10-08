@@ -115,6 +115,11 @@ The top bar shows broad topics (`TOPICS`, defined right after `VIEWS`); choosing
 its maps in a row beneath. A new map needs a `VIEWS` entry **and** a place in exactly one
 topic — the build refuses a map that is in no topic or in two.
 
+Add each new map to `NEW_MAPS` (next to `renderNav()`) with the date it goes live: for
+three weeks it carries a "New" pill on its tab and a dot on its topic until the person
+opens it (`mla-seen`, per device), and the Index lists it under What's new. A new feature
+worth announcing gets a line in `WHATSNEW` the same way.
+
 ### Links from the question bank
 
 The build also writes `resources/atlas-terms.js`: each card's name, alias and its curated
@@ -287,6 +292,12 @@ schedule and question-bank misses) syncs in its own document, `syncs/{PIN}_atlas
 the side whose `at` timestamp (when that card's schedule last changed) is newer. Both the
 atlas (`schedule()` in `tools/atlas-src.html`) and `atlasNoteAnswer` in `shared/app.js`
 write `at` — keep them in step with `mergeAtlas`.
+
+**"I know this"** marks live in the same blob as `known`: the time a card was marked, or
+minus the time it was unmarked, so `mergeAtlas` keeps whichever device acted last (larger
+absolute value). A known card sits out every atlas quiz and the due list — `isWeak()` in the
+atlas and the hub's due pill both skip it. Hiding known cards from the lists
+(`mla-hideknown`) is per device and not synced.
 
 Card review is **opt-in** (`mla-review` = `"on"`, per device, not synced). While it is off,
 answers are still counted but nothing is scheduled, and no "due" message appears anywhere —
