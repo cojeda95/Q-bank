@@ -17,6 +17,7 @@
  */
 
 const ANNOUNCEMENTS = [
+  { date: '10/9/26', text: 'General: UX redesign, Lestion Atlas: Added dynamic maps with manipulative variables, Nephro: Added Moorjani split for exam 2' },
   { date: '10/7/26', text: 'Nephro: Revisited Exam 2-4 Q generation with some new changes, piloting new question format w/ arrows and a test batch of new Qs; Atlas: worked on new maps and added sources for each card against OCOM library, PubMed articles, and First Aid 2025' },
   { date: '10/6/26', text: 'Added OMM Midterm questions, Nephro exams 3 and 4 still under review; new atlas maps pushed, fixed PIN-sync error' },
   { date: '10/5/26', text: 'Added OMM Midterm questions, Nephro exam 2 questions final revisions pushed, exams 3 and 4 still under review' },
