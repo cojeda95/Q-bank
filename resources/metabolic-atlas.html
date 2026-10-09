@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 224 pan/zoom maps with 2158 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 231 pan/zoom maps with 2162 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="224 interactive maps. 2158 lesions pinned to the step they break.">
+<meta property="og:description" content="231 interactive maps. 2162 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -628,6 +628,21 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 .ds-src{font:11.5px var(--font-ui);color:var(--ink-3);margin:8px 0 0}
 @media print{ .dynsheet,.dynbtn{display:none!important} }
 
+/* ── phones: static maps (m41) ── */
+.phit{fill:transparent;display:none}
+@media (pointer:coarse){ .phit{display:inline} }
+.secbar{display:none}
+@media (max-width:1000px){
+  .secbar:not([hidden]){display:flex;gap:6px;position:absolute;left:0;right:0;bottom:calc(68px + env(safe-area-inset-bottom,0px));z-index:5;
+    overflow-x:auto;padding:4px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .secbar::-webkit-scrollbar{display:none}
+  .drawer:not([hidden]) ~ .secbar{display:none}
+}
+.secbar .sb{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:6px 12px;
+  font:600 12.5px var(--font-ui);box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer;white-space:nowrap}
+.secbar .sb.on{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+@media print{ .secbar{display:none!important} }
+
 /* ── OCOM Question Hub integration ─────────────────── */
 :root{--accent:#1f4e79;--accent-soft:#E3ECF5}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--accent:#7FB3DE;--accent-soft:#16293A}}
@@ -720,6 +735,7 @@ body{display:flex;flex-direction:column}
       <div class="hint" id="hint">drag to pan · scroll to zoom · click any pin · ? for shortcuts</div>
       <div class="indexwrap" id="indexwrap" hidden></div>
       <aside class="drawer" id="drawer" hidden></aside>
+      <div class="secbar" id="secBar" hidden role="navigation" aria-label="Sections of this map"></div>
       <button class="dynbtn" id="dynBtn" hidden aria-label="Show this map’s switches">Switches ▴</button>
       <div class="dynsheet" id="dynSheet" hidden aria-label="Switches for this map"></div>
       <div class="minimap" id="minimap" hidden><svg id="mmsvg" aria-hidden="true"></svg><button class="mmx" id="mmx" title="Hide the overview (m)" aria-label="Hide the overview map">×</button></div>
@@ -1655,6 +1671,30 @@ const PATHS = {
   axDna:{n:"DNA, RNA & folate",v:"--p-sugars"},
   axRes:{n:"Resistance",v:"--p-gluconeo"},
   axMyc:{n:"Mycobacteria",v:"--p-glycogen"},
+  miArt:{n:"Coronary arteries",v:"--p-tca"},
+  miWall:{n:"The infarct",v:"--p-glycogen"},
+  miEcg:{n:"ECG",v:"--p-ppp"},
+  pvHeart:{n:"The left heart",v:"--p-tca"},
+  pvLoop:{n:"The loop",v:"--p-glycolysis"},
+  pvSound:{n:"Sounds and murmurs",v:"--p-ppp"},
+  edForce:{n:"Starling forces",v:"--p-glycolysis"},
+  edPc:{n:"Raised capillary pressure",v:"--p-tca"},
+  edOnc:{n:"Low oncotic pressure",v:"--p-gluconeo"},
+  edLeak:{n:"Leak & lymph",v:"--p-ppp"},
+  hvEntry:{n:"Entry",v:"--p-glycolysis"},
+  hvRep:{n:"Copy & integrate",v:"--p-tca"},
+  hvOut:{n:"Assembly & release",v:"--p-ppp"},
+  hvOi:{n:"Opportunistic infections",v:"--p-glycogen"},
+  esMot:{n:"Eye movements",v:"--p-glycolysis"},
+  esPup:{n:"Pupil pathways",v:"--p-gluconeo"},
+  esRx:{n:"Drugs at the pupil",v:"--p-ppp"},
+  psUp:{n:"Upper plexus & posterior cord",v:"--p-tca"},
+  psLow:{n:"Lower plexus, median & ulnar",v:"--p-gluconeo"},
+  psExam:{n:"Levels & exam",v:"--p-ppp"},
+  mfAxis:{n:"Hypothalamus & pituitary",v:"--p-glycolysis"},
+  mfOvary:{n:"Ovary",v:"--p-tca"},
+  mfUter:{n:"Uterus & cycle",v:"--p-gluconeo"},
+  mfRx:{n:"Drugs & disorders",v:"--p-glycogen"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -18719,6 +18759,39 @@ functech:{n:"Functional technique — Johnston’s three-segment approach",k:"re
  buzz:["Stack ease, breathe, hold 3–5 s, re-examine"],
  src:["OCOM OMM — OMS2 written midterm study guide"],
  tx:["—"],q:["functional technique","three segment unit","three segment functional approach","direction of greatest ease","planes of ease"]},
+
+/* ── cards for the dynamic maps (m39) ─── */
+lymphedema:{n:"Lymphedema",k:"dz",p:"edLeak",enz:"Lymph cannot drain — fluid and protein stay in the tissue",inh:"—",fa:"156, 301, 486, 655",hi:1,
+ mech:"When lymph vessels or nodes are blocked, removed or missing, the fluid and plasma protein that normally leave the tissue in lymph stay behind. Interstitial protein builds up, so <b>interstitial oncotic pressure (πi) rises</b> and draws still more fluid out of the capillaries — the edema can be especially severe because the protein cannot be removed.",
+ find:["<b>Lymphatic filariasis</b> (Wuchereria bancrofti, Brugia malayi; mosquito-borne): worms in lymph nodes → inflammation → lymphedema of the legs and genitals (<b>elephantiasis</b>), hydrocele; symptoms start 9 months–1 year after infection","After <b>axillary node removal or irradiation</b> for breast cancer: lymphedema of the arm and breast","Invasive tumors, trauma and fibrosis can also block lymphatics; congenital lymphatic defects (Turner syndrome: lymphedema of hands and feet, cystic hygroma)","Chronic post-mastectomy lymphedema can give rise to cutaneous angiosarcoma (<b>Stewart-Treves syndrome</b>)"],
+ labs:["Filariasis: microfilariae on a blood smear, eosinophilia"],
+ buzz:["Elephantiasis = filarial lymphedema"],
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema","Guyton ch 16 — The Microcirculation and Lymphatic System: Capillary Fluid Exchange, Interstitial Fluid, and Lymph Flow","Costanzo ch 4 — Cardiovascular physiology","Bootcamp.com Microbiology — Nematodes (Wuchereria and Brugia)"],
+ tx:["Filariasis: diethylcarbamazine","Limb elevation and skin hygiene"],q:["lymphedema","lymphoedema","elephantiasis","stewart treves","stewart-treves syndrome","lymphatic filariasis","=impaired lymphatic drainage"]},
+
+menscycle:{n:"Menstrual cycle — follicular, ovulatory & luteal phases",k:"reg",p:"mfUter",enz:"Follicular (estrogen) phase varies · luteal (progesterone) phase is a fixed 14 days",inh:"—",fa:"648–650",hi:1,
+ mech:"Day 1 is the first day of menses. In the <b>follicular phase</b> FSH grows a cohort of follicles, one becomes dominant and its rising <b>estradiol</b> proliferates the endometrium while feeding back negatively on GnRH, FSH and LH. At midcycle, high estradiol switches to <b>positive feedback</b> — the LH (and smaller FSH) surge — and the follicle ruptures. In the <b>luteal phase</b> the corpus luteum makes <b>progesterone</b> (plus estradiol and inhibin), which turns the lining secretory and holds FSH and LH down. Without hCG the corpus luteum regresses, progesterone and estradiol fall abruptly and the lining is shed.",
+ find:["Cycle length varies (about 21–35 days) because the <b>follicular phase</b> varies; the <b>luteal phase is a fixed 14 days</b>, so ovulation comes about 14 days before the next menses","<b>Proliferative</b> endometrium (estrogen): straight, narrow glands · <b>secretory</b> (progesterone): tortuous, dilated glands, coiled spiral arteries, glycogen-rich secretions","Cervical mucus: copious, watery and stretchy before ovulation (ferning) · thick and scant after it (progesterone)","Progesterone raises the hypothalamic temperature set point — <b>basal body temperature rises</b> after ovulation","Menses: loss of progesterone → spiral artery vasospasm and necrosis of the functional layer; usually 4–5 days"],
+ labs:["A rise in serum progesterone indicates that ovulation occurred"],
+ buzz:["Follicular = estrogen, variable · luteal = progesterone, fixed 14 days"],
+ src:["Costanzo ch 10 — Reproductive physiology","Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones","Bootcamp.com Reproduction — Pregnancy and Menstruation"],
+ tx:["—"],q:["menstrual cycle","follicular phase","secretory phase","basal body temperature","=ovulation occurs 14 days before","corpus luteum regression"]},
+
+ovsteroid:{n:"Ovarian steroidogenesis — the two-cell, two-gonadotropin model",k:"reg",p:"mfOvary",enz:"Theca (LH) makes androgen · granulosa (FSH) aromatizes it to estradiol",inh:"—",fa:"648",hi:1,
+ mech:"<b>LH</b> binds theca cells and stimulates cholesterol desmolase, the first step: theca cells make progesterone and <b>androstenedione</b> but lack aromatase. Androstenedione diffuses to the neighbouring <b>granulosa cells</b>, which carry the only FSH receptors in the ovary; <b>FSH</b> stimulates <b>aromatase</b>, which converts the androgen to <b>17β-estradiol</b>. Locally made estradiol in turn amplifies FSH’s growth effect on granulosa cells — more cells, more estradiol.",
+ find:["Granulosa cells also secrete <b>inhibin</b>, which lowers FSH secretion (activin raises it)","After ovulation LH luteinizes both cell types into the corpus luteum, which makes more progesterone than estrogen","Both receptors work through cAMP","<b>PCOS</b>: high LH:FSH drives theca androgen excess while follicles stall","Aromatase inhibitors (letrozole) block the granulosa step"],
+ labs:["—"],
+ buzz:["Theca: LH, androgens · granulosa: FSH, aromatase"],
+ src:["Costanzo ch 10 — Reproductive physiology","Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones","Bootcamp.com Reproduction — Pregnancy and Menstruation"],
+ tx:["—"],q:["theca cells","granulosa cells","theca interna","two cell","=lh stimulates the theca","=fsh stimulates aromatase","ovarian steroidogenesis","ovarian aromatase"]},
+
+progonly:{n:"Progestin-only contraception — pill, implant, injection, LNG IUD",k:"drug",p:"mfRx",enz:"Progestin alone: thick cervical mucus, thin endometrium; ovulation often suppressed",inh:"—",fa:"648, 675",hi:0,
+ mech:"Progestins (levonorgestrel, etonogestrel, norethindrone, medroxyprogesterone) bind progesterone receptors: they <b>thicken cervical mucus</b> so sperm cannot enter, and thin the endometrium. They lower GnRH, LH and FSH and blunt the surge, but low-dose progestin alone <b>does not always inhibit ovulation</b> — the mucus and endometrial effects carry much of the protection.",
+ find:["Forms: progestin-only pill, subdermal etonogestrel implant, depot medroxyprogesterone (DMPA) injection every 3 months, levonorgestrel IUD","Suited to patients in whom estrogen is undesirable — prior thromboembolism, hypertension, liver disease","Irregular, unpredictable bleeding is the common complaint; amenorrhea often develops on DMPA","DMPA: ovulation can stay suppressed for up to 18 months after the last injection; reversible loss of bone density","Other progestin uses: endometrial cancer, abnormal uterine bleeding, the progestin challenge"],
+ labs:["—"],
+ buzz:["No estrogen: progestin-only pill, implant, depot shot, LNG IUD"],
+ src:["Katzung ch 40 — The Gonadal Hormones & Inhibitors","Bootcamp.com Reproduction — Pharmacology"],
+ tx:["—"],q:["progestin only","progestin-only pill","minipill","etonogestrel implant","depot medroxyprogesterone","dmpa","levonorgestrel iud","levonorgestrel intrauterine"]},
 
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
@@ -37518,26 +37591,281 @@ MAPS.abxsim = {
  edges:[]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["oral","Oral Cavity & Salivary Glands"],["skinbasics","Skin Basics — Layers, Lesions & Terms"],["gidrugs","GI Motility, Laxative & Antiemetic Drugs"],["cardproc","Cardiac Anatomy, Catheters & Vascular Access"],["transfuse","Blood Groups & Transfusion"],["nmjflow","Neuromuscular Junction in Motion"],["synflow","Monoamine Synapse in Motion"],["apflow","Action Potential in Motion"],["bgflow","Basal Ganglia in Motion"],["cordsim","Spinal Cord Lesion Simulator"],["stemsim","Brainstem Lesion Simulator"],["visfield","Visual Pathway Lesion Simulator"],["cardap","Cardiac Action Potential in Motion"],["coagflow","Coagulation Cascade in Motion"],["alvflow","Alveolus in Motion"],["asthflow","Asthma Airway in Motion"],["axisflow","HPA Axis in Motion"],["betaflow","β Cell in Motion"],["follflow","Thyroid Follicle in Motion"],["cochflow","Cochlea in Motion"],["gutabs","Gut Absorption in Motion"],["boneflow","Bone Remodeling in Motion"],["goutflow","Uric Acid & Gout in Motion"],["rajoint","Rheumatoid Joint in Motion"],["vsmotion","Viscerosomatic Reflex in Motion"],["lymphflow","Lymphatic Pump in Motion"],["biliflow","Bilirubin in Motion"],["ironflow","Iron in Motion"],["abflow","Acid–Base in Motion"],["glomsim","Glomerular Disease Locator"],["abxsim","Antibiotic Targets in Motion"],["index","Index"]];
+MAPS.misim = {
+ t:"MI Locator", sub:"The heart from the front with its coronary arteries, a slice through both ventricles and a 12-lead ECG — occlude an artery to see which wall dies, which leads show ST elevation and which complications to expect, then pick a time since the infarct to see how it looks and what threatens it. Tap an artery for its card",
+ w:3600, h:1960,
+ fa:"288, 308–310, 314",
+ src:["Robbins ch 12 — The heart", "Guyton ch 12 — Electrocardiographic Interpretation of Cardiac Muscle and Coronary Blood Flow Abnormalities: Vectorial Analysis", "Bootcamp.com Cardiology — Anatomy", "Bootcamp.com Cardiology — Myocardial Infarction"],
+ art:"kit",
+ dyn:{"lazy":"1fd63d06fa","switches":[{"id":"art","label":"Occlude one artery","type":"one","options":[["lad","LAD","coranat"],["dlad","Distal LAD","coranat"],["lcx","Left circumflex","coranat"],["rca","Right coronary","mi"],["pda","Posterior descending","coranat"],["lm","Left main","cardioshock"]]},{"id":"tm","label":"Time since the infarct","type":"one","options":[["h24","0–24 hours","mitimeline"],["d13","1–3 days","mitimeline"],["d314","3–14 days","micomplic"],["wk","2 weeks – months","micomplic"]]}],"panel":{"x":2520,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2520,y:980,w:1000,h:204,kw:248,t:"STEMI leads (First Aid p. 310; Bootcamp)",rows:[
+   ["Anteroseptal (LAD)","V1–V2"],
+   ["Anteroapical (distal LAD)","V3–V4"],
+   ["Anterolateral (LAD or LCX)","V5–V6"],
+   ["Lateral (LCX)","I, aVL"],
+   ["Inferior (RCA)","II, III, aVF"],
+   ["Posterior (PDA)","ST ↑ V7–V9 · ST ↓ with tall R in V1–V3"],
+   ["Left main","I, aVL, V1–V6"]]},
+  {x:2520,y:1240,w:1000,h:226,kw:265,t:"MI complications by timeframe (First Aid p. 314)",rows:[
+   ["Arrhythmia","first days to months — a major cause of death in the first 48 h"],
+   ["Peri-infarction pericarditis","1–3 days"],
+   ["Papillary muscle rupture","2–7 days — posteromedial ≫ anterolateral"],
+   ["Septal rupture","3–5 days — VSD, ↑ O₂ saturation in the RV"],
+   ["Pseudoaneurysm","3–14 days"],
+   ["Free wall rupture","5–14 days — tamponade"],
+   ["True aneurysm","2 weeks to months — mural thrombus"],
+   ["Postcardiac injury syndrome","weeks to months — Dressler"]]}],
+ nodes:[
+  {id:"mi1",l:"Coronary anatomy",x:300,y:1860,p:"miArt",s:"territories · dominance",m:["coranat","cabg"]},
+  {id:"mi2",l:"Nodal arteries",x:640,y:1860,p:"miArt",s:"SA + AV nodes · bradycardia",m:["nodalart","avblock","sicksinus"]},
+  {id:"mi3",l:"Acute coronary syndromes",x:1000,y:1860,p:"miWall",s:"angina · NSTEMI · STEMI",m:["mi","acstx","ihdother"]},
+  {id:"mi4",l:"MI over time",x:1360,y:1860,p:"miWall",s:"gross · microscopy",m:["mitimeline","ischemiavuln"]},
+  {id:"mi5",l:"MI complications",x:1720,y:1860,p:"miWall",s:"rupture · aneurysm · Dressler",m:["micomplic","mitralregurg","vsd"]},
+  {id:"mi6",l:"Pump and pericardium",x:2080,y:1860,p:"miWall",s:"shock · tamponade · pericarditis",m:["cardioshock","tamponade","pericarditis"]},
+  {id:"mi7",l:"The ECG",x:1880,y:1720,p:"miEcg",s:"leads · arrhythmias",m:["conductionsys","vfib","vtach"]}],
+ edges:[]
+};
+
+MAPS.pvflow = {
+ t:"Pressure–Volume Loop in Motion", sub:"A drawn left heart beside its pressure–volume loop and a one-beat time strip — step through the four phases to watch the valves open and shut and the loop trace itself, then add a valve lesion, a load change or heart failure to see the loop, the murmur and EDV, ESV, SV and EF change. Tap a valve for its card",
+ w:3600, h:1900,
+ fa:"289–290, 292–293, 295–296, 316",
+ src:["Costanzo ch 4 — Cardiovascular physiology", "Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves", "Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects", "Bootcamp.com Cardiology — Pressure Volume Loops"],
+ art:"kit",
+ dyn:{"lazy":"5909db6009","switches":[{"id":"ph","label":"One beat, phase by phase","type":"steps","auto":3,"options":[["ivc","Isovolumetric contraction"],["ej","Ejection"],["ivr","Isovolumetric relaxation"],["fill","Filling"]]},{"id":"dz","label":"Change one thing","type":"one","options":[["as","Aortic stenosis","aortstenosis"],["mr","Mitral regurgitation","mitralregurg"],["ar","Aortic regurgitation","aortregurg"],["ms","Mitral stenosis","mitralsten"],["pre","↑ Preload","starling"],["aft","↑ Afterload","starling"],["ino","↑ Contractility (inotrope)","pressors"],["hfr","Systolic HF (HFrEF)","hf"],["hfp","Diastolic HF (HFpEF)","hf"]]}],"panel":{"x":2520,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2520,y:1020,w:1000,h:138,kw:196,t:"Valve lesions on the loop (First Aid p. 293)",rows:[
+   ["Aortic stenosis","↑ LV pressure · ↑ ESV · ↓ SV · EDV unchanged if mild"],
+   ["Mitral regurgitation","no true isovolumetric phase · ↑ EDV · ↓ ESV · ↑ total SV"],
+   ["Aortic regurgitation","no true isovolumetric phase · ↑ EDV · ↑ SV"],
+   ["Mitral stenosis","↑ LA pressure · ↓ EDV · ↓ ESV · ↓ SV"]]},
+  {x:2520,y:1200,w:1000,h:138,kw:120,t:"Heart sounds (First Aid p. 292)",rows:[
+   ["S1","mitral + tricuspid closure · loudest at the mitral area"],
+   ["S2","aortic + pulmonic closure · left upper sternal border"],
+   ["S3","early diastole, rapid filling · ↑ filling pressure (MR, AR, HF)"],
+   ["S4","late diastole, atrial kick into a stiff LV (hypertrophy)"]]},
+  {x:2520,y:1380,w:1000,h:138,kw:179,t:"Maneuvers (First Aid p. 295)",rows:[
+   ["Standing, Valsalva","↓ preload: most murmurs softer · MVP and HCM louder"],
+   ["Passive leg raise","↑ preload: most murmurs louder · MVP and HCM softer"],
+   ["Hand grip","↑ afterload: AR, MR, VSD louder · AS and HCM softer"],
+   ["Inspiration","right-sided murmurs louder (left-sided: expiration)"]]}],
+ nodes:[
+  {id:"pv1",l:"Mitral valve lesions",x:300,y:560,p:"pvHeart",s:"stenosis · regurgitation · MVP",m:["mitralsten","mitralregurg","mvp"]},
+  {id:"pv2",l:"Aortic valve lesions",x:1090,y:400,p:"pvHeart",s:"stenosis · regurgitation",m:["aortstenosis","aortregurg"]},
+  {id:"pv3",l:"Ventricular failure",x:250,y:1000,p:"pvHeart",s:"HFrEF · HFpEF · cardiomyopathy",m:["hf","dcm","hcm","hfdrugs"]},
+  {id:"pv4",l:"Pressure–volume loops",x:1650,y:1250,p:"pvLoop",s:"normal · valve disease",m:["pvloop","pvvalve"]},
+  {id:"pv5",l:"Preload, afterload",x:2120,y:1250,p:"pvLoop",s:"contractility · SV, EF",m:["starling","cardiaceq","pressors","digoxin"]},
+  {id:"pv6",l:"Heart sounds",x:600,y:1790,p:"pvSound",s:"S1–S4 · splitting",m:["heartsounds","s2split","jvp"]},
+  {id:"pv7",l:"Murmur maneuvers",x:1100,y:1790,p:"pvSound",s:"preload · afterload · breathing",m:["maneuvers"]}],
+ edges:[]
+};
+
+MAPS.edemaflow = {
+ t:"Capillary & Edema in Motion", sub:"Starling forces on one capillary: water filters out at the arteriolar end, returns at the venular end and the rest drains as lymph. Pick a cause of edema to see which force changes. Tap the capillary wall for its card",
+ w:3500, h:2100,
+ fa:"69, 156, 210, 247, 301, 316–317, 323, 485–486, 613",
+ src:["Guyton ch 16 — The Microcirculation and Lymphatic System: Capillary Fluid Exchange, Interstitial Fluid, and Lymph Flow", "Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema", "Costanzo ch 4 — Cardiovascular physiology", "Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock", "Robbins ch 3 — Inflammation and repair", "Bootcamp.com Nephrology — Fluid and filtration physiology", "Bootcamp.com Gastroenterology — Liver", "Bootcamp.com Microbiology — Nematodes (Wuchereria and Brugia)", "Bootcamp.com Microbiology — Bacterial toxins (endotoxin)"],
+ art:"kit",
+ dyn:{"lazy":"2418a2b1b3","switches":[{"id":"ed","label":"Pick a cause of edema","type":"one","options":[["hf","Heart failure","hf"],["dvt","Venous obstruction (DVT)","dvt"],["ccb","Arteriolar dilation (amlodipine)","ccbs"],["neph","Nephrotic syndrome","nephrotic"],["cirr","Cirrhosis","cirrhosis"],["kwash","Protein malnutrition","kwashiorkor"],["lymph","Lymphatic obstruction","lymphedema"],["inflam","Acute inflammation","acuteinflam"],["sepsis","Sepsis","sepsistnf"],["burn","Burns","burns"]]}],"panel":{"x":2460,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2460,y:640,w:1000,h:182,kw:196,t:"Causes of edema (Costanzo Table 4.8; Robbins Table 4.1; FA p. 301)",rows:[
+   ["↑ Pc","heart failure, venous obstruction (DVT), arteriolar dilation, salt and water retention"],
+   ["↓ πc","nephrotic syndrome, liver failure (cirrhosis), protein malnutrition"],
+   ["↑ Kf","burns, inflammation (histamine, cytokines), toxins, infections"],
+   ["↑ πi · lymph blocked","filariasis, node removal or irradiation, tumor"],
+   ["Transudate","protein-poor: ↑ Pc or ↓ πc — heart, liver, kidney, malnutrition"],
+   ["Exudate","protein-rich: ↑ vascular permeability — inflammation"]]},
+  {x:2460,y:880,w:1000,h:160,kw:162,t:"Normal Starling numbers (Guyton ch 16, 25)",rows:[
+   ["Arteriolar end","Pc 30 + πi 8 + Pi −3 (suction) vs πc 28 → 13 mm Hg out"],
+   ["Venular end","Pc 10 + πi 8 + Pi −3 vs πc 28 → 7 mm Hg in"],
+   ["Fate of filtrate","~90% reabsorbed at venular ends · ~10% returns as lymph"],
+   ["Lymph flow","~120 mL/h, nearly 3 L/day — rises as interstitial pressure rises"],
+   ["Safety factors","low tissue compliance · lymph flow up 10–50× · protein washdown"]]}],
+ nodes:[
+  {id:"ed1",l:"Starling forces",x:430,y:1720,p:"edForce",k:"hub",s:"Pc · Pi · πc · πi · Kf",m:["capfluid","edemasafe","fluidcomp"]},
+  {id:"ed2",l:"Raised capillary pressure",x:960,y:1720,p:"edPc",s:"heart failure · DVT · vasodilators",m:["hf","dvt","ccbs"]},
+  {id:"ed3",l:"Low plasma protein",x:1530,y:1720,p:"edOnc",s:"nephrotic · cirrhosis · malnutrition",m:["nephrotic","cirrhosis","kwashiorkor","ascites"]},
+  {id:"ed4",l:"Leaky capillaries",x:2040,y:1720,p:"edLeak",s:"inflammation · sepsis · burns",m:["acuteinflam","sepsistnf","burns"]},
+  {id:"ed5",l:"Lymphatic obstruction",x:520,y:1850,p:"edLeak",s:"filariasis · node removal",m:["lymphedema","filaria","lymphduct"]},
+  {id:"ed6",l:"Lung & pleural fluid",x:1100,y:1850,p:"edForce",s:"the same forces in the chest",m:["pulmedema","effusion"]},
+  {id:"ed7",l:"Shock from fluid loss & leak",x:1690,y:1850,p:"edLeak",s:"hypovolemic · distributive",m:["hypovshock","distshock"]}],
+ edges:[]
+};
+
+MAPS.hivflow = {
+ t:"HIV Life Cycle in Motion", sub:"HIV docks on CD4 and a coreceptor, fuses, copies its RNA into DNA, integrates, and buds out as new virions that protease matures. Pick a drug to put a ✕ on its step, or let the CD4 count fall. Tap a step for its card",
+ w:3500, h:2100,
+ fa:"172–173, 197–198",
+ src:["Katzung ch 49 — Antiviral Agents", "Robbins ch 6 — Diseases of the immune system", "Bootcamp.com Microbiology — Positive-sense RNA viruses (HIV)", "Bootcamp.com Microbiology — Antivirals (antiretroviral therapy)"],
+ art:"kit",
+ dyn:{"lazy":"17d0470b11","switches":[{"id":"rx","label":"Block a step","type":"one","options":[["attach","Attachment (fostemsavir · ibalizumab)","entryinh"],["ccr5","CCR5 antagonist (maraviroc)","entryinh"],["fusion","Fusion inhibitor (enfuvirtide)","entryinh"],["nrti","NRTIs","nrti"],["nnrti","NNRTIs","nnrti"],["insti","Integrase inhibitors","insti"],["pi","Protease inhibitors","hivpi"],["d32","CCR5Δ32 homozygote","hiv"]]},{"id":"cd4","label":"Untreated: CD4 count","type":"one","options":[["500","CD4 < 500","hivoi"],["200","CD4 < 200 (AIDS)","pcp"],["100","CD4 < 100","toxo"],["50","CD4 < 50","mac"]]}],"panel":{"x":2460,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2460,y:790,w:1000,h:204,kw:196,t:"Antiretroviral classes (FA pp. 197–198; Katzung ch 49)",rows:[
+   ["Entry","maraviroc (CCR5) · enfuvirtide (gp41) · fostemsavir (gp120) · ibalizumab (CD4)"],
+   ["NRTIs","tenofovir, emtricitabine, lamivudine, abacavir, zidovudine"],
+   ["NNRTIs","efavirenz, rilpivirine, doravirine, nevirapine"],
+   ["Integrase inhibitors","bictegravir, dolutegravir, raltegravir, cabotegravir"],
+   ["Protease inhibitors","darunavir, atazanavir, lopinavir — boosted by ritonavir or cobicistat"],
+   ["Usual regimen","2 NRTIs + an integrase inhibitor · PrEP: tenofovir + emtricitabine"],
+   ["HIV-2","NNRTIs and enfuvirtide do not work"]]},
+  {x:2460,y:1070,w:1000,h:182,kw:120,t:"HIV genes & tests (FA p. 172; Bootcamp)",rows:[
+   ["env","gp160 → gp120 (docking) + gp41 (fusion)"],
+   ["gag","p24 capsid · p17 matrix"],
+   ["pol","reverse transcriptase · integrase · protease"],
+   ["Diagnosis","Ag/Ab (p24) immunoassay → HIV-1/HIV-2 differentiation assay"],
+   ["Monitoring","viral load (RT-PCR) and CD4 count"],
+   ["Infants","viral load, not antibody — maternal IgG crosses the placenta"]]}],
+ nodes:[
+  {id:"hv1",l:"HIV infection & AIDS",x:330,y:1080,p:"hvEntry",k:"hub",s:"CD4 · CCR5 / CXCR4",m:["hiv","hivoi"]},
+  {id:"hv2",l:"Entry inhibitors",x:330,y:1180,p:"hvEntry",s:"maraviroc · enfuvirtide",m:["entryinh"]},
+  {id:"hv3",l:"Reverse transcriptase",x:330,y:1280,p:"hvRep",s:"NRTIs · NNRTIs",m:["nrti","nnrti"]},
+  {id:"hv4",l:"Integrase & protease",x:330,y:1380,p:"hvOut",s:"-tegravir · -navir",m:["insti","hivpi"]},
+  {id:"hv5",l:"CD4 < 500",x:330,y:1480,p:"hvOi",s:"thrush · leukoplakia · KS",m:["candida","hairyleuk","kaposi","tb"]},
+  {id:"hv6",l:"CD4 < 200 — AIDS",x:330,y:1580,p:"hvOi",s:"PCP · histo · PML",m:["pcp","histo","pml"]},
+  {id:"hv7",l:"CD4 < 100 and < 50",x:330,y:1680,p:"hvOi",s:"toxo · crypto · CMV · MAC",m:["toxo","crypto","cmv","cryptosporidium","mac"]},
+  {id:"hv8",l:"AIDS lymphoma & skin",x:330,y:1780,p:"hvOi",s:"EBV lymphoma · Bartonella",m:["pcnsl","ebv","bartonella"]}],
+ edges:[]
+};
+
+MAPS.eyesim = {
+ t:"Pupil & Eye Movement Simulator", sub:"Both eyes facing you, the six eye muscles by nerve, and the pathways behind them — CN III, IV, VI, the gaze link, the light reflex and the sympathetic chain. Pick a lesion or a drug to see the ✕, the gaze, the lid and the pupils. Tap a pin for its card",
+ w:3500, h:2330,
+ fa:"145, 239–241, 536, 554–558, 567–568, 588–589",
+ src:["Fundamental Neuroscience ch 28 — Visual Motor Systems", "Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs", "Katzung ch 8 — Cholinoceptor-Blocking Drugs", "Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs", "Katzung ch 31 — Opioid Agonists & Antagonists", "Moore ch 9 — Head"],
+ art:"kit",
+ dyn:{"lazy":"b41424a01f","switches":[{"id":"les","label":"Lesion or drug — pick one (lesions on the patient’s left)","type":"one","options":[["cn3c","CN III — compressed","cn3palsy"],["cn3i","CN III — ischemic (diabetes)","cn3palsy"],["cn4","CN IV palsy","cn46palsy"],["cn6","CN VI palsy","cn46palsy"],["horner","Horner syndrome","horner"],["ino","INO (MLF)","ino"],["argyll","Argyll Robertson pupil","lightnear"],["rapd","Marcus Gunn pupil (RAPD)","rapd"],["atro","Atropine · tropicamide drops","antimusc"],["pilo","Pilocarpine drops","muscagon"],["opi","Opioids","opioids"],["phen","Phenylephrine drops","alpha1drugs"],["coc","Cocaine test in Horner","cocaine"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+  {x:140,y:2040,w:2210,h:270,l:"Cards for each lesion and drug"}],
+ panels:[
+  {x:2420,y:760,w:1000,h:160,kw:400,t:"Eye muscles and nerves (First Aid pp. 555–556)",rows:[
+   ["Lateral rectus — CN VI","abducts · palsy: eye turned in, cannot abduct"],
+   ["Superior oblique — CN IV","intorts, depresses · palsy: eye higher, head tilts away"],
+   ["Medial, superior, inferior recti, IO — CN III","palsy: down and out, with ptosis"],
+   ["Levator palpebrae — CN III","major lid elevator · superior tarsal muscle is sympathetic"],
+   ["Obliques go opposite","the left SO and IO are tested looking right"]]},
+  {x:2420,y:1000,w:1000,h:160,kw:213,t:"Drops and the pupil (Katzung ch 7–9 · First Aid pp. 239–241)",rows:[
+   ["Atropine, tropicamide","block M₃ → mydriasis + cycloplegia"],
+   ["Pilocarpine, carbachol","M₃ agonists → miosis · glaucoma"],
+   ["Phenylephrine","α₁ agonist → short-acting mydriasis for the retinal exam"],
+   ["Cocaine","blocks NE reuptake → mydriasis; fails in a postganglionic Horner"],
+   ["Opioids","miosis (not meperidine) · no tolerance"]]}],
+ nodes:[
+  {id:"es1",l:"CN III palsy",x:330,y:2110,p:"esMot",s:"compressive vs ischemic",m:["cn3palsy","eyelids"]},
+  {id:"es2",l:"CN IV · CN VI palsy",x:330,y:2190,p:"esMot",s:"LR₆ SO₄ R₃",m:["cn46palsy","cavernous"]},
+  {id:"es3",l:"INO · gaze center",x:330,y:2270,p:"esMot",s:"MLF · multiple sclerosis",m:["ino","hgaze","ms"]},
+  {id:"es4",l:"Light reflex",x:900,y:2110,p:"esPup",k:"hub",s:"pretectal → both EW nuclei",m:["pupilpath","neartriad"]},
+  {id:"es5",l:"Marcus Gunn pupil",x:900,y:2190,p:"esPup",s:"swinging flashlight",m:["rapd","opticneuritis"]},
+  {id:"es6",l:"Argyll Robertson pupil",x:900,y:2270,p:"esPup",s:"tabes dorsalis",m:["lightnear","tabes"]},
+  {id:"es7",l:"Horner syndrome",x:1470,y:2110,p:"esPup",s:"three-neuron chain",m:["horner"]},
+  {id:"es8",l:"Muscarinic drugs",x:1470,y:2190,p:"esRx",s:"atropine · pilocarpine",m:["antimusc","muscagon","glaucomadrugs"]},
+  {id:"es9",l:"α₁ agonists · cocaine",x:1470,y:2270,p:"esRx",s:"phenylephrine · Horner test",m:["alpha1drugs","cocaine"]},
+  {id:"es10",l:"Opioids",x:2040,y:2110,p:"esRx",s:"pinpoint pupils",m:["opioids"]}],
+ edges:[]
+};
+
+MAPS.plexsim = {
+ t:"Brachial Plexus Lesion Simulator", sub:"Roots, trunks, divisions, cords and branches running on into the arm, with each nerve’s muscles and skin — pick a lesion to see the ✕, the signals that stop, the skin that goes numb and the hand or arm sign. Tap a pin for its card",
+ w:3500, h:1720,
+ fa:"450–453, 458, 463, 523",
+ src:["Moore ch 3 — Upper Limb", "Moore ch 1 — Overview and Basic Concepts"],
+ art:"kit",
+ dyn:{"lazy":"78d80a7f03","switches":[{"id":"les","label":"Lesion — pick one","type":"one","options":[["erb","Erb palsy (upper trunk)","erb"],["klump","Klumpke palsy (lower trunk)","klumpke"],["tos","Thoracic outlet syndrome","klumpke"],["lthor","Long thoracic nerve","longthoracic"],["axil","Axillary nerve","axillarynerve"],["mcut","Musculocutaneous nerve","musculocut"],["radial","Radial nerve — midshaft","radialnerve"],["medsc","Median — supracondylar","mediannerve"],["medct","Median — carpal tunnel","carpaltunnel"],["ulnp","Ulnar — medial epicondyle","ulnarnerve"],["ulnd","Ulnar — Guyon canal","ulnarnerve"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+  {x:140,y:1420,w:2210,h:280,l:"Cards for each lesion"}],
+ panels:[
+  {x:2420,y:760,w:1000,h:160,kw:230,t:"Humerus fractures follow the ARM nerves (First Aid p. 450)",rows:[
+   ["Surgical neck","Axillary — flat deltoid, no abduction past 15°"],
+   ["Midshaft (spiral groove)","Radial — wrist drop, triceps spared"],
+   ["Supracondylar","Median — hand of benediction"],
+   ["Medial epicondyle","Ulnar — claw, radial deviation on wrist flexion"],
+   ["Hook of hamate (wrist)","Ulnar — Guyon canal, ulnar claw"]]},
+  {x:2420,y:1000,w:1000,h:138,kw:222,t:"Arm abduction — SALT (First Aid p. 451)",rows:[
+   ["0–15°","Supraspinatus — suprascapular nerve"],
+   ["15–90°","Deltoid — axillary nerve"],
+   ["Above 90°","Trapezius (accessory) · serratus anterior (long thoracic)"],
+   ["Dermatomes (Moore ch 3)","C5 lateral arm · C6 thumb · C7 middle finger · C8 little finger · T1 medial forearm"]]}],
+ nodes:[
+  {id:"ps1",l:"Erb palsy",x:330,y:1490,p:"psUp",s:"upper trunk · waiter’s tip",m:["erb","rotatorcuff"]},
+  {id:"ps2",l:"Long thoracic nerve",x:330,y:1570,p:"psUp",s:"winged scapula",m:["longthoracic"]},
+  {id:"ps3",l:"Axillary nerve",x:330,y:1650,p:"psUp",s:"surgical neck · dislocation",m:["axillarynerve"]},
+  {id:"ps4",l:"Musculocutaneous",x:860,y:1490,p:"psUp",s:"biceps · lateral forearm",m:["musculocut"]},
+  {id:"ps5",l:"Radial nerve",x:860,y:1570,p:"psUp",s:"wrist drop",m:["radialnerve"]},
+  {id:"ps6",l:"Klumpke · thoracic outlet",x:860,y:1650,p:"psLow",s:"lower trunk · claw hand",m:["klumpke","lungca"]},
+  {id:"ps7",l:"Median nerve",x:1390,y:1490,p:"psLow",s:"benediction · ape hand",m:["mediannerve"]},
+  {id:"ps8",l:"Carpal tunnel",x:1390,y:1570,p:"psLow",s:"Tinel · Phalen",m:["carpaltunnel"]},
+  {id:"ps9",l:"Ulnar nerve",x:1390,y:1650,p:"psLow",s:"claw · Guyon canal",m:["ulnarnerve"]},
+  {id:"ps10",l:"Dermatomes",x:1920,y:1490,p:"psExam",k:"hub",s:"C6 thumb · C8 little finger",m:["dermatomes"]},
+  {id:"ps11",l:"Reflexes and roots",x:1920,y:1570,p:"psExam",s:"biceps C5–C6",m:["reflexroots"]}],
+ edges:[]
+};
+
+MAPS.mensflow = {
+ t:"Menstrual Cycle in Motion", sub:"GnRH pulses → FSH and LH → the two-cell ovary → estradiol and progesterone feeding back and building the endometrium, over a 28-day hormone plot — step through the phases, then add the pill, PCOS, menopause, Kallmann, prolactin, pregnancy or a GnRH drug. Tap a receptor for its card",
+ w:3500, h:2260,
+ fa:"331–332, 334, 648–651, 653–654, 656, 662, 673–675",
+ src:["Costanzo ch 10 — Reproductive physiology", "Guyton ch 82 — Female Physiology Before Pregnancy and Female Hormones", "Guyton ch 83 — Pregnancy and Lactation", "Katzung ch 37 — Hypothalamic & Pituitary Hormones", "Katzung ch 40 — The Gonadal Hormones & Inhibitors", "Robbins ch 22 — The female genital tract", "Bootcamp.com Reproduction — Pregnancy and Menstruation", "Bootcamp.com Reproduction — Female Pathology", "Bootcamp.com Reproduction — Pharmacology"],
+ art:"kit",
+ dyn:{"lazy":"870cead767","switches":[{"id":"ph","label":"The cycle, phase by phase","type":"steps","auto":4,"options":[["men","Menses"],["fol","Follicular phase"],["ovu","Ovulation · LH surge"],["lut","Luteal phase"]]},{"id":"dx","label":"Add one drug or disorder","type":"one","options":[["ocp","Combined pill","ocp"],["pop","Progestin only","progonly"],["pcos","PCOS","pcos"],["meno","Menopause","menopause"],["kall","Kallmann syndrome","kallmann"],["prl","Hyperprolactinemia","prolactinoma"],["preg","Pregnancy (hCG)","lutealshift"],["leup","Continuous leuprolide","gnrhanalogues"],["clom","Clomiphene","ovinduction"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:1000,w:1000,h:182,kw:273,t:"The axis in each state (First Aid pp. 653, 656, 662, 674–675; Bootcamp)",rows:[
+   ["Combined pill","GnRH ↓ · FSH ↓ · LH ↓ — no surge, no ovulation"],
+   ["PCOS","LH ↑ · FSH ↓ (LH:FSH ↑) · androgens ↑ · anovulation"],
+   ["Menopause","FSH ↑↑ · LH ↑ (no surge) · GnRH ↑ · estrogen ↓"],
+   ["Kallmann syndrome","GnRH ↓ · FSH ↓ · LH ↓ · estrogen ↓ · anosmia"],
+   ["Hyperprolactinemia","prolactin ⊣ GnRH → FSH ↓ · LH ↓ · amenorrhea"],
+   ["Primary ovarian insufficiency","FSH ↑ · LH ↑ · estrogen ↓ before age 40"]]},
+  {x:2420,y:1220,w:1000,h:138,kw:196,t:"Contraception (First Aid p. 675; Katzung ch 40; Bootcamp)",rows:[
+   ["Estrogen + progestin","pill · patch · ring — no estrogen or LH surge"],
+   ["Progestin only","pill · implant · DMPA · LNG IUD — mucus thick"],
+   ["Copper IUD","hormone-free · toxic to sperm and ova"],
+   ["Emergency","levonorgestrel · ulipristal · copper IUD"]]}],
+ nodes:[
+  {id:"mf1",l:"Pituitary portal system",x:400,y:870,p:"mfAxis",s:"releasing hormones reach the lobe",m:["pitportal","glycoprot"]},
+  {id:"mf2",l:"GnRH: pulses vs continuous",x:400,y:940,p:"mfAxis",k:"hub",s:"leuprolide · degarelix",m:["gnrhanalogues"]},
+  {id:"mf3",l:"Kallmann · prolactin",x:400,y:1010,p:"mfAxis",s:"GnRH absent or suppressed",m:["kallmann","prolactinoma"]},
+  {id:"mf4",l:"Two-cell estrogen synthesis",x:1145,y:1080,p:"mfOvary",s:"theca LH · granulosa FSH",m:["ovsteroid","aromatasei"]},
+  {id:"mf5",l:"LH surge",x:640,y:2000,p:"mfUter",k:"hub",s:"estradiol’s positive feedback",m:["lhsurge"]},
+  {id:"mf6",l:"The menstrual cycle",x:300,y:2000,p:"mfUter",k:"hub",s:"phases · endometrium · BBT",m:["menscycle"]},
+  {id:"mf7",l:"Corpus luteum rescue",x:980,y:2000,p:"mfUter",s:"hCG · luteal–placental shift",m:["lutealshift","hcghpl"]},
+  {id:"mf8",l:"Contraception",x:1320,y:2000,p:"mfRx",s:"combined · progestin-only",m:["ocp","progonly"]},
+  {id:"mf9",l:"PCOS",x:1640,y:2000,p:"mfRx",s:"LH:FSH ↑ · anovulation",m:["pcos","endohyper"]},
+  {id:"mf10",l:"Menopause",x:1960,y:2000,p:"mfRx",s:"FSH ↑↑ · estrogen ↓",m:["menopause","poi"]},
+  {id:"mf11",l:"Ovulation induction",x:300,y:2090,p:"mfRx",s:"clomiphene · letrozole",m:["ovinduction"]},
+  {id:"mf12",l:"Amenorrhea work-up",x:640,y:2090,p:"mfRx",s:"pregnancy first",m:["amenorrhea"]}],
+ edges:[]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["oral","Oral Cavity & Salivary Glands"],["skinbasics","Skin Basics — Layers, Lesions & Terms"],["gidrugs","GI Motility, Laxative & Antiemetic Drugs"],["cardproc","Cardiac Anatomy, Catheters & Vascular Access"],["transfuse","Blood Groups & Transfusion"],["nmjflow","Neuromuscular Junction in Motion"],["synflow","Monoamine Synapse in Motion"],["apflow","Action Potential in Motion"],["bgflow","Basal Ganglia in Motion"],["cordsim","Spinal Cord Lesion Simulator"],["stemsim","Brainstem Lesion Simulator"],["visfield","Visual Pathway Lesion Simulator"],["cardap","Cardiac Action Potential in Motion"],["coagflow","Coagulation Cascade in Motion"],["alvflow","Alveolus in Motion"],["asthflow","Asthma Airway in Motion"],["axisflow","HPA Axis in Motion"],["betaflow","β Cell in Motion"],["follflow","Thyroid Follicle in Motion"],["cochflow","Cochlea in Motion"],["gutabs","Gut Absorption in Motion"],["boneflow","Bone Remodeling in Motion"],["goutflow","Uric Acid & Gout in Motion"],["rajoint","Rheumatoid Joint in Motion"],["vsmotion","Viscerosomatic Reflex in Motion"],["lymphflow","Lymphatic Pump in Motion"],["biliflow","Bilirubin in Motion"],["ironflow","Iron in Motion"],["abflow","Acid–Base in Motion"],["glomsim","Glomerular Disease Locator"],["abxsim","Antibiotic Targets in Motion"],["misim","MI Locator"],["pvflow","Pressure–Volume Loop in Motion"],["edemaflow","Capillary & Edema in Motion"],["hivflow","HIV Life Cycle in Motion"],["eyesim","Pupil & Eye Movement Simulator"],["plexsim","Brachial Plexus Lesion Simulator"],["mensflow","Menstrual Cycle in Motion"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
   ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","iemlab","nucleo","collagen","ctdis","vitamins","cellcycle","cellbio","tissues","molbio","signal","genetics"]],
   ["path","Pathology",["genpath","neoplasia","thromboemb"]],
-  ["cardio","Cardiac",["cardiac","cardcycle","valves","ihd","cardproc","chd","vasc","vascshock","htnrx","rhythm","cardap"]],
+  ["cardio","Cardiac",["cardiac","cardcycle","pvflow","valves","ihd","misim","cardproc","chd","vasc","vascshock","htnrx","rhythm","cardap"]],
   ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","alvflow","highalt","hypoxia","lungdz","asthflow","pleural","lungcancer","respinf","respdrug"]],
-  ["renal","Renal",["nephron","nephflow","fluids","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","histoembryo","glom","glomsim","renvasc","raasrx","buffers","acidbase","abflow","akickd","endocrine"]],
+  ["renal","Renal",["nephron","nephflow","fluids","edemaflow","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","histoembryo","glom","glomsim","renvasc","raasrx","buffers","acidbase","abflow","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","gidrugs","liver","biliflow","gitract","gutabs","oral","abdanat"]],
   ["heme","Heme/Onc",["rbc","ironflow","hemostasis","coagflow","transfuse","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","softtissue","tumark"]],
   ["immuno","Immunology",["immune","innate","lymphdev","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
   ["endo","Endocrine",["axes","axisflow","pitgh","thyroid","follflow","adrenal","hormones","gcpharm","rclass","pancreas","betaflow","fuelstate"]],
-  ["devrepro","Repro & Development",["sexdev","androgen","repro","placenta","obgyn","malerepro","prosobs","embryo"]],
+  ["devrepro","Repro & Development",["sexdev","androgen","repro","mensflow","placenta","obgyn","malerepro","prosobs","embryo"]],
   ["neuro","Neuro",["neurotx","synapse","nmjflow","ans","membrane","apflow","ionchan","spine","cordsim","brainstem","stemsim","chemvisc","motorctl","cerebellum","gaze","weakness","stroke","brainvessels","brainreg","cortex","meninges","basal","bgflow","neuroer","seizhead"]],
   ["behav","Psych & Behavior",["limbmem","psychmse","dsmdx","psychdx","anxtx","psychtx","synflow","psyrxprin","psychsom","somatcare","substance","sleepdev","neurodev"]],
-  ["eent","EENT",["eyecn","anteye","vision","visfield","ent","hearing","cochflow","larynx"]],
-  ["msk","Musculoskeletal",["muscle","bone","boneflow","bonehisto","arthritis","raarth","rajoint","crystals","goutflow","derm","skinbasics","plexus","orthoinj","sportsortho","legfx","footleg","orthowork","neckpain","shoulder","ptrehab","integrative"]],
+  ["eent","EENT",["eyecn","eyesim","anteye","vision","visfield","ent","hearing","cochflow","larynx"]],
+  ["msk","Musculoskeletal",["muscle","bone","boneflow","bonehisto","arthritis","raarth","rajoint","crystals","goutflow","derm","skinbasics","plexus","plexsim","orthoinj","sportsortho","legfx","footleg","orthowork","neckpain","shoulder","ptrehab","integrative"]],
   ["omm","OMM",["vsomatic","vsmotion","lymphflow","neiomm","chapman","omt","lbp","agingomt","chestomt","ommmech","janda","cranial","jones"]],
-  ["id","Infectious",["microlab","abx","abxsim","antiviral","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
+  ["id","Infectious",["microlab","abx","abxsim","antiviral","hivflow","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
   ["pharm","Pharm",["pkpd","cyp","adr","aging","tox","environ","anesth","pain"]],
   ["stats","Biostats & Ethics",["biostats","ethics"]],
   ["sx","Symptoms",["sxchest","sxdyspnea","sxjaundice","sxabdpain","sxdiarrhea","sxurine","sxams"]],
@@ -37675,7 +38003,7 @@ function pinSVG(id,i,x,y){
   const cls="pin"+(done?(PQ[state.view][id]?" pq-ok":" pq-bad"):"")+(due?" due":"")+(kn&&HIDEKNOWN?" known":"")+(lowY(id)?" lowy":"");
   const tip=ask?"Which lesion is this?":L.n+(due?" — due for review":"")+(kn?" — marked known":"");
   const aria=ask?"Unnamed pin — which lesion is this?":L.n+(due?", due for review":"");
-  return `<g class="${cls}" data-les="${id}" tabindex="0" role="button" aria-label="${esc(aria).replace(/"/g,"&quot;")}" transform="translate(${px.toFixed(1)} ${y.toFixed(1)})"><title>${esc(tip)}</title>${due?'<circle class="duering" r="14"/>':""}${shape}<text>${g}</text></g>`;
+  return `<g class="${cls}" data-les="${id}" tabindex="0" role="button" aria-label="${esc(aria).replace(/"/g,"&quot;")}" transform="translate(${px.toFixed(1)} ${y.toFixed(1)})"><title>${esc(tip)}</title><circle class="phit" r="17"/>${due?'<circle class="duering" r="14"/>':""}${shape}<text>${g}</text></g>`;
 }
 /* While naming pins, a label beside an unanswered pin must not spell out the
    answer ("Vancomycin caps D-Ala-D-Ala"), so its name words are blanked. */
@@ -38793,6 +39121,14 @@ const PLOTCARDS={apnodal:["apphases","class4","avblock"],apventric:["apphases","
   dyannet:["fluidshifts","fluidcomp","plasmaosm","tonicity"],clearance:["gfrcalc","erpf","glucthresh"],difflim:["respmem","pulmcirc"],
   kpot:["eqpot","rmp","hyperk"],aldoesc:["aldoescape","conn","addison"],catbolus:["epine","alpha1drugs","adrmed"]};
 /* the graphs that use a card — the card lists them */
+/* "See it move" on a card: each moving map with a switch about this card (opens with it on), else each moving
+   map that pins it (opens as it is) — the switches stay in the page even while a drawing is lazy */
+function movesOf(id){ const out=[], seen=new Set();
+  VIEWS.forEach(([v,title])=>{ const m=MAPS[v]; if(!m||m.art!=="kit"||!m.dyn) return;
+    (m.dyn.switches||[]).forEach(s=>(s.options||[]).forEach(o=>{ if(o[2]===id&&!seen.has(v)){ seen.add(v); out.push({v,title,str:s.id+":"+o[0],l:o[1]}); } })); });
+  VIEWS.forEach(([v,title])=>{ const m=MAPS[v]; if(!m||m.art!=="kit"||seen.has(v)) return;
+    if((m.nodes||[]).some(n=>(n.m||[]).includes(id))){ seen.add(v); out.push({v,title,str:"",l:""}); } });
+  return out; }
 function graphsOf(id){ const out=[];
   VIEWS.forEach(([v])=>{ const m=MAPS[v]; ((m&&m.plots)||[]).forEach((p,i)=>{ if((PLOTCARDS[p.kind]||[]).includes(id)) out.push([v,i,p]); }); });
   return out; }
@@ -39689,6 +40025,7 @@ function openLes(id,center,pick){
    <div class="dbody">
      ${res}
      ${pick===undefined?practiceHtml(id):""}
+     ${(ms=>ms.length?sec("See it move",`<div class="pagehits">${ms.map(x=>`<button class="pagehit" data-dyngo="${x.v}|${x.str}">${esc(x.l||x.title)}<span class="galn"> · ${esc(x.l?x.title:"moving map")}</span></button>`).join("")}</div>`):"")(movesOf(id))}
      ${(gs=>gs.length?sec("Graphs",`<div class="pagehits">${gs.map(([v,i,p])=>`<button class="pagehit" data-plotgo="${v}:${i}">${esc(p.t)}<span class="galn"> · ${esc((VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1])}</span></button>`).join("")}</div>`):"")(graphsOf(id))}
      ${L.enz?sec("Enzyme / step",`<p><b>${esc(L.enz)}</b></p>`):""}
      ${L.mech?sec("Mechanism",`<div class="mechbox"><p>${L.mech}</p></div>`):""}
@@ -39706,6 +40043,7 @@ function openLes(id,center,pick){
   drawer.querySelectorAll("[data-also]").forEach(b=>b.onclick=()=>{ setView(b.dataset.also); openLes(id,true); });
   drawer.querySelectorAll("[data-plotgo]").forEach(b=>b.onclick=()=>{ const [v,i]=b.dataset.plotgo.split(":");
     if(matchMedia("(max-width: 760px)").matches) closeDrawer(); goPlot(v,+i); });
+  drawer.querySelectorAll("[data-dyngo]").forEach(b=>b.onclick=()=>{ closeDrawer(); goSwitch(b.dataset.dyngo); });
   document.getElementById("drev").onclick=ev=>{ const on=!isRev(id); setRev(id,on);
     ev.currentTarget.setAttribute("aria-pressed",String(on)); ev.currentTarget.textContent=on?"✓ Reviewed":"Mark reviewed";
     renderRail(); if(state.view==="index") renderIndex(); };
@@ -40827,8 +41165,11 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   nephflow:"2026-10-09",
   oral:"2026-10-09",skinbasics:"2026-10-09",gidrugs:"2026-10-09",cardproc:"2026-10-09",transfuse:"2026-10-09",
   nmjflow:"2026-10-09",synflow:"2026-10-09",apflow:"2026-10-09",bgflow:"2026-10-09",cordsim:"2026-10-09",stemsim:"2026-10-09",visfield:"2026-10-09",cardap:"2026-10-09",coagflow:"2026-10-09",alvflow:"2026-10-09",asthflow:"2026-10-09",axisflow:"2026-10-09",betaflow:"2026-10-09",follflow:"2026-10-09",cochflow:"2026-10-09",gutabs:"2026-10-09",boneflow:"2026-10-09",goutflow:"2026-10-09",rajoint:"2026-10-09",vsmotion:"2026-10-09",lymphflow:"2026-10-09",
-  biliflow:"2026-10-09",ironflow:"2026-10-09",abflow:"2026-10-09",glomsim:"2026-10-09",abxsim:"2026-10-09"};
+  biliflow:"2026-10-09",ironflow:"2026-10-09",abflow:"2026-10-09",glomsim:"2026-10-09",abxsim:"2026-10-09",
+  misim:"2026-10-09",pvflow:"2026-10-09",edemaflow:"2026-10-09",hivflow:"2026-10-09",eyesim:"2026-10-09",plexsim:"2026-10-09",mensflow:"2026-10-09"};
 const WHATSNEW=[
+  ["2026-10-09","New moving maps — <b>MI Locator</b> (Cardiac), <b>Pressure–Volume Loop in Motion</b> (Cardiac), <b>Capillary &amp; Edema in Motion</b> (Renal), <b>HIV Life Cycle in Motion</b> (Infectious), <b>Pupil &amp; Eye Movement Simulator</b> (EENT), <b>Brachial Plexus Lesion Simulator</b> (MSK), <b>Menstrual Cycle in Motion</b> (Repro)."],
+  ["2026-10-09","On a phone, a map now opens on its first section at a readable size, with a <b>Sections</b> bar to jump around; cards on a moving map get <b>See it move</b>, which opens the map with that card’s switch on."],
   ["2026-10-09","Every moving map now has <b>Predict the arrows</b>: hide the results, guess ↑ ↓ ↔, then check. On a phone the switches sit in a sheet under the map; search finds a map’s switches (“hemophilia”, “warfarin”), the address keeps the switches you set, and practice questions offer <b>See it move</b>."],
   ["2026-10-09","New moving maps — <b>Bilirubin in Motion</b> (GI), <b>Iron in Motion</b> (Heme/Onc), <b>Acid–Base in Motion</b> (Renal), <b>Glomerular Disease Locator</b> (Renal), <b>Antibiotic Targets in Motion</b> (Infectious)."],
   ["2026-10-09","New: 21 drawn maps that move, like Nephron in Motion — flip a drug, disease or lesion switch and watch what changes. Neuro: <b>Neuromuscular Junction in Motion</b>, <b>Action Potential in Motion</b>, <b>Basal Ganglia in Motion</b>, <b>Spinal Cord Lesion Simulator</b>, <b>Brainstem Lesion Simulator</b> · Psych: <b>Monoamine Synapse in Motion</b> · EENT: <b>Visual Pathway Lesion Simulator</b>, <b>Cochlea in Motion</b> · Cardiac: <b>Cardiac Action Potential in Motion</b> · Heme/Onc: <b>Coagulation Cascade in Motion</b> · Pulmonary: <b>Alveolus in Motion</b>, <b>Asthma Airway in Motion</b> · Endocrine: <b>HPA Axis in Motion</b>, <b>β Cell in Motion</b>, <b>Thyroid Follicle in Motion</b> · GI: <b>Gut Absorption in Motion</b> · MSK: <b>Bone Remodeling in Motion</b>, <b>Uric Acid &amp; Gout in Motion</b>, <b>Rheumatoid Joint in Motion</b> · OMM: <b>Viscerosomatic Reflex in Motion</b>, <b>Lymphatic Pump in Motion</b>."],
@@ -40938,7 +41279,7 @@ function setView(v){
   document.querySelector(".hint").hidden=isIdx;
   renderNav();
   if(isIdx) renderIndex(); else render();
-  dynSheetRender(); if(!isIdx) dynFrame();
+  dynSheetRender(); if(!isIdx){ dynFrame(); phoneFrame(); } else secbarRender();
   miniView();
   renderRail(); updateScore(); writeHash();
   if(state.info){ if(isIdx) closeDrawer(); else openMapInfo(); }
@@ -41128,13 +41469,40 @@ function walkGo(i){
   const visW=(rgt-lft)/(k*z), cx=visW<b.w?b.x+visW/2:b.x+b.w/2, cy=b.y+b.h/2, P=toVB((lft+rgt)/2,(top+bot)/2);
   state.z=z; state.tx=P.x-cx*z; state.ty=P.y-cy*z; applyCam(); walkDim();
 }
+/* ── phones (≤ 1000 px): a static map opens framed on its first section at a readable size (like Walk, without the
+   panel), and a Sections bar along the bottom jumps between sections. Fit still shows the whole map. ── */
+let SECI=0;
+function frameSection(b){
+  const m=MAPS[state.view], r=svg.getBoundingClientRect(); if(!m||!r.width||!r.height) return;
+  const k=Math.min(r.width/m.w,r.height/m.h)||1, pad=1.15, top=r.top+8, bot=r.bottom-110, lft=r.left+8, rgt=r.right-8;
+  let z=Math.min((rgt-lft)/(k*b.w*pad),(bot-top)/(k*b.h*pad));
+  if(innerWidth<=700) z=Math.max(z,0.5/k);
+  z=Math.min(6,Math.max(.35,z));
+  const visW=(rgt-lft)/(k*z), cx=visW<b.w?b.x+visW/2:b.x+b.w/2, cy=b.y+b.h/2, P=toVB((lft+rgt)/2,(top+bot)/2);
+  state.z=z; state.tx=P.x-cx*z; state.ty=P.y-cy*z; applyCam();
+}
+function secbarRender(){
+  const el=document.getElementById("secBar"); if(!el) return;
+  const v=state.view, m=MAPS[v];
+  if(v==="index"||!m||m.art==="kit"||WALK||innerWidth>1000){ el.hidden=true; return; }
+  const steps=walkSteps(v); if(steps.length<2){ el.hidden=true; return; }
+  el.hidden=false;
+  el.innerHTML=steps.map((s,i)=>`<button class="sb${i===SECI?" on":""}" data-sec="${i}">${esc(s.t)}</button>`).join("");
+  el.querySelectorAll("[data-sec]").forEach(b=>b.onclick=()=>{ SECI=+b.dataset.sec; frameSection(steps[SECI].box);
+    el.querySelectorAll(".sb").forEach((x,j)=>x.classList.toggle("on",j===SECI)); });
+}
+function phoneFrame(){
+  SECI=0; secbarRender();
+  const m=MAPS[state.view]; if(!m||m.art==="kit"||innerWidth>1000||WALK) return;
+  const steps=walkSteps(state.view); if(steps.length) frameSection(steps[0].box);
+}
 function startWalk(){
   if(state.view==="index"||!MAPS[state.view]) return;
   const steps=walkSteps(state.view); if(!steps.length) return;
-  closeDrawer(); WALK={v:state.view,i:0,steps}; walkGo(0);
+  closeDrawer(); WALK={v:state.view,i:0,steps}; walkGo(0); secbarRender();
 }
 function endWalk(quiet){
-  WALK=null; walkEl.hidden=true; walkEl.innerHTML="";
+  WALK=null; walkEl.hidden=true; walkEl.innerHTML=""; secbarRender();
   svg.querySelectorAll(".node.wdim").forEach(el=>el.classList.remove("wdim"));
   if(!quiet){ state.z=1; state.tx=0; state.ty=0; applyCam(); }
 }

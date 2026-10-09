@@ -321,6 +321,10 @@ m40 additions:
 - **Predict the arrows:** a chip on every moving map with readouts; the reader guesses ↑ ↓ ↔, then Check.
 - **Phones (≤ 1000 px):** the switches, arrows and note sit in a docked sheet (#dynSheet) — a slim "peek"
   bar by default, "Switches ▴" for all of them; a moving map opens framed on its drawing (dynFrame).
+m41 additions: a card that's on a moving map gets **See it move** (movesOf — the map with that card's switch on,
+else the map); on phones every static map opens on its first Walk section at a readable size (phoneFrame /
+frameSection), a **Sections** bar (#secBar) jumps between sections, and pins get a bigger tap ring (.phit,
+pointer:coarse only). Batch scripts: atlas-review/batches/m41 (engine41.py, assemble.py from base-src.html).
 A card opened from a transporter (or from a graph's card link — anything with `data-plotles`)
 keeps the map where it is: the click records that spot as KEEP_PT and flashPins() only
 slides the map if the card panel now covers it, instead of taking the reader to the card's
