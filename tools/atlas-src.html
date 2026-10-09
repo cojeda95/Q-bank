@@ -37369,10 +37369,18 @@ function readHash(){
     if(!booted) setView(b);
     goPlot(b,i); return true;
   }
+  /* #quiz/<mode> — Daily mix, Due cards and Graph mix from the hub's home page, on the map you last had open */
+  if(a==="quiz"){
+    if(!["mix","due","graphs"].includes(b)) return false;
+    if(!booted){ let v="core"; try{ const s=localStorage.getItem("mla-view"); if(s&&VIEWS.some(x=>x[0]===s)) v=s; }catch(e){} setView(v); }
+    setQuiz(b); return true;
+  }
   if(b){
     if(!isView(a)) return false;
     if(state.view!==a||!booted) setView(a);
     if(LES[b]){ if(a==="index") openLes(b,false); else gotoLes(b); }
+    /* #<map>/quiz — "Quiz this map" on the hub's home page: the map, with the Quiz menu open */
+    else if(b==="quiz"&&a!=="index") setTimeout(()=>quizBtn.click(),0);
     return true;
   }
   if(isView(a)){ setView(a); return true; }
@@ -37885,6 +37893,10 @@ function renderNav(){
   tabsEl.querySelectorAll(".tab").forEach(b=>b.onclick=()=>setView(b.dataset.v));
   [topicsEl,tabsEl].forEach(el=>{ const cur=el.querySelector('[aria-selected="true"]');
     if(cur) el.scrollLeft=Math.max(0,cur.offsetLeft-el.clientWidth/2+cur.offsetWidth/2); });
+  /* the header names the open map and its system — the hub's header above it already says Lesion Atlas */
+  const bh=document.querySelector(".hdr .brand h1"), bs=document.querySelector(".hdr .brand .sub");
+  if(bh) bh.textContent=state.view==="index"?"Every card, A–Z":((MAPS[state.view]||{}).t||"Lesion Atlas");
+  if(bs) bs.textContent=state.view==="index"?"Index":((TOPICS.find(x=>x[0]===t)||[0,"Lesion Atlas"])[1]);
 }
 
 /* ── views & camera ─────────────────────────────────── */

@@ -4,113 +4,184 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OCOM Question Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600&display=swap" rel="stylesheet">
 <style>
   :root {
     --navy: #1f4e79;
     --navy-dark: #163a5a;
-    --grey-text: #555555;
-    --grey-border: #dddddd;
-    --bg: #fafafa;
+    --grey-text: #5b5f58;
+    --grey-border: #deddd6;
+    --line-soft: #ecebe5;
+    --bg: #fafaf7;
     --card-bg: #ffffff;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --hero-bg: #1f4e79;
+    --hero-btn: #20231f;
+    --teal: #1f6f68;
+    --shadow: 0 18px 40px rgba(10, 20, 30, 0.22);
+    /* the atlas's pathway colours, for the map sketch in "Pick up where you left off" */
+    --p-glycolysis: #2c6e9b; --p-gluconeo: #7a55a0; --p-ppp: #17796e; --p-glycogen: #94701f;
+    --p-sugars: #9b4278; --p-tca: #39784f; --p-etc: #55646f; --p-neutral: #6b7570;
+    --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+    font-family: var(--sans);
+  }
+  @media screen {
+    :root[data-theme="dark"] {
+      --bg: #15171a;
+      --line-soft: #2a2f36;
+      --hero-bg: #1b2a3b;
+      --hero-btn: #0f1216;
+      --teal: #6fc4b4;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      --p-glycolysis: #79b2db; --p-gluconeo: #bfa0e2; --p-ppp: #4cc4b0; --p-glycogen: #d3ac55;
+      --p-sugars: #e08fc0; --p-tca: #6fc492; --p-etc: #a3b0a8; --p-neutral: #94a099;
+    }
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
-  .topbar { background: var(--topbar-bg); color: #fff; padding: 14px 16px; }
-  .topbar-inner { max-width: 800px; margin: 0 auto; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .container { max-width: 800px; margin: 0 auto; padding: 30px 16px 60px; }
-  h1 { font-size: 1.5rem; color: var(--navy); margin: 8px 0 4px; }
-  p.subtitle { color: var(--grey-text); margin-top: 0; }
-  .block-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
-  .block-card {
-    background: var(--card-bg);
-    border: 1px solid var(--grey-border);
-    border-radius: 12px;
-    padding: 20px;
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    transition: box-shadow 0.15s, transform 0.15s;
-  }
-  .block-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
-  .block-card.disabled { opacity: 0.5; pointer-events: none; }
-  .block-card.featured { border: 2px solid var(--navy); padding: 19px; }
-  .block-title { font-weight: 700; font-size: 1.15rem; color: var(--navy); }
-  .block-desc { font-size: 0.9rem; color: var(--grey-text); margin-top: 4px; }
-  .block-due { display: inline-block; margin-top: 10px; padding: 4px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; color: var(--navy); border: 1px solid var(--navy); }
-  .block-due[hidden] { display: none; }
-  .footer { text-align: center; padding: 20px; font-size: 0.8rem; color: var(--text-faint); }
+  a { color: var(--navy); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 1.5rem; margin: 0; color: var(--text); }
+  .kicker { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--grey-text); }
 
-  .section-label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-faint);
-    margin: 32px 0 10px;
-  }
-  .sync-card {
-    background: var(--card-bg);
-    border: 1px solid var(--grey-border);
-    border-radius: 12px;
-    padding: 18px 20px;
-  }
-  .sync-hint { font-size: 0.88rem; color: var(--grey-text); line-height: 1.5; margin: 0 0 12px; }
-  .sync-pin-display { font-size: 0.95rem; margin-bottom: 6px; }
-  .sync-pin { font-weight: 700; font-size: 1.15rem; letter-spacing: 0.12em; color: var(--navy); }
-  .sync-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
-  .sync-btn {
-    background: var(--navy-fill);
-    color: #fff;
-    border: none;
-    padding: 9px 16px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    cursor: pointer;
-  }
-  .sync-btn:hover { background: var(--navy-dark); }
-  .sync-btn.secondary { background: var(--input-bg); color: var(--navy); border: 1px solid var(--navy); }
-  .sync-enter-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-  .sync-pin-input {
-    border: 1px solid var(--grey-border);
-    border-radius: 8px;
-    padding: 9px 12px;
-    font-size: 0.95rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    width: 140px;
-    background: var(--input-bg);
-    color: var(--text);
-  }
-  .sync-status { font-size: 0.85rem; color: var(--grey-text); margin-top: 10px; min-height: 1.2em; }
+  /* header — theme.js adds the ◐ toggle to .topbar-inner */
+  .topbar { background: var(--bg); }
+  .topbar-inner { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+  .brand { font-family: var(--serif); font-weight: 600; font-size: 1.25rem; color: var(--text); text-decoration: none; }
+  .mainnav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 0.95rem; font-weight: 500; margin-left: auto; }
+  .mainnav a { color: var(--text); text-decoration: none; padding: 6px 0; }
+  .mainnav a:hover { color: var(--navy); text-decoration: underline; text-underline-offset: 5px; }
+  .mainnav a.primary { color: var(--navy); font-weight: 600; }
+  .topbar .theme-btn { border-color: var(--grey-border); color: var(--text); }
+  .topbar .theme-btn:hover { background: var(--line-soft); }
 
-  .announce-banner {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background: var(--amber-bg);
-    border: 1px solid var(--amber-line);
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin: 18px 0 0;
-    font-size: 0.92rem;
-    line-height: 1.45;
-    color: var(--amber-ink);
-  }
-  .announce-banner .announce-icon { flex-shrink: 0; font-size: 1.05rem; line-height: 1.3; }
-  .announce-banner .announce-date { font-weight: 700; margin-right: 6px; }
-  /* Use Offline — save every page into the service worker's cache (sw.js, CACHE) */
-  .offline-card { display: flex; align-items: center; gap: 14px; background: var(--card-bg, #fff); border: 1px solid var(--grey-border, #ddd); border-radius: 12px; padding: 16px 18px; }
-  .offline-text { flex: 1; min-width: 0; }
-  .offline-btn { flex: none; font: inherit; font-weight: 600; font-size: 0.92rem; padding: 9px 18px; border-radius: 999px; border: 1px solid var(--navy-fill); background: var(--navy-fill); color: #fff; cursor: pointer; }
-  .offline-btn:disabled { opacity: .6; cursor: default; }
-  .offline-bar { margin-top: 10px; height: 6px; border-radius: 999px; background: var(--track, #e0e0e0); overflow: hidden; }
-  .offline-bar span { display: block; height: 100%; width: 0; background: var(--navy-fill); transition: width .2s; }
-  @media (max-width: 520px) { .offline-card { flex-direction: column; align-items: stretch; } .offline-btn { width: 100%; } }
-  .offline-detail { margin-top: 6px; }
+  /* hero: search, with the map you were on beside it */
+  .hero { background: var(--hero-bg); color: #fff; }
+  .hero-in { max-width: 1200px; margin: 0 auto; padding: 52px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 40px; }
+  .hero-main { flex: 1 1 500px; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+  .hero .eyebrow { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+  .hero h1 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 2.75rem; line-height: 1.1; }
+  .hero .lede { margin: 0; font-size: 1.06rem; line-height: 1.5; opacity: 0.92; }
+  .search { display: flex; flex-wrap: wrap; gap: 10px; }
+  .sbox { position: relative; flex: 1 1 320px; min-width: 0; }
+  .sbox input { width: 100%; height: 56px; padding: 0 20px; border: 0; border-radius: 14px; font: inherit; font-size: 1.06rem; color: #20231f; background: #fff; }
+  .sbox input:focus { outline: 3px solid rgba(255, 255, 255, 0.55); outline-offset: 2px; }
+  .search > button { height: 56px; padding: 0 26px; border: 0; border-radius: 14px; background: var(--hero-btn); color: #fff; font: inherit; font-weight: 600; font-size: 1rem; cursor: pointer; }
+  .search > button:hover { filter: brightness(1.25); }
+  .sresults { position: absolute; z-index: 20; top: calc(100% + 8px); left: 0; right: 0; max-height: min(60vh, 520px); overflow: auto; background: var(--card-bg); color: var(--text); border: 1px solid var(--grey-border); border-radius: 14px; box-shadow: var(--shadow); padding: 6px 0; }
+  .sresults[hidden] { display: none; }
+  .sgroup { padding: 8px 16px 4px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--grey-text); }
+  .sopt { display: flex; flex-direction: column; gap: 1px; padding: 8px 16px; text-decoration: none; color: var(--text); }
+  .sopt b { font-weight: 600; }
+  .sopt span { font-size: 0.82rem; color: var(--grey-text); }
+  .sopt:hover, .sopt.on { background: var(--surface-hover); }
+  .snone { padding: 12px 16px; font-size: 0.9rem; color: var(--grey-text); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips a { padding: 8px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.16); color: #fff; font-size: 0.9rem; text-decoration: none; }
+  .chips a:hover { background: rgba(255, 255, 255, 0.28); }
+
+  .pickup { flex: 1 1 420px; min-width: 0; background: var(--card-bg); color: var(--text); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow); }
+  .pickup[hidden] { display: none; }
+  #pickupBody { display: flex; flex-direction: column; gap: 12px; }
+  .pk-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+  .pk-meta { font-size: 0.85rem; color: var(--grey-text); }
+  .pk-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; color: var(--text); text-decoration: none; }
+  .pk-title:hover { color: var(--navy); }
+  .pk-sketch { display: block; width: 100%; height: auto; background: var(--bg); border-radius: 12px; }
+  .pk-sketch .lane-l { font: 600 10.5px var(--sans); letter-spacing: 0.04em; fill: var(--grey-text); }
+  .pk-sketch .node rect { fill: var(--card-bg); stroke-width: 1.4; }
+  .pk-sketch .node text { font: 600 11px var(--sans); fill: var(--text); }
+  .pk-sketch .link { stroke-width: 1.6; fill: none; }
+  .pk-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn { display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 10px; background: var(--navy-fill); color: #fff; font-weight: 600; font-size: 0.95rem; text-decoration: none; border: 1px solid var(--navy-fill); }
+  .btn:hover { background: var(--navy-dark); }
+  .btn.ghost { background: transparent; color: var(--text); border-color: var(--grey-border); }
+  .btn.ghost:hover { background: var(--surface-hover); }
+
+  /* atlas column + announcements rail */
+  .cols { padding-top: 40px; padding-bottom: 24px; display: flex; flex-wrap: wrap; gap: 32px; }
+  .col-main { flex: 999 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 36px; }
+  .col-side { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .col-main section { display: flex; flex-direction: column; gap: 14px; }
+  .sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+  .sec-head a { font-size: 0.95rem; font-weight: 600; }
+
+  .today { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .tile { background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--text); text-decoration: none; }
+  a.tile:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+  .tile .big { font-family: var(--serif); font-size: 2.5rem; font-weight: 600; line-height: 1; color: var(--teal); }
+  .tile .t { font-size: 0.95rem; font-weight: 600; line-height: 1.35; }
+  .tile .d { font-size: 0.82rem; color: var(--grey-text); line-height: 1.45; }
+  .tile .go { margin-top: auto; padding-top: 8px; font-size: 0.9rem; font-weight: 600; color: var(--navy); text-decoration: none; }
+  .tile .go-row { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .tile .go-row a { font-size: 0.9rem; font-weight: 600; text-decoration: none; }
+  .tile .go-row a:hover, .tile .t a:hover { text-decoration: underline; }
+  .tile .t a { color: var(--text); text-decoration: none; }
+  .g-glyph { display: block; width: 100%; height: auto; margin: 2px 0; }
+  .g-glyph .ax { stroke: var(--text-faint); stroke-width: 1; fill: none; }
+  .g-glyph .c1 { stroke: var(--navy); stroke-width: 2; fill: none; }
+  .g-glyph .c2 { stroke: var(--teal); stroke-width: 2; fill: none; }
+  .newlist { margin: 0; padding-left: 18px; font-size: 0.85rem; line-height: 1.65; }
+  .newlist a { color: var(--text-strong); text-decoration: none; }
+  .newlist a:hover { color: var(--navy); text-decoration: underline; }
+
+  .systems { display: grid; grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); gap: 10px; }
+  .sys { --c: var(--navy); background: var(--card-bg); border: 1px solid var(--grey-border); border-left: 4px solid var(--c); border-radius: 12px; display: flex; flex-direction: column; }
+  :root[data-theme="dark"] .sys { border-left-color: color-mix(in srgb, var(--c) 55%, #fff); }
+  .sys-main { flex: 1; padding: 12px 14px; display: flex; flex-direction: column; gap: 3px; text-decoration: none; color: var(--text); border-radius: 0 11px 11px 0; }
+  .sys-main:hover { background: var(--surface-hover); }
+  .sys-main b { font-size: 0.95rem; font-weight: 600; }
+  .sys-main span { font-size: 0.82rem; color: var(--grey-text); }
+  .sys-x { margin: -6px 14px 10px; font-size: 0.82rem; font-weight: 600; text-decoration: none; }
+  .sys-x:hover { text-decoration: underline; }
+
+  .news { background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 14px; overflow: hidden; }
+  .news-head { padding: 16px 20px; border-bottom: 1px solid var(--line-soft); }
+  .news-head h2 { font-family: var(--sans); font-size: 1.06rem; }
+  .ann { padding: 14px 20px; border-bottom: 1px solid var(--line-soft); display: flex; flex-direction: column; gap: 5px; }
+  .ann:last-child { border-bottom: 0; }
+  .ann.pinned { background: var(--amber-bg); }
+  .ann-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .ann-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; background: var(--track-soft); color: var(--text-strong); }
+  .ann.pinned .ann-tag.pin { background: var(--amber-line); color: var(--amber-ink); }
+  .ann-date { font-size: 0.82rem; font-weight: 600; color: var(--grey-text); }
+  .ann p { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--text-strong); }
+  .older > summary { padding: 12px 20px; cursor: pointer; font-size: 0.9rem; font-weight: 600; color: var(--navy); list-style: none; border-top: 1px solid var(--line-soft); }
+  .older > summary::-webkit-details-marker { display: none; }
+  .older[open] > summary { border-bottom: 1px solid var(--line-soft); }
+  .news-empty { padding: 16px 20px; font-size: 0.9rem; color: var(--grey-text); }
+
+  .side-card { background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; color: var(--text); text-decoration: none; }
+  a.side-card:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+  .side-title { font-size: 1rem; font-weight: 600; line-height: 1.35; }
+  .side-desc { font-size: 0.88rem; color: var(--grey-text); line-height: 1.45; }
+  .side-go { font-size: 0.92rem; font-weight: 600; color: var(--navy); }
+  .continue-card[hidden] { display: none; }
+  /* Exam countdown — your exam dates (this device only) and the pace to finish each exam (script at the end) */
+  .countdown-card > summary { display: flex; flex-direction: column; gap: 6px; cursor: pointer; list-style: none; }
+  .countdown-card > summary::-webkit-details-marker { display: none; }
+  .countdown-card > summary .side-go::after { content: " ▾"; }
+  .countdown-card[open] > summary .side-go::after { content: " ▴"; }
+  .cd-list { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 12px; }
+  .cd-block-name { font-weight: 600; font-size: 0.92rem; margin-bottom: 4px; }
+  .cd-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.88rem; padding: 3px 0; }
+  .cd-row input { font: inherit; font-size: 0.85rem; padding: 4px 6px; border: 1px solid var(--grey-border); border-radius: 8px; background: var(--card-bg); color: inherit; min-width: 0; }
+  .cd-note { margin-top: 12px; font-size: 0.82rem; color: var(--grey-text); }
+
+  /* blocks */
+  .blocks { padding-top: 24px; padding-bottom: 40px; display: flex; flex-direction: column; gap: 14px; }
+  .block-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+  .block-card { background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 12px; padding: 14px 16px; text-decoration: none; color: inherit; display: block; transition: box-shadow 0.15s; }
+  .block-card:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+  .block-title { font-weight: 600; font-size: 1rem; color: var(--text); }
+  .block-desc { font-size: 0.85rem; color: var(--grey-text); margin-top: 3px; line-height: 1.45; }
   /* Block tiles: your progress and offline status (script at the end) */
   .block-meta { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: 10px; }
   .block-meta:empty { display: none; }
-  .bm { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--grey-border); color: var(--grey-text); }
+  .bm { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; border: 1px solid var(--grey-border); color: var(--grey-text); }
   .bm.prog { color: var(--navy); border-color: var(--navy); }
   .bm.exr { color: var(--navy); font-weight: 500; }
   .bm.saved { color: var(--green); border-color: currentColor; }
@@ -119,56 +190,151 @@
   .bm.savebtn { cursor: pointer; color: var(--navy); border-color: var(--navy); background: var(--card-bg); }
   .bm.savebtn:hover, .bm.savebtn:focus-visible { background: var(--navy); color: #fff; outline: none; }
   .bm.savebtn[aria-disabled="true"] { opacity: .6; cursor: default; }
-  /* Continue where you left off (script at the end) */
-  .continue-card { display: flex; align-items: center; gap: 14px; margin-top: 18px; border: 2px solid var(--navy); }
-  .continue-card[hidden] { display: none; }
-  .continue-card .cc-icon { font-size: 1.3rem; flex: none; }
-  .continue-card .cc-text { flex: 1; min-width: 0; }
-  .continue-card .cc-text > span { display: block; }
-  /* Exam countdown — your exam dates (this device only) and the pace to finish each exam (script at the end) */
-  .countdown-card { margin-top: 18px; }
-  .countdown-card:hover { transform: none; }
-  .countdown-card > summary { display: flex; align-items: center; gap: 14px; cursor: pointer; list-style: none; }
-  .countdown-card > summary::-webkit-details-marker { display: none; }
-  .countdown-card > summary .cc-icon { font-size: 1.3rem; flex: none; }
-  .countdown-card > summary .cc-text { flex: 1; min-width: 0; }
-  .countdown-card > summary .cc-text > span { display: block; }
-  .countdown-card > summary::after { content: "▾"; color: var(--text-faint); flex: none; }
-  .countdown-card[open] > summary::after { content: "▴"; }
-  .cd-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px 22px; margin-top: 14px; }
-  .cd-block-name { font-weight: 600; font-size: 0.92rem; margin-bottom: 4px; }
-  .cd-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.88rem; padding: 3px 0; }
-  .cd-row input { font: inherit; font-size: 0.85rem; padding: 4px 6px; border: 1px solid var(--grey-border); border-radius: 8px; background: var(--card-bg); color: inherit; min-width: 0; }
-  .cd-note { margin-top: 12px; }
   .bm.cd { color: var(--amber-ink); border-color: var(--amber-line); background: var(--amber-bg); }
+
+  /* sync and offline, at the foot of the page (the header links jump here) */
+  .settings { padding-top: 16px; padding-bottom: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+  .settings h2 { font-size: 1.2rem; margin-bottom: 12px; }
+  .sync-card { background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 12px; padding: 18px 20px; }
+  .sync-hint { font-size: 0.88rem; color: var(--grey-text); line-height: 1.5; margin: 0 0 12px; }
+  .sync-pin-display { font-size: 0.95rem; margin-bottom: 6px; }
+  .sync-pin { font-weight: 700; font-size: 1.15rem; letter-spacing: 0.12em; color: var(--navy); }
+  .sync-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  .sync-btn { background: var(--navy-fill); color: #fff; border: none; padding: 9px 16px; border-radius: 8px; font: inherit; font-size: 0.9rem; cursor: pointer; }
+  .sync-btn:hover { background: var(--navy-dark); }
+  .sync-btn.secondary { background: var(--input-bg); color: var(--navy); border: 1px solid var(--navy); }
+  .sync-enter-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .sync-pin-input { border: 1px solid var(--grey-border); border-radius: 8px; padding: 9px 12px; font: inherit; font-size: 0.95rem; letter-spacing: 0.1em; text-transform: uppercase; width: 140px; background: var(--input-bg); color: var(--text); }
+  .sync-status { font-size: 0.85rem; color: var(--grey-text); margin-top: 10px; min-height: 1.2em; }
+  /* Use Offline — save every page into the service worker's cache (sw.js, CACHE) */
+  .offline-card { display: flex; align-items: center; gap: 14px; background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 12px; padding: 16px 18px; }
+  .offline-text { flex: 1; min-width: 0; }
+  .offline-btn { flex: none; font: inherit; font-weight: 600; font-size: 0.92rem; padding: 9px 18px; border-radius: 999px; border: 1px solid var(--navy-fill); background: var(--navy-fill); color: #fff; cursor: pointer; }
+  .offline-btn:disabled { opacity: .6; cursor: default; }
+  .offline-bar { margin-top: 10px; height: 6px; border-radius: 999px; background: var(--track); overflow: hidden; }
+  .offline-bar span { display: block; height: 100%; width: 0; background: var(--navy-fill); transition: width .2s; }
+  .offline-detail { margin-top: 6px; }
+  .footer { max-width: 1200px; margin: 0 auto; text-align: center; padding: 8px 24px 32px; font-size: 0.8rem; color: var(--text-faint); line-height: 1.5; }
+
+  @media (max-width: 640px) {
+    .wrap, .topbar-inner { padding-left: 16px; padding-right: 16px; }
+    .topbar-inner { padding-top: 12px; padding-bottom: 6px; gap: 6px 12px; }
+    .topbar-actions { order: 2; }
+    .mainnav { order: 3; flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; gap: 18px; margin: 0 -16px; padding: 0 16px; font-size: 0.9rem; scrollbar-width: none; }
+    .mainnav::-webkit-scrollbar { display: none; }
+    .mainnav a { white-space: nowrap; padding: 8px 0; }
+    .chips { display: none; }
+    .sbox input, .search > button { height: 50px; }
+    .hero-in { padding: 28px 16px 32px; gap: 24px; }
+    .hero h1 { font-size: 2rem; }
+    .search > button { flex: 1 1 100%; }
+    .pickup { padding: 16px; }
+    .cols { padding-top: 28px; gap: 28px; }
+    .systems { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .block-grid { grid-template-columns: 1fr; }
+    .settings { grid-template-columns: 1fr; }
+    .offline-card { flex-direction: column; align-items: stretch; }
+    .offline-btn { width: 100%; }
+  }
 </style>
 <link rel="stylesheet" href="shared/theme.css">
 <script src="shared/theme.js"></script>
 </head>
 <body>
-  <div class="topbar"><div class="topbar-inner">OCOM Question Hub</div></div>
-  <div class="container">
-    <h1>Choose a Block</h1>
-    <p class="subtitle">Practice questions and full exam simulations, organized by block. New blocks get added here as the semester goes on.</p>
-    <div id="announceBanner"></div>
-    <a class="block-card continue-card" id="continueCard" href="#" hidden>
-      <span class="cc-icon">▶️</span>
-      <span class="cc-text"><span class="block-title">Continue where you left off</span><span class="block-desc" id="continueDesc"></span></span>
-    </a>
-    <details class="block-card countdown-card" id="countdownCard">
-      <summary><span class="cc-icon">📅</span><span class="cc-text"><span class="block-title">Exam countdown</span><span class="block-desc" id="countdownNext">Add your exam dates to see the days left and how many new questions a day finish each exam.</span></span></summary>
-      <div class="cd-list" id="countdownList"></div>
-      <div class="block-desc cd-note">Dates are saved on this device only. Each block tile then shows the days left and the daily pace.</div>
-    </details>
-    <div class="block-grid">
-      <a class="block-card featured" href="resources/metabolic-atlas.html">
-        <div class="block-title">🗺️ Lesion Atlas</div>
-        <div class="block-desc">192 interactive maps &middot; 2,054 diseases, organisms, drug targets and toxicities pinned to the exact step they break &middot; searchable, with quiz modes that blank the enzyme names or ask you to name each pin</div>
-        <div class="block-due" id="atlasDue" hidden></div>
-      </a>
+  <header class="topbar"><div class="topbar-inner">
+    <a class="brand" href="./">OCOM Question Hub</a>
+    <nav class="mainnav" aria-label="Main">
+      <a class="primary" href="resources/metabolic-atlas.html">Lesion Atlas</a>
+      <a href="#blocks">Blocks</a>
+      <a href="live.html">Live Session</a>
+      <a href="#sync" id="navSync">Sync</a>
+      <a href="#offline">Offline</a>
+    </nav>
+  </div></header>
+
+  <section class="hero" aria-labelledby="askH">
+    <div class="hero-in">
+      <div class="hero-main">
+        <span class="eyebrow">Lesion Atlas</span>
+        <h1 id="askH">What are you studying?</h1>
+        <p class="lede" id="heroLede">192 maps and 2,054 cards, every one sourced, and linked to your practice questions.</p>
+        <form class="search" role="search" id="hubSearch" autocomplete="off">
+          <div class="sbox">
+            <label class="sr" for="hubQ">Search the atlas and question bank</label>
+            <input id="hubQ" type="search" placeholder="Try “aldosterone” or “nephro SDL 23”" role="combobox" aria-expanded="false" aria-controls="hubResults" aria-autocomplete="list" spellcheck="false">
+            <div class="sresults" id="hubResults" role="listbox" aria-label="Results" hidden></div>
+          </div>
+          <button type="submit">Search</button>
+        </form>
+        <div class="chips" id="heroChips"></div>
+      </div>
+      <div class="pickup" id="atlasCard" hidden>
+        <div id="pickupBody"></div>
+      </div>
+    </div>
+  </section>
+
+  <main class="wrap cols">
+    <div class="col-main">
+      <section aria-labelledby="todayH">
+        <h2 id="todayH">Today in the atlas</h2>
+        <div class="today">
+          <a class="tile" id="tileQuiz" href="resources/metabolic-atlas.html#quiz/mix">
+            <span class="kicker">Daily mix</span>
+            <span class="big">10</span>
+            <span class="t">cards from every map</span>
+            <span class="d">Due, starred, missed and new — a quick round across the whole atlas.</span>
+            <span class="go">Start the mix →</span>
+          </a>
+          <div class="tile" id="tileGraph">
+            <span class="kicker">Graph of the day</span>
+            <span class="t" id="graphTitle"><a href="resources/metabolic-atlas.html">Open the graph gallery in the atlas</a></span>
+            <span class="d" id="graphMap"></span>
+            <svg class="g-glyph" viewBox="0 0 220 84" aria-hidden="true"><path class="ax" d="M18 6V76H214"/><path class="c1" d="M18 60C70 60 92 20 140 17S196 14 210 14"/><path class="c2" d="M18 72C80 72 124 58 210 38"/></svg>
+            <span class="go-row"><a id="graphGo" href="resources/metabolic-atlas.html">Open the graph →</a><a href="resources/metabolic-atlas.html#quiz/graphs">Graph mix</a></span>
+          </div>
+          <div class="tile" id="tileNew" hidden>
+            <span class="kicker">New in the atlas</span>
+            <span class="t" id="newCount"></span>
+            <ul class="newlist" id="newList"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="sysH">
+        <div class="sec-head">
+          <h2 id="sysH">Browse by system</h2>
+          <a href="resources/metabolic-atlas.html#index" id="azLink">A–Z index of every card →</a>
+        </div>
+        <div class="systems" id="systems"></div>
+      </section>
     </div>
 
-    <div class="section-label">Blocks</div>
+    <aside class="col-side" aria-label="Announcements and your study">
+      <section class="news" aria-labelledby="newsH">
+        <div class="news-head"><h2 id="newsH">Announcements</h2></div>
+        <div id="newsList"></div>
+      </section>
+      <a class="side-card continue-card" id="continueCard" href="#" hidden>
+        <span class="kicker">Continue questions</span>
+        <span class="side-title" id="continueTitle"></span>
+        <span class="side-desc" id="continueDesc"></span>
+        <span class="side-go">Resume →</span>
+      </a>
+      <details class="side-card countdown-card" id="countdownCard">
+        <summary>
+          <span class="kicker">Exam countdown</span>
+          <span class="side-title" id="countdownNext">Add your exam dates to see the days left and how many new questions a day finish each exam.</span>
+          <span class="side-go">Set exam dates</span>
+        </summary>
+        <div class="cd-list" id="countdownList"></div>
+        <div class="cd-note">Dates are saved on this device only. Each block tile then shows the days left and the daily pace.</div>
+      </details>
+    </aside>
+  </main>
+
+  <section class="wrap blocks" id="blocks" aria-labelledby="blocksH">
+    <h2 id="blocksH">Practice by block</h2>
     <div class="block-grid">
       <a class="block-card" href="nephro/index.html">
         <div class="block-title">Nephrology/Urology/Men's Health Block</div>
@@ -206,75 +372,349 @@
         <div class="block-title">OMM III Written Midterm</div>
         <div class="block-desc">22 SDLs &middot; 594 questions</div>
       </a>
-      <div class="block-card disabled">
-        <div class="block-title">Next Block (coming soon)</div>
-        <div class="block-desc">Will appear here once its question bank is built.</div>
+    </div>
+  </section>
+
+  <section class="wrap settings" aria-label="Sync and offline">
+    <div id="sync">
+      <h2>Sync across devices</h2>
+      <div id="syncSection"></div>
+    </div>
+    <div id="offline">
+      <h2>Use offline</h2>
+      <div class="offline-card" id="offlineCard">
+        <div class="offline-text">
+          <div class="block-title">Save everything for offline</div>
+          <div class="block-desc" id="offlineStatus">Downloads every block, the Lesion Atlas and the shared files to this device (about 21&nbsp;MB) so they all work without signal.</div>
+          <div class="block-desc offline-detail" id="offlineDetail" hidden></div>
+          <div class="offline-bar" id="offlineBar" hidden><span id="offlineFill"></span></div>
+        </div>
+        <button class="offline-btn" id="offlineBtn" type="button">Save all</button>
       </div>
     </div>
-
-    <div class="section-label">Resources</div>
-    <div class="block-grid">
-      <a class="block-card" href="live.html">
-        <div class="block-title">🎮 Live Session</div>
-        <div class="block-desc">In-person, Kahoot-style round &mdash; host from one screen, everyone else answers A&ndash;E from their own phone with a room code</div>
-      </a>
-      <a class="block-card" href="resources/sacral-omm-explorer.html">
-        <div class="block-title">Sacral OMM Explorer</div>
-        <div class="block-desc">Rotatable 3D sacrum model &middot; 10 sacral somatic dysfunction presets with seated flexion, sphinx, and spring test findings</div>
-      </a>
-    </div>
-
-    <div class="section-label">Sync Across Devices</div>
-    <div id="syncSection"></div>
-
-    <div class="section-label">Use Offline</div>
-    <div class="offline-card" id="offlineCard">
-      <div class="offline-text">
-        <div class="block-title">Save everything for offline</div>
-        <div class="block-desc" id="offlineStatus">Downloads every block, the Lesion Atlas and the shared files to this device (about 21&nbsp;MB) so they all work without signal.</div>
-        <div class="block-desc offline-detail" id="offlineDetail" hidden></div>
-        <div class="offline-bar" id="offlineBar" hidden><span id="offlineFill"></span></div>
-      </div>
-      <button class="offline-btn" id="offlineBtn" type="button">Save all</button>
-    </div>
-  </div>
-  <div class="footer">Client-side only &mdash; each block's progress and flags are stored separately in your browser, optionally synced across devices via the PIN above. Works offline: the hub, the Lesion Atlas and any block you have opened once are saved on this device &mdash; or save them all at once with <i>Save all</i> above.</div>
+  </section>
+  <div class="footer">Client-side only &mdash; each block's progress and flags are stored separately in your browser, optionally synced across devices with a sync PIN. Works offline: the hub, the Lesion Atlas and any block you have opened once are saved on this device &mdash; or save them all at once with <i>Save all</i> above.</div>
 <script src="announcements.js"></script>
+<script src="resources/atlas-home.js"></script>
 <script>
-  /* Lesion Atlas cards due for review on this device — shown only to people who turned
-     card review on in the atlas ("mla-review" = "on"); it is off by default. */
+  /* The atlas on the home page, from resources/atlas-home.js (built by tools/build-atlas.py):
+     the hero line and system shortcuts, "Pick up where you left off" (the map last open in
+     the atlas on this device, 'mla-view' — or the newest map), the Daily mix or your due
+     cards, Graph of the day, the newest maps, and Browse by system. */
   (function () {
-    var el = document.getElementById('atlasDue');
-    if (!el) return;
-    function show() {
-      var n = 0, p = null, now = Date.now(), on = false;
+    var H = window.ATLAS_HOME, ATLAS = 'resources/metabolic-atlas.html';
+    if (!H) return;
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function fmt(n) { return Number(n).toLocaleString('en-US'); }
+    var TOP = {}; H.topics.forEach(function (t) { TOP[t[0]] = t; });
+    var COLOR = { neuro: '#3D4A8C', renal: '#1F4E79', msk: '#7A5A2E', bio: '#5B6B2E', behav: '#6A3D7A', id: '#7A3E3E', pulmo: '#2E6A7A',
+      omm: '#1F6F68', heme: '#8C2F39', cardio: '#A5463C', endo: '#B5762A', immuno: '#4A6E3A', devrepro: '#9A4F72', pharm: '#4F5B66',
+      sx: '#5B5F58', eent: '#3A6E8C', gi: '#8C6A2E', path: '#6B4F3A', stats: '#5B5F58' };
+    function topicHref(t) { return ATLAS + '#' + t[2][0]; }
+
+    var S = H.stats;
+    document.getElementById('heroLede').textContent = fmt(S.maps) + ' maps and ' + fmt(S.cards) + ' cards, every one sourced, and linked to ' +
+      fmt(S.linked) + ' of your practice questions.';
+    document.getElementById('azLink').textContent = 'A–Z index of all ' + fmt(S.cards) + ' cards →';
+
+    /* system shortcuts under the search */
+    var CHIPS = [['renal', 'Renal'], ['neuro', 'Neuro'], ['behav', 'Psych'], ['endo', 'Endocrine'], ['pulmo', 'Pulmonary'], ['msk', 'Musculoskeletal'], ['omm', 'OMM'], ['pharm', 'Pharm']];
+    document.getElementById('heroChips').innerHTML = CHIPS.filter(function (c) { return TOP[c[0]]; })
+      .map(function (c) { return '<a href="' + topicHref(TOP[c[0]]) + '">' + esc(c[1]) + '</a>'; }).join('');
+
+    /* Browse by system — most maps first; OMM also carries the Sacral OMM Explorer */
+    document.getElementById('systems').innerHTML = H.topics.slice().sort(function (a, b) { return b[2].length - a[2].length; }).map(function (t) {
+      return '<div class="sys" style="--c:' + (COLOR[t[0]] || '#1f4e79') + '"><a class="sys-main" href="' + topicHref(t) + '"><b>' + esc(t[1]) + '</b><span>' +
+        t[2].length + (t[2].length === 1 ? ' map' : ' maps') + '</span></a>' +
+        (t[0] === 'omm' ? '<a class="sys-x" href="resources/sacral-omm-explorer.html">+ 3D sacrum explorer</a>' : '') + '</div>';
+    }).join('');
+
+    /* the newest maps: the atlas's latest batch */
+    var latest = (H.latest || []).filter(function (v) { return H.maps[v]; });
+    if (latest.length) {
+      document.getElementById('newCount').textContent = latest.length + (latest.length === 1 ? ' map' : ' maps');
+      document.getElementById('newList').innerHTML = latest.map(function (v) { return '<li><a href="' + ATLAS + '#' + v + '">' + esc(H.maps[v][0]) + '</a></li>'; }).join('');
+      document.getElementById('tileNew').hidden = false;
+    }
+
+    /* Graph of the day — the same graph all day, a different one tomorrow */
+    if (H.graphs.length) {
+      var day = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000), g = H.graphs[day % H.graphs.length];
+      var gh = ATLAS + '#graph/' + g[0] + '/' + g[1];
+      document.getElementById('graphTitle').innerHTML = '<a href="' + gh + '">' + esc(g[2]) + '</a>';
+      document.getElementById('graphMap').textContent = 'On the ' + ((H.maps[g[0]] || [g[0]])[0]) + ' map';
+      document.getElementById('graphGo').href = gh;
+    }
+
+    /* Daily mix, or the cards due for review for people who turned card review on in the atlas
+       ("mla-review" = "on"; it is off by default) */
+    function quizTile() {
+      var on = false, p = null, n = 0, now = Date.now(), el = document.getElementById('tileQuiz');
       try { on = localStorage.getItem('mla-review') === 'on'; } catch (e) { on = false; }
-      if (!on) { el.hidden = true; el.textContent = ''; return; }
-      try { p = JSON.parse(localStorage.getItem('mla-progress') || 'null'); } catch (e) { p = null; }
-      if (p && p.box && typeof p.box === 'object') {
-        Object.keys(p.box).forEach(function (id) {
+      if (on) {
+        try { p = JSON.parse(localStorage.getItem('mla-progress') || 'null'); } catch (e) { p = null; }
+        if (p && p.box && typeof p.box === 'object') Object.keys(p.box).forEach(function (id) {
           // cards marked "I know this" never count as due
           if (((p.due && p.due[id]) || 0) <= now && !((p.known && +p.known[id]) > 0)) n++;
         });
       }
-      el.hidden = !n;
-      el.textContent = n ? n + (n === 1 ? ' card' : ' cards') + ' due for review — open the atlas, then Quiz → Due cards' : '';
+      if (n) {
+        el.href = ATLAS + '#quiz/due';
+        el.innerHTML = '<span class="kicker">Card review</span><span class="big">' + fmt(n) + '</span><span class="t">' + (n === 1 ? 'card' : 'cards') +
+          ' due for review</span><span class="d">Missed atlas answers and missed questions, across every map.</span><span class="go">Review now →</span>';
+      } else {
+        el.href = ATLAS + '#quiz/mix';
+        el.innerHTML = '<span class="kicker">Daily mix</span><span class="big">10</span><span class="t">cards from every map</span>' +
+          '<span class="d">' + (on ? 'Nothing is due right now. ' : '') + 'Due, starred, missed and new — a quick round across the whole atlas.</span><span class="go">Start the mix →</span>';
+      }
     }
-    show();
-    window.addEventListener('storage', function (e) { if (e.key === 'mla-progress' || e.key === 'mla-review') show(); });
-    window.addEventListener('pageshow', show);
+
+    /* Pick up where you left off: a sketch of the map's first two lanes and their first steps */
+    function sketch(lanes) {
+      var W = 440, PAD = 12, LH = 80, GAP = 14, h = lanes.length * LH + (lanes.length - 1) * 8 + 8, out = [];
+      lanes.forEach(function (lane, li) {
+        var y = 4 + li * (LH + 8), nodes = lane[1].slice(0, 4), n = nodes.length, nw = (W - 2 * PAD - 2 * 8 - GAP * (n - 1)) / n;
+        var col = 'var(--p-' + ((nodes[0] && nodes[0][1]) || 'neutral') + ')';
+        var label = lane[0].length > 64 ? lane[0].slice(0, 63) + '…' : lane[0];
+        out.push('<rect x="' + PAD + '" y="' + y + '" width="' + (W - 2 * PAD) + '" height="' + LH + '" rx="10" fill="' + col + '" fill-opacity="0.1"/>');
+        out.push('<text class="lane-l" x="' + (PAD + 10) + '" y="' + (y + 19) + '">' + esc(label.toUpperCase()) + '</text>');
+        nodes.forEach(function (nd, i) {
+          var x = PAD + 8 + i * (nw + GAP), ny = y + 32, c = 'var(--p-' + (nd[1] || 'neutral') + ')';
+          var max = Math.max(3, Math.floor((nw - 10) / 6.3)), t = nd[0].length > max ? nd[0].slice(0, max - 1) + '…' : nd[0];
+          out.push('<g class="node"><title>' + esc(nd[0]) + '</title><rect x="' + x.toFixed(1) + '" y="' + ny + '" width="' + nw.toFixed(1) + '" height="34" rx="7" style="stroke:' + c + '"/>' +
+            '<text x="' + (x + nw / 2).toFixed(1) + '" y="' + (ny + 21) + '" text-anchor="middle">' + esc(t) + '</text></g>');
+          if (nd[2] && i + 1 < n) out.push('<path class="link" style="stroke:' + c + '" d="M' + (x + nw + 2).toFixed(1) + ' ' + (ny + 17) + 'h' + (GAP - 4) + '"/>');
+        });
+      });
+      return '<svg class="pk-sketch" viewBox="0 0 ' + W + ' ' + h + '" role="img" aria-label="Sketch of the map: ' +
+        esc(lanes.map(function (l) { return l[0] + ' — ' + l[1].map(function (n) { return n[0]; }).join(', '); }).join('; ')) + '">' + out.join('') + '</svg>';
+    }
+    function pickup() {
+      var v = null, card = document.getElementById('atlasCard');
+      try { v = localStorage.getItem('mla-view'); } catch (e) { v = null; }
+      var mine = v && H.maps[v];
+      if (!mine) v = latest[0];
+      var m = v && H.maps[v];
+      if (!m) { card.hidden = true; return; }
+      var t = TOP[m[1]], href = ATLAS + '#' + v;
+      document.getElementById('pickupBody').innerHTML =
+        '<div class="pk-head"><span class="kicker">' + (mine ? 'Pick up where you left off' : 'New in the atlas') + '</span><span class="pk-meta">' +
+          esc((t ? t[1] + ' · ' : '') + m[2] + (m[2] === 1 ? ' card' : ' cards')) + '</span></div>' +
+        '<a class="pk-title" href="' + href + '">' + esc(m[0]) + '</a>' +
+        (m[3] && m[3].length ? sketch(m[3]) : '') +
+        '<div class="pk-actions"><a class="btn" href="' + href + '">Open map</a><a class="btn ghost" href="' + href + '/quiz">Quiz this map</a></div>';
+      card.hidden = false;
+    }
+    function refresh() { quizTile(); pickup(); }
+    refresh();
+    window.addEventListener('pageshow', refresh);
+    window.addEventListener('storage', function (e) { if (e.key === 'mla-progress' || e.key === 'mla-review' || e.key === 'mla-view') refresh(); });
+  })();
+</script>
+<script>
+  /* Search the atlas and the question bank together: maps, graphs and every block's SDL
+     titles (resources/atlas-home.js) at once, and atlas cards by name and link terms
+     (resources/atlas-terms.js, loaded the first time you search). */
+  (function () {
+    var H = window.ATLAS_HOME, form = document.getElementById('hubSearch'), q = document.getElementById('hubQ'), box = document.getElementById('hubResults');
+    var ATLAS = 'resources/metabolic-atlas.html';
+    if (!H || !form) { if (form) form.addEventListener('submit', function (e) { e.preventDefault(); location.href = ATLAS; }); return; }
+    var GREEK = { 'α': ' alpha ', 'β': ' beta ', 'γ': ' gamma ', 'δ': ' delta ', 'κ': ' kappa ', 'ε': ' epsilon ', 'μ': ' mu ' };
+    var SUB = '₀₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻', SUBTO = '01234567890123456789+-';
+    /* the same normalizing as tools/build-atlas.py (atlas_norm), so the cards' link terms match */
+    function norm(t) {
+      t = String(t).toLowerCase().replace(/[αβγδκεμ]/g, function (c) { return GREEK[c]; })
+        .replace(/[₀-₉⁰¹²³⁴-⁹⁺⁻]/g, function (c) { var i = SUB.indexOf(c); return i < 0 ? c : SUBTO[i]; });
+      t = t.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/<[^>]+>/g, ' ').replace(/['’‘`]/g, '')
+        .replace(/[‐‑‒–—―\-\/]/g, ' ').replace(/[^a-z0-9+ ]/g, ' ');
+      return t.replace(/\s+/g, ' ').trim();
+    }
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    var TOPN = {}; H.topics.forEach(function (t) { TOPN[t[0]] = t[1]; });
+    /* abbreviations: the ones written into a title ("Interview & MSE", "(GSD I)", "NF2"), lower-cased */
+    function acr(t) {
+      return (String(t).match(/\b(?=[A-Z0-9-]*[A-Z])[A-Z0-9][A-Z0-9-]{1,7}\b/g) || []).map(function (x) { return norm(x); })
+        .filter(function (x) { return x !== 'sdl' && !/^[ivx]+$/.test(x); });
+    }
+    /* First Aid's abbreviation list (the atlas's ABBR, via atlas-home.js): "ms" → mitral stenosis,
+       multiple sclerosis; "nf1" → neurofibromatosis type 1 (a letter abbreviation plus a number) */
+    var ABBR = {};
+    Object.keys(H.abbr || {}).forEach(function (k) { ABBR[norm(k)] = H.abbr[k].map(norm); });
+    var VMEMO = {};
+    function variants(qn) {
+      if (VMEMO[qn]) return VMEMO[qn];
+      var out = [], words = qn.split(' ');
+      function meanings(w) {
+        if (ABBR[w]) return ABBR[w];
+        var m = w.match(/^([a-z]+)(\d+[a-z]?)$/);
+        return m && ABBR[m[1]] ? ABBR[m[1]].map(function (x) { return x + ' type ' + m[2]; }).concat(ABBR[m[1]].map(function (x) { return x + ' ' + m[2]; })) : null;
+      }
+      (meanings(qn) || []).forEach(function (x) { out.push(x); });
+      if (words.length > 1) words.forEach(function (w, i) {
+        (meanings(w) || []).forEach(function (x) { var c = words.slice(); c[i] = x; out.push(c.join(' ')); });
+      });
+      out = out.filter(function (x, i) { return x !== qn && out.indexOf(x) === i; }).slice(0, 8);
+      return (VMEMO[qn] = out);
+    }
+    var MAPS = Object.keys(H.maps).map(function (v) { var m = H.maps[v]; return { n: norm(m[0]), ab: acr(m[0]), t: m[0], s: (TOPN[m[1]] ? TOPN[m[1]] + ' · ' : '') + m[2] + ' cards', h: ATLAS + '#' + v }; });
+    var GRAPHS = H.graphs.map(function (g) { return { n: norm(g[2]), ab: acr(g[2]), t: g[2], s: 'Graph on ' + ((H.maps[g[0]] || [g[0]])[0]), h: ATLAS + '#graph/' + g[0] + '/' + g[1] }; });
+    var SDLS = H.sdls.map(function (x) { var b = H.blocks[x[0]]; return { n: norm(x[2]), ab: acr(x[2]), t: x[2], s: (/^sdl ?\d/i.test(x[2]) ? '' : 'SDL ' + x[1] + ' · ') + b[1] + ' block', h: b[0] + '/index.html#practice/' + x[1], b: x[0], num: x[1] }; });
+    /* a block named in the search ("nephro SDL 23", "psych 12", "pulm asthma") narrows the SDLs to that block */
+    var ALIAS = { nephro: ['nephro', 'nephrology', 'renal', 'urology', 'uro'], psych: ['psych', 'psychiatry'], neuro: ['neuro', 'neurology'],
+      endocrine: ['endo', 'endocrine', 'endocrinology'], eent: ['eent', 'ent'], pulm: ['pulm', 'pulmo', 'pulmonary', 'pulmonology'],
+      ortho: ['ortho', 'orthopedics', 'orthopaedics', 'orthopedic'], rheum: ['rheum', 'rheumatology'], omm: ['omm'] };
+    var BLOCKS = H.blocks.map(function (b, i) {
+      var tile = document.querySelector('.block-card[href="' + b[0] + '/index.html"] .block-title');
+      return { i: i, alias: ALIAS[b[0]] || [norm(b[1])], t: tile ? tile.textContent.trim() : b[1] + ' block', s: 'Open the block', h: b[0] + '/index.html' };
+    });
+    var CARDS = null, loading = false;
+    function loadCards() {
+      if (CARDS || loading) return;
+      function ready() {
+        var T = window.ATLAS_TERMS; if (!T) return;
+        var home = {};
+        Object.keys(T.maps || {}).forEach(function (v) { (T.maps[v][1] || []).forEach(function (id) { if (!home[id]) home[id] = v; }); });
+        CARDS = T.cards.map(function (c) {
+          var v = home[c[0]];
+          /* a card's id is often its abbreviation too (ms, nf1, vhl, xla) */
+          var ab = acr(c[1]); if (/^[a-z][a-z0-9]{1,5}$/.test(c[0])) ab.push(c[0]);
+          return { n: norm(c[1]), ab: ab, t: c[1], terms: c[3].map(function (x) { return x.replace(/^=/, ''); }), s: v && H.maps[v] ? 'Card on ' + H.maps[v][0] : 'Card', h: ATLAS + '#' + c[0] };
+        });
+        if (q.value.trim()) show();
+      }
+      if (window.ATLAS_TERMS) return ready();
+      loading = true;
+      var s = document.createElement('script'); s.src = 'resources/atlas-terms.js';
+      s.onload = function () { loading = false; ready(); }; s.onerror = function () { loading = false; };
+      document.head.appendChild(s);
+    }
+    /* how well a title matches: whole title, then the start of it, then the start of a word,
+       then every query word starting a word, then anywhere; a card's link terms count less */
+    function score(it, qn, words) {
+      var n = it.n, sp = ' ' + n + ' ';
+      if (n === qn) return 100;
+      if (it.ab && it.ab.indexOf(qn) >= 0) return 85;
+      if ((n + ' ').indexOf(qn + ' ') === 0) return 90;
+      if (n.indexOf(qn) === 0) return 80;
+      if (sp.indexOf(' ' + qn) >= 0) return 65;
+      if (words.length > 1 && words.every(function (w) { return sp.indexOf(' ' + w) >= 0; })) return 55;
+      if (qn.length >= 5 && n.indexOf(qn) >= 0) return 40;
+      if (it.terms) for (var i = 0; i < it.terms.length; i++) {
+        var t = it.terms[i];
+        if (t === qn) return 60;
+        if (t.indexOf(qn) === 0 || (' ' + t).indexOf(' ' + qn) >= 0) return 30;
+      }
+      return 0;
+    }
+    /* the query as typed, or with an abbreviation spelled out (a shade lower, so a literal match wins a tie) */
+    function top(list, qn, words, k) {
+      var hits = [], vs = variants(qn).map(function (v) { return [v, v.split(' ')]; });
+      list.forEach(function (it) {
+        var s = score(it, qn, words);
+        vs.forEach(function (v) { s = Math.max(s, Math.floor(0.95 * score(it, v[0], v[1]))); });
+        if (s) hits.push([s, it]);
+      });
+      hits.sort(function (a, b) { return b[0] - a[0] || a[1].t.length - b[1].t.length; });
+      return hits.slice(0, k);
+    }
+    var opts = [], active = -1;
+    function show() {
+      var qn = norm(q.value);
+      if (!qn) { hide(); return; }
+      loadCards();
+      var words = qn.split(' ');
+      /* "nephro SDL 23": the block word picks the block, the rest picks its SDL — that SDL alone */
+      var blk = null, rest = [];
+      words.forEach(function (w) { var b = !blk && BLOCKS.filter(function (x) { return x.alias.indexOf(w) >= 0; })[0]; if (b) blk = b; else rest.push(w); });
+      var rq = rest.join(' '), num = rq.match(/^(?:sdl ?)?(\d+)$/), sdlHits, blockHits = [];
+      if (blk) {
+        var mine = SDLS.filter(function (s) { return s.b === blk.i; });
+        sdlHits = num ? mine.filter(function (s) { return String(s.num) === num[1]; }).map(function (s) { return [100, s]; })
+          : rq ? top(mine, rq, rest, 4) : [];
+        blockHits = [[num || rq ? 30 : 95, blk]];   // first only when the block is all you typed
+      } else if (num) {
+        sdlHits = SDLS.filter(function (s) { return String(s.num) === num[1]; }).map(function (s) { return [95, s]; });
+      } else sdlHits = top(SDLS, qn, words, 4);
+      var only = blk && num;   // asking for one SDL — leave out maps, cards and graphs
+      /* maps, cards and graphs match the whole query or, after a block word, what follows it ("pulm asthma" → asthma) */
+      function find(list, k) {
+        if (only) return [];
+        if (!blk || !rq) return top(list, qn, words, k);
+        var best = new Map();
+        top(list, qn, words, k).concat(top(list, rq, rest, k)).forEach(function (h) { if (!best.has(h[1]) || best.get(h[1])[0] < h[0]) best.set(h[1], h); });
+        return Array.from(best.values()).sort(function (a, b) { return b[0] - a[0] || a[1].t.length - b[1].t.length; }).slice(0, k);
+      }
+      var groups = [['Maps', find(MAPS, 3)], ['Cards', CARDS ? find(CARDS, 6) : []], ['Graphs', find(GRAPHS, 2)],
+        ['SDLs', sdlHits], ['Blocks', blockHits]]
+        .filter(function (g) { return g[1].length; })
+        .sort(function (a, b) { return b[1][0][0] - a[1][0][0]; });
+      var html = '', k = 0;
+      groups.forEach(function (g) {
+        html += '<div class="sgroup" role="presentation">' + g[0] + '</div>';
+        g[1].forEach(function (h) {
+          html += '<a class="sopt" role="option" id="hubOpt' + k + '" href="' + esc(h[1].h) + '"><b>' + esc(h[1].t) + '</b><span>' + esc(h[1].s) + '</span></a>'; k++;
+        });
+      });
+      if (!k) html = '<div class="snone">' + (CARDS || !loading ? 'Nothing matches “' + esc(q.value.trim()) + '”.' : 'Searching the atlas cards…') + '</div>';
+      box.innerHTML = html; box.hidden = false; q.setAttribute('aria-expanded', 'true');
+      opts = [].slice.call(box.querySelectorAll('.sopt')); setActive(-1);
+    }
+    function hide() { box.hidden = true; q.setAttribute('aria-expanded', 'false'); q.removeAttribute('aria-activedescendant'); opts = []; active = -1; }
+    function setActive(i) {
+      opts.forEach(function (o, j) { o.classList.toggle('on', j === i); o.setAttribute('aria-selected', String(j === i)); });
+      active = i;
+      if (i >= 0) { q.setAttribute('aria-activedescendant', opts[i].id); opts[i].scrollIntoView({ block: 'nearest' }); } else q.removeAttribute('aria-activedescendant');
+    }
+    q.addEventListener('input', show);
+    q.addEventListener('focus', function () { loadCards(); if (q.value.trim()) show(); });
+    q.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown' && opts.length) { e.preventDefault(); setActive(Math.min(opts.length - 1, active + 1)); }
+      else if (e.key === 'ArrowUp' && opts.length) { e.preventDefault(); setActive(Math.max(-1, active - 1)); }
+      else if (e.key === 'Escape') { hide(); }
+    });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!q.value.trim()) { q.focus(); return; }
+      show();
+      var o = opts[active >= 0 ? active : 0];
+      if (o) location.href = o.href;
+    });
+    document.addEventListener('click', function (e) { if (!form.contains(e.target)) hide(); });
+    /* index.html?q=… — a block's own search hands its query here ("Search the Lesion Atlas for …") */
+    try {
+      var pq = new URLSearchParams(location.search).get('q');
+      if (pq) { q.value = pq.slice(0, 120); loadCards(); show(); q.focus(); }
+    } catch (e) {}
+  })();
+</script>
+<script>
+  /* Announcements, from announcements.js — pinned ones first, then newest first; the newest
+     three show and the rest fold under "Show older". (An old single-banner announcements.js,
+     window.ANNOUNCEMENT, still shows as the first entry.) */
+  (function () {
+    var root = document.getElementById('newsList');
+    if (!root) return;
+    var list = (Array.isArray(window.ANNOUNCEMENTS) ? window.ANNOUNCEMENTS : []).filter(function (a) { return a && a.text; });
+    var one = window.ANNOUNCEMENT; if (one && one.text) list.unshift(one);
+    list = list.filter(function (a) { return a.pinned; }).concat(list.filter(function (a) { return !a.pinned; }));
+    if (!list.length) { root.innerHTML = '<div class="news-empty">Nothing new right now.</div>'; return; }
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function item(a) {
+      return '<article class="ann' + (a.pinned ? ' pinned' : '') + '"><div class="ann-top">' +
+        (a.pinned ? '<span class="ann-tag pin">Pinned</span>' : '') + (a.tag ? '<span class="ann-tag">' + esc(a.tag) + '</span>' : '') +
+        (a.date ? '<span class="ann-date">' + esc(a.date) + '</span>' : '') + '</div><p>' + a.text + '</p></article>';
+    }
+    var SHOW = 3;
+    root.innerHTML = list.slice(0, SHOW).map(item).join('') +
+      (list.length > SHOW ? '<details class="older"><summary>Show ' + (list.length - SHOW) + ' older</summary>' + list.slice(SHOW).map(item).join('') + '</details>' : '');
   })();
 </script>
 <script src="sync.js"></script>
 <script>
+  /* the header's Sync link shows your sync PIN once you have one (sync.js) */
   (function () {
-    var a = window.ANNOUNCEMENT;
-    var root = document.getElementById('announceBanner');
-    if (!root || !a || !a.text) return;
-    var dateHtml = a.date ? '<span class="announce-date">' + a.date + '</span>' : '';
-    root.innerHTML =
-      '<div class="announce-banner"><span class="announce-icon">📢</span>' +
-      '<span>' + dateHtml + a.text + '</span></div>';
+    var a = document.getElementById('navSync');
+    try { var pin = typeof getSavedPin === 'function' && getSavedPin(); if (a && pin) a.textContent = 'Sync · ' + pin; } catch (e) {}
   })();
 </script>
 <script>
@@ -301,7 +741,8 @@
     btn.addEventListener('click', function () {
       var urls = ['./', 'index.html', 'announcements.js', 'sync.js', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
         'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png',
-        'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js', 'resources/qbank-counts.js'];
+        'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js', 'resources/qbank-counts.js',
+        'resources/atlas-home.js', 'resources/atlas-cards.js'];
       Array.prototype.forEach.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]'), function (a) {
         var dir = a.getAttribute('href').replace(/index\.html$/, '');
         urls.push(dir + 'index.html', dir + 'data.js');
@@ -341,12 +782,13 @@
      so does opening a block online. When online, each saved file's size is checked against
      the copy online (the size half of GitHub Pages' "mtime-size" ETag, or Content-Length);
      a different size means a newer version is online. The mtime half changes on every
-     deploy even for unchanged files, so it is ignored. */
+     deploy even for unchanged files, so it is ignored. The atlas has no tile here any more,
+     so its status shows only in the Use offline summary. */
   (function () {
     var CACHE = 'qhub-v1';
     var tiles = [].slice.call(document.querySelectorAll('.block-grid a.block-card[href$=".html"]'));
     var blocks = tiles.filter(function (a) { return /\/index\.html$/.test(a.getAttribute('href')); });
-    var atlas = tiles.filter(function (a) { return a.getAttribute('href') === 'resources/metabolic-atlas.html'; })[0];
+    var atlas = document.createElement('div');   // stands in for the atlas: checked, but no chips on the page
     var detail = document.getElementById('offlineDetail');
     function meta(a) {
       var m = a.querySelector('.block-meta');
@@ -399,10 +841,11 @@
       });
     }
     /* the countdown card: one date field per exam, from resources/qbank-counts.js */
+    var CD_EMPTY = 'Add your exam dates to see the days left and how many new questions a day finish each exam.';
     function countdown() {
       var next = document.getElementById('countdownNext'), list = document.getElementById('countdownList');
       if (!next || !list) return;
-      if (NEXT) next.textContent = 'Next: ' + NEXT.text;
+      next.textContent = NEXT ? NEXT.text : CD_EMPTY;
       if (!window.QBANK_COUNTS || list.childElementCount) return;
       blocks.forEach(function (a) {
         var dir = a.getAttribute('href').replace(/\/index\.html$/, ''), C = window.QBANK_COUNTS[dir];
@@ -418,7 +861,6 @@
             if (inp.value) DATES[dir + ':' + e[0]] = inp.value; else delete DATES[dir + ':' + e[0]];
             try { localStorage.setItem('qhub-examdates', JSON.stringify(DATES)); } catch (err) {}
             progress(); countdown();
-            if (!NEXT) document.getElementById('countdownNext').textContent = 'Add your exam dates to see the days left and how many new questions a day finish each exam.';
           });
           row.appendChild(span); row.appendChild(inp); box.appendChild(row);
         });
@@ -437,7 +879,7 @@
     function ago(t) { var m = Math.round((Date.now() - t) / 60000);
       return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' d ago'; }
     function showContinue() {
-      var card = document.getElementById('continueCard'), desc = document.getElementById('continueDesc'), L = null;
+      var card = document.getElementById('continueCard'), title = document.getElementById('continueTitle'), desc = document.getElementById('continueDesc'), L = null;
       if (!card) return;
       try { L = JSON.parse(localStorage.getItem('qhub-last') || 'null'); } catch (e) { L = null; }
       var ok = L && L.dir && /^[a-z0-9_-]+$/i.test(L.dir) && typeof L.hash === 'string' && /^#[\w\-\/%.]*$/.test(L.hash) &&
@@ -448,7 +890,8 @@
       if (m) { var snap = null; try { snap = JSON.parse(localStorage.getItem(L.dir + '_practicesession_v1') || 'null'); } catch (e) {}
         if (snap && String(snap.sdlNumber) === m[1] && Array.isArray(snap.questions)) where = ' · question ' + (snap.index + 1) + ' of ' + snap.questions.length; }
       card.href = L.dir + '/index.html' + L.hash;
-      desc.textContent = (L.title || L.dir) + ' — ' + (L.label || 'last screen') + where + ' · ' + ago(L.at || Date.now());
+      title.textContent = L.title || L.dir;
+      desc.textContent = (L.label || 'Last screen') + where + ' · ' + ago(L.at || Date.now());
       card.hidden = false;
     }
     showContinue();
@@ -485,7 +928,7 @@
     /* Save one block (or the atlas) for offline use: its own files plus the shared files it
        needs, into the same cache — without saving everything. */
     var SHARED = ['./', 'index.html', 'announcements.js', 'sync.js', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
-      'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png', 'resources/atlas-terms.js', 'resources/atlas-practice.js'];
+      'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-home.js', 'resources/atlas-cards.js'];
     function saveBtn(a, files, show, label) {
       var m = meta(a), el = m.querySelector('[data-k="save"]');
       if (!show || !navigator.onLine) { if (el) el.remove(); return; }

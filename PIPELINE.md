@@ -74,7 +74,8 @@ The standalone source lives in the repo at **`tools/atlas-src.html`** — edit t
 reboot or a new session loses. Keep it in the repo.)
 
 The script derives the map and lesion counts from the artifact itself, so the meta tags stay
-honest. Update the matching counts on the atlas card in `index.html` by hand.
+honest. The hub's home page reads its counts from `resources/atlas-home.js` (below), so there
+is nothing to update by hand there either.
 
 ### What the build refuses
 
@@ -492,6 +493,94 @@ map in both themes. The trap: **`document.querySelector('svg')` grabs a toolbar 
 the map.** The map is `#svg`. An audit rooted on the wrong element finds zero nodes and
 reports "clean" for every map, which it silently did for several sessions — the auditor now
 refuses a zero-node result.
+
+## The home page (index.html)
+
+Since 2026-10-08 the hub's home page leads with the atlas (design "E" from the home-page
+concepts canvas). Top to bottom:
+
+- **Header** — Lesion Atlas, Blocks, Live Session, Sync (shows your PIN once you have one,
+  via `getSavedPin()` from `sync.js`) and Offline; the last two jump to their sections at the
+  foot of the page. `shared/theme.js` still adds the ◐ toggle to `.topbar-inner`.
+- **Hero** — "What are you studying?" with one search box over the atlas and the question
+  bank: maps, graphs and every block's SDL titles at once (from `atlas-home.js`), and atlas
+  cards by name and link terms (`atlas-terms.js`, loaded the first time someone searches;
+  text is normalized the same way as `atlas_norm` in the build). An SDL result opens
+  `<block>/index.html#practice/<n>`. A block word narrows the SDLs to that block: "nephro
+  SDL 23" or "nephro 23" gives that one SDL (and the block's own link), "pulm asthma" gives
+  the Pulm SDLs about asthma plus the atlas's asthma cards; "SDL 23" alone lists SDL 23 in
+  every block. The block words are `ALIAS` in the search script (nephro, nephrology, renal,
+  urology, psych, neuro, endo, eent, ent, pulm, pulmonary, ortho, rheum, omm and so on) —
+  add a block there when a new one is scaffolded.
+  Abbreviations work too: First Aid's list from the atlas (`ABBR`, exported to `atlas-home.js`
+  as `abbr` without everyday words like "as", "at", "top" — `ABBR_SKIP` in the build) spells
+  a query out ("ms" → mitral stenosis, multiple sclerosis), a letter abbreviation with a
+  number reads as a type ("nf1" → neurofibromatosis type 1, "men2a"), and abbreviations
+  written into a title ("Interview & MSE", "(GSD II)") or a short card id (ms, nf1, vhl)
+  match directly. System shortcuts sit under the box (hidden on phones).
+  Beside it, **Pick up where you left off**: the map last open in the atlas on this device
+  (`mla-view`), or the newest map, with a sketch of its first two lanes and their first four
+  steps, **Open map** and **Quiz this map** (`#<map>/quiz`).
+- **Today in the atlas** — Daily mix (`#quiz/mix`), or the number of cards due for review
+  (`#quiz/due`) for people who turned card review on; **Graph of the day** (one graph a day,
+  in turn, `#graph/<map>/<plot>`, plus Graph mix, `#quiz/graphs`); and **New in the atlas**,
+  the latest batch.
+- **Browse by system** — every topic with its map count, most maps first, each opening the
+  topic's first map. The OMM tile also links the Sacral OMM Explorer.
+- **Announcements** (right rail) — from `announcements.js`, which is now a list: newest entry
+  at the top, `{ date, text }` plus optional `tag` and `pinned: true`. The newest three show
+  (pinned first); the rest fold under "Show older". Still edited by hand only.
+- Continue questions and Exam countdown (right rail), then **Practice by block**, then
+  Sync across devices and Use offline.
+
+`resources/atlas-home.js` is built by `tools/build-atlas.py` with the other atlas data:
+atlas stats (maps, cards, graphs, linked questions), the topics, each map's title, topic,
+card count and lane sketch, the newest batch (the **last line** of `NEW_MAPS` — so start each
+batch's dates on a new line, as insert.py does), every graph, and each block's SDL titles.
+The build still finds the blocks from the `href="<block>/index.html"` tiles in `index.html`,
+so keep one tile per block.
+
+## The block pages in design E (2026-10-08)
+
+Every block page wears the hub's header and IBM Plex type. Nothing in a block's own
+`index.html` changed: `shared/app.js` (hubHeader) swaps the old "← All Blocks" bar for the
+hub's brand and links when the page loads, and `shared/style.css` does the rest, so a block
+scaffolded from the old template looks the same. `#homeBtn` stays in the bar for render()
+but is hidden; breadcrumbs replace it. render() tags `main` with `data-view` (home,
+exam-sdls, practice-q for a running SDL practice, otherwise the route name); those three are
+wide (1248px) with a side column, every other screen stays a readable 880px.
+
+- **Block home (H)** — a band with the block's name (QUIZ_CONFIG.title minus "Block
+  Question Bank"), its counts and a search over its SDLs (a number or words; the last row
+  hands the query to the hub's search, `index.html?q=…`), beside the exam or SDL run to
+  resume, or your progress. Then the exams (each with % seen, % right and the countdown you
+  set on the hub), the simulations, your weakest SDLs, "This block in the Lesion Atlas"
+  (maps with a bar for their question count, Open map and Practice) and the graphs as
+  tiles. The side column has the study tools, the block's latest announcement (the newest
+  entry in `announcements.js` tagged with the block or naming it) and the settings as
+  switches. Every id the old screen bound (exam cards, resume cards, Discard, the four
+  study tools, the three settings) is unchanged.
+- **Exam page (I)** — a head strip with the breadcrumb, the countdown and Full exam
+  simulation; the SDLs as numbered rows (the "SDL 13 —" lead moves into the badge;
+  Resume when a run of that SDL is saved); beside them "Exam N in the atlas", the maps this
+  exam's questions link to most and its top graph, counted from each question's linked
+  cards (atlasLinksFor).
+- **Practice question (J, and L on a phone)** — a bar with the breadcrumb, question count
+  and score; the question; and an "On the Lesion Atlas" column that, once you answer, shows
+  the best linked card itself — subtitle, the opening of its mechanism, a buzzword, its
+  sources and First Aid pages, Open on the map, Practice this card, its home map and how
+  many of the block's questions link to it — above the usual atlas links (other cards, See
+  it on a graph, every answer choice on the atlas after a miss). Before an answer it only
+  says what will appear, so it never gives the answer away. Under 900px the column stacks
+  below the question and Previous / Next stick to the bottom of the screen. The card text
+  comes from `resources/atlas-cards.js` (built by `tools/build-atlas.py`: every card a
+  question links to, mechanism cut at about two sentences), loaded after the first answer.
+- Answer letters are badges now (`<span class="letter">A</span>`, no full stop), and every
+  new screen starts scrolled to the top.
+
+The atlas (K) wears the same header (TOPBAR and OCOM_CSS in `tools/build-atlas.py`); its own
+header names the open map and its system (renderNav in `tools/atlas-src.html`) above the
+system tabs, and the open map's tab is teal.
 
 ## Shared code
 

@@ -523,19 +523,29 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 body{display:flex;flex-direction:column}
 .app{flex:1;min-height:0;height:auto}
 .hdr{padding-top:12px}
-.ocom-topbar{background:#1f4e79;color:#fff;padding:14px 16px;flex:none;
-  padding-top:calc(14px + env(safe-area-inset-top,0px))}
-.ocom-topbar-inner{max-width:1100px;margin:0 auto;font-weight:700;font-size:1.1rem;
-  display:flex;align-items:center;gap:14px;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-.ocom-topbar-inner a{color:#fff;text-decoration:none;opacity:.85;font-weight:500;font-size:.95rem}
-.ocom-topbar-inner a:hover{opacity:1;text-decoration:underline}
+/* the hub's own header, as on every page of the hub: brand on the left, the main links on the right */
+.ocom-topbar{background:var(--bg);color:var(--ink);padding:10px 20px;flex:none;border-bottom:1px solid var(--line-2);
+  padding-top:calc(10px + env(safe-area-inset-top,0px))}
+.ocom-topbar-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 18px;
+  font-family:"IBM Plex Sans",system-ui,sans-serif}
+.ocom-brand{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:18px;color:var(--ink);text-decoration:none}
+.ocom-nav{display:flex;flex-wrap:wrap;gap:2px 18px;font-size:14.5px;font-weight:500}
+.ocom-nav a{color:var(--ink);text-decoration:none;padding:4px 0}
+.ocom-nav a:hover{color:var(--accent);text-decoration:underline;text-underline-offset:5px}
+.ocom-nav a[aria-current="page"]{color:var(--accent);font-weight:600}
+@media (max-width:640px){.ocom-topbar{padding:8px 14px}.ocom-nav{flex:1 1 100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:16px;font-size:13.5px}
+  .ocom-nav::-webkit-scrollbar{display:none}.ocom-nav a{white-space:nowrap}}
+/* the header row: the open map's name, then search and the buttons; the systems and the maps below it */
+.hdr .brand h1{max-width:min(46vw,560px);overflow:hidden;text-overflow:ellipsis}
+.hdr .topics{order:3;flex-basis:100%}
+/* the map tabs: the open map in the atlas's teal */
+.subtabs .tab[aria-selected="true"]{background:var(--p-ppp);color:#fff;border-color:transparent}
 </style>
 
 
 </head>
 <body>
-<div class="ocom-topbar"><div class="ocom-topbar-inner"><a href="../index.html">&larr; All Blocks</a><span>Lesion Atlas</span></div></div>
+<header class="ocom-topbar"><div class="ocom-topbar-inner"><a class="ocom-brand" href="../index.html">OCOM Question Hub</a><nav class="ocom-nav" aria-label="Main"><a href="metabolic-atlas.html" aria-current="page">Lesion Atlas</a><a href="../index.html#blocks">Blocks</a><a href="../live.html">Live Session</a><a href="../index.html#sync">Sync</a><a href="../index.html#offline">Offline</a></nav></div></header>
 <div class="app">
   <header class="hdr">
     <div class="brand">
@@ -37404,10 +37414,18 @@ function readHash(){
     if(!booted) setView(b);
     goPlot(b,i); return true;
   }
+  /* #quiz/<mode> — Daily mix, Due cards and Graph mix from the hub's home page, on the map you last had open */
+  if(a==="quiz"){
+    if(!["mix","due","graphs"].includes(b)) return false;
+    if(!booted){ let v="core"; try{ const s=localStorage.getItem("mla-view"); if(s&&VIEWS.some(x=>x[0]===s)) v=s; }catch(e){} setView(v); }
+    setQuiz(b); return true;
+  }
   if(b){
     if(!isView(a)) return false;
     if(state.view!==a||!booted) setView(a);
     if(LES[b]){ if(a==="index") openLes(b,false); else gotoLes(b); }
+    /* #<map>/quiz — "Quiz this map" on the hub's home page: the map, with the Quiz menu open */
+    else if(b==="quiz"&&a!=="index") setTimeout(()=>quizBtn.click(),0);
     return true;
   }
   if(isView(a)){ setView(a); return true; }
@@ -37920,6 +37938,10 @@ function renderNav(){
   tabsEl.querySelectorAll(".tab").forEach(b=>b.onclick=()=>setView(b.dataset.v));
   [topicsEl,tabsEl].forEach(el=>{ const cur=el.querySelector('[aria-selected="true"]');
     if(cur) el.scrollLeft=Math.max(0,cur.offsetLeft-el.clientWidth/2+cur.offsetWidth/2); });
+  /* the header names the open map and its system — the hub's header above it already says Lesion Atlas */
+  const bh=document.querySelector(".hdr .brand h1"), bs=document.querySelector(".hdr .brand .sub");
+  if(bh) bh.textContent=state.view==="index"?"Every card, A–Z":((MAPS[state.view]||{}).t||"Lesion Atlas");
+  if(bs) bs.textContent=state.view==="index"?"Index":((TOPICS.find(x=>x[0]===t)||[0,"Lesion Atlas"])[1]);
 }
 
 /* ── views & camera ─────────────────────────────────── */

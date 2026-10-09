@@ -7,6 +7,32 @@ let SDL_INDEX = new Map();     // sdlNumber -> {sdl, examNumber}
 let session = null;            // active quiz/exam session object
 const main = document.getElementById('main');
 const homeBtn = document.getElementById('homeBtn');
+/* The hub's header on every block page (design E): its brand, then the main links. The page's
+   own "← All Blocks" link and title give way to it; #homeBtn stays in the bar (render() still
+   shows and hides it) but each screen's breadcrumb does its job, so the stylesheet hides it.
+   theme.js adds the ◐ toggle after this runs. */
+const BLOCK_SHORT = { nephro: 'Nephro', psych: 'Psych', neuro: 'Neuro', endocrine: 'Endocrine', eent: 'EENT', pulm: 'Pulm',
+  ortho: 'Ortho', rheum: 'Rheum', omm: 'OMM', gi: 'GI' };
+(function hubHeader() {
+  const bar = document.querySelector('.topbar-inner');
+  if (!bar) return;
+  bar.innerHTML = `<a class="hub-brand" href="../index.html">OCOM Question Hub</a>
+    <nav class="hub-nav" aria-label="Main"><a href="../resources/metabolic-atlas.html">Lesion Atlas</a><a href="../index.html#blocks" aria-current="page">Blocks</a><a href="../live.html">Live Session</a><a href="../index.html#sync">Sync</a><a href="../index.html#offline">Offline</a></nav>`;
+  if (homeBtn) bar.appendChild(homeBtn);
+})();
+// "Nephro" — the block's short name, for breadcrumbs
+function blockShort() {
+  return BLOCK_SHORT[blockDirName()] || QUIZ_CONFIG.title.replace(/\s*(?:Block\s*)?Question Bank$/i, '');
+}
+// "Nephrology / Urology / Men's Health" — the block's title without "Block Question Bank"
+function blockDisplayTitle() {
+  return QUIZ_CONFIG.title.replace(/\s*(?:Block\s*)?Question Bank$/i, '').replace(/\s*\/\s*/g, ' / ').trim();
+}
+// the batch a practice run covers, from its route segment ('1', '2', 'all', or a trial batch)
+function batchLabel(b) {
+  return b === '1' ? 'Batch 1' : b === '2' ? 'Batch 2' : b === 'all' ? 'Both batches'
+    : (TRIAL_BATCHES[b] && TRIAL_BATCHES[b].name) || 'Practice';
+}
 
 // Per-block config, set by a small inline <script> in each block's index.html
 // BEFORE data.js/app.js load. Falls back to the original Neuro Block keys so
@@ -635,6 +661,10 @@ function render() {
   const parts = hash.split('/').filter(Boolean);
 
   homeBtn.hidden = parts.length === 0;
+  main.dataset.view = parts.length === 0 ? 'home' : (parts[0] === 'practice' && parts[2]) ? 'practice-q' : parts[0];
+  // a new screen starts at the top (the block home is long now)
+  if (render.lastHash !== undefined && render.lastHash !== hash) window.scrollTo(0, 0);
+  render.lastHash = hash;
 
   if (parts.length === 0) {
     renderHome();
@@ -781,23 +811,27 @@ function fillAtlasMapsHome() {
         || (ranked(a[0]) ? pct(acc[a[0]]) - pct(acc[b[0]]) || acc[b[0]].n - acc[a[0]].n : 0)
         || b[1] - a[1] || ATLAS_MAPS[a[0]][0].localeCompare(ATLAS_MAPS[b[0]][0]));
     if (!rows.length) return;
+    const most = Math.max(1, ...rows.map(r => r[1]));
     const row = ([id, n]) => {
       const a = acc[id], p = a ? Math.round(100 * pct(a)) : 0;
       const chip = a ? `<span class="amap-acc ${p < 60 ? 'lo' : p < 80 ? 'mid' : 'hi'}" title="Your latest try on ${a.n} of this map’s questions">${a.ok}/${a.n} · ${p}%</span>` : '';
       return `<li class="amap-row">
         <a class="amap-name" href="${ATLAS_URL}#${encodeURIComponent(id)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[id][0])}</a>
+        <span class="amap-bar" aria-hidden="true"><i style="width:${Math.round(100 * n / most)}%"></i></span>
         ${chip}<span class="amap-n">${n} question${n === 1 ? '' : 's'}</span>
         ${a && a.n > a.ok ? `<a class="amap-go amap-miss" href="#atlasmap/${encodeURIComponent(id)}/missed" title="Run only the questions you missed on your latest try">Redo ${a.n - a.ok} missed</a>` : ''}
+        <a class="amap-go open" href="${ATLAS_URL}#${encodeURIComponent(id)}" target="_blank" rel="noopener">Open map</a>
         <a class="amap-go" href="#atlasmap/${encodeURIComponent(id)}">Practice</a></li>`;
     };
     const anyRanked = rows.some(r => ranked(r[0]));
     const top = rows.slice(0, 8), rest = rows.slice(8);
-    el.innerHTML = `<div class="section-label">Maps for this block</div>
+    el.innerHTML = `<section class="bsec atlas-sec" aria-labelledby="amapH"><div class="sec-head"><h2 class="sec-h" id="amapH">This block in the Lesion Atlas</h2>
+      <a href="${ATLAS_URL}" target="_blank" rel="noopener">Open the atlas →</a></div>
       <p class="amap-note">${anyRanked
         ? `Your weakest maps first — ranked by your latest answer to each question linked to the map, once you have answered ${AMAP_MIN}. The rest follow by how many of this block’s questions link to them.`
         : 'Lesion Atlas maps ranked by how many of this block’s questions link to their cards. Once you answer a few questions, your weakest maps move to the top.'} Open a map, or practice its questions here.</p>
       <ul class="amap-list">${top.map(row).join('')}</ul>
-      ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} maps</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}`;
+      ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} maps</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}</section>`;
   });
 }
 
@@ -822,11 +856,19 @@ function fillAtlasGraphsHome() {
         <span class="amap-n">${escapeHtml(map)} · ${n} question${n === 1 ? '' : 's'}</span>
         <a class="amap-go" href="#atlascards/${encodeURIComponent(ids.join(','))}/${encodeURIComponent(t)}">Practice</a></li>`;
     };
+    // the top six as tiles, the rest as rows
+    const tile = ([gi, n]) => {
+      const [v, i, t, ids] = ATLAS_GRAPHS[gi], map = ATLAS_MAPS && ATLAS_MAPS[v] ? ATLAS_MAPS[v][0] : v;
+      const open = `${ATLAS_URL}#graph/${encodeURIComponent(v)}/${i}`;
+      return `<div class="gtile"><a class="gt-name" href="${open}" target="_blank" rel="noopener">${escapeHtml(t)}</a>
+        <span class="gt-meta">${escapeHtml(map)} · ${n} question${n === 1 ? '' : 's'}</span>${GRAPH_GLYPH}
+        <span class="gt-links"><a href="${open}" target="_blank" rel="noopener">Open graph</a><a href="#atlascards/${encodeURIComponent(ids.join(','))}/${encodeURIComponent(t)}">Practice</a></span></div>`;
+    };
     const top = rows.slice(0, 6), rest = rows.slice(6);
-    el.innerHTML = `<div class="section-label">Graphs for this block</div>
+    el.innerHTML = `<section class="bsec" aria-labelledby="agH"><h3 class="sub-h" id="agH">Graphs for this block</h3>
       <p class="amap-note">Lesion Atlas graphs whose cards this block’s questions test most. Open a graph to see it and quiz yourself on its versions, or practice its questions here.</p>
-      <ul class="amap-list">${top.map(row).join('')}</ul>
-      ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} graphs</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}`;
+      <div class="gtiles">${top.map(tile).join('')}</div>
+      ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} graphs</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}</section>`;
   });
 }
 
@@ -860,35 +902,61 @@ function fillWeakSdlsHome() {
       <a class="amap-go" href="#practice/${r.sdl.sdlNumber}">Practice</a></li>`;
   };
   const top = rows.slice(0, 6), rest = rows.slice(6);
-  el.innerHTML = `<div class="section-label">Your weakest SDLs</div>
+  el.innerHTML = `<section class="bsec" aria-labelledby="weakH"><h2 class="sec-h" id="weakH">Your weakest SDLs</h2>
     <p class="amap-note">Ranked by your latest answer to each question, once you have answered ${SDL_MIN} in an SDL — weakest first. This device only.</p>
     <ul class="amap-list">${top.map(row).join('')}</ul>
-    ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} SDLs you have started</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}`;
+    ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} SDLs you have started</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}</section>`;
 }
 
+/* ── Block home (design H) ─────────────────────────────────────────────
+   A band with the block's name, its counts and a search over its SDLs, beside
+   whatever you were doing (an exam or SDL run to resume, or your progress);
+   then the exams, the simulations and the block's maps and graphs on the
+   Lesion Atlas, with the study tools, the block's latest announcement and the
+   settings in a side column. */
+function loadExamDates() {
+  try { const o = JSON.parse(localStorage.getItem('qhub-examdates') || '{}'); return o && typeof o === 'object' ? o : {}; } catch (e) { return {}; }
+}
+// "in 5 days" for an exam date set on the hub's Exam countdown (this device only); past dates show nothing
+function examWhen(s) {
+  const m = typeof s === 'string' && s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return '';
+  const t = new Date(+m[1], +m[2] - 1, +m[3]), now = new Date(); now.setHours(0, 0, 0, 0);
+  const d = Math.round((t - now) / 86400000);
+  return d < 0 ? '' : d === 0 ? 'today' : d === 1 ? 'tomorrow' : `in ${d} days`;
+}
 function renderHome() {
+  main.dataset.view = 'home';
+  const last = lastAttemptMap();
+  const dates = loadExamDates();
   const examCards = DATA.exams.map(e => {
     // Regular bank only (trial batches are opt-in, as in the SDL list); trial counts follow.
     const all = e.sdls.flatMap(sdl => sdl.questions);
-    const qCount = all.filter(q => !isTrialQ(q)).length;
+    const regular = all.filter(q => !isTrialQ(q));
+    const qCount = regular.length;
     const trialMeta = TRIAL_KEYS.map(b => {
       const n = all.filter(q => q.batch === b).length;
       return n ? `<span class="trial-count">${TRIAL_BATCHES[b].icon} ${n} ${escapeHtml(TRIAL_BATCHES[b].listLabel)}</span>` : '';
     }).join('');
+    let seen = 0, right = 0;
+    regular.forEach(q => { const a = last[q.id]; if (a) { seen++; if (a.correct) right++; } });
+    const seenPct = qCount ? Math.min(100, Math.round(100 * seen / qCount)) : 0;
+    const when = examWhen(dates[`${blockDirName()}:${e.examNumber}`]);
     return `
-      <div class="exam-card" data-exam="${e.examNumber}">
-        <div class="exam-num">Exam ${e.examNumber}</div>
-        <div class="exam-label">${e.sdls.length} SDLs · ${qCount ? `${qCount} questions` : 'questions coming soon'}</div>
-        ${qCount && trialMeta ? `<div class="exam-label exam-trial">${trialMeta}</div>` : ''}
-      </div>`;
+      <button type="button" class="exam-card" data-exam="${e.examNumber}">
+        <span class="ex-top"><span class="exam-num">Exam ${e.examNumber}</span>${when ? `<span class="ex-when">${escapeHtml(when)}</span>` : ''}</span>
+        <span class="exam-label">${e.sdls.length} SDLs · ${qCount ? `${qCount} questions` : 'questions coming soon'}</span>
+        ${qCount && trialMeta ? `<span class="exam-label exam-trial">${trialMeta}</span>` : ''}
+        ${qCount ? `<span class="ex-bar"><i style="width:${seenPct}%"></i></span>
+        <span class="ex-prog">${seen ? `${seenPct}% seen · ${Math.round(100 * right / seen)}% right` : 'Not started'}</span>` : ''}
+      </button>`;
   }).join('');
 
   const flagCount = Object.keys(loadFlags()).length;
   const attempts = loadAttempts();
 
-  const map = lastAttemptMap();
   const reviewIds = new Set();
-  Object.keys(map).forEach(id => { if (!map[id].correct) reviewIds.add(id); });
+  Object.keys(last).forEach(id => { if (!last[id].correct) reviewIds.add(id); });
   Object.keys(loadFlags()).forEach(id => reviewIds.add(id));
   const reviewCount = reviewIds.size;
 
@@ -899,17 +967,17 @@ function renderHome() {
   const showFinalExamCard = DATA.exams.length > 1 && allQuestionsForExam(lastExamNumber()).length > 0;
 
   const resumeSnap = loadExamSessionSnapshot();
-  const resumeHtml = resumeSnap ? `
-    <div class="action-card" id="resumeExamCard" style="border-color: var(--navy); border-width: 2px;">
-      <span class="icon">▶️</span>
-      <div>
-        <div class="sdl-title">Resume In-Progress Exam</div>
-        <div class="action-label">${escapeHtml(examSessionLabel(resumeSnap))} — question ${resumeSnap.index + 1} of ${resumeSnap.questions.length}, ${resumeSnap.answers.filter(a => a !== null).length} answered${resumeSnap.timed ? (resumeSnap.deadlineAt - Date.now() <= 0 ? ' · time expired' : ` · ${formatTime((resumeSnap.deadlineAt - Date.now()) / 1000)} left`) : ' · untimed'}
-          <button class="link-btn-inline" id="discardResumeBtn" style="margin-left:8px; background:none; border:1px solid var(--grey-border, #ccc); border-radius:6px; padding:2px 8px; cursor:pointer; font-size:0.78rem;">Discard</button>
-        </div>
-      </div>
-    </div>
-  ` : '';
+  const resumeHtml = resumeSnap ? (() => {
+    const done = resumeSnap.answers.filter(a => a !== null).length, n = resumeSnap.questions.length;
+    return `
+    <div class="bh-card" id="resumeExamCard" role="button" tabindex="0">
+      <span class="kicker">Resume exam</span>
+      <span class="bh-title">${escapeHtml(examSessionLabel(resumeSnap))}</span>
+      <span class="bh-meta">Question ${resumeSnap.index + 1} of ${n} · ${done} answered${resumeSnap.timed ? (resumeSnap.deadlineAt - Date.now() <= 0 ? ' · time expired' : ` · ${formatTime((resumeSnap.deadlineAt - Date.now()) / 1000)} left`) : ' · untimed'}</span>
+      <span class="bh-bar"><i style="width:${Math.round(100 * done / n)}%"></i></span>
+      <span class="bh-actions"><span class="btn">Resume</span><button type="button" class="btn secondary" id="discardResumeBtn">Discard</button></span>
+    </div>`;
+  })() : '';
 
   // Same idea as the exam resume card above, but for an in-progress SDL
   // practice run — this is the direct fix for "I refresh by accident and
@@ -919,87 +987,102 @@ function renderHome() {
   // explicit Discard so an abandoned run doesn't linger forever.
   const practiceSnap = loadPracticeSessionSnapshot();
   const practiceSdl = practiceSnap ? findSdl(practiceSnap.sdlNumber) : null;
-  const practiceResumeHtml = (practiceSnap && practiceSdl) ? `
-    <div class="action-card" id="resumePracticeCard" style="border-color: var(--navy); border-width: 2px;">
-      <span class="icon">▶️</span>
-      <div>
-        <div class="sdl-title">Resume In-Progress Practice</div>
-        <div class="action-label">${escapeHtml(practiceSdl.sdl.title)} — question ${practiceSnap.index + 1} of ${practiceSnap.questions.length}, ${(practiceSnap.records || []).filter(r => r).length} answered
-          <button class="link-btn-inline" id="discardPracticeResumeBtn" style="margin-left:8px; background:none; border:1px solid var(--grey-border, #ccc); border-radius:6px; padding:2px 8px; cursor:pointer; font-size:0.78rem;">Discard</button>
-        </div>
-      </div>
-    </div>
-  ` : '';
+  const practiceResumeHtml = (practiceSnap && practiceSdl) ? (() => {
+    const recs = (practiceSnap.records || []).filter(r => r), n = practiceSnap.questions.length;
+    return `
+    <div class="bh-card" id="resumePracticeCard" role="button" tabindex="0">
+      <span class="kicker">Resume practice</span>
+      <span class="bh-title">${escapeHtml(practiceSdl.sdl.title)}</span>
+      <span class="bh-meta">${escapeHtml(batchLabel(batchParamFromScoreKey(practiceSnap.scoreKey)))} · question ${practiceSnap.index + 1} of ${n} · ${recs.filter(r => r.correct).length} of ${recs.length} right</span>
+      <span class="bh-bar"><i style="width:${Math.round(100 * recs.length / n)}%"></i></span>
+      <span class="bh-actions"><span class="btn">Resume</span><button type="button" class="btn secondary" id="discardPracticeResumeBtn">Discard</button></span>
+    </div>`;
+  })() : '';
+
+  // Nothing to resume: how you are doing in this block, and where to go next
+  const answered = Object.keys(last).length, rightAll = Object.keys(last).filter(id => last[id].correct).length;
+  const firstExam = DATA.exams.find(e => e.sdls.some(s => s.questions.length)) || DATA.exams[0];
+  const progressHtml = `
+    <div class="bh-card static">
+      <span class="kicker">Your progress</span>
+      <span class="bh-title">${answered ? `${answered.toLocaleString()} answered · ${Math.round(100 * rightAll / answered)}% right` : 'Nothing answered yet'}</span>
+      <span class="bh-meta">${answered ? `${reviewCount} to review — missed and flagged · this device` : 'Pick an exam below, or search for an SDL.'}</span>
+      <span class="bh-actions">${answered
+        ? `${reviewCount ? '<a class="btn" href="#review">Review due</a>' : ''}<a class="btn${reviewCount ? ' secondary' : ''}" href="#analytics">Analytics</a>`
+        : firstExam ? `<a class="btn" href="#exam-sdls/${firstExam.examNumber}">Start Exam ${firstExam.examNumber}</a>` : ''}</span>
+    </div>`;
+
+  const nSdl = DATA.exams.reduce((s, e) => s + e.sdls.length, 0);
+  const allQs = DATA.exams.flatMap(e => e.sdls.flatMap(s => s.questions));
+  const nReg = allQs.filter(q => !isTrialQ(q)).length, nTrial = allQs.length - nReg;
 
   main.innerHTML = `
-    <h1>${escapeHtml(QUIZ_CONFIG.title)}</h1>
-    <p class="subtitle">Choose an exam block to practice by SDL or run a full timed simulation.${settings.hyOnly ? ' <strong>⚡ High-Yield Only Mode is ON.</strong>' : ''}</p>
-    ${resumeHtml}
-    ${practiceResumeHtml}
-    <div class="exam-grid">${examCards}</div>
-    ${splitCardsHtml()}
-
-    ${showFinalExamCard ? `
-    <div class="action-card" id="finalExamCard">
-      <span class="icon">&#127937;</span>
-      <div>
-        <div class="sdl-title">Final Exam Simulation</div>
-        <div class="action-label">Cumulative — 50% Exam ${lastExamNumber()}, 50% pooled from every earlier exam block</div>
+    <section class="bhero bleed" aria-labelledby="bhTitle">
+      <div class="bhero-in">
+        <div class="bhero-main">
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">All blocks</a><span aria-hidden="true">/</span><span>${escapeHtml(blockShort())}</span></nav>
+          <h1 id="bhTitle">${escapeHtml(blockDisplayTitle())}</h1>
+          <p class="bhero-meta">${DATA.exams.length} exam${DATA.exams.length === 1 ? '' : 's'} · ${nSdl} SDLs · ${nReg.toLocaleString()} questions${nTrial ? ` + ${nTrial} trial` : ''}${settings.hyOnly ? ' · <strong>⚡ High-yield only is on</strong>' : ''}</p>
+          <form class="bsearch" id="bSearch" role="search" autocomplete="off">
+            <div class="bsbox">
+              <label class="sr" for="bQ">Search this block’s SDLs</label>
+              <input id="bQ" type="search" placeholder="Search this block — “SDL 23” or a topic" role="combobox" aria-expanded="false" aria-controls="bRes" aria-autocomplete="list" spellcheck="false">
+              <div class="bsres" id="bRes" role="listbox" aria-label="SDLs" hidden></div>
+            </div>
+            <button type="submit">Search</button>
+          </form>
+        </div>
+        <div class="bhero-side">${resumeHtml}${practiceResumeHtml}${resumeHtml || practiceResumeHtml ? '' : progressHtml}</div>
       </div>
-    </div>
-    ${finalPresetCardsHtml(`timed at 1.5 min each${settings.examInstantFeedback ? ' · 📝 Instant Feedback is ON' : ''}`)}
-    ` : ''}
-
-    <div class="section-label">Study Tools</div>
-    <div class="action-card" id="analyticsCard">
-      <span class="icon">📊</span>
-      <div>
-        <div class="sdl-title">Performance Analytics</div>
-        <div class="action-label">${attempts.length ? `${attempts.length} answers logged — see your weakest objectives` : 'Answer some questions to unlock this'}</div>
+    </section>
+    <div class="bcols">
+      <div class="bcol-main">
+        <section class="bsec" aria-labelledby="exH">
+          <h2 class="sec-h" id="exH">Exams</h2>
+          <div class="exam-grid">${examCards}</div>
+          <div class="sim-grid">
+            ${splitCardsHtml()}
+            ${showFinalExamCard ? `
+            <div class="action-card" id="finalExamCard">
+              <span class="icon">&#127937;</span>
+              <div>
+                <div class="sdl-title">Final Exam Simulation</div>
+                <div class="action-label">Cumulative — 50% Exam ${lastExamNumber()}, 50% pooled from every earlier exam block</div>
+              </div>
+            </div>
+            ${finalPresetCardsHtml(`timed at 1.5 min each${settings.examInstantFeedback ? ' · 📝 Instant Feedback is ON' : ''}`)}` : ''}
+          </div>
+        </section>
+        <div id="weakSdlsHome"></div>
+        <div id="atlasMapsHome"></div>
+        <div id="atlasGraphsHome"></div>
       </div>
+      <aside class="bcol-side" aria-label="Study tools and settings">
+        <section class="side-box" aria-labelledby="toolsH">
+          <h2 class="side-h" id="toolsH">Study tools</h2>
+          <button type="button" class="tool-row" id="analyticsCard"><b>Performance analytics</b><span>${attempts.length ? `${attempts.length} answers logged — see your weakest objectives` : 'Answer some questions to unlock this'}</span></button>
+          <button type="button" class="tool-row" id="reviewCard"><b>Review due — missed + flagged</b><span>${reviewCount} question${reviewCount === 1 ? '' : 's'} to revisit</span></button>
+          <button type="button" class="tool-row" id="sheetCard"><b>Export study sheet</b><span>Printable missed + flagged, with explanations</span></button>
+          <button type="button" class="tool-row" id="flaggedCard"><b>Review flagged only</b><span>${flagCount} question${flagCount === 1 ? '' : 's'} flagged, across all SDLs</span></button>
+        </section>
+        <div id="blockNews"></div>
+        <section class="side-box" aria-labelledby="setH">
+          <h2 class="side-h" id="setH">Settings</h2>
+          <label class="switch-row"><span><b>High-yield only</b><span>Practice and simulations use only questions tagged high-yield</span></span>
+            <input type="checkbox" class="switch" id="hyToggle" ${settings.hyOnly ? 'checked' : ''}></label>
+          <label class="switch-row"><span><b>Show answers in simulations</b><span>Reveal right or wrong and the explanation after each question, as in Practice, instead of when you submit</span></span>
+            <input type="checkbox" class="switch" id="instantFeedbackToggle" ${settings.examInstantFeedback ? 'checked' : ''}></label>
+          <label class="switch-row"><span><b>Wrong-answer flash</b><span>Red flash and image burst when you miss (every block)</span></span>
+            <input type="checkbox" class="switch" id="wrongFlashToggle" ${wrongFlashEnabled() ? 'checked' : ''}></label>
+        </section>
+      </aside>
     </div>
-    <div class="action-card" id="reviewCard">
-      <span class="icon">🔁</span>
-      <div>
-        <div class="sdl-title">Review Due (Missed + Flagged)</div>
-        <div class="action-label">${reviewCount} question${reviewCount === 1 ? '' : 's'} to revisit</div>
-      </div>
-    </div>
-    <div class="action-card" id="sheetCard">
-      <span class="icon">📄</span>
-      <div>
-        <div class="sdl-title">Export Study Sheet</div>
-        <div class="action-label">Printable list of missed + flagged questions, with explanations</div>
-      </div>
-    </div>
-    <div class="action-card" id="flaggedCard">
-      <span class="icon">&#9733;</span>
-      <div>
-        <div class="sdl-title">Review Flagged Only</div>
-        <div class="action-label">${flagCount} question${flagCount === 1 ? '' : 's'} currently flagged, across all SDLs</div>
-      </div>
-    </div>
-    <div id="weakSdlsHome"></div>
-    <div id="atlasMapsHome"></div>
-    <div id="atlasGraphsHome"></div>
-
-    <div class="section-label">Settings</div>
-    <label class="radio-option" style="cursor:pointer;">
-      <input type="checkbox" id="hyToggle" ${settings.hyOnly ? 'checked' : ''}>
-      <span>⚡ High-Yield Only Mode — restrict Practice and Exam Simulation to questions tagged high-yield</span>
-    </label>
-    <label class="radio-option" style="cursor:pointer; margin-top:8px;">
-      <input type="checkbox" id="instantFeedbackToggle" ${settings.examInstantFeedback ? 'checked' : ''}>
-      <span>📝 Show Answers After Each Question (Exam Simulation) — reveal correct/incorrect + explanation right after you answer, same as Practice mode, instead of waiting until you submit the whole exam</span>
-    </label>
-    <label class="radio-option" style="cursor:pointer; margin-top:8px;">
-      <input type="checkbox" id="wrongFlashToggle" ${wrongFlashEnabled() ? 'checked' : ''}>
-      <span>💥 Wrong-Answer Flash — red screen flash and image burst when you miss a question (applies to every block)</span>
-    </label>
   `;
   fillWeakSdlsHome();
   fillAtlasMapsHome();
   fillAtlasGraphsHome();
+  fillBlockNews();
+  bindBlockSearch();
 
   main.querySelectorAll('.exam-card').forEach(card => {
     card.addEventListener('click', () => setRoute(`exam-sdls/${card.dataset.exam}`));
@@ -1013,8 +1096,13 @@ function renderHome() {
       if (preset) startFinalPreset(preset);
     });
   });
+  // the resume cards open on click or Enter / Space; their Discard buttons stop that
+  const onActivate = (el, fn) => {
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === el) { e.preventDefault(); fn(); } });
+  };
   const resumeExamCard = document.getElementById('resumeExamCard');
-  if (resumeExamCard) resumeExamCard.addEventListener('click', () => setRoute('resume-exam'));
+  if (resumeExamCard) onActivate(resumeExamCard, () => setRoute('resume-exam'));
   const discardResumeBtn = document.getElementById('discardResumeBtn');
   if (discardResumeBtn) discardResumeBtn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -1024,7 +1112,7 @@ function renderHome() {
     }
   });
   const resumePracticeCard = document.getElementById('resumePracticeCard');
-  if (resumePracticeCard) resumePracticeCard.addEventListener('click', () => {
+  if (resumePracticeCard) onActivate(resumePracticeCard, () => {
     setRoute(`practice/${practiceSnap.sdlNumber}/${batchParamFromScoreKey(practiceSnap.scoreKey)}`);
   });
   const discardPracticeResumeBtn = document.getElementById('discardPracticeResumeBtn');
@@ -1056,6 +1144,79 @@ function renderHome() {
   });
 }
 
+/* Search this block's SDLs from the band at the top of its home: "23" or "SDL 23" finds that
+   SDL, words find titles; each result opens the SDL. The last row hands the search to the
+   hub's home page, which also searches the atlas (index.html?q=…). */
+function bindBlockSearch() {
+  const form = document.getElementById('bSearch'), q = document.getElementById('bQ'), box = document.getElementById('bRes');
+  if (!form || !q || !box) return;
+  const items = DATA.exams.flatMap(e => e.sdls.map(s => ({ s, e: e.examNumber, n: atlasNorm(s.title) })));
+  let opts = [], active = -1;
+  function show() {
+    const qn = atlasNorm(q.value);
+    if (!qn) { hide(); return; }
+    const num = qn.match(/^(?:sdl ?)?(\d+)$/), words = qn.split(' ');
+    const hits = num ? items.filter(it => String(it.s.sdlNumber) === num[1])
+      : items.map(it => {
+        const sp = ' ' + it.n + ' ';
+        const sc = it.n.indexOf(qn) === 0 ? 3 : sp.indexOf(' ' + qn) >= 0 ? 2 : words.every(w => sp.indexOf(' ' + w) >= 0) ? 1 : 0;
+        return [sc, it];
+      }).filter(x => x[0]).sort((a, b) => b[0] - a[0] || a[1].s.sdlNumber - b[1].s.sdlNumber).map(x => x[1]);
+    const rows = hits.slice(0, 7).map((it, i) => `<a class="bsopt" role="option" id="bOpt${i}" href="#practice/${it.s.sdlNumber}"><b>${escapeHtml(it.s.title)}</b><span>Exam ${it.e} · ${it.s.questions.length} questions</span></a>`);
+    rows.push(`<a class="bsopt hub" role="option" id="bOpt${rows.length}" href="../index.html?q=${encodeURIComponent(q.value.trim())}"><b>Search the Lesion Atlas for “${escapeHtml(q.value.trim())}”</b><span>Maps, cards, graphs and every block’s SDLs</span></a>`);
+    box.innerHTML = (hits.length ? '' : '<div class="bsnone">No SDL in this block matches.</div>') + rows.join('');
+    box.hidden = false; q.setAttribute('aria-expanded', 'true');
+    opts = [].slice.call(box.querySelectorAll('.bsopt')); setActive(-1);
+  }
+  function hide() { box.hidden = true; q.setAttribute('aria-expanded', 'false'); q.removeAttribute('aria-activedescendant'); opts = []; active = -1; }
+  function setActive(i) {
+    opts.forEach((o, j) => { o.classList.toggle('on', j === i); o.setAttribute('aria-selected', String(j === i)); });
+    active = i;
+    if (i >= 0) { q.setAttribute('aria-activedescendant', opts[i].id); opts[i].scrollIntoView({ block: 'nearest' }); } else q.removeAttribute('aria-activedescendant');
+  }
+  q.addEventListener('input', show);
+  q.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' && opts.length) { e.preventDefault(); setActive(Math.min(opts.length - 1, active + 1)); }
+    else if (e.key === 'ArrowUp' && opts.length) { e.preventDefault(); setActive(Math.max(-1, active - 1)); }
+    else if (e.key === 'Escape') hide();
+  });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!q.value.trim()) { q.focus(); return; }
+    show();
+    const o = opts[active >= 0 ? active : 0];
+    if (o) location.href = o.href;
+  });
+  document.addEventListener('click', e => { if (!form.contains(e.target)) hide(); });
+}
+
+/* The block's latest announcement from the hub (announcements.js, edited by hand): the newest
+   entry tagged with this block, or that names it, shown in the side column. */
+let BLOCK_NEWS_READY = null;
+function fillBlockNews() {
+  const el = document.getElementById('blockNews');
+  if (!el || !APP_SRC) return;
+  if (!BLOCK_NEWS_READY) BLOCK_NEWS_READY = new Promise(resolve => {
+    if (window.ANNOUNCEMENTS || window.ANNOUNCEMENT) return resolve();
+    const s = document.createElement('script');
+    s.src = new URL('../announcements.js', APP_SRC).href;
+    s.async = true; s.onload = resolve; s.onerror = resolve;
+    document.head.appendChild(s);
+  });
+  BLOCK_NEWS_READY.then(() => {
+    if (!document.body.contains(el)) return;
+    const list = (Array.isArray(window.ANNOUNCEMENTS) ? window.ANNOUNCEMENTS : []).concat(window.ANNOUNCEMENT ? [window.ANNOUNCEMENT] : []);
+    const short = blockShort().toLowerCase(), dir = blockDirName().toLowerCase();
+    const names = [short, dir, blockDisplayTitle().split(' / ')[0].toLowerCase()];
+    const a = list.find(x => x && x.text && ((x.tag && names.includes(String(x.tag).toLowerCase())) ||
+      names.some(n => n && new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(String(x.text).replace(/<[^>]+>/g, '')))));
+    if (!a) { el.innerHTML = ''; return; }
+    el.innerHTML = `<section class="side-box news-box" aria-labelledby="bnH">
+      <h2 class="side-h" id="bnH">Latest for ${escapeHtml(blockShort())}${a.date ? ` · ${escapeHtml(a.date)}` : ''}</h2>
+      <p>${a.text}</p><a href="../index.html#newsH">All announcements →</a></section>`;
+  });
+}
+
 /* ── Per-exam SDL selection screen ───────────────────────────────────── */
 // An SDL can be attempted several ways (Both Batches, Batch 1 only, Batch 2
 // only, Bloom Batch) and each writes its score under a different key. The
@@ -1080,10 +1241,13 @@ function bestScoreForSdl(sdlNumber) {
 function renderExamSdlList(examNumber) {
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
   if (!exam) { renderHome(); return; }
+  main.dataset.view = 'exam-sdls';
 
   const settings = loadSettings();
   const totalQ = exam.sdls.reduce((s, sdl) => s + visibleQuestions(sdl).filter(q => !isTrialQ(q)).length, 0);
   const estMinutes = Math.round(totalQ * 90 / 60);
+  const snap = loadPracticeSessionSnapshot();
+  const when = examWhen(loadExamDates()[`${blockDirName()}:${examNumber}`]);
 
   const rows = exam.sdls.map(sdl => {
     const best = bestScoreForSdl(sdl.sdlNumber);
@@ -1093,50 +1257,113 @@ function renderExamSdlList(examNumber) {
       const n = visible.filter(q => q.batch === b).length;
       return n ? ` &middot; ${TRIAL_BATCHES[b].icon} ${n} ${escapeHtml(TRIAL_BATCHES[b].listLabel)}` : '';
     }).join('');
+    // the SDL's own title without its "SDL 13 — " lead: the number sits in the badge
+    const name = String(sdl.title).replace(/^SDL\s*\d+\s*(?:[—–:-]+|--)\s*/i, '');
     if (!sdl.questions.length) return `
       <div class="sdl-row pending">
-        <div>
-          <div class="sdl-title">${escapeHtml(sdl.title)}</div>
+        <span class="sdl-num">${sdl.sdlNumber}</span>
+        <div class="sdl-body">
+          <div class="sdl-title">${escapeHtml(name)}</div>
           <div class="sdl-meta">Questions coming soon</div>
         </div>
       </div>`;
-    const scoreHtml = best
-      ? `<div class="sdl-score">${escapeHtml(best.label)} — Last: ${best.score.last.correct}/${best.score.last.total}${best.score.best.correct === best.score.last.correct && best.score.best.total === best.score.last.total ? '' : ` · Best: ${best.score.best.correct}/${best.score.best.total}`}</div>`
-      : `<div class="sdl-score none">Not attempted</div>`;
+    const going = snap && String(snap.sdlNumber) === String(sdl.sdlNumber);
+    const scoreHtml = going
+      ? `<div class="sdl-score going">In progress · question ${snap.index + 1} of ${snap.questions.length}</div>`
+      : best
+        ? `<div class="sdl-score">${escapeHtml(best.label)} — Last: ${best.score.last.correct}/${best.score.last.total}${best.score.best.correct === best.score.last.correct && best.score.best.total === best.score.last.total ? '' : ` · Best: ${best.score.best.correct}/${best.score.best.total}`}</div>`
+        : `<div class="sdl-score none">Not attempted</div>`;
     return `
-      <div class="sdl-row" data-sdl="${sdl.sdlNumber}">
-        <div>
-          <div class="sdl-title">${escapeHtml(sdl.title)}</div>
+      <div class="sdl-row${going ? ' going' : ''}" data-sdl="${sdl.sdlNumber}">
+        <span class="sdl-num">${sdl.sdlNumber}</span>
+        <div class="sdl-body">
+          <div class="sdl-title">${escapeHtml(name)}</div>
           <div class="sdl-meta">${regularCount} questions${trialMeta}${ATLAS_URL ? ` &middot; <a class="sdl-atlas" href="#sdlcards/${sdl.sdlNumber}" title="The atlas cards this SDL’s questions link to">Atlas cards</a>` : ''}</div>
+          ${scoreHtml}
         </div>
-        ${scoreHtml}
+        <span class="sdl-go">${going ? 'Resume' : 'Practice'}</span>
       </div>`;
   }).join('');
 
   main.innerHTML = `
-    <button class="back-link" id="backHome">&larr; All Exams</button>
-    <h1>Exam ${examNumber}</h1>
-    <p class="subtitle">${exam.sdls.length} SDLs · ${totalQ ? `${totalQ} total questions` : 'questions coming soon'}${settings.hyOnly ? ' · <strong>⚡ High-Yield Only Mode is ON</strong>' : ''}</p>
-    ${totalQ ? `<div class="action-card" id="fullSimCard">
-      <span class="icon">&#9201;</span>
-      <div>
-        <div class="sdl-title">Full Exam Simulation</div>
-        <div class="action-label">All ${totalQ} questions, timed (~${estMinutes} min budget)${settings.examInstantFeedback ? ' · 📝 Instant Feedback is ON' : ', no immediate answer reveal'}</div>
+    <section class="page-head bleed" aria-labelledby="exTitle">
+      <div class="ph-in">
+        <div class="ph-main">
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">All blocks</a><span aria-hidden="true">/</span><a href="#">${escapeHtml(blockShort())}</a><span aria-hidden="true">/</span><span>Exam ${examNumber}</span></nav>
+          <h1 id="exTitle">Exam ${examNumber}</h1>
+          <p class="ph-meta">${exam.sdls.length} SDLs · ${totalQ ? `${totalQ} questions` : 'questions coming soon'}${when ? ` · <span class="ph-when">${escapeHtml(when)}</span>` : ''}${settings.hyOnly ? ' · <strong>⚡ High-yield only is on</strong>' : ''}</p>
+        </div>
+        ${totalQ ? `<button type="button" class="ph-cta" id="fullSimCard">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>
+          <span><b>Full exam simulation</b><span>All ${totalQ} questions, timed (~${estMinutes} min)${settings.examInstantFeedback ? ' · answers shown as you go' : ', answers at the end'}</span></span>
+        </button>` : ''}
       </div>
-    </div>` : ''}
-    ${splitCardsHtml(examNumber)}
-    <div class="section-label">Practice by SDL</div>
-    <div class="sdl-list">${rows}</div>
+    </section>
+    ${splitPresets().some(p => p.exam === examNumber) ? `<div class="sim-grid">${splitCardsHtml(examNumber)}</div>` : ''}
+    <div class="xcols">
+      <section class="xmain" aria-labelledby="sdlH">
+        <h2 class="sec-h" id="sdlH">Practice by SDL</h2>
+        <div class="sdl-list">${rows}</div>
+      </section>
+      <aside class="xside" id="examAtlas" aria-label="Exam ${examNumber} in the Lesion Atlas"></aside>
+    </div>
   `;
 
-  document.getElementById('backHome').addEventListener('click', () => setRoute(''));
   const fullSimCard = document.getElementById('fullSimCard');
   if (fullSimCard) fullSimCard.addEventListener('click', () => setRoute(`examsetup/${examNumber}`));
   bindSplitCards();
   main.querySelectorAll('.sdl-row:not(.pending)').forEach(row => {
-    row.addEventListener('click', e => { if (e.target.closest('a')) return; setRoute(`practice/${row.dataset.sdl}`); });
+    row.addEventListener('click', e => {
+      if (e.target.closest('a')) return;
+      const n = +row.dataset.sdl;
+      if (snap && String(snap.sdlNumber) === String(n)) setRoute(`practice/${n}/${batchParamFromScoreKey(snap.scoreKey)}`);
+      else setRoute(`practice/${n}`);
+    });
+  });
+  fillExamAtlas(exam);
+}
+
+/* "Exam N in the atlas" beside the SDL list: the maps this exam's questions link to most, and
+   the graph they lean on most — worked out from each question's linked cards, the same rule
+   as everywhere else (atlasLinksFor). Maps open in the atlas; Practice runs the block's
+   questions on that map (#atlasmap) or graph (#atlascards). */
+function fillExamAtlas(exam) {
+  const el = document.getElementById('examAtlas');
+  if (!el || !ATLAS_URL) return;
+  ATLAS_READY.then(() => new Promise(r => setTimeout(r, 0))).then(() => {
+    if (!document.body.contains(el) || !ATLAS_MAPS || !ATLAS_INDEX) return;
+    const cardMaps = {};
+    Object.keys(ATLAS_MAPS).forEach(m => (ATLAS_MAPS[m][1] || []).forEach(c => { (cardMaps[c] = cardMaps[c] || []).push(m); }));
+    const mapN = {}, graphN = {};
+    exam.sdls.forEach(sdl => sdl.questions.forEach(q => {
+      if (isTrialQ(q)) return;
+      if (!ATLAS_Q_CARDS.has(q.id)) ATLAS_Q_CARDS.set(q.id, atlasLinksFor(q).map(c => c.id));
+      const ids = ATLAS_Q_CARDS.get(q.id), maps = new Set();
+      ids.forEach(c => (cardMaps[c] || []).forEach(m => maps.add(m)));
+      maps.forEach(m => { mapN[m] = (mapN[m] || 0) + 1; });
+      (ATLAS_GRAPHS || []).forEach((g, gi) => { if (g[3].some(c => ids.includes(c))) graphN[gi] = (graphN[gi] || 0) + 1; });
+    }));
+    const maps = Object.keys(mapN).sort((a, b) => mapN[b] - mapN[a] || ATLAS_MAPS[a][0].localeCompare(ATLAS_MAPS[b][0])).slice(0, 5);
+    const gTop = Object.keys(graphN).sort((a, b) => graphN[b] - graphN[a])[0];
+    if (!maps.length) { el.innerHTML = ''; return; }
+    const g = gTop != null ? ATLAS_GRAPHS[gTop] : null;
+    el.innerHTML = `<section class="side-box">
+        <h2 class="side-h">Exam ${exam.examNumber} in the atlas</h2>
+        <p class="side-note">The maps this exam’s questions link to most</p>
+        ${maps.map(m => `<div class="xmap"><a href="${ATLAS_URL}#${encodeURIComponent(m)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[m][0])}</a>
+          <span>${mapN[m]} question${mapN[m] === 1 ? '' : 's'}</span><a class="amap-go" href="#atlasmap/${encodeURIComponent(m)}">Practice</a></div>`).join('')}
+      </section>
+      ${g ? `<section class="side-box">
+        <h2 class="side-h">Graph to know</h2>
+        <a class="xgraph" href="${ATLAS_URL}#graph/${encodeURIComponent(g[0])}/${g[1]}" target="_blank" rel="noopener">${escapeHtml(g[2])}</a>
+        ${GRAPH_GLYPH}
+        <p class="side-note">${graphN[gTop]} of this exam’s questions · on ${escapeHtml(ATLAS_MAPS[g[0]] ? ATLAS_MAPS[g[0]][0] : g[0])}</p>
+        <span class="side-links"><a href="${ATLAS_URL}#graph/${encodeURIComponent(g[0])}/${g[1]}" target="_blank" rel="noopener">Open the graph</a><a href="#atlascards/${encodeURIComponent(g[3].join(','))}/${encodeURIComponent(g[2])}">Practice its questions</a></span>
+      </section>` : ''}`;
   });
 }
+// a small generic graph sketch for graph tiles (decorative; the real graph is in the atlas)
+const GRAPH_GLYPH = '<svg class="g-glyph" viewBox="0 0 220 70" aria-hidden="true"><path class="ax" d="M14 4V62H214"/><path class="c1" d="M14 50C60 50 84 14 130 12S200 10 212 10"/><path class="c2" d="M14 60C80 60 130 48 212 30"/></svg>';
 
 /* ── Custom Exam Builder (weighted current/prior content + batch mix) ── */
 function renderExamSetup(examNumber) {
@@ -1964,6 +2191,65 @@ function renderPracticeStart(sdlNumber, batch, forceNew) {
   renderPracticeQuestion();
 }
 
+/* ── "On the Lesion Atlas" beside a practice question (design J) ─────────
+   Once a question is answered, the panel shows its best linked card itself — the
+   card's subtitle, the opening of its mechanism, a buzzword, its sources and First
+   Aid pages (resources/atlas-cards.js, built by tools/build-atlas.py, loaded after
+   the first answer) — with links to open it on its map, practice it, and the usual
+   atlas links (other cards, See it on a graph, You picked / Compare). Before an
+   answer it only says what will appear, so it never gives the answer away. */
+let ATLAS_CARDS_READY = null;
+function loadAtlasCards() {
+  if (ATLAS_CARDS_READY) return ATLAS_CARDS_READY;
+  ATLAS_CARDS_READY = new Promise(resolve => {
+    if (window.ATLAS_CARDS) return resolve(window.ATLAS_CARDS);
+    if (!APP_SRC) return resolve(null);
+    const s = document.createElement('script');
+    s.src = new URL('../resources/atlas-cards.js', APP_SRC).href;
+    s.async = true;
+    s.onload = () => resolve(window.ATLAS_CARDS || null);
+    s.onerror = () => resolve(null);
+    document.head.appendChild(s);
+  });
+  return ATLAS_CARDS_READY;
+}
+// the first map a card is pinned on — its home in the atlas
+function atlasHomeMap(id) {
+  for (const m of Object.keys(ATLAS_MAPS || {})) if ((ATLAS_MAPS[m][1] || []).includes(id)) return m;
+  return null;
+}
+const ATLAS_KIND = { dz: 'Disease', drug: 'Drug', reg: 'Regulation', tox: 'Toxicity', org: 'Organism', gene: 'Gene', enz: 'Enzyme' };
+function atlasRailHtml(q, picked) {
+  if (!ATLAS_URL) return '';
+  const cards = atlasLinksFor(q);
+  const more = atlasLinksHtml(q, picked);
+  const c = cards[0];
+  if (!c) return more || `<div class="rail-wait"><span class="kicker">On the Lesion Atlas</span><p>No atlas card is linked to this question yet.</p></div>`;
+  const d = window.ATLAS_CARDS && window.ATLAS_CARDS[c.id];
+  const home = atlasHomeMap(c.id);
+  const P = window.ATLAS_PRACTICE, bi = P ? (P.blocks || []).findIndex(b => b[0] === blockDirName()) : -1;
+  const nHere = P && P.cards && P.cards[c.id] ? ((P.cards[c.id].find(x => x[0] === bi) || [0, 0])[1]) : 0;
+  const href = `${ATLAS_URL}#${home ? encodeURIComponent(home) + '/' : ''}${encodeURIComponent(c.id)}`;
+  return `<section class="rail-card" aria-labelledby="railCardH">
+      <span class="kicker atlas-k">On the Lesion Atlas${ATLAS_KIND[c.k] ? ` · ${ATLAS_KIND[c.k]}` : ''}</span>
+      <h2 id="railCardH"><a href="${href}" target="_blank" rel="noopener">${escapeHtml(c.n)}</a></h2>
+      ${d && d[0] ? `<p class="rail-sub">${escapeHtml(d[0])}</p>` : ''}
+      ${d && d[1] ? `<p class="rail-mech">${escapeHtml(d[1])}</p>` : ''}
+      ${d && d[2] ? `<p class="rail-buzz">${escapeHtml(d[2])}</p>` : ''}
+      ${d && (d[4].length || d[3]) ? `<p class="rail-src">${escapeHtml(d[4].join(' · '))}${d[3] ? `${d[4].length ? ' · ' : ''}First Aid p. ${escapeHtml(d[3])}` : ''}</p>` : ''}
+      <span class="rail-actions"><a class="btn atlas" href="${href}" target="_blank" rel="noopener">Open on the map</a><a class="btn secondary" href="#atlas/${encodeURIComponent(c.id)}">Practice this card</a></span>
+      <p class="rail-home">${home && ATLAS_MAPS[home] ? `Lives on <a href="${ATLAS_URL}#${encodeURIComponent(home)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[home][0])}</a>` : ''}${nHere ? `${home ? ' · ' : ''}${nHere} question${nHere === 1 ? '' : 's'} here link to it` : ''}</p>
+    </section>
+    ${more.replace('<b>On the Lesion Atlas</b>', '<b>Linked on the atlas</b>')}`;
+}
+// refill the panel once the card summaries (and the atlas terms) have loaded
+function refreshRailWhenReady(q, picked) {
+  Promise.all([ATLAS_READY, loadAtlasCards(), loadAtlasPractice()]).then(() => {
+    const r = document.getElementById('qRail');
+    if (r && r.dataset.q === String(q.id)) r.innerHTML = atlasRailHtml(q, picked);
+  });
+}
+
 function renderPracticeQuestion() {
   savePracticeSessionSnapshot();
   const q = session.questions[session.index];
@@ -1989,7 +2275,7 @@ function renderPracticeQuestion() {
     const strikeBtn = !answered ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
     return `<div class="choice-row">
       <button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
-        <span class="letter">${letter}.</span>${choiceBodyHtml(q, letter)}
+        <span class="letter">${letter}</span>${choiceBodyHtml(q, letter)}
       </button>${strikeBtn}
     </div>`;
   }).join('');
@@ -2015,38 +2301,44 @@ function renderPracticeQuestion() {
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
-      ${atlasLinksHtml(q, record.correct ? null : record.letter)}
     `;
   }
 
   const answeredSoFar = session.records.filter(r => r).length;
   const correctSoFar = session.records.filter(r => r && r.correct).length;
+  const picked = answered && !record.correct ? record.letter : null;
 
+  main.dataset.view = 'practice-q';
   main.innerHTML = `
-    <button class="back-link" id="backExam">&larr; Exam ${session.examNumber}</button>
-    ${TRIAL_BATCHES[session.trialBatch || (session.isBloom ? 3 : 0)] ? `<div class="bloom-banner${session.trialBatch === 4 ? ' trial-alt-banner' : ''}">${escapeHtml(TRIAL_BATCHES[session.trialBatch || 3].banner)}</div>` : ''}
-    <div class="quiz-header">
-      <span class="quiz-progress">Question ${session.index + 1} of ${total}</span>
-      <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}</span>
-    </div>
-    <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
-    <div class="q-card">
-      <div class="q-meta-row">
-        <span class="q-objective">Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''} ${q.bloomLevel ? `<span class="bloom-badge">${escapeHtml(q.bloomLevel)}</span>` : ''}</span>
-        <button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button>
+    <div class="q-sub bleed">
+      <div class="q-sub-in">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#">${escapeHtml(blockShort())}</a><span aria-hidden="true">/</span><a href="#exam-sdls/${session.examNumber}">Exam ${session.examNumber}</a><span aria-hidden="true">/</span><a href="#practice/${session.sdlNumber}">SDL ${session.sdlNumber}</a><span class="crumb-x">· ${escapeHtml(batchLabel(batchParamFromScoreKey(session.scoreKey || '')))}</span></nav>
+        <span class="q-sub-r"><span class="quiz-progress">Question <b>${session.index + 1}</b> of ${total}</span><span class="quiz-score">Score <b>${correctSoFar}/${answeredSoFar}</b></span></span>
       </div>
-      <div class="q-stem">${escapeHtml(q.stem)}</div>
-      ${choiceListOpen(q)}${gridHeaderHtml(q, !answered)}${choicesHtml}</div>
-      ${confidenceHtml}
-      ${feedbackHtml}
-      <div class="next-row" style="justify-content: space-between;">
+      <div class="q-sub-bar"><i style="width:${(session.index / total) * 100}%"></i></div>
+    </div>
+    ${TRIAL_BATCHES[session.trialBatch || (session.isBloom ? 3 : 0)] ? `<div class="bloom-banner${session.trialBatch === 4 ? ' trial-alt-banner' : ''}">${escapeHtml(TRIAL_BATCHES[session.trialBatch || 3].banner)}</div>` : ''}
+    <div class="qlayout${answered ? ' answered' : ''}">
+      <div class="q-card">
+        <div class="q-meta-row">
+          <span class="q-objective">Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''} ${q.bloomLevel ? `<span class="bloom-badge">${escapeHtml(q.bloomLevel)}</span>` : ''}</span>
+          <button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button>
+        </div>
+        <div class="q-stem">${escapeHtml(q.stem)}</div>
+        ${choiceListOpen(q)}${gridHeaderHtml(q, !answered)}${choicesHtml}</div>
+        ${confidenceHtml}
+        ${feedbackHtml}
+      </div>
+      <aside class="q-rail" id="qRail" data-q="${escapeHtml(String(q.id))}" aria-label="On the Lesion Atlas">${answered ? atlasRailHtml(q, picked)
+        : '<div class="rail-wait"><span class="kicker">On the Lesion Atlas</span><p>Answer to see where this question lives on the atlas — its card, its map and its graph.</p></div>'}</aside>
+      <div class="next-row q-nav">
         <button class="btn secondary" id="prevBtn" ${session.index === 0 ? 'disabled' : ''}>&larr; Previous</button>
-        ${answered ? `<button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next Question' : 'Finish'}</button>` : '<span></span>'}
+        ${answered ? `<button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next question &rarr;' : 'Finish'}</button>` : '<span></span>'}
       </div>
     </div>
   `;
+  if (answered && !(window.ATLAS_CARDS && ATLAS_INDEX && window.ATLAS_PRACTICE)) refreshRailWhenReady(q, picked);
 
-  document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${session.examNumber}`));
   document.getElementById('flagBtn').addEventListener('click', () => {
     toggleFlag(q.id);
     renderPracticeQuestion();
@@ -2056,6 +2348,7 @@ function renderPracticeQuestion() {
       session.index--;
       session.pendingLetter = null;
       renderPracticeQuestion();
+      window.scrollTo(0, 0);
     }
   });
 
@@ -2103,6 +2396,7 @@ function renderPracticeQuestion() {
           session.index++;
           session.pendingLetter = null;
           renderPracticeQuestion();
+          window.scrollTo(0, 0);
         } else {
           recordScore(session.scoreKey, correctSoFar, total);
           clearPracticeSessionSnapshot();
@@ -2295,7 +2589,7 @@ function renderExamQuestion() {
     const strikeBtn = !locked ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
     return `<div class="choice-row">
       <button class="${cls}" data-letter="${letter}" ${locked ? 'disabled' : ''}>
-        <span class="letter">${letter}.</span>${choiceBodyHtml(q, letter)}
+        <span class="letter">${letter}</span>${choiceBodyHtml(q, letter)}
       </button>${strikeBtn}
     </div>`;
   }).join('');
@@ -2614,7 +2908,7 @@ function renderFlaggedQuestion() {
     const strikeBtn = !answered ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
     return `<div class="choice-row">
       <button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
-        <span class="letter">${letter}.</span>${choiceBodyHtml(q, letter)}
+        <span class="letter">${letter}</span>${choiceBodyHtml(q, letter)}
       </button>${strikeBtn}
     </div>`;
   }).join('');
@@ -3063,7 +3357,7 @@ function renderReviewQuestion() {
     const strikeBtn = !answered ? `<button class="strike-btn ${isStruck ? 'active' : ''}" data-strike-letter="${letter}" title="Cross out this choice" aria-label="Cross out choice ${letter}">🚫</button>` : '';
     return `<div class="choice-row">
       <button class="${cls}" data-letter="${letter}" ${answered ? 'disabled' : ''}>
-        <span class="letter">${letter}.</span>${choiceBodyHtml(q, letter)}
+        <span class="letter">${letter}</span>${choiceBodyHtml(q, letter)}
       </button>${strikeBtn}
     </div>`;
   }).join('');

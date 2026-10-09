@@ -28,6 +28,8 @@ TERMS_OUT = ROOT / "resources" / "atlas-terms.js"
 PRACTICE_OUT = ROOT / "resources" / "atlas-practice.js"
 QLINKS_OUT = ROOT / "resources" / "atlas-qlinks.js"
 COUNTS_OUT = ROOT / "resources" / "qbank-counts.js"
+HOME_OUT = ROOT / "resources" / "atlas-home.js"
+CARDS_OUT = ROOT / "resources" / "atlas-cards.js"
 HOMES = TOOLS / "atlas-homes.json"
 art = src.read_text(encoding="utf-8")
 
@@ -186,13 +188,23 @@ OCOM_CSS = """
 body{display:flex;flex-direction:column}
 .app{flex:1;min-height:0;height:auto}
 .hdr{padding-top:12px}
-.ocom-topbar{background:#1f4e79;color:#fff;padding:14px 16px;flex:none;
-  padding-top:calc(14px + env(safe-area-inset-top,0px))}
-.ocom-topbar-inner{max-width:1100px;margin:0 auto;font-weight:700;font-size:1.1rem;
-  display:flex;align-items:center;gap:14px;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-.ocom-topbar-inner a{color:#fff;text-decoration:none;opacity:.85;font-weight:500;font-size:.95rem}
-.ocom-topbar-inner a:hover{opacity:1;text-decoration:underline}
+/* the hub's own header, as on every page of the hub: brand on the left, the main links on the right */
+.ocom-topbar{background:var(--bg);color:var(--ink);padding:10px 20px;flex:none;border-bottom:1px solid var(--line-2);
+  padding-top:calc(10px + env(safe-area-inset-top,0px))}
+.ocom-topbar-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 18px;
+  font-family:"IBM Plex Sans",system-ui,sans-serif}
+.ocom-brand{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:18px;color:var(--ink);text-decoration:none}
+.ocom-nav{display:flex;flex-wrap:wrap;gap:2px 18px;font-size:14.5px;font-weight:500}
+.ocom-nav a{color:var(--ink);text-decoration:none;padding:4px 0}
+.ocom-nav a:hover{color:var(--accent);text-decoration:underline;text-underline-offset:5px}
+.ocom-nav a[aria-current="page"]{color:var(--accent);font-weight:600}
+@media (max-width:640px){.ocom-topbar{padding:8px 14px}.ocom-nav{flex:1 1 100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:16px;font-size:13.5px}
+  .ocom-nav::-webkit-scrollbar{display:none}.ocom-nav a{white-space:nowrap}}
+/* the header row: the open map's name, then search and the buttons; the systems and the maps below it */
+.hdr .brand h1{max-width:min(46vw,560px);overflow:hidden;text-overflow:ellipsis}
+.hdr .topics{order:3;flex-basis:100%}
+/* the map tabs: the open map in the atlas's teal */
+.subtabs .tab[aria-selected="true"]{background:var(--p-ppp);color:#fff;border-color:transparent}
 """
 
 head = f"""<!doctype html>
@@ -217,9 +229,15 @@ img{{max-width:100%}}
 <script src="atlas-qlinks.js" defer></script>
 """
 
-TOPBAR = ('<div class="ocom-topbar"><div class="ocom-topbar-inner">'
-          '<a href="../index.html">&larr; All Blocks</a>'
-          '<span>Lesion Atlas</span></div></div>\n')
+TOPBAR = ('<header class="ocom-topbar"><div class="ocom-topbar-inner">'
+          '<a class="ocom-brand" href="../index.html">OCOM Question Hub</a>'
+          '<nav class="ocom-nav" aria-label="Main">'
+          '<a href="metabolic-atlas.html" aria-current="page">Lesion Atlas</a>'
+          '<a href="../index.html#blocks">Blocks</a>'
+          '<a href="../live.html">Live Session</a>'
+          '<a href="../index.html#sync">Sync</a>'
+          '<a href="../index.html#offline">Offline</a>'
+          '</nav></div></header>\n')
 
 styled = artifact[:last_style_close] + OCOM_CSS + artifact[last_style_close:]
 # the artifact's markup starts right after its stylesheet block
@@ -307,6 +325,7 @@ if pc:
         plotcards[kind] = re.findall(r'"([a-z0-9_]+)"', lst)
 card_ids = {r[0] for r in rows}
 graphs = []
+all_plots = []   # every graph, with or without cards — the hub's "Graph of the day"
 for mm in re.finditer(r"^MAPS\.([a-z0-9_]+) = \{(.*?)\n\};", art, re.M | re.S):
     body = mm.group(2); k = body.find("\n plots:[")
     if k < 0:
@@ -315,6 +334,8 @@ for mm in re.finditer(r"^MAPS\.([a-z0-9_]+) = \{(.*?)\n\};", art, re.M | re.S):
     for i, obj in enumerate(re.findall(r"\{[^{}]*kind:\"[a-z0-9]+\"[^{}]*\}", seg)):
         kind = re.search(r'kind:"([a-z0-9]+)"', obj).group(1); t = re.search(r't:"([^"]*)"', obj)
         ids = [c for c in plotcards.get(kind, []) if c in card_ids]
+        if t:
+            all_plots.append([mm.group(1), i, t.group(1)])
         if ids and t:
             graphs.append([mm.group(1), i, t.group(1), ids])
 TERMS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. [id, name, kind, normalized terms]; maps: id -> [title, card ids]; graphs: [map, plot, title, card ids] */\n"
@@ -394,6 +415,8 @@ for mid, (_, ids) in map_cards.items():
     for cid in ids:
         maps_of.setdefault(cid, set()).add(mid)
 nq = 0
+nlinked = 0       # questions linked to at least one card
+sdl_list = []     # [block index, SDL number, title] for the hub's search
 exam_counts = {}  # block folder -> {trial: [batches], exams: [[exam number, regular questions]]} for the hub's exam readiness
 for bi, (b, _) in enumerate(blocks):
     raw = (ROOT / b / "data.js").read_text(encoding="utf-8")
@@ -405,10 +428,13 @@ for bi, (b, _) in enumerate(blocks):
                                                 for ex in data["exams"]]}
     for ex in data["exams"]:
         for sdl in ex["sdls"]:
+            sdl_list.append([bi, sdl.get("sdlNumber"), sdl.get("title") or ""])
             for q in sdl["questions"]:
                 nq += 1
                 hit_maps = set(); hit_graphs = set()
-                for cid in links_for(q):
+                qcards = links_for(q)
+                nlinked += bool(qcards)
+                for cid in qcards:
                     hit_graphs |= graphs_of.get(cid, set())
                     counts.setdefault(cid, {}).setdefault(bi, 0)
                     counts[cid][bi] += 1
@@ -438,3 +464,138 @@ COUNTS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. Per blo
 print(f"built {COUNTS_OUT.relative_to(ROOT)}  —  exam totals for {len(exam_counts)} blocks")
 print(f"built {QLINKS_OUT.relative_to(ROOT)}  —  question ids for {len(qlinks)} cards ({QLINKS_OUT.stat().st_size // 1024} KB)")
 print(f"built {PRACTICE_OUT.relative_to(ROOT)}  —  {len(counts)} cards and {len(map_counts)} maps with practice questions from {nq} questions in {len(blocks)} blocks")
+
+
+# ── the hub's home page (index.html): the atlas at a glance ─────────────────
+# Systems and map titles for "Browse by system" and the search, a small schematic
+# of each map (its first two lanes and their first steps, from the map's own
+# compartments, or its pathways where it has none) for "Pick up where you left
+# off", the newest batch of maps (the last line of NEW_MAPS), every graph for
+# "Graph of the day", and each block's SDL titles for the search.
+vseg = art[art.index("const VIEWS"):]
+views = re.findall(r'\["([a-z0-9_]+)","([^"]*)"\]', vseg[:vseg.index("];")])
+tseg = art[art.index("const TOPICS"):]
+topics = [[t, n, re.findall(r'"([a-z0-9_]+)"', vs)] for t, n, vs in
+          re.findall(r'\["([a-z0-9_]+)","([^"]+)",\[([^\]]*)\]\]', tseg[:tseg.index("]];") + 3]) if t != "idx"]
+topic_of = {v: t for t, _, vs in topics for v in vs}
+pseg = art[art.index("const PATHS"):]
+paths = {k: (n, c) for k, n, c in re.findall(r'([A-Za-z0-9_]+):\{n:"([^"]*)",v:"--p-([a-z]+)"\}', pseg[:pseg.index("\n};")])}
+nseg = art[art.index("const NEW_MAPS="):]
+new_lines = [l for l in nseg[:nseg.index("};")].split("\n") if re.search(r'[a-z0-9_]+:"\d{4}-\d\d-\d\d"', l)]
+latest = re.findall(r'([a-z0-9_]+):"\d{4}-\d\d-\d\d"', new_lines[-1]) if new_lines else []
+
+def num(s, k):
+    m = re.search(r"\b" + k + r":(-?[\d.]+)", s)
+    return float(m.group(1)) if m else None
+
+def preview(body):
+    def seg(name):
+        k = body.find("\n " + name + ":[")
+        if k < 0:
+            return ""
+        nxt = [body.find("\n " + x + ":", k + 3) for x in ("comps", "mem", "panels", "nodes", "edges", "plots", "notes")]
+        nxt = [x for x in nxt if x > k]
+        return body[k:min(nxt) if nxt else len(body)]
+    comps = []
+    for o in re.findall(r"\{[^{}]*\}", seg("comps")):
+        l = re.search(r'\bl:"([^"]*)"', o)
+        if l and None not in (num(o, "x"), num(o, "y"), num(o, "w"), num(o, "h")):
+            comps.append((num(o, "x"), num(o, "y"), num(o, "w"), num(o, "h"), l.group(1)))
+    nodes = []
+    for o in re.findall(r'\{id:"[^"]+"[^{}]*\}', seg("nodes")):
+        nid = re.search(r'id:"([^"]+)"', o).group(1); l = re.search(r'\bl:"([^"]*)"', o)
+        p = re.search(r'\bp:"([^"]*)"', o); k = re.search(r'\bk:"([^"]*)"', o)
+        if l and l.group(1) and not (k and k.group(1) == "ghost") and num(o, "x") is not None and num(o, "y") is not None:
+            nodes.append({"id": nid, "l": l.group(1), "x": num(o, "x"), "y": num(o, "y"), "p": p.group(1) if p else "neutral"})
+    linked = set()
+    for a, b in re.findall(r'\{a:"([^"]+)",b:"([^"]+)"', body):
+        linked |= {(a, b), (b, a)}
+    lanes, used = [], set()
+    for x, y, w, h, l in comps:
+        inside = [n for n in nodes if x <= n["x"] <= x + w and y <= n["y"] <= y + h and n["id"] not in used]
+        if len(inside) >= 2:
+            top = min(n["y"] for n in inside)
+            row = sorted([n for n in inside if n["y"] - top < 40], key=lambda n: n["x"])
+            if len(row) < 2:
+                row = sorted(inside, key=lambda n: (n["y"], n["x"]))
+            lanes.append((top, l, row[:5])); used |= {n["id"] for n in inside}
+    if len(lanes) < 2:
+        groups = {}
+        for n in nodes:
+            if n["id"] not in used:
+                groups.setdefault(n["p"], []).append(n)
+        for p, ns in sorted(groups.items(), key=lambda kv: -len(kv[1])):
+            if len(ns) >= 2 and len(lanes) < 2:
+                ns = sorted(ns, key=lambda n: (n["y"], n["x"]))
+                lanes.append((ns[0]["y"], paths.get(p, (p, ""))[0], ns[:5]))
+    out = []
+    for _, l, row in sorted(lanes, key=lambda t: t[0])[:2]:
+        out.append([l, [[n["l"], paths.get(n["p"], ("", "neutral"))[1], int((n["id"], row[i + 1]["id"]) in linked) if i + 1 < len(row) else 0]
+                        for i, n in enumerate(row)]])
+    return out
+
+home_maps = {}
+for mm in re.finditer(r"^MAPS\.([a-z0-9_]+) = \{\s*t:\"([^\"]*)\"(.*?)\n\};", art, re.M | re.S):
+    vid = mm.group(1)
+    home_maps[vid] = [mm.group(2), topic_of.get(vid, ""), len(map_cards.get(vid, ["", []])[1]), preview(mm.group(3))]
+# First Aid's abbreviation list from the atlas (ABBR), for the hub's search — minus everyday words
+# ("as", "at", "if", "top"…) and the entries whose meaning is only a fragment of the term
+ABBR_SKIP = {"as", "at", "if", "so", "top", "post", "ant", "asc", "max", "pat", "tib", "fem", "liv", "kid", "sp", "st", "ca", "cl",
+             "vh", "vl", "fab", "fc", "ev", "nu", "pick", "szalus", "r3", "med", "cmc", "cmr", "vpl", "vpm", "tnm", "crest", "pap",
+             "vpn", "col1a1", "col1a2", "mdma"}
+am = re.search(r"^const ABBR=(\{.*?\});$", art, re.M)
+abbr = {}
+for k, ms in (json.loads(am.group(1)).items() if am else []):
+    ms = [m for m in ms if len(m) >= 4 and "&" not in m and not m.endswith(".")]
+    if k not in ABBR_SKIP and len(k) >= 2 and ms:
+        abbr[k] = ms
+home = {"stats": {"maps": len(home_maps), "cards": len(rows), "graphs": len(all_plots), "linked": nlinked}, "abbr": abbr,
+        "topics": topics, "maps": home_maps, "latest": [v for v in latest if v in home_maps],
+        "graphs": all_plots, "blocks": [list(b) for b in blocks], "sdls": sdl_list}
+HOME_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. The hub home page: atlas stats, systems, map titles and "
+                    "schematics, the newest maps, every graph, and each block's SDLs for the search */\n"
+                    "window.ATLAS_HOME=" + json.dumps(home, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+print(f"built {HOME_OUT.relative_to(ROOT)}  —  {len(home_maps)} maps in {len(topics)} systems, {len(all_plots)} graphs, "
+      f"{nlinked} linked questions, {len(sdl_list)} SDLs, {len(abbr)} abbreviations ({HOME_OUT.stat().st_size // 1024} KB)")
+
+
+# ── card summaries: the question bank's "On the Lesion Atlas" panel ───────────
+# For every card a question links to: its one-line subtitle (enz), the opening of its
+# mechanism, its first buzzword, its First Aid pages and its first two sources, short
+# ("Costanzo ch 6"). shared/app.js loads this after the first answer, so the panel can
+# show the card itself next to the explanation.
+def js_str(block, key):
+    m = re.search(r"\b" + key + r':"((?:[^"\\]|\\.)*)"', block)
+    return re.sub(r"<[^>]+>", "", m.group(1).replace('\\"', '"').replace("\\\\", "\\")).strip() if m else ""
+
+def js_list(block, key):
+    m = re.search(r"\b" + key + r":\[(.*?)\]\s*[,}]", block, re.S)
+    if not m:
+        return []
+    return [re.sub(r"<[^>]+>", "", s.replace('\\"', '"')).strip() for s in re.findall(r'"((?:[^"\\]|\\.)*)"', m.group(1))]
+
+def lead(text, cap=260):
+    out = ""
+    for s in re.findall(r"[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$", text):
+        if out and len(out) + len(s) > cap:
+            break
+        out += s
+        if len(out) >= 140:
+            break
+    out = out.strip()
+    return out if len(out) <= cap else out[:cap - 1].rsplit(" ", 1)[0] + "…"
+
+card_out = {}
+for i, m in enumerate(heads):
+    cid = m.group(1)
+    if cid not in counts:
+        continue
+    block = art[m.start():heads[i + 1].start() if i + 1 < len(heads) else art.index("const MAPS")]
+    enz = js_str(block, "enz")
+    card_out[cid] = [enz if enz not in ("—", "-") else "", lead(js_str(block, "mech")),
+                     next((b for b in js_list(block, "buzz") if b not in ("—", "-")), ""), js_str(block, "fa"),
+                     [s.split(" — ")[0] for s in js_list(block, "src")[:2]]]
+CARDS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. card id -> [subtitle, mechanism lead, buzzword, FA pages, "
+                     "[short sources]] for every card a question links to: the question bank's On the Lesion Atlas panel */\n"
+                     "window.ATLAS_CARDS=" + json.dumps(card_out, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+print(f"built {CARDS_OUT.relative_to(ROOT)}  —  summaries of {len(card_out)} linked cards ({CARDS_OUT.stat().st_size // 1024} KB)")
