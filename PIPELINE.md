@@ -339,6 +339,10 @@ answer, Enter next). Built by atlas-review/batches/m43/assemble.py, which reruns
 m44: the mix can stay in one topic (NMIX.scope, mixPool/topicOf), a Tour can ▶ Play (tourPlay, 6 s a stop), Copy link
 (the address already holds the state), Compare's "Pin B instead", the Index's weakest moving maps (from `mla-nameit`, goNameIt),
 and the hub's block tiles show each map's Name-it score. Built by batches/m44/assemble.py (reruns m43 → m42).
+m45: Name-it and Predict scores live in the atlas progress (`mla-progress` parts nit / prd / nitm — PROG_PARTS), so
+`mergeAtlas` in sync.js carries them (larger count per side); an option named wrong (nitm) comes back first in Name it and
+the mix until named right. Letter keys on moving maps (dynKey): t Tour, n Name it, p Predict, c Compare. The hub home has
+a Moving-map mix tile (your Name-it score). Built by batches/m45/assemble.py (reruns m44 → m43 → m42).
 A card opened from a transporter (or from a graph's card link — anything with `data-plotles`)
 keeps the map where it is: the click records that spot as KEEP_PT and flashPins() only
 slides the map if the card panel now covers it, instead of taking the reader to the card's

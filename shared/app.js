@@ -855,7 +855,7 @@ function fillAtlasMovesHome() {
     const rows = moving.map(v => [v, nOf(P.maps[v])]).filter(([, n]) => n > 0)
       .sort((a, b) => b[1] - a[1] || ATLAS_MAPS[a[0]][0].localeCompare(ATLAS_MAPS[b[0]][0]));
     if (!rows.length) return;
-    let named = {}; try { named = JSON.parse(localStorage.getItem('mla-nameit') || '{}') || {}; } catch (e) {}   // Name-it scores, saved by the atlas
+    let named = {}; try { named = (JSON.parse(localStorage.getItem('mla-progress') || '{}') || {}).nit || {}; } catch (e) {}   // Name-it scores, saved by the atlas
     const open = (v, sw) => `${ATLAS_URL}#${encodeURIComponent(v)}${sw ? '/~' + sw.split(':').map(encodeURIComponent).join(':') : ''}`;
     const tile = ([v, n]) => {
       const sws = ATLAS_MOVES.filter(x => x[0] === v && x[1])

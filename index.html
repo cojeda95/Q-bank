@@ -110,6 +110,8 @@
   .sec-head a { font-size: 0.95rem; font-weight: 600; }
 
   .today { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  #tileNew { grid-column: 1 / -1; }
+  #tileNew .newlist { columns: 2 220px; column-gap: 28px; }
   .tile { background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--text); text-decoration: none; }
   a.tile:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
   .tile .big { font-family: var(--serif); font-size: 2.5rem; font-weight: 600; line-height: 1; color: var(--teal); }
@@ -293,6 +295,12 @@
             <svg class="g-glyph" viewBox="0 0 220 84" aria-hidden="true"><path class="ax" d="M18 6V76H214"/><path class="c1" d="M18 60C70 60 92 20 140 17S196 14 210 14"/><path class="c2" d="M18 72C80 72 124 58 210 38"/></svg>
             <span class="go-row"><a id="graphGo" href="resources/metabolic-atlas.html">Open the graph →</a><a href="resources/metabolic-atlas.html#quiz/graphs">Graph mix</a></span>
           </div>
+          <a class="tile" id="tileMoving" href="resources/metabolic-atlas.html#quiz/moving">
+            <span class="kicker">Moving-map mix</span>
+            <span class="t">Name what’s switched on</span>
+            <span class="d" id="movingStat">Ten questions on random moving maps — a drug, disease or lesion is on; name it from the drawing.</span>
+            <span class="go">Start the mix →</span>
+          </a>
           <div class="tile" id="tileNew" hidden>
             <span class="kicker">New in the atlas</span>
             <span class="t" id="newCount"></span>
@@ -430,6 +438,13 @@
         (t[0] === 'omm' ? '<a class="sys-x" href="resources/sacral-omm-explorer.html">+ 3D sacrum explorer</a>' : '') + '</div>';
     }).join('');
 
+    /* the Moving-map mix tile: how many moving maps, and your Name-it score (atlas progress, synced with the PIN) */
+    (function () {
+      var el = document.getElementById('movingStat'), n = (H.dyn || []).length, ok = 0, all = 0, p = null;
+      try { p = JSON.parse(localStorage.getItem('mla-progress') || 'null'); } catch (e) {}
+      Object.keys((p && p.nit) || {}).forEach(function (v) { var r = p.nit[v]; if (r && r.length === 2) { ok += +r[0] || 0; all += +r[1] || 0; } });
+      if (el && n) el.textContent = (all ? 'You’ve named ' + ok + ' of ' + all + ' right (' + Math.round(100 * ok / all) + '%). ' : '') + 'Ten questions across ' + n + ' moving maps — name the drug, disease or lesion that’s on.';
+    })();
     /* the newest maps: the atlas's latest batch */
     var latest = (H.latest || []).filter(function (v) { return H.maps[v]; });
     if (latest.length) {

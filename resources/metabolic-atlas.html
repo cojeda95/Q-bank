@@ -38351,7 +38351,7 @@ let WALK=null;           // walk-through: {v, i, steps}
    misses; keep the two in step. `at` records when each card's schedule last
    changed, so the hub's PIN sync (sync.js) keeps whichever device reviewed it
    more recently. */
-const PROG_KEY="mla-progress", PROG_PARTS=["rev","ok","miss","box","due","qok","qmiss","at","known","star"];
+const PROG_KEY="mla-progress", PROG_PARTS=["rev","ok","miss","box","due","qok","qmiss","at","known","star","nit","prd","nitm"];   // nit/prd/nitm: moving maps (the kit)
 /* Card review — the spaced-review schedule and every "due" reminder — is opt-in.
    It stays off until a person turns it on, so anyone not interested in card
    quizzes never sees a due message. While it is off, quiz answers are still
@@ -40180,7 +40180,7 @@ function dynSet(k,timer){
     if(b==="scope"&&NMIX){ const tp=topicOf(v); NMIX.scope=NMIX.scope?null:tp&&tp[0]; }
     else
     if(b==="end"){ st.quiz=null; NMIX=null; } else { NMIX=null; dynQuiz(v); } }
-  else if(a==="q"&&st.quiz&&!st.quiz.ans){ const ok=b===st.quiz.k; st.quiz.ans=b; st.qz.n++; if(ok) st.qz.ok++; nameitSave(v,ok); if(NMIX){ NMIX.k++; if(ok) NMIX.ok++; } }
+  else if(a==="q"&&st.quiz&&!st.quiz.ans){ const ok=b===st.quiz.k; st.quiz.ans=b; st.qz.n++; if(ok) st.qz.ok++; nameitSave(v,ok,st.quiz.s+":"+st.quiz.k); if(NMIX){ NMIX.k++; if(ok) NMIX.ok++; } }
   else if(a==="link"){ writeHash(); const u=location.href;
     try{ navigator.clipboard.writeText(u).then(()=>{ const s2=DYN[v]; if(!s2) return; s2.copied=true; dynRedraw(); setTimeout(()=>{ if(DYN[v]){ DYN[v].copied=false; if(state.view===v) dynRedraw(); } },1800); },()=>{ prompt("Copy this link:",u); }); }catch(e){ prompt("Copy this link:",u); }
     return; }
@@ -40188,7 +40188,8 @@ function dynSet(k,timer){
   else if(a==="p"){
     if(b==="on"){ st.pred=st.pred?null:{g:{},chk:false}; if(st.pred) st.auto=null; }   // predicting holds the phase still
     else if(b==="g"&&st.pred&&!st.pred.chk) st.pred.g[c]=st.pred.g[c]===dd?undefined:dd;
-    else if(b==="chk"&&st.pred&&Object.values(st.pred.g).some(Boolean)) st.pred.chk=true;
+    else if(b==="chk"&&st.pred&&!st.pred.chk&&Object.values(st.pred.g).some(Boolean)){ st.pred.chk=true;
+      const live=dynReadouts(m.dyn,st).filter(r=>r.dir); predictSave(v,live.filter(r=>st.pred.g[r.i]===r.dir).length,live.length); }
   }
   if(st.pred&&(a==="t"||a==="o"||a==="n")) st.pred={g:{},chk:false};   // a new state: guess again
   if(a==="t"||a==="o"||a==="n"||a==="reset"){ const s2=DYN[v]; if(s2&&!timer){ s2.tour=null; s2.quiz=null; NMIX=null; tourStop(); } }   // a switch by hand ends a tour or a question
@@ -40219,19 +40220,30 @@ function dynGo(v,str,carry){
 }
 /* Name it asks about a drug / disease / lesion (a "one" switch); the phases of a cycle only on a map with nothing else */
 const dynQuizable=d=>{ const ok=t=>(d.switches||[]).filter(s=>s.type===t&&s.options.length>=3); const o=ok("one"); return o.length?o:ok("steps"); };
-function dynQuiz(v){
+function dynQuiz(v,want){
   const d=MAPS[v].dyn, Sw=dynQuizable(d); if(!Sw.length) return;
   const all=[]; Sw.forEach(s=>s.options.forEach(o=>all.push([s,o[0]])));
   const last=DYN[v]&&DYN[v].quiz?DYN[v].quiz.k:null, pool=all.filter(x=>x[1]!==last);
-  const [s,k]=pool[Math.floor(Math.random()*pool.length)];
+  const miss=nitMissed([v]).map(([,sw,o])=>all.find(x=>x[0].id===sw&&x[1]===o)).filter(x=>x&&x[1]!==last);
+  const [s,k]=(want&&all.find(x=>x[0].id===want[0]&&x[1]===want[1]))||(miss.length?miss[Math.floor(Math.random()*miss.length)]:pool[Math.floor(Math.random()*pool.length)]);
   const others=s.options.map(o=>o[0]).filter(x=>x!==k).sort(()=>Math.random()-.5).slice(0,3);
   const ch=others.concat([k]).sort(()=>Math.random()-.5);
   const qz=(DYN[v]&&DYN[v].qz)||{n:0,ok:0};
   dynGo(v,s.id+":"+k,{quiz:{s:s.id,k,ch,ans:null},qz,tour:null});
 }
-/* Name it, remembered per map on this device: {map: [right, asked]} */
-function nameitScores(){ try{ return JSON.parse(localStorage.getItem("mla-nameit")||"{}")||{}; }catch(e){ return {}; } }
-function nameitSave(v,ok){ try{ const S=nameitScores(), r=S[v]||[0,0]; r[1]++; if(ok) r[0]++; S[v]=r; localStorage.setItem("mla-nameit",JSON.stringify(S)); }catch(e){} }
+/* Name it and Predict, remembered per map in the atlas progress (synced with the PIN, sync.js mergeAtlas):
+   PROG.nit {map: [right, asked]} · PROG.prd {map: [arrows right, arrows asked]} · PROG.nitm {"map|switch:option": misses not yet
+   put right} — a missed option comes back first, until it is named right */
+try{ const old=JSON.parse(localStorage.getItem("mla-nameit")||"null");   // m43–m44 kept Name-it scores on their own
+  if(old&&typeof old==="object"){ Object.keys(old).forEach(v=>{ const a=PROG.nit[v]||[0,0], b=old[v]||[0,0]; PROG.nit[v]=[Math.max(a[0],b[0]),Math.max(a[1],b[1])]; });
+    saveProg(); localStorage.removeItem("mla-nameit"); } }catch(e){}
+const nameitScores=()=>PROG.nit;
+function nameitSave(v,ok,item){ const r=(PROG.nit[v]||[0,0]).slice(); r[1]++; if(ok) r[0]++; PROG.nit[v]=r;
+  const key=v+"|"+item; if(ok) delete PROG.nitm[key]; else PROG.nitm[key]=(PROG.nitm[key]||0)+1; saveProg(); }
+function predictSave(v,ok,n){ const r=(PROG.prd[v]||[0,0]).slice(); r[0]+=ok; r[1]+=n; PROG.prd[v]=r; saveProg(); }
+/* the options named wrong and not yet put right, on these maps: [[map, switch, option], …] */
+const nitMissed=maps=>Object.keys(PROG.nitm).map(k=>{ const [v,so]=k.split("|"), [sw,o]=(so||"").split(":"); return [v,sw,o]; })
+  .filter(([v,sw,o])=>maps.includes(v)&&MAPS[v]&&MAPS[v].dyn&&(MAPS[v].dyn.switches||[]).some(x=>x.id===sw&&x.options.some(y=>y[0]===o)));
 /* Quiz → Moving-map mix: ten Name-it questions, each on a random moving map */
 let NMIX=null;
 const topicOf=v=>TOPICS.find(t=>t[2].includes(v));
@@ -40240,12 +40252,13 @@ function startNameMix(scope){ NMIX={k:0,n:10,ok:0,scope:scope||null}; nameMixNex
 function nameMixNext(){
   if(!NMIX) return;
   let pool=mixPool(NMIX.scope).filter(v=>v!==state.view); if(!pool.length) pool=mixPool(NMIX.scope);
-  const v=pool[Math.floor(Math.random()*pool.length)], mix=NMIX;
+  const miss=nitMissed(pool), want=miss.length?miss[Math.floor(Math.random()*miss.length)]:null;
+  const v=want?want[0]:pool[Math.floor(Math.random()*pool.length)], mix=NMIX;
   if(state.view!==v) setView(v);
   NMIX=mix;   // setView may end a quiz; the mix carries on
   const go=n=>{ if(state.view!==v||NMIX!==mix) return; const d=MAPS[v].dyn;
     if(d.lazy){ if(!DYNFAIL[v]&&n<100) setTimeout(()=>go(n+1),100); return; }
-    dynQuiz(v); dynRedraw(); writeHash(); dynFrame(); };
+    dynQuiz(v,want&&[want[1],want[2]]); dynRedraw(); writeHash(); dynFrame(); };
   go(0);
 }
 /* the tour plays itself: the next stop every 6 s, ending on the last */
@@ -40265,6 +40278,12 @@ function dynKey(ev){
   if(!st||ev.metaKey||ev.ctrlKey||ev.altKey||/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||"")) return false;
   if(st.tour&&(ev.key==="ArrowRight"||ev.key==="ArrowLeft")){ dynSet(ev.key==="ArrowRight"?"tour:next":"tour:prev"); return true; }
   if(st.quiz&&!st.quiz.ans&&/^[1-4]$/.test(ev.key)&&st.quiz.ch[+ev.key-1]){ dynSet("q:"+st.quiz.ch[+ev.key-1]); return true; }
+  const k=ev.key.toLowerCase();
+  if(!st.quiz||st.quiz.ans){
+    if(k==="t"&&!st.tour){ dynSet("tour:go"); return true; }
+    if(k==="n"&&dynQuizable(m.dyn).length){ dynSet("quiz:new"); return true; }
+    if(k==="p"&&(m.dyn.readouts||[]).length&&!st.tour){ dynSet("p:on"); return true; }
+    if(k==="c"&&!st.tour){ dynSet(st.cmp?"cmp:show":"cmp:pin"); return true; } }
   if(st.quiz&&st.quiz.ans&&ev.key==="Enter"){ dynSet(NMIX?(NMIX.k<NMIX.n?"quiz:mix":"quiz:mix10"):"quiz:new"); return true; }
   return false;
 }
@@ -41741,9 +41760,11 @@ function renderIndex(){
       </ul>
       <p>A study aid, not a replacement for these texts. If something looks wrong, tap <b>Report</b> on that card or <a href="${REPO}/issues/new" target="_blank" rel="noopener">open an issue</a> so it can be fixed.</p>
     </details></div>
-    ${(()=>{ if(q) return ""; const N=nameitScores(), W=Object.keys(N).filter(v=>MAPS[v]&&N[v][1]>=2&&N[v][0]<N[v][1])
-        .sort((a,b)=>N[a][0]/N[a][1]-N[b][0]/N[b][1]||N[b][1]-N[a][1]).slice(0,6);
-      return W.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Your weakest moving maps · Name it</h3><ul>${W.map(v=>`<li><button class="idxrow" data-nameit="${v}"><span class="t">${esc(MAPS[v].t)}</span><span class="e">${N[v][0]} of ${N[v][1]} named right on this device — tap to try again</span></button></li>`).join("")}</ul></section>`:""; })()}
+    ${(()=>{ if(q) return ""; const N=PROG.nit, R=PROG.prd, sc=v=>{ const a=N[v]||[0,0], b=R[v]||[0,0]; return [a[0]+b[0],a[1]+b[1]]; };
+      const W=[...new Set(Object.keys(N).concat(Object.keys(R)))].filter(v=>MAPS[v]&&sc(v)[1]>=2&&sc(v)[0]<sc(v)[1])
+        .sort((a,b)=>sc(a)[0]/sc(a)[1]-sc(b)[0]/sc(b)[1]||sc(b)[1]-sc(a)[1]).slice(0,6);
+      const part=(r,l)=>r&&r[1]?`${l} ${r[0]}/${r[1]}`:"";
+      return W.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Your weakest moving maps</h3><ul>${W.map(v=>`<li><button class="idxrow" data-nameit="${v}"><span class="t">${esc(MAPS[v].t)}</span><span class="e">${[part(N[v],"Name it"),part(R[v],"Predict")].filter(Boolean).join(" · ")} — tap to try Name it again</span></button></li>`).join("")}</ul></section>`:""; })()}
     ${(()=>{ const SW=q?switchMatches(q):[]; return SW.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Moving maps · ${SW.length}</h3><ul>${SW.slice(0,20).map(x=>switchRowHtml(x,"idx")).join("")}</ul></section>`:""; })()}
     ${(()=>{ GHITS=q?graphMatches(q):[]; return GHITS.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Graphs · ${GHITS.length}</h3><ul>${GHITS.slice(0,20).map(g=>graphRowHtml(g,"idx")).join("")}</ul></section>`:""; })()}
     ${(()=>{ BOXHITS=q?boxMatches(q):[]; return BOXHITS.length?`<section class="idxcard" style="--c:var(--ink-3)"><h3><span class="bar"></span>In map boxes · ${BOXHITS.length}</h3><ul>${BOXHITS.slice(0,30).map((b,i)=>boxRowHtml(b,i,"idx")).join("")}</ul>${BOXHITS.length>30?`<p class="revnote">${BOXHITS.length-30} more — add a word to narrow it</p>`:""}</section>`:""; })()}
@@ -41789,6 +41810,7 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   misim:"2026-10-09",pvflow:"2026-10-09",edemaflow:"2026-10-09",hivflow:"2026-10-09",eyesim:"2026-10-09",plexsim:"2026-10-09",mensflow:"2026-10-09",
   baroflow:"2026-10-10",shocksim:"2026-10-10",ecgsim:"2026-10-10",cahflow:"2026-10-10",lipoflow:"2026-10-10",hemeflow:"2026-10-10",nucflow:"2026-10-10",acidflow:"2026-10-10",legsim:"2026-10-10"};
 const WHATSNEW=[
+  ["2026-10-10","Moving maps: options you name wrong come back first, <b>Predict the arrows</b> keeps a score too, and both scores now sync with your PIN. Keys: <b>t</b> Tour, <b>n</b> Name it, <b>p</b> Predict, <b>c</b> Compare. The hub home has a <b>Moving-map mix</b> tile with your score."],
   ["2026-10-10","Moving maps: the mix can stay in one system (<b>Only Cardiac</b>), a Tour can <b>▶ Play</b> by itself, <b>Copy link</b> shares the exact state you’re on, Compare can <b>Pin B instead</b> to chain comparisons, and the Index lists your weakest maps for Name it. Block pages show your Name-it score on each moving map."],
   ["2026-10-10","<b>Quiz → Moving-map mix</b>: ten Name-it questions on random moving maps, with a score. Each map’s Name it button remembers your score on this device, and keys work on moving maps — ← → step a Tour, 1–4 answer Name it, Enter for the next."],
   ["2026-10-10","New moving maps — <b>Autonomic Drugs &amp; Baroreflex in Motion</b> (neuro), <b>Shock Simulator</b> (Cardiac), <b>Conduction &amp; ECG Simulator</b> (Cardiac), <b>Steroid Synthesis &amp; CAH in Motion</b> (Endocrine), <b>Lipoprotein Transport in Motion</b> (bio), <b>Heme Synthesis &amp; Porphyrias in Motion</b> (Heme/Onc), <b>Nucleotide Synthesis &amp; Drug Sites in Motion</b> (bio), <b>Parietal Cell in Motion</b> (GI), <b>Lower Limb Nerve Lesion Simulator</b> (MSK)."],
@@ -42036,7 +42058,7 @@ svg.addEventListener("focusin",ev=>{
 function openShortcuts(){
   state.sel=null; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
   const rows=[["Tab · Shift+Tab","move between pins and graph chips"],["Enter or Space","open the focused pin · switch a graph"],
-    ["1 – 4","answer a quiz question"],["Enter","next question, after answering"],["← →","previous / next section while walking a map, or step a moving map’s Tour — otherwise the versions of the last graph you used"],["1 – 4 · Enter","on a moving map: name what’s switched on (Name it), then the next one"],["q · c","quiz me on that graph · compare its versions"],
+    ["1 – 4","answer a quiz question"],["Enter","next question, after answering"],["← →","previous / next section while walking a map, or step a moving map’s Tour — otherwise the versions of the last graph you used"],["1 – 4 · Enter","on a moving map: name what’s switched on (Name it), then the next one"],["t · n · p · c","on a moving map: Tour · Name it · Predict the arrows · Compare (pin, then side by side)"],["q · c","quiz me on that graph · compare its versions"],
     ["/","search"],["[","show or hide the side panel"],["m","show or hide the overview map"],["Esc","close a card, the quiz menu, or the walk"],["?","this list"]];
   drawer.innerHTML=`
    <div class="dhead">
