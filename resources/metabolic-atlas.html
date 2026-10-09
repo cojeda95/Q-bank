@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 192 pan/zoom maps with 2054 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 193 pan/zoom maps with 2054 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="192 interactive maps. 2054 lesions pinned to the step they break.">
+<meta property="og:description" content="193 interactive maps. 2054 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -35,6 +35,7 @@ img{max-width:100%}
   --shadow:0 1px 2px rgba(34,36,31,.05),0 12px 32px -18px rgba(34,36,31,.22);
   --font-ui:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
   --font-dis:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --nf-na:#2C6E9B; --nf-k:#7A55A0; --nf-cl:#39784F; --nf-h2o:#4DA3D9; --nf-glu:#C27C1E; --nf-h:#C0392B; --nf-hco3:#17796E; --nf-ca:#B08A1E; --nf-mg:#8C6D3F; --nf-urea:#6B7570; --nf-blood:#C0392B; --nf-tuft:#F4CFC9; --nf-wallc:#CDBBA6; --nf-lumen:#FFF9F0; --nf-brush:#C9A97F; --nf-tr:#9B4278; --nf-chan:#2C6E9B; --nf-block:#C0392B; --nf-w-pct:#B9CBDD; --nf-w-loop:#BFD8C6; --nf-w-tal:#C9D7B5; --nf-w-dist:#D7C4E3; --nf-w-cd:#BFE0DA;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#1A1C1A; --surface:#232622; --surface-2:#2A2E29; --surface-3:#343833;
@@ -48,6 +49,7 @@ img{max-width:100%}
   --ok:#6FC492; --bad:#EE7386; --due:#E9B25B;
   --compartment:#232B24; --compartment-line:#46584B; --comp-text:#8FD3B4; --comp-badge:#2B3E33;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 14px 34px -18px rgba(0,0,0,.7);
+  --nf-na:#79B2DB; --nf-k:#BFA0E2; --nf-cl:#6FC492; --nf-h2o:#8CC8EE; --nf-glu:#E3A857; --nf-h:#EE7386; --nf-hco3:#4CC4B0; --nf-ca:#D3AC55; --nf-mg:#C4A57A; --nf-urea:#A3B0A8; --nf-blood:#E06A5E; --nf-tuft:#5A2C2A; --nf-wallc:#6B5A4A; --nf-lumen:#2A2521; --nf-brush:#8A7458; --nf-tr:#E08FC0; --nf-chan:#79B2DB; --nf-block:#F07C86; --nf-w-pct:#3C4F60; --nf-w-loop:#3B5546; --nf-w-tal:#4A5A3A; --nf-w-dist:#54476A; --nf-w-cd:#355A55;
 }}
 :root[data-theme="dark"]{
   --bg:#1A1C1A; --surface:#232622; --surface-2:#2A2E29; --surface-3:#343833;
@@ -61,6 +63,7 @@ img{max-width:100%}
   --ok:#6FC492; --bad:#EE7386; --due:#E9B25B;
   --compartment:#232B24; --compartment-line:#46584B; --comp-text:#8FD3B4; --comp-badge:#2B3E33;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 14px 34px -18px rgba(0,0,0,.7);
+  --nf-na:#79B2DB; --nf-k:#BFA0E2; --nf-cl:#6FC492; --nf-h2o:#8CC8EE; --nf-glu:#E3A857; --nf-h:#EE7386; --nf-hco3:#4CC4B0; --nf-ca:#D3AC55; --nf-mg:#C4A57A; --nf-urea:#A3B0A8; --nf-blood:#E06A5E; --nf-tuft:#5A2C2A; --nf-wallc:#6B5A4A; --nf-lumen:#2A2521; --nf-brush:#8A7458; --nf-tr:#E08FC0; --nf-chan:#79B2DB; --nf-block:#F07C86; --nf-w-pct:#3C4F60; --nf-w-loop:#3B5546; --nf-w-tal:#4A5A3A; --nf-w-dist:#54476A; --nf-w-cd:#355A55;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -515,6 +518,41 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
   .hdr-right{flex:1;min-width:170px}
   .indexwrap{padding:20px 16px 56px}
 }
+
+/* ── Nephron in Motion (art layer) ── */
+.nf-art{fill:none;stroke:var(--nf-blood);stroke-linecap:round;opacity:.9}
+.nf-caps{fill:var(--nf-lumen);stroke:var(--nf-wallc);stroke-width:12}
+.nf-tuft{fill:var(--nf-tuft);stroke:var(--nf-blood);stroke-width:3}
+.nf-tgf{fill:none;stroke:var(--ink-3);stroke-width:2;stroke-dasharray:6 6}
+.nf-wall,.nf-lumen,.nf-brush,.nf-urine{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.nf-wall{stroke:var(--nf-wallc)}
+.nf-wall.nf-pct{stroke:var(--nf-w-pct)} .nf-wall.nf-loop{stroke:var(--nf-w-loop)} .nf-wall.nf-tal{stroke:var(--nf-w-tal)}
+.nf-wall.nf-dist{stroke:var(--nf-w-dist)} .nf-wall.nf-cd{stroke:var(--nf-w-cd)}
+.nf-lumen{stroke:var(--nf-lumen)}
+.nf-brush{stroke:var(--nf-brush);stroke-dasharray:2 7;opacity:.3}
+.nf-urine{stroke:var(--nf-w-cd);stroke-width:6}
+.nf-site{cursor:pointer;outline:none}
+.nf-site:hover .nf-l1,.nf-site:focus-visible .nf-l1{fill:var(--accent);text-decoration:underline}
+.nf-site.off .nf-l1,.nf-site.off .nf-l2{opacity:.62}
+.nf-ic{stroke:var(--surface);stroke-width:2}
+.nf-ic-co,.nf-ic-ex{fill:var(--nf-tr)} .nf-ic-ch{fill:var(--nf-chan)} .nf-ic-aqp{fill:var(--nf-h2o)} .nf-ic-pump{fill:var(--ink-2)}
+.nf-ic.closed{fill:var(--surface);stroke:var(--ink-3);stroke-dasharray:3 3}
+.nf-ic-para{stroke:var(--ink-3);stroke-width:3;stroke-dasharray:4 4}
+.nf-ic-wall{fill:var(--ink-3)}
+.nf-ic-md circle{fill:var(--accent)}
+.nf-x{stroke:var(--nf-block);stroke-width:4;stroke-linecap:round}
+.nf-l1{font:600 13px var(--font-ui);fill:var(--ink)}
+.nf-l2{font:12px var(--font-ui);fill:var(--ink-2)}
+.nf-h{font:700 11.5px var(--font-ui);letter-spacing:.08em;fill:var(--ink-3)}
+.nf-chip{cursor:pointer;outline:none}
+.nf-chip rect{fill:var(--surface);stroke:var(--line)}
+.nf-chip text{font:600 12.5px var(--font-ui);fill:var(--ink-2)}
+.nf-chip.on rect{fill:var(--accent);stroke:var(--accent)}
+.nf-chip.on text{fill:var(--surface)}
+.nf-chip:hover rect,.nf-chip:focus-visible rect{stroke:var(--ink);stroke-width:1.6}
+.nf-note{fill:var(--surface-2);stroke:var(--line-2)}
+.nf-nt{font:12.5px var(--font-ui);fill:var(--ink)}
+.nf-src{font:11px var(--font-ui);fill:var(--ink-3)}
 
 /* ── OCOM Question Hub integration ─────────────────── */
 :root{--accent:#1f4e79;--accent-soft:#E3ECF5}
@@ -1407,6 +1445,11 @@ const PATHS = {
   adDz:{n:"Disorders",v:"--p-tca"},
   adMed:{n:"Medulla",v:"--p-gluconeo"},
   rxRaas:{n:"The system",v:"--p-glycolysis"},
+  nfVes:{n:"Glomerulus & arterioles",v:"--p-sugars"},
+  nfPct:{n:"Proximal tubule",v:"--p-glycolysis"},
+  nfLoop:{n:"Loop of Henle",v:"--p-tca"},
+  nfDist:{n:"Distal tubule",v:"--p-gluconeo"},
+  nfCd:{n:"Collecting duct",v:"--p-ppp"},
   rxDrug:{n:"Drugs",v:"--p-tca"},
   flComp:{n:"Compartments",v:"--p-glycolysis"},
   flNa:{n:"Sodium & water",v:"--p-tca"},
@@ -34995,7 +35038,65 @@ MAPS.anxtx = {
   {a:"t7",b:"t8",p:"axRx"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["index","Index"]];
+MAPS.nephflow = {
+ t:"Nephron in Motion", sub:"From the afferent arteriole to the collecting duct — every transporter on the wall, which way each ion moves, and what ADH, aldosterone and each diuretic change. Tap a transporter for its card",
+ w:3540, h:2260,
+ fa:"603–604, 626–627",
+ src:["Costanzo ch 6 — Renal physiology","Costanzo ch 7 — Acid-base physiology","Katzung ch 15 — Diuretic Agents"],
+ art:"nephron",
+ comps:[
+  {x:140,y:100,w:2240,h:770,l:"Cortex"},
+  {x:140,y:900,w:2240,h:540,l:"Outer medulla"},
+  {x:140,y:1470,w:2240,h:700,l:"Inner medulla"}],
+ panels:[
+  {x:2460,y:740,w:1000,h:160,kw:250,t:"Filtered Na⁺ taken back, segment by segment (First Aid p. 603)",rows:[
+   ["Proximal tubule","65–80% · isosmotic, with glucose, amino acids and HCO₃⁻"],
+   ["Thick ascending limb","10–20% · NKCC2, no water follows"],
+   ["Early distal tubule","5–10% · NCC, no water follows"],
+   ["Collecting tubule","3–5% · ENaC, under aldosterone"],
+   ["Every segment","the Na⁺/K⁺-ATPase on the blood side powers the uptake"]]},
+  {x:2460,y:940,w:1000,h:204,kw:250,t:"Diuretics — where each acts (Katzung ch 15; First Aid pp. 626–627)",rows:[
+   ["Acetazolamide","proximal tubule — carbonic anhydrase"],
+   ["SGLT2 inhibitors","proximal tubule — the Na⁺–glucose cotransporter"],
+   ["Mannitol","proximal tubule and thin descending limb — holds water in the lumen"],
+   ["Loop diuretics","thick ascending limb — NKCC2"],
+   ["Thiazides","early distal tubule — NCC"],
+   ["Amiloride, triamterene","collecting tubule — ENaC"],
+   ["Spironolactone, eplerenone","collecting tubule — the aldosterone receptor"]]},
+  {x:2460,y:1184,w:1000,h:138,kw:250,t:"Hormones on the tubule (First Aid p. 603)",rows:[
+   ["Angiotensin II","proximal tubule — Na⁺/H⁺ exchange ↑, so Na⁺, H₂O and HCO₃⁻ are kept"],
+   ["PTH","proximal tubule — PO₄³⁻ uptake ↓ · early distal tubule — Ca²⁺ uptake ↑"],
+   ["Aldosterone","principal cells — ENaC, Na⁺/K⁺ pump, K⁺ channels ↑ · α-intercalated — H⁺-ATPase ↑"],
+   ["ADH","V₂ receptor → aquaporin-2 · urea uptake (UT1) in the inner medulla"]]},
+  {x:2460,y:1362,w:1000,h:138,kw:250,t:"Inherited transport defects (First Aid p. 604)",rows:[
+   ["Fanconi syndrome","proximal tubule — everything it reclaims is lost"],
+   ["Bartter syndrome","thick ascending limb (NKCC2) — like a loop diuretic"],
+   ["Gitelman syndrome","early distal tubule (NaCl) — like a thiazide"],
+   ["Liddle syndrome","ENaC gain of function — like hyperaldosteronism, aldosterone low"]]},
+  {x:2460,y:1540,w:1000,h:182,kw:250,t:"Water permeability (Katzung Table 15-1)",rows:[
+   ["Proximal tubule","very high"],
+   ["Thin descending limb","high"],
+   ["Thin ascending limb","low — water can’t follow the NaCl"],
+   ["Thick ascending limb","very low — the diluting segment"],
+   ["Early distal tubule","very low"],
+   ["Collecting duct","variable — ADH decides"]]}],
+ nodes:[
+  {id:"nf1",l:"Afferent arteriole",x:1470,y:140,p:"nfVes",m:["nsaidkidney"]},
+  {id:"nf2",l:"Efferent arteriole",x:470,y:140,p:"nfVes",m:["raasgfr"]},
+  {id:"nf3",l:"Glomerulus",x:1060,y:500,p:"nfVes",m:["filtrationbarrier","gfrcalc","glomdyn","reabsec"]},
+  {id:"nf4",l:"Proximal tubule",x:330,y:590,p:"nfPct",m:["fanconisyn","sglt2","acetazolamide","glucthresh"]},
+  {id:"nf5",l:"Thin descending limb",x:330,y:1440,p:"nfLoop",m:["mannitol","countercurrent"]},
+  {id:"nf6",l:"Thin ascending limb",x:1400,y:1600,p:"nfLoop",m:["countercurrent"]},
+  {id:"nf7",l:"Thick ascending limb",x:1400,y:760,p:"nfLoop",m:["loopdiuretics","bartter","renalmg","casr"]},
+  {id:"nf8",l:"Macula densa",x:1400,y:470,p:"nfLoop",m:["tgf","reninrel"]},
+  {id:"nf9",l:"Distal convoluted tubule",x:1560,y:230,p:"nfDist",m:["thiazides","gitelman","pthneph"]},
+  {id:"nf10",l:"Principal cells",x:1960,y:520,p:"nfCd",m:["ksparing","liddle","mras","ksecretion"]},
+  {id:"nf11",l:"α-intercalated cells",x:1960,y:890,p:"nfCd",m:["rta","newhco3"]},
+  {id:"nf12",l:"Medullary collecting duct",x:1960,y:1500,p:"nfCd",m:["adhdrugs","aquaporins","di","siadh"]}],
+ edges:[]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -35003,7 +35104,7 @@ const TOPICS = [
   ["path","Pathology",["genpath","neoplasia","thromboemb"]],
   ["cardio","Cardiac",["cardiac","cardcycle","valves","ihd","chd","vasc","vascshock","htnrx","rhythm"]],
   ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","highalt","hypoxia","lungdz","pleural","lungcancer","respinf","respdrug"]],
-  ["renal","Renal",["nephron","fluids","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","histoembryo","glom","renvasc","raasrx","buffers","acidbase","akickd","endocrine"]],
+  ["renal","Renal",["nephron","nephflow","fluids","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","histoembryo","glom","renvasc","raasrx","buffers","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","liver","gitract","abdanat"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","softtissue","tumark"]],
   ["immuno","Immunology",["immune","innate","lymphdev","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
@@ -36415,6 +36516,216 @@ function plotSVG(p,i){
   s+=`<text class="pnote" x="${x0}" y="${p.y+p.h-20}">Schematic — drawn from the stated relationships, not measured data</text>`;
   return `<g class="plot-c" data-plotg="${i}">${s}</g>`;
 }
+/* ── Nephron in Motion (MAPS.nephflow, art:"nephron") ─────────────────────
+   A drawn nephron instead of boxes: the glomerulus and its arterioles, then every
+   tubule segment through cortex and medulla. Each transporter sits on the tubule
+   wall where it works, with ions crossing the way they move (lumen → blood is
+   reabsorbed, blood → lumen is secreted), and the fluid in the lumen thins out
+   as it flows. Switches turn ADH and aldosterone off, or add one diuretic, and
+   the flows answer. A transporter opens its card (data-plotles, the plot engine's
+   card link). Sources: First Aid 2025 pp. 603–604, 626–627; Costanzo ch 6–7;
+   Katzung ch 15 (Table 15-1); Guyton ch 28.
+   Motion is SVG <animateMotion>; it starts paused for anyone whose device asks
+   for reduced motion, and Pause stops it (svg.pauseAnimations). */
+const NF={ on:{na:1,k:1,cl:1,h2o:1,glu:1,acid:1,ca:1,urea:1}, adh:true, aldo:true, drug:"", paused:null };
+const NF_IONS=[["na","Na⁺"],["k","K⁺"],["cl","Cl⁻"],["h2o","H₂O"],["glu","Glucose · amino acids"],["acid","H⁺ · HCO₃⁻ · NH₄⁺"],["ca","Ca²⁺ · Mg²⁺"],["urea","Urea"]];
+/* particle kind → [its switch, its colour] */
+const NF_KIND={na:["na","--nf-na"],k:["k","--nf-k"],cl:["cl","--nf-cl"],h2o:["h2o","--nf-h2o"],glu:["glu","--nf-glu"],aa:["glu","--nf-glu"],
+  h:["acid","--nf-h"],hco3:["acid","--nf-hco3"],nh4:["acid","--nf-h"],ca:["ca","--nf-ca"],mg:["ca","--nf-mg"],urea:["urea","--nf-urea"]};
+const NF_DRUGS=[["acz","Acetazolamide"],["sglt2","SGLT2 inhibitor"],["mann","Mannitol"],["loop","Loop diuretic"],["thz","Thiazide"],["amil","Amiloride"],["spiro","Spironolactone"]];
+/* what each switch does — First Aid pp. 603, 626–627; Katzung ch 15 */
+const NF_NOTE={
+  adh:"No ADH: aquaporin-2 and the UT1 urea channel stay out of the collecting duct, so water and urea stay in the lumen — a large volume of dilute urine.",
+  aldo:"Little aldosterone: less ENaC, Na⁺/K⁺ pump and K⁺-channel activity in principal cells and less H⁺-ATPase in α-intercalated cells — Na⁺ is lost, K⁺ and H⁺ are kept.",
+  acz:"Acetazolamide blocks carbonic anhydrase in the proximal tubule: NaHCO₃ stays in the lumen — a self-limited NaHCO₃ diuresis, alkaline urine, and less HCO₃⁻ in the body (proximal RTA).",
+  sglt2:"SGLT2 inhibitors block the Na⁺–glucose cotransporter of the proximal tubule: glucose and some Na⁺ stay in the lumen — glucosuria with a mild osmotic diuresis.",
+  mann:"Mannitol is filtered but not reabsorbed: it holds water in the lumen of the proximal tubule and thin descending limb, so urine volume rises.",
+  loop:"Loop diuretics block NKCC2 in the thick ascending limb: NaCl stays in the lumen, the lumen loses its (+) voltage so Mg²⁺ and Ca²⁺ are lost too, and the medulla loses its hypertonicity — the urine can’t be concentrated. Hypokalemia, hypomagnesemia.",
+  thz:"Thiazides block NCC in the early distal tubule: less NaCl is reabsorbed there, so the nephron dilutes less, and Ca²⁺ excretion falls (hypercalcemia). Hypokalemic metabolic alkalosis.",
+  amil:"Amiloride blocks ENaC in the collecting tubule: Na⁺ stays in the lumen and K⁺ secretion falls — K⁺ is kept (hyperkalemia).",
+  spiro:"Spironolactone blocks the aldosterone receptor in the collecting tubule: fewer channels and pumps — Na⁺ is lost, K⁺ is kept (hyperkalemia)."
+};
+/* the lumen's centre line, segment by segment (flow paths; the drawing splits the loop's thin and thick parts) */
+const NF_FLOW={
+  pct:{d:"M920 446 V520 Q920 560 880 560 H560 Q520 560 520 600 V890",len:800},
+  tdl:{d:"M520 890 V1990 Q520 2070 600 2070 H1120 Q1200 2070 1200 1990",len:1846},
+  tal:{d:"M1200 1990 V390",len:1600},
+  dct:{d:"M1200 390 Q1200 320 1270 320 H2130 Q2200 320 2200 390",len:1060},
+  cd:{d:"M2200 390 V2170",len:1780}};
+const NF_TUBE=[
+  ["M920 446 V520 Q920 560 880 560 H560 Q520 560 520 600 V890",60,"pct"],
+  ["M520 890 V1990 Q520 2070 600 2070 H1120 Q1200 2070 1200 1990 V1470",32,"loop"],
+  ["M1200 1470 V390",54,"tal"],
+  ["M1200 390 Q1200 320 1270 320 H2130 Q2200 320 2200 390",54,"dist"],
+  ["M2200 390 V2170",70,"cd"]];
+/* transporter sites: x, y on the lumen's centre line; n = the side the label sits on; w = lumen width there;
+   ions = [kind, "out" (reabsorbed) or "in" (secreted), particles]; t = icon type; c = card;
+   block = a drug that hits it; stop = a switch that idles it (no ions reach it); low / boost = the switches
+   that slow or speed it; adh = needs ADH */
+const NF_SITES=[
+  {x:820,y:560,n:[0,1],w:60,t:"co",l:"SGLT2",s:"Na⁺ with glucose",ions:[["na","out",1],["glu","out",2]],c:"sglt2",block:["sglt2"]},
+  {x:640,y:560,n:[0,1],w:60,t:"co",l:"Na⁺ with amino acids, PO₄³⁻",s:"PTH slows the PO₄³⁻ uptake",ions:[["na","out",1],["aa","out",1]],c:"renalpo4"},
+  {x:740,y:560,n:[0,-1],w:60,t:"ex",l:"Secretes organic acids and bases",s:"PAH, urate, many drugs · NH₄⁺ made from glutamine",ions:[["nh4","in",1]],c:"newhco3"},
+  {x:520,y:650,n:[-1,0],w:60,t:"ex",l:"NHE3 + carbonic anhydrase",s:"Na⁺ in, H⁺ out — HCO₃⁻ reclaimed (angiotensin II ↑)",ions:[["na","out",1],["h","in",1],["hco3","out",1]],c:"hco3reabs",block:["acz"]},
+  {x:520,y:740,n:[-1,0],w:60,t:"aqp",l:"Isosmotic water",s:"H₂O follows Na⁺ — 65–80% reclaimed here",ions:[["h2o","out",2]],c:"aquaporins",low:["mann"]},
+  {x:520,y:830,n:[-1,0],w:60,t:"para",l:"Cl⁻, K⁺ and Ca²⁺ come along",s:"Cl⁻ between the cells late on; K⁺, Ca²⁺ with the fluid",ions:[["cl","out",1],["k","out",1],["ca","out",1]],c:"khandling"},
+  {x:520,y:1180,n:[-1,0],w:32,t:"aqp",l:"Water leaves, passively",s:"drawn out by the salty medulla",ions:[["h2o","out",2]],c:"countercurrent",low:["mann","loop"]},
+  {x:520,y:1720,n:[-1,0],w:32,t:"aqp",l:"Water leaves, passively",s:"the fluid is most concentrated at the bend",ions:[["h2o","out",2]],c:"countercurrent",low:["mann","loop"]},
+  {x:1200,y:1760,n:[1,0],w:32,t:"para",l:"NaCl leaves, passively",s:"water can’t follow",ions:[["na","out",1],["cl","out",1]],c:"countercurrent"},
+  {x:1200,y:1320,n:[1,0],w:54,t:"co",l:"NKCC2",s:"Na⁺, K⁺ and 2 Cl⁻ in",ions:[["na","out",1],["k","out",1],["cl","out",2]],c:"loopdiuretics",block:["loop"]},
+  {x:1200,y:1180,n:[1,0],w:54,t:"ch",l:"ROMK",s:"K⁺ leaks back — the lumen turns (+)",ions:[["k","in",1]],c:"khandling",stop:["loop"]},
+  {x:1200,y:1040,n:[1,0],w:54,t:"para",l:"Mg²⁺, Ca²⁺ between the cells",s:"pushed by the (+) lumen",ions:[["mg","out",1],["ca","out",1]],c:"renalmg",stop:["loop"]},
+  {x:1200,y:900,n:[1,0],w:54,t:"wall",l:"No water channels",s:"salt out, water stays — the urine is diluted",ions:[],c:"freewater"},
+  {x:1200,y:470,n:[1,0],w:54,t:"md",l:"",s:"",ions:[],c:"tgf"},
+  {x:1380,y:320,n:[0,1],w:54,t:"co",l:"NCC",s:"Na⁺ and Cl⁻ in",ions:[["na","out",1],["cl","out",1]],c:"thiazides",block:["thz"]},
+  {x:1560,y:320,n:[0,1],w:54,t:"ex",l:"Ca²⁺ in — PTH ↑",s:"Na⁺/Ca²⁺ exchange",ions:[["ca","out",1]],c:"pthneph",boost:["thz"]},
+  {x:1740,y:320,n:[0,1],w:54,t:"wall",l:"No water channels",s:"the urine leaves fully dilute",ions:[],c:"freewater"},
+  {x:2200,y:600,n:[-1,0],w:70,t:"ch",l:"ENaC",s:"Na⁺ in — aldosterone ↑",ions:[["na","out",1]],c:"aldoaction",block:["amil"],low:["aldo","spiro"]},
+  {x:2200,y:690,n:[-1,0],w:70,t:"ch",l:"ROMK",s:"K⁺ out to the urine — aldosterone ↑",ions:[["k","in",1]],c:"ksecretion",low:["aldo","spiro","amil"]},
+  {x:2200,y:780,n:[-1,0],w:70,t:"aqp",l:"Aquaporin-2",s:"H₂O in — ADH through the V₂ receptor",ions:[["h2o","out",2]],c:"adhdrugs",adh:true},
+  {x:2200,y:990,n:[-1,0],w:70,t:"pump",l:"H⁺-ATPase",s:"H⁺ out, HCO₃⁻ to the blood — aldosterone ↑",ions:[["h","in",1],["hco3","out",1]],c:"rta",low:["aldo","spiro"]},
+  {x:2200,y:1090,n:[-1,0],w:70,t:"pump",l:"H⁺–K⁺-ATPase",s:"K⁺ reclaimed, H⁺ out",ions:[["k","out",1],["h","in",1]],c:"khandling"},
+  {x:2200,y:1260,n:[-1,0],w:70,t:"aqp",l:"Aquaporin-2",s:"H₂O in — ADH",ions:[["h2o","out",2]],c:"aquaporins",adh:true},
+  {x:2200,y:1660,n:[-1,0],w:70,t:"ch",l:"UT1",s:"urea out — ADH ↑ (inner medulla only)",ions:[["urea","out",2]],c:"countercurrent",adh:true},
+  {x:2200,y:1830,n:[-1,0],w:70,t:"aqp",l:"Aquaporin-2",s:"H₂O in — ADH",ions:[["h2o","out",2]],c:"di",adh:true}];
+/* how much of each thing is still in the lumen, segment by segment, under the current switches */
+function nfFlowCounts(){
+  const F={pct:{na:3,cl:2,k:1,h2o:4,glu:2,aa:1,hco3:1,urea:1,ca:1},tdl:{na:2,cl:2,k:1,h2o:2,urea:1},
+    tal:{na:2,cl:2,k:1,h2o:2,urea:1,ca:1,mg:1},dct:{na:1,cl:1,h2o:2,urea:1},cd:{na:1,k:1,h2o:1,urea:1,h:1}};
+  const add=(segs,k,n)=>segs.forEach(s=>{ F[s][k]=Math.max(0,(F[s][k]||0)+n); });
+  const d=NF.drug, later=["tdl","tal","dct","cd"];
+  if(!NF.adh){ add(["cd"],"h2o",3); add(["cd"],"urea",1); }
+  if(d==="acz"){ add(later,"hco3",1); add(["cd"],"na",1); }
+  if(d==="sglt2"){ add(later,"glu",1); add(["cd"],"h2o",1); }
+  if(d==="mann"){ add(later,"h2o",2); }
+  if(d==="loop"){ add(["dct","cd"],"na",1); add(["dct","cd"],"cl",1); add(["dct","cd"],"k",1); add(["dct","cd"],"ca",1); add(["dct","cd"],"mg",1); add(["cd"],"h2o",2); }
+  if(d==="thz"){ add(["cd"],"na",1); add(["cd"],"cl",1); add(["cd"],"k",1); add(["cd"],"h2o",1); }
+  if(d==="amil"||d==="spiro"||!NF.aldo){ add(["cd"],"na",1); F.cd.k=0; }
+  return F;
+}
+function nfPaused(){
+  if(NF.paused!==null) return NF.paused;
+  try{ return matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){ return false; }
+}
+function nfMotion(){ try{ if(nfPaused()) svg.pauseAnimations(); else svg.unpauseAnimations(); }catch(e){} }
+const nfDot=(kind,r,anim)=>`<circle r="${r}" fill="var(${NF_KIND[kind][1]})" stroke="var(--surface)" stroke-width="1.4">${anim}</circle>`;
+function nephronArt(m){
+  const out=[];
+  /* the arterioles and the glomerulus */
+  out.push(`<g class="nf-vessels"><path d="M1320 150 C1220 170 1120 210 1046 258" class="nf-art" stroke-width="24"/>
+    <path d="M876 258 C800 210 700 170 600 150" class="nf-art" stroke-width="17"/>
+    <circle cx="960" cy="330" r="118" class="nf-caps"/>
+    ${[[930,300,30],[990,296,28],[1010,348,27],[960,372,26],[912,352,26],[960,328,22]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" class="nf-tuft"/>`).join("")}
+    <text class="nf-l2" x="800" y="352" text-anchor="end">Filtrate: water and small solutes</text>
+    <text class="nf-l2" x="800" y="368" text-anchor="end">not blood cells or most protein</text></g>`);
+  /* macula densa → afferent arteriole: tubuloglomerular feedback */
+  out.push(`<path d="M1172 462 C1150 380 1146 300 1122 236" class="nf-tgf"/><text class="nf-l2" x="1134" y="318" text-anchor="middle" transform="rotate(-77 1134 318)">NaCl signal → afferent tone</text>`);
+  /* the tubule: wall, lumen, and a brush border in the proximal tubule */
+  NF_TUBE.forEach(([d,w,seg])=>out.push(`<path d="${d}" class="nf-wall nf-${seg}" stroke-width="${w+12}"/><path d="${d}" class="nf-lumen" stroke-width="${w}"/>`));
+  out.push(`<path d="${NF_TUBE[0][0]}" class="nf-brush" stroke-width="${60-10}"/>`);
+  out.push(`<path d="M2200 2172 V2205" class="nf-urine" marker-end="url(#ah-nfCd)"/><text class="nf-l1" x="2200" y="2236" text-anchor="middle">Urine</text>`);
+  /* fluid flowing down the lumen — thinner and thinner */
+  const F=nfFlowCounts(), SPEED=140;
+  Object.keys(NF_FLOW).forEach(seg=>{
+    const f=NF_FLOW[seg], dur=(f.len/SPEED).toFixed(1), parts=[];
+    Object.keys(F[seg]).forEach(k=>{ if(NF.on[NF_KIND[k][0]]) for(let i=0;i<F[seg][k];i++) parts.push(k); });
+    parts.forEach((k,i)=>{
+      const b=-(dur*(i+0.5)/parts.length).toFixed(2);
+      out.push(nfDot(k,6,`<animateMotion dur="${dur}s" begin="${b}s" repeatCount="indefinite" path="${f.d}"/>`));
+    });
+  });
+  /* the transporters */
+  const d=NF.drug;
+  NF_SITES.forEach((s,si)=>{
+    const [nx,ny]=s.n, h=s.w/2, wx=s.x+nx*(h+3), wy=s.y+ny*(h+3), tx=-ny, ty=nx;
+    const blocked=(s.block||[]).includes(d), stopped=(s.stop||[]).includes(d), closed=s.adh&&!NF.adh;
+    const low=!blocked&&!stopped&&!closed&&(s.low||[]).some(c=>c===d||(c==="aldo"&&!NF.aldo));
+    const boost=(s.boost||[]).includes(d);
+    const vert=!!nx;
+    /* the icon on the wall */
+    let ic="";
+    const iw=vert?16:28, ih=vert?28:16;
+    if(s.t==="para") ic=`<path d="M${wx-tx*14} ${wy-ty*14} L${wx+tx*14} ${wy+ty*14}" class="nf-ic-para"/>`;
+    else if(s.t==="wall") ic=`<rect x="${wx-(vert?4:30)}" y="${wy-(vert?30:4)}" width="${vert?8:60}" height="${vert?60:8}" rx="3" class="nf-ic-wall"/>`;
+    else if(s.t==="md") ic=`<g class="nf-ic-md">${[-18,-6,6,18].map(o=>`<circle cx="${wx+tx*o}" cy="${wy+ty*o}" r="5"/>`).join("")}</g>`;
+    else ic=`<rect x="${wx-iw/2}" y="${wy-ih/2}" width="${iw}" height="${ih}" rx="5" class="nf-ic nf-ic-${s.t}${closed?" closed":""}"/>`;
+    if(blocked) ic+=`<path d="M${wx-11} ${wy-11} L${wx+11} ${wy+11} M${wx+11} ${wy-11} L${wx-11} ${wy+11}" class="nf-x"/>`;
+    /* ions crossing */
+    let ions="";
+    if(!blocked&&!stopped&&!closed) s.ions.forEach(([k,dir,n],ii)=>{
+      if(!NF.on[NF_KIND[k][0]]) return;
+      const cnt=low?1:boost?n+1:n, dur=(low?4.6:2.6);
+      for(let j=0;j<cnt;j++){
+        const off=(ii-(s.ions.length-1)/2)*11+(j%2?5:0);
+        const ax=s.x+tx*off, ay=s.y+ty*off, bx=s.x+nx*(h+26)+tx*off, by=s.y+ny*(h+26)+ty*off;   // just past the wall, short of the label
+        const p=dir==="out"?`M${ax} ${ay} L${bx} ${by}`:`M${bx} ${by} L${ax} ${ay}`;
+        const b=-((dur*(j/cnt+ii*0.21+si*0.13))%dur).toFixed(2);
+        ions+=nfDot(k,6.5,`<animateMotion dur="${dur}s" begin="${b}s" repeatCount="indefinite" path="${p}"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.15;.8;1" dur="${dur}s" begin="${b}s" repeatCount="indefinite"/>`);
+      }
+    });
+    /* the label */
+    let lab="";
+    if(s.l){
+      const suf=blocked?" — blocked":stopped?" — stops":closed?" — closed, no ADH":low?" — turned down":boost?" — turned up":"";
+      if(vert){ const lx=s.x+nx*(h+46), an=nx<0?"end":"start";
+        lab=`<text class="nf-l1" x="${lx}" y="${s.y-3}" text-anchor="${an}">${esc(s.l+suf)}</text><text class="nf-l2" x="${lx}" y="${s.y+13}" text-anchor="${an}">${esc(s.s)}</text>`; }
+      else { const ly=s.y+ny*(h+(ny>0?50:36));
+        lab=`<text class="nf-l1" x="${s.x}" y="${ny>0?ly:ly-16}" text-anchor="middle">${esc(s.l+suf)}</text><text class="nf-l2" x="${s.x}" y="${ny>0?ly+16:ly}" text-anchor="middle">${esc(s.s)}</text>`; }
+    }
+    const name=LES[s.c]?LES[s.c].n:"";
+    out.push(`<g class="nf-site${blocked||stopped||closed?" off":""}" data-plotles="${s.c}" tabindex="0" role="button" aria-label="${esc((s.l?s.l+": "+s.s:"Macula densa")+(name?" — opens "+name:""))}">${ions}${ic}${lab}</g>`);
+  });
+  /* the switches, top right */
+  const X0=2460, W=1000;
+  let y=150, x=X0;
+  const chip=(key,label,on,dot)=>{
+    const w=Math.round(label.length*7.1+(dot?40:26));
+    if(x+w>X0+W){ x=X0; y+=44; }
+    const g=`<g class="nf-chip${on?" on":""}" data-nf="${key}" tabindex="0" role="button" aria-pressed="${on}"><rect x="${x}" y="${y-21}" width="${w}" height="30" rx="15"/>${dot?`<circle cx="${x+16}" cy="${y-6}" r="6.5" fill="var(${dot})"/>`:""}<text x="${x+(dot?30:13)}" y="${y-1}">${esc(label)}</text></g>`;
+    x+=w+8; return g;
+  };
+  const head=(t)=>{ x=X0; const g=`<text class="nf-h" x="${X0}" y="${y}">${esc(t.toUpperCase())}</text>`; y+=30; return g; };
+  let ctl=`<rect x="${X0-20}" y="104" width="${W+40}" height="10" fill="none"/>`;
+  y=126; ctl+=head("Show");
+  NF_IONS.forEach(([k,l])=>{ const kind=Object.keys(NF_KIND).find(q=>NF_KIND[q][0]===k); ctl+=chip("ion:"+k,l,!!NF.on[k],NF_KIND[kind][1]); });
+  y+=50; ctl+=head("Hormones");
+  ctl+=chip("adh",NF.adh?"ADH present":"No ADH",NF.adh)+chip("aldo",NF.aldo?"Aldosterone present":"Little aldosterone",NF.aldo);
+  y+=50; ctl+=head("Add one drug");
+  NF_DRUGS.forEach(([k,l])=>{ ctl+=chip("drug:"+k,l,NF.drug===k); });
+  y+=50; x=X0;
+  ctl+=chip("pause",nfPaused()?"Play the motion":"Pause the motion",false)+chip("reset","Reset",false);
+  /* what the current switches do */
+  const notes=[];
+  if(!NF.adh) notes.push(NF_NOTE.adh);
+  if(!NF.aldo) notes.push(NF_NOTE.aldo);
+  if(NF.drug) notes.push(NF_NOTE[NF.drug]);
+  if(!notes.length) notes.push("Normal: filtrate leaves Bowman’s capsule and every segment takes back its share — lumen → blood is reabsorbed, blood → lumen is secreted. Tap any transporter for its card.");
+  if(NF.paused===null&&nfPaused()) notes.push("The motion is paused because this device asks for reduced motion — Play starts it.");
+  const lines=[]; notes.forEach(t=>{ let cur=""; t.split(" ").forEach(wd=>{ if((cur+" "+wd).trim().length>132){ lines.push(cur.trim()); cur=wd; } else cur+=" "+wd; }); lines.push(cur.trim()); lines.push(""); });
+  lines.pop();
+  y+=34;
+  ctl+=`<rect class="nf-note" x="${X0}" y="${y}" width="${W}" height="${lines.length*19+30}" rx="12"/>`+lines.map((t,i)=>`<text class="nf-nt" x="${X0+16}" y="${y+26+i*19}">${esc(t)}</text>`).join("")+
+    `<text class="nf-src" x="${X0+W}" y="${y+lines.length*19+50}" text-anchor="end">First Aid pp. 603, 626–627 · Katzung ch 15 · Costanzo ch 6</text>`;
+  out.push(`<g class="nf-ctl">${ctl}</g>`);
+  return out.join("");
+}
+function nfSet(k){
+  const [a,b]=k.split(":");
+  if(a==="ion") NF.on[b]=NF.on[b]?0:1;
+  else if(a==="adh") NF.adh=!NF.adh;
+  else if(a==="aldo") NF.aldo=!NF.aldo;
+  else if(a==="drug") NF.drug=NF.drug===b?"":b;
+  else if(a==="pause") NF.paused=!nfPaused();
+  else if(a==="reset"){ Object.keys(NF.on).forEach(i=>{ NF.on[i]=1; }); NF.adh=true; NF.aldo=true; NF.drug=""; }
+  const w=svg.querySelector("#artWrap"), m=MAPS[state.view];
+  if(!w||!m||!m.art) return;
+  w.innerHTML=nephronArt(m);
+  nfMotion();
+  const el=w.querySelector(`[data-nf="${k}"]`);
+  if(el){ FOCUS_QUIET=true; try{ el.focus({preventScroll:true}); }catch(e){} FOCUS_QUIET=false; }
+}
+const ART={ nephron:nephronArt };
+
 function render(){
   const m=MAPS[state.view];
   const paths=[...new Set([...m.edges.map(e=>e.p),...m.nodes.map(n=>n.p)])];
@@ -36452,9 +36763,11 @@ function render(){
   const focusPin=fp?[fp.dataset.les,[...svg.querySelectorAll(`.pin[data-les="${fp.dataset.les}"]`)].indexOf(fp)]:null;
   const fv=fe&&svg.contains(fe)&&fe.closest?fe.closest(".pvar"):null, focusVar=fv?[fv.dataset.plot,fv.dataset.pv]:null;
   svg.setAttribute("viewBox",`0 0 ${m.w} ${m.h}`);
-  svg.innerHTML=`<defs>${defs}</defs><g id="cam"><g class="bg-layer">${comps}${panels}</g><g class="edge-layer">${edges}</g><g class="node-layer">${nodes}</g><g class="chip-layer">${chips}</g><g class="tip-layer">${tips}</g></g>`;
+  const art=m.art&&ART[m.art]?`<g class="art-layer" id="artWrap">${ART[m.art](m)}</g>`:"";
+  svg.innerHTML=`<defs>${defs}</defs><g id="cam"><g class="bg-layer">${comps}${art}${panels}</g><g class="edge-layer">${edges}</g><g class="node-layer">${nodes}</g><g class="chip-layer">${chips}</g><g class="tip-layer">${tips}</g></g>`;
   cam=svg.querySelector("#cam");
   fitChips(); fitPanels(); fitComps(); drawMini(); applyCam(); applyFilter(); markSelected();
+  if(m.art) nfMotion(); else { try{ svg.unpauseAnimations(); }catch(e){} }
   /* a re-render replaces every pin; keep keyboard focus on the one that had it */
   if(focusPin){ const ps=svg.querySelectorAll(`.pin[data-les="${focusPin[0]}"]`), p=ps[focusPin[1]]||ps[0];
     if(p){ FOCUS_QUIET=true; try{ p.focus({preventScroll:true}); }catch(e){} FOCUS_QUIET=false; } }
@@ -37851,8 +38164,10 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   gaze:"2026-10-08",neckpain:"2026-10-08",ionchan:"2026-10-08",psyrxprin:"2026-10-08",somatcare:"2026-10-08",gcpharm:"2026-10-08",lymphdev:"2026-10-08",
   lungcancer:"2026-10-08",pitgh:"2026-10-08",buffers:"2026-10-08",renalmin:"2026-10-08",ventmech:"2026-10-08",shoulder:"2026-10-08",ctdis:"2026-10-08",
   thyroid:"2026-10-08",innate:"2026-10-08",pleural:"2026-10-08",fuelstate:"2026-10-08",prosobs:"2026-10-08",rbflow:"2026-10-08",kshift:"2026-10-08",tissues:"2026-10-08",
-  cortex:"2026-10-08",adrenal:"2026-10-08",raasrx:"2026-10-08",fluids:"2026-10-08",raarth:"2026-10-08",footleg:"2026-10-08",anxtx:"2026-10-08"};
+  cortex:"2026-10-08",adrenal:"2026-10-08",raasrx:"2026-10-08",fluids:"2026-10-08",raarth:"2026-10-08",footleg:"2026-10-08",anxtx:"2026-10-08",
+  nephflow:"2026-10-09"};
 const WHATSNEW=[
+  ["2026-10-09","New: <b>Nephron in Motion</b> (Renal) — a drawn nephron from the arterioles to the collecting duct, with every transporter on the wall and ions moving across it. Turn ADH or aldosterone off, or add one diuretic, and watch the flows change; tap a transporter for its card."],
   ["2026-10-08","New maps: <b>Cerebral Cortex &amp; Lobes</b> (Neuro), <b>Adrenal Gland — Cortex to Medulla</b> (Endocrine), <b>RAAS &amp; Its Drugs</b> and <b>Body Fluids &amp; Fluid Shifts</b> (Renal), <b>Rheumatoid &amp; Infectious Arthritis</b> and <b>Foot, Ankle &amp; Leg Problems</b> (MSK), <b>Anxiety Disorders &amp; Treatment</b> (Psych)."],
   ["2026-10-08","New graphs: <b>Darrow–Yannet diagrams</b> for the six volume changes, <b>clearance against plasma concentration</b>, <b>diffusion- vs perfusion-limited gas transfer</b>, <b>extracellular K⁺ and the membrane potential</b>, <b>aldosterone excess and absence</b> over days, and <b>catecholamine boluses</b>."],
   ["2026-10-08","Every card now lists the graphs that use it. In the question bank, an answered question offers <b>See it on a graph</b>, and each block home lists the <b>Graphs for this block</b>. More of your questions link to cards."],
@@ -38033,6 +38348,8 @@ svg.addEventListener("pointerleave",ev=>{ if(!svg.hasPointerCapture||!svg.hasPoi
 svg.addEventListener("gesturestart",ev=>ev.preventDefault());   // Safari: keep the page itself from zooming
 svg.addEventListener("click",ev=>{
   if(dragged){ dragged=false; return; }   // the end of a pan is not a tap
+  const nfc=ev.target.closest("[data-nf]");   // Nephron in Motion's switches
+  if(nfc){ nfSet(nfc.dataset.nf); return; }
   const pv=ev.target.closest(".pvar");
   const pgc=ev.target.closest(".plot-c"); if(pgc) PLOTACT=state.view+":"+pgc.dataset.plotg;
   const pl=ev.target.closest("[data-plotles]");
@@ -38067,7 +38384,7 @@ svg.addEventListener("click",ev=>{
 /* keyboard: pins are focusable — Tab moves between them, Enter or Space opens one,
    and a pin that gets focus off-screen is brought into view */
 svg.addEventListener("keydown",ev=>{
-  const pin=ev.target.closest&&ev.target.closest(".pin, .pvar"); if(!pin) return;
+  const pin=ev.target.closest&&ev.target.closest(".pin, .pvar, .nf-site, [data-nf]"); if(!pin) return;
   if(ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); ev.stopPropagation(); dragged=false; pin.dispatchEvent(new MouseEvent("click",{bubbles:true})); }
 });
 svg.addEventListener("focusin",ev=>{

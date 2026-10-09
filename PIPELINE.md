@@ -283,6 +283,24 @@ n]]}`, each question once per graph) into atlas-practice.js — the indices matc
 block** on the block home (`fillAtlasGraphsHome`, Practice → `#atlascards`). A graph whose cards change keeps its
 index only if the map's plot order does, so add plots at the end of a map's list.
 
+### Drawn maps (`art`) — Nephron in Motion (m36)
+
+A map can carry `art:"<name>"`: render() then draws `ART[<name>](m)` into `#artWrap`,
+between the compartments and the panels, so the map's own nodes, pins, panels, Walk and
+search still work on top of it. `MAPS.nephflow` is the first: a drawn nephron (glomerulus
+and arterioles, PCT, thin limbs, TAL with the macula densa, DCT, connecting tubule,
+collecting duct) with `NF_SITES` — every transporter on the wall, its ions and which way
+they move, the card it opens (`data-plotles`, the plot engine's card link), and which
+switches block it (`block`, a direct target), idle it (`stop`, nothing reaches it), turn it
+down or up (`low` / `boost`) or need ADH (`adh`). `nfFlowCounts()` sets how much of each
+ion is still in the lumen per segment under the current switches. The switches (ions shown,
+ADH, aldosterone, one drug, pause, reset) are SVG chips with `data-nf`, handled by nfSet()
+from the map's click handler; they redraw only `#artWrap`. Motion is SVG animateMotion,
+paused with svg.pauseAnimations() — paused by default when the device asks for reduced
+motion. Every label is sourced to First Aid pp. 603–604, 626–627, Costanzo ch 6–7 or
+Katzung ch 15 (Table 15-1); the switch notes (`NF_NOTE`) quote those pages' mechanisms.
+Batch script: `atlas-review/batches/m36/nephflow.py` with `nephflow_art.js`.
+
 ### Search abbreviations
 
 `ABBR` in `tools/atlas-src.html` holds First Aid 2025's abbreviation list (pp. 747–757),
