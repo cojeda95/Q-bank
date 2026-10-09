@@ -343,6 +343,8 @@ m45: Name-it and Predict scores live in the atlas progress (`mla-progress` parts
 `mergeAtlas` in sync.js carries them (larger count per side); an option named wrong (nitm) comes back first in Name it and
 the mix until named right. Letter keys on moving maps (dynKey): t Tour, n Name it, p Predict, c Compare. The hub home has
 a Moving-map mix tile (your Name-it score). Built by batches/m45/assemble.py (reruns m44 → m43 → m42).
+m46: Acid–Base Compensation Timeline (abtime) — batches/m46/assemble.py reruns m45 → … → m42, then inserts the m46 module(s).
+Nephro's splitPresets gain `extraExams` / `extraLabel`: Moorjani Split — Exam 2 is 42 objectives + 8 Week 1 (Exam 1) review = 50.
 A card opened from a transporter (or from a graph's card link — anything with `data-plotles`)
 keeps the map where it is: the click records that spot as KEEP_PT and flashPins() only
 slides the map if the card panel now covers it, instead of taking the reader to the card's
