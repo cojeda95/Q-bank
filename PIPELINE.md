@@ -283,23 +283,35 @@ n]]}`, each question once per graph) into atlas-practice.js — the indices matc
 block** on the block home (`fillAtlasGraphsHome`, Practice → `#atlascards`). A graph whose cards change keeps its
 index only if the map's plot order does, so add plots at the end of a map's list.
 
-### Drawn maps (`art`) — Nephron in Motion (m36)
+### Drawn, moving maps — the dynamic-maps kit (`art:"kit"`, m36 → m38/m39)
 
 A map can carry `art:"<name>"`: render() then draws `ART[<name>](m)` into `#artWrap`,
 between the compartments and the panels, so the map's own nodes, pins, panels, Walk and
-search still work on top of it. `MAPS.nephflow` is the first: a drawn nephron (glomerulus
-and arterioles, PCT, thin limbs, TAL with the macula densa, DCT, connecting tubule,
-collecting duct) with `NF_SITES` — every transporter on the wall, its ions and which way
-they move, the card it opens (`data-plotles`, the plot engine's card link), and which
-switches block it (`block`, a direct target), idle it (`stop`, nothing reaches it), turn it
-down or up (`low` / `boost`) or need ADH (`adh`). `nfFlowCounts()` sets how much of each
-ion is still in the lumen per segment under the current switches. The switches (ions shown,
-ADH, aldosterone, one drug, pause, reset) are SVG chips with `data-nf`, handled by nfSet()
-from the map's click handler; they redraw only `#artWrap`. Motion is SVG animateMotion,
-paused with svg.pauseAnimations() — paused by default when the device asks for reduced
-motion. Every label is sourced to First Aid pp. 603–604, 626–627, Costanzo ch 6–7 or
-Katzung ch 15 (Table 15-1); the switch notes (`NF_NOTE`) quote those pages' mechanisms.
-Batch script: `atlas-review/batches/m36/nephflow.py` with `nephflow_art.js`.
+search still work on top of it. Every drawn map uses the one engine, `art:"kit"` (kitArt),
+and is plain data in `m.dyn` — documented field by field in the comment above `const DYN`:
+`kinds` (particle kinds → show-group and colour), `groups` (the Show chips), `switches`
+(`toggle`; `one` — pick at most one option; `steps` — phases of a cycle, `auto` seconds steps
+through them while the motion plays, a tap holds a phase), `notes` keyed by condition,
+`shapes` (SVG strings, tubes, vessels and membranes whose width answers switches, text),
+`flows` (particles along a path; `mods` add/set counts or change speed), `sites` (a receptor,
+channel or transporter on a wall with particles crossing; `block` ✕, `stop`, `low`/`boost`,
+`need` + `closed`, `cross` for right through a membrane, the card it opens), `readouts`
+(↑ ↓ ↔ gauges) and `panel` (where the switches sit). A condition is `"adh"`, `"!adh"`,
+`"drug:loop"`, `"drug:*"` or `"a&b"`. Chips carry `data-dyn` and go to dynSet(), which redraws
+only `#artWrap`; per-map state lives in `DYN[view]`. Motion is SVG animateMotion, paused with
+svg.pauseAnimations() — paused by default when the device asks for reduced motion — and the
+auto-step timer (DYN_T) stops when the motion is paused or the map changes. Drawing styles:
+the `nf-*` classes (first written for the nephron), `dyn-*` classes, and colours only through
+CSS variables (`--dk1…--dk12`, the `--nf-*` ion colours, `--dyn-*`), so dark mode works.
+Nephron in Motion (`MAPS.nephflow`) was the first; m38 moved it onto the kit and added the
+glomerular-vessel switches (NSAID, ACE inhibitor / ARB, ANP / BNP, sympathetic surge) with
+GFR / RPF / FF / renin readouts (First Aid pp. 601, 606–607, 627; Costanzo ch 6).
+Batch scripts: `atlas-review/batches/m38/` (kit.js, kitify.py) and `m39/` (dynlib.py — check,
+screenshot harness and assembler; SPEC_DYN.md — the brief for writing a new drawn map).
+A card opened from a transporter (or from a graph's card link — anything with `data-plotles`)
+keeps the map where it is: the click records that spot as KEEP_PT and flashPins() only
+slides the map if the card panel now covers it, instead of taking the reader to the card's
+first pin elsewhere on the map.
 
 ### Search abbreviations
 
