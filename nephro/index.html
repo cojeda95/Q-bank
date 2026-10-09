@@ -37,6 +37,16 @@
     exam: 1,
     perObjective: 1,
     extra: 3
+  }, {
+    // Exam 2 (SDLs 13-24) has 42 objectives: 42 + 8 Week 1 review questions (one each from 8
+    // random Exam 1 objectives) = 50, so Week 1 is 16% of a run (under the 30% cap).
+    id: 'moorjani2',
+    name: 'Moorjani Split — Exam 2',
+    exam: 2,
+    perObjective: 1,
+    extra: 8,
+    extraExams: [1],
+    extraLabel: 'Week 1'
   }],
   // Batch 3 (per-SDL opt-in trial slot, shared/app.js BATCH3) is the Exam 2 trial set in
   // SDLs 13-24: kept out of exam totals and simulations like Neuro's Bloom Batch.

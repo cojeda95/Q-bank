@@ -1739,7 +1739,9 @@ function finalPresetCardsHtml(note) {
    in QUIZ_CONFIG.splitPresets: { id, name, exam, perObjective (default 1),
    extra (default 0) }. Every run draws `perObjective` random questions from
    each objective of each SDL in `exam`, in SDL then objective order, and puts
-   `extra` more at the end, drawn at random from the rest of that exam's pool.
+   `extra` more at the end, drawn at random from the rest of that exam's pool —
+   or, with `extraExams: [1]`, one each from that many random objectives of those
+   earlier exams (a cumulative review slice; `extraLabel` names it, e.g. "Week 1").
    Trial batches (isTrialQ) are left out as everywhere else, but High-Yield Only Mode is
    ignored: the split's size is set by the objective count, and some objectives
    have no high-yield questions at all. Blocks without splits see no change. */
@@ -1757,8 +1759,10 @@ function splitExtra(preset) {
   return Number.isFinite(preset.extra) && preset.extra > 0 ? Math.floor(preset.extra) : 0;
 }
 // One group per objective that has questions: { sdl, objective, questions }.
-function splitObjectiveGroups(preset) {
-  const exam = DATA.exams.find(e => e.examNumber === preset.exam);
+function splitObjectiveGroups(preset) { return examObjectiveGroups(preset.exam); }
+const splitExtraExams = preset => Array.isArray(preset.extraExams) && preset.extraExams.length ? preset.extraExams : null;
+function examObjectiveGroups(examNumber) {
+  const exam = DATA.exams.find(e => e.examNumber === examNumber);
   if (!exam) return [];
   const groups = [];
   exam.sdls.slice().sort((a, b) => a.sdlNumber - b.sdlNumber).forEach(sdl => {
@@ -1779,7 +1783,9 @@ function splitCounts(preset) {
   const groups = splitObjectiveGroups(preset);
   const per = splitPerObjective(preset);
   const core = groups.reduce((s, g) => s + Math.min(per, g.questions.length), 0);
-  const pool = groups.reduce((s, g) => s + g.questions.length, 0);
+  const xs = splitExtraExams(preset);
+  const pool = xs ? xs.reduce((s, n) => s + examObjectiveGroups(n).length, 0) + core   // one per earlier-exam objective
+    : groups.reduce((s, g) => s + g.questions.length, 0);
   const extra = Math.min(splitExtra(preset), pool - core);
   return { objectives: groups.length, core, extra, total: core + extra };
 }
@@ -1791,6 +1797,8 @@ function buildSplitQuestions(preset) {
     core.push(...picked.slice(0, per));
     rest.push(...picked.slice(per));
   });
+  const xs = splitExtraExams(preset);
+  if (xs) return core.concat(shuffle(xs.flatMap(n => examObjectiveGroups(n))).map(g => shuffle(g.questions)[0]).slice(0, splitExtra(preset)));
   return core.concat(shuffle(rest).slice(0, splitExtra(preset)));
 }
 function startSplit(preset, { timed = true, secondsPerQuestion = 90 } = {}) {
@@ -1806,7 +1814,8 @@ function startSplit(preset, { timed = true, secondsPerQuestion = 90 } = {}) {
 function splitSummary(preset) {
   const per = splitPerObjective(preset);
   const { objectives, extra, total } = splitCounts(preset);
-  return `${per} question${per === 1 ? '' : 's'} from each of Exam ${preset.exam}'s ${objectives} objectives${extra ? ` + ${extra} random` : ''} · ${total} questions`;
+  const xs = splitExtraExams(preset);
+  return `${per} question${per === 1 ? '' : 's'} from each of Exam ${preset.exam}'s ${objectives} objectives${extra ? ` + ${extra} ${xs ? `${preset.extraLabel || 'Exam ' + xs.join(' & ')} review` : 'random'}` : ''} · ${total} questions`;
 }
 // Cards for the home screen, or for one exam's pages when examNumber is given.
 // `note` is appended to the label, e.g. on the exam setup page.
@@ -1848,11 +1857,13 @@ function renderSplitSetup(id) {
     .map(r => `<tr><td>${escapeHtml(r.title)}</td><td>${r.objectives}</td><td>${r.questions}</td></tr>`)
     .join('');
   const extraPositions = extra === 1 ? `question ${total}` : `questions ${core + 1}–${total}`;
+  const xs = splitExtraExams(preset), xName = preset.extraLabel || (xs ? `Exam ${xs.join(' & ')}` : '');
+  const extraWhere = xs ? `from ${extra} different random objectives of ${xName} (Exam ${xs.join(' & ')}) — ${Math.round(100 * extra / total)}% of the run` : `at random from the rest of Exam ${preset.exam}`;
 
   main.innerHTML = `
     <button class="back-link" id="backHome">&larr; Home</button>
     <h1>${escapeHtml(preset.name)}</h1>
-    <p class="subtitle">Every objective in Exam ${preset.exam}: ${per} random question${per === 1 ? '' : 's'} from each of its ${objectives} objectives, in SDL order (${core} questions)${extra ? `, then ${extra} more picked at random from the rest of Exam ${preset.exam} as ${extraPositions}` : ''}. ${total} questions in all, drawn fresh every run.</p>
+    <p class="subtitle">Every objective in Exam ${preset.exam}: ${per} random question${per === 1 ? '' : 's'} from each of its ${objectives} objectives, in SDL order (${core} questions)${extra ? `, then ${extra} more picked ${extraWhere} as ${extraPositions}` : ''}. ${total} questions in all, drawn fresh every run.</p>
     ${score ? `<p class="setup-hint">Last run: ${score.last.correct}/${score.last.total}${score.best.correct === score.last.correct && score.best.total === score.last.total ? '' : ` · Best: ${score.best.correct}/${score.best.total}`}</p>` : ''}
     ${settings.hyOnly ? '<p class="setup-hint">⚡ High-Yield Only Mode does not apply here: this split always covers every objective, including those with no high-yield questions.</p>' : ''}
     <div class="setup-card">
@@ -1879,7 +1890,7 @@ function renderSplitSetup(id) {
       <thead><tr><th>SDL</th><th>Objectives</th><th>Questions</th></tr></thead>
       <tbody>
         ${rows}
-        ${extra ? `<tr><td>Random extras from any Exam ${preset.exam} SDL</td><td>—</td><td>${extra}</td></tr>` : ''}
+        ${extra ? `<tr><td>${xs ? `${escapeHtml(xName)} review — one each from random Exam ${xs.join(' & ')} objectives` : `Random extras from any Exam ${preset.exam} SDL`}</td><td>—</td><td>${extra}</td></tr>` : ''}
         <tr><td><b>Total</b></td><td><b>${objectives}</b></td><td><b>${total}</b></td></tr>
       </tbody>
     </table>
