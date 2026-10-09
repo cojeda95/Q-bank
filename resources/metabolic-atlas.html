@@ -36632,7 +36632,7 @@ MAPS.nmjflow = {
  fa:"136, 235, 238–239, 459, 480, 566",
  src:["Katzung ch 6 — Introduction to Autonomic Pharmacology", "Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs", "Katzung ch 27 — Skeletal Muscle Relaxants", "Guyton ch 7 — Excitation of Skeletal Muscle: Neuromuscular Transmission and Excitation-Contraction Coupling", "Robbins ch 27 — Peripheral nerves and skeletal muscles", "Bootcamp.com Neurology — Diseases of the Neuromuscular Junction"],
  art:"kit",
- dyn:{"lazy":"e72054fc3c","switches":[{"id":"dz","label":"Disease or toxin — pick one","type":"one","options":[["mg","Myasthenia gravis","mg"],["lems","Lambert-Eaton","lems"],["bot","Botulinum toxin","botulinum"],["op","Organophosphate poisoning","organophosphate"]]},{"id":"rx","label":"Drug — pick one","type":"one","options":[["pyr","Pyridostigmine · neostigmine","achei"],["amif","Amifampridine","lems"],["roc","Rocuronium","nmb"],["sug","Rocuronium + sugammadex","nmb"],["sux","Succinylcholine","nmb"],["pam","Atropine + pralidoxime","organophosphate"],["hemi","Hemicholinium","nmjtrans"],["ves","Vesamicol","nmjtrans"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"f7d0eac55e","switches":[{"id":"dz","label":"Disease or toxin — pick one","type":"one","options":[["mg","Myasthenia gravis","mg"],["lems","Lambert-Eaton","lems"],["bot","Botulinum toxin","botulinum"],["op","Organophosphate poisoning","organophosphate"]]},{"id":"rx","label":"Drug — pick one","type":"one","options":[["pyr","Pyridostigmine · neostigmine","achei"],["amif","Amifampridine","lems"],["roc","Rocuronium","nmb"],["sug","Rocuronium + sugammadex","nmb"],["sux","Succinylcholine","nmb"],["pam","Atropine + pralidoxime","organophosphate"],["hemi","Hemicholinium","nmjtrans"],["ves","Vesamicol","nmjtrans"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38202,7 +38202,7 @@ MAPS.nucflow = {
  fa:"34–35, 71, 80–81, 115, 118–119, 190, 195, 199, 249, 422, 426, 443–444, 473, 496",
  src:["Marks ch 39 — Purine and Pyrimidine Metabolism", "Marks ch 36 — Fate of Amino Acid Nitrogen: Urea Cycle", "Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout", "Katzung ch 46 — Sulfonamides, Trimethoprim, & Quinolones", "Katzung ch 52 — Antiprotozoal Drugs", "Katzung ch 54 — Cancer Chemotherapy", "Katzung ch 55 — Immunopharmacology", "Bootcamp.com Genetics — DNA structure", "Bootcamp.com Biochemistry — Protein metabolism", "Bootcamp.com Hematology & Oncology — Macrocytic Anemia"],
  art:"kit",
- dyn:{"lazy":"6f6980dbb3","switches":[{"id":"drug","label":"Pick one drug","type":"one","options":[["mtx","Methotrexate","mtx"],["tmp","Trimethoprim","sulfonamides"],["pyr","Pyrimethamine","toxo"],["5fu","5-Fluorouracil","fluorouracil"],["hu","Hydroxyurea","hydroxyurea"],["mmf","Mycophenolate","mmf"],["rbv","Ribavirin","ribavirin"],["lef","Leflunomide","dmards"],["6mp","6-MP · azathioprine","thiopurine"]]},{"id":"dz","label":"Pick one disorder","type":"one","options":[["lesch","Lesch–Nyhan (HGPRT)","leschnyhan"],["orotic","Orotic aciduria (UMP synthase)","oroticaciduria"],["otc","OTC deficiency","otc"],["ada","ADA deficiency (SCID)","ada"],["fol","Folate deficiency","b9def"]]}],"panel":{"x":2460,"y":110,"w":1000}},
+ dyn:{"lazy":"69e3536fd8","switches":[{"id":"drug","label":"Pick one drug","type":"one","options":[["mtx","Methotrexate","mtx"],["tmp","Trimethoprim","sulfonamides"],["pyr","Pyrimethamine","toxo"],["5fu","5-Fluorouracil","fluorouracil"],["hu","Hydroxyurea","hydroxyurea"],["mmf","Mycophenolate","mmf"],["rbv","Ribavirin","ribavirin"],["lef","Leflunomide","dmards"],["6mp","6-MP · azathioprine","thiopurine"]]},{"id":"dz","label":"Pick one disorder","type":"one","options":[["lesch","Lesch–Nyhan (HGPRT)","leschnyhan"],["orotic","Orotic aciduria (UMP synthase)","oroticaciduria"],["otc","OTC deficiency","otc"],["ada","ADA deficiency (SCID)","ada"],["fol","Folate deficiency","b9def"]]}],"panel":{"x":2460,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39921,7 +39921,10 @@ function dynSections(d,st){
     const Q=st.quiz;
     if(Q&&Q.s===s.id){   // naming it: this switch's chips become the choices
       const chips=Q.ch.map((k,i)=>{ const o=s.options.find(x=>x[0]===k); return {key:"q:"+k,l:(Q.ans?(k===Q.k?"✓ ":k===Q.ans?"✗ ":""):(i+1)+" · ")+o[1],on:!!Q.ans&&k===Q.k}; });
-      if(Q.ans&&NMIX) chips.push(NMIX.k<NMIX.n?{key:"quiz:mix",l:"Next map ›",on:true}:{key:"quiz:mix10",l:"Another 10",on:true},{key:"quiz:end",l:"Done",on:false});
+      if(Q.ans&&NMIX){ const tp=topicOf(state.view);
+        chips.push(NMIX.k<NMIX.n?{key:"quiz:mix",l:"Next map ›",on:true}:{key:"quiz:mix10",l:"Another 10",on:true});
+        if(tp&&mixPool(tp[0]).length>=3) chips.push({key:"quiz:scope",l:NMIX.scope?"All moving maps":"Only "+tp[1],on:false});
+        chips.push({key:"quiz:end",l:"Done",on:false}); }
       else if(Q.ans) chips.push({key:"quiz:new",l:"Another one",on:false},{key:"quiz:end",l:"Done",on:false});
       S.push({h:Q.ans?"Name it — the answer":"Name it — which one is on?",chips}); return; }
     const chips=s.options.map(([k,l],i)=>({key:"o:"+s.id+":"+k,l:(s.type==="steps"&&!/^(Phase|\d)/.test(l)?(i+1)+" · ":"")+l,on:st.sw[s.id]===k}));   // "Phase 0…" labels carry their own number
@@ -39929,14 +39932,15 @@ function dynSections(d,st){
       if(s.auto) chips.push({key:"a:"+s.id,l:st.auto===s.id?"Stepping through":"Step through",on:st.auto===s.id}); }
     S.push({h:s.label,chips}); });
   /* the last row: a tour's own buttons while touring; otherwise the motion, Reset and the ways to study the map */
-  const tail=st.tour?[{key:"tour:prev",l:"‹ Back",on:false},{key:"tour:next",l:st.tour.i<dynTour(d).length-1?"Next ›":"Start again",on:true},{key:"tour:end",l:"End the tour",on:false}]:[];
+  const tail=st.tour?[{key:"tour:prev",l:"‹ Back",on:false},{key:"tour:next",l:st.tour.i<dynTour(d).length-1?"Next ›":"Start again",on:true},{key:"tour:auto",l:TOUR_T?"■ Stop":"▶ Play",on:!!TOUR_T},{key:"tour:end",l:"End the tour",on:false}]:[];
   tail.push({key:"pause",l:dynPaused(st)?"Play the motion":"Pause the motion",on:false},{key:"reset",l:"Reset",on:false});
   if(!st.tour){
     if((d.readouts||[]).length) tail.push({key:"p:on",l:st.pred?"Stop predicting":"Predict the arrows",on:!!st.pred});
     if((d.switches||[]).length) tail.push({key:"tour:go",l:"Tour",on:false});
     if(!st.quiz&&dynQuizable(d).length){ const r=nameitScores()[state.view]; tail.push({key:"quiz:new",l:r?`Name it · ${r[0]}/${r[1]}`:"Name it",on:false}); }
     if(st.cmp) tail.push({key:"cmp:show",l:"Side by side",on:true},{key:"cmp:off",l:"Unpin",on:false});
-    else if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"cmp:pin",l:"Compare",on:false}); }
+    else if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"cmp:pin",l:"Compare",on:false});
+    if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"link",l:st.copied?"✓ Link copied":"Copy link",on:!!st.copied}); }
   S.push({h:"",chips:tail});
   return S;
 }
@@ -39951,7 +39955,7 @@ function dynReadouts(d,st){
 function dynNotes(d,st){
   const R=dynReadouts(d,st), live=R.filter(r=>r.dir), Q=st.quiz;
   if(Q&&!Q.ans){ const s=d.switches.find(x=>x.id===Q.s);
-    return [`${NMIX?`Moving-map mix ${NMIX.k+1} of ${NMIX.n} · ${NMIX.ok} right so far. `:""}Name it: one choice under “${s.label}” is switched on. Read the drawing${R.length?" and the results":""}, then pick it from the ${Q.ch.length} choices.`]; }
+    return [`${NMIX?`Moving-map mix${NMIX.scope?" ("+(TOPICS.find(t=>t[0]===NMIX.scope)||["",""])[1]+")":""} ${NMIX.k+1} of ${NMIX.n} · ${NMIX.ok} right so far. `:""}Name it: one choice under “${s.label}” is switched on. Read the drawing${R.length?" and the results":""}, then pick it from the ${Q.ch.length} choices.`]; }
   if(st.pred&&!st.pred.chk) return [live.length
     ?"Predict: pick ↑, ↓ or ↔ for each result, then press Check. The explanation comes back when you check."
     :"Pick a drug, disease or lesion first — then predict which way each result moves."];
@@ -40168,12 +40172,18 @@ function dynSet(k,timer){
   else if(a==="pause") st.paused=!dynPaused(st);
   else if(a==="reset"){ delete DYN[v]; dynSt(v).paused=st.paused; }
   else if(a==="tour"){ const T=dynTour(m.dyn);
-    if(b==="end"){ st.tour=null; }
+    if(b==="auto"){ if(TOUR_T) tourStop(); else tourPlay(v); }
+    else if(b==="end"){ st.tour=null; tourStop(); }
     else { const i=b==="go"?0:b==="next"?((st.tour?st.tour.i:-1)+1)%T.length:Math.max(0,(st.tour?st.tour.i:0)-1);
       dynGo(v,T[i].str,{tour:{i},quiz:null}); } }
-  else if(a==="quiz"){ if(b==="mix"){ nameMixNext(); return; } if(b==="mix10"){ startNameMix(); return; }
+  else if(a==="quiz"){ if(b==="mix"){ nameMixNext(); return; } if(b==="mix10"){ startNameMix(NMIX&&NMIX.scope); return; }
+    if(b==="scope"&&NMIX){ const tp=topicOf(v); NMIX.scope=NMIX.scope?null:tp&&tp[0]; }
+    else
     if(b==="end"){ st.quiz=null; NMIX=null; } else { NMIX=null; dynQuiz(v); } }
   else if(a==="q"&&st.quiz&&!st.quiz.ans){ const ok=b===st.quiz.k; st.quiz.ans=b; st.qz.n++; if(ok) st.qz.ok++; nameitSave(v,ok); if(NMIX){ NMIX.k++; if(ok) NMIX.ok++; } }
+  else if(a==="link"){ writeHash(); const u=location.href;
+    try{ navigator.clipboard.writeText(u).then(()=>{ const s2=DYN[v]; if(!s2) return; s2.copied=true; dynRedraw(); setTimeout(()=>{ if(DYN[v]){ DYN[v].copied=false; if(state.view===v) dynRedraw(); } },1800); },()=>{ prompt("Copy this link:",u); }); }catch(e){ prompt("Copy this link:",u); }
+    return; }
   else if(a==="cmp"){ if(b==="pin") st.cmp={str:dynStateStr(v),l:dynStateLabel(m.dyn,st)}; else if(b==="off") st.cmp=null; else if(b==="show"){ dynCompare(v); return; } }
   else if(a==="p"){
     if(b==="on"){ st.pred=st.pred?null:{g:{},chk:false}; if(st.pred) st.auto=null; }   // predicting holds the phase still
@@ -40181,7 +40191,7 @@ function dynSet(k,timer){
     else if(b==="chk"&&st.pred&&Object.values(st.pred.g).some(Boolean)) st.pred.chk=true;
   }
   if(st.pred&&(a==="t"||a==="o"||a==="n")) st.pred={g:{},chk:false};   // a new state: guess again
-  if(a==="t"||a==="o"||a==="n"||a==="reset"){ const s2=DYN[v]; if(s2&&!timer){ s2.tour=null; s2.quiz=null; NMIX=null; } }   // a switch by hand ends a tour or a question
+  if(a==="t"||a==="o"||a==="n"||a==="reset"){ const s2=DYN[v]; if(s2&&!timer){ s2.tour=null; s2.quiz=null; NMIX=null; tourStop(); } }   // a switch by hand ends a tour or a question
   const w=svg.querySelector("#artWrap"); if(!w) return;
   if((a==="tour"||a==="quiz")&&!timer) dynFrame();
   const ae=document.activeElement, fk=ae&&w.contains(ae)&&ae.dataset?ae.dataset.dyn:null;   // keep keyboard focus through a re-draw
@@ -40224,10 +40234,12 @@ function nameitScores(){ try{ return JSON.parse(localStorage.getItem("mla-nameit
 function nameitSave(v,ok){ try{ const S=nameitScores(), r=S[v]||[0,0]; r[1]++; if(ok) r[0]++; S[v]=r; localStorage.setItem("mla-nameit",JSON.stringify(S)); }catch(e){} }
 /* Quiz → Moving-map mix: ten Name-it questions, each on a random moving map */
 let NMIX=null;
-function startNameMix(){ NMIX={k:0,n:10,ok:0}; nameMixNext(); }
+const topicOf=v=>TOPICS.find(t=>t[2].includes(v));
+const mixPool=scope=>VIEWS.map(x=>x[0]).filter(v=>MAPS[v]&&MAPS[v].art==="kit"&&MAPS[v].dyn&&dynQuizable(MAPS[v].dyn).length&&(!scope||(topicOf(v)||[])[0]===scope));
+function startNameMix(scope){ NMIX={k:0,n:10,ok:0,scope:scope||null}; nameMixNext(); }
 function nameMixNext(){
   if(!NMIX) return;
-  const pool=VIEWS.map(x=>x[0]).filter(v=>v!==state.view&&MAPS[v]&&MAPS[v].art==="kit"&&MAPS[v].dyn&&dynQuizable(MAPS[v].dyn).length);
+  let pool=mixPool(NMIX.scope).filter(v=>v!==state.view); if(!pool.length) pool=mixPool(NMIX.scope);
   const v=pool[Math.floor(Math.random()*pool.length)], mix=NMIX;
   if(state.view!==v) setView(v);
   NMIX=mix;   // setView may end a quiz; the mix carries on
@@ -40236,6 +40248,17 @@ function nameMixNext(){
     dynQuiz(v); dynRedraw(); writeHash(); dynFrame(); };
   go(0);
 }
+/* the tour plays itself: the next stop every 6 s, ending on the last */
+let TOUR_T=null;
+function tourStop(){ if(TOUR_T){ clearInterval(TOUR_T); TOUR_T=null; } }
+function tourPlay(v){ tourStop();
+  TOUR_T=setInterval(()=>{ const st=DYN[v]; if(state.view!==v||!st||!st.tour){ tourStop(); return; }
+    if(st.tour.i>=dynTour(MAPS[v].dyn).length-1){ tourStop(); dynRedraw(); return; }
+    dynSet("tour:next",true); },6000); }
+/* open a moving map straight into Name it (the Index's weakest maps) */
+function goNameIt(v){ if(!MAPS[v]) return; NMIX=null; if(state.view!==v) setView(v);
+  const go=n=>{ if(state.view!==v) return; if(MAPS[v].dyn.lazy){ if(!DYNFAIL[v]&&n<100) setTimeout(()=>go(n+1),100); return; } dynQuiz(v); dynRedraw(); writeHash(); dynFrame(); };
+  go(0); }
 /* keys on a moving map: ← → step a tour; 1–4 name it, Enter for the next question */
 function dynKey(ev){
   const v=state.view, m=MAPS[v], st=m&&m.art==="kit"&&m.dyn&&!m.dyn.lazy&&DYN[v];
@@ -40271,14 +40294,16 @@ function dynCompare(v){
   const old=document.getElementById("dynCmp"); if(old) old.remove();
   const el=document.createElement("div"); el.id="dynCmp"; el.className="dcmp"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true");
   el.setAttribute("aria-label","Compare two states of "+m.t);
-  el.innerHTML=`<div class="dcmp-box"><div class="dcmp-h"><b>${esc(m.t)} — compare</b><button class="ds-x" data-cmpx>Close</button></div>
+  el.innerHTML=`<div class="dcmp-box"><div class="dcmp-h"><b>${esc(m.t)} — compare</b><span class="ds-hb"><button class="ds-x" data-cmpb title="Pin B, then change the switches for a new comparison">Pin B instead</button><button class="ds-x" data-cmpx>Close</button></span></div>
     ${A.R.some((r,i)=>diff(i))?`<p class="dcmp-sub">Results that differ are underlined.</p>`:""}<div class="dcmp-cols">${col(A)}${col(B)}</div></div>`;
   document.body.appendChild(el);
   const back=document.activeElement;
   const close=()=>{ el.remove(); removeEventListener("keydown",key,true); try{ back&&back.focus({preventScroll:true}); }catch(e){} };
   const key=e=>{ if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); close(); } };
   addEventListener("keydown",key,true);
-  el.addEventListener("click",e=>{ if(e.target===el||e.target.closest("[data-cmpx]")) close(); });
+  el.addEventListener("click",e=>{
+    if(e.target.closest("[data-cmpb]")){ cur.cmp={str:dynStateStr(v),l:dynStateLabel(d,cur)}; close(); dynRedraw(); return; }
+    if(e.target===el||e.target.closest("[data-cmpx]")) close(); });
   el.querySelectorAll("svg").forEach(s=>{ try{ if(dynPaused(cur)) s.pauseAnimations(); }catch(e){} });
   const x=el.querySelector("[data-cmpx]"); if(x) x.focus();
 }
@@ -41716,6 +41741,9 @@ function renderIndex(){
       </ul>
       <p>A study aid, not a replacement for these texts. If something looks wrong, tap <b>Report</b> on that card or <a href="${REPO}/issues/new" target="_blank" rel="noopener">open an issue</a> so it can be fixed.</p>
     </details></div>
+    ${(()=>{ if(q) return ""; const N=nameitScores(), W=Object.keys(N).filter(v=>MAPS[v]&&N[v][1]>=2&&N[v][0]<N[v][1])
+        .sort((a,b)=>N[a][0]/N[a][1]-N[b][0]/N[b][1]||N[b][1]-N[a][1]).slice(0,6);
+      return W.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Your weakest moving maps · Name it</h3><ul>${W.map(v=>`<li><button class="idxrow" data-nameit="${v}"><span class="t">${esc(MAPS[v].t)}</span><span class="e">${N[v][0]} of ${N[v][1]} named right on this device — tap to try again</span></button></li>`).join("")}</ul></section>`:""; })()}
     ${(()=>{ const SW=q?switchMatches(q):[]; return SW.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Moving maps · ${SW.length}</h3><ul>${SW.slice(0,20).map(x=>switchRowHtml(x,"idx")).join("")}</ul></section>`:""; })()}
     ${(()=>{ GHITS=q?graphMatches(q):[]; return GHITS.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Graphs · ${GHITS.length}</h3><ul>${GHITS.slice(0,20).map(g=>graphRowHtml(g,"idx")).join("")}</ul></section>`:""; })()}
     ${(()=>{ BOXHITS=q?boxMatches(q):[]; return BOXHITS.length?`<section class="idxcard" style="--c:var(--ink-3)"><h3><span class="bar"></span>In map boxes · ${BOXHITS.length}</h3><ul>${BOXHITS.slice(0,30).map((b,i)=>boxRowHtml(b,i,"idx")).join("")}</ul>${BOXHITS.length>30?`<p class="revnote">${BOXHITS.length-30} more — add a word to narrow it</p>`:""}</section>`:""; })()}
@@ -41725,6 +41753,7 @@ function renderIndex(){
   idxWrap.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
   idxWrap.querySelectorAll("[data-plotgo]").forEach(b=>b.onclick=()=>{ const [v,i,j]=b.dataset.plotgo.split(":"); goPlot(v,+i,j); });
   idxWrap.querySelectorAll("[data-dyngo]").forEach(b=>b.onclick=()=>goSwitch(b.dataset.dyngo));
+  idxWrap.querySelectorAll("[data-nameit]").forEach(b=>b.onclick=()=>goNameIt(b.dataset.nameit));
 }
 
 /* ── navigation: broad topics, then the maps inside the chosen one ── */
@@ -41760,6 +41789,7 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   misim:"2026-10-09",pvflow:"2026-10-09",edemaflow:"2026-10-09",hivflow:"2026-10-09",eyesim:"2026-10-09",plexsim:"2026-10-09",mensflow:"2026-10-09",
   baroflow:"2026-10-10",shocksim:"2026-10-10",ecgsim:"2026-10-10",cahflow:"2026-10-10",lipoflow:"2026-10-10",hemeflow:"2026-10-10",nucflow:"2026-10-10",acidflow:"2026-10-10",legsim:"2026-10-10"};
 const WHATSNEW=[
+  ["2026-10-10","Moving maps: the mix can stay in one system (<b>Only Cardiac</b>), a Tour can <b>▶ Play</b> by itself, <b>Copy link</b> shares the exact state you’re on, Compare can <b>Pin B instead</b> to chain comparisons, and the Index lists your weakest maps for Name it. Block pages show your Name-it score on each moving map."],
   ["2026-10-10","<b>Quiz → Moving-map mix</b>: ten Name-it questions on random moving maps, with a score. Each map’s Name it button remembers your score on this device, and keys work on moving maps — ← → step a Tour, 1–4 answer Name it, Enter for the next."],
   ["2026-10-10","New moving maps — <b>Autonomic Drugs &amp; Baroreflex in Motion</b> (neuro), <b>Shock Simulator</b> (Cardiac), <b>Conduction &amp; ECG Simulator</b> (Cardiac), <b>Steroid Synthesis &amp; CAH in Motion</b> (Endocrine), <b>Lipoprotein Transport in Motion</b> (bio), <b>Heme Synthesis &amp; Porphyrias in Motion</b> (Heme/Onc), <b>Nucleotide Synthesis &amp; Drug Sites in Motion</b> (bio), <b>Parietal Cell in Motion</b> (GI), <b>Lower Limb Nerve Lesion Simulator</b> (MSK)."],
   ["2026-10-10","Every moving map now has a <b>Tour</b> (it steps through the switches with a line on each), <b>Name it</b> (one option is switched on in secret — name it from the drawing) and <b>Compare</b> (pin a state, change the switches, see both side by side). Block home pages list <b>Moving maps for this block</b>, and <i>Save all</i> now saves every moving map for offline use."],

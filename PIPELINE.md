@@ -336,6 +336,9 @@ hub's Save all and the atlas's Save offline save resources/dyn/* too. Batch: atl
 m43: **Quiz → Moving-map mix** (NMIX, startNameMix/nameMixNext — ten Name-it questions on random moving maps; #quiz/moving),
 Name-it scores per map on this device (`mla-nameit`, shown on the Name it chip), and keys on moving maps (dynKey: ← → tour, 1–4
 answer, Enter next). Built by atlas-review/batches/m43/assemble.py, which reruns m42's assemble (its kit.js and modules) first.
+m44: the mix can stay in one topic (NMIX.scope, mixPool/topicOf), a Tour can ▶ Play (tourPlay, 6 s a stop), Copy link
+(the address already holds the state), Compare's "Pin B instead", the Index's weakest moving maps (from `mla-nameit`, goNameIt),
+and the hub's block tiles show each map's Name-it score. Built by batches/m44/assemble.py (reruns m43 → m42).
 A card opened from a transporter (or from a graph's card link — anything with `data-plotles`)
 keeps the map where it is: the click records that spot as KEEP_PT and flashPins() only
 slides the map if the card panel now covers it, instead of taking the reader to the card's

@@ -855,13 +855,14 @@ function fillAtlasMovesHome() {
     const rows = moving.map(v => [v, nOf(P.maps[v])]).filter(([, n]) => n > 0)
       .sort((a, b) => b[1] - a[1] || ATLAS_MAPS[a[0]][0].localeCompare(ATLAS_MAPS[b[0]][0]));
     if (!rows.length) return;
+    let named = {}; try { named = JSON.parse(localStorage.getItem('mla-nameit') || '{}') || {}; } catch (e) {}   // Name-it scores, saved by the atlas
     const open = (v, sw) => `${ATLAS_URL}#${encodeURIComponent(v)}${sw ? '/~' + sw.split(':').map(encodeURIComponent).join(':') : ''}`;
     const tile = ([v, n]) => {
       const sws = ATLAS_MOVES.filter(x => x[0] === v && x[1])
         .map(x => [x, x[4].reduce((t, c) => t + nOf(P.cards && P.cards[c]), 0)]).filter(([, k]) => k > 0)
         .sort((a, b) => b[1] - a[1]).slice(0, 3);
       return `<div class="gtile mtile"><a class="gt-name" href="${open(v)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[v][0])}</a>
-        <span class="gt-meta">${n} question${n === 1 ? '' : 's'} in this block</span>
+        <span class="gt-meta">${n} question${n === 1 ? '' : 's'} in this block${named[v] && named[v][1] ? ` · Name it ${named[v][0]}/${named[v][1]}` : ''}</span>
         ${sws.length ? `<span class="mt-sw">${sws.map(([x, k]) => `<a href="${open(v, x[1])}" target="_blank" rel="noopener" title="${k} question${k === 1 ? '' : 's'} here">${escapeHtml(x[2])}</a>`).join('')}</span>` : MOVE_GLYPH}
         <span class="gt-links"><a href="${open(v)}" target="_blank" rel="noopener">Open map</a><a href="#atlasmap/${encodeURIComponent(v)}">Practice</a></span></div>`;
     };
