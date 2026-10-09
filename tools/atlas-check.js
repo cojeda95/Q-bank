@@ -105,7 +105,7 @@
     });
     /* graphs: the kinds tools/atlas-src.html can draw (PLOTS) — keep in step */
     (m.plots||[]).forEach(p=>{
-      if(!["pvloop","starling","odc","lungpv","glucose","doseresp","elim","mm","lb","flowvol","cofunc","apnerve","apcond","apnodal","apventric","wiggers","menstrual","titration","lentension","forcevel","glomcap","ecglytes","pregweeks","vco2","vo2","o2cascade","pthca","hcvsero","hbvsero","abresp","cones","cbfmap","cbfgas","o2content","gtt","dditest","dexsupp","phh","ccprof","gradap","co2dc","eyetrace","cortrhythm"].includes(p.kind)) err(`${where}: plot "${p.t}" has unknown kind "${p.kind}"`);
+      if(!["pvloop","starling","odc","lungpv","glucose","doseresp","elim","mm","lb","flowvol","cofunc","apnerve","apcond","apnodal","apventric","wiggers","menstrual","titration","lentension","forcevel","glomcap","ecglytes","pregweeks","vco2","vo2","o2cascade","pthca","hcvsero","hbvsero","abresp","cones","cbfmap","cbfgas","o2content","gtt","dditest","dexsupp","phh","ccprof","gradap","co2dc","eyetrace","cortrhythm","spiro","paco2va","davenport","ghday","insglu","nephmin"].includes(p.kind)) err(`${where}: plot "${p.t}" has unknown kind "${p.kind}"`);
       if(p.x<0||p.y<0||p.x+p.w>m.w||p.y+p.h>m.h) err(`${where}: plot "${p.t}" runs off the ${m.w}×${m.h} canvas`);
     });
     const pin=(arr,owner)=>{ const seen=new Set();

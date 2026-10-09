@@ -204,6 +204,14 @@ sawtooth and vergence — from the speeds and latencies of Fundamental Neuroscie
 and `cortrhythm` (plasma cortisol over the day: normal, night shift, Cushing syndrome, chronic
 steroids). A mark can put its label under the point with a fourth element, `[x, y, "B",
 "below"]` — for two curves only a few pixels apart.
+The m33 kinds: `spiro` (a spirogram trace from `spiro(rv, frc, vt, tlc)` — tidal breaths, one
+maximal breath, tidal again — with TLC, FRC and RV lines for normal, obstructive and
+restrictive), `paco2va` (PaCO₂ = V̇CO₂ × 0.863 / V̇A from `paco2()`, which starts where the
+curve is under the top of the chart — a curve whose first point is above the top draws
+nothing), `davenport` (four PCO₂ isobars from `isobar()`, the disorder points riding as marks
+on the first one, values from Costanzo Table 7.3), `ghday` (pulses from `ghday(scale, every)`,
+with sleep as a band), `insglu` (glucose, insulin and glucagon as multiples of fasting) and
+`nephmin` (% of the filtered Ca²⁺, phosphate and Mg²⁺ by segment, a category axis).
 
 **Graph quiz and gallery.** Any kind with three or more versions shows a **Quiz me** chip.
 `PLOTQ["view:index"]` holds `{ans, pick, n, right}`; `plotQuiz()` starts, answers, moves on
@@ -225,6 +233,16 @@ show on the Index page and in the side panel. **Compare** (any graph with two or
 versions) opens a row of overlay chips; `PLOTCMP["view:index"]` `{open, j}` draws version `j`
 dashed (`.pcmp`) over the chosen one, in place of the reference curve, and is hidden during a
 quiz.
+
+**Missed graphs, mix scope and graph cards (m33).** Every answer in a graph quiz goes through
+`gmissMark(key, version, right)`: a miss adds to `GMISS["view:index"][version]` (saved as
+`mla-gmiss`, this device only), a right answer takes one off. A graph's own quiz and Graph mix
+pick missed versions first (`gmissed()`), and the mix head says "one you missed before". The
+mix bar has **This map · Whole topic · Everything** (`GSCOPE`, saved as `mla-gscope`);
+`graphPool(scope, home)` widens map → topic → everything when a scope has no graphs and the
+bar says so. `PLOTCARDS[kind]` lists the cards each graph illustrates; `plotSVG()` draws them
+as `.pcardc` chips under the legend (as many as fit above the note, hidden while a quiz is
+unanswered), and a click opens the card with `openLes()`.
 
 ### Search abbreviations
 
@@ -351,6 +369,12 @@ against the correct answer and the first explanation sentence only — never the
 stem — so a plain term must come from one of those two. A plain term can also catch a
 distractor named in that first sentence: `"psychological factors affecting other medical
 conditions"` took a conversion question until it was made answer-only.
+The m33 sweep (acid–base foundations, ventilation, lung tumors, growth hormone, innate
+immune cells, phonation and swallowing) plus the seven new maps brought the target SDLs to
+11 unlinked questions; three small gap cards (voice and resonance, vocal cord nodules,
+mastication) were pinned onto existing Larynx nodes rather than given a map. Generic words
+steal: "beta subunit" took insulin-receptor answers, "chromosome 3p" a VHL answer,
+"articulation" an OMM thrust answer, "haploinsufficiency" DiGeorge answers — all removed.
 
 **You picked.** After a miss, `atlasLinksHtml(q, picked)` also matches the option the person
 chose (`atlasPickedFor`): only its leading phrase — the text before the first comma, colon,

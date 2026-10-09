@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 170 pan/zoom maps with 1894 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 177 pan/zoom maps with 1952 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="170 interactive maps. 1894 lesions pinned to the step they break.">
+<meta property="og:description" content="177 interactive maps. 1952 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -1346,6 +1346,26 @@ const PATHS = {
   ldGenes:{n:"Receptor genes",v:"--p-glycolysis"},
   ldB:{n:"B cells",v:"--p-tca"},
   ldT:{n:"T cells",v:"--p-gluconeo"},
+  lcPre:{n:"Pathogenesis",v:"--p-glycolysis"},
+  lcType:{n:"Histologic types",v:"--p-tca"},
+  lcSpread:{n:"Spread & syndromes",v:"--p-gluconeo"},
+  pgAnat:{n:"Anatomy",v:"--p-glycolysis"},
+  pgHorm:{n:"Cells & hormones",v:"--p-tca"},
+  pgDz:{n:"Disorders",v:"--p-gluconeo"},
+  bfBuf:{n:"Buffers",v:"--p-glycolysis"},
+  bfKid:{n:"Compensation",v:"--p-tca"},
+  bfDx:{n:"Diagnosis",v:"--p-gluconeo"},
+  rmCa:{n:"Calcium",v:"--p-glycolysis"},
+  rmPo:{n:"Phosphate & PTH",v:"--p-tca"},
+  rmMg:{n:"Magnesium",v:"--p-gluconeo"},
+  vmMus:{n:"Muscles & pressures",v:"--p-glycolysis"},
+  vmElas:{n:"Elastic work",v:"--p-tca"},
+  vmVent:{n:"Ventilation",v:"--p-gluconeo"},
+  shWork:{n:"Workup",v:"--p-glycolysis"},
+  shGH:{n:"Glenohumeral",v:"--p-tca"},
+  shOut:{n:"Outside the joint",v:"--p-gluconeo"},
+  ctEds:{n:"Ehlers-Danlos",v:"--p-glycolysis"},
+  ctFib:{n:"Fibrillin & TGF-β",v:"--p-tca"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -3398,7 +3418,7 @@ chediak:{n:"Chédiak-Higashi syndrome",alias:"LYST · lysosomal trafficking regu
  src:["Robbins ch 6 — Diseases of the immune system","Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus"],
  tx:["—"]},
 
-cgd:{n:"Chronic granulomatous disease",alias:"NADPH oxidase deficiency",k:"dz",p:"phago",q:["chronic granulomatous disease", "nadph oxidase deficiency", "nitroblue tetrazolium", "dihydrorhodamine"],enz:"NADPH oxidase (gp91phox and others)",inh:"—",gen:"X-linked (most) or autosomal recessive",fa:"126",hi:1,
+cgd:{n:"Chronic granulomatous disease",alias:"NADPH oxidase deficiency",k:"dz",p:"phago",q:["chronic granulomatous disease", "nadph oxidase deficiency", "nitroblue tetrazolium", "dihydrorhodamine","=these neutrophils engulf bacteria into phagosomes"],enz:"NADPH oxidase (gp91phox and others)",inh:"—",gen:"X-linked (most) or autosomal recessive",fa:"126",hi:1,
  mech:"The neutrophil's respiratory burst uses <b>NADPH oxidase</b> to convert O₂ into superoxide and then hydrogen peroxide, which is what actually kills the ingested organism. Without it phagocytosis still happens — the killing does not.",
  find:["Recurrent infections and granulomas"],
  labs:["<b>Abnormal dihydrorhodamine (DHR) flow cytometry</b> — the current test","<b>Nitroblue tetrazolium fails to turn blue</b> — the older test, still examined","<b>Catalase-positive organisms cause the disease</b>: <i>S. aureus</i>, <i>Serratia</i>, <i>Nocardia</i>, <i>Burkholderia cepacia</i>, <i>Aspergillus</i> — they destroy the H₂O₂ they generate, so the neutrophil cannot borrow it. See the catalase card on the Lipids map"],
@@ -3655,7 +3675,7 @@ antiandrogens:{n:"Antiandrogens",alias:"finasteride · flutamide · spironolacto
  src:["Katzung ch 40 — The Gonadal Hormones & Inhibitors","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists","Katzung ch 61 — Dermatologic Pharmacology"],
  tx:["—"]},
 
-gnrhanalogues:{n:"GnRH analogues — pulsatile versus continuous",alias:"leuprolide · goserelin · degarelix",k:"drug",p:"gonad",q:["leuprolide", "gnrh agonist", "gnrh agonists", "gnrh analog", "gnrh analogue", "gnrh analogues","=down regulation of receptors that suppresses lh"],enz:"The GnRH receptor on the gonadotroph",inh:"—",fa:"674",hi:1,
+gnrhanalogues:{n:"GnRH analogues — pulsatile versus continuous",alias:"leuprolide · goserelin · degarelix",k:"drug",p:"gonad",q:["leuprolide", "gnrh agonist", "gnrh agonists", "gnrh analog", "gnrh analogue", "gnrh analogues","=down regulation of receptors that suppresses lh","=downregulation of gnrh receptors","gnrh receptor downregulation"],enz:"The GnRH receptor on the gonadotroph",inh:"—",fa:"674",hi:1,
  mech:"The pituitary responds to the <b>pattern</b> of GnRH, not just its presence. <b>Pulsatile</b> delivery stimulates LH and FSH release; <b>continuous</b> delivery downregulates the receptor and shuts the axis off after an initial surge. One drug does opposite things depending on how it is given.",
  find:["<b>Pulsatile</b> — used to induce ovulation or spermatogenesis, as in Kallmann syndrome","<b>Continuous</b> — chemical castration for prostate cancer, endometriosis, uterine fibroids, central precocious puberty","The initial flare: continuous agonist dosing transiently raises testosterone, which can worsen bone pain and cause neurologic symptoms with vertebral metastases. An androgen receptor antagonist (flutamide, bicalutamide) prevents it; testosterone reaches the castrate range in about 2 weeks","<b>Degarelix</b> is a GnRH <b>antagonist</b>, so it suppresses immediately with no flare"],
  labs:["Hypogonadism: hot flashes, ↓ libido, erectile dysfunction"],
@@ -13836,11 +13856,11 @@ movements:{n:"Terms of movement",k:"reg",p:"bhjoint",enz:"Flexion bends, extensi
 
 ghaction:{n:"Growth hormone & IGF-1 actions",k:"reg",p:"hmpit",enz:"Builds protein, burns fat, spares glucose",inh:"—",fa:"333, 341, 343",hi:1,
  mech:"Growth hormone (somatotropin) from the anterior pituitary acts directly on tissues and indirectly through <b>IGF-1</b> (somatomedin C), made mainly by the liver in response to GH; plasma IGF-1 closely follows GH secretion. The GH receptor has no kinase of its own: GH binding activates the associated <b>JAK2</b>, which phosphorylates <b>STAT</b> proteins that enter the nucleus and switch on GH target genes.",
- find:["<b>Protein</b>: ↑ amino acid transport into cells, ↑ RNA translation and DNA transcription, ↓ protein breakdown — net protein deposition","<b>Fat</b>: releases fatty acids from adipose tissue and favors fat as fuel over carbohydrate and protein","<b>Glucose — diabetogenic</b>: GH causes insulin resistance → ↓ glucose uptake by muscle and fat, ↑ hepatic glucose output, compensatory ↑ insulin","<b>Bone</b>: at the epiphyseal cartilages GH lengthens long bones until the plates fuse in late adolescence; periosteal osteoblasts keep thickening bone throughout life, especially membranous bones such as the jaw","Effective growth needs insulin and carbohydrate too","Short stature with normal or high GH but low IGF-1: GH receptor defects (<b>Laron syndrome</b>)"],
+ find:["<b>Protein</b>: ↑ amino acid transport into cells, ↑ RNA translation and DNA transcription, ↓ protein breakdown — net protein deposition","<b>Fat</b>: releases fatty acids from adipose tissue and favors fat as fuel over carbohydrate and protein","<b>Glucose — diabetogenic</b>: GH causes insulin resistance → ↓ glucose uptake by muscle and fat, ↑ hepatic glucose output, compensatory ↑ insulin","<b>Bone</b>: at the epiphyseal cartilages GH lengthens long bones until the plates fuse in late adolescence; periosteal osteoblasts keep thickening bone throughout life, especially membranous bones such as the jaw","Effective growth needs insulin and carbohydrate too","Short stature with normal or high GH but low IGF-1: GH receptor defects (<b>Laron syndrome</b>)","One GH molecule binds two receptor chains and dimerizes them; the GH receptor belongs to the JAK/STAT cytokine receptor superfamily (Katzung)"],
  labs:["Diagnose GH excess with serum IGF-1 (GH fluctuates through the day) and failure of GH to suppress after an oral glucose load"],
  buzz:["GH → liver → IGF-1","Diabetogenic, lipolytic, anabolic"],
- src:["Guyton ch 76 — Pituitary Hormones and Their Control By the Hypothalamus","Costanzo ch 9 — Endocrine physiology"],
- tx:["—"],q:["growth hormone","somatotropin","igf 1","igf1","insulin like growth factor","insulin like growth factor 1","somatomedin","somatomedins","somatomedin c","growth hormone receptor","jak2 stat","jak stat"]},
+ src:["Guyton ch 76 — Pituitary Hormones and Their Control By the Hypothalamus","Costanzo ch 9 — Endocrine physiology","Katzung ch 37 — Hypothalamic & Pituitary Hormones"],
+ tx:["—"],q:["growth hormone","somatotropin","igf 1","igf1","insulin like growth factor","insulin like growth factor 1","somatomedin","somatomedins","somatomedin c","growth hormone receptor","jak2 stat","jak stat","=increased protein synthesis in most cells","=increased transcription of dna to form new rna","=progressive exhaustion of epiphyseal cartilage","=gh strongly stimulates osteoblasts in the bone periosteum","=gh strongly stimulates periosteal osteoblasts","=a nonreceptor tyrosine kinase receptor belonging to the class i cytokine","=a single gh molecule binds two gh receptor","=the gh receptor is a class i cytokine receptor"]},
 
 ghcontrol:{n:"Control of growth hormone secretion",k:"reg",p:"hmpit",enz:"GHRH up, somatostatin down, pulses in deep sleep",inh:"—",fa:"332, 333",hi:1,
  mech:"GH is released in pulses under two hypothalamic controls: <b>GHRH</b> (44 amino acids, from the arcuate and ventromedial nuclei) stimulates it and <b>somatostatin</b> (14 amino acids, from periventricular neurons) inhibits it. GH and IGF-1 feed back on the hypothalamus and pituitary.",
@@ -14048,7 +14068,7 @@ intrabuffer:{n:"Intracellular buffers — hemoglobin, phosphates & K⁺ shifts",
  labs:["—"],
  buzz:["H⁺ in, K⁺ out (unless an organic anion goes with it)"],
  src:["Costanzo ch 7 — Acid-base physiology"],
- tx:["—"],q:["intracellular buffer","intracellular buffers","hemoglobin buffer","deoxyhemoglobin","histidine residues","organic phosphates","h+ k+ exchange","transcellular shift"]},
+ tx:["—"],q:["intracellular buffer","intracellular buffers","hemoglobin buffer","deoxyhemoglobin","histidine residues","organic phosphates","h+ k+ exchange","transcellular shift","=6 4 to 7 0","=a higher pk of its histidine imidazole groups"]},
 
 hco3reabs:{n:"Reabsorption of filtered HCO₃⁻",k:"reg",p:"abren",enz:"Recapture all the buffer first",inh:"—",fa:"609, 611",hi:1,
  mech:"More than 99.9% of filtered HCO₃⁻ (about 4320 mEq/day at a GFR of 180 L/day) is reabsorbed, mostly in the early proximal tubule. The Na⁺–H⁺ exchanger (NHE3) secretes H⁺, which combines with filtered HCO₃⁻; brush-border carbonic anhydrase splits the H₂CO₃ to CO₂ and water, which enter the cell and are reassembled by intracellular carbonic anhydrase. The HCO₃⁻ leaves across the basolateral membrane by Na⁺–HCO₃⁻ cotransport and Cl⁻–HCO₃⁻ exchange; the H⁺ is recycled.",
@@ -16285,6 +16305,474 @@ tcrcd3:{n:"The T-cell receptor complex",k:"reg",p:"ldT",enz:"αβ or γδ TCR + 
  buzz:["TCR sees antigen · CD3 signals"],
  src:["OCOM Rheum — SDL 28 reading: T-cell receptors and MHC molecules (Male, Peebles & Male, Immunology ch 6)"],
  tx:["—"],q:["t cell receptor complex","tcr complex","cd3 complex","gamma delta t cells","cd3 zeta"]},
+
+/* ── lung cancer · pituitary & GH · buffers · renal Ca/PO4/Mg · ventilation mechanics · shoulder pain · heritable connective tissue (m33) ─── */
+lcfield:{n:"Field carcinogenesis & lung cancer precursors",k:"reg",p:"lcPre",enz:"Smoke mutates a whole field of mucosa · 3p loss comes first",inh:"—",fa:"703",hi:1,
+ mech:"Tobacco carcinogens mutagenize large areas of the respiratory mucosa at once, so “benign” bronchial epithelium of smokers already carries cancer-gene changes — a <b>field effect</b>. On this fertile soil, cells that collect the right mix of driver mutations become carcinomas. Losses of <b>3p</b>, <b>9p</b> (CDKN2A) and <b>17p</b> (TP53) are early events, found even in histologically normal epithelium of smokers.",
+ find:["Four precursor lesions: atypical adenomatous hyperplasia (≤ 5 mm, dysplastic pneumocytes on alveolar walls) · adenocarcinoma in situ · squamous metaplasia → dysplasia → carcinoma in situ · diffuse idiopathic pulmonary neuroendocrine cell hyperplasia","A precursor does not have to progress — some stay localized or regress","Smoking: risk rises almost linearly with pack-years — about 60 times higher in heavy smokers — yet only 10–15% of smokers get lung cancer; risk falls after quitting but may never return to baseline","Asbestos: 5-fold risk in nonsmoking workers, 55-fold if they also smoke · radon, uranium, arsenic, chromium, nickel and radiation add risk","About 25% of lung cancer worldwide (10–15% in Western countries) arises in never-smokers — mostly adenocarcinoma in women, often EGFR-mutant"],
+ labs:["—"],
+ buzz:["3p loss in normal-looking smoker bronchus = field effect"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Smoking prevention; low-dose CT screening in high-risk people finds some early cancers but has many false positives"],q:["field carcinogenesis","field effect","3p loss","3p deletion","3p deletions","=tobacco carcinogens mutagenize large areas","atypical adenomatous hyperplasia"]},
+
+lcadeno:{n:"Lung adenocarcinoma — glands, TTF-1 & drivers",k:"dz",p:"lcType",enz:"Peripheral · the most common type · targetable mutations",inh:"—",fa:"703",hi:1,
+ mech:"An invasive epithelial tumor with <b>glandular differentiation or mucin</b>. It is now the most common lung cancer in both sexes and the usual type in never-smokers. Most are <b>peripheral</b> and smaller than squamous tumors; most stain for <b>TTF-1</b>. About a third carry gain-of-function mutations in growth-factor signaling that drugs can target.",
+ find:["Patterns: lepidic (the only noninvasive one), acinar, papillary, micropapillary, solid","Drivers: <b>EGFR</b> (10–15% in White patients, more in nonsmoking Asian women), <b>ALK</b> 3–5%, ROS1 1%, MET 2–5%, RET 1–2%, BRAF 2%, PI3K 2%, <b>KRAS</b> about 30%","Never-smokers: more EGFR, almost never KRAS","KRAS-mutant tumors do worse regardless of treatment","Often central scarring with pleural puckering"],
+ labs:["—"],
+ buzz:["Peripheral glandular tumor in a never-smoking woman → think EGFR"],
+ src:["Robbins ch 15 — The lung","Katzung ch 54 — Cancer Chemotherapy"],
+ tx:["Surgery if confined to the lung; EGFR, ALK, ROS1 or MET kinase inhibitors for those mutations; checkpoint inhibitors in a subset"],q:["lung adenocarcinoma","pulmonary adenocarcinoma","adenocarcinoma of the lung","ttf 1","thyroid transcription factor 1","egfr mutation","egfr mutations","alk rearrangement"]},
+
+lcais:{n:"Adenocarcinoma in situ, minimally invasive & mucinous adenocarcinoma",k:"dz",p:"lcPre",enz:"Graded by invasion: 0 mm · ≤ 5 mm · more",inh:"—",fa:"703",hi:1,
+ mech:"Lung adenocarcinomas are classified by how far they invade. <b>Adenocarcinoma in situ</b> (formerly bronchioloalveolar carcinoma) is ≤ 3 cm and grows only along pre-existing alveolar septa — a pure <b>lepidic</b> pattern with no stromal, vascular or pleural invasion. A tumor ≤ 3 cm with invasion ≤ 5 mm, scarring and lepidic-predominant growth is <b>minimally (micro-) invasive adenocarcinoma</b>, with a far better prognosis than invasive tumors of the same size.",
+ find:["Staging: adenocarcinoma in situ is Tis; minimally invasive adenocarcinoma is T1mi","<b>Mucinous adenocarcinoma</b>: tall columnar mucinous cells along alveolar septa; spreads <b>aerogenously</b>, forming satellite tumors — less often cured by surgery; may consolidate a whole lobe and mimic lobar pneumonia","Lepidic growth also appears at the edge of many invasive adenocarcinomas, and occasionally with metastatic carcinoma","First Aid: the in situ (bronchioloalveolar) type often shows hazy infiltrates like pneumonia on chest x-ray and has a better prognosis"],
+ labs:["—"],
+ buzz:["Pure lepidic ≤ 3 cm = in situ · ≤ 5 mm invasion = minimally invasive"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Resection; minimally invasive tumors do far better than invasive tumors of the same size"],q:["adenocarcinoma in situ ais","minimally invasive adenocarcinoma","microinvasive adenocarcinoma","lepidic","lepidic growth","lepidic predominant","bronchioloalveolar carcinoma","spread aerogenously","aerogenous spread","aerogenously","=adenocarcinoma in situ"]},
+
+lcscc:{n:"Squamous cell carcinoma of the lung",k:"dz",p:"lcType",enz:"Central · keratin pearls · p40 · smoking",inh:"—",fa:"703",hi:1,
+ mech:"Strongly tied to smoking and more common in men. It is preceded by squamous metaplasia, dysplasia and carcinoma in situ — a phase that can last years, when atypical cells may appear in sputum while the chest film is normal. Most arise <b>centrally</b> in segmental or subsegmental bronchi, growing into the lumen (obstruction → atelectasis, infection) or along the peribronchial tissue toward the carina.",
+ find:["Histology: <b>keratinization</b> (squamous pearls or single cells with eosinophilic cytoplasm) and/or <b>intercellular bridges</b>; poorly differentiated tumors need immunostains such as <b>p40</b>","Genetics: deletions of 3p, 9p (CDKN2A, mutated in 65%) and 17p (TP53, mutated in most); p53 overexpression in 60–90% of carcinoma in situ; <b>FGFR1</b> amplification in many","Spreads outside the thorax later than the other types","PTHrP → hypercalcemia; cavitation (First Aid)","Peripheral squamous carcinoma is becoming more common"],
+ labs:["Sputum cytology: orange keratinized squamous cells"],
+ buzz:["Central hilar mass + hypercalcemia + keratin pearls"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Surgery if confined to the lung; chemotherapy; checkpoint inhibitors in a subset"],q:["lung squamous cell carcinoma","squamous cell lung carcinoma","squamous cell lung cancer","squamous cell carcinoma of the lung","fgfr1 amplification","p40","=squamous cell carcinoma characterized by keratinization","=squamous cell carcinoma central hilar location","keratin pearls"]},
+
+lcsclc:{n:"Small cell lung carcinoma",k:"dz",p:"lcType",enz:"Neuroendocrine · almost all smokers · metastatic at diagnosis",inh:"—",fa:"703",hi:1,
+ mech:"A highly malignant neuroendocrine carcinoma — only about 1% occurs in nonsmokers. There is no known preinvasive phase; it is the most aggressive lung tumor, metastasizes widely and is virtually always fatal. It has the highest mutational burden of lung cancers, with almost universal loss of <b>TP53 and RB</b>, 3p loss and often MYC amplification.",
+ find:["Small cells (under about 3 lymphocyte diameters) with scant cytoplasm, finely granular “salt-and-pepper” chromatin, absent nucleoli, <b>nuclear molding</b>, high mitotic rate and extensive necrosis","<b>Azzopardi effect</b>: vessel walls stained blue by DNA from necrotic tumor cells","Neuroendocrine markers: chromogranin, synaptophysin, CD56; dense-core granules about 100 nm in two-thirds","The type most often making ectopic hormones — ACTH (Cushing) and ADH (SIADH)","Very sensitive to chemotherapy and radiation, but most present with advanced disease: median survival about 10 months"],
+ labs:["—"],
+ buzz:["Central tumor + SIADH or Cushing in a smoker"],
+ src:["Robbins ch 15 — The lung","Katzung ch 54 — Cancer Chemotherapy"],
+ tx:["Chemotherapy (± radiation); surgery only for the rare early case"],q:["small cell lung carcinoma","small cell lung cancer","small cell carcinoma of the lung","sclc","azzopardi effect","nuclear molding"]},
+
+lclarge:{n:"Large cell carcinoma & large cell neuroendocrine carcinoma",k:"dz",p:"lcType",enz:"Undifferentiated vs neuroendocrine — two separate tumors",inh:"—",fa:"703",hi:1,
+ mech:"<b>Large cell carcinoma</b> is an undifferentiated malignant epithelial tumor without the features of the other types — large nuclei, prominent nucleoli, moderate cytoplasm, no glands, no squamous differentiation. <b>Large cell neuroendocrine carcinoma</b> is a different entity with neuroendocrine morphology and markers.",
+ find:["Large cell carcinoma is about 2% of lung carcinomas; about 4–5% of lung carcinomas mix two or more histologies","First Aid: peripheral, highly anaplastic, tobacco-related; may make hCG → gynecomastia; less responsive to chemotherapy, so removed surgically; poor prognosis","Five-year survival: large cell neuroendocrine carcinoma about 30%, small cell carcinoma about 5%"],
+ labs:["—"],
+ buzz:["Large cell = no differentiation at all"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Surgery"],q:["large cell carcinoma","large cell neuroendocrine carcinoma","lcnec"]},
+
+lccarcinoid:{n:"Bronchial carcinoid tumors — typical & atypical",k:"dz",p:"lcType",enz:"Low-grade neuroendocrine · polypoid in a mainstem bronchus",inh:"—",fa:"703",hi:1,
+ mech:"Low-grade malignant epithelial neuroendocrine tumors, 1–5% of lung tumors, usually in people under 60, equal in both sexes, and 20–40% nonsmokers. Central tumors grow as finger-like or spherical polyps into a bronchus under intact mucosa (or through the wall as a <b>collar-button</b> lesion); peripheral ones are solid nodules.",
+ find:["Histology: organoid, trabecular or ribbon nests separated by delicate fibrovascular stroma; dense-core granules on electron microscopy; serotonin, neuron-specific enolase, bombesin or calcitonin by immunostain","<b>Typical</b>: under 2 mitoses per 10 high-power fields, no necrosis · <b>atypical</b>: 2–10 mitoses and/or necrosis, more pleomorphism, invades lymphatics","Symptoms from the endobronchial mass: cough, hemoptysis, obstruction with infection, bronchiectasis, atelectasis","Only about 10% produce the carcinoid syndrome; most do not secrete or metastasize","Five-year survival about 95% typical, 70% atypical"],
+ labs:["—"],
+ buzz:["Young nonsmoker, hemoptysis, smooth pink endobronchial polyp"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Resection"],q:["bronchial carcinoid","bronchial carcinoids","pulmonary carcinoid","typical carcinoid","atypical carcinoid","collar button","dense core neurosecretory granules","dense core granules","neurosecretory granules"]},
+
+lctarget:{n:"Targeted therapy for non-small cell lung cancer",k:"drug",p:"lcType",enz:"EGFR TKIs · ALK inhibitors · checkpoint inhibitors",inh:"—",fa:"446",hi:1,
+ mech:"Adenocarcinomas with activating kinase mutations respond to matching inhibitors, which prolong survival; tumors that recur often carry new resistance mutations — proof the drug was hitting its target. Smoking-related cancers carry many neoantigens, so subsets of adenocarcinoma and squamous carcinoma respond to <b>checkpoint inhibitors</b>.",
+ find:["EGFR: erlotinib, gefitinib, afatinib; <b>osimertinib</b> also covers T790M — more cardiotoxicity (atrial fibrillation, QT prolongation, heart failure)","ALK: <b>crizotinib</b> (first generation), then ceritinib, <b>alectinib</b>, brigatinib, lorlatinib after progression or intolerance; lorlatinib also acts on ROS1 and in the brain","TKIs with EGFR, ALK, ROS1 and MET mutations; KRAS inhibitors for particular mutant KRAS variants","EGFR TKIs: rash, diarrhea, interstitial lung disease"],
+ labs:["Test adenocarcinomas for driver mutations before treatment"],
+ buzz:["EGFR → osimertinib · ALK → alectinib"],
+ src:["Katzung ch 54 — Cancer Chemotherapy","Robbins ch 15 — The lung"],
+ tx:["—"],q:["osimertinib","crizotinib","alectinib","alk inhibitor","alk inhibitors","alk tyrosine kinase inhibitor","egfr tyrosine kinase inhibitor","egfr tyrosine kinase inhibitors"]},
+
+lclocal:{n:"Local spread of lung cancer — Pancoast, SVC & effusions",k:"reg",p:"lcSpread",enz:"What a growing tumor presses on",inh:"—",fa:"703, 704",hi:1,
+ mech:"Any lung carcinoma can reach the pleura and spread in the pleural cavity or pericardium, and most involve bronchial, tracheal or mediastinal nodes. Obstruction of an airway gives focal emphysema, atelectasis, suppurative bronchitis, bronchiectasis or abscess.",
+ find:["<b>Pancoast (superior sulcus) tumor</b>: an apical cancer invades the neural structures around the trachea, including the cervical sympathetic plexus → ulnar-distribution pain and ipsilateral <b>Horner syndrome</b>","<b>Superior vena cava syndrome</b>: venous congestion and edema of the head and arms","Hoarseness (recurrent laryngeal nerve) · dysphagia (esophagus) · diaphragm paralysis (phrenic nerve) · rib destruction · pericarditis or tamponade","Distant spread: adrenals in more than half, liver 30–50%, brain 20%, bone 20%","First Aid mnemonic SPHERE: SVC syndrome, Pancoast, Horner, Endocrine, Recurrent laryngeal nerve, Effusions"],
+ labs:["—"],
+ buzz:["Shoulder pain + Horner = Pancoast"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["—"],q:["pancoast tumor","pancoast","superior sulcus tumor","superior vena cava syndrome","svc syndrome"]},
+
+lcparaneo:{n:"Paraneoplastic syndromes of lung cancer",k:"dz",p:"lcSpread",enz:"Hormones and antibodies from the tumor",inh:"—",fa:"224, 352, 703",hi:1,
+ mech:"Hormones made by lung cancer cells can cause syndromes before the tumor is visible; clinically significant ones occur in 1–10% of patients. Any type can make any hormone, but <b>ACTH and ADH</b> come mostly from <b>small cell carcinoma</b> and <b>hypercalcemia</b> mostly from <b>squamous cell carcinoma</b>.",
+ find:["ADH → SIADH, hyponatremia · ACTH → Cushing syndrome · PTH, PTHrP, prostaglandin E, cytokines → hypercalcemia · calcitonin → hypocalcemia · gonadotropins → gynecomastia · serotonin, bradykinin → carcinoid syndrome","<b>Lambert-Eaton myasthenic syndrome</b>: antibodies to neuronal calcium channels","Sensory peripheral neuropathy · acanthosis nigricans · leukemoid reactions","<b>Trousseau syndrome</b>: hypercoagulability with deep vein thrombosis and thromboembolism","<b>Hypertrophic pulmonary osteoarthropathy</b> with clubbing"],
+ labs:["Ectopic ACTH: high ACTH that high-dose dexamethasone does not suppress"],
+ buzz:["Small cell: ACTH, ADH, Lambert-Eaton · squamous: PTHrP"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Treat the tumor"],q:["paraneoplastic syndrome","paraneoplastic syndromes","trousseau syndrome","trousseau","migratory thrombophlebitis","hypertrophic pulmonary osteoarthropathy","hypertrophic osteoarthropathy","=ectopic acth production by neoplastic cells","ectopic acth"]},
+
+lungmets:{n:"Metastases to the lung",k:"dz",p:"lcSpread",enz:"The most common lung tumor — multiple peripheral nodules",inh:"—",fa:"219",hi:1,
+ mech:"The lung is the most common site of metastatic neoplasms. Carcinomas and sarcomas from anywhere in the body reach it through blood or lymphatics or by direct extension (esophageal carcinoma, mediastinal lymphoma).",
+ find:["Usual pattern: multiple discrete <b>cannonball</b> nodules in all lobes, especially the periphery — e.g., from renal cell carcinoma","Other patterns: a solitary nodule, endobronchial or pleural disease, pneumonic consolidation; lepidic growth occasionally","Lung metastases most often come from colon and breast, then kidney and prostate (First Aid)","Blood-borne tumor cells come to rest in the first capillary bed they meet, so hematogenous metastases favor the liver (portal blood) and the lungs (caval blood) (Robbins ch 7)"],
+ labs:["—"],
+ buzz:["Many round peripheral nodules = metastases"],
+ src:["Robbins ch 15 — The lung","Robbins ch 7 — Neoplasia"],
+ tx:["—"],q:["cannonball","cannonball lesions","cannonball metastases","metastases to the lung","=the lungs receive the entire cardiac output","first capillary bed"]},
+
+lungbenign:{n:"Hamartoma, inflammatory myofibroblastic tumor & LAM",k:"dz",p:"lcSpread",enz:"The uncommon lung tumors",inh:"—",fa:"703",hi:1,
+ mech:"<b>Pulmonary hamartoma</b> is a relatively common benign “coin lesion” found incidentally — solitary, under 3–4 cm, well circumscribed, made of cartilage (most often), fibrous tissue and fat with entrapped respiratory epithelium in clefts. Despite the name it is a clonal neoplasm (6p21 or 12q14–q15).",
+ find:["<b>Inflammatory myofibroblastic tumor</b>: rare, more common in children; fever, cough, chest pain, hemoptysis; a round peripheral mass, calcified in about a quarter; spindle fibroblasts and myofibroblasts with lymphocytes and plasma cells; some have <b>ALK</b> rearrangements (2p23) and respond to ALK inhibitors","<b>Lymphangioleiomyomatosis</b>: young women; perivascular epithelioid cells with TSC2 loss (raised mTOR activity) → cystic lung, dyspnea or pneumothorax; mTOR inhibitors slow it, only transplant cures"],
+ labs:["—"],
+ buzz:["Popcorn coin lesion with cartilage = hamartoma"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["—"],q:["pulmonary hamartoma","hamartoma","inflammatory myofibroblastic tumor","lymphangioleiomyomatosis","coin lesion"]},
+
+pitdev:{n:"Pituitary development — Rathke pouch & infundibulum",k:"reg",p:"pgAnat",enz:"Oral ectoderm + diencephalon",inh:"—",fa:"331",hi:1,
+ mech:"The hypophysis develops from two completely different parts: <b>Rathke pouch</b>, an ectodermal outpocketing of the stomodeum (primitive mouth) just in front of the oropharyngeal membrane, and the <b>infundibulum</b>, a downward extension of the diencephalon.",
+ find:["Rathke pouch appears at about 3 weeks, grows toward the infundibulum and loses its oral connection by the end of the second month","Anterior wall → anterior lobe (adenohypophysis), with the pars tuberalis wrapping the stalk · posterior wall → pars intermedia","Infundibulum → stalk and pars nervosa (posterior lobe, neurohypophysis) — neuroglia plus axons from the hypothalamus","A Rathke remnant in the pharyngeal roof is a pharyngeal hypophysis; <b>craniopharyngiomas</b> arise from Rathke remnants, usually above the sella — hydrocephalus, diabetes insipidus, growth failure"],
+ labs:["—"],
+ buzz:["Anterior = oral ectoderm · posterior = neuroectoderm"],
+ src:["Langman ch 18 — Central Nervous System"],
+ tx:["—"],q:["rathke pouch","rathkes pouch","infundibulum","oral ectoderm","pharyngeal hypophysis"]},
+
+pitportal:{n:"Pituitary anatomy & the hypothalamic–hypophysial portal system",k:"reg",p:"pgAnat",enz:"Releasing hormones reach the anterior lobe by portal blood",inh:"—",fa:"342",hi:1,
+ mech:"The pituitary — about 1 cm and 0.5–1 g — sits in the <b>sella turcica</b>, a bony cavity at the base of the skull, joined to the hypothalamus by the pituitary (hypophysial) stalk. The anterior lobe is controlled by hypothalamic releasing and inhibitory hormones carried in <b>portal vessels</b>; the posterior lobe by nerve signals.",
+ find:["<b>Median eminence</b>: the lowest part of the hypothalamus, joining the stalk — the functional link to the anterior pituitary","Hypothalamic neurons release their hormones into the capillaries of the median eminence; the portal vessels carry them down the stalk to the anterior pituitary sinuses — so nearly all anterior pituitary blood first passes a hypothalamic capillary bed","Releasing hormones: TRH (3 amino acids), GnRH (10), CRH (41), GHRH · inhibitory: somatostatin (GH), dopamine (prolactin)","Posterior pituitary hormones (ADH, oxytocin) are made by magnocellular neurons of the supraoptic and paraventricular nuclei and carried down their axons"],
+ labs:["—"],
+ buzz:["Median eminence → portal veins → anterior pituitary"],
+ src:["Guyton ch 76 — Pituitary Hormones and Their Control By the Hypothalamus"],
+ tx:["—"],q:["hypothalamic hypophysial portal","hypothalamic hypophyseal portal","hypophysial portal","hypophyseal portal","sella turcica","=the portal system delivers hypothalamic","=the hypothalamic hypophysial portal system","=the pituitary gland lies in the sella turcica","=the median eminence is"]},
+
+pitstalk:{n:"Stalk section — prolactin up, the rest down",k:"reg",p:"pgAnat",enz:"Dopamine is a brake; everything else needs a push",inh:"—",fa:"342",hi:1,
+ mech:"Almost all pituitary secretion depends on the hypothalamus. A pituitary moved away from the hypothalamus and transplanted elsewhere secretes very little of each hormone — <b>except prolactin</b>, which rises, because its main hypothalamic control is inhibitory (dopamine).",
+ find:["Damage to the dopaminergic hypothalamic neurons or the <b>pituitary stalk</b> (e.g., head trauma), dopamine-blocking drugs, or any suprasellar mass that disturbs hypothalamic inhibition causes hyperprolactinemia (Robbins)","So mild hyperprolactinemia with a pituitary tumor does not prove it secretes prolactin","Pattern of stalk compression: prolactin ↑, GH, TSH, ACTH, FSH and LH ↓"],
+ labs:["Prolactin mildly high with a nonfunctioning macroadenoma = stalk effect"],
+ buzz:["Cut the stalk: everything falls except prolactin"],
+ src:["Guyton ch 76 — Pituitary Hormones and Their Control By the Hypothalamus","Robbins ch 24 — The endocrine system"],
+ tx:["—"],q:["stalk section","stalk effect","pituitary stalk compression","stalk compression","=secretion of most anterior pituitary hormones falls","=elevated prolactin with low gh"]},
+
+pitcells:{n:"Anterior pituitary cells — somatotropes to lactotropes",k:"reg",p:"pgHorm",enz:"Somatotropes 30–40% · corticotropes 20%",inh:"—",fa:"331",hi:1,
+ mech:"At least five cell types: <b>somatotropes</b> (GH), <b>corticotropes</b> (ACTH), <b>thyrotropes</b> (TSH), <b>gonadotropes</b> (LH and FSH) and <b>lactotropes</b> (prolactin). About 30–40% are somatotropes and about 20% corticotropes; each of the others is only 3–5%.",
+ find:["Somatotropes stain with acid dyes — acidophils — so GH-secreting tumors were called acidophilic tumors","First Aid: acidophils make GH and prolactin; basophils make FSH, LH, ACTH and TSH (B-FLAT)","Melanotropin (MSH) comes from the intermediate lobe"],
+ labs:["—"],
+ buzz:["Acid PiG: prolactin and GH are acidophils"],
+ src:["Guyton ch 76 — Pituitary Hormones and Their Control By the Hypothalamus"],
+ tx:["—"],q:["=somatotropes which are acidophilic cells","corticotropes","thyrotropes","gonadotropes","lactotropes","acidophilic cells","acidophils","basophils of the anterior pituitary"]},
+
+glycoprot:{n:"TSH, LH, FSH & hCG — the shared α subunit",k:"reg",p:"pgHorm",enz:"Same α chain · β gives specificity",inh:"—",fa:"331",hi:1,
+ mech:"TSH, FSH and LH are glycoproteins of two noncovalently linked subunits, neither active alone. Their <b>α subunits are identical</b> (made from the same mRNA); the <b>β subunit</b> confers biologic specificity. The placental hormone <b>hCG</b> has the identical α chain and its own β chain.",
+ find:["Pairing of α and β begins in the endoplasmic reticulum and continues in the Golgi","TSH, FSH and LH act through G protein-coupled receptors (Katzung)"],
+ labs:["—"],
+ buzz:["α common · β specific"],
+ src:["Costanzo ch 9 — Endocrine physiology","Katzung ch 37 — Hypothalamic & Pituitary Hormones"],
+ tx:["—"],q:["common alpha subunit","identical alpha subunit","shared alpha subunit","share a common alpha subunit","glycoprotein hormones","=hcg shares an identical alpha subunit"]},
+
+pomc:{n:"Pro-opiomelanocortin — ACTH, MSH, β-endorphin & Nelson syndrome",k:"reg",p:"pgHorm",enz:"One precursor, cut many ways",inh:"—",fa:"331",hi:1,
+ mech:"ACTH, γ- and β-lipotropin, β-endorphin and MSH all come from one precursor, <b>pro-opiomelanocortin (POMC)</b>, transcribed from a single gene. ACTH is the only one with well-established physiologic actions in humans; MSH has some pigmenting activity and β-endorphin is an endogenous opiate.",
+ find:["<b>Nelson syndrome</b>: after both adrenals are removed for Cushing syndrome, the loss of cortisol feedback lets a corticotroph tumor grow — mass effects and hyperpigmentation (MSH, also from POMC) without hypercortisolism","First Aid: POMC derivatives — β-endorphin, ACTH and MSH (“Go pro with a BAM”)"],
+ labs:["—"],
+ buzz:["Hyperpigmentation + pituitary mass after bilateral adrenalectomy = Nelson"],
+ src:["Costanzo ch 9 — Endocrine physiology","Robbins ch 24 — The endocrine system"],
+ tx:["—"],q:["proopiomelanocortin","pro opiomelanocortin","nelson syndrome","beta endorphin","melanocyte stimulating hormone"]},
+
+hypopit:{n:"Hypopituitarism & empty sella",k:"dz",p:"pgDz",enz:"Appears after about 75% of the gland is lost",inh:"—",fa:"343",hi:1,
+ mech:"Anterior pituitary hypofunction appears when about <b>75%</b> of the parenchyma is gone. Most cases are destructive: pituitary tumors and other sellar masses, traumatic brain injury and subarachnoid hemorrhage, surgery or radiation, Sheehan syndrome, apoplexy, and hypothalamic lesions (which can also cause diabetes insipidus).",
+ find:["<b>Empty sella</b>: primary — a defect in the diaphragma sellae lets arachnoid and CSF herniate into the sella, enlarging it and compressing the pituitary; secondary — a mass enlarges the sella, then is removed or infarcts","Adult panhypopituitarism (Guyton): hypothyroidism, low adrenal glucocorticoids and loss of sexual function — a lethargic person gaining weight; replace adrenal and thyroid hormones","Causes in adults (Guyton): craniopharyngioma or chromophobe tumors compressing the gland, or thrombosis of the pituitary vessels after postpartum shock"],
+ labs:["—"],
+ buzz:["Empty sella on MRI = CSF where the pituitary should be"],
+ src:["Robbins ch 24 — The endocrine system","Guyton ch 76 — Pituitary Hormones and Their Control By the Hypothalamus"],
+ tx:["Hormone replacement — glucocorticoids, thyroxine, sex steroids, GH (First Aid)"],q:["hypopituitarism","empty sella","empty sella syndrome","=herniation of the arachnoid membrane"]},
+
+pitnet:{n:"Pituitary neuroendocrine tumors — mass effects & apoplexy",k:"dz",p:"pgDz",enz:"Too much hormone, or a mass in the sella",inh:"—",fa:"343",hi:1,
+ mech:"The most common cause of hyperpituitarism is a pituitary neuroendocrine tumor (<b>PitNET</b>, formerly adenoma) of the anterior lobe, classified by the hormones and transcription factors it expresses. Peak age 35–60; autopsy prevalence about 14%, most clinically silent.",
+ find:["Mass effects: compression of the crossing optic chiasm fibers → <b>bitemporal hemianopsia</b>; headache, nausea and vomiting from raised intracranial pressure","Large tumors, especially nonfunctioning ones (gonadotroph, null cell), destroy the adjacent gland → hypopituitarism","<b>Pituitary apoplexy</b>: hemorrhage into a tumor — sudden enlargement and hypopituitarism; a neurosurgical emergency that can cause sudden death","Some tumors make two hormones, GH and prolactin most commonly; corticotroph tumors cause Cushing disease"],
+ labs:["—"],
+ buzz:["Bitemporal hemianopsia + headache = sellar mass"],
+ src:["Robbins ch 24 — The endocrine system"],
+ tx:["Surgery; dopamine agonists for prolactin-secreting tumors"],q:["pituitary neuroendocrine tumor","pituitary apoplexy","nonfunctioning pituitary adenoma","pituitary macroadenoma"]},
+
+ghdwarf:{n:"GH deficiency & pituitary dwarfism",k:"dz",p:"pgDz",enz:"Proportionate but slow growth",inh:"—",fa:"333",hi:1,
+ mech:"Most dwarfism results from childhood <b>panhypopituitarism</b>: the body develops in proportion but slowly — a 10-year-old may look 4–5 — and without gonadotropins the child does not go through puberty. In about one-third only GH is missing, and these people mature sexually.",
+ find:["<b>Laron syndrome</b> (and African pygmies): GH is normal or high but tissues cannot respond — GH receptor mutations or failure to make IGF-1","Recombinant human GH (<b>somatropin</b>) replaced cadaver GH, which transmitted Creutzfeldt-Jakob prions; given subcutaneously six to seven times a week, or weekly as long-acting forms","<b>Mecasermin</b> (recombinant IGF-1) treats severe IGF-1 deficiency that does not respond to GH","Animal GH does not work in humans (except, to some extent, primate GH)"],
+ labs:["—"],
+ buzz:["GH alone missing → short but sexually mature"],
+ src:["Guyton ch 76 — Pituitary Hormones and Their Control By the Hypothalamus","Katzung ch 37 — Hypothalamic & Pituitary Hormones"],
+ tx:["Somatropin; mecasermin for GH insensitivity"],q:["pituitary dwarfism","growth hormone deficiency","gh deficiency","somatropin","mecasermin","recombinant human growth hormone"]},
+
+ghpulse:{n:"GH secretion across the day and a lifetime",k:"reg",p:"pgHorm",enz:"Pulses every ~2 h · biggest in deep sleep · peak at puberty",inh:"—",fa:"332",hi:1,
+ mech:"Growth hormone is secreted in <b>pulses</b> about every 2 hours; the largest burst comes within an hour of falling asleep, in stages III and IV. Secretion rises from birth into early childhood, stays steady through childhood, surges at <b>puberty</b> (estrogen in girls, testosterone in boys — more frequent and larger pulses, driving the growth spurt), settles after puberty and falls to its lowest in old age.",
+ find:["Hypoglycemia and starvation are potent stimuli","Endogenous GH half-life about 20 minutes, cleared mainly by the liver (Katzung)"],
+ labs:["—"],
+ buzz:["GH peaks soon after sleep onset"],
+ src:["Costanzo ch 9 — Endocrine physiology","Katzung ch 37 — Hypothalamic & Pituitary Hormones"],
+ tx:["—"],q:["pulsatile growth hormone","growth hormone pulses","gh pulses","pubertal growth spurt"]},
+
+phscale:{n:"pH & [H⁺] — a log scale",k:"reg",p:"bfBuf",enz:"pH 7.4 = 40 nEq/L",inh:"—",fa:"610",hi:1,
+ mech:"Arterial [H⁺] is about <b>40 nEq/L</b> — more than a million times lower than Na⁺ — so it is written as pH = −log₁₀[H⁺] = 7.4. Two cautions: as [H⁺] rises, pH falls; and the relation is logarithmic, so <b>equal pH changes are not equal [H⁺] changes</b>.",
+ find:["pH 7.4 → 7.2 adds about 23 nEq/L (to about 63) · 7.4 → 7.6 removes only about 15 (to about 25) — a pH change on the acid side is a bigger [H⁺] change","Every 0.3 pH units doubles or halves [H⁺]: pH 7.1 ≈ 80 nEq/L","Life beyond a few hours: pH about 6.8–8.0, i.e. [H⁺] about 160 down to 10 nEq/L","Normal arterial pH 7.35–7.45; venous blood and interstitial fluid about 7.35 from the extra CO₂ · below 7.35 acidemia, above 7.45 alkalemia (First Aid)"],
+ labs:["—"],
+ buzz:["7.4 ↔ 40 · 7.1 ↔ 80"],
+ src:["Costanzo ch 7 — Acid-base physiology","Guyton ch 31 — Acid–Base Regulation"],
+ tx:["—"],q:["hydrogen ion concentration","=equal changes in ph do not reflect equal changes","=about 10 to 160 neq l","=a decrease of approximately 15 neq l","=an increase of approximately 23 neq l","=about 80 neq l","normal arterial ph range"]},
+
+buffpk:{n:"What makes a good buffer — pK, amount & an open system",k:"reg",p:"bfBuf",enz:"Within 1 pH unit of the pK",inh:"—",fa:"609",hi:1,
+ mech:"A buffer resists pH change best on the linear part of its sigmoid titration curve — <b>pK ± 1.0</b> — so useful physiologic buffers have a pK within 1.0 of 7.4. Outside that range, small additions of H⁺ swing the pH widely.",
+ find:["Bicarbonate wins in the extracellular fluid even with a pK of 6.1: HCO₃⁻ is plentiful (24 mEq/L) and its acid form, CO₂, is volatile and breathed off","Phosphate (pK 6.8) is closer to 7.4 but present in small amounts in the ECF; it matters more inside cells and in urine","A buffer with pK 7.0 protects pH 7.4; one with pK 8.6 does not"],
+ labs:["—"],
+ buzz:["pK ± 1 · plenty of it · CO₂ can leave"],
+ src:["Costanzo ch 7 — Acid-base physiology","Guyton ch 31 — Acid–Base Regulation"],
+ tx:["—"],q:["buffering range","effective buffer","=the buffer with pk 7 0 because it lies within 1 0 ph unit","=hco3 circulates at a much higher concentration than phosphate"]},
+
+hhcalc:{n:"Henderson–Hasselbalch at the bedside — worked numbers",k:"reg",p:"bfBuf",enz:"pH = 6.1 + log(HCO₃⁻ / 0.03 × PCO₂)",inh:"—",fa:"609",hi:1,
+ mech:"For blood, pH = 6.1 + log([HCO₃⁻] / (0.03 × PCO₂)), with HCO₃⁻ in mEq/L and PCO₂ in mm Hg. What sets the pH is the <b>ratio</b>, not either number alone: 24 / (0.03 × 40) = 20, log 20 ≈ 1.3, pH 7.4.",
+ find:["Chronic COPD: HCO₃⁻ 31, PCO₂ 60 → ratio about 17 : 1 → pH about 7.33 — renal HCO₃⁻ retention restores the ratio partway, limiting the fall","Phosphate at pH 7.4: pK 6.8 → base : acid about 4 : 1","Any value that does not fit the compensation rules means a mixed disorder"],
+ labs:["—"],
+ buzz:["Ratio 20 : 1 = pH 7.4"],
+ src:["Costanzo ch 7 — Acid-base physiology","Guyton ch 31 — Acid–Base Regulation"],
+ tx:["—"],q:["henderson hasselbalch","=about 17 to 1","=about 4 to 1 hpo4 2 to h2po4","6 1 + log 24","=renal hco3 retention restores the hco3 co2 ratio"]},
+
+uag:{n:"Urinary anion gap — a rough index of NH₄⁺",k:"reg",p:"bfDx",enz:"Na⁺ + K⁺ − Cl⁻",inh:"—",fa:"610, 611",hi:1,
+ mech:"In a normal anion gap (hyperchloremic) metabolic acidosis, the urinary anion gap — <b>urine Na⁺ + K⁺ − Cl⁻</b> — estimates ammonium excretion, because NH₄⁺ leaves with Cl⁻. A <b>negative</b> gap means plenty of NH₄⁺: the kidney is responding, so HCO₃⁻ is being lost elsewhere (diarrhea). A <b>positive</b> gap means little NH₄⁺: distal urinary acidification is impaired (renal tubular acidosis).",
+ find:["Batlle 1988: negative in people loaded with NH₄Cl and in diarrhea (even with urine pH above 5.3); positive in classic distal RTA, hyperkalemic distal RTA and selective aldosterone deficiency","Urinary ammonium correlates inversely with the urinary anion gap"],
+ labs:["—"],
+ buzz:["Negative = gut · positive = kidney"],
+ src:["Costanzo ch 7 — Acid-base physiology"],
+ tx:["—"],q:["urinary anion gap","urine anion gap","=urine na+ plus urine k+ minus urine cl","=impaired renal nh4+ excretion","=brisk renal nh4+ excretion"],
+ ref:[{a:"Batlle DC, Hizon M, Cohen E, Gutterman C, Gupta R",t:"The use of the urinary anion gap in the diagnosis of hyperchloremic metabolic acidosis",j:"N Engl J Med",y:1988,pmid:"3344005",doi:"10.1056/NEJM198803103181002"}]},
+
+drta:{n:"Distal (type 1) RTA — urine pH stays above 5.5",k:"dz",p:"bfDx",enz:"α-intercalated cells cannot secrete H⁺",inh:"—",fa:"611, 617",hi:1,
+ mech:"In distal RTA the α-intercalated cells cannot secrete H⁺, so no new HCO₃⁻ is made: a normal anion gap metabolic acidosis with <b>urine pH persistently above 5.5</b> even when plasma HCO₃⁻ is very low, and <b>hypokalemia</b>.",
+ find:["Calcium phosphate stones — calcium phosphate precipitates in alkaline urine (First Aid)","Causes: amphotericin B, analgesic nephropathy, urinary tract obstruction, autoimmune disease such as SLE (First Aid)","Positive urinary anion gap — little NH₄⁺ in the urine (Batlle 1988)"],
+ labs:["Urine pH > 5.5 · K⁺ low · positive urinary anion gap"],
+ buzz:["Can’t acidify the urine, ever"],
+ src:["Costanzo ch 7 — Acid-base physiology","Guyton ch 31 — Acid–Base Regulation"],
+ tx:["Alkali (citrate) replacement"],q:["distal renal tubular acidosis","type 1 renal tubular acidosis","type 1 rta","distal rta","=persistently above 5 5","=a urine ph above 5 5 in type 1","=failed alpha intercalated h+ atpase"],
+ ref:[{a:"Batlle DC, Hizon M, Cohen E, Gutterman C, Gupta R",t:"The use of the urinary anion gap in the diagnosis of hyperchloremic metabolic acidosis",j:"N Engl J Med",y:1988,pmid:"3344005",doi:"10.1056/NEJM198803103181002"}]},
+
+renalca:{n:"Renal calcium handling — 67 · 25 · 8",k:"reg",p:"rmCa",enz:"Coupled to Na⁺ until the distal tubule",inh:"—",fa:"606, 608",hi:1,
+ mech:"Only the 60% of plasma Ca²⁺ not bound to protein is filtered; over 99% of the filtered load is reabsorbed. Reabsorption tracks Na⁺ in the proximal tubule and loop and is uncoupled from it only in the distal tubule.",
+ find:["<b>Proximal tubule ~67%</b>, tightly coupled to Na⁺: volume expansion (e.g., a saline load) lowers both and raises Ca²⁺ excretion; volume contraction raises both","<b>Thick ascending limb ~25%</b>, paracellular, driven by the lumen-positive potential that Na⁺-K⁺-2Cl⁻ generates — loop diuretics inhibit Ca²⁺ reabsorption as much as Na⁺ (useful in hypercalcemia)","<b>Distal tubule ~8%</b>, the regulated step: PTH raises it through cAMP; thiazides raise it while increasing Na⁺ excretion — hence thiazides for idiopathic hypercalciuria","Guyton: 60–70% proximal, 20–25% loop, 5–10% distal and collecting; 1–2% excreted"],
+ labs:["—"],
+ buzz:["Loop diuretics dump Ca²⁺; thiazides save it"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 30 — Renal Regulation of Potassium, Calcium, Phosphate, and Magnesium; Integration of Renal Mechanisms for Control of Blood Volume and Extracellular Fluid Volume"],
+ tx:["—"],q:["renal calcium handling","renal calcium reabsorption","=increased ca2+ excretion since proximal ca2+ reabsorption tracks na+"]},
+
+casr:{n:"Ca²⁺-sensing receptor in the thick ascending limb",k:"reg",p:"rmCa",enz:"High Ca²⁺ shuts off NKCC2",inh:"—",fa:"349",hi:1,
+ mech:"Hypercalcemia binds a <b>Ca²⁺-sensing receptor</b> in the thick ascending limb. With Ca²⁺ bound, the Na⁺-K⁺-2Cl⁻ cotransporter is inhibited, removing the lumen-positive potential that drives paracellular Ca²⁺ reabsorption — so a high serum Ca²⁺ raises Ca²⁺ excretion, as it should.",
+ find:["<b>Familial hypocalciuric hypercalcemia</b>: the receptor is defective, high Ca²⁺ fails to inhibit NKCC2 — more Ca²⁺ reabsorbed (hypocalciuria) and serum Ca²⁺ rises (hypercalcemia)","FHH: the receptor is defective in the parathyroids and kidneys — higher Ca²⁺ is needed to suppress PTH, PTH stays normal to high (First Aid)"],
+ labs:["—"],
+ buzz:["Ca²⁺ high → NKCC2 off → calciuria"],
+ src:["Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["calcium sensing receptor","ca2+ sensing receptor","casr","=a ca2+ sensing receptor detects hypercalcemia"]},
+
+renalpo4:{n:"Renal phosphate handling — proximal tubule & Tm",k:"reg",p:"rmPo",enz:"Na⁺-phosphate cotransport · overflow",inh:"—",fa:"606",hi:1,
+ mech:"About 90% of plasma phosphate is filtered (10% is protein-bound). About <b>70%</b> of the filtered load is reabsorbed in the proximal convoluted tubule and <b>15%</b> in the proximal straight tubule by an apical <b>Na⁺-phosphate cotransporter</b>; little or none is reabsorbed later. Like glucose it shows a transport maximum, so excretion works as an overflow.",
+ find:["About 15% of the filtered phosphate is excreted — a high fraction, which matters because urinary phosphate is the main titratable acid buffer","Guyton: Tm about 0.1 mmol/min; phosphate spills into the urine once plasma phosphate exceeds about 0.8 mM/L"],
+ labs:["—"],
+ buzz:["Phosphate is a proximal-tubule-only story"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 30 — Renal Regulation of Potassium, Calcium, Phosphate, and Magnesium; Integration of Renal Mechanisms for Control of Blood Volume and Extracellular Fluid Volume"],
+ tx:["—"],q:["renal phosphate handling","phosphate reabsorption","sodium phosphate cotransporter","na+ phosphate cotransporter","=the proximal tubule via an apical na+ phosphate cotransporter"]},
+
+pthneph:{n:"PTH on the nephron — phosphaturic & hypocalciuric",k:"reg",p:"rmPo",enz:"Both through cAMP",inh:"—",fa:"336, 349",hi:1,
+ mech:"PTH binds a basolateral receptor coupled to adenylyl cyclase by a G protein. In the <b>proximal tubule</b> the cAMP cascade inhibits Na⁺-phosphate cotransport (retrieving the cotransporters and lowering the Tm) → <b>phosphaturia</b>. In the <b>distal tubule</b> it increases Ca²⁺ reabsorption → its <b>hypocalciuric</b> action.",
+ find:["Proximal cells also export cAMP into the lumen — <b>increased urinary cAMP and phosphaturia</b> are the hallmarks of PTH action","<b>Pseudohypoparathyroidism</b>: a defect in the receptor, G protein or adenylyl cyclase — PTH is high but urinary phosphate and cAMP fall","Primary hyperparathyroidism: high Ca²⁺, low phosphate, high urinary cAMP"],
+ labs:["Urinary cAMP rises with PTH"],
+ buzz:["PTH: phosphate out, calcium in"],
+ src:["Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["urinary camp","=pth binds a basolateral receptor and activates adenylyl cyclase","=retrieval of apical na+ phosphate cotransporters"]},
+
+renalmg:{n:"Renal magnesium handling — the thick ascending limb",k:"reg",p:"rmMg",enz:"25 · 65 · < 5",inh:"—",fa:"606",hi:1,
+ mech:"Unlike Ca²⁺, most Mg²⁺ is reabsorbed in the loop: the proximal tubule takes only about <b>25%</b>, the <b>thick ascending limb about 65%</b> — mainly paracellular, driven by the lumen-positive voltage, with claudins — and the distal and collecting tubules under 5% by active transcellular transport.",
+ find:["Loop diuretics abolish the lumen-positive voltage → Mg²⁺ (and Ca²⁺) wasting and hypomagnesemia","Plasma Mg²⁺ about 1.8 mEq/L, more than half protein-bound; only about half the dietary 250–300 mg/day is absorbed, and the kidneys excrete that absorbed amount"],
+ labs:["—"],
+ buzz:["Mg²⁺ follows the loop’s voltage"],
+ src:["Guyton ch 30 — Renal Regulation of Potassium, Calcium, Phosphate, and Magnesium; Integration of Renal Mechanisms for Control of Blood Volume and Extracellular Fluid Volume","Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["renal magnesium handling","magnesium reabsorption","magnesium wasting","renal magnesium wasting","=the lumen positive voltage that repels divalent cations"]},
+
+ckdphos:{n:"Phosphate & calcium in chronic kidney disease",k:"dz",p:"rmPo",enz:"Fewer nephrons, phosphate retention",inh:"—",fa:"621, 622",hi:1,
+ mech:"Creatinine and urea rise almost in proportion to the nephrons lost. Phosphate, urate and H⁺ stay near normal until GFR falls below about <b>20–30%</b> of normal, because the remaining nephrons excrete progressively larger fractions of what they filter; after that their plasma levels rise.",
+ find:["Late CKD: high phosphate despite high PTH — too few nephrons are left to filter and excrete it","Na⁺ and Cl⁻ stay near normal even at very low GFR"],
+ labs:["—"],
+ buzz:["PTH can only dump phosphate that is filtered"],
+ src:["Guyton ch 32 — Diuretics and Kidney Diseases","Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["phosphate retention","=his reduced nephron mass severely limits"]},
+
+respmus:{n:"Muscles of breathing",k:"reg",p:"vmMus",enz:"Diaphragm for quiet breathing · rib raisers for more",inh:"—",fa:"682",hi:1,
+ mech:"Quiet breathing is almost entirely the <b>diaphragm</b>: it contracts to lengthen the chest cavity, and expiration is passive recoil of the lungs and chest wall. Heavier breathing adds the muscles that raise and lower the rib cage, which increases the anteroposterior diameter.",
+ find:["Inspiration: <b>external intercostals</b> (most important rib raisers), sternocleidomastoids (lift the sternum), anterior serrati, scaleni (first two ribs)","Forced expiration: abdominal recti and other abdominal muscles (pull the lower ribs down and push the abdominal contents against the diaphragm), internal intercostals","At rest no work is spent on expiration"],
+ labs:["—"],
+ buzz:["Raise the ribs = inspire"],
+ src:["Guyton ch 38 — Pulmonary Ventilation"],
+ tx:["—"],q:["muscles of respiration","muscles of inspiration","muscles of expiration","accessory muscles of respiration","=external intercostals and sternocleidomastoid"]},
+
+breathpress:{n:"Pleural, alveolar & transpulmonary pressure",k:"reg",p:"vmMus",enz:"Pleural −5 → −7.5 · alveolar −1 → +1 cm H₂O",inh:"—",fa:"679",hi:1,
+ mech:"With the glottis open and no airflow, every part of the airway is at atmospheric (0) pressure. For air to flow in, alveolar pressure must fall below it: during quiet inspiration <b>alveolar pressure</b> falls to about −1 cm H₂O, enough to draw in 0.5 L in about 2 seconds, then rises to about +1 to push it out.",
+ find:["<b>Pleural pressure</b>: about −5 cm H₂O at the start of inspiration (the suction that holds the lungs open), about −7.5 at its end","<b>Transpulmonary pressure</b> = alveolar − pleural pressure: the elastic recoil pressure tending to collapse the lungs at each instant","Lung compliance is defined against it: about 200 mL per cm H₂O"],
+ labs:["—"],
+ buzz:["Transpulmonary = alveolar minus pleural"],
+ src:["Guyton ch 38 — Pulmonary Ventilation"],
+ tx:["—"],q:["transpulmonary pressure","intrapleural pressure","=creates a pressure gradient that pulls air from atmosphere into alveoli","=transpulmonary pressure is the difference between alveolar and pleural pressure"]},
+
+lungthorax:{n:"Lung vs lung–thorax compliance",k:"reg",p:"vmElas",enz:"200 vs 110 mL / cm H₂O",inh:"—",fa:"679",hi:1,
+ mech:"The lungs alone stretch by about <b>200 mL</b> for each cm H₂O of transpulmonary pressure. The thoracic cage has its own elastic and viscous resistance, so inflating lungs inside the chest takes almost twice the pressure: the combined lung–thorax compliance is about <b>110 mL/cm H₂O</b>.",
+ find:["Near very high or very low volumes the chest wall limits expansion so much that combined compliance can fall below 20% of the lungs’ alone","Lung elastic forces: tissue (elastin and collagen fibers) and, larger, the surface tension of the fluid lining the alveoli"],
+ labs:["—"],
+ buzz:["Chest wall halves the compliance"],
+ src:["Guyton ch 38 — Pulmonary Ventilation"],
+ tx:["—"],q:["lung thorax compliance","chest wall compliance","=elastic and viscous resistance of the thoracic cage"]},
+
+laplace:{n:"Surface tension, Laplace & surfactant — the numbers",k:"reg",p:"vmElas",enz:"P = 2T / r",inh:"—",fa:"679",hi:1,
+ mech:"Surface tension in an alveolus creates a collapsing pressure P = 2 × surface tension / radius. For an average alveolus (radius about 100 µm) lined with surfactant this is about <b>4 cm H₂O</b>; lined with water alone about <b>18 cm H₂O</b> — 4.5 times as much.",
+ find:["Surface tension: pure water 72 dynes/cm · alveolar fluid without surfactant 50 · with normal surfactant 5–30","Halving the radius doubles the pressure — premature infants have alveoli under a quarter of adult radius","Surfactant secretion begins only in the sixth to seventh month, so premature infants may collapse their lungs six to eight times more readily than adults → respiratory distress syndrome, treated with continuous positive pressure"],
+ labs:["—"],
+ buzz:["Small alveoli + no surfactant = collapse"],
+ src:["Guyton ch 38 — Pulmonary Ventilation"],
+ tx:["Continuous positive pressure breathing (Guyton)"],q:["law of laplace","laplace","dynes cm","=pure water 72 dynes cm","pressure caused by surface tension is inversely related to alveolar radius"]},
+
+wob:{n:"Energy cost of breathing",k:"reg",p:"vmElas",enz:"3–5% at rest",inh:"—",fa:"682",hi:1,
+ mech:"The work of inspiration has three parts: <b>compliance (elastic) work</b> to expand the lungs against their recoil, <b>tissue resistance work</b> against the viscosity of lung and chest wall, and <b>airway resistance work</b>. During quiet breathing only <b>3–5%</b> of the body’s total energy goes to ventilation.",
+ find:["In heavy exercise that can rise as much as 50-fold, more so with high airway resistance or low compliance — the energy for breathing itself limits exercise","Restrictive disease raises elastic work (fast, shallow breathing); obstructive disease raises resistive work (slow, deep breathing)"],
+ labs:["—"],
+ buzz:["Breathing is cheap — until the lungs are stiff or narrow"],
+ src:["Guyton ch 38 — Pulmonary Ventilation"],
+ tx:["—"],q:["work of breathing","energy cost of breathing","compliance work","tissue resistance work","airway resistance work","=3 5 at rest"]},
+
+alvvent:{n:"Alveolar ventilation & PaCO₂",k:"reg",p:"vmVent",enz:"V̇A = rate × (VT − VD) · PaCO₂ ∝ V̇CO₂ / V̇A",inh:"—",fa:"683",hi:1,
+ mech:"Only the air that reaches the gas-exchange areas counts. With a tidal volume of 500 mL, dead space of 150 mL and 12 breaths/min, alveolar ventilation is 12 × (500 − 150) = <b>4200 mL/min</b>. The <b>alveolar ventilation equation</b> — PACO₂ = V̇CO₂ × K / V̇A — makes PaCO₂ inversely proportional to alveolar ventilation for a given CO₂ production.",
+ find:["Halve alveolar ventilation and PaCO₂ doubles (hypoventilation → respiratory acidosis); double it and PaCO₂ halves (hyperventilation → respiratory alkalosis)","Arterial PCO₂ equals alveolar PCO₂ because CO₂ always equilibrates","Rapid shallow breathing wastes more of each breath on dead space"],
+ labs:["—"],
+ buzz:["Double the ventilation, halve the PaCO₂"],
+ src:["Guyton ch 38 — Pulmonary Ventilation","Costanzo ch 5 — Respiratory physiology"],
+ tx:["—"],q:["alveolar ventilation","alveolar ventilation equation"]},
+
+deadmeas:{n:"Measuring dead space — anatomic vs physiologic",k:"reg",p:"vmVent",enz:"Single breath of O₂, then watch the N₂",inh:"—",fa:"680",hi:1,
+ mech:"Anatomic dead space is measured by a single deep breath of 100% O₂ and a rapid nitrogen record of the next expiration: the first part is pure O₂ from the airways, then N₂ rises as alveolar air arrives. The ratio of the areas gives the dead space — about <b>150 mL</b> in a young man.",
+ find:["Dead space grows with body size and a little after age 50–60; smaller in women","<b>Physiologic dead space</b> adds alveoli with absent or poor blood flow; in health it nearly equals anatomic dead space, but in some lung diseases it can reach 10 times the anatomic volume (1–2 L)","Dead-space air is expired first, so it hinders removing expired gases"],
+ labs:["—"],
+ buzz:["Physiologic = anatomic + unperfused alveoli"],
+ src:["Guyton ch 38 — Pulmonary Ventilation"],
+ tx:["—"],q:["fowler method","nitrogen washout","single breath nitrogen"]},
+
+shwork:{n:"Shoulder pain workflow — trauma first",k:"reg",p:"shWork",enz:"Trauma? → intrinsic vs extrinsic → glenohumeral vs not",inh:"—",hi:1,
+ mech:"The course workflow (UpToDate) branches first on <b>a history of trauma</b>. With trauma: history, examination (may include ultrasound) and radiographs as indicated, looking for a fracture (clavicle, proximal humerus), glenohumeral dislocation, AC sprain or sternoclavicular subluxation/dislocation — manage and refer to orthopedics. Without them, evaluate for intrinsic soft-tissue injury.",
+ find:["No trauma: history and examination decide whether the cause is <b>intrinsic</b> (the shoulder itself) or <b>extrinsic</b> (referred)","Intrinsic causes then split into <b>glenohumeral</b> (exam of the joint gives pain, weakness or abnormal motion) and <b>extraglenohumeral</b> (focal tenderness outside the joint)","Rotator cuff disease is the most common cause of shoulder pain (11.2 per 1000 patient visits a year)"],
+ labs:["Radiographs for trauma"],
+ buzz:["First question: was there trauma?"],
+ src:["OCOM Ortho — SDL 13 lecture: Shoulder pain and injury"],
+ tx:["—"],q:["shoulder pain workflow","shoulder pain algorithm","=determine whether a significant history of trauma is present"]},
+
+shextrinsic:{n:"Extrinsic (referred) shoulder pain",k:"reg",p:"shWork",enz:"The shoulder hurts but the joint is fine",inh:"—",hi:1,
+ mech:"A shoulder complaint likely comes from outside the shoulder when the pain is <b>vague, diffuse or poorly localized</b>; comes with other symptoms such as <b>dyspnea, abdominal pain or diaphoresis</b>; is <b>sharp, shooting or “electric”</b> and radiates to the neck or down the arm; follows a history such as a recent motor vehicle collision or cardiac disease; and moving the glenohumeral joint does not hurt, with the shoulders symmetric in appearance, motion and strength.",
+ find:["Moving the glenohumeral joint does not reproduce the pain"],
+ labs:["—"],
+ buzz:["Painless glenohumeral motion + systemic symptoms = look elsewhere"],
+ src:["OCOM Ortho — SDL 13 lecture: Shoulder pain and injury"],
+ tx:["—"],q:["referred shoulder pain","extrinsic shoulder pain","extrinsic cause","=sharp shooting or electric pain radiating","=evaluate for an extrinsic or referred cause"]},
+
+shoa:{n:"Glenohumeral vs acromioclavicular osteoarthritis",k:"dz",p:"shGH",enz:"Anterior, abduction & ER vs superior, adduction & flexion",inh:"—",hi:1,
+ mech:"Osteoarthritis is the most common arthritis of both joints, though both are less often affected than other joints. Most patients are over 70, women more than men. Risk factors: direct trauma, prior dislocation or fracture, and — for the glenohumeral joint — severe rotator cuff tears.",
+ find:["Gradually worsening pain over years, morning stiffness, stiffness after inactivity, loss of motion","<b>Glenohumeral</b>: anterior shoulder and upper arm pain, worst with <b>abduction and external rotation</b> · <b>AC</b>: superior shoulder pain, worst with <b>adduction and forward flexion</b>","Exam: anterior (or superior for the AC joint) joint-line tenderness, painful loss of motion, ± crepitus; late weakness and atrophy","Clinical diagnosis (NICE): use-related joint pain, age ≥ 45, morning stiffness ≤ 30 minutes"],
+ labs:["Radiographs if needed"],
+ buzz:["AC = top of the shoulder, cross-body pain"],
+ src:["OCOM Ortho — SDL 13 lecture: Shoulder pain and injury"],
+ tx:["Medication, physical therapy, intra-articular corticosteroid, regenerative injections, acupuncture, joint replacement"],q:["glenohumeral osteoarthritis","acromioclavicular osteoarthritis","ac joint osteoarthritis","ac joint arthritis","acromioclavicular arthritis","=acromioclavicular oa produces superior shoulder pain"]},
+
+impinge:{n:"Rotator cuff impingement — the subacromial space",k:"dz",p:"shGH",enz:"Supraspinatus squeezed under the acromion",inh:"—",fa:"451",hi:1,
+ mech:"Impingement traps the cuff — usually the <b>supraspinatus</b> — between the humeral head and the acromion, in the <b>subacromial space</b>, which is extra-articular (outside the capsule). The subacromial-subdeltoid bursa can also swell.",
+ find:["Two mechanisms that patients cycle between: an edematous supraspinatus too big to glide through, or a thin supraspinatus (chronic tendinosis ± tears) that lets the humerus ride high and narrow the space","Pain with overhead motion, referred to the deltoid insertion, worse at night and when lying on that side","Impingement tests: Neer and Hawkins · strength tests in abduction, external and internal rotation","Radiographs: subacromial space and acromion shape"],
+ labs:["—"],
+ buzz:["Overhead pain at night = cuff"],
+ src:["OCOM Ortho — SDL 13 lecture: Shoulder pain and injury"],
+ tx:["Physical therapy (mainstay), analgesics, corticosteroid injection"],q:["rotator cuff impingement","impingement syndrome","subacromial impingement","subacromial space","neer test","hawkins test","subacromial bursitis"]},
+
+rctear:{n:"Rotator cuff tendinosis & tears",k:"dz",p:"shGH",enz:"Partial · full thickness · massive",inh:"—",fa:"451",hi:1,
+ mech:"Rotator cuff injury is impingement or tears — from degenerative tendinopathy or trauma. It is truly “tendinitis” only when acutely inflamed; after about 3 months no inflammatory cells remain and the tendon is disorganized and degenerating (<b>tendinosis</b>), with periodic re-inflammation.",
+ find:["Tears: bursal-sided (most often with impingement), articular-sided or intrasubstance · partial thickness, full thickness or massive","Risk factors: overhead activity, anatomic variants, internal-rotation deficit, scapular dyskinesia, glenohumeral instability, posture, cervical spine disease, poor cuff endurance","Weakness when the tear is significant; <b>drop arm test</b>","Imaging: MRI is sensitive and specific for soft tissue; musculoskeletal ultrasound is equally sensitive"],
+ labs:["MRI or ultrasound"],
+ buzz:["Can’t hold the arm up = drop arm"],
+ src:["OCOM Ortho — SDL 13 lecture: Shoulder pain and injury"],
+ tx:["Physical therapy first; corticosteroid or regenerative (PRP, prolotherapy) injections; surgery for recalcitrant, full-thickness and massive tears"],q:["rotator cuff tear","rotator cuff tears","rotator cuff tendinosis","rotator cuff tendinopathy","drop arm test","full thickness tear"]},
+
+frozen:{n:"Adhesive capsulitis (frozen shoulder)",k:"dz",p:"shGH",enz:"Global loss of motion with no other explanation",inh:"—",hi:1,
+ mech:"A gradual, global limitation of shoulder motion in multiple planes with no other explanation. Its pathology is not well understood. Lifetime prevalence 2–5%, peak in the mid-50s; 6–17% get it in the other shoulder.",
+ find:["More common in <b>diabetes</b>; associated with thyroid disease, hyperlipidemia, stroke and autoimmune disease","Secondary to rotator cuff disease, humerus fracture, prolonged immobilization or surgery","Pain first, then stiffness; on exam little pain or weakness but loss of motion in many planes","Imaging does not help, except to find other conditions"],
+ labs:["—"],
+ buzz:["Diabetic with a stiff shoulder in every direction"],
+ src:["OCOM Ortho — SDL 13 lecture: Shoulder pain and injury"],
+ tx:["Restore motion early: glenohumeral corticosteroid injection (or oral glucocorticoid) + physical therapy; manipulation under anesthesia if that fails"],q:["adhesive capsulitis","frozen shoulder"]},
+
+shextragh:{n:"Extraglenohumeral shoulder pain — biceps, AC joint, bursa",k:"reg",p:"shOut",enz:"Focal tenderness outside the joint",inh:"—",hi:1,
+ mech:"An intrinsic cause outside the glenohumeral joint gives <b>focal pain and tenderness outside the joint</b>, and gentle passive glenohumeral motion generally does not hurt.",
+ find:["Causes: biceps tendinopathy, biceps tendon tear, AC arthritis, scapulothoracic weakness, subscapular bursitis, distal clavicle osteolysis","Glenohumeral causes instead: cuff impingement, tendinopathy or tear, adhesive capsulitis, instability, labral tear, glenohumeral arthritis"],
+ labs:["—"],
+ buzz:["Point tenderness + painless passive motion = outside the joint"],
+ src:["OCOM Ortho — SDL 13 lecture: Shoulder pain and injury"],
+ tx:["—"],q:["extraglenohumeral","extraglenohumereal","biceps tendinopathy","subscapular bursitis","distal clavicle osteolysis","=focal pain and tenderness localized outside the glenohumeral joint capsule"]},
+
+edsclass:{n:"Ehlers-Danlos classification — 13 types, one theme",k:"dz",p:"ctEds",enz:"Some defect in collagen",inh:"—",fa:"48, 49",hi:1,
+ mech:"The common thread in every Ehlers-Danlos syndrome is an abnormality of <b>collagen</b> — in a structural collagen gene or in an enzyme or matrix protein needed to make and assemble it — so EDS is inherited both dominantly and recessively. The 2017 international classification lists <b>13 subtypes</b>; together they affect about 1 in 5000 births.",
+ find:["Collagen-rich tissues fail: hyperextensible, fragile, easily bruised skin with gaping wounds that are hard to repair; hypermobile joints prone to dislocation","Internal complications: rupture of colon and large arteries (vascular), ocular fragility with corneal rupture and retinal detachment (kyphoscoliotic), diaphragmatic hernia (classic)","Dominant: classical (COL5A1), vascular (COL3A1), hypermobile (unknown), arthrochalasia (COL1A1/2), periodontal · recessive: classical-like (TNXB), dermatosparaxis (ADAMTS2), kyphoscoliotic (PLOD1), others"],
+ labs:["—"],
+ buzz:["Different step, same broken collagen"],
+ src:["Robbins ch 5 — Genetic disorders"],
+ tx:["—"],q:["ehlers danlos classification","eds subtypes","=all eds subtypes result from defects in collagen synthesis"]},
+
+edskypho:{n:"Kyphoscoliotic EDS — lysyl hydroxylase (PLOD1)",k:"dz",p:"ctEds",enz:"No hydroxylysine, no cross-links",inh:"—",fa:"49",hi:1,
+ mech:"The best characterized recessive form and the most common autosomal recessive EDS. Mutations in <b>PLOD1</b> sharply reduce <b>lysyl hydroxylase</b>, which hydroxylates lysine residues during collagen synthesis. Hydroxylysine is needed for intermolecular and intramolecular cross-links, so the collagen lacks normal stability.",
+ find:["Scoliosis and kyphosis, joint hypermobility, and ocular fragility — corneal rupture, retinal detachment","An enzyme deficiency, so it is recessive"],
+ labs:["—"],
+ buzz:["PLOD1 → lysyl hydroxylase → cross-links"],
+ src:["Robbins ch 5 — Genetic disorders"],
+ tx:["—"],q:["kyphoscoliotic eds","kyphoscoliotic ehlers danlos","kyphoscoliosis type","plod1"]},
+
+edsproc:{n:"Dermatosparaxis & arthrochalasia EDS — procollagen cleavage",k:"dz",p:"ctEds",enz:"N-terminal propeptide left on",inh:"—",fa:"49",hi:1,
+ mech:"In both, procollagen type I is not converted to collagen: the noncollagen N- and C-terminal domains normally cut off by specific peptidases stay on. <b>Arthrochalasia</b> is a structural mutation in COL1A1 or COL1A2 that makes the chains resist cleavage — dominant, because the abnormal half of the chains spoils normal helices. <b>Dermatosparaxis</b> is a deficiency of procollagen N-peptidase (<b>ADAMTS2</b>) — an enzyme defect, so recessive.",
+ find:["A heterozygote keeps enough enzyme to process procollagen; disease needs loss of both alleles"],
+ labs:["—"],
+ buzz:["Same step: structural = dominant, enzyme = recessive"],
+ src:["Robbins ch 5 — Genetic disorders"],
+ tx:["—"],q:["dermatosparaxis","adamts2","procollagen n peptidase","procollagen peptidase","arthrochalasia"]},
+
+edsvasc:{n:"Vascular EDS — type III collagen (COL3A1)",k:"dz",p:"ctEds",enz:"Arteries, bowel and uterus rupture",inh:"—",fa:"49",hi:1,
+ mech:"Vascular EDS comes from abnormal <b>type III collagen</b>. It is genetically heterogeneous — COL3A1 mutations can lower synthesis of pro-α1(III) chains, block secretion of type III procollagen or make structurally abnormal collagen — and some alleles act as <b>dominant negatives</b>, causing severe disease in heterozygotes.",
+ find:["Blood vessels and intestine are rich in type III collagen → spontaneous rupture of large arteries and colon; gravid uterus rupture (First Aid)","Unlike other subtypes, the skin is usually not hyperextensible"],
+ labs:["—"],
+ buzz:["Thin skin, arterial or bowel rupture = COL3A1"],
+ src:["Robbins ch 5 — Genetic disorders"],
+ tx:["—"],q:["vascular eds","vascular ehlers danlos","col3a1","type iii collagen"]},
+
+edsclassic:{n:"Classic & classic-like EDS — type V collagen & tenascin X",k:"dz",p:"ctEds",enz:"COL5A1/COL5A2 · TNXB",inh:"—",fa:"49",hi:1,
+ mech:"Most <b>classic</b> EDS carries mutations in the type V collagen genes <b>COL5A1 and COL5A2</b> (dominant). A <b>classic-like</b> recessive form comes from <b>TNXB</b>, encoding tenascin X — a large multimeric matrix protein that interacts with fibrillar collagens I, III and V and influences their synthesis and assembly.",
+ find:["Marked skin fragility and scarring (First Aid); diaphragmatic hernia (Robbins)"],
+ labs:["—"],
+ buzz:["Classic = type V collagen"],
+ src:["Robbins ch 5 — Genetic disorders"],
+ tx:["—"],q:["classic eds","classical eds","classic ehlers danlos","col5a1","col5a2","tnxb","tenascin x","type v collagen"]},
+
+edshyper:{n:"Hypermobile EDS",k:"dz",p:"ctEds",enz:"The one form without a known gene",inh:"—",fa:"49",hi:1,
+ mech:"The genetic basis is known in every form of EDS except the <b>hypermobility type</b> (autosomal dominant, gene unknown).",
+ find:["First Aid: the most common type — joint and skin laxity"],
+ labs:["No genetic test — a clinical diagnosis"],
+ buzz:["Most common EDS, no gene"],
+ src:["Robbins ch 5 — Genetic disorders"],
+ tx:["—"],q:["hypermobile eds","hypermobile ehlers danlos","hypermobility type","hypermobility eds"]},
+
+loeysdietz:{n:"Loeys-Dietz syndrome",k:"dz",p:"ctFib",enz:"Too much TGF-β signaling · aneurysms rupture small",inh:"—",hi:1,
+ mech:"Increased <b>TGF-β signaling</b> from mutations in the TGF-β receptors, the downstream signal SMAD3, or TGF-β3 itself. Like Marfan syndrome — where missing fibrillin fails to sequester TGF-β — it weakens the aortic wall.",
+ find:["Aneurysms can rupture at small sizes","Fibrillin is also a negative regulator of TGF-β, linking Marfan and Loeys-Dietz in their cardiovascular disease"],
+ labs:["—"],
+ buzz:["Marfan-like aorta that ruptures earlier"],
+ src:["Robbins ch 11 — Blood vessels"],
+ tx:["—"],q:["loeys dietz","loeys dietz syndrome","tgf beta receptor","tgfbr1","tgfbr2","smad3"]},
+
+inheritrule:{n:"Structural vs enzyme defects — dominant vs recessive",k:"reg",p:"ctFib",enz:"Dominant negatives break multimers; enzymes have spare capacity",inh:"—",hi:1,
+ mech:"Mendelian disorders sort by the protein involved. Mutations in <b>structural</b> proteins (collagen in osteogenesis imperfecta and EDS, fibrillin in Marfan, spectrin in hereditary spherocytosis) often act <b>dominantly</b>, because a defective protein spoils multimer assemblies — a dominant-negative effect. <b>Enzyme</b> defects are usually <b>recessive</b>: heterozygotes keep enough activity.",
+ find:["Autosomal dominant: dominant-negative structural mutations, gain-of-function mutations, loss of function in haploinsufficient genes","Autosomal recessive: loss-of-function mutations in enzymes; heterozygotes are unaffected carriers","Exceptions exist — dystrophin defects are X-linked recessive"],
+ labs:["—"],
+ buzz:["Bad brick = dominant · missing worker = recessive"],
+ src:["Robbins ch 5 — Genetic disorders"],
+ tx:["—"],q:["structural protein defects"]},
+
+/* ── link-sweep gap cards: voice, vocal cord nodules, mastication (m33) ─── */
+vocalize:{n:"Phonation, articulation & resonance",k:"reg",p:"lxlar",enz:"Larynx vibrates · mouth shapes · cavities resonate",inh:"—",hi:1,
+ mech:"Speech has two mechanical parts: <b>phonation</b> by the larynx, whose vocal folds act as the vibrator, stretched and positioned by the intrinsic laryngeal muscles; and <b>articulation</b> by the lips, tongue and soft palate. The <b>resonators</b> are the mouth, the nose and associated nasal sinuses, the pharynx, and even the chest cavity.",
+ find:["Blocking the nasal resonators changes the voice — the familiar quality of a severe cold"],
+ labs:["—"],
+ buzz:["Larynx makes the tone; the cavities color it"],
+ src:["Guyton ch 38 — Pulmonary Ventilation"],
+ tx:["—"],q:["resonators","resonating chambers","=the mouth nose and associated nasal sinuses pharynx and chest cavity","=nasal obstruction prevents the nasal cavity and sinuses from functioning as resonating","=the enlarged adenoid pad obstructs the nasopharyngeal lumen"]},
+
+vcnodule:{n:"Vocal cord nodules & polyps",k:"dz",p:"lxlar",enz:"Singer’s nodules — benign, bilateral, hoarse",inh:"—",hi:1,
+ mech:"Reactive nodules (polyps) develop on the true vocal cords, most often in heavy smokers or in people who strain their voices (<b>singer’s nodules</b>). Their location and inflammation change the voice and often cause progressive hoarseness, but the risk of cancer is almost nonexistent.",
+ find:["By convention nodules are bilateral and polyps unilateral; adults are most affected","Smooth, rounded, sessile or pedunculated, a few millimeters; squamous epithelium over loose myxoid connective tissue","Nodules on opposing cords may impinge on each other and ulcerate"],
+ labs:["—"],
+ buzz:["Bilateral nodules in a singer or teacher"],
+ src:["Robbins ch 16 — Head and neck"],
+ tx:["Voice rest and therapy; excision"],q:["vocal cord nodules","vocal fold nodules","singers nodules","vocal cord polyps","=repeated phonotrauma"]},
+
+chewing:{n:"Mastication & the chewing reflex",k:"reg",p:"lxswal",enz:"CN V3 muscles · brainstem rhythm · more surface for enzymes",inh:"—",hi:1,
+ mech:"Most muscles of chewing are innervated by the motor branch of the fifth cranial nerve, and chewing is controlled by brainstem nuclei — stimulating reticular areas near the brainstem taste centers causes rhythmic chewing. Incisors cut, molars grind; together the jaw muscles close with up to about 55 pounds on the incisors and 200 on the molars.",
+ find:["<b>Chewing reflex</b>: a bolus in the mouth reflexively inhibits the jaw muscles, the jaw drops, the stretch triggers a rebound contraction that closes it, compressing the bolus again — and the cycle repeats","Digestive enzymes act only on food surfaces, so grinding to fine particles speeds digestion; it also breaks the cellulose membranes of fruits and raw vegetables, prevents excoriation of the gut and eases gastric emptying"],
+ labs:["—"],
+ buzz:["Drop, stretch, rebound — the chewing reflex"],
+ src:["Guyton ch 64 — Propulsion and Mixing of Food in the Alimentary Tract"],
+ tx:["—"],q:["chewing reflex","=the bolus in the mouth reflexively inhibits jaw elevator","=grinding food into fine particles","=the mandibular branch of the trigeminal nerve cn v3 carries motor fibers to the muscles of mastication"]},
 
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
@@ -18617,7 +19105,7 @@ MAPS.rbc = {
 
 MAPS.pancreas = {
  t:"Endocrine Pancreas & Diabetes", sub:"Follow glucose into the β cell, insulin out to its targets, and the hormones that push back · each drug and disease is pinned where it acts",
- w:3500, h:3000,
+ w:3500, h:3660,
  fa:"47, 73, 88, 338, 350–351, 357–359",
  src:["Robbins ch 17 — The gastrointestinal tract","Robbins ch 24 — The endocrine system","Katzung ch 15 — Diuretic Agents","Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs","Marks ch 19 — Basic Concepts in the Regulation of Fuel Metabolism by Insulin, Glucagon, and Other Hormones","Marks ch 21 — Digestion, Absorption, and Transport of Carbohydrates","Marks ch 22 — Generation of Adenosine Triphosphate from Glucose, Fructose, and Galactose: Glycolysis","Marks ch 26 — Formation and Degradation of Glycogen","Marks ch 41 — Actions of Hormones That Regulate Fuel Metabolism","Guyton ch 79 — Insulin, Glucagon, and Diabetes Mellitus"],
  comps:[
@@ -18679,7 +19167,8 @@ MAPS.pancreas = {
   {id:"hhsn",l:"Hyperosmolar state",x:2620,y:1600,p:"dm",s:"enough insulin to stop ketones",m:["hhs"]},
   {id:"chronic",l:"Years of hyperglycemia",x:1480,y:1790,p:"dm",s:"glycation · sorbitol",m:["dmcomplications","polyol","diabetickidney"]}],
  plots:[
-  {x:140,y:2340,w:2000,h:600,kind:"gtt",t:"Oral glucose tolerance test"}],
+  {x:140,y:2340,w:2000,h:600,kind:"gtt",t:"Oral glucose tolerance test"},
+  {x:140,y:3000,w:2400,h:600,kind:"insglu",t:"Insulin and glucagon — glucose up, glucose down, protein, exercise"}],
  edges:[
   {a:"gut",b:"bglu",p:"betacell",e:"Brush-border α-glucosidase",ly:-46,m:["agi"]},
   {a:"bglu",b:"glut2",p:"betacell",e:"Enters the β cell",ly:-46},
@@ -29826,11 +30315,11 @@ MAPS.larynx = {
   {id:"l1",l:"Posterior cricoarytenoid",x:420,y:370,p:"lxlar",s:"the only abductor — opens the airway",m:["larynxmus"]},
   {id:"l2",l:"Adductors",x:1020,y:370,p:"lxlar",s:"lateral cricoarytenoids · arytenoids",m:["larynxmus"]},
   {id:"l3",l:"Cricothyroid",x:1620,y:370,p:"lxlar",s:"tenses the vocal folds",m:["larynxmus"]},
-  {id:"l4",l:"Phonation",x:2220,y:370,p:"lxlar",s:"air through adducted vocal folds",m:["larynxmus"]},
+  {id:"l4",l:"Phonation",x:2220,y:370,p:"lxlar",s:"air through adducted vocal folds",m:["larynxmus","vocalize"]},
   {id:"l5",l:"Epiglottis",x:2820,y:370,p:"lxlar",s:"elastic cartilage",m:["larynxmus"]},
   {id:"l6",l:"Epiglottitis",x:420,y:450,p:"lxlar",s:"drooling, stridor · thumb sign",m:["epiglottitis"]},
   {id:"l7",l:"Croup",x:1020,y:450,p:"lxlar",s:"barking cough · steeple sign",m:["parainfl"]},
-  {id:"l8",l:"Laryngeal papillomatosis",x:1620,y:450,p:"lxlar",s:"HPV-6 and 11 · hoarse child",m:["laryngealpap"]},
+  {id:"l8",l:"Laryngeal papillomatosis",x:1620,y:450,p:"lxlar",s:"HPV-6 and 11 · hoarse child",m:["laryngealpap","vcnodule"]},
   {id:"l9",l:"Head and neck cancer",x:2220,y:450,p:"lxlar",s:"tobacco, alcohol · HPV-16",m:["headneckscc"]},
   {id:"lx1",l:"→ Ear, Nose & Throat",x:2820,y:450,p:"neutral",k:"ghost",go:"ent"},
   {id:"n1",l:"Internal laryngeal nerve",x:420,y:630,p:"lxnerve",s:"sensation above the vocal folds",m:["laryngealnerves"]},
@@ -29842,7 +30331,7 @@ MAPS.larynx = {
   {id:"n7",l:"Gag reflex",x:1020,y:710,p:"lxnerve",s:"CN IX in, CN X out",m:["pharynxanat"]},
   {id:"n8",l:"Lateral medullary syndrome",x:1620,y:710,p:"lxnerve",s:"nucleus ambiguus · dysphagia, hoarseness",m:["wallenberg"]},
   {id:"nx1",l:"→ Embryology",x:2220,y:710,p:"neutral",k:"ghost",go:"embryo"},
-  {id:"s1",l:"Voluntary stage",x:420,y:890,p:"lxswal",s:"the tongue pushes the bolus back",m:["swallowing"]},
+  {id:"s1",l:"Voluntary stage",x:420,y:890,p:"lxswal",s:"the tongue pushes the bolus back",m:["swallowing","chewing"]},
   {id:"s2",l:"Pharyngeal stage",x:1020,y:890,p:"lxswal",s:"reflex · larynx rises, epiglottis covers",m:["swallowing"]},
   {id:"s3",l:"Upper esophageal sphincter",x:1620,y:890,p:"lxswal",s:"relaxes, then closes again",m:["swallowing"]},
   {id:"s4",l:"Primary peristalsis",x:2220,y:890,p:"lxswal",s:"8–10 seconds to the stomach",m:["swallowing"]},
@@ -32493,24 +32982,400 @@ MAPS.lymphdev = {
   {a:"t7",b:"t8",p:"ldT"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["index","Index"]];
+MAPS.lungcancer = {
+ t:"Lung Cancer", sub:"Field carcinogenesis and the precursor lesions · adenocarcinoma from in situ to invasive, squamous, small cell, large cell and carcinoid tumors · driver mutations and targeted drugs · local spread, metastases and paraneoplastic syndromes",
+ w:3300, h:1032,
+ fa:"219, 224, 703, 704",
+ src:["Robbins ch 15 — The lung", "Katzung ch 54 — Cancer Chemotherapy"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Pathogenesis and precursors"},
+  {x:140,y:290,w:3020,h:200,l:"Histologic types and targets"},
+  {x:140,y:550,w:3020,h:200,l:"Spread and syndromes"}],
+ panels:[
+  {x:140,y:810,w:1480,h:160,kw:144,t:"Types at a glance (Robbins; First Aid)",rows:[
+   ["Adenocarcinoma","peripheral · glands, TTF-1 · EGFR, ALK, KRAS"],
+   ["Squamous cell","central · keratin pearls, p40 · PTHrP"],
+   ["Small cell","central · salt-and-pepper · ACTH, ADH"],
+   ["Large cell","peripheral · undifferentiated · hCG"],
+   ["Carcinoid","endobronchial polyp · young · nonsmokers"]]},
+  {x:1680,y:810,w:1480,h:160,kw:299,t:"Adenocarcinoma by invasion (Robbins)",rows:[
+   ["Atypical adenomatous hyperplasia","≤ 5 mm · dysplastic pneumocytes"],
+   ["Adenocarcinoma in situ (Tis)","≤ 3 cm · pure lepidic · no invasion"],
+   ["Minimally invasive (T1mi)","≤ 3 cm · ≤ 5 mm invasion"],
+   ["Invasive adenocarcinoma","acinar, papillary, micropapillary, solid"],
+   ["Mucinous","aerogenous spread · mimics pneumonia"]]}],
+ nodes:[
+  {id:"a1",l:"Smoking & field effect",x:420,y:170,p:"lcPre",k:"hub",s:"3p loss in normal mucosa",m:["lcfield","lungca"]},
+  {id:"a2",l:"Precursor lesions",x:1020,y:170,p:"lcPre",s:"AAH · metaplasia → CIS",m:["lcfield"]},
+  {id:"a3",l:"Adenocarcinoma in situ",x:1620,y:170,p:"lcPre",s:"≤ 3 cm · pure lepidic",m:["lcais"]},
+  {id:"a4",l:"Minimally invasive",x:2220,y:170,p:"lcPre",s:"≤ 5 mm invasion",m:["lcais"]},
+  {id:"a5",l:"Mucinous adenocarcinoma",x:2820,y:170,p:"lcPre",s:"aerogenous satellites",m:["lcais"]},
+  {id:"t1",l:"Adenocarcinoma",x:420,y:350,p:"lcType",k:"hub",s:"peripheral · TTF-1 · 50%",m:["lcadeno","lungca"]},
+  {id:"t2",l:"Squamous cell",x:1020,y:350,p:"lcType",s:"central · keratin · p40",m:["lcscc"]},
+  {id:"t3",l:"Small cell",x:1620,y:350,p:"lcType",s:"neuroendocrine · TP53 + RB",m:["lcsclc"]},
+  {id:"t4",l:"Large cell",x:2220,y:350,p:"lcType",s:"undifferentiated",m:["lclarge"]},
+  {id:"t5",l:"Carcinoid",x:2820,y:350,p:"lcType",s:"polypoid · dense-core granules",m:["lccarcinoid","carcinoid"]},
+  {id:"t6",l:"Driver mutations",x:420,y:430,p:"lcType",k:"hub",s:"EGFR · ALK · KRAS",m:["lcadeno","lctarget"]},
+  {id:"t7",l:"EGFR inhibitors",x:1020,y:430,p:"lcType",s:"osimertinib",m:["egfr","lctarget"]},
+  {id:"t8",l:"ALK inhibitors",x:1620,y:430,p:"lcType",s:"crizotinib · alectinib",m:["lctarget"]},
+  {id:"t9",l:"Checkpoint inhibitors",x:2220,y:430,p:"lcType",s:"neoantigen-rich tumors",m:["lctarget"]},
+  {id:"t10",l:"Benign & rare",x:2820,y:430,p:"lcType",s:"hamartoma · IMT · LAM",m:["lungbenign"]},
+  {id:"s1",l:"Local spread",x:420,y:610,p:"lcSpread",k:"hub",s:"nodes · pleura · pericardium",m:["lclocal"]},
+  {id:"s2",l:"Pancoast tumor",x:1020,y:610,p:"lcSpread",s:"ulnar pain · Horner",m:["lclocal","horner"]},
+  {id:"s3",l:"SVC syndrome",x:1620,y:610,p:"lcSpread",s:"face and arm edema",m:["lclocal"]},
+  {id:"s4",l:"Distant metastases",x:2220,y:610,p:"lcSpread",s:"adrenal · liver · brain · bone",m:["lclocal","metsites"]},
+  {id:"s5",l:"Metastases to the lung",x:2820,y:610,p:"lcSpread",s:"cannonball nodules",m:["lungmets"]},
+  {id:"s6",l:"Paraneoplastic",x:420,y:690,p:"lcSpread",k:"hub",s:"hormones · antibodies",m:["lcparaneo"]},
+  {id:"s7",l:"SIADH · ACTH",x:1020,y:690,p:"lcSpread",s:"small cell",m:["lcparaneo","siadh"]},
+  {id:"s8",l:"Hypercalcemia",x:1620,y:690,p:"lcSpread",s:"squamous · PTHrP",m:["lcparaneo","hcmalig"]},
+  {id:"s9",l:"Lambert-Eaton",x:2220,y:690,p:"lcSpread",s:"Ca²⁺ channel antibodies",m:["lems"]},
+  {id:"s10",l:"Trousseau · clubbing",x:2820,y:690,p:"lcSpread",s:"clots · osteoarthropathy",m:["lcparaneo"]}],
+ edges:[
+  {a:"a1",b:"a2",p:"lcPre"},
+  {a:"a2",b:"a3",p:"lcPre"},
+  {a:"a3",b:"a4",p:"lcPre"},
+  {a:"a4",b:"a5",p:"lcPre"},
+  {a:"t1",b:"t2",p:"lcType"},
+  {a:"t2",b:"t3",p:"lcType"},
+  {a:"t3",b:"t4",p:"lcType"},
+  {a:"t6",b:"t7",p:"lcType"},
+  {a:"t7",b:"t8",p:"lcType"},
+  {a:"s1",b:"s2",p:"lcSpread"},
+  {a:"s2",b:"s3",p:"lcSpread"},
+  {a:"s3",b:"s4",p:"lcSpread"},
+  {a:"s6",b:"s7",p:"lcSpread"},
+  {a:"s7",b:"s8",p:"lcSpread"},
+  {a:"s8",b:"s9",p:"lcSpread"}]
+};
+
+MAPS.pitgh = {
+ t:"Pituitary & Growth Hormone", sub:"Rathke pouch and the infundibulum · the sella, median eminence and portal system — and why cutting the stalk raises prolactin · the five anterior pituitary cells, the shared α subunit and POMC · GH pulses, actions and bone · tumors, apoplexy, hypopituitarism, empty sella and dwarfism",
+ w:3300, h:1672,
+ fa:"331, 332, 333, 342, 343",
+ src:["Guyton ch 76 — Pituitary Hormones and Their Control By the Hypothalamus", "Costanzo ch 9 — Endocrine physiology", "Robbins ch 24 — The endocrine system", "Langman ch 18 — Central Nervous System", "Katzung ch 37 — Hypothalamic & Pituitary Hormones"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Anatomy and development"},
+  {x:140,y:290,w:3020,h:200,l:"Cells and hormones"},
+  {x:140,y:550,w:3020,h:200,l:"Disorders"}],
+ panels:[
+  {x:140,y:810,w:1480,h:160,kw:136,t:"Anterior pituitary cells (Guyton)",rows:[
+   ["Somatotropes","GH · 30–40% · acidophils"],
+   ["Corticotropes","ACTH · about 20%"],
+   ["Thyrotropes","TSH · 3–5%"],
+   ["Gonadotropes","LH, FSH · 3–5%"],
+   ["Lactotropes","prolactin · 3–5%"]]},
+  {x:1680,y:810,w:1480,h:160,kw:187,t:"Hypothalamic control (Guyton Table 76.2)",rows:[
+   ["TRH","3 amino acids → TSH"],
+   ["GnRH","10 amino acids → LH, FSH"],
+   ["CRH","41 amino acids → ACTH"],
+   ["GHRH · somatostatin","GH up · GH down"],
+   ["Dopamine","prolactin down"]]}],
+ nodes:[
+  {id:"a1",l:"Rathke pouch",x:420,y:170,p:"pgAnat",k:"hub",s:"oral ectoderm → anterior lobe",m:["pitdev"]},
+  {id:"a2",l:"Craniopharyngioma",x:1020,y:170,p:"pgAnat",s:"Rathke remnant",m:["craniopharyngioma","pitdev"]},
+  {id:"a3",l:"Sella & portal system",x:1620,y:170,p:"pgAnat",k:"hub",s:"median eminence → sinuses",m:["pitportal"]},
+  {id:"a4",l:"Posterior pituitary",x:2220,y:170,p:"pgAnat",s:"axons from SON and PVN",m:["posteriorpit","pitportal"]},
+  {id:"a5",l:"Stalk section",x:2820,y:170,p:"pgAnat",s:"prolactin up, the rest down",m:["pitstalk"]},
+  {id:"h1",l:"Five cell types",x:420,y:350,p:"pgHorm",k:"hub",s:"somatotropes 30–40%",m:["pitcells"]},
+  {id:"h2",l:"Shared α subunit",x:1020,y:350,p:"pgHorm",s:"TSH · LH · FSH · hCG",m:["glycoprot"]},
+  {id:"h3",l:"POMC",x:1620,y:350,p:"pgHorm",s:"ACTH · MSH · β-endorphin",m:["pomc"]},
+  {id:"h4",l:"GnRH pulses",x:2220,y:350,p:"pgHorm",s:"continuous = shutdown",m:["gnrhanalogues","kallmann"]},
+  {id:"h5",l:"Prolactin brake",x:2820,y:350,p:"pgHorm",s:"dopamine",m:["pitstalk","prolactinoma"]},
+  {id:"h6",l:"GH pulses",x:420,y:430,p:"pgHorm",k:"hub",s:"sleep · puberty · age",m:["ghpulse","ghcontrol"]},
+  {id:"h7",l:"GH control",x:1020,y:430,p:"pgHorm",s:"GHRH up · somatostatin down",m:["ghcontrol"]},
+  {id:"h8",l:"GH actions",x:1620,y:430,p:"pgHorm",s:"protein up · fat burned · glucose spared",m:["ghaction"]},
+  {id:"h9",l:"Plates vs periosteum",x:2220,y:430,p:"pgHorm",s:"length vs thickness",m:["ghaction","acromegaly"]},
+  {id:"h10",l:"IGF-1",x:2820,y:430,p:"pgHorm",s:"the liver’s growth signal",m:["ghaction","laron"]},
+  {id:"d1",l:"Pituitary tumor",x:420,y:610,p:"pgDz",k:"hub",s:"mass effect · bitemporal",m:["pitnet"]},
+  {id:"d2",l:"Acromegaly",x:1020,y:610,p:"pgDz",s:"IGF-1 excess",m:["acromegaly","pitdrugs"]},
+  {id:"d3",l:"Prolactinoma",x:1620,y:610,p:"pgDz",s:"dopamine agonists",m:["prolactinoma","pitdrugs"]},
+  {id:"d4",l:"Nelson syndrome",x:2220,y:610,p:"pgDz",s:"after adrenalectomy",m:["pomc"]},
+  {id:"d5",l:"Apoplexy",x:2820,y:610,p:"pgDz",s:"bleed into a tumor",m:["pitnet","sheehan"]},
+  {id:"d6",l:"Hypopituitarism",x:420,y:690,p:"pgDz",k:"hub",s:"≈ 75% of gland lost",m:["hypopit"]},
+  {id:"d7",l:"Empty sella",x:1020,y:690,p:"pgDz",s:"CSF in the sella",m:["hypopit"]},
+  {id:"d8",l:"Sheehan syndrome",x:1620,y:690,p:"pgDz",s:"postpartum infarct",m:["sheehan"]},
+  {id:"d9",l:"GH deficiency",x:2220,y:690,p:"pgDz",s:"proportionate dwarfism",m:["ghdwarf"]},
+  {id:"d10",l:"Laron syndrome",x:2820,y:690,p:"pgDz",s:"GH resistance",m:["laron","ghdwarf"]}],
+ plots:[
+  {x:140,y:1032,w:2400,h:580,kind:"ghday",t:"Growth hormone across 24 hours"}],
+ edges:[
+  {a:"a1",b:"a2",p:"pgAnat"},
+  {a:"a3",b:"a4",p:"pgAnat"},
+  {a:"a4",b:"a5",p:"pgAnat"},
+  {a:"h1",b:"h2",p:"pgHorm"},
+  {a:"h2",b:"h3",p:"pgHorm"},
+  {a:"h6",b:"h7",p:"pgHorm"},
+  {a:"h7",b:"h8",p:"pgHorm"},
+  {a:"h8",b:"h9",p:"pgHorm"},
+  {a:"h9",b:"h10",p:"pgHorm"},
+  {a:"d1",b:"d2",p:"pgDz"},
+  {a:"d2",b:"d3",p:"pgDz"},
+  {a:"d6",b:"d7",p:"pgDz"},
+  {a:"d7",b:"d8",p:"pgDz"},
+  {a:"d9",b:"d10",p:"pgDz"}]
+};
+
+MAPS.buffers = {
+ t:"Buffers & Henderson–Hasselbalch", sub:"pH as a log scale · what makes a good buffer, and worked Henderson–Hasselbalch numbers · intracellular buffers · compensation for each primary disorder · the anion gap, the urinary anion gap and distal RTA",
+ w:3300, h:1510,
+ fa:"609, 610, 611",
+ src:["Costanzo ch 7 — Acid-base physiology", "Guyton ch 31 — Acid–Base Regulation"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"pH and buffers"},
+  {x:140,y:290,w:3020,h:120,l:"Lungs and kidneys"},
+  {x:140,y:470,w:3020,h:120,l:"Diagnosis"}],
+ panels:[
+  {x:140,y:650,w:1480,h:138,kw:187,t:"Buffer pairs (Costanzo; Guyton)",rows:[
+   ["HCO₃⁻ / CO₂","pK 6.1 · 24 mEq/L · CO₂ breathed off"],
+   ["HPO₄²⁻ / H₂PO₄⁻","pK 6.8 · 4 : 1 at pH 7.4 · urine"],
+   ["Histidine imidazole","pK 6.4–7.0"],
+   ["Hemoglobin","deoxy pK 7.9 · oxy 6.7"]]},
+  {x:1680,y:650,w:1480,h:138,kw:205,t:"Compensation rules (Costanzo Table 7.3)",rows:[
+   ["Metabolic acidosis","PCO₂ ↓ 1.2 per 1 mEq/L HCO₃⁻"],
+   ["Metabolic alkalosis","PCO₂ ↑ 0.6 per 1 mEq/L"],
+   ["Respiratory acidosis","HCO₃⁻ ↑ 0.1 acute · 0.3 chronic per mm Hg"],
+   ["Respiratory alkalosis","HCO₃⁻ ↓ 0.2 acute · 0.4 chronic per mm Hg"]]}],
+ nodes:[
+  {id:"b1",l:"pH and [H⁺]",x:420,y:170,p:"bfBuf",k:"hub",s:"7.4 = 40 nEq/L",m:["phscale"]},
+  {id:"b2",l:"Henderson–Hasselbalch",x:1020,y:170,p:"bfBuf",s:"pH = pK + log A⁻/HA",m:["hhbuffer"]},
+  {id:"b3",l:"A good buffer",x:1620,y:170,p:"bfBuf",s:"pK ± 1 · plenty · volatile",m:["buffpk"]},
+  {id:"b4",l:"Worked numbers",x:2220,y:170,p:"bfBuf",s:"20 : 1 = 7.4",m:["hhcalc"]},
+  {id:"b5",l:"Intracellular buffers",x:2820,y:170,p:"bfBuf",s:"Hb · phosphates · K⁺ shifts",m:["intrabuffer"]},
+  {id:"k1",l:"Compensation",x:420,y:350,p:"bfKid",k:"hub",s:"restore the ratio",m:["abcompensation"]},
+  {id:"k2",l:"Respiratory acidosis",x:1020,y:350,p:"bfKid",s:"acute 0.1 · chronic 0.3",m:["respacid","abcompensation"]},
+  {id:"k3",l:"Respiratory alkalosis",x:1620,y:350,p:"bfKid",s:"acute 0.2 · chronic 0.4",m:["respalk"]},
+  {id:"k4",l:"New HCO₃⁻",x:2220,y:350,p:"bfKid",s:"titratable acid · NH₄⁺",m:["newhco3"]},
+  {id:"k5",l:"Metabolic alkalosis",x:2820,y:350,p:"bfKid",s:"PCO₂ up 0.6 per 1",m:["metalk"]},
+  {id:"x1",l:"Anion gap",x:420,y:530,p:"bfDx",k:"hub",s:"Na⁺ − (Cl⁻ + HCO₃⁻)",m:["agma"]},
+  {id:"x2",l:"Normal-gap acidosis",x:1020,y:530,p:"bfDx",s:"HCO₃⁻ lost",m:["nagma"]},
+  {id:"x3",l:"Urinary anion gap",x:1620,y:530,p:"bfDx",s:"negative gut · positive kidney",m:["uag"]},
+  {id:"x4",l:"Distal RTA",x:2220,y:530,p:"bfDx",s:"urine pH > 5.5",m:["drta","rta"]},
+  {id:"x5",l:"RTA types",x:2820,y:530,p:"bfDx",s:"1 · 2 · 4",m:["rta"]}],
+ plots:[
+  {x:140,y:850,w:2400,h:600,kind:"davenport",t:"Acid–base map — pH, HCO₃⁻ and PCO₂"}],
+ edges:[
+  {a:"b1",b:"b2",p:"bfBuf"},
+  {a:"b2",b:"b3",p:"bfBuf"},
+  {a:"b3",b:"b4",p:"bfBuf"},
+  {a:"k1",b:"k2",p:"bfKid"},
+  {a:"k2",b:"k3",p:"bfKid"},
+  {a:"k3",b:"k4",p:"bfKid"},
+  {a:"x1",b:"x2",p:"bfDx"},
+  {a:"x2",b:"x3",p:"bfDx"},
+  {a:"x3",b:"x4",p:"bfDx"},
+  {a:"x4",b:"x5",p:"bfDx"}]
+};
+
+MAPS.renalmin = {
+ t:"Renal Calcium, Phosphate & Magnesium", sub:"Where the nephron reabsorbs Ca²⁺ (67 · 25 · 8), phosphate (proximal only, with a Tm) and Mg²⁺ (mostly the thick ascending limb) · the Ca²⁺-sensing receptor and FHH · PTH’s phosphaturic and hypocalciuric actions · loops, thiazides and CKD",
+ w:3300, h:1512,
+ fa:"336, 349, 606, 608, 621",
+ src:["Costanzo ch 6 — Renal physiology", "Guyton ch 30 — Renal Regulation of Potassium, Calcium, Phosphate, and Magnesium; Integration of Renal Mechanisms for Control of Blood Volume and Extracellular Fluid Volume", "Guyton ch 32 — Diuretics and Kidney Diseases"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Calcium"},
+  {x:140,y:290,w:3020,h:120,l:"Phosphate and PTH"},
+  {x:140,y:470,w:3020,h:120,l:"Magnesium"}],
+ panels:[
+  {x:140,y:650,w:1480,h:116,kw:196,t:"Where each is reabsorbed (% of the filtered load)",rows:[
+   ["Ca²⁺ (Costanzo)","PT 67 · TAL 25 · DT 8 · excreted < 1"],
+   ["Phosphate (Costanzo)","PCT 70 · straight PT 15 · excreted 15"],
+   ["Mg²⁺ (Guyton)","PT 25 · TAL 65 · distal < 5"]]},
+  {x:1680,y:650,w:1480,h:160,kw:136,t:"What changes excretion",rows:[
+   ["Saline load","Ca²⁺ ↑ with Na⁺"],
+   ["Loop diuretic","Ca²⁺ ↑ · Mg²⁺ ↑"],
+   ["Thiazide","Ca²⁺ ↓"],
+   ["PTH","phosphate ↑ · Ca²⁺ ↓"],
+   ["Hypercalcemia","Ca²⁺ ↑ via CaSR"]]}],
+ nodes:[
+  {id:"c1",l:"Ca²⁺ handling",x:420,y:170,p:"rmCa",k:"hub",s:"PT 67 · TAL 25 · DT 8",m:["renalca"]},
+  {id:"c2",l:"Tracks Na⁺ proximally",x:1020,y:170,p:"rmCa",s:"saline → calciuria",m:["renalca"]},
+  {id:"c3",l:"Ca²⁺-sensing receptor",x:1620,y:170,p:"rmCa",s:"high Ca²⁺ → NKCC2 off",m:["casr"]},
+  {id:"c4",l:"FHH",x:2220,y:170,p:"rmCa",s:"defective CaSR",m:["fhh","casr"]},
+  {id:"c5",l:"Loops vs thiazides",x:2820,y:170,p:"rmCa",s:"dump vs save Ca²⁺",m:["loopdiuretics","thiazides"]},
+  {id:"p1",l:"Phosphate handling",x:420,y:350,p:"rmPo",k:"hub",s:"proximal · Tm",m:["renalpo4"]},
+  {id:"p2",l:"PTH on the nephron",x:1020,y:350,p:"rmPo",s:"phosphaturic · hypocalciuric",m:["pthneph","pthaction"]},
+  {id:"p3",l:"Urinary cAMP",x:1620,y:350,p:"rmPo",s:"hallmark of PTH",m:["pthneph"]},
+  {id:"p4",l:"Phosphate in CKD",x:2220,y:350,p:"rmPo",s:"retained below 20–30% GFR",m:["ckdphos","renalod"]},
+  {id:"p5",l:"Calcitriol",x:2820,y:350,p:"rmPo",s:"kidney 1α-hydroxylase",m:["calcitriol"]},
+  {id:"m1",l:"Mg²⁺ handling",x:420,y:530,p:"rmMg",k:"hub",s:"TAL 65% paracellular",m:["renalmg"]},
+  {id:"m2",l:"Loop diuretic wasting",x:1020,y:530,p:"rmMg",s:"voltage lost",m:["renalmg","loopdiuretics"]},
+  {id:"m3",l:"Bartter syndrome",x:1620,y:530,p:"rmMg",s:"TAL transport defect",m:["bartter"]},
+  {id:"m4",l:"Gitelman syndrome",x:2220,y:530,p:"rmMg",s:"DCT · low Mg²⁺",m:["gitelman"]},
+  {id:"m5",l:"Mg²⁺ & phosphate disorders",x:2820,y:530,p:"rmMg",s:"causes and effects",m:["mgpo4"]}],
+ plots:[
+  {x:140,y:872,w:2000,h:580,kind:"nephmin",t:"Where Ca²⁺, phosphate and Mg²⁺ are reabsorbed"}],
+ edges:[
+  {a:"c1",b:"c2",p:"rmCa"},
+  {a:"c2",b:"c3",p:"rmCa"},
+  {a:"c3",b:"c4",p:"rmCa"},
+  {a:"p1",b:"p2",p:"rmPo"},
+  {a:"p2",b:"p3",p:"rmPo"},
+  {a:"p3",b:"p4",p:"rmPo"},
+  {a:"m1",b:"m2",p:"rmMg"},
+  {a:"m2",b:"m3",p:"rmMg"},
+  {a:"m3",b:"m4",p:"rmMg"}]
+};
+
+MAPS.ventmech = {
+ t:"Ventilation Mechanics & Dead Space", sub:"The muscles of breathing · pleural, alveolar and transpulmonary pressure · lung and chest-wall compliance, surface tension and the Laplace numbers · the energy cost of breathing · lung volumes, dead space and alveolar ventilation",
+ w:3300, h:1510,
+ fa:"679, 680, 682, 683, 692",
+ src:["Guyton ch 38 — Pulmonary Ventilation", "Costanzo ch 5 — Respiratory physiology"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Muscles and pressures"},
+  {x:140,y:290,w:3020,h:120,l:"Elastic forces and work"},
+  {x:140,y:470,w:3020,h:120,l:"Volumes and ventilation"}],
+ panels:[
+  {x:140,y:650,w:1480,h:138,kw:222,t:"Pressures and compliance (Guyton)",rows:[
+   ["Pleural pressure","−5 → −7.5 cm H₂O"],
+   ["Alveolar pressure","−1 in · +1 out"],
+   ["Transpulmonary pressure","alveolar − pleural"],
+   ["Compliance","lungs 200 · lungs + thorax 110 mL/cm H₂O"]]},
+  {x:1680,y:650,w:1480,h:138,kw:273,t:"Surface tension (Guyton)",rows:[
+   ["Pure water","72 dynes/cm"],
+   ["Alveolar fluid, no surfactant","50 dynes/cm"],
+   ["With surfactant","5–30 dynes/cm"],
+   ["Average alveolus","4 cm H₂O with surfactant · 18 without"]]}],
+ nodes:[
+  {id:"m1",l:"Muscles of breathing",x:420,y:170,p:"vmMus",k:"hub",s:"diaphragm · external intercostals",m:["respmus"]},
+  {id:"m2",l:"Pleural pressure",x:1020,y:170,p:"vmMus",s:"−5 → −7.5 cm H₂O",m:["breathpress"]},
+  {id:"m3",l:"Alveolar pressure",x:1620,y:170,p:"vmMus",s:"−1 in · +1 out",m:["breathpress"]},
+  {id:"m4",l:"Transpulmonary pressure",x:2220,y:170,p:"vmMus",s:"alveolar − pleural",m:["breathpress","compliance"]},
+  {id:"m5",l:"Pleural fluid",x:2820,y:170,p:"vmMus",s:"kept negative by lymph",m:["pleura"]},
+  {id:"e1",l:"Compliance",x:420,y:350,p:"vmElas",k:"hub",s:"ΔV / ΔP · hysteresis",m:["compliance"]},
+  {id:"e2",l:"Lung vs lung–thorax",x:1020,y:350,p:"vmElas",s:"200 vs 110 mL/cm H₂O",m:["lungthorax"]},
+  {id:"e3",l:"Surface tension",x:1620,y:350,p:"vmElas",s:"P = 2T / r",m:["laplace"]},
+  {id:"e4",l:"Neonatal RDS",x:2220,y:350,p:"vmElas",s:"no surfactant",m:["nrds","laplace"]},
+  {id:"e5",l:"Work of breathing",x:2820,y:350,p:"vmElas",s:"3–5% at rest",m:["wob","airwayres"]},
+  {id:"v1",l:"Lung volumes",x:420,y:530,p:"vmVent",k:"hub",s:"VT · IRV · ERV · RV",m:["lungvol"]},
+  {id:"v2",l:"Dead space",x:1020,y:530,p:"vmVent",s:"≈ 150 mL",m:["deadspace"]},
+  {id:"v3",l:"Measuring it",x:1620,y:530,p:"vmVent",s:"N₂ washout · physiologic",m:["deadmeas"]},
+  {id:"v4",l:"Alveolar ventilation",x:2220,y:530,p:"vmVent",s:"4200 mL/min",m:["alvvent"]},
+  {id:"v5",l:"V/Q mismatch",x:2820,y:530,p:"vmVent",s:"shunt and dead space",m:["vq"]}],
+ plots:[
+  {x:140,y:850,w:1480,h:600,kind:"spiro",t:"Spirogram — volumes and capacities"},
+  {x:1680,y:850,w:1480,h:600,kind:"paco2va",t:"PaCO₂ and alveolar ventilation"}],
+ edges:[
+  {a:"m1",b:"m2",p:"vmMus"},
+  {a:"m2",b:"m3",p:"vmMus"},
+  {a:"m3",b:"m4",p:"vmMus"},
+  {a:"e1",b:"e2",p:"vmElas"},
+  {a:"e2",b:"e3",p:"vmElas"},
+  {a:"e3",b:"e4",p:"vmElas"},
+  {a:"v1",b:"v2",p:"vmVent"},
+  {a:"v2",b:"v3",p:"vmVent"},
+  {a:"v3",b:"v4",p:"vmVent"},
+  {a:"v4",b:"v5",p:"vmVent"}]
+};
+
+MAPS.shoulder = {
+ t:"Shoulder Pain", sub:"The workup: trauma first, then intrinsic vs extrinsic, then glenohumeral vs outside the joint · glenohumeral and AC osteoarthritis · cuff impingement, tendinosis and tears · adhesive capsulitis · biceps, bursa, AC joint and the nerves around the shoulder",
+ w:3300, h:850,
+ fa:"450, 451",
+ src:["OCOM Ortho — SDL 13 lecture: Shoulder pain and injury", "Moore ch 3 — Upper Limb"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Workup"},
+  {x:140,y:290,w:3020,h:120,l:"Glenohumeral causes"},
+  {x:140,y:470,w:3020,h:120,l:"Outside the joint"}],
+ panels:[
+  {x:140,y:650,w:1480,h:116,kw:170,t:"Glenohumeral vs AC osteoarthritis (course)",rows:[
+   ["Glenohumeral","anterior shoulder · abduction, external rotation"],
+   ["Acromioclavicular","superior shoulder · adduction, forward flexion"],
+   ["Both","most > 70 · women · morning stiffness"]]},
+  {x:1680,y:650,w:1480,h:138,kw:273,t:"Exam (course; First Aid)",rows:[
+   ["Neer · Hawkins","impingement"],
+   ["Drop arm","cuff tear"],
+   ["Empty / full can","supraspinatus"],
+   ["Loss of motion in every plane","adhesive capsulitis"]]}],
+ nodes:[
+  {id:"w1",l:"Was there trauma?",x:420,y:170,p:"shWork",k:"hub",s:"the first branch",m:["shwork"]},
+  {id:"w2",l:"Radiographs",x:1020,y:170,p:"shWork",s:"fracture · dislocation · AC sprain",m:["shwork"]},
+  {id:"w3",l:"Fracture or dislocation",x:1620,y:170,p:"shWork",s:"clavicle · humerus · GH",m:["clavfx","shoulderdisloc"]},
+  {id:"w4",l:"Extrinsic cause?",x:2220,y:170,p:"shWork",s:"vague · electric · dyspnea",m:["shextrinsic"]},
+  {id:"w5",l:"Joint motion painless",x:2820,y:170,p:"shWork",s:"look elsewhere",m:["shextrinsic"]},
+  {id:"g1",l:"Impingement",x:420,y:350,p:"shGH",k:"hub",s:"subacromial · Neer · Hawkins",m:["impinge"]},
+  {id:"g2",l:"Cuff tendinosis & tears",x:1020,y:350,p:"shGH",s:"drop arm · MRI or US",m:["rctear","rotatorcuff"]},
+  {id:"g3",l:"Cuff muscles",x:1620,y:350,p:"shGH",s:"SItS",m:["rotatorcuff"]},
+  {id:"g4",l:"Adhesive capsulitis",x:2220,y:350,p:"shGH",s:"global loss of motion",m:["frozen"]},
+  {id:"g5",l:"GH osteoarthritis",x:2820,y:350,p:"shGH",s:"abduction · ER worst",m:["shoa"]},
+  {id:"o1",l:"Extraglenohumeral",x:420,y:530,p:"shOut",k:"hub",s:"focal tenderness",m:["shextragh"]},
+  {id:"o2",l:"AC arthritis",x:1020,y:530,p:"shOut",s:"adduction · forward flexion",m:["shoa","shextragh"]},
+  {id:"o3",l:"Biceps tendinopathy",x:1620,y:530,p:"shOut",s:"anterior shoulder",m:["shextragh"]},
+  {id:"o4",l:"Scapular winging",x:2220,y:530,p:"shOut",s:"long thoracic nerve",m:["longthoracic"]},
+  {id:"o5",l:"Axillary nerve",x:2820,y:530,p:"shOut",s:"deltoid · teres minor",m:["axillarynerve"]}],
+ edges:[
+  {a:"w1",b:"w2",p:"shWork"},
+  {a:"w2",b:"w3",p:"shWork"},
+  {a:"w4",b:"w5",p:"shWork"},
+  {a:"g1",b:"g2",p:"shGH"},
+  {a:"g2",b:"g3",p:"shGH"},
+  {a:"o1",b:"o2",p:"shOut"},
+  {a:"o2",b:"o3",p:"shOut"}]
+};
+
+MAPS.ctdis = {
+ t:"Heritable Connective Tissue Disorders", sub:"Ehlers-Danlos syndromes by the step of collagen they break — classic, vascular, hypermobile, kyphoscoliotic, dermatosparaxis · Marfan and Loeys-Dietz through fibrillin and TGF-β · why structural defects are dominant and enzyme defects recessive",
+ w:3300, h:794,
+ fa:"48, 49, 50",
+ src:["Robbins ch 5 — Genetic disorders", "Robbins ch 11 — Blood vessels"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Ehlers-Danlos syndromes"},
+  {x:140,y:370,w:3020,h:120,l:"Fibrillin and TGF-β"}],
+ panels:[
+  {x:140,y:550,w:1480,h:182,kw:153,t:"EDS types (Robbins Table 5.5)",rows:[
+   ["Classical","AD · COL5A1"],
+   ["Vascular","AD · COL3A1"],
+   ["Hypermobile","AD · gene unknown"],
+   ["Classical-like","AR · TNXB"],
+   ["Dermatosparaxis","AR · ADAMTS2"],
+   ["Kyphoscoliotic","AR · PLOD1"]]},
+  {x:1680,y:550,w:1480,h:116,kw:144,t:"Look-alikes",rows:[
+   ["Marfan","FBN1 · lens up and out · aortic root"],
+   ["Homocystinuria","lens down and in · clots"],
+   ["Loeys-Dietz","TGF-β receptors · aneurysms rupture small"]]}],
+ nodes:[
+  {id:"e1",l:"EDS — one theme",x:420,y:170,p:"ctEds",k:"hub",s:"13 types · collagen",m:["edsclass","eds"]},
+  {id:"e2",l:"Classic",x:1020,y:170,p:"ctEds",s:"COL5A1 · TNXB-like",m:["edsclassic"]},
+  {id:"e3",l:"Vascular",x:1620,y:170,p:"ctEds",s:"COL3A1 · rupture",m:["edsvasc"]},
+  {id:"e4",l:"Kyphoscoliotic",x:2220,y:170,p:"ctEds",s:"PLOD1 · lysyl hydroxylase",m:["edskypho"]},
+  {id:"e5",l:"Dermatosparaxis",x:2820,y:170,p:"ctEds",s:"ADAMTS2 · N-peptidase",m:["edsproc"]},
+  {id:"e6",l:"Hypermobile",x:420,y:250,p:"ctEds",k:"hub",s:"gene unknown",m:["edshyper"]},
+  {id:"e7",l:"Collagen types",x:1020,y:250,p:"ctEds",s:"I · II · III · IV",m:["collagentypes"]},
+  {id:"e8",l:"Osteogenesis imperfecta",x:1620,y:250,p:"ctEds",s:"type I collagen",m:["oi"]},
+  {id:"e9",l:"Alport syndrome",x:2220,y:250,p:"ctEds",s:"type IV collagen",m:["alport"]},
+  {id:"e10",l:"Menkes disease",x:2820,y:250,p:"ctEds",s:"copper · lysyl oxidase",m:["menkes"]},
+  {id:"f1",l:"Marfan syndrome",x:420,y:430,p:"ctFib",k:"hub",s:"FBN1 · lens up",m:["marfan"]},
+  {id:"f2",l:"Loeys-Dietz",x:1020,y:430,p:"ctFib",s:"TGF-β receptors",m:["loeysdietz"]},
+  {id:"f3",l:"Thoracic aneurysm",x:1620,y:430,p:"ctFib",s:"cystic medial degeneration",m:["taa"]},
+  {id:"f4",l:"Homocystinuria",x:2220,y:430,p:"ctFib",s:"lens down and in",m:["homocyst"]},
+  {id:"f5",l:"Dominant vs recessive",x:2820,y:430,p:"ctFib",s:"structural vs enzyme",m:["inheritrule"]}],
+ edges:[
+  {a:"e1",b:"e2",p:"ctEds"},
+  {a:"e2",b:"e3",p:"ctEds"},
+  {a:"e3",b:"e4",p:"ctEds"},
+  {a:"e4",b:"e5",p:"ctEds"},
+  {a:"f1",b:"f2",p:"ctFib"},
+  {a:"f2",b:"f3",p:"ctFib"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
-  ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","iemlab","nucleo","collagen","vitamins","cellcycle","cellbio","molbio","signal","genetics"]],
+  ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","iemlab","nucleo","collagen","ctdis","vitamins","cellcycle","cellbio","molbio","signal","genetics"]],
   ["path","Pathology",["genpath","neoplasia","thromboemb"]],
   ["cardio","Cardiac",["cardiac","cardcycle","valves","ihd","chd","vasc","vascshock","htnrx","rhythm"]],
-  ["pulmo","Pulmonary",["pulm","lungmech","gasx","highalt","hypoxia","lungdz","respinf","respdrug"]],
-  ["renal","Renal",["nephron","renalphys","gfrk","renalna","urineconc","histoembryo","glom","renvasc","acidbase","akickd","endocrine"]],
+  ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","highalt","hypoxia","lungdz","lungcancer","respinf","respdrug"]],
+  ["renal","Renal",["nephron","renalphys","gfrk","renalna","renalmin","urineconc","histoembryo","glom","renvasc","buffers","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","liver","gitract","abdanat"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","softtissue","tumark"]],
   ["immuno","Immunology",["immune","lymphdev","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
-  ["endo","Endocrine",["axes","hormones","gcpharm","rclass","pancreas"]],
+  ["endo","Endocrine",["axes","pitgh","hormones","gcpharm","rclass","pancreas"]],
   ["devrepro","Repro & Development",["sexdev","androgen","repro","placenta","obgyn","malerepro","embryo"]],
   ["neuro","Neuro",["neurotx","synapse","ans","membrane","ionchan","spine","brainstem","chemvisc","motorctl","cerebellum","gaze","weakness","stroke","brainvessels","brainreg","meninges","basal","neuroer","seizhead"]],
   ["behav","Psych & Behavior",["limbmem","psychmse","dsmdx","psychdx","psychtx","psyrxprin","psychsom","somatcare","substance","sleepdev","neurodev"]],
   ["eent","EENT",["eyecn","anteye","vision","ent","hearing","larynx"]],
-  ["msk","Musculoskeletal",["muscle","bone","bonehisto","arthritis","crystals","derm","plexus","orthoinj","sportsortho","legfx","orthowork","neckpain","ptrehab","integrative"]],
+  ["msk","Musculoskeletal",["muscle","bone","bonehisto","arthritis","crystals","derm","plexus","orthoinj","sportsortho","legfx","orthowork","neckpain","shoulder","ptrehab","integrative"]],
   ["omm","OMM",["vsomatic","neiomm","chapman","omt","lbp","agingomt","chestomt","ommmech","janda","cranial","jones"]],
   ["id","Infectious",["microlab","abx","antiviral","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
   ["pharm","Pharm",["pkpd","cyp","adr","aging","tox","environ","anesth","pain"]],
@@ -32712,7 +33577,15 @@ function panelSVG(p,pi){
 const PLOTVAR={};   // "view:index" → chosen variant
 const PLOTQ={};     // "view:index" → graph quiz {ans: hidden variant, pick: the answer given or null, n, right, mix}
 const PLOTCMP={};   // "view:index" → compare {open: chips showing, j: the version overlaid or null}
-let GQ=null;        // graph mix {list: [[view, plot index]], k: current, n: answered, right}
+let GQ=null;        // graph mix {list: [[view, plot index]], k: current, n: answered, right, scope}
+/* graph versions named wrong, this device only: {"view:plot": {version: misses}} — a right answer takes one off */
+let GMISS=(()=>{ try{ return JSON.parse(localStorage.getItem("mla-gmiss")||"{}")||{}; }catch(e){ return {}; } })();
+function gmissMark(key,j,right){ const m=GMISS[key]||(GMISS[key]={});
+  if(right){ if(m[j]){ m[j]--; if(!m[j]) delete m[j]; } } else m[j]=(m[j]||0)+1;
+  if(!Object.keys(m).length) delete GMISS[key];
+  try{ localStorage.setItem("mla-gmiss",JSON.stringify(GMISS)); }catch(e){} }
+const gmissed=key=>Object.keys(GMISS[key]||{}).map(Number);
+let GSCOPE=(()=>{ try{ return localStorage.getItem("mla-gscope")||"all"; }catch(e){ return "all"; } })();
 const lin=n=>Array.from({length:n+1},(_,i)=>i/n);
 const hill=(p50,n)=>p=>100*Math.pow(p,n)/(Math.pow(p,n)+Math.pow(p50,n));
 function pvLoop(o){
@@ -32900,6 +33773,32 @@ const CORT={norm:[[0,5],[2,6],[4,11],[6,20],[8,18],[10,14],[12,12],[14,11.5],[16
   shift:[[0,9],[4,8],[8,7],[10,8],[12,11],[14,14],[16,17],[18,15],[20,12],[22,10],[24,9]],
   cush:[[0,19],[4,20],[6,23],[8,23],[12,22],[16,21],[20,20],[24,19]],
   supp:[[0,2],[6,3],[12,2.5],[18,2.2],[24,2]]};
+/* spirogram: tidal breaths at FRC, one maximal breath in to TLC and out to RV, tidal again (litres; Guyton Fig 38.6) */
+function spiro(rv,frc,vt,tlc){ const pts=[], tid=t=>frc+vt*(1-Math.cos(2*Math.PI*t/4))/2, ease=u=>(1-Math.cos(Math.PI*u))/2;
+  for(let k=0;k<=96;k++){ const t=k*0.25; let v;
+    if(t<=8) v=tid(t); else if(t<=10) v=frc+(tlc-frc)*ease((t-8)/2); else if(t<=13) v=tlc+(rv-tlc)*ease((t-10)/3);
+    else if(t<=15) v=rv+(frc-rv)*ease((t-13)/2); else v=tid(t-15);
+    pts.push([t,v]); } return pts; }
+/* alveolar ventilation equation: PaCO₂ = V̇CO₂ × 0.863 / V̇A (V̇CO₂ mL/min, V̇A L/min; Costanzo ch 5) */
+function paco2(vco2){ const pts=[], v0=Math.max(1.5,vco2*0.863/118); for(let va=v0;va<=12.0001;va+=0.1) pts.push([va,vco2*0.863/va]); return pts; }
+const pco2at=(vco2,va)=>Math.round(vco2*0.863/va);
+/* acid–base map: HCO₃⁻ = 0.03 × PCO₂ × 10^(pH − 6.1) along each PCO₂ isobar (Costanzo ch 7) */
+function isobar(p){ const pts=[]; for(let k=0;k<=40;k++){ const ph=7+k*0.02; pts.push([ph,0.03*p*Math.pow(10,ph-6.1)]); } return pts; }
+const phOf=(hco3,p)=>+(6.1+Math.log10(hco3/(0.03*p))).toFixed(2);
+/* the four PCO₂ isobars; the disorder points ride on the first one as marks */
+const ISOB=marks=>[{pts:isobar(20),lab:"PCO₂ 20",marks},{pts:isobar(40),lab:"PCO₂ 40"},{pts:isobar(60),lab:"PCO₂ 60"},{pts:isobar(80),lab:"PCO₂ 80"}];
+/* GH over 24 hours from midnight (sleep onset): a pulse about every 2 hours, the largest within an hour of falling asleep (Costanzo ch 9; heights schematic) */
+function ghday(scale,every){ const amp=[60,18,12,8,10,6,9,7,8,6,9,7,8,6,9,7], pts=[];
+  for(let k=0;k<=240;k++){ const t=k*0.1; let v=2*Math.min(1,scale);
+    for(let j=0;j*every+0.75<=24.5;j++){ const c=j*every+0.75, a=amp[j%amp.length]*scale; v+=a*Math.exp(-((t-c)*(t-c))/(2*0.22*0.22)); }
+    pts.push([t,v]); } return pts; }
+/* insulin, glucagon and glucose as multiples of the fasting value, minutes (Guyton ch 79; the later shapes schematic) */
+const INSG={g1:[[-15,1],[0,1],[5,2.5],[180,2.5]], i1:[[-15,1],[0,1],[4,10],[12,5.5],[30,6.5],[60,7.8],[120,9],[180,9.5]], c1:[[-15,1],[0,1],[30,0.6],[180,0.5]],
+  g2:[[-15,1],[0,1],[30,0.7],[60,0.6],[180,0.6]], i2:[[-15,1],[0,1],[5,0.4],[30,0.25],[180,0.2]], c2:[[-15,1],[0,1],[30,2.5],[60,3.6],[120,4],[180,4]],
+  g3:[[-15,1],[180,1]], i3:[[-15,1],[0,1],[20,2.4],[60,3],[180,2.6]], c3:[[-15,1],[0,1],[20,2],[60,2.8],[180,2.6]],
+  g4:[[-15,1],[180,1]], c4:[[-15,1],[0,1],[60,2.5],[120,4],[180,4.5]]};
+/* % of the filtered load reabsorbed by segment (Costanzo ch 6; Guyton ch 30) */
+const NMIN={ca:[[0,67],[1,25],[2,8],[3,1]], po:[[0,85],[1,0],[2,0],[3,15]], mg:[[0,25],[1,65],[2,5],[3,5]]};
 const PLOTS={
   glomcap:{xl:"Distance along the glomerular capillary",yl:"Pressure (mm Hg)",xr:[0,1],yr:[0,60],xt:[0,0.5,1],xtl:["afferent end","halfway","efferent end"],yt:[0,10,20,30,40,50,60],ref:true,vars:[
     {l:"Normal",cap:"Costanzo’s values. PGC stays at 45 mm Hg along the capillary because the efferent arteriole holds it up; PBS is 10; πGC climbs as protein-free fluid is filtered out. Filtration happens wherever the net pressure is above zero.",
@@ -33184,6 +34083,89 @@ const PLOTS={
      events:[[8,"daily dose"]],
      key:[["HPA","Suppressed — the risk is adrenal crisis on stopping"],["am","Large doses: a single morning dose if possible; alternate-day dosing leaves a recovery period (Katzung)"]],
      d:()=>[{pts:mono(CORT.supp,10),lab:"Cortisol"}]}]},
+  spiro:{xl:"Time (s)",yl:"Lung volume (L)",xr:[0,24],yr:[0,7],xt:[0,4,8,12,16,20,24],yt:[0,1,2,3,4,5,6,7],ref:true,vars:[
+    {l:"Normal",cap:"Guyton Fig 38.6 (young man): tidal breaths of 0.5 L from the functional residual capacity, then a maximal breath in to total lung capacity and out to residual volume. Spirometry cannot measure residual volume, or any capacity that contains it.",
+     key:[["VT","Tidal volume 0.5 L · IRV 3.0 · ERV 1.1 · RV 1.2"],["VC","Vital capacity 4.6 L = IRV + VT + ERV"],["TLC","Total lung capacity 5.8 L · FRC 2.3 L"]],
+     d:()=>[{pts:spiro(1.2,2.3,0.5,5.8),lab:"Lung volume"},{y:5.8,lab:"TLC 5.8"},{y:2.3,lab:"FRC 2.3"},{y:1.2,lab:"RV 1.2"}]},
+    {l:"Obstructive",cap:"Schematic. Air is trapped: residual volume, FRC and total lung capacity rise, and FEV₁ falls more than FVC, so FEV₁/FVC falls (First Aid).",
+     key:[["RV","↑ — the lungs cannot empty"],["TLC","↑ — hyperinflation"],["FEV₁/FVC","↓ below 70%"]],
+     d:()=>[{pts:spiro(2.6,3.6,0.5,6.6),lab:"Lung volume"},{y:6.6,lab:"TLC ↑"},{y:3.6,lab:"FRC ↑"},{y:2.6,lab:"RV ↑"}]},
+    {l:"Restrictive",cap:"Schematic. Stiff lungs or chest wall: total lung capacity, FRC and residual volume all fall; FEV₁ falls in proportion to FVC, so FEV₁/FVC is normal or high (First Aid). Breathing is fast and shallow.",
+     key:[["TLC","↓ — the lungs cannot fill"],["FEV₁/FVC","normal or ↑"]],
+     d:()=>[{pts:spiro(0.9,1.7,0.4,4),lab:"Lung volume"},{y:4,lab:"TLC ↓"},{y:1.7,lab:"FRC ↓"},{y:0.9,lab:"RV ↓"}]}]},
+  paco2va:{xl:"Alveolar ventilation (L/min)",yl:"PaCO₂ (mm Hg)",xr:[1,12],yr:[0,120],xt:[2,4,6,8,10,12],yt:[0,20,40,60,80,100,120],ref:true,vars:[
+    {l:"Normal",cap:"The alveolar ventilation equation (Costanzo): PaCO₂ = V̇CO₂ × K / V̇A, so for a given CO₂ production PaCO₂ is inversely proportional to alveolar ventilation. With V̇CO₂ 200 mL/min and V̇A 4.2 L/min (Guyton), PaCO₂ is about 40 mm Hg.",
+     key:[["4.2","12 breaths × (500 − 150 mL) = 4.2 L/min (Guyton)"],["K","863 mm Hg at body conditions (BTPS)"]],
+     d:()=>[{pts:paco2(200),lab:"PaCO₂",marks:[[4.2,pco2at(200,4.2),"normal"]]},{y:40,lab:"40"}]},
+    {l:"Hypoventilation",cap:"Halve alveolar ventilation and PaCO₂ doubles — respiratory acidosis.",
+     key:[["½","V̇A 2.1 L/min → PaCO₂ about 80"]],
+     d:()=>[{pts:paco2(200),lab:"PaCO₂",marks:[[2.1,pco2at(200,2.1),"½ ventilation"]]},{y:40,lab:"40"}]},
+    {l:"Hyperventilation",cap:"Double alveolar ventilation and PaCO₂ halves — respiratory alkalosis.",
+     key:[["2×","V̇A 8.4 L/min → PaCO₂ about 20"]],
+     d:()=>[{pts:paco2(200),lab:"PaCO₂",marks:[[8.4,pco2at(200,8.4),"2× ventilation"]]},{y:40,lab:"40"}]},
+    {l:"More CO₂ made",cap:"By the same equation, doubling CO₂ production (as in exercise) doubles PaCO₂ at an unchanged ventilation — so alveolar ventilation must double to hold PaCO₂ at 40.",
+     key:[["V̇CO₂","400 mL/min: the whole curve moves up"]],
+     d:()=>[{pts:paco2(400),lab:"PaCO₂",marks:[[8.4,pco2at(400,8.4),"2× ventilation"]]},{y:40,lab:"40"}]}]},
+  davenport:{xl:"pH",yl:"Plasma HCO₃⁻ (mEq/L)",xr:[7,7.8],yr:[0,50],xt:[7,7.1,7.2,7.3,7.4,7.5,7.6,7.7,7.8],xtl:["7.0","7.1","7.2","7.3","7.4","7.5","7.6","7.7","7.8"],yt:[0,10,20,30,40,50],vars:[
+    {l:"Normal",cap:"Each curve holds PCO₂ constant: HCO₃⁻ = 0.03 × PCO₂ × 10^(pH − 6.1). Normal is HCO₃⁻ 24, PCO₂ 40, pH 7.40 (Costanzo).",
+     key:[["isobar","Points on one curve share a PCO₂ — moving along it is a metabolic change; moving between curves is respiratory"]],
+     d:()=>ISOB([[7.4,24,"normal"]])},
+    {l:"Metabolic acidosis",cap:"HCO₃⁻ falls to 12. Respiratory compensation is immediate: PCO₂ falls 1.2 mm Hg per mEq/L (Costanzo Table 7.3) — to about 26 — lifting pH from 7.10 to about 7.29.",
+     key:[["1.2","PCO₂ ↓ 1.2 per 1 mEq/L HCO₃⁻ · First Aid: Winters 1.5 × HCO₃⁻ + 8 ± 2"]],
+     d:()=>ISOB([[phOf(12,40),12,"uncompensated"],[phOf(12,25.6),12,"compensated","below"]])},
+    {l:"Metabolic alkalosis",cap:"HCO₃⁻ rises to 36; hypoventilation raises PCO₂ 0.6 mm Hg per mEq/L — to about 47 — bringing pH from 7.58 to about 7.51 (Costanzo).",
+     key:[["0.6","PCO₂ ↑ 0.6 per 1 mEq/L HCO₃⁻"]],
+     d:()=>ISOB([[phOf(36,40),36,"uncompensated"],[phOf(36,47.2),36,"compensated","below"]])},
+    {l:"Respiratory acidosis",cap:"PCO₂ 60. Acutely HCO₃⁻ rises only 0.1 mEq/L per mm Hg (pH about 7.26); once the kidneys compensate, 0.3 per mm Hg (HCO₃⁻ 30, pH about 7.32) — chronic patients sit closer to normal (Costanzo).",
+     key:[["acute","+0.1 mEq/L per mm Hg — buffering only"],["chronic","+0.3 mEq/L per mm Hg — renal HCO₃⁻ retention"]],
+     d:()=>ISOB([[phOf(26,60),26,"acute","below"],[phOf(30,60),30,"chronic"]])},
+    {l:"Respiratory alkalosis",cap:"PCO₂ 20. Acutely HCO₃⁻ falls 0.2 mEq/L per mm Hg (pH about 7.66); chronically 0.4 per mm Hg (HCO₃⁻ 16, pH about 7.53) (Costanzo).",
+     key:[["acute","−0.2 mEq/L per mm Hg"],["chronic","−0.4 mEq/L per mm Hg"]],
+     d:()=>ISOB([[phOf(22,20),22,"acute"],[phOf(16,20),16,"chronic","below"]])}]},
+  ghday:{xl:"Time of day — asleep at midnight",yl:"Plasma GH (relative)",xr:[0,24],yr:[0,105],xt:[0,4,8,12,16,20,24],xtl:["Midnight","4 am","8 am","Noon","4 pm","8 pm","Midnight"],yt:[],ref:true,vars:[
+    {l:"Adult",cap:"Costanzo: GH is released in bursts about every 2 hours; the largest comes within an hour of falling asleep, in sleep stages III and IV. Heights are schematic.",
+     bands:[[0,7,"sleep"]],
+     key:[["sleep","Biggest pulse soon after sleep onset"],["2 h","Pulse interval"]],
+     d:()=>[{pts:ghday(1,2),lab:"GH"}]},
+    {l:"Puberty",cap:"An enormous secretory burst — estrogen in girls, testosterone in boys — with more frequent and larger pulses that drive the growth spurt (Costanzo; schematic).",
+     bands:[[0,7,"sleep"]],
+     key:[["↑↑","Frequency and magnitude both rise"]],
+     d:()=>[{pts:ghday(1.6,1.5),lab:"GH"}]},
+    {l:"Older adult",cap:"In senescence GH secretory rates and pulsatility fall to their lowest (Costanzo; schematic).",
+     bands:[[0,7,"sleep"]],
+     key:[["↓","Smallest pulses of life"]],
+     d:()=>[{pts:ghday(0.3,2),lab:"GH"}]},
+    {l:"Fasting",cap:"Hypoglycemia and starvation are potent stimuli for GH secretion (Costanzo; heights schematic) — GH then spares glucose and mobilizes fat.",
+     bands:[[0,7,"sleep"]],
+     key:[["fast","Low glucose and starvation raise GH"]],
+     d:()=>[{pts:ghday(1.5,2),lab:"GH"}]}]},
+  insglu:{xl:"Minutes",yl:"Level (× fasting value)",xr:[-15,180],yr:[0,11],xt:[0,30,60,90,120,150,180],yt:[0,1,2,4,6,8,10],vars:[
+    {l:"Glucose raised",cap:"Guyton Fig 79.8: when blood glucose is suddenly raised to 2–3 times normal and held there, insulin rises almost 10-fold in 3–5 minutes (preformed insulin dumped), falls about halfway in 5–10 minutes, then from about 15 minutes rises again to a plateau over 2–3 hours. High glucose suppresses glucagon.",
+     events:[[0,"glucose raised"]],
+     key:[["1st","Preformed insulin released"],["2nd","New insulin synthesized — plateau in 2–3 h"],["↓","Glucagon falls as glucose rises"]],
+     d:()=>[{pts:INSG.g1,lab:"Glucose"},{pts:INSG.i1,lab:"Insulin"},{pts:INSG.c1,lab:"Glucagon"}]},
+    {l:"Glucose falls",cap:"Insulin secretion turns off within 3–5 minutes of glucose returning to the fasting level, and a fall to hypoglycemic levels raises glucagon severalfold, which drives hepatic glucose output (Guyton; shapes schematic).",
+     events:[[0,"glucose falls"]],
+     key:[["off","Insulin off in 3–5 min"],["↑","Glucagon up severalfold"]],
+     d:()=>[{pts:INSG.g2,lab:"Glucose"},{pts:INSG.i2,lab:"Insulin"},{pts:INSG.c2,lab:"Glucagon"}]},
+    {l:"Protein meal",cap:"Amino acids (especially alanine and arginine) stimulate both insulin and glucagon, so here the two are not opposites: glucagon converts the amino acids to glucose (Guyton; shapes schematic).",
+     events:[[0,"protein meal"]],
+     key:[["both","Insulin and glucagon rise together"]],
+     d:()=>[{pts:INSG.g3,lab:"Glucose"},{pts:INSG.i3,lab:"Insulin"},{pts:INSG.c3,lab:"Glucagon"}]},
+    {l:"Exhaustive exercise",cap:"Glucagon often rises 4- to 5-fold and keeps blood glucose from falling; muscle takes up glucose without needing much insulin (Guyton; shape schematic).",
+     events:[[0,"exercise starts"]],
+     key:[["4–5×","Glucagon"],["GLUT4","Contraction moves GLUT4 to the membrane"]],
+     d:()=>[{pts:INSG.g4,lab:"Glucose"},{pts:INSG.c4,lab:"Glucagon"}]}]},
+  nephmin:{xl:"Nephron segment (last point: excreted)",yl:"% of the filtered load",xr:[-0.4,3.4],yr:[0,100],xt:[0,1,2,3],xtl:["Proximal tubule","Thick ascending limb","Distal tubule","Excreted"],yt:[0,25,50,75,100],vars:[
+    {l:"Calcium",cap:"Costanzo: 67% proximal (with Na⁺), 25% in the thick ascending limb (paracellular, lumen-positive voltage), 8% in the distal tubule (PTH- and thiazide-regulated); under 1% excreted.",
+     key:[["PT","Tracks Na⁺ — saline raises Ca²⁺ excretion"],["TAL","Loop diuretics and the Ca²⁺-sensing receptor cut it"],["DT","PTH and thiazides raise it"]],
+     d:()=>[{pts:NMIN.ca,lab:"Share of the filtered load",marks:[[0,67,"67"],[1,25,"25"],[2,8,"8"],[3,1,"< 1"]]}]},
+    {l:"Phosphate",cap:"Costanzo: about 70% in the proximal convoluted and 15% in the proximal straight tubule, by Na⁺-phosphate cotransport with a Tm; little or none later — so about 15% is excreted, the urinary titratable-acid buffer.",
+     key:[["PT","PTH retrieves the cotransporters → phosphaturia"],["15","A high excreted fraction"]],
+     d:()=>[{pts:NMIN.po,lab:"Share of the filtered load",marks:[[0,85,"85"],[3,15,"15"]]}]},
+    {l:"Magnesium",cap:"Guyton: only about 25% proximal; about 65% in the thick ascending limb, mainly paracellular, driven by the lumen-positive voltage with claudins; under 5% distal; the small remainder is excreted.",
+     key:[["TAL","The main site — loop diuretics waste Mg²⁺"],["DT","< 5%, transcellular"]],
+     d:()=>[{pts:NMIN.mg,lab:"Share of the filtered load",marks:[[0,25,"25"],[1,65,"65"],[2,5,"< 5"]]}]}]},
   wiggers:{xl:"Time (s) — three beats at 75/min",yl:"Pressure (mm Hg)",xr:[0,2.4],yr:[0,190],xt:[0,0.4,0.8,1.2,1.6,2,2.4],yt:[0,40,80,120,160],
    strips:[{yl:"LV volume",yr:[25,170],h:110,d:V=>[{pts:lvVol(V.vol),lab:"LV volume"}]},
            {yl:"ECG",yr:[-0.45,1.25],h:80,d:()=>[{pts:WIG_ECG,lab:"ECG",col:"var(--ink-2)"},{txt:wigEach([[0.045,"P",0.55],[0.18,"QRS",1.35],[0.42,"T",0.7]])}]},
@@ -33413,10 +34395,11 @@ const PSER=["var(--accent)","var(--p-sugars)","var(--p-glycogen)","var(--p-gluco
 function plotQuiz(pi,act,j){
   const m=MAPS[state.view], p=m&&m.plots&&m.plots[pi], K=p&&PLOTS[p.kind]; if(!K) return;
   const key=state.view+":"+pi, n=K.vars.length, Q=PLOTQ[key];
-  const fresh=prev=>{ let a; do{ a=Math.floor(Math.random()*n); }while(n>1&&a===prev); return a; };
+  const fresh=prev=>{ const ms=gmissed(key).filter(x=>x!==prev&&x<n); if(ms.length) return ms[Math.floor(Math.random()*ms.length)];
+    let a; do{ a=Math.floor(Math.random()*n); }while(n>1&&a===prev); return a; };
   if(act==="start") PLOTQ[key]={ans:fresh(sat(PLOTVAR[key]||0,0,n-1)),pick:null,n:0,right:0};
   else if(!Q) return;
-  else if(act==="pick"){ if(Q.pick==null){ Q.pick=j; Q.n++; if(j===Q.ans) Q.right++;
+  else if(act==="pick"){ if(Q.pick==null){ Q.pick=j; Q.n++; if(j===Q.ans) Q.right++; gmissMark(key,Q.ans,j===Q.ans);
     if(Q.mix&&GQ){ GQ.n=Q.n; GQ.right=Q.right; updateScore(); } } }
   else if(act==="gnext"){ if(GQ) GQ.k++; showGraph(); return; }
   else if(act==="gdone"){ PLOTVAR[key]=Q.ans; if(GQ) GQ.k=GQ.list.length; showGraph(); return; }
@@ -33424,6 +34407,18 @@ function plotQuiz(pi,act,j){
   else if(act==="done"){ PLOTVAR[key]=Q.ans; delete PLOTQ[key]; }
   render();
 }
+/* the cards each graph illustrates — chips under the legend open them (hidden while a quiz is unanswered) */
+const PLOTCARDS={apnodal:["apphases","class4","avblock"],apventric:["apphases","class3","longqt"],apnerve:["nerveap","refractory","rmp"],apcond:["conduction","demyelin","nerveap"],
+  dexsupp:["cushing","axisreg","pitdrugs"],gtt:["t1dm","t2dm"],insglu:["insulinsecr","glucagonact","insulinact"],hcvsero:["hcv","sofosbuvir"],hbvsero:["hbv","hbvdrugs"],
+  menstrual:["ocp","ovinduction"],titration:["hhbuffer","buffpk","newhco3"],phh:["phscale","hhbuffer"],doseresp:["efficacypotency","antagonists"],elim:["elimination","clearance"],
+  mm:["enzkinetics"],lb:["enzkinetics","antagonists"],flowvol:["pfts","copd","ild"],abresp:["passiveimm","vxkilled","vxconj"],pvloop:["pvloop","pvvalve","hf"],
+  starling:["starling","cofunction"],cofunc:["cofunction","starling"],wiggers:["pvloop","pvvalve","jvp"],odc:["odc","co2trans","cohb"],lungpv:["compliance","ards"],
+  glucose:["glucthresh","sglt2"],dditest:["polyuriadx","di","siadh"],ccprof:["countercurrent","freewater","loopdiuretics"],cones:["retinacells","phototrans"],
+  co2dc:["co2trans","odc"],pthca:["pthaction","fhh","hyperpara1"],pregweeks:["hcghpl","lutealshift","p4preg"],glomcap:["glomstarling","glomdyn","gfrcalc"],
+  ecglytes:["ecglytes","hyperk","hypok"],vco2:["ventresp","chemorec"],vo2:["ventresp","chemorec","acclim"],o2cascade:["alttable","acclim"],cbfmap:["brainflow"],
+  cbfgas:["brainflow","hypoxeffect"],o2content:["odc","hypoxtypes","cohb"],eyetrace:["eyemovtypes","pursuitokn","pulsestep"],gradap:["gradedap","demyelin","conduction"],
+  cortrhythm:["cushing","gcsupp","addison"],ghday:["ghpulse","ghcontrol"],davenport:["abcompensation","respacid","metalk"],nephmin:["renalca","renalpo4","renalmg"],
+  spiro:["lungvol","pfts"],paco2va:["alvvent","respacid","respalk"]};
 /* compare: open or close the overlay chips, or overlay (again: remove) a version */
 function plotCmp(pi,act,j){
   const key=state.view+":"+pi, C=PLOTCMP[key]||(PLOTCMP[key]={open:false,j:null});
@@ -33532,7 +34527,7 @@ function plotSVG(p,i){
   let ty=cy+26+28;
   if(Q){ const msg=hide?"Which version is this? Pick one above.":(Q.pick===Q.ans?"Right — ":"Not quite — this is ")+V.l;
     s+=`<text class="pqhead" x="${x0}" y="${ty}">${esc(msg)}</text>`; ty+=21;
-    if(Q.n||Q.mix){ s+=`<text class="pcap" x="${x0}" y="${ty}">${Q.mix&&GQ?`Graph mix ${GQ.k+1} of ${GQ.list.length} · `:""}${Q.right} of ${Q.n} right so far</text>`; ty+=21; } ty+=6; }
+    if(Q.n||Q.mix){ s+=`<text class="pcap" x="${x0}" y="${ty}">${Q.mix&&GQ?`Graph mix ${GQ.k+1} of ${GQ.list.length} · `:""}${Q.right} of ${Q.n} right so far${Q.review&&hide?" · one you missed before":""}</text>`; ty+=21; } ty+=6; }
   if(!hide) wrapWords(V.cap,Math.floor(colW/6.9)).forEach(line=>{ s+=`<text class="pcap" x="${x0}" y="${ty}">${esc(line)}</text>`; ty+=19; });
   /* key: what each numbered phase is — the ions moving and the channels open */
   if(V.key&&!hide){ ty+=8;
@@ -33548,6 +34543,12 @@ function plotSVG(p,i){
     if(K.all&&K.vars.length>1&&!hide) leg.push({cls:"pother",t:"The other variants"}); }
   ty+=10;
   leg.forEach(g=>{ s+=`<line class="${g.cls}" x1="${x0}" y1="${ty-4}" x2="${x0+26}" y2="${ty-4}"${g.col?` style="stroke:${g.col}"`:""}/><text class="pleg" x="${x0+36}" y="${ty}">${esc(g.t)}</text>`; ty+=22; });
+  /* cards this graph illustrates — as many chips as fit above the note */
+  const pcs=(PLOTCARDS[p.kind]||[]).filter(id=>LES[id]);
+  if(pcs.length&&!hide){ ty+=4; s+=`<text class="pcap" x="${x0}" y="${ty}">Cards</text>`; cx=x0+52; cy=ty-17; const lim=p.y+p.h-40;
+    for(const id of pcs){ let t=LES[id].n.split(" — ")[0]; if(t.length>30) t=t.slice(0,29)+"…";
+      const w=Math.round(t.length*7.2+26); if(cx>x0+52&&cx+w>x0+colW){ cx=x0+52; cy+=34; } if(cy+26>lim) break;
+      chip(t,`data-plotles="${id}"`," pcardc"); } }
   s+=`<text class="pnote" x="${x0}" y="${p.y+p.h-20}">Schematic — drawn from the stated relationships, not measured data</text>`;
   return `<g class="plot-c" data-plotg="${i}">${s}</g>`;
 }
@@ -34078,9 +35079,12 @@ function updateScore(){
     if(!GQ) GQ={list:[],k:0,n:0,right:0};
     const total=GQ.list.length, done=GQ.k>=total;
     box.hidden=false;
-    box.innerHTML=done?`<span>Graph mix done — <b>${GQ.right}</b> of <b>${GQ.n}</b> right</span><button class="go" data-gagain>Another 10</button>`
+    const seg=`<span class="seg"><button data-gscope="map" aria-pressed="${GSCOPE==="map"}">This map</button><button data-gscope="topic" aria-pressed="${GSCOPE==="topic"}">Whole topic</button><button data-gscope="all" aria-pressed="${GSCOPE==="all"}">Everything</button></span>`
+      +(GQ.scope&&GQ.scope!==GSCOPE?`<span>No graphs here — using ${GQ.scope==="topic"?"the topic":"the whole atlas"}</span>`:"");
+    box.innerHTML=seg+(done?`<span>Graph mix done — <b>${GQ.right}</b> of <b>${GQ.n}</b> right</span><button class="go" data-gagain>Another 10</button>`
       :`<span>Graph mix <b>${GQ.k+1}/${total}</b> · <b>${GQ.right}</b> right</span>
-        <span class="qbar"><i style="width:${Math.round(GQ.k/total*100)}%"></i></span><button class="go" data-gnext>Next graph</button>`;
+        <span class="qbar"><i style="width:${Math.round(GQ.k/total*100)}%"></i></span><button class="go" data-gnext>Next graph</button>`);
+    box.querySelectorAll("[data-gscope]").forEach(b=>b.onclick=()=>{ GSCOPE=b.dataset.gscope; try{localStorage.setItem("mla-gscope",GSCOPE);}catch(e){} startGraphMix(); });
     const a=box.querySelector("[data-gagain]"); if(a) a.onclick=startGraphMix;
     const g=box.querySelector("[data-gnext]"); if(g) g.onclick=()=>{ GQ.k++; showGraph(); };
     return;
@@ -34259,16 +35263,23 @@ function nextMix(){
 /* ── graph mix: ten random graphs from across the atlas. Each opens framed on its map showing one
    of its versions with the name, caption, key and telling labels hidden (the graph quiz); name the
    version, then go on to the next graph. The score runs across the round. ── */
-function graphPool(){ const out=[];
-  VIEWS.forEach(([v])=>{ const m=MAPS[v]; ((m&&m.plots)||[]).forEach((p,i)=>{ const K=PLOTS[p.kind]; if(K&&K.vars.length>=2) out.push([v,i]); }); });
-  return out; }
+function graphPool(scope,home){ const all=[];
+  VIEWS.forEach(([v])=>{ const m=MAPS[v]; ((m&&m.plots)||[]).forEach((p,i)=>{ const K=PLOTS[p.kind]; if(K&&K.vars.length>=2) all.push([v,i]); }); });
+  /* this map → its topic → everything, widening when a scope has no graphs */
+  const topic=(TOPICS.find(t=>t[2].includes(home))||[0,0,[]])[2];
+  if(scope==="map"){ const p=all.filter(([v])=>v===home); if(p.length) return {pool:p,used:"map"}; scope="topic"; }
+  if(scope==="topic"){ const p=all.filter(([v])=>topic.includes(v)); if(p.length) return {pool:p,used:"topic"}; }
+  return {pool:all,used:"all"}; }
 function clearGraphQ(){ Object.keys(PLOTQ).forEach(k=>{ if(PLOTQ[k].mix) delete PLOTQ[k]; }); }
-function startGraphMix(){ clearGraphQ(); GQ={list:shuffle(graphPool()).slice(0,10),k:0,n:0,right:0}; showGraph(); }
+function startGraphMix(){ clearGraphQ();
+  const {pool,used}=graphPool(GSCOPE,state.view), seen=([v,i])=>gmissed(v+":"+i).length>0;
+  GQ={list:[...shuffle(pool.filter(seen)),...shuffle(pool.filter(x=>!seen(x)))].slice(0,10),k:0,n:0,right:0,scope:used}; showGraph(); }
 function showGraph(){
   clearGraphQ();
   if(!GQ||GQ.k>=GQ.list.length){ if(state.view!=="index") render(); updateScore(); return; }
   const [v,i]=GQ.list[GQ.k], K=PLOTS[MAPS[v].plots[i].kind];
-  PLOTQ[v+":"+i]={ans:Math.floor(Math.random()*K.vars.length),pick:null,n:GQ.n,right:GQ.right,mix:true};
+  const ms=gmissed(v+":"+i).filter(x=>x<K.vars.length);
+  PLOTQ[v+":"+i]={ans:ms.length?ms[Math.floor(Math.random()*ms.length)]:Math.floor(Math.random()*K.vars.length),pick:null,n:GQ.n,right:GQ.right,mix:true,review:ms.length>0};
   if(!drawer.hidden) closeDrawer();
   goPlot(v,i);
 }
@@ -34933,8 +35944,12 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   androgen:"2026-10-08",renvasc:"2026-10-08",lbp:"2026-10-08",anteye:"2026-10-08",ptrehab:"2026-10-08",
   limbmem:"2026-10-08",placenta:"2026-10-08",agingomt:"2026-10-08",softtissue:"2026-10-08",integrative:"2026-10-08",gfrk:"2026-10-08",highalt:"2026-10-08",
   cerebellum:"2026-10-08",meninges:"2026-10-08",brainvessels:"2026-10-08",neurodev:"2026-10-08",dsmdx:"2026-10-08",crystals:"2026-10-08",hypoxia:"2026-10-08",legfx:"2026-10-08",
-  gaze:"2026-10-08",neckpain:"2026-10-08",ionchan:"2026-10-08",psyrxprin:"2026-10-08",somatcare:"2026-10-08",gcpharm:"2026-10-08",lymphdev:"2026-10-08"};
+  gaze:"2026-10-08",neckpain:"2026-10-08",ionchan:"2026-10-08",psyrxprin:"2026-10-08",somatcare:"2026-10-08",gcpharm:"2026-10-08",lymphdev:"2026-10-08",
+  lungcancer:"2026-10-08",pitgh:"2026-10-08",buffers:"2026-10-08",renalmin:"2026-10-08",ventmech:"2026-10-08",shoulder:"2026-10-08",ctdis:"2026-10-08"};
 const WHATSNEW=[
+  ["2026-10-08","New maps: <b>Lung Cancer</b> and <b>Ventilation Mechanics &amp; Dead Space</b> (Pulmonary), <b>Pituitary &amp; Growth Hormone</b> (Endocrine), <b>Buffers &amp; Henderson–Hasselbalch</b> and <b>Renal Calcium, Phosphate &amp; Magnesium</b> (Renal), <b>Shoulder Pain</b> (MSK) and <b>Heritable Connective Tissue Disorders</b> (Biochemistry)."],
+  ["2026-10-08","New graphs: a <b>spirogram</b> with obstructive and restrictive versions, <b>PaCO₂ vs alveolar ventilation</b>, an <b>acid–base (Davenport) diagram</b>, <b>GH pulses over 24 hours</b>, <b>insulin and glucagon</b> after glucose, fasting and protein, and <b>where Ca²⁺, phosphate and Mg²⁺ are reabsorbed</b>."],
+  ["2026-10-08","Graph quizzes now bring back the versions you missed, <b>Graph mix</b> can stay on this map or this topic, and each graph lists the cards it illustrates. More of your questions link to cards."],
   ["2026-10-08","New maps: <b>Eye Movements &amp; Gaze Centers</b> and <b>Resting Potential, Ion Channels &amp; Graded Potentials</b> (Neuro), <b>Psychopharmacology Principles</b> and <b>Somatic Symptom &amp; Factitious Disorders — Care</b> (Psych), <b>Neck Pain &amp; Cervical Radiculopathy</b> (MSK), <b>Glucocorticoid Pharmacology</b> (Endocrine) and <b>Lymphocyte Development &amp; Antigen Receptors</b> (Immunology)."],
   ["2026-10-08","New graphs: <b>pH vs [H⁺]</b>, the <b>countercurrent osmolality profile</b>, <b>graded vs action potentials</b>, the <b>CO₂ dissociation curve and Haldane effect</b>, <b>eye-movement traces</b> and the <b>daily cortisol rhythm</b>."],
   ["2026-10-08","<b>Quiz → Graph mix</b>: ten random graphs, name each version. Search now finds graphs (try “desmopressin”), and any graph can <b>overlay a second version</b> to compare. More of your questions link to cards."],
@@ -34982,8 +35997,8 @@ function graphsIdxHtml(){
   const name=v=>(VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1];
   const groups=TOPICS.map(([,l,vs])=>[l,vs.flatMap(v=>((MAPS[v]&&MAPS[v].plots)||[]).map((p,i)=>({v,i,p})))]).filter(g=>g[1].length);
   const n=groups.reduce((a,g)=>a+g[1].length,0); if(!n) return "";
-  return `<details class="idx-sources graphs-idx"><summary>All graphs · ${n}</summary>
-    <p>Every graph in the atlas, by system. Tap one to jump to it. A graph with three or more versions has a <b>Quiz me</b> chip that hides the name and asks you to pick it; <b>Compare</b> overlays a second version, dashed. <b>Quiz → Graph mix</b> runs ten at random.</p>
+  return `<details class="idx-sources graphs-idx"><summary>All graphs · ${n}${(r=>r?` · ${r} to review`:"")(Object.values(GMISS).reduce((a,m)=>a+Object.keys(m).length,0))}</summary>
+    <p>Every graph in the atlas, by system. Tap one to jump to it. A graph with three or more versions has a <b>Quiz me</b> chip that hides the name and asks you to pick it; <b>Compare</b> overlays a second version, dashed. <b>Quiz → Graph mix</b> runs ten at random — this map, this topic or everything — and brings back the versions you missed first. Each graph lists the cards it illustrates.</p>
     ${groups.map(([l,list])=>`<div class="gal-sec"><h4>${esc(l)}</h4><div class="pagehits">${list.map(({v,i,p})=>`<button class="pagehit" data-plotgo="${v}:${i}">${esc(p.t)}<span class="galn"> · ${esc(name(v))}${PLOTS[p.kind]&&PLOTS[p.kind].vars.length>=3?" · quiz":""}</span></button>`).join("")}</div></div>`).join("")}
   </details>`;
 }
@@ -35102,6 +36117,8 @@ svg.addEventListener("gesturestart",ev=>ev.preventDefault());   // Safari: keep 
 svg.addEventListener("click",ev=>{
   if(dragged){ dragged=false; return; }   // the end of a pan is not a tap
   const pv=ev.target.closest(".pvar");
+  const pl=ev.target.closest("[data-plotles]");
+  if(pl){ openLes(pl.dataset.plotles); return; }
   const pcz=ev.target.closest("[data-pc]");
   if(pcz){ plotCmp(pcz.dataset.plot,pcz.dataset.pc,+pcz.dataset.pv); return; }
   const pqz=ev.target.closest("[data-pq]");
