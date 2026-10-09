@@ -712,6 +712,7 @@ body{display:flex;flex-direction:column}
           <button class="qopt" role="menuitemradio" data-q="buzz" aria-checked="false">Buzzword → card<span>Read a buzzword, pick the card it belongs to</span></button>
           <button class="qopt" role="menuitemradio" data-q="mix" aria-checked="false">Daily mix<span id="qmixn">10 cards from every map — due, starred, missed and new</span></button>
           <button class="qopt" role="menuitemradio" data-q="graphs" aria-checked="false">Graph mix<span>10 random graphs — name each version, with a score</span></button>
+          <button class="qopt" role="menuitemradio" data-q="moving" aria-checked="false">Moving-map mix<span>10 random moving maps — name what’s switched on, with a score</span></button>
           <button class="qopt" role="menuitemradio" data-q="case" aria-checked="false">Case vignettes<span>Findings from a disease card, its name hidden — pick the diagnosis</span></button>
           <button class="qopt" role="menuitemradio" data-q="star" aria-checked="false">Starred cards<span id="qstarn">Every card you’ve starred, across all maps</span></button>
           <button class="qopt" role="menuitemradio" data-q="due" aria-checked="false">Due cards<span id="qduen">Every card due for review, across all maps</span></button>
@@ -37975,7 +37976,7 @@ MAPS.baroflow = {
  fa:"240–243, 299, 318",
  src:["Katzung ch 6 — Introduction to Autonomic Pharmacology", "Katzung ch 8 — Cholinoceptor-Blocking Drugs", "Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs", "Katzung ch 10 — Adrenoceptor Antagonist Drugs", "Guyton ch 18 — Nervous Regulation of the Circulation and Rapid Control of Arterial Pressure", "Guyton ch 24 — Circulatory Shock and Its Treatment"],
  art:"kit",
- dyn:{"lazy":"a1cacf8d6f","switches":[{"id":"drug","label":"Give a drug — or test the reflex","type":"one","options":[["stand","Stand up","syncope"],["bleed","Hemorrhage","hypovshock"],["csm","Carotid sinus massage","baroreflex"],["pe","Phenylephrine","alpha1drugs"],["ne","Norepinephrine","pressors"],["epilo","Epinephrine — low dose","epine"],["epihi","Epinephrine — high dose","epine"],["iso","Isoproterenol","pressors"],["atro","Atropine","antimusc"]]},{"id":"ab","label":"α-blocker","type":"toggle","on":"Phentolamine given first","off":"No α-blocker","def":false}],"panel":{"x":2460,"y":110,"w":1000}},
+ dyn:{"lazy":"d9b834020d","switches":[{"id":"drug","label":"Give a drug — or test the reflex","type":"one","options":[["stand","Stand up","syncope"],["bleed","Hemorrhage","hypovshock"],["csm","Carotid sinus massage","baroreflex"],["pe","Phenylephrine","alpha1drugs"],["ne","Norepinephrine","pressors"],["epilo","Epinephrine — low dose","epine"],["epihi","Epinephrine — high dose","epine"],["iso","Isoproterenol","pressors"],["atro","Atropine","antimusc"]]},{"id":"ab","label":"α-blocker","type":"toggle","on":"Phentolamine given first","off":"No α-blocker","def":false}],"panel":{"x":2460,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38275,7 +38276,7 @@ MAPS.legsim = {
  fa:"456–458, 523",
  src:["Moore ch 7 — Lower Limb", "Moore ch 5 — Abdomen", "OCOM OMM — SDL 1 lecture: Low Back Pain I"],
  art:"kit",
- dyn:{"lazy":"b24e66475b","switches":[{"id":"les","label":"Lesion — pick one","type":"one","options":[["fem","Femoral nerve","femoralobt"],["obt","Obturator nerve","femoralobt"],["lfc","Lateral femoral cutaneous","meralgia"],["supglut","Superior gluteal","glutealnerve"],["infglut","Inferior gluteal","glutealnerve"],["sciatic","Sciatic nerve","sciaticnerve"],["cfib","Common fibular — fibular neck","peroneal"],["dfib","Deep fibular","peroneal"],["sfib","Superficial fibular","legnerves"],["tibp","Tibial — knee","sciaticnerve"],["tibd","Tibial — tarsal tunnel","sciaticnerve"],["l4","L4 root","lumbradic"],["l5","L5 root","lumbradic"],["s1","S1 root","lumbradic"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"1613ad2aea","switches":[{"id":"les","label":"Lesion — pick one","type":"one","options":[["fem","Femoral nerve","femoralobt"],["obt","Obturator nerve","femoralobt"],["lfc","Lateral femoral cutaneous","meralgia"],["supglut","Superior gluteal","glutealnerve"],["infglut","Inferior gluteal","glutealnerve"],["sciatic","Sciatic nerve","sciaticnerve"],["cfib","Common fibular — fibular neck","peroneal"],["dfib","Deep fibular","peroneal"],["sfib","Superficial fibular","legnerves"],["tibp","Tibial — knee","sciaticnerve"],["tibd","Tibial — tarsal tunnel","sciaticnerve"],["l4","L4 root","lumbradic"],["l5","L5 root","lumbradic"],["s1","S1 root","lumbradic"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
   {x:140,y:1750,w:2200,h:160,l:"Cards for each lesion"}],
  panels:[
@@ -39919,8 +39920,9 @@ function dynSections(d,st){
   (d.switches||[]).filter(s=>s.type==="one"||s.type==="steps").forEach(s=>{
     const Q=st.quiz;
     if(Q&&Q.s===s.id){   // naming it: this switch's chips become the choices
-      const chips=Q.ch.map(k=>{ const o=s.options.find(x=>x[0]===k); return {key:"q:"+k,l:(Q.ans?(k===Q.k?"✓ ":k===Q.ans?"✗ ":""):"")+o[1],on:!!Q.ans&&k===Q.k}; });
-      if(Q.ans) chips.push({key:"quiz:new",l:"Another one",on:false},{key:"quiz:end",l:"Done",on:false});
+      const chips=Q.ch.map((k,i)=>{ const o=s.options.find(x=>x[0]===k); return {key:"q:"+k,l:(Q.ans?(k===Q.k?"✓ ":k===Q.ans?"✗ ":""):(i+1)+" · ")+o[1],on:!!Q.ans&&k===Q.k}; });
+      if(Q.ans&&NMIX) chips.push(NMIX.k<NMIX.n?{key:"quiz:mix",l:"Next map ›",on:true}:{key:"quiz:mix10",l:"Another 10",on:true},{key:"quiz:end",l:"Done",on:false});
+      else if(Q.ans) chips.push({key:"quiz:new",l:"Another one",on:false},{key:"quiz:end",l:"Done",on:false});
       S.push({h:Q.ans?"Name it — the answer":"Name it — which one is on?",chips}); return; }
     const chips=s.options.map(([k,l],i)=>({key:"o:"+s.id+":"+k,l:(s.type==="steps"&&!/^(Phase|\d)/.test(l)?(i+1)+" · ":"")+l,on:st.sw[s.id]===k}));   // "Phase 0…" labels carry their own number
     if(s.type==="steps"){ chips.push({key:"n:"+s.id,l:"Next ›",on:false});
@@ -39932,7 +39934,7 @@ function dynSections(d,st){
   if(!st.tour){
     if((d.readouts||[]).length) tail.push({key:"p:on",l:st.pred?"Stop predicting":"Predict the arrows",on:!!st.pred});
     if((d.switches||[]).length) tail.push({key:"tour:go",l:"Tour",on:false});
-    if(!st.quiz&&dynQuizable(d).length) tail.push({key:"quiz:new",l:"Name it",on:false});
+    if(!st.quiz&&dynQuizable(d).length){ const r=nameitScores()[state.view]; tail.push({key:"quiz:new",l:r?`Name it · ${r[0]}/${r[1]}`:"Name it",on:false}); }
     if(st.cmp) tail.push({key:"cmp:show",l:"Side by side",on:true},{key:"cmp:off",l:"Unpin",on:false});
     else if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"cmp:pin",l:"Compare",on:false}); }
   S.push({h:"",chips:tail});
@@ -39949,7 +39951,7 @@ function dynReadouts(d,st){
 function dynNotes(d,st){
   const R=dynReadouts(d,st), live=R.filter(r=>r.dir), Q=st.quiz;
   if(Q&&!Q.ans){ const s=d.switches.find(x=>x.id===Q.s);
-    return [`Name it: one choice under “${s.label}” is switched on. Read the drawing${R.length?" and the results":""}, then pick it from the ${Q.ch.length} choices.`]; }
+    return [`${NMIX?`Moving-map mix ${NMIX.k+1} of ${NMIX.n} · ${NMIX.ok} right so far. `:""}Name it: one choice under “${s.label}” is switched on. Read the drawing${R.length?" and the results":""}, then pick it from the ${Q.ch.length} choices.`]; }
   if(st.pred&&!st.pred.chk) return [live.length
     ?"Predict: pick ↑, ↓ or ↔ for each result, then press Check. The explanation comes back when you check."
     :"Pick a drug, disease or lesion first — then predict which way each result moves."];
@@ -39957,7 +39959,8 @@ function dynNotes(d,st){
   Object.keys(d.notes||{}).forEach(k=>{ if(k&&dynHas(st,k)) notes.push(d.notes[k]); });
   if(!notes.length&&d.notes&&d.notes[""]) notes.push(d.notes[""]);
   if(Q&&Q.ans){ const s=d.switches.find(x=>x.id===Q.s), o=s.options.find(x=>x[0]===Q.k), p=s.options.find(x=>x[0]===Q.ans);
-    notes.unshift((Q.ans===Q.k?`Right — it’s ${o[1]}.`:`It’s ${o[1]} (you picked ${p[1]}).`)+` ${st.qz.ok} of ${st.qz.n} so far.`); }
+    const r=nameitScores()[state.view];
+    notes.unshift((Q.ans===Q.k?`Right — it’s ${o[1]}.`:`It’s ${o[1]} (you picked ${p[1]}).`)+(NMIX?` Mix: ${NMIX.ok} of ${NMIX.k} right${NMIX.k>=NMIX.n?" — done.":"."}`:` ${st.qz.ok} of ${st.qz.n} so far`+(r&&r[1]>st.qz.n?` · ${r[0]} of ${r[1]} on this map, on this device.`:"."))); }
   if(st.tour){ const T=dynTour(d); notes.unshift(`Tour ${st.tour.i+1} of ${T.length} — ${T[st.tour.i].l}.`); }
   if(st.cmp&&!st.tour&&!Q) notes.push(`Pinned for comparing: ${st.cmp.l}. Change the switches, then press Side by side.`);
   if(st.pred&&st.pred.chk){ const ok=live.filter(r=>st.pred.g[r.i]===r.dir).length;
@@ -40168,8 +40171,9 @@ function dynSet(k,timer){
     if(b==="end"){ st.tour=null; }
     else { const i=b==="go"?0:b==="next"?((st.tour?st.tour.i:-1)+1)%T.length:Math.max(0,(st.tour?st.tour.i:0)-1);
       dynGo(v,T[i].str,{tour:{i},quiz:null}); } }
-  else if(a==="quiz"){ if(b==="end") st.quiz=null; else dynQuiz(v); }
-  else if(a==="q"&&st.quiz&&!st.quiz.ans){ st.quiz.ans=b; st.qz.n++; if(st.quiz.ans===st.quiz.k) st.qz.ok++; }
+  else if(a==="quiz"){ if(b==="mix"){ nameMixNext(); return; } if(b==="mix10"){ startNameMix(); return; }
+    if(b==="end"){ st.quiz=null; NMIX=null; } else { NMIX=null; dynQuiz(v); } }
+  else if(a==="q"&&st.quiz&&!st.quiz.ans){ const ok=b===st.quiz.k; st.quiz.ans=b; st.qz.n++; if(ok) st.qz.ok++; nameitSave(v,ok); if(NMIX){ NMIX.k++; if(ok) NMIX.ok++; } }
   else if(a==="cmp"){ if(b==="pin") st.cmp={str:dynStateStr(v),l:dynStateLabel(m.dyn,st)}; else if(b==="off") st.cmp=null; else if(b==="show"){ dynCompare(v); return; } }
   else if(a==="p"){
     if(b==="on"){ st.pred=st.pred?null:{g:{},chk:false}; if(st.pred) st.auto=null; }   // predicting holds the phase still
@@ -40177,7 +40181,7 @@ function dynSet(k,timer){
     else if(b==="chk"&&st.pred&&Object.values(st.pred.g).some(Boolean)) st.pred.chk=true;
   }
   if(st.pred&&(a==="t"||a==="o"||a==="n")) st.pred={g:{},chk:false};   // a new state: guess again
-  if(a==="t"||a==="o"||a==="n"||a==="reset"){ const s2=DYN[v]; if(s2&&!timer){ s2.tour=null; s2.quiz=null; } }   // a switch by hand ends a tour or a question
+  if(a==="t"||a==="o"||a==="n"||a==="reset"){ const s2=DYN[v]; if(s2&&!timer){ s2.tour=null; s2.quiz=null; NMIX=null; } }   // a switch by hand ends a tour or a question
   const w=svg.querySelector("#artWrap"); if(!w) return;
   if((a==="tour"||a==="quiz")&&!timer) dynFrame();
   const ae=document.activeElement, fk=ae&&w.contains(ae)&&ae.dataset?ae.dataset.dyn:null;   // keep keyboard focus through a re-draw
@@ -40214,6 +40218,32 @@ function dynQuiz(v){
   const ch=others.concat([k]).sort(()=>Math.random()-.5);
   const qz=(DYN[v]&&DYN[v].qz)||{n:0,ok:0};
   dynGo(v,s.id+":"+k,{quiz:{s:s.id,k,ch,ans:null},qz,tour:null});
+}
+/* Name it, remembered per map on this device: {map: [right, asked]} */
+function nameitScores(){ try{ return JSON.parse(localStorage.getItem("mla-nameit")||"{}")||{}; }catch(e){ return {}; } }
+function nameitSave(v,ok){ try{ const S=nameitScores(), r=S[v]||[0,0]; r[1]++; if(ok) r[0]++; S[v]=r; localStorage.setItem("mla-nameit",JSON.stringify(S)); }catch(e){} }
+/* Quiz → Moving-map mix: ten Name-it questions, each on a random moving map */
+let NMIX=null;
+function startNameMix(){ NMIX={k:0,n:10,ok:0}; nameMixNext(); }
+function nameMixNext(){
+  if(!NMIX) return;
+  const pool=VIEWS.map(x=>x[0]).filter(v=>v!==state.view&&MAPS[v]&&MAPS[v].art==="kit"&&MAPS[v].dyn&&dynQuizable(MAPS[v].dyn).length);
+  const v=pool[Math.floor(Math.random()*pool.length)], mix=NMIX;
+  if(state.view!==v) setView(v);
+  NMIX=mix;   // setView may end a quiz; the mix carries on
+  const go=n=>{ if(state.view!==v||NMIX!==mix) return; const d=MAPS[v].dyn;
+    if(d.lazy){ if(!DYNFAIL[v]&&n<100) setTimeout(()=>go(n+1),100); return; }
+    dynQuiz(v); dynRedraw(); writeHash(); dynFrame(); };
+  go(0);
+}
+/* keys on a moving map: ← → step a tour; 1–4 name it, Enter for the next question */
+function dynKey(ev){
+  const v=state.view, m=MAPS[v], st=m&&m.art==="kit"&&m.dyn&&!m.dyn.lazy&&DYN[v];
+  if(!st||ev.metaKey||ev.ctrlKey||ev.altKey||/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||"")) return false;
+  if(st.tour&&(ev.key==="ArrowRight"||ev.key==="ArrowLeft")){ dynSet(ev.key==="ArrowRight"?"tour:next":"tour:prev"); return true; }
+  if(st.quiz&&!st.quiz.ans&&/^[1-4]$/.test(ev.key)&&st.quiz.ch[+ev.key-1]){ dynSet("q:"+st.quiz.ch[+ev.key-1]); return true; }
+  if(st.quiz&&st.quiz.ans&&ev.key==="Enter"){ dynSet(NMIX?(NMIX.k<NMIX.n?"quiz:mix":"quiz:mix10"):"quiz:new"); return true; }
+  return false;
 }
 /* what is switched on, in words */
 function dynStateLabel(d,st){
@@ -40876,6 +40906,8 @@ function updateScore(){
 }
 function setQuiz(mode){
   if(mode==="due"&&!REVIEW_ON){ openReviewIntro(); return; }
+  if(mode==="moving"){ setQuiz(""); startNameMix(); return; }   // Name it on random moving maps (the kit's NMIX)
+  NMIX=null;
   state.quiz=mode; state.reveal.clear();
   const b=document.getElementById("quizBtn");
   b.classList.toggle("on",!!mode);
@@ -41269,7 +41301,7 @@ function readHashCore(raw){
   }
   /* #quiz/<mode> — Daily mix, Due cards and Graph mix from the hub's home page, on the map you last had open */
   if(a==="quiz"){
-    if(!["mix","due","graphs"].includes(b)) return false;
+    if(!["mix","due","graphs","moving"].includes(b)) return false;
     if(!booted){ let v="core"; try{ const s=localStorage.getItem("mla-view"); if(s&&VIEWS.some(x=>x[0]===s)) v=s; }catch(e){} setView(v); }
     setQuiz(b); return true;
   }
@@ -41728,6 +41760,7 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   misim:"2026-10-09",pvflow:"2026-10-09",edemaflow:"2026-10-09",hivflow:"2026-10-09",eyesim:"2026-10-09",plexsim:"2026-10-09",mensflow:"2026-10-09",
   baroflow:"2026-10-10",shocksim:"2026-10-10",ecgsim:"2026-10-10",cahflow:"2026-10-10",lipoflow:"2026-10-10",hemeflow:"2026-10-10",nucflow:"2026-10-10",acidflow:"2026-10-10",legsim:"2026-10-10"};
 const WHATSNEW=[
+  ["2026-10-10","<b>Quiz → Moving-map mix</b>: ten Name-it questions on random moving maps, with a score. Each map’s Name it button remembers your score on this device, and keys work on moving maps — ← → step a Tour, 1–4 answer Name it, Enter for the next."],
   ["2026-10-10","New moving maps — <b>Autonomic Drugs &amp; Baroreflex in Motion</b> (neuro), <b>Shock Simulator</b> (Cardiac), <b>Conduction &amp; ECG Simulator</b> (Cardiac), <b>Steroid Synthesis &amp; CAH in Motion</b> (Endocrine), <b>Lipoprotein Transport in Motion</b> (bio), <b>Heme Synthesis &amp; Porphyrias in Motion</b> (Heme/Onc), <b>Nucleotide Synthesis &amp; Drug Sites in Motion</b> (bio), <b>Parietal Cell in Motion</b> (GI), <b>Lower Limb Nerve Lesion Simulator</b> (MSK)."],
   ["2026-10-10","Every moving map now has a <b>Tour</b> (it steps through the switches with a line on each), <b>Name it</b> (one option is switched on in secret — name it from the drawing) and <b>Compare</b> (pin a state, change the switches, see both side by side). Block home pages list <b>Moving maps for this block</b>, and <i>Save all</i> now saves every moving map for offline use."],
   ["2026-10-09","New moving maps — <b>MI Locator</b> (Cardiac), <b>Pressure–Volume Loop in Motion</b> (Cardiac), <b>Capillary &amp; Edema in Motion</b> (Renal), <b>HIV Life Cycle in Motion</b> (Infectious), <b>Pupil &amp; Eye Movement Simulator</b> (EENT), <b>Brachial Plexus Lesion Simulator</b> (MSK), <b>Menstrual Cycle in Motion</b> (Repro)."],
@@ -41973,7 +42006,7 @@ svg.addEventListener("focusin",ev=>{
 function openShortcuts(){
   state.sel=null; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
   const rows=[["Tab · Shift+Tab","move between pins and graph chips"],["Enter or Space","open the focused pin · switch a graph"],
-    ["1 – 4","answer a quiz question"],["Enter","next question, after answering"],["← →","previous / next section while walking a map — otherwise the versions of the last graph you used"],["q · c","quiz me on that graph · compare its versions"],
+    ["1 – 4","answer a quiz question"],["Enter","next question, after answering"],["← →","previous / next section while walking a map, or step a moving map’s Tour — otherwise the versions of the last graph you used"],["1 – 4 · Enter","on a moving map: name what’s switched on (Name it), then the next one"],["q · c","quiz me on that graph · compare its versions"],
     ["/","search"],["[","show or hide the side panel"],["m","show or hide the overview map"],["Esc","close a card, the quiz menu, or the walk"],["?","this list"]];
   drawer.innerHTML=`
    <div class="dhead">
@@ -42132,6 +42165,7 @@ document.addEventListener("keydown",ev=>{
     const nx=drawer.querySelector("[data-next]");
     if(nx&&ev.key==="Enter"){ ev.preventDefault(); nx.click(); return; }
   }
+  if(dynKey(ev)){ ev.preventDefault(); return; }   // a moving map's tour (← →) and Name it (1–4, Enter)
   if(ev.key==="?"&&document.activeElement!==qInput){ ev.preventDefault(); openShortcuts(); return; }
   if(ev.key==="/"&&document.activeElement!==qInput){ ev.preventDefault(); qInput.focus(); }
   if(ev.key==="["&&document.activeElement!==qInput){ ev.preventDefault(); railBtn.click(); }

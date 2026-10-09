@@ -333,6 +333,9 @@ own conditional captions are hidden and dynStateStr returns "" so the address ca
 readouts underlined). The hub: block homes list **Moving maps for this block** (fillAtlasMovesHome in shared/app.js,
 with the 3 switches the block tests most), and build-atlas.py exports the drawing list as ATLAS_HOME.dyn so the
 hub's Save all and the atlas's Save offline save resources/dyn/* too. Batch: atlas-review/batches/m42.
+m43: **Quiz → Moving-map mix** (NMIX, startNameMix/nameMixNext — ten Name-it questions on random moving maps; #quiz/moving),
+Name-it scores per map on this device (`mla-nameit`, shown on the Name it chip), and keys on moving maps (dynKey: ← → tour, 1–4
+answer, Enter next). Built by atlas-review/batches/m43/assemble.py, which reruns m42's assemble (its kit.js and modules) first.
 A card opened from a transporter (or from a graph's card link — anything with `data-plotles`)
 keeps the map where it is: the click records that spot as KEEP_PT and flashPins() only
 slides the map if the card panel now covers it, instead of taking the reader to the card's
