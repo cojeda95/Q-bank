@@ -870,6 +870,19 @@ h1 { font-size: 1.9rem; line-height: 1.15; margin: 6px 0 6px; }
 .bhero-side { flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 .bh-card { background: var(--card-bg); color: var(--text); border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow); cursor: pointer; text-align: left; }
 .bh-card.static { cursor: default; }
+/* block home: the moving maps in the hero, your progress as a bar on top of the exams */
+.mh-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.mh-list li { display: flex; flex-direction: column; gap: 2px; padding: 9px 0; border-top: 1px solid var(--grey-border); }
+.mh-list li:first-child { border-top: none; padding-top: 2px; }
+.mh-name { font-weight: 600; color: var(--text); text-decoration: none; line-height: 1.3; }
+.mh-name:hover { color: var(--navy); text-decoration: underline; }
+.mhero .mt-sw { margin: 4px 0 0; }
+.bprog { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; background: var(--card-bg);
+  border: 1px solid var(--grey-border); border-radius: 12px; padding: 10px 16px; margin-bottom: 18px; font-size: 0.92rem; color: var(--grey-text); }
+.bprog b { color: var(--text); font-weight: 600; }
+.bprog .kicker { margin-right: 6px; }
+.bprog-act { display: flex; gap: 8px; flex-wrap: wrap; }
+.bprog-act .btn { padding: 6px 14px; font-size: 0.85rem; }
 .bh-card:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 .bh-title { font-size: 1.1rem; font-weight: 600; line-height: 1.35; }
 .bh-meta { font-size: 0.88rem; color: var(--grey-text); }

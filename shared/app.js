@@ -867,6 +867,23 @@ function fillAtlasMovesHome() {
         <span class="gt-links"><a href="${open(v)}" target="_blank" rel="noopener">Open map</a><a href="#atlasmap/${encodeURIComponent(v)}">Practice</a></span></div>`;
     };
     const top = rows.slice(0, 6), rest = rows.slice(6);
+    const hero = document.getElementById('atlasMovesHero');
+    if (hero) {
+      const item = ([v, n]) => {
+        const sws = ATLAS_MOVES.filter(x => x[0] === v && x[1])
+          .map(x => [x, x[4].reduce((t, c) => t + nOf(P.cards && P.cards[c]), 0)]).filter(([, k]) => k > 0)
+          .sort((a, b) => b[1] - a[1]).slice(0, 2);
+        return `<li><a class="mh-name" href="${open(v)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[v][0])}</a>
+          <span class="bh-meta">${n} question${n === 1 ? '' : 's'} here${named[v] && named[v][1] ? ` · Name it ${named[v][0]}/${named[v][1]}` : ''}</span>
+          ${sws.length ? `<span class="mt-sw">${sws.map(([x]) => `<a href="${open(v, x[1])}" target="_blank" rel="noopener">${escapeHtml(x[2])}</a>`).join('')}</span>` : ''}</li>`;
+      };
+      hero.innerHTML = `<div class="bh-card static mhero">
+        <span class="kicker">Moving maps for this block</span>
+        <ul class="mh-list">${rows.slice(0, 3).map(item).join('')}</ul>
+        <span class="bh-actions"><a class="btn" href="${ATLAS_URL}#quiz/moving" target="_blank" rel="noopener">Moving-map mix</a>${rows.length > 3 ? `<button type="button" class="btn secondary" id="mhAll">All ${rows.length} moving maps ↓</button>` : ''}</span></div>`;
+      const all = document.getElementById('mhAll');
+      if (all) all.addEventListener('click', () => { const t = document.getElementById('amvH'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    }
     el.innerHTML = `<section class="bsec" aria-labelledby="amvH"><h3 class="sub-h" id="amvH">Moving maps for this block</h3>
       <p class="amap-note">Lesion Atlas maps you can switch — drugs, diseases, lesions — ranked by how many of this block’s questions they cover. A switch below opens the map with it on.</p>
       <div class="gtiles">${top.map(tile).join('')}</div>
@@ -1041,12 +1058,13 @@ function renderHome() {
   // Nothing to resume: how you are doing in this block, and where to go next
   const answered = Object.keys(last).length, rightAll = Object.keys(last).filter(id => last[id].correct).length;
   const firstExam = DATA.exams.find(e => e.sdls.some(s => s.questions.length)) || DATA.exams[0];
+  // Your progress: a slim bar sitting on top of the exams (the hero's side holds the moving maps)
   const progressHtml = `
-    <div class="bh-card static">
-      <span class="kicker">Your progress</span>
-      <span class="bh-title">${answered ? `${answered.toLocaleString()} answered · ${Math.round(100 * rightAll / answered)}% right` : 'Nothing answered yet'}</span>
-      <span class="bh-meta">${answered ? `${reviewCount} to review — missed and flagged · this device` : 'Pick an exam below, or search for an SDL.'}</span>
-      <span class="bh-actions">${answered
+    <div class="bprog" aria-label="Your progress">
+      <span class="bprog-t"><span class="kicker">Your progress</span> ${answered
+        ? `<b>${answered.toLocaleString()} answered · ${Math.round(100 * rightAll / answered)}% right</b> · ${reviewCount} to review — missed and flagged · this device`
+        : '<b>Nothing answered yet</b> — pick an exam below, or search for an SDL.'}</span>
+      <span class="bprog-act">${answered
         ? `${reviewCount ? '<a class="btn" href="#review">Review due</a>' : ''}<a class="btn${reviewCount ? ' secondary' : ''}" href="#analytics">Analytics</a>`
         : firstExam ? `<a class="btn" href="#exam-sdls/${firstExam.examNumber}">Start Exam ${firstExam.examNumber}</a>` : ''}</span>
     </div>`;
@@ -1071,12 +1089,13 @@ function renderHome() {
             <button type="submit">Search</button>
           </form>
         </div>
-        <div class="bhero-side">${resumeHtml}${practiceResumeHtml}${resumeHtml || practiceResumeHtml ? '' : progressHtml}</div>
+        <div class="bhero-side">${resumeHtml}${practiceResumeHtml}<div id="atlasMovesHero"></div></div>
       </div>
     </section>
     <div class="bcols">
       <div class="bcol-main">
         <section class="bsec" aria-labelledby="exH">
+          ${progressHtml}
           <h2 class="sec-h" id="exH">Exams</h2>
           <div class="exam-grid">${examCards}</div>
           <div class="sim-grid">
