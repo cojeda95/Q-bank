@@ -558,6 +558,8 @@
     }
     var MAPS = Object.keys(H.maps).map(function (v) { var m = H.maps[v]; return { n: norm(m[0]), ab: acr(m[0]), t: m[0], s: (TOPN[m[1]] ? TOPN[m[1]] + ' · ' : '') + m[2] + ' cards', h: ATLAS + '#' + v }; });
     var GRAPHS = H.graphs.map(function (g) { return { n: norm(g[2]), ab: acr(g[2]), t: g[2], s: 'Graph on ' + ((H.maps[g[0]] || [g[0]])[0]), h: ATLAS + '#graph/' + g[0] + '/' + g[1] }; });
+    /* a moving map with one switch on — "hemophilia" → Coagulation Cascade in Motion with Hemophilia A */
+    var MOVES = (H.moves || []).map(function (x) { return { n: norm(x[2]), ab: acr(x[2]), t: x[2], s: 'Moving map · ' + x[3], h: ATLAS + '#' + x[0] + '/~' + x[1] }; });
     var SDLS = H.sdls.map(function (x) { var b = H.blocks[x[0]]; return { n: norm(x[2]), ab: acr(x[2]), t: x[2], s: (/^sdl ?\d/i.test(x[2]) ? '' : 'SDL ' + x[1] + ' · ') + b[1] + ' block', h: b[0] + '/index.html#practice/' + x[1], b: x[0], num: x[1] }; });
     /* a block named in the search ("nephro SDL 23", "psych 12", "pulm asthma") narrows the SDLs to that block */
     var ALIAS = { nephro: ['nephro', 'nephrology', 'renal', 'urology', 'uro'], psych: ['psych', 'psychiatry'], neuro: ['neuro', 'neurology'],
@@ -644,7 +646,7 @@
         top(list, qn, words, k).concat(top(list, rq, rest, k)).forEach(function (h) { if (!best.has(h[1]) || best.get(h[1])[0] < h[0]) best.set(h[1], h); });
         return Array.from(best.values()).sort(function (a, b) { return b[0] - a[0] || a[1].t.length - b[1].t.length; }).slice(0, k);
       }
-      var groups = [['Maps', find(MAPS, 3)], ['Cards', CARDS ? find(CARDS, 6) : []], ['Graphs', find(GRAPHS, 2)],
+      var groups = [['Maps', find(MAPS, 3)], ['Cards', CARDS ? find(CARDS, 6) : []], ['Graphs', find(GRAPHS, 2)], ['Moving maps', find(MOVES, 3)],
         ['SDLs', sdlHits], ['Blocks', blockHits]]
         .filter(function (g) { return g[1].length; })
         .sort(function (a, b) { return b[1][0][0] - a[1][0][0]; });

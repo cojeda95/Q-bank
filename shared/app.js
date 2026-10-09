@@ -91,6 +91,7 @@ const ATLAS_URL = APP_SRC ? new URL('../resources/metabolic-atlas.html', APP_SRC
 let ATLAS_INDEX = null;
 let ATLAS_MAPS = null;   // map id -> [title, card ids], for "Practice this map"
 let ATLAS_GRAPHS = null; // [map id, plot index, title, card ids] — "See it on a graph", "Graphs for this block"
+let ATLAS_MOVES = null;  // [map id, "switch:option" or "", option label, map title, card ids] — "See it move"
 let ATLAS_READY = Promise.resolve();   // settles once atlas-terms.js has loaded (or failed)
 (function loadAtlasTerms() {
   if (!APP_SRC) return;
@@ -103,6 +104,7 @@ let ATLAS_READY = Promise.resolve();   // settles once atlas-terms.js has loaded
       if (d && Array.isArray(d.cards)) ATLAS_INDEX = d.cards.map(([id, n, k, t]) => ({ id, n, k, t }));
       if (d && d.maps) ATLAS_MAPS = d.maps;
       if (d && Array.isArray(d.graphs)) ATLAS_GRAPHS = d.graphs;
+      if (d && Array.isArray(d.moves)) ATLAS_MOVES = d.moves;
       resolve();
     };
     s.onerror = resolve;
@@ -198,7 +200,10 @@ function atlasLinksHtml(q, picked) {
   // the first graph that illustrates one of the linked cards, best card first
   const g = ATLAS_GRAPHS && cards.map(c => ATLAS_GRAPHS.find(x => x[3].includes(c.id))).find(Boolean);
   const graphHtml = g ? `<a class="atlas-graph" href="${ATLAS_URL}#graph/${encodeURIComponent(g[0])}/${g[1]}" target="_blank" rel="noopener">See it on a graph: ${escapeHtml(g[2])}</a>` : '';
-  return `<div class="info-block atlas"><b>On the Lesion Atlas</b>${cards.map(link).join('')}${graphHtml}${pickedHtml}${table}</div>`;
+  // a moving map for the best card: with that card's switch already on if one exists, else the map itself
+  const mv = ATLAS_MOVES && cards.map(c => ATLAS_MOVES.find(x => x[1] && x[4].includes(c.id)) || ATLAS_MOVES.find(x => !x[1] && x[4].includes(c.id))).find(Boolean);
+  const moveHtml = mv ? `<a class="atlas-graph atlas-move" href="${ATLAS_URL}#${encodeURIComponent(mv[0])}${mv[1] ? '/~' + mv[1].split(':').map(encodeURIComponent).join(':') : ''}" target="_blank" rel="noopener">See it move: ${escapeHtml(mv[3])}${mv[2] ? ' — ' + escapeHtml(mv[2]) : ''}</a>` : '';
+  return `<div class="info-block atlas"><b>On the Lesion Atlas</b>${cards.map(link).join('')}${graphHtml}${moveHtml}${pickedHtml}${table}</div>`;
 }
 
 /* Missed questions feed the Lesion Atlas review list. The atlas keeps its

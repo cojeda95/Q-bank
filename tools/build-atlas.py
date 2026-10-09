@@ -16,7 +16,7 @@ question to the matching atlas card, and resources/atlas-practice.js, which
 counts those questions per card and block for the cards' Practice buttons —
 re-run it after syncing new questions so the counts stay current.
 """
-import json, re, shutil, subprocess, sys, tempfile, pathlib
+import hashlib, json, re, shutil, subprocess, sys, tempfile, pathlib
 
 TOOLS = pathlib.Path(__file__).resolve().parent
 ROOT = TOOLS.parent
@@ -42,6 +42,23 @@ KNOWN_SRC = re.compile(r"(Robbins|Katzung|Guyton|Costanzo|Kaplan & Sadock|Marks|
                        r"Fundamental Neuroscience|Foundations of Osteopathic Medicine|Atlas of Osteopathic Techniques|"
                        r"Somatic Dysfunction in Osteopathic Family Medicine|An Osteopathic Approach to Diagnosis and Treatment|DeGowin|"
                        r"OCOM OMM|OCOM Ortho|OCOM Psych|OCOM Rheum|OCOM Nephro|Osmosis|Bootcamp\.com) ")
+
+def dyn_maps(text):
+    """[(map id, its m.dyn data)] for every drawn, moving map (art:"kit") — the data is JSON on the map's dyn: line"""
+    return [(m, d) for m, d, _, _ in dyn_spans(text)]
+
+def dyn_spans(text):
+    """like dyn_maps, with where each map's dyn JSON starts and ends in text"""
+    dec = json.JSONDecoder(); out = []
+    heads = list(re.finditer(r"^MAPS\.([a-z0-9_]+) = \{", text, re.M))
+    for i, mm in enumerate(heads):
+        stop = heads[i + 1].start() if i + 1 < len(heads) else len(text)
+        k = text.find("\n dyn:", mm.end(), stop)
+        if k < 0:
+            continue
+        data, end = dec.raw_decode(text, k + len("\n dyn:"))
+        out.append((mm.group(1), data, k + len("\n dyn:"), end))
+    return out
 
 def validate(art):
     """Return a list of problems that should block the build."""
@@ -101,6 +118,13 @@ def validate(art):
             if k in seen:
                 problems.append(f"{k}: {what} is defined twice — the later one silently wins")
             seen.add(k)
+    # 4. A moving map's switch option may name the card it is about ([key, label, card]) — search and
+    #    "See it move" follow it, so it must exist.
+    for mid, d in dyn_maps(art):
+        for sw in d.get("switches", []):
+            for o in sw.get("options", []):
+                if len(o) > 2 and o[2] and o[2] not in cards:
+                    problems.append(f"MAPS.{mid}: switch {sw.get('id')} option {o[0]} names card {o[2]!r}, which does not exist")
     dupes(re.findall(r"^([a-z0-9_]+):\{n:\"", art, re.M), "card")
     dupes(re.findall(r"^MAPS\.([a-z0-9_]+) = \{", art, re.M), "map")
     paths_block = art[art.index("const PATHS = {"):art.index("\n};", art.index("const PATHS = {"))]
@@ -245,8 +269,28 @@ marker = '<div class="app">'
 i = styled.index(marker)
 built = head + styled[:i] + "\n</head>\n<body>\n" + TOPBAR + styled[i:] + "\n</body>\n</html>\n"
 
+# ── moving maps: each drawing goes to resources/dyn/<map>.js and loads when its map opens (the kit's dynLoad);
+#    the page keeps {lazy: content hash, switches, panel} so search, links and the switch state work before it arrives
+DYN_DIR = ROOT / "resources" / "dyn"
+DYN_DIR.mkdir(exist_ok=True)
+parts, pos, keep, moved = [], 0, set(), 0
+for mid, data, a, b in (dyn_spans(built) if "function dynLoad(" in built else []):   # only a kit that can load them
+    body = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+    h = hashlib.sha1(body.encode("utf-8")).hexdigest()[:10]
+    (DYN_DIR / f"{mid}.js").write_text(f"/* Built by tools/build-atlas.py — do not edit. The drawing of MAPS.{mid} (Lesion Atlas). */\n"
+                                       f"(window.DYNDATA=window.DYNDATA||{{}})[{json.dumps(mid)}]={body};\n", encoding="utf-8")
+    stub = {"lazy": h, "switches": data.get("switches", []), "panel": data.get("panel")}
+    parts += [built[pos:a], json.dumps(stub, ensure_ascii=False, separators=(",", ":"))]; pos = b
+    keep.add(f"{mid}.js"); moved += b - a
+parts.append(built[pos:]); built = "".join(parts)
+for f in DYN_DIR.glob("*.js"):
+    if f.name not in keep:
+        f.unlink()
+if not keep:
+    DYN_DIR.rmdir() if not any(DYN_DIR.iterdir()) else None
 out.write_text(built, encoding="utf-8")
 print(f"built {out.relative_to(out.parents[1])}  —  {maps} maps, {cards} cards, {len(built):,} bytes")
+print(f"built resources/dyn/  —  {len(keep)} moving-map drawings, {moved:,} bytes moved out of the page")
 
 if homes_now is not None:
     snap = json.dumps(dict(sorted(homes_now.items())), indent=0, ensure_ascii=False) + "\n"
@@ -338,11 +382,24 @@ for mm in re.finditer(r"^MAPS\.([a-z0-9_]+) = \{(.*?)\n\};", art, re.M | re.S):
             all_plots.append([mm.group(1), i, t.group(1)])
         if ids and t:
             graphs.append([mm.group(1), i, t.group(1), ids])
-TERMS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. [id, name, kind, normalized terms]; maps: id -> [title, card ids]; graphs: [map, plot, title, card ids] */\n"
-                     "window.ATLAS_TERMS=" + json.dumps({"atlas": "metabolic-atlas.html", "cards": rows, "maps": map_cards, "graphs": graphs},
+# moves: [map, "switch:option" ("" = the map as it opens), option label, map title, card ids] — "See it move" under a
+# question opens a moving map with the switch for its card already on (#<map>/~<switch:option>), else just the map
+moves = []
+for mid, d in dyn_maps(art):
+    tm = re.search(r"^MAPS\." + mid + r" = \{\s*t:\"([^\"]*)\"", art, re.M)
+    title = tm.group(1) if tm else mid
+    for sw in d.get("switches", []):
+        for o in sw.get("options", []):
+            if len(o) > 2 and o[2] in card_ids:
+                moves.append([mid, f"{sw['id']}:{o[0]}", o[1], title, [o[2]]])
+    on_map = {x["c"] for x in d.get("sites", []) if x.get("c") in card_ids} | set(map_cards.get(mid, [None, []])[1])
+    moves.append([mid, "", "", title, sorted(on_map)])
+TERMS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. [id, name, kind, normalized terms]; maps: id -> [title, card ids]; graphs: [map, plot, title, card ids]; moves: [map, switch:option, label, map title, card ids] */\n"
+                     "window.ATLAS_TERMS=" + json.dumps({"atlas": "metabolic-atlas.html", "cards": rows, "maps": map_cards, "graphs": graphs, "moves": moves},
                                                         ensure_ascii=False, separators=(",", ":")) + ";\n",
                      encoding="utf-8")
-print(f"built {TERMS_OUT.relative_to(ROOT)}  —  {sum(len(r[3]) for r in rows)} link terms for {len(rows)} cards, {len(graphs)} graphs")
+print(f"built {TERMS_OUT.relative_to(ROOT)}  —  {sum(len(r[3]) for r in rows)} link terms for {len(rows)} cards, {len(graphs)} graphs, "
+      f"{sum(1 for x in moves if x[1])} moving-map switches")
 
 
 # ── practice index: how many Q-bank questions link to each card ─────────────
@@ -551,7 +608,8 @@ for k, ms in (json.loads(am.group(1)).items() if am else []):
         abbr[k] = ms
 home = {"stats": {"maps": len(home_maps), "cards": len(rows), "graphs": len(all_plots), "linked": nlinked}, "abbr": abbr,
         "topics": topics, "maps": home_maps, "latest": [v for v in latest if v in home_maps],
-        "graphs": all_plots, "blocks": [list(b) for b in blocks], "sdls": sdl_list}
+        "graphs": all_plots, "blocks": [list(b) for b in blocks], "sdls": sdl_list,
+        "moves": [x[:4] for x in moves if x[1]]}
 HOME_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. The hub home page: atlas stats, systems, map titles and "
                     "schematics, the newest maps, every graph, and each block's SDLs for the search */\n"
                     "window.ATLAS_HOME=" + json.dumps(home, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")

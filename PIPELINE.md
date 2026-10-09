@@ -308,6 +308,19 @@ glomerular-vessel switches (NSAID, ACE inhibitor / ARB, ANP / BNP, sympathetic s
 GFR / RPF / FF / renin readouts (First Aid pp. 601, 606–607, 627; Costanzo ch 6).
 Batch scripts: `atlas-review/batches/m38/` (kit.js, kitify.py) and `m39/` (dynlib.py — check,
 screenshot harness and assembler; SPEC_DYN.md — the brief for writing a new drawn map).
+m40 additions:
+- **Lazy drawings.** build-atlas.py moves each moving map's `dyn` data to `resources/dyn/<map>.js`
+  (content-hashed) and leaves `{lazy, switches, panel}` in the page; the kit's dynLoad() fetches it when
+  the map opens, and once the first map is up the rest are fetched quietly so the offline copy has them.
+  The build only does this when the page's kit has `function dynLoad(`.
+- **Switch state in the address:** `#coagflow/~dz:hema,!adh` (dynStateStr / dynApplyStr; readHash strips
+  the `~` segment). writeHash keeps it current as switches change.
+- **Option → card:** a `one`/`steps` option may be `[key, label, card]`. The build validates the card and
+  exports `moves` (atlas-terms.js; atlas-home.js) — the question bank's "See it move" link under a question
+  and the hub search's "Moving maps" group; the atlas search lists them too (switchMatches).
+- **Predict the arrows:** a chip on every moving map with readouts; the reader guesses ↑ ↓ ↔, then Check.
+- **Phones (≤ 1000 px):** the switches, arrows and note sit in a docked sheet (#dynSheet) — a slim "peek"
+  bar by default, "Switches ▴" for all of them; a moving map opens framed on its drawing (dynFrame).
 A card opened from a transporter (or from a graph's card link — anything with `data-plotles`)
 keeps the map where it is: the click records that spot as KEEP_PT and flashPins() only
 slides the map if the card panel now covers it, instead of taking the reader to the card's
