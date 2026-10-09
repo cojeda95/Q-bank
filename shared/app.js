@@ -666,6 +666,8 @@ function render() {
     renderAtlasPractice(decodeURIComponent(parts[1]), parts[2] === 'missed');
   } else if (parts[0] === 'atlasmap' && parts[1]) {
     renderAtlasMapPractice(decodeURIComponent(parts[1]), parts[2] === 'missed');
+  } else if (parts[0] === 'atlascards' && parts[1]) {
+    renderAtlasCardsPractice(decodeURIComponent(parts[1]).split(','), parts[2] ? decodeURIComponent(parts[2]) : '');
   } else if (parts[0] === 'sdlcards' && parts[1]) {
     renderSdlCards(parseInt(parts[1], 10));
   } else if (parts[0] === 'sdlmissed' && parts[1]) {
@@ -692,6 +694,7 @@ function rememberPlace(parts) {
     const f = findSdl(parseInt(parts[1], 10));
     if (f) save((parts[0] === 'sdlcards' ? 'Atlas cards: ' : 'Your misses: ') + f.sdl.title);
   }
+  else if (parts[0] === 'atlascards' && parts[1]) save('Atlas practice: ' + (parts[2] ? decodeURIComponent(parts[2]) : 'a graph'));
   else if ((parts[0] === 'atlas' || parts[0] === 'atlasmap') && parts[1]) {
     const id = decodeURIComponent(parts[1]), route = window.location.hash, miss = parts[2] === 'missed' ? ' — your misses' : '';
     ATLAS_READY.then(() => {
@@ -2909,6 +2912,41 @@ function renderAtlasMapPractice(mapId, missedOnly) {
     session = {
       mode: 'review',
       queueLabel: 'Atlas — ' + entry[0] + (missedOnly ? ' · your misses' : ''),
+      questions: shuffle(qs),
+      index: 0,
+      records: new Array(qs.length).fill(null),
+      pendingLetter: null,
+    };
+    renderReviewQuestion();
+  });
+}
+
+/* ── Practice from an atlas graph ────────────────────────────────────────
+   A graph's "Questions" chips open #atlascards/<card id,card id,…>/<graph title>: every
+   question in this block that links to any card the graph illustrates (the atlas counts
+   them from atlas-qlinks.js, built by the same linking rule). */
+function renderAtlasCardsPractice(ids, title) {
+  const route = window.location.hash;
+  main.innerHTML = `<p class="loading">Finding questions…</p>`;
+  ATLAS_READY.then(() => {
+    if (window.location.hash !== route) return;
+    const want = new Set(ids), name = title || 'Atlas graph', qs = [];
+    DATA.exams.forEach(e => e.sdls.forEach(sdl => sdl.questions.forEach(q => {
+      if (atlasLinksFor(q).some(c => want.has(c.id))) {
+        qs.push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title, examNumber: e.examNumber }));
+      }
+    })));
+    if (!qs.length) {
+      main.innerHTML = `
+        <button class="back-link" id="backHome">&larr; Home</button>
+        <h1>${escapeHtml(name)}</h1>
+        <p class="empty-state">No questions in this block link to the cards on that graph yet.</p>`;
+      document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+      return;
+    }
+    session = {
+      mode: 'review',
+      queueLabel: 'Atlas — ' + name,
       questions: shuffle(qs),
       index: 0,
       records: new Array(qs.length).fill(null),

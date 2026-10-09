@@ -212,6 +212,17 @@ nothing), `davenport` (four PCO₂ isobars from `isobar()`, the disorder points 
 on the first one, values from Costanzo Table 7.3), `ghday` (pulses from `ghday(scale, every)`,
 with sleep as a band), `insglu` (glucose, insulin and glucagon as multiples of fasting) and
 `nephmin` (% of the filtered Ca²⁺, phosphate and Mg²⁺ by segment, a category axis).
+The m34 kinds: `thyfb` (log TSH against free T4 from `thyfb()`, with primary, subclinical and
+central points — off-curve points are plain marks on the same series; the y ticks use `ytl`,
+labels for `yt` exactly as `xtl` labels `xt`), `thycourse` (free T4, TSH and iodine uptake over
+weeks for de Quervain thyroiditis, Graves disease and thyroid hormone ingestion), `rbfpress`
+(GFR, renal blood flow and urine flow as % of the value at 100 mm Hg, Guyton Fig 27.10, with
+the autoregulatory range as a band), `presnat` (Guyton's acute and chronic renal output curves
+with intake lines and equilibrium points; `pshift()` moves a curve right), `fuelphase` (fuel use
+on a category axis from fed to "fat gone") and `a1c` (eAG = 28.7 × HbA1c − 46.7, Nathan 2008).
+A band that only one version carries shows during a quiz even though its label is hidden — so a
+band must either be shared by every version or be the thing the quiz asks about (the a1c
+thresholds); `thycourse` keeps its phases in the key instead.
 
 **Graph quiz and gallery.** Any kind with three or more versions shows a **Quiz me** chip.
 `PLOTQ["view:index"]` holds `{ans, pick, n, right}`; `plotQuiz()` starts, answers, moves on
@@ -243,6 +254,19 @@ mix bar has **This map · Whole topic · Everything** (`GSCOPE`, saved as `mla-g
 bar says so. `PLOTCARDS[kind]` lists the cards each graph illustrates; `plotSVG()` draws them
 as `.pcardc` chips under the legend (as many as fit above the note, hidden while a quiz is
 unanswered), and a click opens the card with `openLes()`.
+
+**Mix review, graph questions and graph keys (m34).** A wrong answer in a Graph mix is pushed
+to `GQ.miss` as `[view, plot, answer, pick]`; when the mix ends `showGraph()` opens
+`openGraphReview()` once (the drawer), and the bar keeps a **Review N missed** button. A row
+sets `PLOTCMP` to overlay the picked version and calls `goPlot(view, plot, answer)`. Under the
+card chips, **Questions** chips count, per block, the questions linked to any of the graph's
+`PLOTCARDS` (union of `ATLAS_QLINKS` ids, so the count matches the block); a click opens
+`../<block>/index.html#atlascards/<card,card,…>/<graph title>`, which shared/app.js
+(`renderAtlasCardsPractice`) runs as a review session with the same `atlasLinksFor()` rule.
+atlas-qlinks.js is deferred, so the page redraws once on DOMContentLoaded to show them.
+`PLOTACT` remembers the graph last clicked (any `.plot-c`) or framed by `goPlot()`; on that
+map ← → step its versions, **q** starts its quiz and **c** toggles compare — not while its quiz
+is open, during a walk, in an input, or with focus inside the drawer.
 
 ### Search abbreviations
 
@@ -375,6 +399,15 @@ immune cells, phonation and swallowing) plus the seven new maps brought the targ
 mastication) were pinned onto existing Larynx nodes rather than given a map. Generic words
 steal: "beta subunit" took insulin-receptor answers, "chromosome 3p" a VHL answer,
 "articulation" an OMM thrust answer, "haploinsufficiency" DiGeorge answers — all removed.
+The m34 sweep (Endo 28, Nephro 8/15/27/31/38/41, Pulm 26/27, EENT 6/11, Psych 8/33, OMM 14/23)
+plus the eight new maps took linked questions from 7,581 to 7,689; what stays unlinked (supine
+bottle feeding, tympanometry, OMM tenets) has no textbook source in the corpus. Two gap cards
+(alveolar proteinosis, the visual streams) went onto existing nodes. Histology and cell names
+steal hardest: "macrophages", "endothelium", "stereocilia", "dendritic cells", "renal blood
+flow", "respiratory epithelium" all took other cards' questions. A card's name base is always a
+term, so the fix for a generic name is to rename the card ("Dendritic cell types — …", "How
+much blood the kidneys get — …"), and epithelium names work best answer-only
+(`=pseudostratified columnar`, `=stratified squamous`).
 
 **You picked.** After a miss, `atlasLinksHtml(q, picked)` also matches the option the person
 chose (`atlasPickedFor`): only its leading phrase — the text before the first comma, colon,

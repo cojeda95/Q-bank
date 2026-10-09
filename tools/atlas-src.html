@@ -1331,6 +1331,30 @@ const PATHS = {
   shOut:{n:"Outside the joint",v:"--p-gluconeo"},
   ctEds:{n:"Ehlers-Danlos",v:"--p-glycolysis"},
   ctFib:{n:"Fibrillin & TGF-β",v:"--p-tca"},
+  thHorm:{n:"Hormone & tests",v:"--p-glycolysis"},
+  thInfl:{n:"Hypo, hyper & thyroiditis",v:"--p-tca"},
+  thTum:{n:"Nodules & cancer",v:"--p-gluconeo"},
+  inLink:{n:"Innate & adaptive",v:"--p-glycolysis"},
+  inCells:{n:"Innate cells",v:"--p-tca"},
+  inDef:{n:"Phagocyte defects",v:"--p-gluconeo"},
+  plFluid:{n:"Pleural fluid",v:"--p-glycolysis"},
+  plTum:{n:"Pleural tumors",v:"--p-tca"},
+  plAir:{n:"Air & pressure",v:"--p-gluconeo"},
+  fsFed:{n:"Fed state",v:"--p-glycolysis"},
+  fsFast:{n:"Fasting",v:"--p-tca"},
+  fsCtrl:{n:"Control",v:"--p-gluconeo"},
+  poPros:{n:"Prostate",v:"--p-glycolysis"},
+  poObs:{n:"Obstruction & stones",v:"--p-tca"},
+  rbMeas:{n:"Flow",v:"--p-glycolysis"},
+  rbAuto:{n:"Autoregulation",v:"--p-tca"},
+  rbVaso:{n:"Vasoactive control",v:"--p-gluconeo"},
+  ksBal:{n:"Balance",v:"--p-glycolysis"},
+  ksIn:{n:"Into cells",v:"--p-tca"},
+  ksOut:{n:"Out of cells",v:"--p-gluconeo"},
+  tsSimple:{n:"Simple epithelia",v:"--p-glycolysis"},
+  tsStrat:{n:"Stratified epithelia",v:"--p-tca"},
+  tsSurf:{n:"Surfaces & change",v:"--p-ppp"},
+  tsTissue:{n:"Basic tissues",v:"--p-gluconeo"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -2409,12 +2433,12 @@ renovascular:{n:"Renovascular hypertension",k:"dz",p:"raas",q:["renal artery ste
  src:["Robbins ch 11 — Blood vessels","Robbins ch 20 — The kidney","Costanzo ch 6 — Renal physiology"],
  tx:["—"]},
 
-natriuretic:{n:"ANP & BNP — the counter-regulatory arm",k:"reg",p:"raas",q:["atrial natriuretic peptide", "brain natriuretic peptide", "sacubitril"],enz:"Natriuretic peptides · neprilysin degrades them",inh:"—",fa:"299, 606",hi:1,
+natriuretic:{n:"ANP & BNP — the counter-regulatory arm",k:"reg",p:"raas",q:["atrial natriuretic peptide", "brain natriuretic peptide", "sacubitril","anp directly decreases na+ reabsorption","anp receptors possess intrinsic guanylyl cyclase","=ecf volume expansion produced by aldosterone driven na+ retention","=anp would still bind its receptor","natriuretic peptide receptor a"],enz:"Natriuretic peptides · neprilysin degrades them",inh:"—",fa:"299, 606",hi:1,
  mech:"Atrial and ventricular stretch releases ANP and BNP, which act through cGMP to dilate the afferent arteriole, constrict the efferent, and inhibit renin, aldosterone and sodium reabsorption — the physiologic opposite of the RAAS.",
- find:["Causes <b>aldosterone escape</b>, which is why primary hyperaldosteronism usually has no edema","Dilates vessels, promotes natriuresis and diuresis"],
+ find:["Causes <b>aldosterone escape</b>, which is why primary hyperaldosteronism usually has no edema","Dilates vessels, promotes natriuresis and diuresis","Secreted by the atria when ECF volume rises: dilates afferent and constricts efferent arterioles (GFR ↑) and decreases Na⁺ reabsorption in the <b>late distal tubule and collecting ducts</b>; BNP comes from ventricular cells, urodilatin from the kidney (Costanzo ch 6)","The ANP receptor has an extracellular binding site and an intracellular <b>guanylyl cyclase</b> domain: GTP → cGMP → cGMP-dependent kinase (Costanzo ch 9)"],
  labs:["<b>BNP and NT-proBNP</b> are the workhorse tests for heart failure; a normal value effectively rules it out in acute dyspnea"],
  buzz:["Sacubitril blocks neprilysin so ANP/BNP last longer","Nesiritide is recombinant BNP"],
- src:["Katzung ch 17 — Vasoactive Peptides","Costanzo ch 6 — Renal physiology"],
+ src:["Katzung ch 17 — Vasoactive Peptides","Costanzo ch 6 — Renal physiology","Costanzo ch 9 — Endocrine physiology"],
  tx:["—"]},
 
 hyperpara1:{n:"Primary hyperparathyroidism",k:"dz",p:"calcium",q:["primary hyperparathyroidism", "parathyroid adenoma"],enz:"Autonomous PTH secretion — usually a single adenoma",inh:"—",gen:"Mostly sporadic · familial in MEN1 and MEN2A (autosomal dominant)",fa:"336, 349",hi:1,
@@ -2915,9 +2939,9 @@ nrds:{n:"Neonatal respiratory distress syndrome",k:"dz",p:"alveolus",q:["neonata
  src:["Robbins ch 10 — Diseases of infancy and childhood"],
  tx:["Antenatal corticosteroids; exogenous surfactant; CPAP and gentle ventilation"]},
 
-ards:{n:"Acute respiratory distress syndrome",k:"dz",p:"alveolus",q:["acute respiratory distress syndrome", "ards", "diffuse alveolar damage"],enz:"Diffuse alveolar damage",inh:"Acquired",fa:"697",hi:1,
+ards:{n:"Acute respiratory distress syndrome",k:"dz",p:"alveolus",q:["acute respiratory distress syndrome", "ards", "diffuse alveolar damage","=release of neutrophil extracellular traps"],enz:"Diffuse alveolar damage",inh:"Acquired",fa:"697",hi:1,
  mech:"An inflammatory insult makes the alveolar-capillary membrane leak protein-rich fluid. Surfactant is inactivated, alveoli collapse and flood, and the result is a large intrapulmonary <b>shunt</b> that oxygen alone cannot fix.",
- find:["Onset within 1 week of an insult: sepsis (most common), aspiration, burns, trauma, pancreatitis, drowning","Bilateral opacities not explained by heart failure or volume overload","PaO₂/FiO₂ < 300"],
+ find:["Onset within 1 week of an insult: sepsis (most common), aspiration, burns, trauma, pancreatitis, drowning","Bilateral opacities not explained by heart failure or volume overload","PaO₂/FiO₂ < 300","Neutrophils adhere to activated endothelium, migrate into the interstitium and alveoli and release proteases, reactive oxygen species and cytokines; neutrophil extracellular traps (NETs) appear to add to the damage (Robbins)"],
  labs:["Histology: <b>hyaline membranes</b> lining alveoli — diffuse alveolar damage","Pulmonary capillary wedge pressure is <b>normal</b> — this is not cardiogenic edema","↓ Compliance, widened A–a gradient"],
  buzz:["Hyaline membranes in an adult after sepsis"],
  src:["Robbins ch 15 — The lung","Costanzo ch 5 — Respiratory physiology"],
@@ -2948,9 +2972,9 @@ ild:{n:"Interstitial lung disease",k:"dz",p:"alveolus",q:["interstitial lung dis
  tx:["IPF: pirfenidone or nintedanib; hypersensitivity pneumonitis: remove the exposure"],
  ref:[{a:"Raghu G et al.",t:"Idiopathic pulmonary fibrosis (an update) and progressive pulmonary fibrosis in adults: an official ATS/ERS/JRS/ALAT clinical practice guideline",j:"Am J Respir Crit Care Med",y:2022,pmid:"35486072",doi:"10.1164/rccm.202202-0399ST"},{a:"Raghu G et al.",t:"An official ATS/ERS/JRS/ALAT clinical practice guideline: treatment of idiopathic pulmonary fibrosis. An update of the 2011 clinical practice guideline",j:"Am J Respir Crit Care Med",y:2015,pmid:"26177183",doi:"10.1164/rccm.201506-1063ST"}]},
 
-pneumoconiosis:{n:"Pneumoconioses",k:"dz",p:"alveolus",q:["pneumoconiosis", "pneumoconioses", "asbestosis", "silicosis", "coal workers pneumoconiosis", "berylliosis", "mesothelioma"],enz:"Inhaled mineral dust ingested by alveolar macrophages",inh:"Occupational",fa:"696",hi:1,
+pneumoconiosis:{n:"Pneumoconioses",k:"dz",p:"alveolus",q:["pneumoconiosis", "pneumoconioses", "asbestosis", "silicosis", "coal workers pneumoconiosis", "berylliosis", "mesothelioma","=1 to 5 micrometers","particles from 1 to 5","=siderosis","=whorled collagen nodules with weakly birefringent particles"],enz:"Inhaled mineral dust ingested by alveolar macrophages",inh:"Occupational",fa:"696",hi:1,
  mech:"Inhaled mineral dust reaches the alveolus and is taken up by macrophages, which release fibrogenic factors that drive fibrosis around the dust.",
- find:["Coal workers: upper lobes, small rounded nodules; Caplan syndrome with rheumatoid arthritis","Silicosis: sandblasting, foundries, mines. Upper lobes, eggshell calcification of hilar nodes. Silica impairs macrophages → ↑ tuberculosis risk","Asbestosis: shipbuilding, roofing, plumbing. Lower lobes, ivory-white calcified pleural plaques, ferruginous bodies. Risk of bronchogenic carcinoma > mesothelioma","Berylliosis: aerospace and manufacturing; noncaseating granulomas; sometimes glucocorticoid-responsive"],
+ find:["Coal workers: upper lobes, small rounded nodules; Caplan syndrome with rheumatoid arthritis","Silicosis: sandblasting, foundries, mines. Upper lobes, eggshell calcification of hilar nodes. Silica impairs macrophages → ↑ tuberculosis risk","Asbestosis: shipbuilding, roofing, plumbing. Lower lobes, ivory-white calcified pleural plaques, ferruginous bodies. Risk of bronchogenic carcinoma > mesothelioma","Berylliosis: aerospace and manufacturing; noncaseating granulomas; sometimes glucocorticoid-responsive","The most dangerous particles are 1–5 µm — they reach the terminal small airways and air sacs (Robbins)","Silicotic nodule: central whorled collagen with a peripheral zone of dust-laden macrophages; polarized light shows weakly birefringent silicate particles (Robbins)","Iron oxide from welding causes siderosis (Robbins)"],
  labs:["Asbestos goes to the <b>bases</b>; coal and silica go to the <b>apices</b>"],
  buzz:["Eggshell calcification → silicosis; then think TB","Pleural plaques are a marker of exposure, not of asbestosis itself"],
  src:["Robbins ch 15 — The lung"],
@@ -6539,11 +6563,11 @@ nephritic:{n:"Nephritic syndrome",alias:"glomerulonephritis",k:"dz",p:"gnephriti
 
 nephrotic:{n:"Nephrotic syndrome",k:"dz",p:"gnephrotic",enz:"Podocyte injury — the charge barrier fails and protein pours out",inh:"Primary podocytopathies or systemic disease",fa:"613",hi:1,
  mech:"When podocytes are injured, the filter loses its charge and size selectivity, and albumin floods into the urine. Low albumin drops oncotic pressure (edema), the liver ramps up lipoprotein synthesis (hyperlipidemia), and small anticoagulant and immune proteins are lost too.",
- find:["<b>Proteinuria &gt; 3.5 g/day</b>, frothy urine","<b>Hypoalbuminemia</b> → <b>edema</b> (periorbital, anasarca)","<b>Hyperlipidemia</b>, fatty casts (oval fat bodies, <b>Maltese cross</b>)","<b>Hypercoagulable</b>: antithrombin lost in urine → renal vein thrombosis, DVT","<b>Infections</b>: IgG lost in urine"],
+ find:["<b>Proteinuria &gt; 3.5 g/day</b>, frothy urine","<b>Hypoalbuminemia</b> → <b>edema</b> (periorbital, anasarca)","<b>Hyperlipidemia</b>, fatty casts (oval fat bodies, <b>Maltese cross</b>)","<b>Hypercoagulable</b>: antithrombin lost in urine → renal vein thrombosis, DVT","<b>Infections</b>: IgG lost in urine","Edema: low colloid osmotic pressure plus <b>Na⁺ and water retention</b> — aldosterone from hypovolemia-driven renin, sympathetic activity, less natriuretic peptide (Robbins)","<b>Selectivity</b>: highly selective proteinuria is mostly low-molecular-weight protein (albumin, transferrin); poorly selective proteinuria adds globulins (Robbins)"],
  labs:["24-hour urine protein or urine protein-to-creatinine ratio; low albumin, high cholesterol"],
  buzz:["Massive proteinuria + edema + hypoalbuminemia + hyperlipidemia = nephrotic","Antithrombin loss → renal vein thrombosis"],
  src:["Robbins ch 20 — The kidney"],
- tx:["ACE inhibitor or ARB to reduce proteinuria; diuretics; treat the cause (glucocorticoids for minimal change disease)"],q:["nephrotic syndrome","nephrotic","nephrotic range proteinuria","fatty casts","oval fat bodies","maltese cross"]},
+ tx:["ACE inhibitor or ARB to reduce proteinuria; diuretics; treat the cause (glucocorticoids for minimal change disease)"],q:["nephrotic syndrome","nephrotic","nephrotic range proteinuria","fatty casts","oval fat bodies","maltese cross","=low oncotic pressure with renal na+ and water retention","=albumin loss lowers plasma oncotic pressure and the kidney retains","=mostly albumin and other low molecular weight proteins"]},
 
 psgn:{n:"Infection-related glomerulonephritis",alias:"poststreptococcal glomerulonephritis · PSGN",k:"dz",p:"gnephritic",enz:"Immune complexes deposit as subepithelial humps (type III hypersensitivity)",inh:"2–4 weeks after group A strep pharyngitis or skin infection; staph in adults",fa:"614",hi:1,
  mech:"Antibodies against streptococcal antigens form immune complexes that lodge on the outer side of the GBM, activate complement and draw in neutrophils. Complement is consumed, so C3 falls. In children it usually resolves on its own.",
@@ -7682,11 +7706,11 @@ malehpg:{n:"Sertoli & Leydig cells — who makes what",alias:"hypothalamic-pitui
 
 spermatogenesis:{n:"Spermatogenesis",alias:"spermiogenesis",k:"reg",p:"mhpg",enz:"Meiosis in the seminiferous tubules, supported by Sertoli cells",inh:"—",fa:"647",hi:1,
  mech:"Begins at puberty. <b>Spermatogonia</b> (2N) divide to make primary spermatocytes, which complete meiosis I to secondary spermatocytes and meiosis II to haploid <b>spermatids</b>. Spermiogenesis then remodels each spermatid into a spermatozoon — it loses cytoplasm and gains an acrosome cap and a tail. A full cycle takes a little over two months.",
- find:["Sperm develop best below 37 °C — why the testes sit in the scrotum","<b>Kartagener syndrome</b> (primary ciliary dyskinesia): immotile sperm tails → infertility","<b>Cystic fibrosis</b>: sperm are normal but the <b>vas deferens is absent</b> → infertility","Semen: almost 60% seminal vesicle fluid and about 30% prostatic fluid, plus fluid and sperm from the vas deferens and mucous glands; pH about 7.5 (Guyton)","<b>Capacitation</b>: in the female tract, over 1–10 hours, the fluids wash away inhibitory factors and the cholesterol that toughens the acrosome membrane, so the sperm can fertilize (Guyton)"],
+ find:["Sperm develop best below 37 °C — why the testes sit in the scrotum","<b>Kartagener syndrome</b> (primary ciliary dyskinesia): immotile sperm tails → infertility","<b>Cystic fibrosis</b>: sperm are normal but the <b>vas deferens is absent</b> → infertility","Semen: almost 60% seminal vesicle fluid and about 30% prostatic fluid, plus fluid and sperm from the vas deferens and mucous glands; pH about 7.5 (Guyton)","<b>Capacitation</b>: in the female tract, over 1–10 hours, the fluids wash away inhibitory factors and the cholesterol that toughens the acrosome membrane, so the sperm can fertilize (Guyton)","Meiosis I is the <b>reductional</b> division — homologous chromosomes, after crossing-over, separate and the chromosome number halves; meiosis II is the equatorial division (Pawlina)"],
  labs:["—"],
  buzz:["Gonium is going to be a sperm; zoon is zooming to the egg"],
  src:["Pawlina ch 22 — Male Reproductive System","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)","Costanzo ch 10 — Reproductive physiology"],
- tx:["—"],q:["spermatogenesis","spermiogenesis","spermatogonia","spermatocyte","spermatid","acrosome","=the seminal vesicles contribute approximately 60","capacitation","=capacitation in which"]},
+ tx:["—"],q:["spermatogenesis","spermiogenesis","spermatogonia","spermatocyte","spermatid","acrosome","=the seminal vesicles contribute approximately 60","capacitation","=capacitation in which","=a reductional division that halves the chromosome number","=sperm have not yet been capacitated"]},
 
 anabolic:{n:"Anabolic steroids & exogenous testosterone",alias:"anabolic-androgenic steroids",k:"drug",p:"mhpg",enz:"Androgen receptor agonists",inh:"—",fa:"653",hi:1,
  mech:"Outside testosterone shuts down the hypothalamic-pituitary-gonadal axis. LH and FSH fall, so the testis stops making its own testosterone — and <b>intratesticular</b> testosterone, which spermatogenesis depends on, drops even though blood levels are high.",
@@ -10927,7 +10951,7 @@ vagusomm:{n:"Vagal reflexes — OA, C1, C2",alias:"cranial parasympathetics",k:"
  labs:["—"],
  buzz:["Pancreatitis with tissue change at OA, C1 and C2 = vagal afferents"],
  src:["OCOM OMM — OMS2 written midterm study guide","Foundations of Osteopathic Medicine ch 6 — Autonomic Nervous System","Foundations of Osteopathic Medicine ch 72 — Osteopathic Considerations in Pulmonology","An Osteopathic Approach to Diagnosis and Treatment ch 113 — Cardiac Applications"],
- tx:["Suboccipital release / OA decompression to normalize vagal tone"],q:["vagus nerve afferents","occipitoatlantal","oa c1 c2"]},
+ tx:["Suboccipital release / OA decompression to normalize vagal tone"],q:["vagus nerve afferents","occipitoatlantal","oa c1 c2","=the vagus nerve as it exits the skull"]},
 
 pelvicsplanch:{n:"Pelvic splanchnics — S2–S4",alias:"nervi erigentes · sacral parasympathetics",k:"reg",p:"vpara",enz:"S2–S4 parasympathetic outflow",inh:"—",hi:1,
  mech:"The sacral division supplies the <b>distal third of the transverse colon</b>, descending and sigmoid colon, rectum, bladder detrusor and the pelvic reproductive organs. Its reflected somatic findings are in the paraspinal and pelvic tissues around the sacrum.",
@@ -10944,7 +10968,7 @@ omheadneck:{n:"Head & neck: osteopathic levels",k:"reg",p:"vsymp",enz:"Sympathet
  labs:["Osmosis places the sinus and nasal points at C1–C2 articular pillars"],
  buzz:["Most head and neck posterior points sit on C1 or C2"],
  src:["OCOM OMM — Week 5 lab: Chapman's reflex points chart","An Osteopathic Approach to Diagnosis and Treatment ch 22 — Chapman's Reflex Points","Osmosis — Chapman points","Foundations of Osteopathic Medicine ch 6 — Autonomic Nervous System"],
- tx:["—"],q:["=angle of louis","=upper edge of proximal clavicle"]},
+ tx:["—"],q:["=angle of louis","=upper edge of proximal clavicle","head and neck sympathetic innervation arises from t1 to t5"]},
 
 ombeth:{n:"BETH points — 2nd intercostal space",alias:"bronchi · esophagus · thyroid · heart",k:"reg",p:"vsymp",enz:"Four anterior Chapman points share the 2nd ICS beside the sternum",inh:"—",hi:1,
  mech:"The lab chart flags four organs whose anterior Chapman points all sit in the <b>second intercostal space close to the sternum</b>: <b>B</b>ronchi, <b>E</b>sophagus, <b>T</b>hyroid and <b>H</b>eart. Their posterior points sit around T2–T3.",
@@ -10952,7 +10976,7 @@ ombeth:{n:"BETH points — 2nd intercostal space",alias:"bronchi · esophagus ·
  labs:["Osmosis lists the heart posterior point at the T3 transverse process"],
  buzz:["Tender pea-sized nodule in the 2nd ICS beside the sternum"],
  src:["OCOM OMM — Week 5 lab: Chapman's reflex points chart","An Osteopathic Approach to Diagnosis and Treatment ch 22 — Chapman's Reflex Points","OCOM OMM — OMS2 written midterm study guide","Osmosis — Chapman points"],
- tx:["—"],q:["beth point","beth points"]},
+ tx:["—"],q:["beth point","beth points","=bronchials esophagus thyroid and heart"]},
 
 omheart:{n:"Heart: osteopathic levels",k:"reg",p:"vsymp",enz:"Sympathetic T1–T5, left · parasympathetic vagus",inh:"—",hi:1,
  mech:"Cardiac sympathetics leave the upper thoracic cord (the course gives T1–T6, with the heaviest concentration of cardiac nociceptive afferents at <b>T4</b>). Right-sided fibers reach the SA node, left-sided fibers the AV node. Cardiac disease therefore produces tissue texture change at <b>T1–T5 on the left</b>, most often T2–T3, plus upper cervical findings through the vagus.",
@@ -10976,7 +11000,7 @@ omstomach:{n:"Esophagus & stomach: osteopathic levels",k:"reg",p:"vsymp",enz:"Es
  labs:["Surface anatomy: the pylorus lies 4–5 fingers above the umbilicus, just right of midline, almond-sized"],
  buzz:["GERD with a tender left 5th ICS point"],
  src:["OCOM OMM — Week 5 lab: Chapman's reflex points chart","An Osteopathic Approach to Diagnosis and Treatment ch 22 — Chapman's Reflex Points","OCOM OMM — OMS2 written midterm study guide","Foundations of Osteopathic Medicine ch 43 — Clinical Assessment: Viscerosomatic, Somatosomatic, Somatovisceral Reflexes; Counterstrain Points, Myofascial Trigger Points, and Chapman Reflexes","Osmosis — Viscerosomatic reflexes","Osmosis — Chapman points"],
- tx:["Celiac ganglion inhibition (superior border of L1)"],q:[]},
+ tx:["Celiac ganglion inhibition (superior border of L1)"],q:["=left fifth intercostal space between mid mammary line and sternum"]},
 
 omliver:{n:"Liver & gallbladder: osteopathic levels",k:"reg",p:"vsymp",enz:"Sympathetic T5–T9 (course alternative T6–T10) via the celiac ganglion · vagus",inh:"—",hi:1,
  mech:"The liver and gallbladder share the celiac outflow (T5–T9) with the stomach, but their findings lie on the <b>right</b>.",
@@ -10992,7 +11016,7 @@ ompancspleen:{n:"Pancreas & spleen: osteopathic levels",k:"reg",p:"vsymp",enz:"S
  labs:["—"],
  buzz:["Right 7th ICS = pancreas · left 7th ICS = spleen"],
  src:["OCOM OMM — Week 5 lab: Chapman's reflex points chart","An Osteopathic Approach to Diagnosis and Treatment ch 22 — Chapman's Reflex Points","OCOM OMM — OMS2 written midterm study guide","Foundations of Osteopathic Medicine ch 55 — Visceral Manipulation"],
- tx:["<b>Splenic pump</b>: compress the left costal margin (ribs 8–12) rhythmically with a sudden release → mobilizes stored red and white cells (↑ leukocyte and reticulocyte counts)","Splenic pump is <b>absolutely contraindicated</b> with splenomegaly — mononucleosis or hematologic malignancy — because of rupture risk"],q:["splenic pump"]},
+ tx:["<b>Splenic pump</b>: compress the left costal margin (ribs 8–12) rhythmically with a sudden release → mobilizes stored red and white cells (↑ leukocyte and reticulocyte counts)","Splenic pump is <b>absolutely contraindicated</b> with splenomegaly — mononucleosis or hematologic malignancy — because of rupture risk"],q:["splenic pump","=right seventh intercostal space"]},
 
 omsmallint:{n:"Small intestine: osteopathic levels",k:"reg",p:"vsymp",enz:"Sympathetic T9–T11 (Osmosis: T10–T11) via the superior mesenteric ganglion · vagus",inh:"—",hi:1,
  mech:"The small bowel takes lower thoracic outflow through the superior mesenteric ganglion; the vagus supplies its parasympathetics.",
@@ -11032,7 +11056,7 @@ omadrenal:{n:"Adrenals: osteopathic levels",k:"reg",p:"vsymp",enz:"Sympathetic T
  labs:["—"],
  buzz:["Chronic stress and a tight adrenal region"],
  src:["OCOM OMM — Week 5 lab: Chapman's reflex points chart","An Osteopathic Approach to Diagnosis and Treatment ch 22 — Chapman's Reflex Points","Osmosis — Chapman points","Osmosis — Viscerosomatic reflexes","OCOM OMM — OMS2 written midterm study guide"],
- tx:["—"],q:[]},
+ tx:["—"],q:["=t11 and t12 intertransverse spaces"]},
 
 ombladder:{n:"Bladder & urethra: osteopathic levels",k:"reg",p:"vsymp",enz:"Sympathetic T12–L2 (Osmosis: T11–L2) · parasympathetic S2–S4",inh:"—",hi:0,
  mech:"Sympathetic tone contracts the trigone (α) and relaxes the detrusor (β), so sustained tone favors retention; the pelvic splanchnics drive the detrusor.",
@@ -11105,7 +11129,7 @@ diaphragmrel:{n:"Diaphragm release",alias:"doming the diaphragm",k:"reg",p:"omtl
  labs:["—"],
  buzz:["Restore the pump that moves lymph"],
  src:["OCOM OMM — OMS2 written midterm study guide","Foundations of Osteopathic Medicine ch 78 — Osteopathic Considerations and Approaches in the Acutely Ill or Hospitalized Patient","Somatic Dysfunction in Osteopathic Family Medicine ch 29 — The Patient with Urologic Concerns"],
- tx:["—"],q:["diaphragm release","doming the diaphragm","thoracoabdominal diaphragm"]},
+ tx:["—"],q:["diaphragm release","doming the diaphragm","thoracoabdominal diaphragm","=it restores vertical diaphragm excursion"]},
 
 lymphpump:{n:"Lymphatic pump techniques",alias:"thoracic pump",k:"reg",p:"omtlymph",enz:"Alternating intrathoracic and intra-abdominal pressure",inh:"—",hi:1,
  mech:"Rhythmic pressure changes push lymph centrally through one-way valved vessels. Lymphatic channels themselves contract about 5–8 times per minute at rest.",
@@ -12841,7 +12865,7 @@ erpf:{n:"Renal plasma flow & filtration fraction",k:"reg",p:"rpglom",enz:"PAH cl
  labs:["—"],
  buzz:["PAH for flow, inulin for filtration"],
  src:["Costanzo ch 6 — Renal physiology","Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control"],
- tx:["—"],q:["effective renal plasma flow","renal plasma flow","para aminohippuric acid","pah clearance","filtration fraction"]},
+ tx:["—"],q:["effective renal plasma flow","renal plasma flow","para aminohippuric acid","pah clearance","filtration fraction","effective rpf equals the clearance of pah"]},
 
 glomdyn:{n:"Changes in glomerular dynamics",k:"reg",p:"rpglom",enz:"Read the filtration fraction to tell them apart",inh:"—",fa:"601",hi:1,
  mech:"Each change moves GFR and RPF differently, and the filtration fraction (GFR / RPF) tells them apart.",
@@ -13574,11 +13598,11 @@ pulmex:{n:"Pulmonary blood flow in exercise",k:"reg",p:"gxflow",enz:"More flow a
 
 pulmedema:{n:"Lung fluid balance & pulmonary edema",k:"dz",p:"gxfluid",enz:"A safety factor of about 21 mm Hg",inh:"—",fa:"316",hi:1,
  mech:"Fluid exchange in the lung follows the same Starling forces as other tissues, but the numbers keep the lung dry: capillary pressure is low, interstitial pressure is negative and lymphatics pump continually. The alveolar epithelium is so thin that any positive interstitial pressure ruptures it, so excess interstitial fluid floods the alveoli.",
- find:["Lung capillary pressure about 7 mm Hg vs 17–25 in many peripheral tissues · interstitial pressure about −5 to −8 mm Hg · interstitial colloid osmotic pressure about 14 mm Hg, twice most tissues","<b>Safety factor</b>: capillary pressure must rise from 7 to above plasma colloid osmotic pressure (about 28 mm Hg) before substantial edema forms — an acute margin of about 21 mm Hg. In experiments, fluid began to collect once left atrial pressure passed about 23 mm Hg","<b>Chronic</b> elevation (2 weeks or more) makes the lung more resistant: lymphatics expand and can carry perhaps 10 times more fluid — patients with chronic mitral stenosis tolerate capillary pressures of 40–45 mm Hg","<b>Causes</b>: left heart failure or mitral valve disease (↑ pulmonary venous and capillary pressure); capillary membrane damage from infection such as pneumonia, or from noxious gases such as chlorine or sulfur dioxide (protein and fluid leak)","Acute capillary pressures 25–30 mm Hg above the safety level can kill within 20–30 minutes; in acute left heart failure capillary pressure sometimes reaches 50 mm Hg","In experiments, fluid began to collect in the lungs once left atrial pressure rose above about 23 mm Hg — capillary pressure then exceeded the 25 mm Hg plasma oncotic pressure (Guyton)"],
+ find:["Lung capillary pressure about 7 mm Hg vs 17–25 in many peripheral tissues · interstitial pressure about −5 to −8 mm Hg · interstitial colloid osmotic pressure about 14 mm Hg, twice most tissues","<b>Safety factor</b>: capillary pressure must rise from 7 to above plasma colloid osmotic pressure (about 28 mm Hg) before substantial edema forms — an acute margin of about 21 mm Hg. In experiments, fluid began to collect once left atrial pressure passed about 23 mm Hg","<b>Chronic</b> elevation (2 weeks or more) makes the lung more resistant: lymphatics expand and can carry perhaps 10 times more fluid — patients with chronic mitral stenosis tolerate capillary pressures of 40–45 mm Hg","<b>Causes</b>: left heart failure or mitral valve disease (↑ pulmonary venous and capillary pressure); capillary membrane damage from infection such as pneumonia, or from noxious gases such as chlorine or sulfur dioxide (protein and fluid leak)","Acute capillary pressures 25–30 mm Hg above the safety level can kill within 20–30 minutes; in acute left heart failure capillary pressure sometimes reaches 50 mm Hg","In experiments, fluid began to collect in the lungs once left atrial pressure rose above about 23 mm Hg — capillary pressure then exceeded the 25 mm Hg plasma oncotic pressure (Guyton)","Robbins classification: <b>hemodynamic</b> — ↑ hydrostatic pressure (left heart failure, volume overload, pulmonary vein obstruction), ↓ oncotic pressure (hypoalbuminemia: nephrotic syndrome, liver disease, protein-losing enteropathy), lymphatic obstruction (rare) · <b>alveolar wall injury</b> — infection, inhaled gases, aspiration, radiation, trauma, sepsis, drugs (Robbins)","Long-standing congestion (mitral stenosis): hemosiderin-laden “heart failure cells” and alveolar wall fibrosis make the lungs firm and brown — <b>brown induration</b> (Robbins)"],
  labs:["Heart failure: ↑ pulmonary venous pressure → venous distention and transudation of fluid; hemosiderin-laden macrophages (“heart failure cells”) in the lungs"],
  buzz:["Safety factor ≈ 28 − 7 = 21 mm Hg","Chronic: lymphatics expand"],
- src:["Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid"],
- tx:["—"],q:["pulmonary edema safety factor","safety factor against pulmonary edema","pulmonary interstitial fluid","pulmonary interstitium","lung interstitium","pulmonary capillary dynamics","=pulmonary edema","plasma colloid osmotic pressure","=when left atrial pressure exceeds 23 mm hg","=negative pressure of 8 mm hg","=interstitial fluid hydrostatic pressure of 8 mm hg"]},
+ src:["Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid","Robbins ch 15 — The lung"],
+ tx:["—"],q:["pulmonary edema safety factor","safety factor against pulmonary edema","pulmonary interstitial fluid","pulmonary interstitium","lung interstitium","pulmonary capillary dynamics","=pulmonary edema","plasma colloid osmotic pressure","=when left atrial pressure exceeds 23 mm hg","=negative pressure of 8 mm hg","=interstitial fluid hydrostatic pressure of 8 mm hg","=hemodynamic edema from decreased oncotic pressure","lymphatic obstruction is a rare cause of pulmonary edema","=hemosiderin accumulation in macrophages and interstitial fibrosis"]},
 
 pleura:{n:"Pleural fluid & pleural pressure",k:"reg",p:"gxfluid",enz:"Lymphatic pumping keeps it negative",inh:"—",hi:1,
  mech:"A few milliliters of mucoid fluid lie between the visceral and parietal pleura, so the lungs slide easily as they move. The pleural membrane is porous, interstitial fluid transudes into the space continually, and lymphatics opening from the pleural cavity pump the excess away — which keeps the space a potential space under negative pressure.",
@@ -13865,7 +13889,7 @@ glucagonact:{n:"Glucagon actions & control",k:"reg",p:"hmfuel",enz:"The hypergly
  labs:["—"],
  buzz:["Gs → cAMP → PKA","Protein meal → glucagon and insulin both rise"],
  src:["Guyton ch 79 — Insulin, Glucagon, and Diabetes Mellitus","Costanzo ch 9 — Endocrine physiology"],
- tx:["—"],q:["glucagon secretion","glucagon receptor","hyperglycemic hormone","effects of glucagon","glucagon action"]},
+ tx:["—"],q:["glucagon secretion","glucagon receptor","hyperglycemic hormone","effects of glucagon","glucagon action","=glucagon binds a gs coupled receptor","=glucagon bound its gs coupled receptor"]},
 
 pthaction:{n:"PTH actions & control",k:"reg",p:"hmca",enz:"Raise calcium, trash phosphate",inh:"—",fa:"336, 337",hi:1,
  mech:"PTH, an 84-amino-acid peptide from the parathyroid <b>chief cells</b>, raises ionized Ca²⁺ by acting on bone, kidney and (through vitamin D) gut. The N-terminal 1–34 fragment has full activity; the kidney clears intact PTH within minutes but its fragments for hours.",
@@ -13917,19 +13941,19 @@ thyroidact:{n:"Thyroid hormone actions",k:"reg",p:"hmmet",enz:"The 7 B’s",inh:
 
 psychinterview:{n:"The psychiatric interview",k:"reg",p:"psint",enz:"Open-ended first, in a series of funnels",inh:"—",fa:"272",hi:1,
  mech:"The initial interview gathers what is needed for a criteria-based diagnosis and a person-centered treatment plan. Its two pillars are the <b>history</b> — the patient’s subjective account, plus collateral sources — and the <b>mental status examination</b>, the interviewer’s objective tool, like the physical exam elsewhere in medicine.",
- find:["Parts: identifying data · source and reliability · chief complaint · present illness · past psychiatric history · substance use · past medical history · family history · developmental and social history · review of systems · mental status exam · physical exam · formulation · DSM-5 diagnoses · treatment plan","Start open-ended (“What has led to your being here?”) so the patient tells the story; then narrow with closed-ended questions — not one funnel for the whole interview, but a <b>series of funnels</b>, each new area opening with an open-ended question","Answer the patient’s questions about what will happen and about confidentiality directly; a nonjudgmental attitude encourages sharing","<b>Rapport</b> grows from respect and empathic statements (“That must have been very difficult for you”); <b>empathy</b> is understanding what the patient thinks and feels — putting oneself in their place while keeping objectivity","<b>Safety</b>: in emergency settings keep a clear exit path, leave the door ajar or have staff present; psychotic or confused patients may feel threatened and need reassurance","Explore strengths as well as deficits (“What do you consider your greatest asset?”)"],
+ find:["Parts: identifying data · source and reliability · chief complaint · present illness · past psychiatric history · substance use · past medical history · family history · developmental and social history · review of systems · mental status exam · physical exam · formulation · DSM-5 diagnoses · treatment plan","Start open-ended (“What has led to your being here?”) so the patient tells the story; then narrow with closed-ended questions — not one funnel for the whole interview, but a <b>series of funnels</b>, each new area opening with an open-ended question","Answer the patient’s questions about what will happen and about confidentiality directly; a nonjudgmental attitude encourages sharing","<b>Rapport</b> grows from respect and empathic statements (“That must have been very difficult for you”); <b>empathy</b> is understanding what the patient thinks and feels — putting oneself in their place while keeping objectivity","<b>Safety</b>: in emergency settings keep a clear exit path, leave the door ajar or have staff present; psychotic or confused patients may feel threatened and need reassurance","Explore strengths as well as deficits (“What do you consider your greatest asset?”)","Empathy keeps objectivity; in <b>identification</b> the psychiatrist experiences the emotion so strongly that objectivity is lost — boundaries blur, which is hardest on patients with boundary problems such as borderline personality disorder (Kaplan & Sadock)","Forensic and disability evaluations are less confidential — say explicitly that the session is not confidential and who will receive the report (Kaplan & Sadock)"],
  labs:["—"],
  buzz:["Open → closed, then open again for each new topic","Empathy keeps objectivity"],
  src:["Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient"],
- tx:["—"],q:["psychiatric interview","open ended question","open ended questions","closed ended question","closed ended questions","funnel technique","series of funnels","=rapport","collateral information"]},
+ tx:["—"],q:["psychiatric interview","open ended question","open ended questions","closed ended question","closed ended questions","funnel technique","series of funnels","=rapport","collateral information","=empathy understands the patients emotion while staying objective","=identification since the resident","=empathy since clinical objectivity is retained","differentiates empathy from identification","=the session is not confidential"]},
 
 psychros:{n:"Psychiatric review of systems & alcohol screening",k:"reg",p:"psint",enz:"SIGECAPS, mania, CAGE",inh:"—",hi:1,
  mech:"The psychiatric review of systems screens each major symptom cluster so no disorder is missed, whatever the chief complaint.",
- find:["<b>Depression — SIGECAPS</b>: Sleep, Interest, Guilt, Energy, Concentration, Appetite, Psychomotor agitation or slowing, Suicidality","<b>Mania</b>: impulsivity, grandiosity, recklessness, excess energy, less need for sleep, overspending, talkativeness, racing thoughts, hypersexuality · mixed: irritability, lability","<b>Anxiety</b>: where, when, who, how long, how often","<b>CAGE</b>: ever felt you should <b>C</b>ut down? <b>A</b>nnoyed by criticism of your drinking? <b>G</b>uilty about drinking? Needed an <b>E</b>ye-opener in the morning? Positive answers raise suspicion of alcohol use disorder (AUDIT-C is another validated screen)","<b>RAPS4</b>: Remorse (guilt after drinking), Amnesia, failure to Perform expected tasks, morning Starter drink","Ask about amount (patients define “a drink” differently), tolerance, withdrawal, and effects on relationships, work, school, the law and driving"],
+ find:["<b>Depression — SIGECAPS</b>: Sleep, Interest, Guilt, Energy, Concentration, Appetite, Psychomotor agitation or slowing, Suicidality","<b>Mania</b>: impulsivity, grandiosity, recklessness, excess energy, less need for sleep, overspending, talkativeness, racing thoughts, hypersexuality · mixed: irritability, lability","<b>Anxiety</b>: where, when, who, how long, how often","<b>CAGE</b>: ever felt you should <b>C</b>ut down? <b>A</b>nnoyed by criticism of your drinking? <b>G</b>uilty about drinking? Needed an <b>E</b>ye-opener in the morning? Positive answers raise suspicion of alcohol use disorder (AUDIT-C is another validated screen)","<b>RAPS4</b>: Remorse (guilt after drinking), Amnesia, failure to Perform expected tasks, morning Starter drink","Ask about amount (patients define “a drink” differently), tolerance, withdrawal, and effects on relationships, work, school, the law and driving","CAGE scoring: each yes = 1; 1 or more warrants follow-up, 2 or more strongly suggests a significant alcohol problem (Kaplan & Sadock)","The amount of alcohol can be confused with the volume of the drink (“I add a lot of water”) — ask how many shots (Kaplan & Sadock)"],
  labs:["—"],
  buzz:["SIGECAPS for depression","CAGE: Cut, Annoyed, Guilty, Eye-opener"],
  src:["Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient","DeGowin ch 15 — The Mental Status, Psychiatric, and Social Evaluations"],
- tx:["—"],q:["sigecaps","cage questionnaire","cage questions","raps4","rapid alcohol problem screen","audit c","psychiatric review of systems","eye opener"]},
+ tx:["—"],q:["sigecaps","cage questionnaire","cage questions","raps4","rapid alcohol problem screen","audit c","psychiatric review of systems","eye opener","=the manic symptom cluster","=a score of 2 or more strongly suggests","=the amount of alcohol can be confused","=tolerance withdrawal symptoms and the impact of alcohol use"]},
 
 mse:{n:"Mental status examination",k:"reg",p:"psmse",enz:"The psychiatric physical exam",inh:"—",hi:1,
  mech:"The mental status examination (MSE) is an objective, cross-sectional snapshot of the patient’s mental functioning at the time of the interview — gathered throughout the interview, from the first moments, by observation and direct questions. Because it can be repeated, it tracks change between visits, and its findings help separate primary psychiatric illness from medical, neurologic or substance causes.",
@@ -14005,11 +14029,11 @@ psychformul:{n:"Primary vs secondary presentations & the social evaluation",k:"r
 
 childassess:{n:"Assessing children — rating scales & soft signs",k:"reg",p:"pssafe",enz:"Several informants, standardized scales",inh:"—",hi:1,
  mech:"Child assessment pulls information from parents, teachers and the child, and adds standardized rating scales and a focused neurologic and physical exam.",
- find:["<b>Rating scales</b>: the Child Behavior Checklist (parent and teacher forms), SNAP and Conners’ Rating Scales — used, for example, in ADHD evaluation","History includes prenatal, perinatal and toddler information","<b>Soft signs</b>: subtle, nonfocal neurologic findings (clumsiness, reflex asymmetries, ambidexterity) — not localizing","<b>Minor physical anomalies</b> (such as ear malformations) are more frequent in autism spectrum disorder","Suspected absence spells need a neurologic consultation and EEG — a temporal lobe seizure focus can mimic ADHD"],
+ find:["<b>Rating scales</b>: the Child Behavior Checklist (parent and teacher forms), SNAP and Conners’ Rating Scales — used, for example, in ADHD evaluation","History includes prenatal, perinatal and toddler information","<b>Soft signs</b>: subtle, nonfocal neurologic findings (clumsiness, reflex asymmetries, ambidexterity) — not localizing","<b>Minor physical anomalies</b> (such as ear malformations) are more frequent in autism spectrum disorder","Suspected absence spells need a neurologic consultation and EEG — a temporal lobe seizure focus can mimic ADHD","Infants: begin with the parents present — it calms the child and shows the parent–infant interaction (Kaplan & Sadock ch 1)","Under 6: puppets and dolls work well, especially when questions are directed to the dolls rather than to the child (Kaplan & Sadock ch 1)","<b>NIMH DISC-IV</b>: a highly structured interview covering more than 30 diagnoses, given by trained laypersons, with parallel parent (ages 6–17) and child (9–17) forms (Kaplan & Sadock ch 1)","<b>Stanford-Binet</b>: ages 2–24 — pictures and objects for young children, verbal tasks for older ones; gives a mental age and an IQ · an infant’s developmental score does not reliably predict later IQ but does detect deviation (Kaplan & Sadock ch 1)"],
  labs:["—"],
  buzz:["Soft signs are nonfocal"],
- src:["Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders"],
- tx:["—"],q:["child behavior checklist","achenbach","conners","conners rating scales","snap rating scale","soft signs","neurologic soft signs","minor physical anomalies","pediatric psychiatric interview","child psychiatric evaluation"]},
+ src:["Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders","Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient"],
+ tx:["—"],q:["child behavior checklist","achenbach","conners","conners rating scales","snap rating scale","soft signs","neurologic soft signs","minor physical anomalies","pediatric psychiatric interview","child psychiatric evaluation","=play based assessment with puppets or dolls","=the nimh diagnostic interview schedule for children","=the stanford binet intelligence scale","=begin with the parents present","=not a reliable predictor of later intelligence"]},
 
 acidprod:{n:"Volatile & fixed acids",k:"reg",p:"abbuf",enz:"CO₂ leaves by the lungs, fixed acid by the kidneys",inh:"—",hi:1,
  mech:"Arterial pH stays slightly alkaline (7.4) despite large daily acid loads in two forms. <b>Volatile acid</b> is CO₂, the end product of aerobic metabolism (13,000–20,000 mmol/day), which combines with water to form carbonic acid and is breathed out. <b>Fixed (nonvolatile) acid</b> — about 50 mmol/day — must be buffered in the body fluids until the kidneys excrete it.",
@@ -14178,7 +14202,7 @@ respmechomm:{n:"Respiratory mechanics for the osteopath",k:"reg",p:"cpulm",enz:"
  labs:["—"],
  buzz:["Diaphragm down + ribs up → ↓ intrathoracic pressure → inspiration"],
  src:["OCOM OMM — SDL 22 lecture: Pulmonology 1","OCOM OMM — Pulmonary OMM lab slides"],
- tx:["—"],q:["=accessory muscles","accessory muscles of respiration","diaphragmatic excursion","muscles of inspiration","muscles of respiration","tissue resistance","parenchymal resistance","respiratory pump","pressure and volume share an inverse","diaphragm descends about","accessory muscles that forcefully","internal intercostals and the abdominal wall","lung parenchyma is a passive","parenchyma is passive","diaphragmatic descent lowers intrathoracic","low pressure lymph","primary muscles tire","inspiration is accomplished mainly by the diaphragm","diaphragm contracts and moves downward","=abdominal recti compressing"]},
+ tx:["—"],q:["=accessory muscles","accessory muscles of respiration","diaphragmatic excursion","muscles of inspiration","muscles of respiration","tissue resistance","parenchymal resistance","respiratory pump","pressure and volume share an inverse","diaphragm descends about","accessory muscles that forcefully","internal intercostals and the abdominal wall","lung parenchyma is a passive","parenchyma is passive","diaphragmatic descent lowers intrathoracic","low pressure lymph","primary muscles tire","inspiration is accomplished mainly by the diaphragm","diaphragm contracts and moves downward","=abdominal recti compressing","=a smaller pressure gradient with less venous return"]},
 
 copdomm:{n:"Hyperinflation & the case for respiratory OMT",k:"reg",p:"cpulm",enz:"Restore the chest wall, not just the lung",inh:"—",hi:1,
  mech:"Chronic air trapping in COPD keeps the chest from returning to rest: a <b>barrel chest</b> with a larger AP diameter, a <b>flattened diaphragm</b> whose horizontal fibers pull the lower costal margin inward on inspiration (<b>Hoover sign</b>), and respiratory muscles held short at an inefficient point on their length-tension curve with high resting tone that impairs their own blood flow.",
@@ -14419,7 +14443,7 @@ obstructuro:{n:"Obstructive uropathy — what happens to the kidney",k:"dz",p:"n
  labs:["—"],
  buzz:["Obstruction: concentrating defect first","Relief → NaCl-rich diuresis"],
  src:["Robbins ch 20 — The kidney"],
- tx:["Relieve the obstruction early; replace losses during the post-obstructive diuresis"],q:["urinary tract obstruction","=urinary obstruction","obstructive uropathy","post obstructive diuresis","postobstructive diuresis","impaired concentrating ability","bilateral partial obstruction","complete bilateral obstruction","filtrate diffuses back","renal ultrasonography","renal colic"]},
+ tx:["Relieve the obstruction early; replace losses during the post-obstructive diuresis"],q:["urinary tract obstruction","=urinary obstruction","obstructive uropathy","post obstructive diuresis","postobstructive diuresis","impaired concentrating ability","bilateral partial obstruction","complete bilateral obstruction","filtrate diffuses back","renal ultrasonography","renal colic","=the underlying cause of the obstruction","=reversion to normal function","=stretch of the capsule and collecting system"]},
 
 /* ── synaptic transmission · motor control · neuroendocrine-immune (OMM) · knee, hip & hand workups · respiratory infections · depression care & forensic psychiatry (m28) ─── */
 chemsynapse:{n:"Chemical synapse — how a transmitter is released",k:"reg",p:"synrel",enz:"Calcium in, vesicle fuses, transmitter out",inh:"—",fa:"130, 136",hi:1,
@@ -14668,7 +14692,7 @@ lungdefense:{n:"Lung host defenses — and how they fail",k:"reg",p:"riLower",en
  labs:["—"],
  buzz:["Smoking paralyzes the escalator","Flu → staph pneumonia"],
  src:["Robbins ch 15 — The lung"],
- tx:["—"],q:["mucociliary escalator","=mucociliary clearance","mucociliary apparatus","host defenses","lung defense","alveolar macrophage function","secondary bacterial pneumonia","myd88","toll like receptor signaling","bronchociliary"],
+ tx:["—"],q:["mucociliary escalator","=mucociliary clearance","mucociliary apparatus","host defenses","lung defense","alveolar macrophage function","secondary bacterial pneumonia","myd88","toll like receptor signaling","bronchociliary","viral respiratory infections damage ciliated epithelium"],
  ref:[{a:"Segovia JA, Chang TH, Winter VT, et al.",t:"NLRP3 is a critical regulator of inflammation and innate immune cell response during Mycoplasma pneumoniae infection",j:"Infect Immun",y:2017,pmid:"29061706",doi:"10.1128/IAI.00548-17"}]},
 
 lobarstages:{n:"Stages of lobar pneumonia — congestion to resolution",k:"reg",p:"riLower",enz:"Congestion → red → gray → resolution",inh:"—",fa:"702",hi:1,
@@ -14857,7 +14881,7 @@ ckdprog:{n:"CKD progression — hyperfiltration, podocytes & fibrosis",k:"reg",p
  labs:["—"],
  buzz:["Hyperfiltration of the survivors is what keeps CKD progressing"],
  src:["Robbins ch 20 — The kidney"],
- tx:["ACE inhibitors or ARBs to lower intraglomerular pressure"],q:["ckd progression","glomerular hypertension","=hypertrophy with capillary hypertension","=filtered protein taken up by tubules","=nephron loss hyperfiltration","=hyperfiltration of surviving nephrons","=hypertrophy with raised capillary pressure","tubulointerstitial fibrosis"]},
+ tx:["ACE inhibitors or ARBs to lower intraglomerular pressure"],q:["ckd progression","glomerular hypertension","=hypertrophy with capillary hypertension","=filtered protein taken up by tubules","=nephron loss hyperfiltration","=hyperfiltration of surviving nephrons","=hypertrophy with raised capillary pressure","tubulointerstitial fibrosis","=they lower intraglomerular pressure and blunt angiotensin driven fibrosis"]},
 
 ciliopathy:{n:"Renal cilia & cyst formation — the ciliopathy model",k:"reg",p:"rvCyst",enz:"Primary cilium senses flow → Ca²⁺ signal restrains proliferation",inh:"—",fa:"622",hi:1,
  mech:"The favored hypothesis puts the <b>cilium–centrosome complex</b> of tubular epithelial cells at the center of polycystic disease. Each tubular cell has one nonmotile <b>primary cilium</b> (2–3 µm of microtubules on a basal body derived from the centriole) that monitors <b>fluid flow and shear stress</b>; in response the sensors regulate ion flux, cell polarity and proliferation. <b>Polycystin-1 and -2</b> sit on the primary cilium, and cells lacking PKD1 keep normal cilia but lose the flow-induced Ca²⁺ flux.",
@@ -15436,7 +15460,7 @@ chargesel:{n:"Size & charge selectivity — the dextran experiment",k:"reg",p:"g
  labs:["—"],
  buzz:["A negative barrier repels negative albumin"],
  src:["Costanzo ch 6 — Renal physiology","Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control"],
- tx:["—"],q:["dextran","cationic dextran","charge selectivity","size selectivity","=blood cells are far larger","=large anionic plasma proteins"]},
+ tx:["—"],q:["dextran","cationic dextran","charge selectivity","size selectivity","=blood cells are far larger","=large anionic plasma proteins","=lost anionic charge removes repulsion"]},
 
 nephrontypes:{n:"Superficial cortical vs juxtamedullary nephrons",k:"reg",p:"gkFluid",enz:"Short loops in the outer cortex · long loops from the corticomedullary border",inh:"—",hi:0,
  mech:"<b>Superficial cortical nephrons</b> — the majority — have glomeruli in the outer cortex and short loops of Henle that reach only the outer medulla. <b>Juxtamedullary nephrons</b> (about 25%, Guyton) have larger glomeruli near the <b>corticomedullary border</b>, with higher single-nephron GFR, and long loops of Henle that dive into the inner medulla and papilla; with their vasa recta they are essential for concentrating the urine.",
@@ -16278,7 +16302,7 @@ lcfield:{n:"Field carcinogenesis & lung cancer precursors",k:"reg",p:"lcPre",enz
  labs:["—"],
  buzz:["3p loss in normal-looking smoker bronchus = field effect"],
  src:["Robbins ch 15 — The lung"],
- tx:["Smoking prevention; low-dose CT screening in high-risk people finds some early cancers but has many false positives"],q:["field carcinogenesis","field effect","3p loss","3p deletion","3p deletions","=tobacco carcinogens mutagenize large areas","atypical adenomatous hyperplasia"]},
+ tx:["Smoking prevention; low-dose CT screening in high-risk people finds some early cancers but has many false positives"],q:["field carcinogenesis","field effect","3p loss","3p deletion","3p deletions","=tobacco carcinogens mutagenize large areas","atypical adenomatous hyperplasia","=55 fold increase"]},
 
 lcadeno:{n:"Lung adenocarcinoma — glands, TTF-1 & drivers",k:"dz",p:"lcType",enz:"Peripheral · the most common type · targetable mutations",inh:"—",fa:"703",hi:1,
  mech:"An invasive epithelial tumor with <b>glandular differentiation or mucin</b>. It is now the most common lung cancer in both sexes and the usual type in never-smokers. Most are <b>peripheral</b> and smaller than squamous tumors; most stain for <b>TTF-1</b>. About a third carry gain-of-function mutations in growth-factor signaling that drugs can target.",
@@ -16738,6 +16762,433 @@ chewing:{n:"Mastication & the chewing reflex",k:"reg",p:"lxswal",enz:"CN V3 musc
  buzz:["Drop, stretch, rebound — the chewing reflex"],
  src:["Guyton ch 64 — Propulsion and Mixing of Food in the Alimentary Tract"],
  tx:["—"],q:["chewing reflex","=the bolus in the mouth reflexively inhibits jaw elevator","=grinding food into fine particles","=the mandibular branch of the trigeminal nerve cn v3 carries motor fibers to the muscles of mastication"]},
+
+/* ── thyroid · innate immune cells · pleura · fed & fasting · prostate & obstruction · renal blood flow · K⁺ shifts · epithelium & tissues (m34) ─── */
+thylabs:{n:"Reading thyroid tests — TSH first",k:"reg",p:"thHorm",enz:"TSH screens · free T4 confirms · uptake finds the cause",inh:"—",fa:"344, 345",hi:1,
+ mech:"Serum TSH is the screening test: in primary thyroid disease it moves opposite to free T4. <b>Primary hypothyroidism</b>: TSH ↑, free T4 ↓. <b>Primary hyperthyroidism</b>: TSH ↓, free T3 and T4 ↑. When the pituitary or hypothalamus is the problem the pair moves together — central hypothyroidism has a low free T4 without a high TSH, and the rare TSH-secreting pituitary tumor gives hyperthyroidism with a normal or raised TSH.",
+ find:["After primary hyperthyroidism is confirmed, <b>radioactive iodine uptake</b> finds the cause: diffusely increased (Graves disease), increased in one nodule (toxic adenoma), decreased (thyroiditis)","Thyroid-stimulating immunoglobulins / TSH-receptor antibodies are generally diagnostic of Graves disease","Nonthyroidal illness (euthyroid sick) syndrome in critically ill patients: low T3 with normal or low T4 and TSH (First Aid)","Hypothyroidism raises LDL and cholesterol; hyperthyroidism lowers them (First Aid)"],
+ labs:["TSH ↑ + free T4 ↓ = primary hypothyroidism · TSH ↓ + free T4 ↑ = primary hyperthyroidism"],
+ buzz:["TSH and T4 move opposite = the thyroid · together = the pituitary"],
+ src:["Robbins ch 24 — The endocrine system"],
+ tx:["—"],q:["thyroid function tests","radioactive iodine uptake","central hypothyroidism","secondary hyperthyroidism","euthyroid sick syndrome","nonthyroidal illness syndrome"]},
+
+transthy:{n:"Transient thyroiditis — de Quervain (painful) and silent",k:"dz",p:"thInfl",enz:"Thyrotoxic, then hypothyroid, then usually normal",inh:"—",fa:"345",hi:1,
+ mech:"<b>Subacute granulomatous (de Quervain) thyroiditis</b> follows a viral illness (coxsackievirus, mumps, measles, adenovirus, SARS-CoV-2), peaks at 40–50, women about 4 : 1. It is the most common cause of a <b>painful thyroid</b>. Damaged follicles release hormone, so T3 and T4 are high and TSH low — but, unlike Graves disease, <b>radioactive iodine uptake is low</b>.",
+ find:["The thyrotoxic phase fades in 2–6 weeks even untreated; a hypothyroid phase may follow, then recovery in 6–8 weeks","Histology: early neutrophil microabscesses, then lymphocytes, macrophages and multinucleate giant cells around pools of colloid — “granulomatous”","The immune response is virus-initiated and self-limited, not autoimmune","<b>Silent (painless) thyroiditis</b> — a chronic lymphocytic thyroiditis — runs the same transient course without pain"],
+ labs:["T4 ↑, TSH ↓, radioactive iodine uptake ↓"],
+ buzz:["Painful thyroid after a cold, low uptake = de Quervain"],
+ src:["Robbins ch 24 — The endocrine system"],
+ tx:["Usually self-limited; β-blocker for symptoms"],q:["de quervain thyroiditis","subacute granulomatous thyroiditis","subacute thyroiditis","granulomatous thyroiditis","painless thyroiditis","silent thyroiditis","transient thyroiditis"]},
+
+riedel:{n:"Riedel thyroiditis",k:"dz",p:"thInfl",enz:"Rock-hard fibrosis that mimics cancer",inh:"—",fa:"345",hi:0,
+ mech:"A rare disorder of extensive fibrosis involving the thyroid and nearby neck structures. The hard, fixed thyroid mass clinically simulates a carcinoma. It may come with fibrosis elsewhere, such as the retroperitoneum, and appears to be a manifestation of <b>IgG4-related disease</b>.",
+ find:["IgG4-related disease: fibrosis with tissue infiltration by IgG4-producing plasma cells"],
+ labs:["—"],
+ buzz:["Woody, fixed thyroid + retroperitoneal fibrosis"],
+ src:["Robbins ch 24 — The endocrine system"],
+ tx:["—"],q:["riedel thyroiditis","igg4 related disease"]},
+
+goiter:{n:"Goiter — diffuse and multinodular",k:"dz",p:"thInfl",enz:"Low hormone → high TSH → a bigger gland",inh:"—",fa:"345, 346",hi:1,
+ mech:"<b>Diffuse nontoxic (simple) goiter</b> enlarges the whole gland without nodules; follicles are enlarged and full of colloid. In <b>endemic</b> goiter, low dietary iodine lowers hormone synthesis, TSH rises and drives follicular hypertrophy and hyperplasia. Goitrogens such as cassava (thiocyanate) and Brassica vegetables add to it.",
+ find:["<b>Multinodular goiter</b>: recurrent hyperplasia and involution → an irregular, multilobulated, asymmetric gland that can exceed 2000 g — the largest thyroid enlargements, more often mistaken for tumors than any other thyroid disease","It can press on the trachea and esophagus or grow behind the sternum (substernal goiter); polyclonal and monoclonal nodules coexist, and some autonomous nodules carry TSH-pathway mutations","Cut surface: brown colloid nodules with hemorrhage, fibrosis, calcification and cysts in older lesions","Cancer can hide inside a multinodular goiter"],
+ labs:["—"],
+ buzz:["Iodine deficiency → TSH ↑ → goiter"],
+ src:["Robbins ch 24 — The endocrine system"],
+ tx:["Iodine supplementation; surgery for compression"],q:["multinodular goiter","diffuse nontoxic goiter","simple goiter","endemic goiter","substernal goiter","goitrogens","=multinodular goiter arising from recurrent cycles"]},
+
+follneo:{n:"Follicular adenoma vs follicular carcinoma",k:"dz",p:"thTum",enz:"Same cells — only invasion tells them apart",inh:"—",fa:"347",hi:1,
+ mech:"A <b>follicular adenoma</b> is a solitary, circumscribed nodule of uniform follicles, usually with an intact capsule; circumscription without invasion is required for the diagnosis. <b>Follicular carcinoma</b> (5–15% of thyroid cancers, 25–40% where iodine is lacking; peak 40–60) shows <b>capsular and/or vascular invasion</b>. There is no reliable cytologic difference between an adenoma and a minimally invasive carcinoma, so <b>fine-needle aspiration cannot separate them</b> — the capsule must be sampled histologically.",
+ find:["Vascular invasion involves veins within and just beyond the capsule; lymphatic spread is uncommon, so nodes are usually spared and <b>hematogenous metastases</b> go to bone, lungs, liver and brain","Widely invasive carcinoma: up to half die within 10 years; minimally invasive: 10-year survival over 90%","Both are usually cold nodules on scintigraphy; adenomas do not recur or metastasize","Oncocytic (Hürthle cell) variants have abundant granular eosinophilic cytoplasm; no papillary nuclear features or psammoma bodies"],
+ labs:["FNA cannot tell adenoma from carcinoma — the capsule must be examined after excision"],
+ buzz:["Follicular = blood · papillary = lymph"],
+ src:["Robbins ch 24 — The endocrine system"],
+ tx:["Excision; thyroidectomy ± radioiodine for carcinoma"],q:["follicular adenoma","follicular carcinoma","=capsular invasion","minimally invasive follicular carcinoma","=evidence of capsular invasion or vascular invasion","=follicular carcinoma preferentially disseminates hematogenously"]},
+
+papca:{n:"Papillary thyroid carcinoma",k:"dz",p:"thTum",enz:"Most common · Orphan Annie nuclei · nodes",inh:"—",fa:"347",hi:1,
+ mech:"Nearly 85% of thyroid cancers in the United States, usually at 25–50, and most of those linked to prior ionizing radiation. Diagnosis rests on the <b>nuclei</b>: finely dispersed, optically clear (“ground-glass” or Orphan Annie eye) chromatin, grooves (coffee-bean) and pseudoinclusions.",
+ find:["Branching papillae with thin fibrovascular cores covered by cuboidal cells","<b>Psammoma bodies</b> — concentric calcifications, almost never in follicular or medullary carcinoma; strongly suggest papillary carcinoma on fine-needle aspiration","Lymphatic invasion is common and blood vessel invasion uncommon: cervical node metastases in up to half","RET/PTC rearrangements and BRAF mutations (First Aid)"],
+ labs:["FNA: nuclear features ± psammoma bodies"],
+ buzz:["Psammoma bodies + clear grooved nuclei"],
+ src:["Robbins ch 24 — The endocrine system"],
+ tx:["Thyroidectomy ± radioiodine"],q:["papillary thyroid carcinoma","papillary carcinoma of the thyroid","orphan annie","psammoma bodies","nuclear grooves"]},
+
+anapca:{n:"Anaplastic thyroid carcinoma",k:"dz",p:"thTum",enz:"One of the most aggressive cancers known",inh:"—",fa:"347",hi:1,
+ mech:"Undifferentiated tumors that no longer resemble follicular cells — epithelioid, spindled, pleomorphic or giant-cell rich — often with foci of papillary or follicular carcinoma, consistent with origin from a well-differentiated cancer. They lose thyroid differentiation markers but keep the driver mutations.",
+ find:["A rapidly enlarging bulky neck mass, usually already in neck structures or the lungs at presentation","Dyspnea, dysphagia, hoarseness and cough from compression and invasion","Death usually within a year"],
+ labs:["—"],
+ buzz:["Older patient, neck mass growing over weeks"],
+ src:["Robbins ch 24 — The endocrine system"],
+ tx:["—"],q:["anaplastic thyroid carcinoma","anaplastic carcinoma"]},
+
+nkcell:{n:"Natural killer cells",k:"reg",p:"inCells",enz:"Kill cells that lose MHC class I",inh:"—",fa:"106",hi:1,
+ mech:"NK cells recognize and destroy severely stressed or abnormal cells — virus-infected and tumor cells. They are 5–10% of blood lymphocytes and express <b>CD16</b> (an IgG Fc receptor), so they also kill antibody-coated cells (<b>ADCC</b>). Killing is a balance: <b>inhibitory receptors recognize self MHC class I</b> on healthy cells; infection or transformation raises ligands for activating receptors and often lowers MHC class I, tipping the balance to killing.",
+ find:["They secrete <b>IFN-γ</b>, which activates macrophages to destroy ingested microbes — early defense against intracellular infections","IL-2 and IL-15 drive NK proliferation; <b>IL-12</b> activates killing and IFN-γ secretion","NK cells are one of the innate lymphoid cells (ILCs): tissue-resident lymphocytes without T-cell receptors, activated by cytokines; groups 1–3 mirror Th1, Th2 and Th17 cytokines"],
+ labs:["—"],
+ buzz:["Missing self (MHC I low) = NK target"],
+ src:["Robbins ch 6 — Diseases of the immune system"],
+ tx:["—"],q:["natural killer cells","natural killer cell","innate lymphoid cells","=these cells bear inhibitory receptors that bind mhc class i","=these cells secrete ifn gamma which activates macrophages","=the patient has a deficiency of natural killer cells"]},
+
+dendritic:{n:"Dendritic cell types — Langerhans to follicular",k:"reg",p:"inCells",enz:"Catch antigen at the border, present it in the node",inh:"—",fa:"101",hi:1,
+ mech:"Dendritic cells sit under epithelia and in the interstitium of all tissues, capture protein antigens and display peptides to T cells. They carry many microbe sensors (TLRs, lectins) and secrete cytokines, so they act as sentinels — but unlike macrophages they do not destroy microbes. Immature DCs in the epidermis are <b>Langerhans cells</b>.",
+ find:["With microbes, DCs carry antigen through lymphatics to the T-cell zones of lymph nodes and express high MHC and costimulatory molecules to activate naive T cells","<b>Follicular dendritic cells</b> are a different cell — specialized fibroblasts in germinal centers with Fc and C3b receptors that trap antibody- or complement-bound antigen for B cells"],
+ labs:["—"],
+ buzz:["DC = the messenger from tissue to node"],
+ src:["Robbins ch 6 — Diseases of the immune system"],
+ tx:["—"],q:["langerhans cells","follicular dendritic cells","=these cells are called langerhans cells"]},
+
+macrophage:{n:"Monocytes & macrophages",k:"reg",p:"inCells",enz:"Blood monocyte → tissue macrophage",inh:"—",fa:"97, 101",hi:1,
+ mech:"Monocytes and neutrophils are the blood phagocytes recruited to infection; monocytes enter tissues and mature into <b>macrophages</b>, the dominant cells of chronic inflammation. Some tissue-resident macrophages — <b>Kupffer cells</b> in the liver, <b>microglia</b> in the brain, <b>alveolar macrophages</b> in the lungs — come from the yolk sac or fetal liver early in life.",
+ find:["Phagocytes sense microbes and damage, ingest them and destroy them","Macrophages are activated by IFN-γ from NK cells and T cells","In the spleen, sinusoids lined by macrophages and dendritic cells trap blood-borne antigens"],
+ labs:["—"],
+ buzz:["Kupffer · microglia · alveolar macrophage = resident macrophages"],
+ src:["Robbins ch 6 — Diseases of the immune system"],
+ tx:["—"],q:["kupffer cells","alveolar macrophages","tissue resident macrophages"]},
+
+prr:{n:"Pattern recognition receptors — Toll-like and other innate sensors",k:"reg",p:"inLink",enz:"Germline receptors for microbial patterns",inh:"—",fa:"97",hi:1,
+ mech:"Innate receptors are encoded in the germline, the same in every person and every cell that expresses them. Phagocytes, dendritic cells and many epithelial cells use them to sense microbial products (PAMPs) and dead cells.",
+ find:["<b>Toll-like receptors</b> — 10 in mammals, each for a different set of microbial molecules — sit in the plasma membrane and endosomes","Others: NOD-like receptors in the cytosol, C-type lectin receptors, RIG-like receptors for viral nucleic acids, cytosolic DNA sensors","Their signals drive inflammation and antiviral (interferon) defense"],
+ labs:["—"],
+ buzz:["Germline receptors, same in everyone = innate"],
+ src:["Robbins ch 6 — Diseases of the immune system"],
+ tx:["—"],q:["toll like receptors","toll like receptor","pattern recognition receptors","pattern recognition receptor","nod like receptors","pathogen associated molecular patterns"]},
+
+innadapt:{n:"Innate vs adaptive immunity — and memory",k:"reg",p:"inLink",enz:"Fast and fixed vs slow, specific, and remembered",inh:"—",fa:"97",hi:1,
+ mech:"<b>Innate immunity</b> is always present and reacts immediately: epithelial barriers, phagocytes (neutrophils, macrophages), dendritic cells, NK and other innate lymphoid cells, and plasma proteins such as complement. <b>Adaptive immunity</b> — lymphocytes and antibodies — develops more slowly but is more powerful, using receptors made by somatic recombination with enormous diversity.",
+ find:["Each has a cellular arm and a humoral (plasma protein) arm","Activated lymphocytes leave long-lived <b>memory cells</b> — an expanded pool of antigen-specific cells that respond faster and more effectively on re-exposure; this is why vaccines work","Many memory cells live in the mucosal tissues"],
+ labs:["—"],
+ buzz:["Innate: minutes, same every time · adaptive: days, better the second time"],
+ src:["Robbins ch 6 — Diseases of the immune system"],
+ tx:["—"],q:["memory cells","memory lymphocytes","=adaptive immunity generates long lived memory lymphocytes"]},
+
+effmech:{n:"Why pleural fluid collects — five mechanisms",k:"reg",p:"plFluid",enz:"Pressure · permeability · oncotic · suction · lymph",inh:"—",fa:"699",hi:1,
+ mech:"Normally no more than 15 mL of clear serous fluid lubricates the pleura. Fluid accumulates with <b>increased hydrostatic pressure</b> (heart failure), <b>increased vascular permeability</b> (pneumonia), <b>decreased osmotic pressure</b> (nephrotic syndrome), <b>increased intrapleural negative pressure</b> (atelectasis) or <b>decreased lymphatic drainage</b> (mediastinal carcinomatosis).",
+ find:["Inflammatory causes give exudates; pressure and oncotic causes give transudates (hydrothorax)","Metastatic implants, most often from lung and breast, cause serous or serosanguineous effusions with tumor cells — cytology helps"],
+ labs:["—"],
+ buzz:["Five ways to fill the pleural space"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Treat the cause; drain large effusions"],q:["pleural fluid accumulation","=exudate due to pleural inflammation"]},
+
+pleuritis:{n:"Inflammatory pleuritis & empyema",k:"dz",p:"plFluid",enz:"Serous → fibrinous → pus",inh:"—",fa:"699",hi:1,
+ mech:"Serous, serofibrinous and fibrinous pleuritis share an inflammatory basis. The commonest causes are diseases of the underlying lung — tuberculosis, pneumonia, infarction, abscess, bronchiectasis — plus rheumatoid arthritis, lupus, uremia, systemic infection, pleural metastases and radiotherapy.",
+ find:["<b>Empyema</b>: purulent exudate from bacterial or fungal seeding, usually by contiguous spread from the lung; rarely from a subdiaphragmatic or liver abscess through the diaphragm, more often on the right","Empyema is loculated yellow-green pus of neutrophils, usually small and walled off by fibrosis; it often organizes into tough adhesions that obliterate the space or encase the lung","<b>Hemorrhagic pleuritis</b> (bloody exudate) — hemorrhagic diatheses, rickettsiae, tumor; search for tumor cells"],
+ labs:["—"],
+ buzz:["Pus in the pleural space = empyema"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Drainage"],q:["empyema","pleuritis","serofibrinous pleuritis","hemorrhagic pleuritis"]},
+
+hydrothorax:{n:"Hydrothorax, hemothorax & chylothorax",k:"dz",p:"plFluid",enz:"Clear fluid · blood · milky lymph",inh:"—",fa:"699",hi:1,
+ mech:"<b>Hydrothorax</b> is a noninflammatory collection of clear, straw-colored fluid, most often from heart failure (with pulmonary congestion), and also with generalized edema in renal failure or cirrhosis. <b>Hemothorax</b> is blood in the pleural cavity — usually trauma or surgery, sometimes a ruptured aortic aneurysm (almost always fatal). <b>Chylothorax</b> is milky lymph rich in emulsified fat.",
+ find:["Chylothorax: thoracic duct trauma, or a malignancy obstructing a major lymphatic duct"],
+ labs:["Chylothorax: milky fluid"],
+ buzz:["Milky pleural fluid = thoracic duct"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["—"],q:["hydrothorax","hemothorax","chylothorax"]},
+
+sft:{n:"Solitary fibrous tumor of the pleura",k:"dz",p:"plTum",enz:"Pedunculated · CD34 and STAT6 positive",inh:"—",hi:1,
+ mech:"A soft-tissue tumor that favors the pleura, driven by a <b>NAB2::STAT6</b> fusion from a cryptic chromosome 12 inversion. It is dense fibrous tissue, often <b>attached to the pleura by a pedicle</b>, from 1–2 cm to enormous, staying on the lung surface.",
+ find:["Whorls of collagen and reticulin with fibroblast-like spindle cells; rarely malignant (pleomorphism, mitoses, necrosis, over 10 cm)","<b>CD34 and STAT6 positive, keratin negative</b> — the reverse of mesothelioma","No relation to asbestos"],
+ labs:["—"],
+ buzz:["Pedunculated pleural mass, STAT6+ = solitary fibrous tumor"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Resection"],q:["solitary fibrous tumor","nab2 stat6","=a well circumscribed pedunculated mass with a distinct fibrous pedicle"]},
+
+pleuralmets:{n:"Metastatic pleural disease",k:"dz",p:"plTum",enz:"Far more common than primary pleural tumors",inh:"—",fa:"699",hi:1,
+ mech:"Secondary tumors of the pleura far outnumber primary ones. The most frequent come from the <b>lung and breast</b>; ovarian carcinomas implant widely in both the abdominal and thoracic cavities.",
+ find:["Most implants produce a serous or serosanguineous effusion with tumor cells — cytology of the sediment is valuable","Malignant obstruction of the thoracic or right lymphatic duct causes chylothorax"],
+ labs:["Pleural fluid cytology"],
+ buzz:["Pleural tumor? Think metastasis first"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["—"],q:["pleural metastases","malignant pleural effusion","metastatic pleural"]},
+
+fedstate:{n:"The fed state — insulin says store",k:"reg",p:"fsFed",enz:"Insulin up, glucagon down",inh:"—",fa:"88",hi:1,
+ mech:"From the start of absorption until it ends we are in the fed (absorptive) state. Fuel beyond immediate needs goes to the depots. After a meal the pancreas releases <b>insulin</b> and glucose and insulin suppress <b>glucagon</b>: insulin carries the message that dietary glucose is available to be used and stored.",
+ find:["Liver stores as much as two-thirds of absorbed glucose as glycogen; excess glucose becomes fatty acids packaged in VLDL (Guyton)","Muscle takes up glucose via GLUT4 after meals; adipose stores triglyceride","Blood glucose rises from 80–90 to 120–140 mg/dL in the first hour and returns within about 2 hours of the last absorption (Guyton)"],
+ labs:["—"],
+ buzz:["Fed = insulin = store"],
+ src:["Marks ch 2 — The Fed or Absorptive State","Guyton ch 79 — Insulin, Glucagon, and Diabetes Mellitus"],
+ tx:["—"],q:["fed state","absorptive state","the fed or absorptive state"]},
+
+insdefic:{n:"When insulin falls — fat and protein are released",k:"reg",p:"fsFast",enz:"Hormone-sensitive lipase on · proteolysis on",inh:"—",fa:"88",hi:1,
+ mech:"Insulin normally activates <b>lipoprotein lipase</b> in adipose capillaries (pulling VLDL fatty acids into fat cells) and <b>inhibits hormone-sensitive lipase</b>, so stored triglyceride stays put. When insulin is absent, hormone-sensitive lipase is strongly activated: free fatty acids and glycerol pour into the blood within minutes and become the main fuel of essentially every tissue except the brain.",
+ find:["In the fasted adipocyte, glucagon and epinephrine activate hormone-sensitive lipase through cAMP and protein kinase (First Aid)","Insulin also moves amino acids into cells, switches on ribosomal translation and slows protein breakdown — with <b>insulin deficiency</b> protein storage stops, catabolism rises and amino acids pour out of muscle to be burned or used for gluconeogenesis: wasting and weakness","Insulin lowers hepatic gluconeogenesis by reducing the activity and amount of gluconeogenic enzymes; its absence lets them run","Insulin and GH act synergistically on growth"],
+ labs:["—"],
+ buzz:["No insulin: fat out of adipose, amino acids out of muscle"],
+ src:["Guyton ch 79 — Insulin, Glucagon, and Diabetes Mellitus"],
+ tx:["—"],q:["hormone sensitive lipase","=insulin inhibits hormone sensitive lipase","=insulin promotes net protein anabolism","=insulin deficiency activates lysosomal proteolysis","=insulin deficiency removes inhibition of lysosomal proteolysis","=insulin suppresses hepatic gluconeogenesis"]},
+
+basalstate:{n:"The basal (postabsorptive) state",k:"reg",p:"fsFast",enz:"Overnight fast: glycogen out, fat burned",inh:"—",fa:"88",hi:1,
+ mech:"As glucose falls after absorption, insulin falls and the liver begins breaking down glycogen. After about 12 hours — the overnight fast — we are in the <b>basal (postabsorptive) state</b>: insulin is low and glucagon rising.",
+ find:["The liver keeps blood glucose up by glycogenolysis and gluconeogenesis; glucose-dependent tissues (brain, red cells) keep using glucose","Fatty acids from adipose become the main fuel — they are the major fuel oxidized during the overnight fast","In an extended fast the liver turns fatty acids into ketone bodies, which muscle and kidney oxidize"],
+ labs:["—"],
+ buzz:["Overnight = glycogen + fatty acids"],
+ src:["Marks ch 3 — Fasting"],
+ tx:["—"],q:["basal state","postabsorptive state","overnight fast"]},
+
+counterreg:{n:"Keeping glucose up — liver buffer and counterregulation",k:"reg",p:"fsCtrl",enz:"Insulin · glucagon · epinephrine · then GH and cortisol",inh:"—",fa:"337",hi:1,
+ mech:"Fasting glucose sits at 80–90 mg/dL. The liver is the <b>glucose buffer</b>: it stores up to two-thirds of absorbed glucose as glycogen and releases it later, cutting swings to about one-third of what they would be. Insulin and glucagon are the feedback pair; usually insulin matters more, but glucagon becomes vital in starvation and exercise.",
+ find:["Severe hypoglycemia acts on the hypothalamus to fire the sympathetic system — adrenal <b>epinephrine</b> releases more hepatic glucose","Over hours to days, <b>GH and cortisol</b> lower glucose use and shift tissues to fat","Glucose matters because it is almost the only fuel the brain, retina and germinal epithelium can use in quantity"],
+ labs:["—"],
+ buzz:["Glucagon and epinephrine first; GH and cortisol later"],
+ src:["Guyton ch 79 — Insulin, Glucagon, and Diabetes Mellitus"],
+ tx:["—"],q:["counterregulatory hormones","counterregulation","glucose buffer","blood glucose regulation"]},
+
+dmdx:{n:"Diagnosing diabetes — HbA1c, fasting glucose & the OGTT",k:"reg",p:"fsCtrl",enz:"HbA1c ≥ 6.5% · fasting ≥ 126 · 2-hour ≥ 200",inh:"—",fa:"350",hi:1,
+ mech:"Diabetes is diagnosed by any one of: fasting plasma glucose ≥ 126 mg/dL; random glucose ≥ 200 mg/dL with classic hyperglycemic signs; 2-hour glucose ≥ 200 mg/dL in a 75-g oral glucose tolerance test; or <b>HbA1c ≥ 6.5%</b>. Except for a random glucose with classic signs, each needs confirming on a separate day.",
+ find:["<b>Prediabetes</b>: fasting glucose 100–125 mg/dL (impaired fasting glucose), 2-hour OGTT 140–199 mg/dL (impaired glucose tolerance) and/or HbA1c 5.7–6.4% — up to a quarter with impaired glucose tolerance develop diabetes within 5 years","<b>HbA1c</b> forms by nonenzymatic addition of glucose to hemoglobin, so it reflects control over the red cell’s 120-day life and changes little with day-to-day swings; keep it below 7% in most patients (Robbins)","First Aid: HbA1c reflects the average glucose of the prior 3 months and is influenced by RBC turnover","Estimated average glucose (mg/dL) = 28.7 × HbA1c − 46.7: 6% ≈ 126, 7% ≈ 154, 8% ≈ 183, 9% ≈ 212 (Nathan 2008 — the same across type 1, type 2, age and race)"],
+ labs:["HbA1c ≥ 6.5% · fasting ≥ 126 mg/dL · OGTT 2-hour ≥ 200 · random ≥ 200 with symptoms"],
+ buzz:["6.5 · 126 · 200"],
+ src:["Robbins ch 24 — The endocrine system"],
+ tx:["—"],q:["hba1c","hemoglobin a1c","glycated hemoglobin","glycosylated hemoglobin","estimated average glucose","prediabetes","impaired fasting glucose","impaired glucose tolerance"],
+ ref:[{a:"Nathan DM, Kuenen J, Borg R, Zheng H, Schoenfeld D, Heine RJ",t:"Translating the A1C assay into estimated average glucose values",j:"Diabetes Care",y:2008,pmid:"18540046",doi:"10.2337/dc08-0545"}]},
+
+prozones:{n:"Prostate zones & glands",k:"reg",p:"poPros",enz:"BPH in the transition zone · cancer in the peripheral zone",inh:"—",fa:"672",hi:1,
+ mech:"The adult prostate has central, peripheral, transition and periurethral zones. <b>Most hyperplasias arise in the transition zone</b> (central, around the urethra — so they obstruct), <b>most carcinomas in the peripheral zone</b> (posterior, palpable on rectal examination).",
+ find:["Glands are lined by two layers — a basal layer of low cuboidal cells under columnar secretory cells with papillary infoldings — in abundant fibromuscular stroma","Testicular androgens sustain the prostate; castration causes apoptosis and atrophy"],
+ labs:["—"],
+ buzz:["Transition = BPH · peripheral = cancer"],
+ src:["Robbins ch 21 — The lower urinary tract and male genital system"],
+ tx:["—"],q:["transition zone of the prostate","peripheral zone of the prostate","prostate zones","prostatic zones"]},
+
+bphpath:{n:"How BPH grows — DHT made by stromal cells",k:"dz",p:"poPros",enz:"Type 2 5α-reductase lives in the stroma",inh:"—",fa:"672, 673",hi:1,
+ mech:"<b>Dihydrotestosterone</b> is the main prostatic androgen, made from testosterone by <b>type 2 5α-reductase</b>, which is expressed in <b>stromal cells</b>, not epithelium. DHT binds androgen receptors in both stroma and epithelium more avidly than testosterone, driving growth factors that expand both. Type 1 5α-reductase in liver and skin adds circulating DHT.",
+ find:["Histologic BPH in up to 90% of men by 80; it is not premalignant","5α-reductase inhibitors: <b>finasteride</b> (half-life about 8 h; DHT falls within 8 h) moderately shrinks the prostate; <b>dutasteride</b> acts more slowly with a much longer half-life; side effects include decreased libido (Katzung)","Androgens are permissive; several lines of evidence suggest estrogens contribute too (Robbins)"],
+ labs:["—"],
+ buzz:["Stromal DHT drives BPH; finasteride blocks it"],
+ src:["Robbins ch 21 — The lower urinary tract and male genital system","Katzung ch 40 — The Gonadal Hormones & Inhibitors"],
+ tx:["α₁-blockers relax smooth muscle; 5α-reductase inhibitors shrink the gland"],q:["type 2 5 alpha reductase","=prostatic stromal cells"]},
+
+hgpin:{n:"High-grade PIN & the basal cell layer",k:"dz",p:"poPros",enz:"Benign glands keep basal cells — cancer loses them",inh:"—",fa:"672",hi:1,
+ mech:"<b>High-grade prostatic intraepithelial neoplasia (HGPIN)</b> is a precursor: large, branching, architecturally benign acini lined by atypical cells with prominent nucleoli, but they still keep at least part of a <b>basal cell layer</b> and an intact basement membrane. Both HGPIN and cancer predominate in the peripheral zone; about 80% of prostates removed for cancer harbor HGPIN.",
+ find:["Carcinoma glands are small, crowded, single-layered, without branching or papillary infoldings, with enlarged nuclei and large nucleoli — and <b>no basal cells</b>","Immunostains for basal cells and AMACR (up in most cancers) help, alongside H&E","Perineural invasion is common in carcinoma"],
+ labs:["—"],
+ buzz:["Basal cells present = benign or PIN · absent = cancer"],
+ src:["Robbins ch 21 — The lower urinary tract and male genital system"],
+ tx:["—"],q:["high grade prostatic intraepithelial neoplasia","prostatic intraepithelial neoplasia","hgpin","basal cell layer","amacr"]},
+
+gleason:{n:"Gleason score & grade groups",k:"reg",p:"poPros",enz:"Primary pattern + secondary pattern",inh:"—",fa:"672",hi:1,
+ mech:"Prostate cancer is graded by gland pattern. Grade 1: uniform round glands in circumscribed nodules; grade 5: cords, sheets and solid nests infiltrating stroma. The dominant pattern (primary) and the next most frequent (secondary) are <b>added</b> to give the Gleason score, 2–10 (a single pattern is doubled).",
+ find:["Screen-detected, treatable cancers are usually 6 or 7; 8–10 tend to be advanced and less curable","Scores are combined into five grade groups: group 1 (≤ 6), group 2 (3 + 4), group 3 (4 + 3) … group 5 (up to 5 + 5) — each with a different prognosis","Grade and stage are the most important prognostic factors; the score usually stays stable for years"],
+ labs:["—"],
+ buzz:["Gleason = sum of the two commonest patterns"],
+ src:["Robbins ch 21 — The lower urinary tract and male genital system"],
+ tx:["—"],q:["gleason score","gleason grade","grade group","grade groups","=sum of primary and secondary pattern grades","=solid sheets and nests of infiltrating cells"]},
+
+calcstone:{n:"Calcium stones — why they form",k:"dz",p:"poObs",enz:"Supersaturation · hypercalciuria · uric acid nucleation",inh:"—",fa:"617",hi:1,
+ mech:"Most stones contain calcium — about 70% by Robbins (calcium oxalate, or oxalate with phosphate; First Aid says about 80%). The key determinant of any stone is a urine concentration of its constituents above their solubility (<b>supersaturation</b>); low urine volume favors it.",
+ find:["About 5% of calcium oxalate stone formers are hypercalcemic and hypercalciuric (hyperparathyroidism, bone disease, sarcoidosis); about 55% have hypercalciuria without hypercalcemia — absorptive, renal or idiopathic","Up to 20% have hyperuricosuria: <b>uric acid crystals nucleate calcium oxalate</b> in the collecting ducts","About 5% have hyperoxaluria (hereditary, or enteric overabsorption); hypocitraturia also favors calcium stones","Other stones: struvite 5–10% (urea-splitting Proteus → alkaline urine, staghorns), uric acid 5–10% (urine pH below 5.5, radiolucent), cystine 1–2%"],
+ labs:["—"],
+ buzz:["Uric acid seeds calcium oxalate"],
+ src:["Robbins ch 20 — The kidney"],
+ tx:["—"],q:["calcium oxalate stones","=hypercalciuria","hyperuricosuria","supersaturation","=nucleation of calcium oxalate by uric acid crystals"]},
+
+semen:{n:"Semen & the accessory glands",k:"reg",p:"poPros",enz:"Seminal vesicles ~60% · prostate ~30% · vas deferens ~10%",inh:"—",fa:"646, 647",hi:1,
+ mech:"Each <b>seminal vesicle</b> joins the ampulla of the ductus deferens to form an <b>ejaculatory duct</b>, which runs through the prostate into the prostatic urethra. Seminal vesicle fluid is mucoid and rich in <b>fructose</b> (the principal metabolic substrate for sperm), citric acid, <b>prostaglandins</b> and <b>fibrinogen</b>. The <b>prostate</b> adds a thin, milky, <b>slightly alkaline</b> fluid with calcium, citrate, phosphate, a clotting enzyme and profibrinolysin; its epithelium makes PSA, prostatic acid phosphatase, fibrinolysin and citric acid.",
+ find:["Semen: about 10% from the vas deferens, almost 60% seminal vesicle fluid, about 30% prostatic fluid, plus bulbourethral mucus; pH about 7.5 — seminal vesicle fluid comes last and washes sperm through the ducts (Guyton)","Alkaline prostatic fluid neutralizes the acidic vas deferens fluid and vaginal secretions (pH 3.5–4.0); sperm are not optimally motile until the pH reaches about 6.0–6.5 (Guyton)","Seminal prostaglandins make cervical mucus more receptive to sperm and may cause reverse peristalsis of the uterus and fallopian tubes (Guyton)","The prostatic clotting enzyme turns seminal vesicle fibrinogen into a weak coagulum that holds semen near the cervix; fibrinolysin dissolves it in 15–30 minutes (Guyton)","<b>Blood–testis barrier</b>: Sertoli cell junctions isolate the antigenically foreign haploid germ cells, which first appear at puberty, long after immune tolerance is set; a breach (e.g., after vasectomy) produces sperm antibodies (Pawlina)"],
+ labs:["—"],
+ buzz:["Fructose = seminal vesicles · milky, alkaline, PSA = prostate"],
+ src:["Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)","Pawlina ch 22 — Male Reproductive System"],
+ tx:["—"],q:["seminal vesicles","seminal vesicle","seminal fluid","prostatic fluid","prostatic secretion","ejaculatory duct","ejaculatory ducts","blood testis barrier","=a slightly alkaline milky fluid","=easing cervical mucus penetration","=it shields haploid germ cells from immune recognition"]},
+
+rbfnum:{n:"How much blood the kidneys get — cortex vs medulla",k:"reg",p:"rbMeas",enz:"About a quarter of the cardiac output",inh:"—",fa:"600",hi:1,
+ mech:"The kidneys receive about <b>22–25% of cardiac output</b> — about 1100 mL/min in a 70-kg adult by Guyton, 1.25 L/min (1800 L/day) by Costanzo. Flow equals the renal artery–vein pressure gradient divided by resistance, set mainly by two arteriole sets in series — afferent and efferent.",
+ find:["The cortex receives most of the flow; the medulla only 1–2%, through the vasa recta (Guyton)","RBF and GFR are held nearly constant between mean pressures of about 80 and 170 mm Hg (Guyton)","A denervated (transplanted) kidney autoregulates as well as an intact one — the mechanisms are intrinsic (Costanzo)"],
+ labs:["—"],
+ buzz:["Small organs, a quarter of the cardiac output"],
+ src:["Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control","Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["cortical blood flow","medullary blood flow"]},
+
+myogenic:{n:"Myogenic autoregulation",k:"reg",p:"rbAuto",enz:"Stretch opens Ca²⁺ channels → the afferent arteriole contracts",inh:"—",fa:"600",hi:1,
+ mech:"Higher arterial pressure stretches the afferent arteriole; stretch-activated <b>Ca²⁺ channels</b> open in the smooth muscle, more Ca²⁺ enters, wall tension rises and resistance increases — so renal blood flow and GFR stay constant.",
+ find:["One of the two intrinsic autoregulatory mechanisms, with tubuloglomerular feedback"],
+ labs:["—"],
+ buzz:["Stretch → Ca²⁺ in → constrict"],
+ src:["Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["myogenic mechanism","myogenic response","myogenic hypothesis","=pressure induced stretch opens calcium channels"]},
+
+tgf:{n:"Tubuloglomerular feedback — the macula densa signal",k:"reg",p:"rbAuto",enz:"More NaCl at the macula densa → adenosine → afferent constriction",inh:"—",fa:"600",hi:1,
+ mech:"When GFR rises, more Na⁺ and Cl⁻ reach the <b>macula densa</b> and enter its cells on the Na⁺-K⁺-2Cl⁻ cotransporter. Rising cell Cl⁻ depolarizes the basolateral membrane, opening Ca²⁺ channels; the Ca²⁺ rise releases <b>adenosine</b>, which constricts the nearby afferent arteriole — bringing RBF and GFR back to normal.",
+ find:["Volume expansion, ANP and a high-protein diet alter its sensitivity","A high-protein diet increases proximal NaCl reabsorption, lowering macula densa delivery — feedback then raises GFR (hyperfiltration)"],
+ labs:["—"],
+ buzz:["Macula densa senses NaCl, adenosine squeezes the afferent"],
+ src:["Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["tubuloglomerular feedback","macula densa","=increased intracellular calcium following na+ 2cl k+ cotransporter mediated depolarization"]},
+
+rbfvaso:{n:"What constricts and dilates the renal arterioles",k:"reg",p:"rbVaso",enz:"Ang II squeezes the efferent most · prostaglandins protect",inh:"—",fa:"600, 601",hi:1,
+ mech:"Constrictors: <b>sympathetic nerves</b>, <b>angiotensin II</b>, endothelin (and NSAIDs, by removing prostaglandins). Dilators: <b>PGE₂, PGI₂</b>, nitric oxide, bradykinin, dopamine, ANP. Angiotensin II constricts both arterioles but the <b>efferent is more sensitive</b> — low levels raise GFR, high levels lower it.",
+ find:["In hemorrhage, sympathetic activity and high angiotensin II constrict both arterioles, lowering RBF and GFR — pressure is defended at the kidney’s expense","The same stimuli make the kidney produce prostaglandins, which dilate both arterioles and protect RBF; NSAIDs block this and can cause renal failure","ACE inhibitors dilate the efferent arteriole and lower GFR","<b>ANP</b> dilates afferent and constricts efferent arterioles — RBF and GFR both rise · <b>low-dose dopamine</b> dilates cerebral, cardiac, splanchnic and renal arterioles (and constricts skin and skeletal muscle beds)"],
+ labs:["—"],
+ buzz:["Ang II: efferent first · NSAIDs: afferent loses its dilator"],
+ src:["Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["=anp dilates the afferent arteriole constricts the efferent arteriole","=renal cerebral cardiac and splanchnic arterioles are dilated","=vasodilating the afferent arteriole to counteract afferent vasoconstriction","angiotensin ii constricts both arterioles","anp dilates the afferent arteriole and constricts the efferent arteriole"]},
+
+kinternal:{n:"Internal K⁺ balance — why small shifts matter",k:"reg",p:"ksBal",enz:"98% of K⁺ is inside cells",inh:"—",fa:"608",hi:1,
+ mech:"About 98% of body K⁺ is intracellular, so a small shift out of cells is large relative to the small extracellular pool. The distribution across cell membranes is <b>internal K⁺ balance</b>; matching urinary excretion to daily intake (50–150 mEq) is <b>external K⁺ balance</b>.",
+ find:["Into cells (→ hypokalemia): insulin, β₂-agonists, α-antagonists, alkalosis, hyposmolarity","Out of cells (→ hyperkalemia): insulin deficiency, β₂-antagonists, α-agonists, acidosis, hyperosmolarity, cell lysis, exercise"],
+ labs:["—"],
+ buzz:["Most K⁺ is hidden inside cells"],
+ src:["Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["internal potassium balance","internal k+ balance","transcellular potassium shift","=because about 98 of body k+ is intracellular"]},
+
+kinsulin:{n:"Insulin, β₂ and α — moving K⁺ into cells",k:"reg",p:"ksIn",enz:"Na⁺/K⁺-ATPase does the moving",inh:"—",fa:"608",hi:1,
+ mech:"<b>Insulin</b> stimulates Na⁺-K⁺-ATPase and moves K⁺ into cells — physiologically, it clears the K⁺ of a meal into cells. <b>β₂-agonists</b> also drive K⁺ in; <b>β₂-antagonists</b> and <b>α-agonists</b> shift it out, α-antagonists in.",
+ find:["Insulin deficiency → hyperkalemia; high insulin → hypokalemia","Exercise shifts K⁺ out of muscle; a β-blocker adds to that efflux"],
+ labs:["—"],
+ buzz:["Insulin and β₂ push K⁺ in"],
+ src:["Costanzo ch 6 — Renal physiology"],
+ tx:["Insulin with glucose, and β₂-agonists, for hyperkalemia"],q:["=beta 2 blockade independently shifts k+ out of cells"]},
+
+kacid:{n:"Acid–base and K⁺ — the H⁺/K⁺ exchange",k:"reg",p:"ksIn",enz:"H⁺ in, K⁺ out",inh:"—",fa:"608",hi:1,
+ mech:"Intracellular fluid buffers H⁺, but H⁺ cannot cross membranes alone — it needs an accompanying anion or must be exchanged for a cation, which is K⁺. In <b>acidemia</b> H⁺ enters cells and K⁺ leaves (hyperkalemia); in <b>alkalemia</b> H⁺ leaves and K⁺ enters (hypokalemia).",
+ find:["Not every acid–base disorder shifts K⁺: CO₂ is lipid-soluble and crosses membranes freely, so respiratory disorders need no K⁺ exchange; organic acids (lactate, ketoacids) enter with their anion","Organic acidoses — lactic acid, ketoacids, salicylic acid — need no K⁺ shift either: the organic anion enters the cell with H⁺"],
+ labs:["—"],
+ buzz:["Acidosis → hyperkalemia (unless the acid brings its own anion)"],
+ src:["Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["=it lets h+ enter or leave cells to use buffers while preserving electroneutrality","=co2 is lipid soluble and crosses membranes freely"]},
+
+kout:{n:"Hyperosmolarity, cell lysis & exercise — K⁺ out of cells",k:"reg",p:"ksOut",enz:"Water drags K⁺ out · broken cells spill it",inh:"—",fa:"608",hi:1,
+ mech:"<b>Hyperosmolarity</b> pulls water out of cells; the intracellular K⁺ concentration rises and K⁺ diffuses out — water flow “drags” K⁺ with it. <b>Cell lysis</b> releases large amounts of K⁺: burns, rhabdomyolysis and tumor cells destroyed by chemotherapy. <b>Exercise</b> depletes ATP, opening K⁺ channels in muscle so K⁺ leaves down its gradient.",
+ find:["The exercise shift is usually small and reverses with rest — larger with a β-blocker","Hyperglycemia in insulin deficiency combines hyperosmolarity with lack of insulin"],
+ labs:["—"],
+ buzz:["Osmolarity, lysis, exercise: K⁺ out"],
+ src:["Costanzo ch 6 — Renal physiology"],
+ tx:["—"],q:["=hyperosmolarity pulls water out of cells dragging","=atp depletion in exercising muscle opens k+ channels"]},
+
+fourtissues:{n:"The four basic tissues",k:"reg",p:"tsTissue",enz:"Epithelium · connective · muscle · nerve",inh:"—",hi:1,
+ mech:"Every organ is built from only four basic tissues: <b>epithelium</b> covers body surfaces, lines body cavities and forms glands; <b>connective tissue</b> underlies and supports the other three, structurally and functionally; <b>muscle tissue</b> contracts and moves; <b>nerve tissue</b> receives, transmits and integrates information to control the body.",
+ find:["Each is defined by general morphology or function and subdivided by its cell populations and extracellular substances"],
+ labs:["—"],
+ buzz:["Cover · support · move · signal"],
+ src:["Pawlina ch 4 — Tissues: Concept and Classification"],
+ tx:["—"],q:["four basic tissues","basic tissue types","epithelial tissue"]},
+
+epiclass:{n:"How epithelia are named — layers × shape",k:"reg",p:"tsSimple",enz:"Simple or stratified · squamous, cuboidal or columnar",inh:"—",hi:1,
+ mech:"Epithelium is named by two features: the number of layers — <b>simple</b> (one) or <b>stratified</b> (two or more) — and the shape of the <b>surface</b> cells: <b>squamous</b> (wider than tall), <b>cuboidal</b> (about equal) or <b>columnar</b> (taller than wide). A third term can describe the apical surface: ciliated, or keratinized vs nonkeratinized.",
+ find:["In a stratified epithelium only the surface layer’s shape names it","Two special categories: pseudostratified (looks layered, is really simple) and transitional (urothelium)","Functions: secretion (stomach), absorption (intestine, proximal tubule), transport (cilia moving mucus; pinocytosis), mechanical protection (epidermis, bladder), receptor function (taste buds, olfactory epithelium, retina)","Secreting and absorbing epithelia are simple or pseudostratified; simple squamous suits rapid transport; stratification goes with impermeability"],
+ labs:["—"],
+ buzz:["Count the layers, look at the top cells"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["—"],q:["classification of epithelium","epithelial classification","simple epithelium","stratified epithelium"]},
+
+simsq:{n:"Simple squamous epithelium — endothelium, mesothelium & alveoli",k:"reg",p:"tsSimple",enz:"One flat layer · exchange and lubrication",inh:"—",hi:1,
+ mech:"One layer of flat cells — ideal for rapid transport across it. <b>Where</b>: the vascular system (<b>endothelium</b>), body cavities (<b>mesothelium</b>), Bowman capsule of the kidney, and the respiratory spaces of the lung. <b>Function</b>: exchange, barrier (in the central nervous system), and lubrication.",
+ find:["Endothelium lines blood and lymphatic vessels; endocardium lines the heart chambers; mesothelium lines and covers the contents of the peritoneal, pericardial and pleural cavities","Exceptions: cuboidal endothelium of high endothelial venules in lymphoid tissue; rod-shaped endothelium of splenic venous sinuses","Vascular endothelium regulates transport, smooth muscle tone, immune responses and hormone secretion"],
+ labs:["—"],
+ buzz:["Flat and single = exchange"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["—"],q:["simple squamous epithelium","simple squamous","high endothelial venules"]},
+
+simcub:{n:"Simple cuboidal epithelium — ducts, tubules & thyroid",k:"reg",p:"tsSimple",enz:"One layer of cubes · absorption and secretion",inh:"—",hi:1,
+ mech:"One layer of cells about as tall as they are wide. <b>Where</b>: small ducts of exocrine glands, the surface of the ovary (germinal epithelium), kidney tubules and <b>thyroid follicles</b>. <b>Function</b>: absorption and conduit (ducts), barrier (ovary), absorption and secretion (kidney tubules, thyroid).",
+ find:["The basal layer of prostatic glands is low cuboidal (Robbins)","Cell height often reflects how active secretion or absorption is"],
+ labs:["—"],
+ buzz:["Thyroid follicles and kidney tubules = cuboidal"],
+ src:["Pawlina ch 5 — Epithelial Tissue","Robbins ch 21 — The lower urinary tract and male genital system"],
+ tx:["—"],q:["simple cuboidal epithelium","simple cuboidal","cuboidal epithelium"]},
+
+simcol:{n:"Simple columnar epithelium — stomach, intestines & gallbladder",k:"reg",p:"tsSimple",enz:"One layer of tall cells · secretion and absorption",inh:"—",hi:1,
+ mech:"One layer of cells taller than wide. <b>Where</b>: small intestine and colon, stomach lining and gastric glands, gallbladder. <b>Function</b>: absorption and secretion (intestine), secretion (stomach), absorption (gallbladder).",
+ find:["Intestinal absorptive cells carry dense microvilli (a brush or striated border) that multiply the surface area","Barrett esophagus replaces squamous lining with intestinal-type simple columnar epithelium with goblet cells"],
+ labs:["—"],
+ buzz:["Gut lining from stomach to rectum = simple columnar"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["—"],q:["simple columnar epithelium","simple columnar"]},
+
+pseudostrat:{n:"Pseudostratified epithelium — airways & male ducts",k:"reg",p:"tsSimple",enz:"Looks layered · every cell touches the basement membrane",inh:"—",fa:"680",hi:1,
+ mech:"It appears stratified, but every cell rests on the basement membrane; some just do not reach the surface — so it is really a <b>simple</b> epithelium. <b>Where</b>: trachea and bronchial tree, ductus deferens, efferent ductules of the epididymis. <b>Function</b>: secretion and conduit (airways), absorption and conduit (male ducts).",
+ find:["Its distribution is limited, and identification usually depends on knowing where it is normally found","In some pseudostratified epithelia the basal cells are stem cells that replace the mature cells","Respiratory epithelium is pseudostratified ciliated columnar with goblet cells; smoking turns it into stratified squamous (metaplasia)"],
+ labs:["—"],
+ buzz:["Airway lining = pseudostratified ciliated columnar"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["—"],q:["=pseudostratified columnar"]},
+
+strsq:{n:"Stratified squamous epithelium — keratinized vs nonkeratinized",k:"reg",p:"tsStrat",enz:"Many layers, flat on top · protection",inh:"—",hi:1,
+ mech:"Several layers with flat surface cells, typical of surfaces under friction. <b>Where</b>: epidermis (<b>keratinized</b>), oral cavity and esophagus, vagina (<b>nonkeratinized</b>). <b>Function</b>: barrier and protection.",
+ find:["The surface cells may be keratinized — the epidermis is “stratified squamous keratinized epithelium” — or nonkeratinized, as in the oral cavity, esophagus and vagina","Squamous metaplasia turns the simple columnar lining of the cervical canal into stratified squamous nonkeratinized epithelium; reflux can turn the lower esophagus’s squamous lining into intestinal-like columnar epithelium (Barrett esophagus)"],
+ labs:["—"],
+ buzz:["Skin keratinized · mouth, esophagus, vagina not"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["—"],q:["=stratified squamous","keratinized stratified squamous","nonkeratinized stratified squamous","keratinized epithelium"]},
+
+strcubcol:{n:"Stratified cuboidal & stratified columnar — big ducts",k:"reg",p:"tsStrat",enz:"Two or more layers · barrier and conduit",inh:"—",hi:1,
+ mech:"<b>Stratified cuboidal</b> (usually two layers with cuboidal surface cells): sweat gland ducts, large ducts of exocrine glands, the anorectal junction. <b>Stratified columnar</b>: the largest ducts of exocrine glands and the anorectal junction. <b>Function</b> of both: barrier and conduit.",
+ find:["Both are uncommon compared with the simple types; an esophageal gland duct is stratified cuboidal"],
+ labs:["—"],
+ buzz:["Duct of a sweat gland = stratified cuboidal"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["—"],q:["stratified cuboidal epithelium","stratified cuboidal","stratified columnar epithelium","stratified columnar"]},
+
+transitional:{n:"Transitional epithelium (urothelium) — built to stretch",k:"reg",p:"tsStrat",enz:"Calyces → ureters → bladder → proximal urethra",inh:"—",hi:1,
+ mech:"A stratified epithelium with features that let it <b>distend</b>. <b>Where</b>: the lower urinary tract from the minor calyces to the proximal urethra — renal calyces, ureters, bladder, urethra. <b>Function</b>: barrier with a distensible property.",
+ find:["Chronic irritation (e.g., schistosomiasis) can cause squamous metaplasia of the urothelium","It also gives mechanical protection in the bladder"],
+ labs:["—"],
+ buzz:["Urinary passages = transitional"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["—"],q:["transitional epithelium","urothelial lining"]},
+
+apical:{n:"Microvilli, stereocilia & cilia",k:"reg",p:"tsSurf",enz:"Absorb · absorb or sense · move or sense",inh:"—",fa:"46",hi:1,
+ mech:"<b>Microvilli</b> are finger-like projections on most epithelial cells; their number and shape track absorptive capacity — tall, packed microvilli in absorptive cells. <b>Stereocilia</b> are unusually long, immotile microvilli found only in the epididymis, proximal ductus deferens (absorption) and inner ear hair cells (sensation). <b>Motile cilia</b> have a 9 + 2 axoneme with motor proteins and sweep surfaces (dust in the bronchial tree).",
+ find:["<b>Primary cilia</b>: one immotile cilium on almost every cell, sensing chemicals, osmolarity, flow, light, odor and sound — essential for tissue morphogenesis","Stereocilia renew their actin cores continuously (treadmilling)","Defective motile cilia: primary ciliary dyskinesia; defective primary cilia: ciliopathies such as polycystic kidney disease"],
+ labs:["—"],
+ buzz:["Microvilli absorb · cilia move · stereocilia are long microvilli"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["—"],q:["microvilli","motile cilia","primary cilia","primary cilium"]},
+
+epimeta:{n:"Epithelial metaplasia — where it happens",k:"dz",p:"tsSurf",enz:"One mature epithelium replaced by another",inh:"—",fa:"202",hi:1,
+ mech:"Metaplasia is a reversible switch from one mature epithelial type to another, an adaptive response to stress or chronic inflammation produced by reprogramming epithelial stem cells. The commonest is <b>columnar to squamous</b>.",
+ find:["Trachea and bronchi: pseudostratified respiratory epithelium → squamous with cigarette smoke","Cervical canal: simple columnar → stratified squamous nonkeratinized with chronic infection (e.g., HPV)","Bladder: urothelium → squamous with chronic parasites (schistosomiasis)","Esophagus: stratified squamous → intestinal-type columnar with goblet cells — <b>Barrett esophagus</b>","Usually reversible when the stimulus goes; persistent squamous metaplasia can lead to squamous carcinoma — lung, cervix and bladder cancers often arise from it"],
+ labs:["—"],
+ buzz:["Smoker’s bronchus and Barrett esophagus = metaplasia"],
+ src:["Pawlina ch 5 — Epithelial Tissue"],
+ tx:["Remove the stimulus"],q:["squamous metaplasia","columnar metaplasia","epithelial metaplasia"]},
+
+ctproper:{n:"Connective tissue proper — loose and dense",k:"reg",p:"tsTissue",enz:"Cells and ground substance vs packed collagen",inh:"—",hi:1,
+ mech:"<b>Loose connective tissue</b>: thin, sparse collagen fibers, many cell types and abundant gel-like ground substance through which O₂, nutrients, CO₂ and wastes diffuse to and from small vessels. <b>Dense irregular</b>: mostly collagen in bundles running in many directions, few cells (fibroblasts) — strength against stress from several directions, e.g., the reticular dermis. <b>Dense regular</b>: densely packed parallel fibers — tendons, ligaments and aponeuroses.",
+ find:["Specialized connective tissues: cartilage, bone, blood, hemopoietic tissue, adipose tissue, lymphatic tissue","Embryonic connective tissue: mesenchyme and mucous connective tissue"],
+ labs:["—"],
+ buzz:["Tendon = dense regular · dermis = dense irregular"],
+ src:["Pawlina ch 6 — Connective Tissue"],
+ tx:["—"],q:["loose connective tissue","dense irregular connective tissue","dense regular connective tissue","connective tissue proper"]},
+
+adipose:{n:"White, brown & beige fat",k:"reg",p:"tsTissue",enz:"Store energy vs make heat",inh:"—",fa:"76",hi:1,
+ mech:"<b>White adipose tissue</b> is the main type in adults. <b>Brown adipose tissue</b> is abundant in the fetus and newborn — a key thermogenic tissue that offsets the newborn’s high surface-to-mass heat loss and helps prevent lethal hypothermia (a major risk for preterm babies) — then dwindles over the first decade, persisting around internal organs.",
+ find:["<b>Beige (“brite”)</b> fat: brown-like adipocytes within subcutaneous white fat in adults"],
+ labs:["—"],
+ buzz:["Brown fat keeps the newborn warm"],
+ src:["Pawlina ch 9 — Adipose Tissue"],
+ tx:["—"],q:["brown adipose tissue","white adipose tissue","beige adipose","brown fat"]},
+
+muscletypes:{n:"Skeletal, cardiac & smooth muscle tissue",k:"reg",p:"tsTissue",enz:"Striated voluntary · striated heart · nonstriated viscera",inh:"—",hi:1,
+ mech:"<b>Skeletal muscle</b> attaches to bone for movement and posture (and the extraocular muscles); each fiber is a <b>multinucleated syncytium</b>. Visceral striated muscle — tongue, pharynx, lumbar diaphragm, upper esophagus — is identical but in soft tissues. <b>Cardiac muscle</b> is striated, in the heart wall and the bases of the great veins. <b>Smooth muscle</b> lacks striations and lies in the viscera, blood vessels, arrector pili and intrinsic eye muscles.",
+ find:["Smooth muscle: fusiform cells 20 µm (small vessels) to 500 µm (pregnant uterus), joined by gap junctions; no striations and no troponin; slow, prolonged contraction with a fatigue-free latch state; peristalsis in gut and male tract","Striations come from the arrangement of thick and thin filaments, the same in skeletal and cardiac muscle"],
+ labs:["—"],
+ buzz:["Multinucleate = skeletal · no striations = smooth"],
+ src:["Pawlina ch 11 — Muscle Tissue"],
+ tx:["—"],q:["skeletal muscle tissue","cardiac muscle tissue","smooth muscle tissue","visceral striated muscle","multinucleated syncytium"]},
+
+nervetissue:{n:"Neurons & neuroglia — the nervous tissue",k:"reg",p:"tsTissue",enz:"Neurons signal · glia support",inh:"—",hi:1,
+ mech:"Nerve tissue has two principal cell types: <b>neurons</b>, the functional units — a cell body and processes specialized to receive stimuli and conduct impulses — and <b>supporting cells (neuroglia)</b>.",
+ find:["CNS glia: oligodendrocytes, astrocytes, microglia, ependymal cells","PNS glia: Schwann cells (surround axons), satellite cells (surround ganglion cell bodies), enteric glia in the gut wall"],
+ labs:["—"],
+ buzz:["CNS myelin = oligodendrocytes · PNS = Schwann cells"],
+ src:["Pawlina ch 12 — Nerve Tissue"],
+ tx:["—"],q:["nerve tissue","neuroglia"]},
+
+/* ── link-sweep gap cards: alveolar proteinosis, visual streams (m34) ─── */
+pap:{n:"Pulmonary alveolar proteinosis",k:"dz",p:"alveolus",enz:"Macrophages cannot clear surfactant · GM-CSF",inh:"—",hi:1,
+ mech:"A rare disease of defective alveolar macrophage function from deficient <b>GM-CSF signaling</b>: surfactant accumulates in the alveolar and bronchiolar spaces, giving bilateral patchy asymmetric opacities. Loss of GM-CSF signaling blocks terminal differentiation of alveolar macrophages, so they cannot catabolize surfactant.",
+ find:["<b>Autoimmune</b> PAP (90%): autoantibodies neutralize GM-CSF; adults, no family pattern","<b>Secondary</b>: hematopoietic disorders, malignancy, immunodeficiency, lysinuric protein intolerance, acute silicosis and other inhalational syndromes","<b>Hereditary</b>: very rare, neonates — loss-of-function mutations in GM-CSF or its receptor","Whole-lung lavage is the standard of care; GM-CSF therapy helps autoimmune disease"],
+ labs:["—"],
+ buzz:["Surfactant-filled alveoli + anti-GM-CSF antibodies"],
+ src:["Robbins ch 15 — The lung"],
+ tx:["Whole-lung lavage; GM-CSF"],q:["pulmonary alveolar proteinosis","alveolar proteinosis","=neutralization of gm csf"]},
+
+visstreams:{n:"LGN layers, V1 & the two visual streams",k:"reg",p:"vscort",enz:"Magno = fast black-and-white · parvo = color and detail",inh:"—",hi:1,
+ mech:"The dorsal lateral geniculate nucleus has six layers. <b>Layers I and II (magnocellular)</b> receive type M ganglion cells — a rapidly conducting but color-blind pathway with poor point-to-point detail. <b>Layers III–VI (parvocellular)</b> receive type P ganglion cells — color and accurate spatial detail at moderate speed. The <b>primary visual cortex</b> lies in the calcarine fissure on the medial occipital lobe; the macula maps near the occipital pole.",
+ find:["<b>Color blobs</b>: column-like areas among the primary visual columns that receive lateral signals from adjacent columns and respond to color","<b>Position–form–motion pathway (dorsal)</b>: V1 → posterior midtemporal and occipitoparietal cortex — where objects are and whether they move; mainly M-cell signals, black and white","<b>Detail–color pathway (ventral)</b>: V1 → inferior, ventral and medial occipital and temporal cortex — reading, texture, color, what the object is"],
+ labs:["—"],
+ buzz:["Where = dorsal, parietal · what = ventral, temporal"],
+ src:["Guyton ch 52 — The Eye: III. Central Neurophysiology of Vision"],
+ tx:["—"],q:["magnocellular layers","parvocellular layers","color blobs","calcarine fissure","dorsal visual stream","ventral visual stream","=the dorsal stream projects to the occipitoparietal cortex","=layers i and ii are magnocellular"]},
 
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
@@ -30229,9 +30680,9 @@ MAPS.vision = {
   {id:"t4",l:"Na⁺ channels close",x:2220,y:630,p:"vsphoto",s:"the photoreceptor hyperpolarizes",m:["phototrans"]},
   {id:"t5",l:"Dark current",x:2820,y:630,p:"vsphoto",s:"in the dark cGMP keeps Na⁺ flowing in",m:["phototrans"]},
   {id:"v1",l:"Optic nerve · chiasm",x:420,y:830,p:"vscort",s:"nasal fibers cross",m:["viscortex"]},
-  {id:"v2",l:"Lateral geniculate",x:1020,y:830,p:"vscort",s:"thalamic relay",m:["viscortex"]},
+  {id:"v2",l:"Lateral geniculate",x:1020,y:830,p:"vscort",s:"thalamic relay",m:["viscortex","visstreams"]},
   {id:"v3",l:"Optic radiations",x:1620,y:830,p:"vscort",s:"geniculocalcarine tract",m:["viscortex"]},
-  {id:"v4",l:"Primary visual cortex",x:2220,y:830,p:"vscort",s:"area 17 · lines and their orientation",m:["viscortex"]},
+  {id:"v4",l:"Primary visual cortex",x:2220,y:830,p:"vscort",s:"area 17 · lines and their orientation",m:["viscortex","visstreams"]},
   {id:"v5",l:"Field cuts",x:2820,y:830,p:"vscort",s:"the field lost localizes the lesion",m:["vfdefects"]},
   {id:"v6",l:"Suprachiasmatic nucleus",x:420,y:910,p:"vscort",s:"circadian rhythm",m:["viscortex","circadian"]},
   {id:"v7",l:"Pretectal nuclei",x:1020,y:910,p:"vscort",s:"pupillary light reflex",m:["viscortex"]},
@@ -30809,7 +31260,7 @@ MAPS.histoembryo = {
   {id:"a5",l:"Respiratory bronchiole",x:2820,y:430,p:"hairway",s:"first site of gas exchange",m:["airwayhisto"]},
   {id:"v1",l:"Type I cells",x:420,y:610,p:"halv",s:"40% of cells · 95% of surface",m:["pneumocytes"]},
   {id:"v2",l:"Type II cells",x:1020,y:610,p:"halv",k:"hub",s:"lamellar bodies · stem cells",m:["pneumocytes"]},
-  {id:"v3",l:"Alveolar macrophages",x:1620,y:610,p:"halv",s:"dust cells",m:["pneumocytes"]},
+  {id:"v3",l:"Alveolar macrophages",x:1620,y:610,p:"halv",s:"dust cells",m:["pneumocytes","pap"]},
   {id:"v4",l:"Blood–air barrier",x:2220,y:610,p:"halv",s:"thin, vast membrane",m:["respmem","pneumocytes"]},
   {id:"v5",l:"Pores of Kohn",x:2820,y:610,p:"halv",s:"between alveoli",m:["pneumocytes"]},
   {id:"k1",l:"Pro- → meso- → metanephros",x:420,y:790,p:"hekid",k:"hub",s:"week 4 · interim · week 5",m:["kidneydev"]},
@@ -33323,20 +33774,428 @@ MAPS.ctdis = {
   {a:"f2",b:"f3",p:"ctFib"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["index","Index"]];
+MAPS.thyroid = {
+ t:"Thyroid Disease", sub:"Reading TSH, free T4 and radioactive iodine uptake · Hashimoto and Graves disease · transient thyroiditis (de Quervain and silent), Riedel thyroiditis and goiter · follicular adenoma vs carcinoma, papillary, medullary and anaplastic carcinoma",
+ w:3300, h:1714,
+ fa:"344, 345, 346, 347",
+ src:["Robbins ch 24 — The endocrine system"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Hormone and tests"},
+  {x:140,y:290,w:3020,h:200,l:"Hypothyroidism, hyperthyroidism and thyroiditis"},
+  {x:140,y:550,w:3020,h:120,l:"Nodules and cancer"}],
+ panels:[
+  {x:140,y:730,w:1480,h:182,kw:213,t:"Thyroid tests by condition (Robbins; First Aid)",rows:[
+   ["Primary hypothyroidism","TSH ↑ · free T4 ↓"],
+   ["Central hypothyroidism","free T4 ↓ without a high TSH"],
+   ["Graves disease","TSH ↓ · T4 ↑ · uptake ↑, diffuse"],
+   ["Toxic adenoma","TSH ↓ · uptake ↑ in one nodule"],
+   ["Thyroiditis","TSH ↓ · T4 ↑ · uptake ↓"],
+   ["Euthyroid sick","T3 ↓ · T4 and TSH normal or low"]]},
+  {x:1680,y:730,w:1480,h:138,kw:120,t:"Thyroid cancers (Robbins)",rows:[
+   ["Papillary","about 85% · nuclear features · lymph nodes"],
+   ["Follicular","capsular or vascular invasion · blood-borne"],
+   ["Medullary","C cells · calcitonin"],
+   ["Anaplastic","older patients · death within a year"]]}],
+ nodes:[
+  {id:"t1",l:"Synthesis & transport",x:420,y:170,p:"thHorm",k:"hub",s:"iodide · TPO · TBG",m:["thyroidreg"]},
+  {id:"t2",l:"Thyroid hormone actions",x:1020,y:170,p:"thHorm",s:"BMR · β₁ · bone",m:["thyroidact"]},
+  {id:"t3",l:"Reading the labs",x:1620,y:170,p:"thHorm",s:"TSH first, then free T4",m:["thylabs"]},
+  {id:"t4",l:"Iodine uptake",x:2220,y:170,p:"thHorm",s:"high in Graves · low in thyroiditis",m:["thylabs"]},
+  {id:"t5",l:"Thyroid drugs",x:2820,y:170,p:"thHorm",s:"thionamides · levothyroxine",m:["thyroiddrugs"]},
+  {id:"h1",l:"Hashimoto thyroiditis",x:420,y:350,p:"thInfl",k:"hub",s:"the commonest hypothyroidism",m:["hypothyroid"]},
+  {id:"h2",l:"de Quervain thyroiditis",x:1020,y:350,p:"thInfl",s:"painful · after a virus",m:["transthy"]},
+  {id:"h3",l:"Silent thyroiditis",x:1620,y:350,p:"thInfl",s:"painless · same course",m:["transthy"]},
+  {id:"h4",l:"Riedel thyroiditis",x:2220,y:350,p:"thInfl",s:"fibrosis · IgG4",m:["riedel"]},
+  {id:"h5",l:"Euthyroid sick",x:2820,y:350,p:"thInfl",s:"low T3 in the ICU",m:["thylabs"]},
+  {id:"h6",l:"Graves disease",x:420,y:430,p:"thInfl",k:"hub",s:"TSH-receptor antibodies",m:["hyperthyroid"]},
+  {id:"h7",l:"Diffuse goiter",x:1020,y:430,p:"thInfl",s:"iodine lack → TSH ↑",m:["goiter"]},
+  {id:"h8",l:"Multinodular goiter",x:1620,y:430,p:"thInfl",s:"the largest glands",m:["goiter"]},
+  {id:"h9",l:"Thyroglossal duct cyst",x:2220,y:430,p:"thInfl",s:"midline · moves with the tongue",m:["neckcysts"]},
+  {id:"n1",l:"Follicular adenoma",x:420,y:610,p:"thTum",k:"hub",s:"encapsulated · no invasion",m:["follneo"]},
+  {id:"n2",l:"Follicular carcinoma",x:1020,y:610,p:"thTum",s:"capsule or vessel invasion",m:["follneo"]},
+  {id:"n3",l:"Papillary carcinoma",x:1620,y:610,p:"thTum",s:"clear nuclei · psammoma",m:["papca","thyroidca"]},
+  {id:"n4",l:"Medullary carcinoma",x:2220,y:610,p:"thTum",s:"C cells · calcitonin",m:["medullary"]},
+  {id:"n5",l:"Anaplastic carcinoma",x:2820,y:610,p:"thTum",s:"rapid · fatal",m:["anapca"]}],
+ plots:[
+  {x:140,y:974,w:1480,h:680,kind:"thyfb",t:"TSH and free T4 — reading the feedback curve"},
+  {x:1680,y:974,w:1480,h:680,kind:"thycourse",t:"Thyroiditis vs Graves — T4, TSH and iodine uptake"}],
+ edges:[
+  {a:"t1",b:"t2",p:"thHorm"},
+  {a:"t3",b:"t4",p:"thHorm"},
+  {a:"h2",b:"h3",p:"thInfl"},
+  {a:"h7",b:"h8",p:"thInfl"},
+  {a:"n1",b:"n2",p:"thTum"}]
+};
+
+MAPS.innate = {
+ t:"Innate Immune Cells", sub:"Innate vs adaptive immunity and memory · Toll-like and other pattern recognition receptors · monocytes and tissue macrophages · dendritic cells from Langerhans cells to follicular dendritic cells · NK cells, missing self and ADCC · phagocyte defects",
+ w:3300, h:952,
+ fa:"97, 101, 106, 108",
+ src:["Robbins ch 6 — Diseases of the immune system"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Innate and adaptive"},
+  {x:140,y:290,w:3020,h:200,l:"Innate cells"},
+  {x:140,y:550,w:3020,h:120,l:"Phagocyte defects"}],
+ panels:[
+  {x:140,y:730,w:1480,h:160,kw:120,t:"Innate vs adaptive (Robbins ch 6)",rows:[
+   ["Timing","always present, immediate · vs days"],
+   ["Receptors","germline, the same in everyone · vs somatic recombination"],
+   ["Memory","none · vs memory lymphocytes"],
+   ["Cells","phagocytes, dendritic, NK, ILCs · vs T and B cells"],
+   ["Proteins","complement · vs antibodies"]]},
+  {x:1680,y:730,w:1480,h:160,kw:196,t:"Where innate cells sit (Robbins ch 6)",rows:[
+   ["Kupffer cells","liver macrophages"],
+   ["Microglia","brain macrophages"],
+   ["Alveolar macrophages","lung"],
+   ["Langerhans cells","epidermal dendritic cells"],
+   ["NK cells","5–10% of blood lymphocytes"]]}],
+ nodes:[
+  {id:"l1",l:"Innate vs adaptive",x:420,y:170,p:"inLink",k:"hub",s:"fast and fixed vs specific",m:["innadapt"]},
+  {id:"l2",l:"Memory cells",x:1020,y:170,p:"inLink",s:"faster the second time",m:["innadapt"]},
+  {id:"l3",l:"Pattern recognition",x:1620,y:170,p:"inLink",s:"TLRs · NOD-like · RIG-like",m:["prr"]},
+  {id:"l4",l:"Complement",x:2220,y:170,p:"inLink",s:"innate plasma proteins",m:["complementreg"]},
+  {id:"l5",l:"Chemokines & IL-8",x:2820,y:170,p:"inLink",s:"recruit neutrophils",m:["chemokines"]},
+  {id:"c1",l:"Monocytes → macrophages",x:420,y:350,p:"inCells",k:"hub",s:"chronic inflammation",m:["macrophage"]},
+  {id:"c2",l:"Resident macrophages",x:1020,y:350,p:"inCells",s:"Kupffer · microglia · alveolar",m:["macrophage"]},
+  {id:"c3",l:"Dendritic cells",x:1620,y:350,p:"inCells",s:"carry antigen to nodes",m:["dendritic"]},
+  {id:"c4",l:"Langerhans cells",x:2220,y:350,p:"inCells",s:"epidermal dendritic cells",m:["dendritic","lch"]},
+  {id:"c5",l:"Follicular dendritic cells",x:2820,y:350,p:"inCells",s:"trap antigen for B cells",m:["dendritic"]},
+  {id:"c6",l:"NK cells",x:420,y:430,p:"inCells",k:"hub",s:"CD16 · 5–10% of lymphocytes",m:["nkcell"]},
+  {id:"c7",l:"Missing self",x:1020,y:430,p:"inCells",s:"MHC I lost → killed",m:["nkcell"]},
+  {id:"c8",l:"ADCC & IFN-γ",x:1620,y:430,p:"inCells",s:"kill antibody-coated cells",m:["nkcell"]},
+  {id:"c9",l:"Innate lymphoid cells",x:2220,y:430,p:"inCells",s:"groups 1–3",m:["nkcell"]},
+  {id:"c10",l:"HLH",x:2820,y:430,p:"inCells",s:"uncontrolled macrophages",m:["hlh"]},
+  {id:"d1",l:"Leukocyte adhesion deficiency",x:420,y:610,p:"inDef",k:"hub",s:"no rolling or adhesion",m:["lad1"]},
+  {id:"d2",l:"Chronic granulomatous disease",x:1020,y:610,p:"inDef",s:"NADPH oxidase",m:["cgd"]},
+  {id:"d3",l:"Chédiak-Higashi",x:1620,y:610,p:"inDef",s:"giant granules",m:["chediak"]},
+  {id:"d4",l:"MPO deficiency",x:2220,y:610,p:"inDef",s:"Candida",m:["mpo"]}],
+ edges:[
+  {a:"l1",b:"l2",p:"inLink"},
+  {a:"c1",b:"c2",p:"inCells"},
+  {a:"c3",b:"c4",p:"inCells"},
+  {a:"c6",b:"c7",p:"inCells"},
+  {a:"c7",b:"c8",p:"inCells"},
+  {a:"d1",b:"d2",p:"inDef"}]
+};
+
+MAPS.pleural = {
+ t:"Pleural Disease", sub:"Normal pleural fluid and the five ways it accumulates · transudate vs exudate · hydrothorax, hemothorax and chylothorax · serous and fibrinous pleuritis, empyema · metastases, mesothelioma and solitary fibrous tumor · pneumothorax",
+ w:3300, h:952,
+ fa:"699, 700",
+ src:["Robbins ch 15 — The lung", "Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Pleural fluid"},
+  {x:140,y:370,w:3020,h:120,l:"Pleural tumors"},
+  {x:140,y:550,w:3020,h:120,l:"Air and pressure"}],
+ panels:[
+  {x:140,y:730,w:1480,h:160,kw:299,t:"Why fluid collects (Robbins ch 15)",rows:[
+   ["↑ Hydrostatic pressure","heart failure · transudate"],
+   ["↑ Vascular permeability","pneumonia · exudate"],
+   ["↓ Osmotic pressure","nephrotic syndrome · transudate"],
+   ["↑ Negative intrapleural pressure","atelectasis"],
+   ["↓ Lymphatic drainage","mediastinal carcinomatosis"]]},
+  {x:1680,y:730,w:1480,h:138,kw:120,t:"What is in the space (Robbins ch 15)",rows:[
+   ["Hydrothorax","clear, straw-colored"],
+   ["Empyema","pus"],
+   ["Hemothorax","blood"],
+   ["Chylothorax","milky lymph"]]}],
+ nodes:[
+  {id:"f1",l:"Normal pleural fluid",x:420,y:170,p:"plFluid",k:"hub",s:"lymphatics keep it negative",m:["pleura"]},
+  {id:"f2",l:"Five mechanisms",x:1020,y:170,p:"plFluid",s:"pressure · leak · oncotic · suction · lymph",m:["effmech"]},
+  {id:"f3",l:"Transudate vs exudate",x:1620,y:170,p:"plFluid",s:"Light criteria",m:["effusion"]},
+  {id:"f4",l:"Hydrothorax",x:2220,y:170,p:"plFluid",s:"heart failure",m:["hydrothorax"]},
+  {id:"f5",l:"Hemo- & chylothorax",x:2820,y:170,p:"plFluid",s:"blood · milky lymph",m:["hydrothorax"]},
+  {id:"f6",l:"Pleuritis",x:420,y:250,p:"plFluid",k:"hub",s:"serous → fibrinous",m:["pleuritis"]},
+  {id:"f7",l:"Empyema",x:1020,y:250,p:"plFluid",s:"loculated pus",m:["pleuritis"]},
+  {id:"f8",l:"Hemorrhagic pleuritis",x:1620,y:250,p:"plFluid",s:"look for tumor",m:["pleuritis"]},
+  {id:"f9",l:"Malignant effusion",x:2220,y:250,p:"plFluid",s:"cytology",m:["pleuralmets"]},
+  {id:"p1",l:"Metastases",x:420,y:430,p:"plTum",k:"hub",s:"lung · breast · ovary",m:["pleuralmets"]},
+  {id:"p2",l:"Mesothelioma",x:1020,y:430,p:"plTum",s:"asbestos",m:["mesothelioma"]},
+  {id:"p3",l:"Solitary fibrous tumor",x:1620,y:430,p:"plTum",s:"pedicle · STAT6",m:["sft"]},
+  {id:"p4",l:"Lung cancer spread",x:2220,y:430,p:"plTum",s:"pleura · pericardium",m:["lclocal"]},
+  {id:"a1",l:"Pneumothorax",x:420,y:610,p:"plAir",k:"hub",s:"air in the pleural space",m:["pneumothorax"]},
+  {id:"a2",l:"Pleural pressure",x:1020,y:610,p:"plAir",s:"about −5 to −7.5 cm H₂O",m:["breathpress"]}],
+ edges:[
+  {a:"f1",b:"f2",p:"plFluid"},
+  {a:"f2",b:"f3",p:"plFluid"},
+  {a:"f4",b:"f5",p:"plFluid"},
+  {a:"f6",b:"f7",p:"plFluid"},
+  {a:"p1",b:"p2",p:"plTum"}]
+};
+
+MAPS.fuelstate = {
+ t:"Fed & Fasting Fuel Use", sub:"The fed state and what insulin stores · the overnight (basal) fast — liver glycogen and fatty acids · what happens when insulin falls · ketones and starvation · the liver as a glucose buffer and the counterregulatory hormones · diagnosing diabetes with HbA1c",
+ w:3300, h:1652,
+ fa:"88, 89, 337, 338, 350",
+ src:["Marks ch 2 — The Fed or Absorptive State", "Marks ch 3 — Fasting", "Guyton ch 79 — Insulin, Glucagon, and Diabetes Mellitus", "Robbins ch 24 — The endocrine system"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Fed state"},
+  {x:140,y:290,w:3020,h:200,l:"Fasting"},
+  {x:140,y:550,w:3020,h:120,l:"Keeping glucose steady"}],
+ panels:[
+  {x:140,y:730,w:1480,h:160,kw:144,t:"Who burns what (Marks; Guyton)",rows:[
+   ["Fed","glucose; the liver and muscle store glycogen"],
+   ["Overnight fast","fatty acids; liver glycogen keeps glucose up"],
+   ["Days 1–3","gluconeogenesis; fatty acids"],
+   ["After day 3","ketone bodies feed the brain"],
+   ["Red cells","always glucose — no mitochondria"]]},
+  {x:1680,y:730,w:1480,h:138,kw:153,t:"Hormones (Guyton ch 79)",rows:[
+   ["Insulin","store — glycogen, fat, protein"],
+   ["Glucagon","release liver glucose"],
+   ["Epinephrine","fast rescue in hypoglycemia"],
+   ["GH and cortisol","hours to days · shift tissues to fat"]]}],
+ nodes:[
+  {id:"e1",l:"Fed state",x:420,y:170,p:"fsFed",k:"hub",s:"insulin up, glucagon down",m:["fedstate"]},
+  {id:"e2",l:"Insulin secretion",x:1020,y:170,p:"fsFed",s:"glucose → β cell",m:["insulinsecr"]},
+  {id:"e3",l:"Insulin actions",x:1620,y:170,p:"fsFed",s:"GLUT4 · glycogen · fat",m:["insulinact"]},
+  {id:"e4",l:"Liver glycogen",x:2220,y:170,p:"fsFed",s:"up to ⅔ of absorbed glucose",m:["fedstate"]},
+  {id:"e5",l:"Excess → VLDL",x:2820,y:170,p:"fsFed",s:"fat exported from liver",m:["fedstate"]},
+  {id:"b1",l:"Overnight fast",x:420,y:350,p:"fsFast",k:"hub",s:"basal state",m:["basalstate"]},
+  {id:"b2",l:"Glucagon",x:1020,y:350,p:"fsFast",s:"liver glucose out",m:["glucagonact"]},
+  {id:"b3",l:"Fat released",x:1620,y:350,p:"fsFast",s:"hormone-sensitive lipase",m:["insdefic"]},
+  {id:"b4",l:"Ketone bodies",x:2220,y:350,p:"fsFast",s:"liver makes, muscle and brain burn",m:["ketones"]},
+  {id:"b5",l:"Starvation",x:2820,y:350,p:"fsFast",s:"ketones feed the brain",m:["starvation"]},
+  {id:"b6",l:"Protein released",x:420,y:430,p:"fsFast",k:"hub",s:"muscle → gluconeogenesis",m:["insdefic"]},
+  {id:"b7",l:"Diabetic ketoacidosis",x:1020,y:430,p:"fsFast",s:"no insulin at all",m:["dka"]},
+  {id:"k1",l:"Liver glucose buffer",x:420,y:610,p:"fsCtrl",k:"hub",s:"fasting 80–90 mg/dL",m:["counterreg"]},
+  {id:"k2",l:"Counterregulation",x:1020,y:610,p:"fsCtrl",s:"glucagon · epinephrine · GH · cortisol",m:["counterreg"]},
+  {id:"k3",l:"Cortisol actions",x:1620,y:610,p:"fsCtrl",s:"gluconeogenesis",m:["cortisolact"]},
+  {id:"k4",l:"Hypoglycemia workup",x:2220,y:610,p:"fsCtrl",s:"insulinoma",m:["insulinoma"]},
+  {id:"k5",l:"Diagnosing diabetes",x:2820,y:610,p:"fsCtrl",s:"HbA1c ≥ 6.5% · fasting ≥ 126",m:["dmdx"]}],
+ plots:[
+  {x:140,y:952,w:1480,h:640,kind:"fuelphase",t:"Who burns what — fed to starvation"},
+  {x:1680,y:952,w:1480,h:640,kind:"a1c",t:"HbA1c and average glucose"}],
+ edges:[
+  {a:"e1",b:"e2",p:"fsFed"},
+  {a:"e2",b:"e3",p:"fsFed"},
+  {a:"e4",b:"e5",p:"fsFed"},
+  {a:"b1",b:"b2",p:"fsFast"},
+  {a:"b2",b:"b3",p:"fsFast"},
+  {a:"b3",b:"b4",p:"fsFast"},
+  {a:"b4",b:"b5",p:"fsFast"},
+  {a:"b6",b:"b7",p:"fsFast"},
+  {a:"k1",b:"k2",p:"fsCtrl"}]
+};
+
+MAPS.prosobs = {
+ t:"Prostate & Urinary Obstruction", sub:"Prostate zones — BPH in the transition zone, cancer in the peripheral zone · DHT from stromal 5α-reductase and the drugs that block it · high-grade PIN, basal cells and the Gleason score · semen and the accessory glands · obstructive uropathy, hydronephrosis and stones",
+ w:3300, h:750,
+ fa:"617, 618, 672, 673",
+ src:["Robbins ch 20 — The kidney", "Robbins ch 21 — The lower urinary tract and male genital system", "Katzung ch 40 — The Gonadal Hormones & Inhibitors", "Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)", "Pawlina ch 22 — Male Reproductive System"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Prostate"},
+  {x:140,y:370,w:3020,h:120,l:"Obstruction and stones"}],
+ panels:[
+  {x:140,y:550,w:1480,h:138,kw:153,t:"Prostate zones (Robbins ch 21)",rows:[
+   ["Transition zone","most hyperplasias · around the urethra"],
+   ["Peripheral zone","most carcinomas · palpable on rectal exam"],
+   ["Glands","basal cuboidal layer under columnar secretory cells"],
+   ["Cancer glands","single layer · no basal cells"]]},
+  {x:1680,y:550,w:1480,h:138,kw:120,t:"Stones (Robbins ch 20)",rows:[
+   ["Calcium","about 70% (First Aid about 80%)"],
+   ["Struvite","5–10% · urease-splitting bacteria"],
+   ["Uric acid","5–10% · urine pH below 5.5"],
+   ["Cystine","1–2%"]]}],
+ nodes:[
+  {id:"p1",l:"Prostate zones",x:420,y:170,p:"poPros",k:"hub",s:"transition · peripheral",m:["prozones"]},
+  {id:"p2",l:"BPH",x:1020,y:170,p:"poPros",s:"transition zone nodules",m:["bph","bphpath"]},
+  {id:"p3",l:"DHT & 5α-reductase",x:1620,y:170,p:"poPros",s:"stromal type 2 enzyme",m:["bphpath"]},
+  {id:"p4",l:"α₁-blockers",x:2220,y:170,p:"poPros",s:"relax smooth muscle",m:["alpha1drugs"]},
+  {id:"p5",l:"Prostatitis",x:2820,y:170,p:"poPros",s:"acute · chronic",m:["prostatitis"]},
+  {id:"p6",l:"Prostate cancer",x:420,y:250,p:"poPros",k:"hub",s:"peripheral zone",m:["prostateca"]},
+  {id:"p7",l:"High-grade PIN",x:1020,y:250,p:"poPros",s:"basal cells kept",m:["hgpin"]},
+  {id:"p8",l:"Gleason score",x:1620,y:250,p:"poPros",s:"two patterns added",m:["gleason"]},
+  {id:"p9",l:"Antiandrogens",x:2220,y:250,p:"poPros",s:"finasteride · flutamide",m:["antiandrogens"]},
+  {id:"p10",l:"Semen & accessory glands",x:2820,y:250,p:"poPros",s:"fructose · alkaline · PSA",m:["semen"]},
+  {id:"o1",l:"Obstructive uropathy",x:420,y:430,p:"poObs",k:"hub",s:"concentrating fails first",m:["obstructuro"]},
+  {id:"o2",l:"Hydronephrosis",x:1020,y:430,p:"poObs",s:"dilated pelvis and calyces",m:["hydroneph"]},
+  {id:"o3",l:"Kidney stones",x:1620,y:430,p:"poObs",s:"supersaturation",m:["stones"]},
+  {id:"o4",l:"Calcium stones",x:2220,y:430,p:"poObs",s:"hypercalciuria · uric acid seeds",m:["calcstone"]},
+  {id:"o5",l:"Urinary incontinence",x:2820,y:430,p:"poObs",s:"overflow with obstruction",m:["incontinence"]}],
+ edges:[
+  {a:"p1",b:"p2",p:"poPros"},
+  {a:"p2",b:"p3",p:"poPros"},
+  {a:"p3",b:"p4",p:"poPros"},
+  {a:"p6",b:"p7",p:"poPros"},
+  {a:"p7",b:"p8",p:"poPros"},
+  {a:"o1",b:"o2",p:"poObs"},
+  {a:"o3",b:"o4",p:"poObs"}]
+};
+
+MAPS.rbflow = {
+ t:"Renal Blood Flow & Autoregulation", sub:"How much blood the kidneys get and where it goes · PAH and filtration fraction · autoregulation from 80 to 170 mm Hg — the myogenic mechanism and tubuloglomerular feedback · what constricts and dilates the afferent and efferent arterioles",
+ w:3300, h:1594,
+ fa:"600, 601",
+ src:["Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control", "Costanzo ch 6 — Renal physiology","Guyton ch 19 — Role of the Kidneys in Long-Term Control of Arterial Pressure and in Hypertension: The Integrated System for Arterial Pressure Regulation"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Flow and filtration"},
+  {x:140,y:290,w:3020,h:120,l:"Autoregulation"},
+  {x:140,y:470,w:3020,h:120,l:"Vasoactive control"}],
+ panels:[
+  {x:140,y:650,w:1480,h:182,kw:205,t:"Arterioles and GFR (Costanzo ch 6)",rows:[
+   ["Afferent constriction","RBF ↓ · GFR ↓"],
+   ["Efferent constriction","RBF ↓ · GFR ↑"],
+   ["Angiotensin II","efferent more sensitive · low levels raise GFR"],
+   ["NSAIDs","remove prostaglandin dilation"],
+   ["ACE inhibitors","efferent dilates · GFR ↓"],
+   ["ANP","afferent dilates, efferent constricts · GFR ↑"]]},
+  {x:1680,y:650,w:1480,h:138,kw:222,t:"Numbers (Guyton; Costanzo)",rows:[
+   ["Renal blood flow","about 1100–1250 mL/min"],
+   ["Share of cardiac output","22–25%"],
+   ["Autoregulatory range","about 80–170 mm Hg"],
+   ["Medullary flow","1–2% of renal flow"]]}],
+ nodes:[
+  {id:"m1",l:"Renal blood flow",x:420,y:170,p:"rbMeas",k:"hub",s:"about 22–25% of cardiac output",m:["rbfnum"]},
+  {id:"m2",l:"Cortex vs medulla",x:1020,y:170,p:"rbMeas",s:"medulla 1–2%",m:["rbfnum"]},
+  {id:"m3",l:"PAH & filtration fraction",x:1620,y:170,p:"rbMeas",s:"FF = GFR / RPF",m:["erpf"]},
+  {id:"m4",l:"GFR",x:2220,y:170,p:"rbMeas",s:"inulin · creatinine",m:["gfrcalc"]},
+  {id:"m5",l:"Glomerular Starling forces",x:2820,y:170,p:"rbMeas",s:"filtration equilibrium",m:["glomstarling"]},
+  {id:"a1",l:"Autoregulation",x:420,y:350,p:"rbAuto",k:"hub",s:"80–170 mm Hg",m:["rbfauto"]},
+  {id:"a2",l:"Myogenic mechanism",x:1020,y:350,p:"rbAuto",s:"stretch → Ca²⁺ → constrict",m:["myogenic"]},
+  {id:"a3",l:"Tubuloglomerular feedback",x:1620,y:350,p:"rbAuto",s:"macula densa NaCl",m:["tgf"]},
+  {id:"a4",l:"Adenosine",x:2220,y:350,p:"rbAuto",s:"afferent constriction",m:["tgf"]},
+  {id:"a5",l:"High-protein diet",x:2820,y:350,p:"rbAuto",s:"hyperfiltration",m:["tgf"]},
+  {id:"v1",l:"Arteriole tone",x:420,y:530,p:"rbVaso",k:"hub",s:"afferent vs efferent",m:["rbfvaso"]},
+  {id:"v2",l:"Angiotensin II",x:1020,y:530,p:"rbVaso",s:"efferent more sensitive",m:["rbfvaso"]},
+  {id:"v3",l:"Prostaglandins & NSAIDs",x:1620,y:530,p:"rbVaso",s:"protect afferent flow",m:["nsaidkidney"]},
+  {id:"v4",l:"ANP & dopamine",x:2220,y:530,p:"rbVaso",s:"dilate",m:["rbfvaso","natriuretic"]},
+  {id:"v5",l:"Glomerular dynamics",x:2820,y:530,p:"rbVaso",s:"what each change does",m:["glomdyn"]}],
+ plots:[
+  {x:140,y:894,w:1480,h:640,kind:"rbfpress",t:"Autoregulation — GFR, blood flow and urine flow"},
+  {x:1680,y:894,w:1480,h:640,kind:"presnat",t:"Pressure natriuresis — the renal output curve"}],
+ edges:[
+  {a:"m1",b:"m2",p:"rbMeas"},
+  {a:"m2",b:"m3",p:"rbMeas"},
+  {a:"m3",b:"m4",p:"rbMeas"},
+  {a:"a1",b:"a2",p:"rbAuto"},
+  {a:"a2",b:"a3",p:"rbAuto"},
+  {a:"a3",b:"a4",p:"rbAuto"},
+  {a:"v1",b:"v2",p:"rbVaso"},
+  {a:"v2",b:"v3",p:"rbVaso"}]
+};
+
+MAPS.kshift = {
+ t:"Potassium Shifts", sub:"Internal vs external K⁺ balance · what moves K⁺ into cells — insulin, β₂-agonists, alkalosis · what moves it out — insulin lack, β-blockers, acidosis, hyperosmolarity, cell lysis, exercise · why respiratory and organic acidoses shift little",
+ w:3300, h:908,
+ fa:"608, 609",
+ src:["Costanzo ch 6 — Renal physiology", "Guyton ch 30 — Renal Regulation of Potassium, Calcium, Phosphate, and Magnesium; Integration of Renal Mechanisms for Control of Blood Volume and Extracellular Fluid Volume"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Balance"},
+  {x:140,y:290,w:3020,h:120,l:"Into cells"},
+  {x:140,y:470,w:3020,h:200,l:"Out of cells"}],
+ panels:[
+  {x:140,y:730,w:1480,h:94,kw:256,t:"Shifts (Costanzo ch 6)",rows:[
+   ["Into cells → hypokalemia","insulin · β₂-agonists · α-antagonists · alkalosis · hyposmolarity"],
+   ["Out of cells → hyperkalemia","insulin lack · β₂-antagonists · α-agonists · acidosis · hyperosmolarity · lysis · exercise"]]},
+  {x:1680,y:730,w:1480,h:116,kw:179,t:"Acid–base and K⁺ (Costanzo ch 6)",rows:[
+   ["Inorganic acidosis","H⁺ enters cells, K⁺ leaves"],
+   ["Organic acidosis","little shift — the anion enters with H⁺"],
+   ["Respiratory","little shift — CO₂ crosses freely"]]}],
+ nodes:[
+  {id:"b1",l:"Internal balance",x:420,y:170,p:"ksBal",k:"hub",s:"98% inside cells",m:["kinternal"]},
+  {id:"b2",l:"External balance",x:1020,y:170,p:"ksBal",s:"the nephron",m:["khandling"]},
+  {id:"b3",l:"Na⁺/K⁺-ATPase",x:1620,y:170,p:"ksBal",s:"3 Na⁺ out, 2 K⁺ in",m:["nakpump"]},
+  {id:"b4",l:"Distal K⁺ secretion",x:2220,y:170,p:"ksBal",s:"principal cells",m:["ksecretion"]},
+  {id:"b5",l:"Intracellular buffering",x:2820,y:170,p:"ksBal",s:"H⁺ into cells",m:["intrabuffer"]},
+  {id:"i1",l:"Insulin",x:420,y:350,p:"ksIn",k:"hub",s:"clears a meal’s K⁺",m:["kinsulin"]},
+  {id:"i2",l:"β₂-agonists",x:1020,y:350,p:"ksIn",s:"K⁺ in",m:["kinsulin"]},
+  {id:"i3",l:"Alkalosis",x:1620,y:350,p:"ksIn",s:"H⁺ out, K⁺ in",m:["kacid"]},
+  {id:"i4",l:"Hypokalemia",x:2220,y:350,p:"ksIn",s:"flat T · U waves",m:["hypok"]},
+  {id:"i5",l:"Periodic paralysis",x:2820,y:350,p:"ksIn",s:"sudden shift in",m:["periodicpara"]},
+  {id:"o1",l:"Acidosis",x:420,y:530,p:"ksOut",k:"hub",s:"H⁺ in, K⁺ out",m:["kacid"]},
+  {id:"o2",l:"Insulin lack · β-blockers",x:1020,y:530,p:"ksOut",s:"K⁺ stays out",m:["kinsulin"]},
+  {id:"o3",l:"Hyperosmolarity",x:1620,y:530,p:"ksOut",s:"water drags K⁺ out",m:["kout"]},
+  {id:"o4",l:"Exercise",x:2220,y:530,p:"ksOut",s:"ATP falls, K⁺ channels open",m:["kout"]},
+  {id:"o5",l:"Hyperkalemia",x:2820,y:530,p:"ksOut",s:"peaked T waves",m:["hyperk"]},
+  {id:"o6",l:"Cell lysis",x:420,y:610,p:"ksOut",k:"hub",s:"burns · chemotherapy",m:["kout"]},
+  {id:"o7",l:"Rhabdomyolysis",x:1020,y:610,p:"ksOut",s:"muscle breakdown",m:["rhabdo"]},
+  {id:"o8",l:"Tumor lysis",x:1620,y:610,p:"ksOut",s:"K⁺ · phosphate · urate",m:["tls"]}],
+ edges:[
+  {a:"b1",b:"b2",p:"ksBal"},
+  {a:"i1",b:"i2",p:"ksIn"},
+  {a:"o6",b:"o7",p:"ksOut"},
+  {a:"o7",b:"o8",p:"ksOut"}]
+};
+
+MAPS.tissues = {
+ t:"Epithelium & Tissue Types", sub:"The four basic tissues · how epithelia are named — layers and surface shape · simple squamous, cuboidal, columnar and pseudostratified · stratified squamous, cuboidal, columnar and transitional — what each does and where to find it · microvilli and cilia · metaplasia · connective, adipose, muscle and nerve tissue",
+ w:3300, h:1278,
+ fa:"46, 76, 202, 680",
+ src:["Pawlina ch 4 — Tissues: Concept and Classification", "Pawlina ch 5 — Epithelial Tissue", "Pawlina ch 6 — Connective Tissue", "Pawlina ch 9 — Adipose Tissue", "Pawlina ch 11 — Muscle Tissue", "Pawlina ch 12 — Nerve Tissue"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Simple epithelia — one layer"},
+  {x:140,y:370,w:3020,h:120,l:"Stratified epithelia — two or more layers"},
+  {x:140,y:550,w:3020,h:120,l:"Surfaces, glands and change"},
+  {x:140,y:730,w:3020,h:200,l:"The four basic tissues"}],
+ panels:[
+  {x:140,y:990,w:1480,h:226,kw:187,t:"Epithelium — where and what for (Pawlina ch 5)",rows:[
+   ["Simple squamous","vessels, body cavities, Bowman capsule, alveoli · exchange, lubrication"],
+   ["Simple cuboidal","small ducts, kidney tubules, thyroid follicles, ovary surface · absorption, secretion"],
+   ["Simple columnar","stomach, intestines, gallbladder · secretion, absorption"],
+   ["Pseudostratified","trachea, bronchi, ductus deferens, efferent ductules · secretion, conduit"],
+   ["Stratified squamous","epidermis (keratinized); mouth, esophagus, vagina · protection"],
+   ["Stratified cuboidal","sweat gland ducts, large exocrine ducts, anorectal junction · conduit"],
+   ["Stratified columnar","largest exocrine ducts, anorectal junction · conduit"],
+   ["Transitional","calyces, ureters, bladder, urethra · distensible barrier"]]},
+  {x:1680,y:990,w:1480,h:138,kw:170,t:"Basic tissues (Pawlina)",rows:[
+   ["Epithelium","covers surfaces, lines cavities, forms glands"],
+   ["Connective tissue","supports — loose, dense, cartilage, bone, blood, fat"],
+   ["Muscle tissue","skeletal, cardiac, smooth — contraction"],
+   ["Nerve tissue","neurons and glia — signaling"]]}],
+ nodes:[
+  {id:"s1",l:"Naming epithelia",x:420,y:170,p:"tsSimple",k:"hub",s:"layers × shape",m:["epiclass"]},
+  {id:"s2",l:"Simple squamous",x:1020,y:170,p:"tsSimple",s:"exchange · lubrication",m:["simsq"]},
+  {id:"s3",l:"Simple cuboidal",x:1620,y:170,p:"tsSimple",s:"absorption · secretion",m:["simcub"]},
+  {id:"s4",l:"Simple columnar",x:2220,y:170,p:"tsSimple",s:"secretion · absorption",m:["simcol"]},
+  {id:"s5",l:"Pseudostratified",x:2820,y:170,p:"tsSimple",s:"looks layered, is not",m:["pseudostrat"]},
+  {id:"s6",l:"Where: vessels & alveoli",x:420,y:250,p:"tsSimple",k:"hub",s:"endothelium · mesothelium",m:["simsq","endothreg","pneumocytes"]},
+  {id:"s7",l:"Where: tubules & thyroid",x:1020,y:250,p:"tsSimple",s:"kidney · follicles · ducts",m:["simcub","nephronhisto"]},
+  {id:"s8",l:"Where: stomach to colon",x:1620,y:250,p:"tsSimple",s:"and the gallbladder",m:["simcol"]},
+  {id:"s9",l:"Where: airways",x:2220,y:250,p:"tsSimple",s:"trachea · bronchi",m:["pseudostrat","airwayhisto"]},
+  {id:"s10",l:"Where: male ducts",x:2820,y:250,p:"tsSimple",s:"ductus deferens · efferent ductules",m:["pseudostrat"]},
+  {id:"t1",l:"Stratified squamous",x:420,y:430,p:"tsStrat",k:"hub",s:"protection",m:["strsq"]},
+  {id:"t2",l:"Keratinized",x:1020,y:430,p:"tsStrat",s:"epidermis",m:["strsq"]},
+  {id:"t3",l:"Nonkeratinized",x:1620,y:430,p:"tsStrat",s:"mouth · esophagus · vagina",m:["strsq"]},
+  {id:"t4",l:"Stratified cuboidal & columnar",x:2220,y:430,p:"tsStrat",s:"big ducts · sweat ducts",m:["strcubcol"]},
+  {id:"t5",l:"Transitional",x:2820,y:430,p:"tsStrat",s:"calyces → urethra",m:["transitional","urotract"]},
+  {id:"u1",l:"Microvilli & stereocilia",x:420,y:610,p:"tsSurf",k:"hub",s:"absorb · sense",m:["apical"]},
+  {id:"u2",l:"Motile & primary cilia",x:1020,y:610,p:"tsSurf",s:"9 + 2 · sensing",m:["apical","pcd"]},
+  {id:"u3",l:"Cell junctions",x:1620,y:610,p:"tsSurf",s:"tight · adherens · desmosome",m:["celljunctions"]},
+  {id:"u4",l:"Exocrine glands",x:2220,y:610,p:"tsSurf",s:"merocrine · apocrine · holocrine",m:["exocrine"]},
+  {id:"u5",l:"Metaplasia",x:2820,y:610,p:"tsSurf",s:"one epithelium for another",m:["epimeta","celladapt"]},
+  {id:"x1",l:"Four basic tissues",x:420,y:790,p:"tsTissue",k:"hub",s:"cover · support · move · signal",m:["fourtissues"]},
+  {id:"x2",l:"Connective tissue proper",x:1020,y:790,p:"tsTissue",s:"loose · dense",m:["ctproper","tendonlig"]},
+  {id:"x3",l:"Adipose tissue",x:1620,y:790,p:"tsTissue",s:"white · brown · beige",m:["adipose"]},
+  {id:"x4",l:"Muscle tissue",x:2220,y:790,p:"tsTissue",s:"skeletal · cardiac · smooth",m:["muscletypes"]},
+  {id:"x5",l:"Nerve tissue",x:2820,y:790,p:"tsTissue",s:"neurons · glia",m:["nervetissue","glia"]},
+  {id:"x6",l:"Cartilage",x:420,y:870,p:"tsTissue",k:"hub",s:"hyaline · elastic · fibro",m:["cartilage"]},
+  {id:"x7",l:"Collagen types",x:1020,y:870,p:"tsTissue",s:"I · II · III · IV",m:["collagentypes"]}],
+ edges:[
+  {a:"s1",b:"s2",p:"tsSimple"},
+  {a:"s2",b:"s3",p:"tsSimple"},
+  {a:"s3",b:"s4",p:"tsSimple"},
+  {a:"s4",b:"s5",p:"tsSimple"},
+  {a:"t1",b:"t2",p:"tsStrat"},
+  {a:"t2",b:"t3",p:"tsStrat"},
+  {a:"u1",b:"u2",p:"tsSurf"},
+  {a:"x1",b:"x2",p:"tsTissue"},
+  {a:"x6",b:"x7",p:"tsTissue"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
-  ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","iemlab","nucleo","collagen","ctdis","vitamins","cellcycle","cellbio","molbio","signal","genetics"]],
+  ["bio","Biochemistry",["core","lipid","steroid","lysosome","nitrogen","iemlab","nucleo","collagen","ctdis","vitamins","cellcycle","cellbio","tissues","molbio","signal","genetics"]],
   ["path","Pathology",["genpath","neoplasia","thromboemb"]],
   ["cardio","Cardiac",["cardiac","cardcycle","valves","ihd","chd","vasc","vascshock","htnrx","rhythm"]],
-  ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","highalt","hypoxia","lungdz","lungcancer","respinf","respdrug"]],
-  ["renal","Renal",["nephron","renalphys","gfrk","renalna","renalmin","urineconc","histoembryo","glom","renvasc","buffers","acidbase","akickd","endocrine"]],
+  ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","highalt","hypoxia","lungdz","pleural","lungcancer","respinf","respdrug"]],
+  ["renal","Renal",["nephron","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","histoembryo","glom","renvasc","buffers","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","liver","gitract","abdanat"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","softtissue","tumark"]],
-  ["immuno","Immunology",["immune","lymphdev","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
-  ["endo","Endocrine",["axes","pitgh","hormones","gcpharm","rclass","pancreas"]],
-  ["devrepro","Repro & Development",["sexdev","androgen","repro","placenta","obgyn","malerepro","embryo"]],
+  ["immuno","Immunology",["immune","innate","lymphdev","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
+  ["endo","Endocrine",["axes","pitgh","thyroid","hormones","gcpharm","rclass","pancreas","fuelstate"]],
+  ["devrepro","Repro & Development",["sexdev","androgen","repro","placenta","obgyn","malerepro","prosobs","embryo"]],
   ["neuro","Neuro",["neurotx","synapse","ans","membrane","ionchan","spine","brainstem","chemvisc","motorctl","cerebellum","gaze","weakness","stroke","brainvessels","brainreg","meninges","basal","neuroer","seizhead"]],
   ["behav","Psych & Behavior",["limbmem","psychmse","dsmdx","psychdx","psychtx","psyrxprin","psychsom","somatcare","substance","sleepdev","neurodev"]],
   ["eent","EENT",["eyecn","anteye","vision","ent","hearing","larynx"]],
@@ -33542,7 +34401,8 @@ function panelSVG(p,pi){
 const PLOTVAR={};   // "view:index" → chosen variant
 const PLOTQ={};     // "view:index" → graph quiz {ans: hidden variant, pick: the answer given or null, n, right, mix}
 const PLOTCMP={};   // "view:index" → compare {open: chips showing, j: the version overlaid or null}
-let GQ=null;        // graph mix {list: [[view, plot index]], k: current, n: answered, right, scope}
+let PLOTACT=null;   // "view:index" of the graph last clicked or jumped to — ← → q c act on it
+let GQ=null;        // graph mix {list: [[view, plot index]], k: current, n: answered, right, scope, miss: [[view, plot, answer, pick]]}
 /* graph versions named wrong, this device only: {"view:plot": {version: misses}} — a right answer takes one off */
 let GMISS=(()=>{ try{ return JSON.parse(localStorage.getItem("mla-gmiss")||"{}")||{}; }catch(e){ return {}; } })();
 function gmissMark(key,j,right){ const m=GMISS[key]||(GMISS[key]={});
@@ -33764,6 +34624,29 @@ const INSG={g1:[[-15,1],[0,1],[5,2.5],[180,2.5]], i1:[[-15,1],[0,1],[4,10],[12,5
   g4:[[-15,1],[180,1]], c4:[[-15,1],[0,1],[60,2.5],[120,4],[180,4.5]]};
 /* % of the filtered load reabsorbed by segment (Costanzo ch 6; Guyton ch 30) */
 const NMIN={ca:[[0,67],[1,25],[2,8],[3,1]], po:[[0,85],[1,0],[2,0],[3,15]], mg:[[0,25],[1,65],[2,5],[3,5]]};
+/* TSH–free T4 feedback: log TSH falls in a straight line as free T4 rises (schematic; Robbins ch 24 gives the directions) */
+const thyfb=()=>{ const pts=[]; for(let x=2.6;x<=7.401;x+=0.1) pts.push([x,-0.9*(x-5)]); return pts; };
+const THYB=[[4.2,5.8,"normal free T4"]];
+/* weeks after onset, × normal (Robbins ch 24 timings; shapes schematic) */
+const THYC={qT:[[0,1],[1,2.3],[3,2.5],[5,1.7],[7,0.9],[9,0.55],[12,0.65],[15,0.95],[20,1]],qS:[[0,1],[1,0.15],[5,0.15],[7,0.5],[9,1.9],[12,2.3],[15,1.3],[20,1]],qU:[[0,1],[1,0.1],[6,0.1],[10,0.7],[14,1],[20,1]],
+  gT:[[0,1],[2,1.8],[4,2.5],[20,2.7]],gS:[[0,1],[2,0.2],[4,0.08],[20,0.05]],gU:[[0,1],[2,1.8],[4,2.4],[20,2.6]],
+  fT:[[0,1],[2,2.1],[20,2.2]],fS:[[0,1],[2,0.12],[20,0.08]],fU:[[0,1],[2,0.12],[20,0.1]]};
+/* renal blood flow, GFR and urine flow as % of the value at 100 mm Hg (Guyton Fig 27.10; shapes schematic) */
+const RBFP={gfr:[[45,0],[55,35],[65,70],[70,86],[75,92],[80,96],[100,100],[140,102],[170,106],[180,109],[190,116],[200,124]],
+  rbf:[[45,20],[55,45],[65,72],[75,90],[80,95],[100,100],[140,103],[170,107],[185,118],[200,130]],
+  uri:[[50,0],[60,10],[75,35],[90,70],[100,100],[125,200],[131,240]],
+  acei:[[45,0],[60,15],[70,45],[80,75],[90,92],[100,100],[140,102],[170,106],[180,109],[190,116],[200,124]]};
+/* renal output of salt and water (× normal) against arterial pressure (Guyton ch 19, Figs 19.1–19.4; shapes schematic) */
+const PNAT={acute:[[50,0],[60,0.08],[70,0.2],[80,0.4],[90,0.68],[100,1],[110,1.4],[125,2.2],[140,2.85],[150,3.3],[160,4],[175,4.8],[190,5.5],[200,6]],
+  chronic:[[80,0],[90,0.15],[95,0.4],[98,0.75],[100,1],[102,2],[104,4],[106,6],[108,8]]};
+const pshift=(pts,d)=>pts.map(([a,b])=>[a+d,b]);
+/* fuel use across the fast — Fed, Overnight, Day 1, Days 2–3, After day 3, Fat gone (Marks ch 3; First Aid; heights schematic) */
+const FUEL={glyc:[[0,9],[1,6],[2,1],[3,0],[4,0]],gng:[[0,0.5],[1,2],[2,5],[3,7],[4,4]],
+  bG:[[0,10],[1,10],[2,10],[3,9],[4,4],[5,4]],bK:[[0,0],[1,0],[2,0.3],[3,1.5],[4,6],[5,6]],
+  mG:[[0,8],[1,2],[2,1],[3,1],[4,1],[5,1]],mF:[[0,2],[1,7],[2,8],[3,8],[4,9],[5,2]],mK:[[0,0],[1,0.5],[2,2],[3,3],[4,1],[5,0.5]],
+  pB:[[0,1],[1,2],[2,5],[3,6],[4,3],[5,9]],pU:[[0,2],[1,2.5],[2,5],[3,6],[4,3]]};
+/* estimated average glucose (mg/dL) = 28.7 × HbA1c − 46.7 (Nathan 2008) */
+const eag=a=>28.7*a-46.7, EAG=[[4,eag(4)],[12,eag(12)]];
 const PLOTS={
   glomcap:{xl:"Distance along the glomerular capillary",yl:"Pressure (mm Hg)",xr:[0,1],yr:[0,60],xt:[0,0.5,1],xtl:["afferent end","halfway","efferent end"],yt:[0,10,20,30,40,50,60],ref:true,vars:[
     {l:"Normal",cap:"Costanzo’s values. PGC stays at 45 mm Hg along the capillary because the efferent arteriole holds it up; PBS is 10; πGC climbs as protein-free fluid is filtered out. Filtration happens wherever the net pressure is above zero.",
@@ -34131,6 +35014,87 @@ const PLOTS={
     {l:"Magnesium",cap:"Guyton: only about 25% proximal; about 65% in the thick ascending limb, mainly paracellular, driven by the lumen-positive voltage with claudins; under 5% distal; the small remainder is excreted.",
      key:[["TAL","The main site — loop diuretics waste Mg²⁺"],["DT","< 5%, transcellular"]],
      d:()=>[{pts:NMIN.mg,lab:"Share of the filtered load",marks:[[0,25,"25"],[1,65,"65"],[2,5,"< 5"]]}]}]},
+  thyfb:{xl:"Free T4",yl:"TSH (× normal, log scale)",xr:[1.5,8.5],yr:[-2.3,2.3],xt:[3,5,7],xtl:["Low","Normal","High"],yt:[-2,-1,0,1,2],ytl:["0.01×","0.1×","1×","10×","100×"],vars:[
+    {l:"Euthyroid",cap:"Schematic of pituitary feedback: free T4 suppresses TSH, and TSH moves far more than T4 — so serum TSH is the most sensitive screening test (Robbins). Thyroid disease slides the point along the curve; pituitary or hypothalamic disease moves it off.",
+     bands:THYB,key:[["TSH","Screen first"],["fT4","Then confirm"]],
+     d:()=>[{pts:thyfb(),lab:"Pituitary set point",marks:[[5,0,"normal"]]}]},
+    {l:"Primary hypothyroidism",cap:"Robbins: TSH rises because feedback inhibition of TRH and TSH is lost; free T4 is low in overt disease. Hashimoto thyroiditis is the usual cause where iodine is sufficient.",
+     bands:THYB,key:[["↑","TSH high"],["↓","Free T4 low"]],
+     d:()=>[{pts:thyfb(),lab:"Pituitary set point",marks:[[3,1.8,"low T4, high TSH"]]}]},
+    {l:"Subclinical hypothyroidism",cap:"Robbins: an early form of primary hypothyroidism — TSH is elevated while free T4 and T3 are still normal; it may be asymptomatic.",
+     bands:THYB,key:[["↑","TSH high"],["=","Free T4 still normal"]],
+     d:()=>[{pts:thyfb(),lab:"Pituitary set point",marks:[[4.4,0.54,"TSH up, T4 normal"]]}]},
+    {l:"Primary hyperthyroidism",cap:"Robbins: TSH is decreased even at the earliest stages, when disease may still be subclinical; free T4 and T3 rise. Radioactive iodine uptake then finds the cause — diffuse (Graves), one nodule (toxic adenoma) or low (thyroiditis).",
+     bands:THYB,key:[["↓","TSH suppressed"],["↑","Free T4 high"]],
+     d:()=>[{pts:thyfb(),lab:"Pituitary set point",marks:[[7.2,-1.98,"high T4, low TSH"]]}]},
+    {l:"Central hypothyroidism",cap:"Robbins: with hypothalamic or pituitary disease TSH is not increased — usually low or inappropriately normal — while free T4 is low. The point falls off the curve.",
+     bands:THYB,key:[["off","The pituitary cannot answer"]],
+     d:()=>[{pts:thyfb(),lab:"Pituitary set point",marks:[[3,-0.2,"low T4, TSH not raised","below"]]}]},
+    {l:"TSH-secreting adenoma",cap:"Robbins: in rare pituitary (secondary) hyperthyroidism, TSH is normal or raised despite high thyroid hormone — again off the curve.",
+     bands:THYB,key:[["off","TSH not suppressed"]],
+     d:()=>[{pts:thyfb(),lab:"Pituitary set point",marks:[[7.2,0.3,"high T4, TSH not low"]]}]}]},
+  thycourse:{xl:"Weeks from onset",yl:"Level (× normal)",xr:[0,20],yr:[0,3.2],xt:[0,4,8,12,16,20],yt:[0,1,2,3],vars:[
+    {l:"de Quervain thyroiditis",cap:"Robbins: after a viral illness, damaged follicles release hormone — T4 high, TSH low, but radioactive iodine uptake low, unlike Graves disease. The thyrotoxic phase fades in 2–6 weeks; a hypothyroid phase may follow, then recovery in 6–8 weeks. Silent (painless) thyroiditis runs the same course. Timing of the curves is schematic.",
+     key:[["↓U","Uptake low while T4 is high"],["0–6","Thyrotoxic · then hypothyroid · then recovery"],["pain","Tender gland"]],
+     d:()=>[{pts:THYC.qT,lab:"Free T4"},{pts:THYC.qS,lab:"TSH"},{pts:THYC.qU,lab:"Iodine uptake"},{y:1,lab:"normal"}]},
+    {l:"Graves disease",cap:"Robbins: TSH-receptor antibodies stimulate the gland, so hormone rises, TSH is suppressed and radioactive iodine uptake is diffusely increased — and it persists until treated (schematic).",
+     key:[["↑U","Uptake high and diffuse"],["TSI","Thyroid-stimulating immunoglobulin"]],
+     d:()=>[{pts:THYC.gT,lab:"Free T4"},{pts:THYC.gS,lab:"TSH"},{pts:THYC.gU,lab:"Iodine uptake"},{y:1,lab:"normal"}]},
+    {l:"Taking thyroid hormone",cap:"Robbins lists factitious thyrotoxicosis (exogenous thyroxine) with the thyroiditides — causes without increased gland production — so the suppressed gland takes up little iodine; the excess lasts as long as the intake (schematic).",
+     key:[["↓U","Gland suppressed"],["∞","No phases"]],
+     d:()=>[{pts:THYC.fT,lab:"Free T4"},{pts:THYC.fS,lab:"TSH"},{pts:THYC.fU,lab:"Iodine uptake"},{y:1,lab:"normal"}]}]},
+  rbfpress:{xl:"Renal arterial pressure (mm Hg)",yl:"% of the value at 100 mm Hg",xr:[40,200],yr:[0,220],xt:[40,80,120,160,200],yt:[0,50,100,150,200],ref:true,vars:[
+    {l:"GFR",cap:"Guyton: GFR stays nearly constant from about 80 to 170 mm Hg — a fall to 70–75 or a rise to 160–180 usually changes it less than 10%. The mechanisms are intrinsic: they work in a kidney removed from the body.",
+     bands:[[80,170,"autoregulatory range"]],key:[["TGF","Macula densa feedback"],["myo","Myogenic afferent constriction"]],
+     d:()=>[{pts:RBFP.gfr,lab:"Flow or filtration"}]},
+    {l:"Renal blood flow",cap:"Guyton: renal blood flow is autoregulated in parallel with GFR, although GFR is held more tightly under some conditions.",
+     bands:[[80,170,"autoregulatory range"]],key:[["≈","Parallel with GFR"]],
+     d:()=>[{pts:RBFP.rbf,lab:"Flow or filtration"}]},
+    {l:"Urine flow",cap:"Guyton Fig 27.10: urine flow is not autoregulated — it climbs steeply with pressure (pressure diuresis): nearly zero at 50 mm Hg, normal at 100, 4–6 times normal at 200 (Guyton ch 19).",
+     bands:[[80,170,"autoregulatory range"]],key:[["↑↑","Pressure diuresis"]],
+     d:()=>[{pts:RBFP.uri,lab:"Flow or filtration"}]},
+    {l:"ACE inhibitor, low pressure",cap:"Guyton: angiotensin II’s preferential efferent constriction props up glomerular pressure when perfusion pressure falls. Block its formation (ACE inhibitors) or its receptors and GFR falls further at low pressure — as in renal artery stenosis.",
+     bands:[[80,170,"autoregulatory range"]],key:[["Ang II","Efferent support lost"]],
+     d:()=>[{pts:RBFP.acei,lab:"Flow or filtration"}]}]},
+  presnat:{xl:"Arterial pressure (mm Hg)",yl:"Salt and water output (× normal)",xr:[40,200],yr:[0,8],xt:[50,100,150,200],yt:[0,1,2,4,6,8],ref:true,vars:[
+    {l:"Normal (chronic curve)",cap:"Guyton Fig 19.4: over days, pressure natriuresis is amplified by less sympathetic activity, angiotensin II and aldosterone, so the chronic renal output curve is nearly vertical. Raising salt intake 6-fold moves the equilibrium from A to B — only a few mm Hg.",
+     key:[["A","Normal intake — 100 mm Hg"],["B","6× intake — a few mm Hg higher"]],
+     d:()=>[{pts:PNAT.chronic,lab:"Renal output",marks:[[100,1,"A"],[106,6,"B"]]},{y:1,lab:"intake 1×"},{y:6,lab:"intake 6×"}]},
+    {l:"Acute curve (isolated kidney)",cap:"Guyton Fig 19.1: in a perfused kidney output is nearly zero at 50 mm Hg, normal at 100 and 4–6 times normal at 200. If pressure rises to 150 (B), output exceeds intake, fluid is lost and pressure returns to A — the near-infinite feedback gain.",
+     key:[["A","Equilibrium point"],["B","Output > intake → pressure falls back"]],
+     d:()=>[{pts:PNAT.acute,lab:"Renal output",marks:[[100,1,"A"],[150,3.3,"B"]]},{y:1,lab:"intake 1×"}]},
+    {l:"Curve shifted right",cap:"Guyton Fig 19.3A: a kidney abnormality shifts the renal output curve 50 mm Hg to the right, and within a few days arterial pressure follows to the new equilibrium.",
+     key:[["+50","New equilibrium about 150 mm Hg"]],
+     d:()=>[{pts:pshift(PNAT.chronic,50),lab:"Renal output",marks:[[150,1,"new equilibrium"]]},{y:1,lab:"intake 1×"}]},
+    {l:"Salt-sensitive",cap:"Guyton: loss of functional nephrons (kidney injury, aging, hypertension, diabetes) or excess angiotensin II or aldosterone flattens the chronic curve toward the acute one, so even moderate salt increases raise pressure significantly (3× intake shown; schematic).",
+     key:[["flat","Attenuated renal output curve"],["3×","Salt raises pressure a lot"]],
+     d:()=>[{pts:PNAT.acute,lab:"Renal output",marks:[[100,1,"A"],[143,3,"B"]]},{y:1,lab:"intake 1×"},{y:3,lab:"intake 3×"}]}]},
+  fuelphase:{xl:"Time since the last meal",yl:"Use (schematic)",xr:[-0.4,5.4],yr:[0,10.5],xt:[0,1,2,3,4,5],xtl:["Fed","Overnight","Day 1","Days 2–3","After day 3","Fat gone"],yt:[],vars:[
+    {l:"Liver glucose output",cap:"Marks: liver glycogen is gone by about 20–30 hours, leaving gluconeogenesis (from lactate, alanine, glycerol) as the only source of blood glucose; in prolonged fasting gluconeogenesis falls as the brain switches to ketones — protein is spared.",
+     key:[["24 h","Glycogen gone (First Aid: after day 1)"]],
+     d:()=>[{pts:FUEL.glyc,lab:"Liver glycogen"},{pts:FUEL.gng,lab:"Gluconeogenesis"}]},
+    {l:"Brain fuel",cap:"Marks and First Aid: the brain runs on glucose until the starved state; after about day 3 ketone bodies become its main fuel, so it needs much less glucose. Red cells always need glucose — no mitochondria.",
+     key:[["day 3","Ketones take over"]],
+     d:()=>[{pts:FUEL.bG,lab:"Glucose"},{pts:FUEL.bK,lab:"Ketone bodies"}]},
+    {l:"Muscle fuel",cap:"Marks: muscle takes up glucose after meals (insulin, GLUT4) and burns fatty acids between meals; it uses ketone bodies early in a fast, but after 3–5 days uses fewer and depends mainly on fatty acids, leaving the ketones for the brain.",
+     key:[["FA","The main fuel of fasting muscle"]],
+     d:()=>[{pts:FUEL.mG,lab:"Glucose"},{pts:FUEL.mF,lab:"Fatty acids"},{pts:FUEL.mK,lab:"Ketone bodies"}]},
+    {l:"Protein breakdown",cap:"Marks Table 3.2: in prolonged fasting muscle protein breakdown and liver urea production both fall — protein is spared. First Aid: once fat stores are gone, vital protein breakdown accelerates, leading to organ failure and death.",
+     key:[["spared","After day 3"],["end","Fat gone → protein"]],
+     d:()=>[{pts:FUEL.pB,lab:"Muscle protein breakdown"},{pts:FUEL.pU,lab:"Urea production"}]}]},
+  a1c:{xl:"HbA1c (%)",yl:"Estimated average glucose (mg/dL)",xr:[4,12],yr:[0,320],xt:[4,5,6,7,8,9,10,11,12],yt:[0,50,100,150,200,250,300],vars:[
+    {l:"The relationship",cap:"Nathan 2008 (507 people, 3 months of continuous and fingerstick monitoring): estimated average glucose = 28.7 × HbA1c − 46.7, the same across type 1, type 2, age and race. HbA1c reflects the red cell’s 120-day life (Robbins) — about the prior 3 months (First Aid).",
+     key:[["28.7","mg/dL per 1% of HbA1c"]],
+     d:()=>[{pts:EAG,lab:"Average glucose",marks:[[6,126,"6% ≈ 126"],[8,183,"8% ≈ 183"],[10,240,"10% ≈ 240"]]}]},
+    {l:"Prediabetes",cap:"Robbins: prediabetes is HbA1c 5.7–6.4%, fasting glucose 100–125 mg/dL or a 2-hour OGTT of 140–199; up to a quarter with impaired glucose tolerance develop diabetes within 5 years.",
+     bands:[[5.7,6.4,"prediabetes"]],key:[["5.7","≈ 117 mg/dL"],["6.4","≈ 137 mg/dL"]],
+     d:()=>[{pts:EAG,lab:"Average glucose",marks:[[5.7,117,"5.7%","below"],[6.4,137,"6.4%","below"]]}]},
+    {l:"Diabetes",cap:"Robbins and First Aid: HbA1c ≥ 6.5% (average glucose about 140), fasting glucose ≥ 126, a 2-hour OGTT ≥ 200, or a random glucose ≥ 200 with classic signs; all but the last are confirmed on a separate day.",
+     bands:[[6.5,12,"diabetes"]],key:[["6.5","≈ 140 mg/dL"]],
+     d:()=>[{pts:EAG,lab:"Average glucose",marks:[[6.5,140,"6.5% ≈ 140"]]}]},
+    {l:"Treatment target",cap:"Robbins: keep HbA1c below 7% in most patients with diabetes — about 154 mg/dL on average; continuous monitoring adds “time in range” as a newer goal.",
+     key:[["7","≈ 154 mg/dL"]],
+     d:()=>[{pts:EAG,lab:"Average glucose",marks:[[7,154,"7% ≈ 154"]]},{x:7,lab:"target below 7%"}]}]},
   wiggers:{xl:"Time (s) — three beats at 75/min",yl:"Pressure (mm Hg)",xr:[0,2.4],yr:[0,190],xt:[0,0.4,0.8,1.2,1.6,2,2.4],yt:[0,40,80,120,160],
    strips:[{yl:"LV volume",yr:[25,170],h:110,d:V=>[{pts:lvVol(V.vol),lab:"LV volume"}]},
            {yl:"ECG",yr:[-0.45,1.25],h:80,d:()=>[{pts:WIG_ECG,lab:"ECG",col:"var(--ink-2)"},{txt:wigEach([[0.045,"P",0.55],[0.18,"QRS",1.35],[0.42,"T",0.7]])}]},
@@ -34365,7 +35329,7 @@ function plotQuiz(pi,act,j){
   if(act==="start") PLOTQ[key]={ans:fresh(sat(PLOTVAR[key]||0,0,n-1)),pick:null,n:0,right:0};
   else if(!Q) return;
   else if(act==="pick"){ if(Q.pick==null){ Q.pick=j; Q.n++; if(j===Q.ans) Q.right++; gmissMark(key,Q.ans,j===Q.ans);
-    if(Q.mix&&GQ){ GQ.n=Q.n; GQ.right=Q.right; updateScore(); } } }
+    if(Q.mix&&GQ){ GQ.n=Q.n; GQ.right=Q.right; if(j!==Q.ans) (GQ.miss||(GQ.miss=[])).push([state.view,+pi,Q.ans,j]); updateScore(); } } }
   else if(act==="gnext"){ if(GQ) GQ.k++; showGraph(); return; }
   else if(act==="gdone"){ PLOTVAR[key]=Q.ans; if(GQ) GQ.k=GQ.list.length; showGraph(); return; }
   else if(act==="next"){ Q.ans=fresh(Q.ans); Q.pick=null; }
@@ -34383,7 +35347,9 @@ const PLOTCARDS={apnodal:["apphases","class4","avblock"],apventric:["apphases","
   ecglytes:["ecglytes","hyperk","hypok"],vco2:["ventresp","chemorec"],vo2:["ventresp","chemorec","acclim"],o2cascade:["alttable","acclim"],cbfmap:["brainflow"],
   cbfgas:["brainflow","hypoxeffect"],o2content:["odc","hypoxtypes","cohb"],eyetrace:["eyemovtypes","pursuitokn","pulsestep"],gradap:["gradedap","demyelin","conduction"],
   cortrhythm:["cushing","gcsupp","addison"],ghday:["ghpulse","ghcontrol"],davenport:["abcompensation","respacid","metalk"],nephmin:["renalca","renalpo4","renalmg"],
-  spiro:["lungvol","pfts"],paco2va:["alvvent","respacid","respalk"]};
+  spiro:["lungvol","pfts"],paco2va:["alvvent","respacid","respalk"],
+  thyfb:["thylabs","hypothyroid","hyperthyroid"],thycourse:["transthy","hyperthyroid","thylabs"],rbfpress:["rbfauto","myogenic","tgf","rbfvaso"],
+  presnat:["eabv","natriuretic"],fuelphase:["starvation","basalstate","ketones","insdefic"],a1c:["dmdx","t2dm"]};
 /* compare: open or close the overlay chips, or overlay (again: remove) a version */
 function plotCmp(pi,act,j){
   const key=state.view+":"+pi, C=PLOTCMP[key]||(PLOTCMP[key]={open:false,j:null});
@@ -34394,6 +35360,7 @@ function plotCmp(pi,act,j){
 /* frame one graph on its map (from the gallery or a search) and flash its border; j picks a version */
 function goPlot(v,i,j){
   if(j!=null&&j!=="") PLOTVAR[v+":"+i]=+j;
+  PLOTACT=v+":"+i;
   setView(v);
   const m=MAPS[v], p=m&&m.plots&&m.plots[i]; if(!p) return;
   setTimeout(()=>{   /* after setView has laid the map out (a timer also runs in a background tab) */
@@ -34433,7 +35400,7 @@ function plotSVG(p,i){
     <line class="pdiv" x1="${p.x+cw}" y1="${p.y+18}" x2="${p.x+cw}" y2="${p.y+p.h-18}"/>`;
   /* gridlines, axes, ticks, axis labels */
   K.xt.forEach((t,ti)=>{ s+=`<line class="pgrid" x1="${X(t)}" y1="${T}" x2="${X(t)}" y2="${BB}"/><text class="ptick" x="${X(t)}" y="${BB+19}" text-anchor="middle">${esc(K.xtl?K.xtl[ti]:t)}</text>`; });
-  K.yt.forEach(t=>{ s+=`<line class="pgrid" x1="${L}" y1="${Y(t)}" x2="${R}" y2="${Y(t)}"/><text class="ptick" x="${L-10}" y="${Y(t)+4}" text-anchor="end">${t}</text>`; });
+  K.yt.forEach((t,ti)=>{ s+=`<line class="pgrid" x1="${L}" y1="${Y(t)}" x2="${R}" y2="${Y(t)}"/><text class="ptick" x="${L-10}" y="${Y(t)+4}" text-anchor="end">${esc(K.ytl?K.ytl[ti]:t)}</text>`; });
   s+=`<line class="pax" x1="${L}" y1="${B}" x2="${R}" y2="${B}"/><line class="pax" x1="${L}" y1="${T}" x2="${L}" y2="${B}"/>`;
   if(K.y0) s+=`<line class="pax" x1="${X(0)}" y1="${T}" x2="${X(0)}" y2="${B}"/>`;
   if(K.zero) s+=`<line class="pax" x1="${L}" y1="${Y(0)}" x2="${R}" y2="${Y(0)}"/>`;
@@ -34513,7 +35480,15 @@ function plotSVG(p,i){
   if(pcs.length&&!hide){ ty+=4; s+=`<text class="pcap" x="${x0}" y="${ty}">Cards</text>`; cx=x0+52; cy=ty-17; const lim=p.y+p.h-40;
     for(const id of pcs){ let t=LES[id].n.split(" — ")[0]; if(t.length>30) t=t.slice(0,29)+"…";
       const w=Math.round(t.length*7.2+26); if(cx>x0+52&&cx+w>x0+colW){ cx=x0+52; cy+=34; } if(cy+26>lim) break;
-      chip(t,`data-plotles="${id}"`," pcardc"); } }
+      chip(t,`data-plotles="${id}"`," pcardc"); }
+    /* questions linked to those cards, per block (atlas-qlinks.js) — a chip runs them in that block */
+    const QL=window.ATLAS_QLINKS, per={};
+    if(QL&&QL.cards) pcs.forEach(id=>(QL.cards[id]||[]).forEach(([b,qs])=>{ const set=per[b]||(per[b]=new Set()); qs.forEach(q=>set.add(q)); }));
+    const bs=Object.keys(per).sort((a,b)=>per[b].size-per[a].size);
+    if(bs.length&&cy+34+26<=lim){ cy+=34; s+=`<text class="pcap" x="${x0}" y="${cy+17.5}">Questions</text>`; cx=x0+84;
+      for(const b of bs){ const [dir,label]=QL.blocks[+b], t=`${label} · ${per[b].size}`, w=Math.round(t.length*7.2+26);
+        if(cx>x0+84&&cx+w>x0+colW){ cx=x0+84; cy+=34; } if(cy+26>lim) break;
+        chip(t,`data-plotprac="../${encodeURIComponent(dir)}/index.html#atlascards/${encodeURIComponent(pcs.join(","))}/${encodeURIComponent(p.t)}"`," pcardc"); } } }
   s+=`<text class="pnote" x="${x0}" y="${p.y+p.h-20}">Schematic — drawn from the stated relationships, not measured data</text>`;
   return `<g class="plot-c" data-plotg="${i}">${s}</g>`;
 }
@@ -35046,11 +36021,12 @@ function updateScore(){
     box.hidden=false;
     const seg=`<span class="seg"><button data-gscope="map" aria-pressed="${GSCOPE==="map"}">This map</button><button data-gscope="topic" aria-pressed="${GSCOPE==="topic"}">Whole topic</button><button data-gscope="all" aria-pressed="${GSCOPE==="all"}">Everything</button></span>`
       +(GQ.scope&&GQ.scope!==GSCOPE?`<span>No graphs here — using ${GQ.scope==="topic"?"the topic":"the whole atlas"}</span>`:"");
-    box.innerHTML=seg+(done?`<span>Graph mix done — <b>${GQ.right}</b> of <b>${GQ.n}</b> right</span><button class="go" data-gagain>Another 10</button>`
+    box.innerHTML=seg+(done?`<span>Graph mix done — <b>${GQ.right}</b> of <b>${GQ.n}</b> right</span>${GQ.miss&&GQ.miss.length?`<button class="go" data-greview>Review ${GQ.miss.length} missed</button>`:""}<button class="go" data-gagain>Another 10</button>`
       :`<span>Graph mix <b>${GQ.k+1}/${total}</b> · <b>${GQ.right}</b> right</span>
         <span class="qbar"><i style="width:${Math.round(GQ.k/total*100)}%"></i></span><button class="go" data-gnext>Next graph</button>`);
     box.querySelectorAll("[data-gscope]").forEach(b=>b.onclick=()=>{ GSCOPE=b.dataset.gscope; try{localStorage.setItem("mla-gscope",GSCOPE);}catch(e){} startGraphMix(); });
     const a=box.querySelector("[data-gagain]"); if(a) a.onclick=startGraphMix;
+    const gr=box.querySelector("[data-greview]"); if(gr) gr.onclick=openGraphReview;
     const g=box.querySelector("[data-gnext]"); if(g) g.onclick=()=>{ GQ.k++; showGraph(); };
     return;
   }
@@ -35241,12 +36217,35 @@ function startGraphMix(){ clearGraphQ();
   GQ={list:[...shuffle(pool.filter(seen)),...shuffle(pool.filter(x=>!seen(x)))].slice(0,10),k:0,n:0,right:0,scope:used}; showGraph(); }
 function showGraph(){
   clearGraphQ();
-  if(!GQ||GQ.k>=GQ.list.length){ if(state.view!=="index") render(); updateScore(); return; }
+  if(!GQ||GQ.k>=GQ.list.length){ if(state.view!=="index") render(); updateScore();
+    if(GQ&&GQ.miss&&GQ.miss.length&&!GQ.shown){ GQ.shown=true; openGraphReview(); } return; }
   const [v,i]=GQ.list[GQ.k], K=PLOTS[MAPS[v].plots[i].kind];
   const ms=gmissed(v+":"+i).filter(x=>x<K.vars.length);
   PLOTQ[v+":"+i]={ans:ms.length?ms[Math.floor(Math.random()*ms.length)]:Math.floor(Math.random()*K.vars.length),pick:null,n:GQ.n,right:GQ.right,mix:true,review:ms.length>0};
   if(!drawer.hidden) closeDrawer();
   goPlot(v,i);
+}
+
+/* the end of a Graph mix: every version named wrong — a button opens that graph on the right version
+   with the one you picked overlaid, dashed */
+function openGraphReview(){
+  const list=(GQ&&GQ.miss)||[]; if(!list.length) return;
+  state.sel=null; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
+  const rows=list.map(([v,i,a,pk],n)=>{ const m=MAPS[v], p=m&&m.plots&&m.plots[i], K=p&&PLOTS[p.kind]; if(!K) return "";
+    const where=(VIEWS.find(x=>x[0]===v)||[v,m.t])[1];
+    return `<button class="li bx" data-grev="${n}" style="--c:var(--accent)"><span class="dot"></span><span><span class="nm">${esc(p.t)}</span><span class="bz">It was ${esc(K.vars[a].l)} — you said ${esc(K.vars[pk].l)} · ${esc(where)}</span></span></button>`; }).join("");
+  drawer.innerHTML=`
+   <div class="dhead">
+     <button class="dclose" id="dclose" aria-label="Close">×</button>
+     <span class="dkind" style="--k:var(--accent)">Graph mix</span>
+     <h2 class="dtitle">Review what you missed</h2>
+   </div>
+   <div class="dbody"><p class="revnote">${GQ.right} of ${GQ.n} right. Each graph opens on the right version, with the one you picked overlaid, dashed.</p>
+     <div class="lesionlist">${rows}</div></div>`;
+  drawer.scrollTop=0;
+  document.getElementById("dclose").onclick=closeDrawer;
+  drawer.querySelectorAll("[data-grev]").forEach(b=>b.onclick=()=>{ const [v,i,a,pk]=list[+b.dataset.grev];
+    PLOTCMP[v+":"+i]={open:true,j:pk}; closeDrawer(); goPlot(v,i,a); });
 }
 
 /* ── starred round: every starred card, shuffled, each once ── */
@@ -35910,8 +36909,13 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   limbmem:"2026-10-08",placenta:"2026-10-08",agingomt:"2026-10-08",softtissue:"2026-10-08",integrative:"2026-10-08",gfrk:"2026-10-08",highalt:"2026-10-08",
   cerebellum:"2026-10-08",meninges:"2026-10-08",brainvessels:"2026-10-08",neurodev:"2026-10-08",dsmdx:"2026-10-08",crystals:"2026-10-08",hypoxia:"2026-10-08",legfx:"2026-10-08",
   gaze:"2026-10-08",neckpain:"2026-10-08",ionchan:"2026-10-08",psyrxprin:"2026-10-08",somatcare:"2026-10-08",gcpharm:"2026-10-08",lymphdev:"2026-10-08",
-  lungcancer:"2026-10-08",pitgh:"2026-10-08",buffers:"2026-10-08",renalmin:"2026-10-08",ventmech:"2026-10-08",shoulder:"2026-10-08",ctdis:"2026-10-08"};
+  lungcancer:"2026-10-08",pitgh:"2026-10-08",buffers:"2026-10-08",renalmin:"2026-10-08",ventmech:"2026-10-08",shoulder:"2026-10-08",ctdis:"2026-10-08",
+  thyroid:"2026-10-08",innate:"2026-10-08",pleural:"2026-10-08",fuelstate:"2026-10-08",prosobs:"2026-10-08",rbflow:"2026-10-08",kshift:"2026-10-08",tissues:"2026-10-08"};
 const WHATSNEW=[
+  ["2026-10-08","New section: <b>Epithelium &amp; Tissue Types</b> (Biochemistry) — simple, stratified, pseudostratified and transitional epithelia, what each does and where to find it, plus the four basic tissues."],
+  ["2026-10-08","New maps: <b>Thyroid Disease</b> and <b>Fed &amp; Fasting Fuel Use</b> (Endocrine), <b>Innate Immune Cells</b> (Immunology), <b>Pleural Disease</b> (Pulmonary), <b>Prostate &amp; Urinary Obstruction</b> (Repro), <b>Renal Blood Flow &amp; Autoregulation</b> and <b>Potassium Shifts</b> (Renal)."],
+  ["2026-10-08","New graphs: the <b>TSH–free T4 feedback curve</b>, <b>thyroiditis vs Graves</b> over weeks, <b>renal autoregulation</b>, the <b>renal output curve</b> (pressure natriuresis), <b>who burns what</b> from fed to starvation, and <b>HbA1c vs average glucose</b>."],
+  ["2026-10-08","A Graph mix now ends with a list of the versions you missed; each graph shows the question-bank questions linked to its cards; and ← → q c work on the last graph you used. More of your questions link to cards."],
   ["2026-10-08","New maps: <b>Lung Cancer</b> and <b>Ventilation Mechanics &amp; Dead Space</b> (Pulmonary), <b>Pituitary &amp; Growth Hormone</b> (Endocrine), <b>Buffers &amp; Henderson–Hasselbalch</b> and <b>Renal Calcium, Phosphate &amp; Magnesium</b> (Renal), <b>Shoulder Pain</b> (MSK) and <b>Heritable Connective Tissue Disorders</b> (Biochemistry)."],
   ["2026-10-08","New graphs: a <b>spirogram</b> with obstructive and restrictive versions, <b>PaCO₂ vs alveolar ventilation</b>, an <b>acid–base (Davenport) diagram</b>, <b>GH pulses over 24 hours</b>, <b>insulin and glucagon</b> after glucose, fasting and protein, and <b>where Ca²⁺, phosphate and Mg²⁺ are reabsorbed</b>."],
   ["2026-10-08","Graph quizzes now bring back the versions you missed, <b>Graph mix</b> can stay on this map or this topic, and each graph lists the cards it illustrates. More of your questions link to cards."],
@@ -35963,7 +36967,7 @@ function graphsIdxHtml(){
   const groups=TOPICS.map(([,l,vs])=>[l,vs.flatMap(v=>((MAPS[v]&&MAPS[v].plots)||[]).map((p,i)=>({v,i,p})))]).filter(g=>g[1].length);
   const n=groups.reduce((a,g)=>a+g[1].length,0); if(!n) return "";
   return `<details class="idx-sources graphs-idx"><summary>All graphs · ${n}${(r=>r?` · ${r} to review`:"")(Object.values(GMISS).reduce((a,m)=>a+Object.keys(m).length,0))}</summary>
-    <p>Every graph in the atlas, by system. Tap one to jump to it. A graph with three or more versions has a <b>Quiz me</b> chip that hides the name and asks you to pick it; <b>Compare</b> overlays a second version, dashed. <b>Quiz → Graph mix</b> runs ten at random — this map, this topic or everything — and brings back the versions you missed first. Each graph lists the cards it illustrates.</p>
+    <p>Every graph in the atlas, by system. Tap one to jump to it. A graph with three or more versions has a <b>Quiz me</b> chip that hides the name and asks you to pick it; <b>Compare</b> overlays a second version, dashed. <b>Quiz → Graph mix</b> runs ten at random — this map, this topic or everything — and brings back the versions you missed first, then lists what you missed. Each graph lists the cards it illustrates and the question-bank questions linked to them. Keys: ← → switch versions of the last graph you used, <b>q</b> quizzes, <b>c</b> compares.</p>
     ${groups.map(([l,list])=>`<div class="gal-sec"><h4>${esc(l)}</h4><div class="pagehits">${list.map(({v,i,p})=>`<button class="pagehit" data-plotgo="${v}:${i}">${esc(p.t)}<span class="galn"> · ${esc(name(v))}${PLOTS[p.kind]&&PLOTS[p.kind].vars.length>=3?" · quiz":""}</span></button>`).join("")}</div></div>`).join("")}
   </details>`;
 }
@@ -36082,8 +37086,11 @@ svg.addEventListener("gesturestart",ev=>ev.preventDefault());   // Safari: keep 
 svg.addEventListener("click",ev=>{
   if(dragged){ dragged=false; return; }   // the end of a pan is not a tap
   const pv=ev.target.closest(".pvar");
+  const pgc=ev.target.closest(".plot-c"); if(pgc) PLOTACT=state.view+":"+pgc.dataset.plotg;
   const pl=ev.target.closest("[data-plotles]");
   if(pl){ openLes(pl.dataset.plotles); return; }
+  const pp=ev.target.closest("[data-plotprac]");
+  if(pp){ window.open(pp.dataset.plotprac,"_blank","noopener"); return; }
   const pcz=ev.target.closest("[data-pc]");
   if(pcz){ plotCmp(pcz.dataset.plot,pcz.dataset.pc,+pcz.dataset.pv); return; }
   const pqz=ev.target.closest("[data-pq]");
@@ -36127,7 +37134,7 @@ svg.addEventListener("focusin",ev=>{
 function openShortcuts(){
   state.sel=null; state.info=false; drawer.hidden=false; drawer.classList.remove("cmp");
   const rows=[["Tab · Shift+Tab","move between pins and graph chips"],["Enter or Space","open the focused pin · switch a graph"],
-    ["1 – 4","answer a quiz question"],["Enter","next question, after answering"],["← →","previous / next section while walking a map"],
+    ["1 – 4","answer a quiz question"],["Enter","next question, after answering"],["← →","previous / next section while walking a map — otherwise the versions of the last graph you used"],["q · c","quiz me on that graph · compare its versions"],
     ["/","search"],["[","show or hide the side panel"],["m","show or hide the overview map"],["Esc","close a card, the quiz menu, or the walk"],["?","this list"]];
   drawer.innerHTML=`
    <div class="dhead">
@@ -36264,6 +37271,13 @@ document.addEventListener("keydown",ev=>{
   if(ev.key==="["&&document.activeElement!==qInput){ ev.preventDefault(); railBtn.click(); }
   if(WALK&&document.activeElement!==qInput&&(ev.key==="ArrowRight"||ev.key==="ArrowLeft")&&!ev.metaKey&&!ev.ctrlKey&&!ev.altKey){
     ev.preventDefault(); walkGo(WALK.i+(ev.key==="ArrowRight"?1:-1)); return; }
+  /* graphs: ← → switch versions, q quizzes, c compares — on the graph used last, if it is on this map */
+  if(PLOTACT&&!WALK&&!/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||"")&&!drawer.contains(document.activeElement)&&!ev.metaKey&&!ev.ctrlKey&&!ev.altKey){
+    const [pv,pi]=PLOTACT.split(":"), m=MAPS[state.view], p=pv===state.view&&m&&m.plots&&m.plots[+pi], K=p&&PLOTS[p.kind];
+    if(K&&!PLOTQ[PLOTACT]){ const n=K.vars.length, k=ev.key.toLowerCase();
+      if(ev.key==="ArrowRight"||ev.key==="ArrowLeft"){ ev.preventDefault(); PLOTVAR[PLOTACT]=(sat(PLOTVAR[PLOTACT]||0,0,n-1)+(ev.key==="ArrowRight"?1:n-1))%n; render(); return; }
+      if(k==="q"&&n>=3){ ev.preventDefault(); plotQuiz(+pi,"start"); return; }
+      if(k==="c"&&n>=2){ ev.preventDefault(); plotCmp(+pi,"toggle"); return; } } }
   if(ev.key==="m"&&!/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||"")&&!ev.metaKey&&!ev.ctrlKey&&!ev.altKey&&state.view!=="index"){ setMini(MINI_OFF); return; }
   if(ev.key==="Escape"){ if(!tmenu.hidden){ showTextMenu(false); return; } if(!qmenu.hidden){ showQuizMenu(false); return; } if(!drawer.hidden){ closeDrawer(); return; } if(WALK) endWalk(); }
 });
@@ -36284,6 +37298,7 @@ if(!readHash()){
   openLes("g6pd",false);
 }
 booted=true;
+document.addEventListener("DOMContentLoaded",()=>{ try{ const m=MAPS[state.view]; if(m&&m.plots&&m.plots.length) render(); }catch(e){} });
 /* offline support: the site-wide service worker (sw.js at the site root) keeps a copy of
    this page and its data, so the atlas works without signal once it has been opened */
 try{ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))
