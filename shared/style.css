@@ -940,6 +940,10 @@ h1 { font-size: 1.9rem; line-height: 1.15; margin: 6px 0 6px; }
 .gt-meta { font-size: 0.8rem; color: var(--grey-text); }
 .gt-links { display: flex; gap: 14px; font-size: 0.88rem; font-weight: 600; margin-top: auto; }
 .gt-links a { color: var(--navy); }
+.mt-sw { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 4px; }
+.mt-sw a { font-size: 0.8rem; font-weight: 600; color: var(--navy); background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 999px; padding: 3px 10px; text-decoration: none; }
+.mt-sw a:hover { text-decoration: underline; }
+.amap-more .gtiles { margin-top: 12px; }
 .g-glyph { display: block; width: 100%; height: auto; margin: 4px 0; }
 .g-glyph .ax { stroke: var(--text-faint); stroke-width: 1; fill: none; }
 .g-glyph .c1 { stroke: var(--navy); stroke-width: 2; fill: none; }

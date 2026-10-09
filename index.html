@@ -745,6 +745,8 @@
         'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png',
         'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js', 'resources/qbank-counts.js',
         'resources/atlas-home.js', 'resources/atlas-cards.js'];
+      // the moving maps' drawings load only when a map opens — save them all here (list from atlas-home.js)
+      ((window.ATLAS_HOME && window.ATLAS_HOME.dyn) || []).forEach(function (f) { urls.push('resources/dyn/' + f); });
       Array.prototype.forEach.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]'), function (a) {
         var dir = a.getAttribute('href').replace(/index\.html$/, '');
         urls.push(dir + 'index.html', dir + 'data.js');
@@ -919,7 +921,7 @@
         return p.then(function () {
           return cache.match(abs(u), { ignoreSearch: true }).then(function (res) {
             if (!res) { st.saved = false; return; }
-            if (!online) return;
+            if (!online || /^resources\/dyn\//.test(u)) return;   // a moving-map drawing: saved is enough (the page itself shows when it changed)
             return Promise.all([res.blob().then(function (b) { return b.size; }), netSize(abs(u))]).then(function (v) {
               if (v[1] != null && v[0] !== v[1]) st.newer = true;
             });
@@ -964,7 +966,8 @@
           var dir = a.getAttribute('href').replace(/index\.html$/, '');
           return [a, [dir + 'index.html', dir + 'data.js']];
         });
-        if (atlas) jobs.push([atlas, ['resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js']]);
+        if (atlas) jobs.push([atlas, ['resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js']
+          .concat(((window.ATLAS_HOME && window.ATLAS_HOME.dyn) || []).map(function (f) { return 'resources/dyn/' + f; }))]);
         var res = [];
         return jobs.reduce(function (p, j) {
           return p.then(function () { return check(cache, j[1], online); }).then(function (st) {

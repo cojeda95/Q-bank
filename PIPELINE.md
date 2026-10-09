@@ -325,6 +325,14 @@ m41 additions: a card that's on a moving map gets **See it move** (movesOf — t
 else the map); on phones every static map opens on its first Walk section at a readable size (phoneFrame /
 frameSection), a **Sections** bar (#secBar) jumps between sections, and pins get a bigger tap ring (.phit,
 pointer:coarse only). Batch scripts: atlas-review/batches/m41 (engine41.py, assemble.py from base-src.html).
+m42 additions (kit): **Tour** (dynTour — as it opens, then every toggle flipped and every option in order, each
+state's note as narration; its Back/Next/End chips replace the last row), **Name it** (dynQuiz — a random option of a
+"one" switch, or of a steps switch on maps with none, is set in secret; the switch's chips become 4 choices, the state's
+own conditional captions are hidden and dynStateStr returns "" so the address can't give it away) and **Compare**
+(st.cmp pins a state; dynCompare opens #dynCmp with both drawings, readouts and notes side by side — differing
+readouts underlined). The hub: block homes list **Moving maps for this block** (fillAtlasMovesHome in shared/app.js,
+with the 3 switches the block tests most), and build-atlas.py exports the drawing list as ATLAS_HOME.dyn so the
+hub's Save all and the atlas's Save offline save resources/dyn/* too. Batch: atlas-review/batches/m42.
 A card opened from a transporter (or from a graph's card link — anything with `data-plotles`)
 keeps the map where it is: the click records that spot as KEEP_PT and flashPins() only
 slides the map if the card panel now covers it, instead of taking the reader to the card's

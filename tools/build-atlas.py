@@ -609,7 +609,8 @@ for k, ms in (json.loads(am.group(1)).items() if am else []):
 home = {"stats": {"maps": len(home_maps), "cards": len(rows), "graphs": len(all_plots), "linked": nlinked}, "abbr": abbr,
         "topics": topics, "maps": home_maps, "latest": [v for v in latest if v in home_maps],
         "graphs": all_plots, "blocks": [list(b) for b in blocks], "sdls": sdl_list,
-        "moves": [x[:4] for x in moves if x[1]]}
+        "moves": [x[:4] for x in moves if x[1]],
+        "dyn": sorted(keep)}   # the moving-map drawings (resources/dyn/), so the hub's "Save all" saves them too
 HOME_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. The hub home page: atlas stats, systems, map titles and "
                     "schematics, the newest maps, every graph, and each block's SDLs for the search */\n"
                     "window.ATLAS_HOME=" + json.dumps(home, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")

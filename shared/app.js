@@ -840,6 +840,39 @@ function fillAtlasMapsHome() {
   });
 }
 
+/* "Moving maps for this block" on the block home: the atlas's moving maps whose cards this block's questions
+   link to most (counts from atlas-practice.js), each with the switches this block tests most — a switch link
+   opens the map with it on (#<map>/~<switch>:<option>) — and a Practice button (#atlasmap/<map>). */
+function fillAtlasMovesHome() {
+  const el = document.getElementById('atlasMovesHome');
+  if (!el || !ATLAS_URL) return;
+  Promise.all([ATLAS_READY, loadAtlasPractice()]).then(([, P]) => {
+    if (!document.body.contains(el) || !P || !P.maps || !ATLAS_MOVES || !ATLAS_MAPS) return;
+    const bi = (P.blocks || []).findIndex(b => b[0] === blockDirName());
+    if (bi < 0) return;
+    const nOf = (rows) => ((rows || []).find(x => x[0] === bi) || [0, 0])[1];
+    const moving = [...new Set(ATLAS_MOVES.map(x => x[0]))].filter(v => ATLAS_MAPS[v]);
+    const rows = moving.map(v => [v, nOf(P.maps[v])]).filter(([, n]) => n > 0)
+      .sort((a, b) => b[1] - a[1] || ATLAS_MAPS[a[0]][0].localeCompare(ATLAS_MAPS[b[0]][0]));
+    if (!rows.length) return;
+    const open = (v, sw) => `${ATLAS_URL}#${encodeURIComponent(v)}${sw ? '/~' + sw.split(':').map(encodeURIComponent).join(':') : ''}`;
+    const tile = ([v, n]) => {
+      const sws = ATLAS_MOVES.filter(x => x[0] === v && x[1])
+        .map(x => [x, x[4].reduce((t, c) => t + nOf(P.cards && P.cards[c]), 0)]).filter(([, k]) => k > 0)
+        .sort((a, b) => b[1] - a[1]).slice(0, 3);
+      return `<div class="gtile mtile"><a class="gt-name" href="${open(v)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[v][0])}</a>
+        <span class="gt-meta">${n} question${n === 1 ? '' : 's'} in this block</span>
+        ${sws.length ? `<span class="mt-sw">${sws.map(([x, k]) => `<a href="${open(v, x[1])}" target="_blank" rel="noopener" title="${k} question${k === 1 ? '' : 's'} here">${escapeHtml(x[2])}</a>`).join('')}</span>` : MOVE_GLYPH}
+        <span class="gt-links"><a href="${open(v)}" target="_blank" rel="noopener">Open map</a><a href="#atlasmap/${encodeURIComponent(v)}">Practice</a></span></div>`;
+    };
+    const top = rows.slice(0, 6), rest = rows.slice(6);
+    el.innerHTML = `<section class="bsec" aria-labelledby="amvH"><h3 class="sub-h" id="amvH">Moving maps for this block</h3>
+      <p class="amap-note">Lesion Atlas maps you can switch — drugs, diseases, lesions — ranked by how many of this block’s questions they cover. A switch below opens the map with it on.</p>
+      <div class="gtiles">${top.map(tile).join('')}</div>
+      ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} moving maps</summary><div class="gtiles">${rest.map(tile).join('')}</div></details>` : ''}</section>`;
+  });
+}
+
 /* "Graphs for this block" on the block home: the atlas graphs whose cards this block's questions
    link to most (counts from atlas-practice.js), each opening the graph in the atlas (#graph/<map>/<plot>)
    with a Practice button that runs those questions here (#atlascards). Absent data shows nothing. */
@@ -1060,6 +1093,7 @@ function renderHome() {
         </section>
         <div id="weakSdlsHome"></div>
         <div id="atlasMapsHome"></div>
+        <div id="atlasMovesHome"></div>
         <div id="atlasGraphsHome"></div>
       </div>
       <aside class="bcol-side" aria-label="Study tools and settings">
@@ -1085,6 +1119,7 @@ function renderHome() {
   `;
   fillWeakSdlsHome();
   fillAtlasMapsHome();
+  fillAtlasMovesHome();
   fillAtlasGraphsHome();
   fillBlockNews();
   bindBlockSearch();
@@ -1368,6 +1403,7 @@ function fillExamAtlas(exam) {
   });
 }
 // a small generic graph sketch for graph tiles (decorative; the real graph is in the atlas)
+const MOVE_GLYPH = '<svg class="g-glyph m-glyph" viewBox="0 0 220 70" aria-hidden="true"><path class="ax" d="M10 35H210"/><circle class="c1" cx="60" cy="35" r="7"/><circle class="c2" cx="120" cy="35" r="7"/><circle class="c1" cx="180" cy="35" r="7"/></svg>';
 const GRAPH_GLYPH = '<svg class="g-glyph" viewBox="0 0 220 70" aria-hidden="true"><path class="ax" d="M14 4V62H214"/><path class="c1" d="M14 50C60 50 84 14 130 12S200 10 212 10"/><path class="c2" d="M14 60C80 60 130 48 212 30"/></svg>';
 
 /* ── Custom Exam Builder (weighted current/prior content + batch mix) ── */
