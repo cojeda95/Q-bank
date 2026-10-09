@@ -64,6 +64,7 @@ const APP_SRC = (document.currentScript && document.currentScript.src) || '';
 const ATLAS_URL = APP_SRC ? new URL('../resources/metabolic-atlas.html', APP_SRC).href : '';
 let ATLAS_INDEX = null;
 let ATLAS_MAPS = null;   // map id -> [title, card ids], for "Practice this map"
+let ATLAS_GRAPHS = null; // [map id, plot index, title, card ids] — "See it on a graph", "Graphs for this block"
 let ATLAS_READY = Promise.resolve();   // settles once atlas-terms.js has loaded (or failed)
 (function loadAtlasTerms() {
   if (!APP_SRC) return;
@@ -75,6 +76,7 @@ let ATLAS_READY = Promise.resolve();   // settles once atlas-terms.js has loaded
       const d = window.ATLAS_TERMS;
       if (d && Array.isArray(d.cards)) ATLAS_INDEX = d.cards.map(([id, n, k, t]) => ({ id, n, k, t }));
       if (d && d.maps) ATLAS_MAPS = d.maps;
+      if (d && Array.isArray(d.graphs)) ATLAS_GRAPHS = d.graphs;
       resolve();
     };
     s.onerror = resolve;
@@ -167,7 +169,10 @@ function atlasLinksHtml(q, picked) {
   if (!cards.length && !wrong && !table) return '';
   const pickedHtml = wrong ? `<div class="atlas-picked"><span class="atlas-picked-lbl">You picked ${escapeHtml(picked)}:</span>${link(wrong)}${cards.length
     ? `<a class="atlas-cmp" href="${ATLAS_URL}#cmp/${encodeURIComponent(wrong.id)}/${encodeURIComponent(cards[0].id)}" target="_blank" rel="noopener">Compare with ${escapeHtml(cards[0].n)}</a>` : ''}</div>` : '';
-  return `<div class="info-block atlas"><b>On the Lesion Atlas</b>${cards.map(link).join('')}${pickedHtml}${table}</div>`;
+  // the first graph that illustrates one of the linked cards, best card first
+  const g = ATLAS_GRAPHS && cards.map(c => ATLAS_GRAPHS.find(x => x[3].includes(c.id))).find(Boolean);
+  const graphHtml = g ? `<a class="atlas-graph" href="${ATLAS_URL}#graph/${encodeURIComponent(g[0])}/${g[1]}" target="_blank" rel="noopener">See it on a graph: ${escapeHtml(g[2])}</a>` : '';
+  return `<div class="info-block atlas"><b>On the Lesion Atlas</b>${cards.map(link).join('')}${graphHtml}${pickedHtml}${table}</div>`;
 }
 
 /* Missed questions feed the Lesion Atlas review list. The atlas keeps its
@@ -796,6 +801,35 @@ function fillAtlasMapsHome() {
   });
 }
 
+/* "Graphs for this block" on the block home: the atlas graphs whose cards this block's questions
+   link to most (counts from atlas-practice.js), each opening the graph in the atlas (#graph/<map>/<plot>)
+   with a Practice button that runs those questions here (#atlascards). Absent data shows nothing. */
+function fillAtlasGraphsHome() {
+  const el = document.getElementById('atlasGraphsHome');
+  if (!el || !ATLAS_URL) return;
+  Promise.all([ATLAS_READY, loadAtlasPractice()]).then(([, P]) => {
+    if (!document.body.contains(el) || !P || !P.graphs || !ATLAS_GRAPHS) return;
+    const bi = (P.blocks || []).findIndex(b => b[0] === blockDirName());
+    if (bi < 0) return;
+    const rows = Object.keys(P.graphs).map(gi => [+gi, ((P.graphs[gi] || []).find(x => x[0] === bi) || [0, 0])[1]])
+      .filter(([gi, n]) => n > 0 && ATLAS_GRAPHS[gi])
+      .sort((a, b) => b[1] - a[1] || ATLAS_GRAPHS[a[0]][2].localeCompare(ATLAS_GRAPHS[b[0]][2]));
+    if (!rows.length) return;
+    const row = ([gi, n]) => {
+      const [v, i, t, ids] = ATLAS_GRAPHS[gi], map = ATLAS_MAPS && ATLAS_MAPS[v] ? ATLAS_MAPS[v][0] : v;
+      return `<li class="amap-row">
+        <a class="amap-name" href="${ATLAS_URL}#graph/${encodeURIComponent(v)}/${i}" target="_blank" rel="noopener">${escapeHtml(t)}</a>
+        <span class="amap-n">${escapeHtml(map)} · ${n} question${n === 1 ? '' : 's'}</span>
+        <a class="amap-go" href="#atlascards/${encodeURIComponent(ids.join(','))}/${encodeURIComponent(t)}">Practice</a></li>`;
+    };
+    const top = rows.slice(0, 6), rest = rows.slice(6);
+    el.innerHTML = `<div class="section-label">Graphs for this block</div>
+      <p class="amap-note">Lesion Atlas graphs whose cards this block’s questions test most. Open a graph to see it and quiz yourself on its versions, or practice its questions here.</p>
+      <ul class="amap-list">${top.map(row).join('')}</ul>
+      ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} graphs</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}`;
+  });
+}
+
 /* "Your weakest SDLs" on the block home: every SDL you have answered at least SDL_MIN of its
    questions in, ranked by your latest try (lastAttemptMap), weakest first — with Redo missed
    (#sdlmissed/<sdl>), Atlas cards (#sdlcards/<sdl>) and Practice. */
@@ -947,6 +981,7 @@ function renderHome() {
     </div>
     <div id="weakSdlsHome"></div>
     <div id="atlasMapsHome"></div>
+    <div id="atlasGraphsHome"></div>
 
     <div class="section-label">Settings</div>
     <label class="radio-option" style="cursor:pointer;">
@@ -964,6 +999,7 @@ function renderHome() {
   `;
   fillWeakSdlsHome();
   fillAtlasMapsHome();
+  fillAtlasGraphsHome();
 
   main.querySelectorAll('.exam-card').forEach(card => {
     card.addEventListener('click', () => setRoute(`exam-sdls/${card.dataset.exam}`));

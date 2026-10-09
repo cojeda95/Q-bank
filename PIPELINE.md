@@ -223,6 +223,11 @@ on a category axis from fed to "fat gone") and `a1c` (eAG = 28.7 × HbA1c − 46
 A band that only one version carries shows during a quiz even though its label is hidden — so a
 band must either be shared by every version or be the thing the quiz asks about (the a1c
 thresholds); `thycourse` keeps its phases in the key instead.
+The m35 kinds: `dyannet` (Darrow–Yannet boxes from `DYB(icf, ecf, osm)` — closed paths, `close:true`, which skip
+`clipTop`; `ref:true` draws the normal boxes dashed), `clearance` (inulin, creatinine, glucose and PAH clearance on a
+relative concentration axis), `difflim` (capillary partial pressure as % of alveolar, `capp(p0, k)`), `kpot` (E_K and a
+Goldman-form resting potential on a log K⁺ axis via `xtl`), `aldoesc` (Na⁺ excretion, ECF volume and pressure over days)
+and `catbolus` (systolic, diastolic and heart rate after a bolus, `bol(base, peak)`).
 
 **Graph quiz and gallery.** Any kind with three or more versions shows a **Quiz me** chip.
 `PLOTQ["view:index"]` holds `{ans, pick, n, right}`; `plotQuiz()` starts, answers, moves on
@@ -267,6 +272,15 @@ atlas-qlinks.js is deferred, so the page redraws once on DOMContentLoaded to sho
 `PLOTACT` remembers the graph last clicked (any `.plot-c`) or framed by `goPlot()`; on that
 map ← → step its versions, **q** starts its quiz and **c** toggles compare — not while its quiz
 is open, during a walk, in an input, or with focus inside the drawer.
+
+**Graphs on cards and in the question bank (m35).** `graphsOf(id)` lists every plot whose kind's `PLOTCARDS`
+include the card; the drawer shows them under Practice as `data-plotgo` buttons. `#graph/<map>/<plot index>` opens
+any graph (`readHash` → `goPlot`). tools/build-atlas.py reads `PLOTCARDS` and each map's `plots` and writes
+`graphs: [[map, plot, title, card ids]]` into atlas-terms.js and per-block counts (`graphs: {index: [[block,
+n]]}`, each question once per graph) into atlas-practice.js — the indices match. shared/app.js uses them for
+**See it on a graph** under an answered question (the first graph of the best linked card) and **Graphs for this
+block** on the block home (`fillAtlasGraphsHome`, Practice → `#atlascards`). A graph whose cards change keeps its
+index only if the map's plot order does, so add plots at the end of a map's list.
 
 ### Search abbreviations
 
@@ -408,6 +422,13 @@ flow", "respiratory epithelium" all took other cards' questions. A card's name b
 term, so the fix for a generic name is to rename the card ("Dendritic cell types — …", "How
 much blood the kidneys get — …"), and epithelium names work best answer-only
 (`=pseudostratified columnar`, `=stratified squamous`).
+The m35 sweep (Nephro 47, Endo 1–3, Psych 35, Neuro 2/3, Pulm 13/14, OMM 20, Ortho 1) plus the seven new maps took
+linked questions from 7,689 to 7,791; one gap card (reactive attachment / disinhibited social engagement) went onto
+the Child abuse node. New course readings live in corpus/ortho (SDL 7 lecture and Practical Office Orthopedics ch 5),
+corpus/rheum (SDL 38 UpToDate Lyme and septic arthritis) and corpus/nephro (SDL 46 ScholarRx RAAS and male repro);
+`OCOM Nephro` joined KNOWN_SRC. Steals this time: "edema" (a card name base), "norepinephrine", "isotonic",
+"mineralocorticoid receptor", "hydroxyzine", "arthrocentesis" — and answer-only "=adrenal medulla" still took
+autonomic questions, because "=" limits the zone, not the topic.
 
 **You picked.** After a miss, `atlasLinksHtml(q, picked)` also matches the option the person
 chose (`atlasPickedFor`): only its leading phrase — the text before the first comma, colon,

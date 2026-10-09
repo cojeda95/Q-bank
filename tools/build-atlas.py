@@ -39,7 +39,7 @@ ESCAPED_TAG = re.compile(r"</?(?:b|i|em|strong)>")
 KNOWN_SRC = re.compile(r"(Robbins|Katzung|Guyton|Costanzo|Kaplan & Sadock|Marks|Langman|Moore|Pawlina|"
                        r"Fundamental Neuroscience|Foundations of Osteopathic Medicine|Atlas of Osteopathic Techniques|"
                        r"Somatic Dysfunction in Osteopathic Family Medicine|An Osteopathic Approach to Diagnosis and Treatment|DeGowin|"
-                       r"OCOM OMM|OCOM Ortho|OCOM Psych|OCOM Rheum|Osmosis) ")
+                       r"OCOM OMM|OCOM Ortho|OCOM Psych|OCOM Rheum|OCOM Nephro|Osmosis) ")
 
 def validate(art):
     """Return a list of problems that should block the build."""
@@ -298,11 +298,30 @@ for mm in re.finditer(r"^MAPS\.([a-z0-9_]+) = \{\s*t:\"([^\"]*)\"(.*?)\n\};", ar
                 ids.append(cid)
     if ids:
         map_cards[mm.group(1)] = [mm.group(2), ids]
-TERMS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. [id, name, kind, normalized terms]; maps: id -> [title, card ids] */\n"
-                     "window.ATLAS_TERMS=" + json.dumps({"atlas": "metabolic-atlas.html", "cards": rows, "maps": map_cards},
+# graphs: [map id, plot index, title, card ids] — PLOTCARDS lists the cards each graph kind illustrates; the question
+# bank uses these for "See it on a graph" under a question and "Graphs for this block" (#graph/<map>/<plot> in the atlas)
+plotcards = {}
+pc = re.search(r"const PLOTCARDS=\{(.*?)\};", art, re.S)
+if pc:
+    for kind, lst in re.findall(r"([a-z0-9]+):\[([^\]]*)\]", pc.group(1)):
+        plotcards[kind] = re.findall(r'"([a-z0-9_]+)"', lst)
+card_ids = {r[0] for r in rows}
+graphs = []
+for mm in re.finditer(r"^MAPS\.([a-z0-9_]+) = \{(.*?)\n\};", art, re.M | re.S):
+    body = mm.group(2); k = body.find("\n plots:[")
+    if k < 0:
+        continue
+    seg = body[k:body.find("\n edges:", k) if "\n edges:" in body[k:] else len(body)]
+    for i, obj in enumerate(re.findall(r"\{[^{}]*kind:\"[a-z0-9]+\"[^{}]*\}", seg)):
+        kind = re.search(r'kind:"([a-z0-9]+)"', obj).group(1); t = re.search(r't:"([^"]*)"', obj)
+        ids = [c for c in plotcards.get(kind, []) if c in card_ids]
+        if ids and t:
+            graphs.append([mm.group(1), i, t.group(1), ids])
+TERMS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. [id, name, kind, normalized terms]; maps: id -> [title, card ids]; graphs: [map, plot, title, card ids] */\n"
+                     "window.ATLAS_TERMS=" + json.dumps({"atlas": "metabolic-atlas.html", "cards": rows, "maps": map_cards, "graphs": graphs},
                                                         ensure_ascii=False, separators=(",", ":")) + ";\n",
                      encoding="utf-8")
-print(f"built {TERMS_OUT.relative_to(ROOT)}  —  {sum(len(r[3]) for r in rows)} link terms for {len(rows)} cards")
+print(f"built {TERMS_OUT.relative_to(ROOT)}  —  {sum(len(r[3]) for r in rows)} link terms for {len(rows)} cards, {len(graphs)} graphs")
 
 
 # ── practice index: how many Q-bank questions link to each card ─────────────
@@ -365,6 +384,11 @@ def links_for(q):
 counts = {}
 qlinks = {}       # card id -> block index -> question ids linked to it (the atlas card's "Your record")
 map_counts = {}   # map id -> block index -> questions linked to any card on that map (each question once)
+graph_counts = {} # graph index -> block index -> questions linked to any card the graph illustrates (each question once)
+graphs_of = {}
+for gi, g in enumerate(graphs):
+    for cid in g[3]:
+        graphs_of.setdefault(cid, set()).add(gi)
 maps_of = {}
 for mid, (_, ids) in map_cards.items():
     for cid in ids:
@@ -383,8 +407,9 @@ for bi, (b, _) in enumerate(blocks):
         for sdl in ex["sdls"]:
             for q in sdl["questions"]:
                 nq += 1
-                hit_maps = set()
+                hit_maps = set(); hit_graphs = set()
                 for cid in links_for(q):
+                    hit_graphs |= graphs_of.get(cid, set())
                     counts.setdefault(cid, {}).setdefault(bi, 0)
                     counts[cid][bi] += 1
                     if q.get("id"):
@@ -393,11 +418,15 @@ for bi, (b, _) in enumerate(blocks):
                 for mid in hit_maps:
                     map_counts.setdefault(mid, {}).setdefault(bi, 0)
                     map_counts[mid][bi] += 1
+                for gi in hit_graphs:
+                    graph_counts.setdefault(gi, {}).setdefault(bi, 0)
+                    graph_counts[gi][bi] += 1
 PRACTICE_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. cards (and maps): id -> [[block index, questions]] */\n"
                         "window.ATLAS_PRACTICE=" + json.dumps(
                             {"blocks": [list(b) for b in blocks],
                              "cards": {cid: sorted(v.items(), key=lambda kv: -kv[1]) for cid, v in sorted(counts.items())},
-                             "maps": {mid: sorted(v.items(), key=lambda kv: -kv[1]) for mid, v in sorted(map_counts.items())}},
+                             "maps": {mid: sorted(v.items(), key=lambda kv: -kv[1]) for mid, v in sorted(map_counts.items())},
+                             "graphs": {str(gi): sorted(v.items(), key=lambda kv: -kv[1]) for gi, v in sorted(graph_counts.items())}},
                             ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
 QLINKS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. card id -> [[block index, [question ids]]]: the atlas card's 'Your record' reads each block's attempt log for these */\n"
                       "window.ATLAS_QLINKS=" + json.dumps(

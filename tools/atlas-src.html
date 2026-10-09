@@ -1355,6 +1355,25 @@ const PATHS = {
   tsStrat:{n:"Stratified epithelia",v:"--p-tca"},
   tsSurf:{n:"Surfaces & change",v:"--p-ppp"},
   tsTissue:{n:"Basic tissues",v:"--p-gluconeo"},
+  ctLobe:{n:"Lobes & white matter",v:"--p-glycolysis"},
+  ctArea:{n:"Layers & areas",v:"--p-tca"},
+  ctSyn:{n:"Syndromes",v:"--p-gluconeo"},
+  adCortex:{n:"Cortex",v:"--p-glycolysis"},
+  adDz:{n:"Disorders",v:"--p-tca"},
+  adMed:{n:"Medulla",v:"--p-gluconeo"},
+  rxRaas:{n:"The system",v:"--p-glycolysis"},
+  rxDrug:{n:"Drugs",v:"--p-tca"},
+  flComp:{n:"Compartments",v:"--p-glycolysis"},
+  flNa:{n:"Sodium & water",v:"--p-tca"},
+  flEdema:{n:"Edema",v:"--p-gluconeo"},
+  arRA:{n:"Rheumatoid arthritis",v:"--p-glycolysis"},
+  arInf:{n:"Infectious arthritis",v:"--p-tca"},
+  ftLeg:{n:"Leg",v:"--p-glycolysis"},
+  ftAnkle:{n:"Ankle",v:"--p-tca"},
+  ftFoot:{n:"Heel & forefoot",v:"--p-gluconeo"},
+  ftNerve:{n:"Nerves",v:"--p-ppp"},
+  axDx:{n:"Disorders",v:"--p-glycolysis"},
+  axRx:{n:"Treatment",v:"--p-tca"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -2068,7 +2087,7 @@ cah21:{n:"21-Hydroxylase deficiency",alias:"Classic congenital adrenal hyperplas
  src:["Robbins ch 24 — The endocrine system","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists","Guyton ch 78 — Adrenocortical Hormones"],
  tx:["Hydrocortisone + fludrocortisone","Stress-dose IV hydrocortisone in adrenal crisis"]},
 
-cah11:{n:"11β-Hydroxylase deficiency",k:"dz",p:"mineral",q:["11 beta hydroxylase deficiency"],enz:"11β-Hydroxylase (CYP11B1)",inh:"—",gen:"Autosomal recessive",fa:"339",hi:1,
+cah11:{n:"11β-Hydroxylase deficiency",k:"dz",p:"mineral",q:["11 beta hydroxylase deficiency","cyp11b1","=11 deoxycorticosterone accumulates"],enz:"11β-Hydroxylase (CYP11B1)",inh:"—",gen:"Autosomal recessive",fa:"339",hi:1,
  mech:"Cortisol and aldosterone are still low, but the block accumulates <b>11-deoxycorticosterone</b>, which is itself a weak mineralocorticoid. Enough of it builds up to cause salt retention and hypertension — the opposite blood pressure from 21-hydroxylase deficiency.",
  find:["Severe hypertension in infancy, or precocious puberty in childhood","Virilization: ambiguous genitalia in 46,XX, precocious puberty in 46,XY"],
  labs:["<b>↑ 11-Deoxycorticosterone and ↑ 11-deoxycortisol</b>","↓ Aldosterone and <b>↓ renin</b> (suppressed by the volume expansion)","<b>Hypokalemia</b>, metabolic alkalosis","↑ Androgens"],
@@ -2593,7 +2612,7 @@ ame:{n:"Apparent mineralocorticoid excess",k:"dz",p:"cd",enz:"11β-Hydroxysteroi
  labs:["<b>↓ Renin and ↓ aldosterone</b>, like Liddle — but the cortisol:cortisone ratio is high","Metabolic alkalosis"],
  buzz:["Hypertension and hypokalemia in a licorice eater","Cortisol is a mineralocorticoid unless something stops it"],
  src:["Guyton ch 78 — Adrenocortical Hormones","Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists"],
- tx:["Stop the licorice; K⁺-sparing diuretics, or corticosteroids to suppress endogenous cortisol"],q:["=without functional 11 beta hsd2"]},
+ tx:["Stop the licorice; K⁺-sparing diuretics, or corticosteroids to suppress endogenous cortisol"],q:["=without functional 11 beta hsd2","11beta hsd2","glycyrrhetinic acid"]},
 
 adhdrugs:{n:"ADH, its receptors and the drugs",k:"drug",p:"cd",q:["desmopressin", "conivaptan", "tolvaptan", "demeclocycline", "vaptan", "vaptans","=circulating adh levels which control aqp2","adh binding to the v2 receptor","=vesicles containing aqp2 channels are shuttled","=existing aqp2 vesicles are shuttled"],enz:"V2 receptor → cAMP → aquaporin-2 insertion",inh:"—",fa:"333, 342, 360, 538",hi:1,
  mech:"ADH acting on V2 receptors inserts aquaporin-2 into the apical membrane of the principal cell, letting water follow the medullary gradient. V1 receptors on vascular smooth muscle mediate vasoconstriction instead.",
@@ -3656,7 +3675,7 @@ kallmann:{n:"Kallmann syndrome",alias:"hypogonadotropic hypogonadism with anosmi
  src:["Katzung ch 37 — Hypothalamic & Pituitary Hormones"],
  tx:["Testosterone or estrogen for virilization; <b>pulsatile GnRH or gonadotropins</b> when fertility is the goal"]},
 
-antiandrogens:{n:"Antiandrogens",alias:"finasteride · flutamide · spironolactone · danazol",k:"drug",p:"extgen",q:["flutamide", "bicalutamide", "finasteride", "antiandrogen", "antiandrogens"],enz:"5α-reductase · the androgen receptor",inh:"—",fa:"676",hi:1,
+antiandrogens:{n:"Antiandrogens",alias:"finasteride · flutamide · spironolactone · danazol",k:"drug",p:"extgen",q:["flutamide", "bicalutamide", "finasteride", "antiandrogen", "antiandrogens","=decreased conversion of testosterone to dht"],enz:"5α-reductase · the androgen receptor",inh:"—",fa:"676",hi:1,
  mech:"The androgen axis can be interrupted at three places, and which one a drug hits determines its effect and its side effects: synthesis, conversion to DHT, or the receptor itself.",
  find:["Finasteride and dutasteride — 5α-reductase inhibitors for benign prostatic hyperplasia and androgenetic alopecia; adverse: gynecomastia, sexual dysfunction","Flutamide, bicalutamide, nilutamide — androgen receptor antagonists for prostate cancer; gynecomastia, sexual dysfunction","Spironolactone — blocks the androgen receptor and 17α-hydroxylase; used in PCOS; causes gynecomastia and amenorrhea","Ketoconazole and abiraterone — 17α-hydroxylase/17,20-lyase inhibitors for prostate cancer; abiraterone causes hypertension and hypokalemia (mineralocorticoid excess)","Danazol — synthetic partial androgen agonist for endometriosis and hereditary angioedema; weight gain, acne, hirsutism, ↓ HDL, hepatotoxicity"],
  labs:["Pregnant women should not take or even handle crushed finasteride tablets — risk of hypospadias in a male fetus","Antiandrogens in a male cause gynecomastia by shifting the androgen-to-estrogen balance"],
@@ -5725,7 +5744,7 @@ pde5:{n:"PDE5 inhibitors",alias:"sildenafil · tadalafil · vardenafil",k:"drug"
  labs:["<b>Never with nitrates</b> — both raise cGMP, and together they cause profound hypotension"],
  buzz:["Sildenafil plus nitroglycerin = life-threatening hypotension","Blue vision = PDE6"],
  src:["Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes","Katzung ch 19 — Nitric Oxide"],
- tx:["—"],q:["sildenafil","tadalafil","vardenafil","pde5 inhibitor","pde5 inhibitors","phosphodiesterase 5","phosphodiesterase type 5"]},
+ tx:["—"],q:["sildenafil","tadalafil","vardenafil","pde5 inhibitor","pde5 inhibitors","phosphodiesterase 5","phosphodiesterase type 5","pde5 is the enzyme that degrades cgmp"]},
 
 laron:{n:"Laron syndrome",alias:"Growth hormone insensitivity",k:"dz",p:"jakstat",enz:"Growth hormone receptor — defective",inh:"—",gen:"Autosomal recessive",fa:"333",hi:1,
  mech:"The GH receptor cannot signal, so the liver makes almost no IGF-1 despite plenty of GH. With no IGF-1 feedback, GH climbs higher still. The picture is growth hormone deficiency with a high GH level.",
@@ -6660,7 +6679,7 @@ agma:{n:"Anion gap metabolic acidosis",alias:"GOLDMARK",k:"dz",p:"abmetab",enz:"
  labs:["Anion gap &gt; 12 mEq/L","Expected PCO₂ (Winters): 1.5 × HCO₃⁻ + 8 ± 2 — higher means a coexisting respiratory acidosis","Check the osmolar gap when a toxic alcohol is suspected"],
  buzz:["GOLDMARK = anion gap acidosis","Kussmaul breathing = respiratory compensation"],
  src:["Costanzo ch 7 — Acid-base physiology","Katzung ch 58 — Management of the Poisoned Patient","Katzung ch 23 — The Alcohols"],
- tx:["Treat the cause: insulin and fluids for DKA, fomepizole for toxic alcohols, dialysis for renal failure"],q:["anion gap metabolic acidosis","high anion gap","elevated anion gap","goldmark","anion gap acidosis","lactic acidosis"]},
+ tx:["Treat the cause: insulin and fluids for DKA, fomepizole for toxic alcohols, dialysis for renal failure"],q:["anion gap metabolic acidosis","high anion gap","elevated anion gap","goldmark","anion gap acidosis","lactic acidosis","the anion gap equals the sodium concentration minus"]},
 
 nagma:{n:"Normal anion gap metabolic acidosis",alias:"hyperchloremic acidosis · SHARDS",k:"dz",p:"abmetab",enz:"Bicarbonate is lost and replaced by chloride — the gap stays 8–12",inh:"Saline, hyperchloremia or hyperalimentation, Addison or acetazolamide, RTA, diarrhea, spironolactone",fa:"610",hi:1,
  mech:"Bicarbonate is lost through the gut or kidney (or diluted by saline), and chloride rises to keep the charges balanced, so the anion gap stays normal.",
@@ -7726,7 +7745,7 @@ erection:{n:"Erection, emission & ejaculation",alias:"point, squeeze and shoot",
  labs:["Pelvic surgery or diabetic neuropathy that injures the pelvic splanchnics causes erectile dysfunction"],
  buzz:["Point, squeeze and shoot","S2, 3, 4 keep the penis off the floor"],
  src:["Moore ch 6 — Pelvis and Perineum","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)","Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes"],
- tx:["—"],q:["erection","ejaculation","pelvic splanchnic nerves","point squeeze and shoot"]},
+ tx:["—"],q:["erection","ejaculation","pelvic splanchnic nerves","point squeeze and shoot","sexual stimulation triggers release of nitric oxide"]},
 
 priapism:{n:"Priapism",k:"dz",p:"merect",enz:"Blood trapped in the corpora cavernosa",inh:"Sickle cell disease; drugs",fa:"669",hi:1,
  mech:"A painful erection lasting more than 4 hours. In <b>ischemic</b> priapism, venous drainage is blocked — sickled red cells jam the cavernosal channels, or drugs keep the smooth muscle relaxed — and the trapped blood becomes hypoxic and acidotic.",
@@ -9301,7 +9320,7 @@ conductodd:{n:"Conduct disorder, ODD & DMDD",alias:"oppositional defiant disorde
  labs:["—"],
  buzz:["Argues with teachers but not peers = ODD","Sets fires and hurts the family cat = conduct disorder"],
  src:["Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders"],
- tx:["Psychotherapy and parent management training; DMDD: CBT, stimulants, antipsychotics"],q:["conduct disorder","oppositional defiant disorder","disruptive mood dysregulation disorder","intermittent explosive disorder"]},
+ tx:["Psychotherapy and parent management training; DMDD: CBT, stimulants, antipsychotics"],q:["conduct disorder","oppositional defiant disorder","disruptive mood dysregulation disorder","intermittent explosive disorder","=at least 4 symptoms across the three types"]},
 
 tourette:{n:"Tourette syndrome & tic disorders",alias:"Tourette syndrome",k:"dz",p:"devdz",enz:"Basal ganglia–cortical circuits",inh:"Onset before 18",fa:"574",hi:1,
  mech:"Sudden, rapid, recurrent, nonrhythmic motor and vocal tics. Tourette syndrome needs <b>both motor and vocal tics</b> for more than a year, starting before age 18.",
@@ -10927,7 +10946,7 @@ facilitation:{n:"Segmental facilitation",alias:"facilitated segment · Korr's ne
  labs:["—"],
  buzz:["A segment that overreacts to any input"],
  src:["OCOM OMM — OMS2 written midterm study guide","Foundations of Osteopathic Medicine ch 43 — Clinical Assessment: Viscerosomatic, Somatosomatic, Somatovisceral Reflexes; Counterstrain Points, Myofascial Trigger Points, and Chapman Reflexes","Foundations of Osteopathic Medicine ch 71 — Osteopathic Considerations in Cardiovascular Medicine","Foundations of Osteopathic Medicine ch 78 — Osteopathic Considerations and Approaches in the Acutely Ill or Hospitalized Patient"],
- tx:["Reduce the nociceptive input — treat the organ and the soma"],q:["segmental facilitation","facilitated segment","facilitated segments","neurologic lens"]},
+ tx:["Reduce the nociceptive input — treat the organ and the soma"],q:["segmental facilitation","facilitated segment","facilitated segments","neurologic lens","=chronic hyperexcitability"]},
 
 tart:{n:"TART — diagnosing somatic dysfunction",alias:"tissue texture · asymmetry · restriction · tenderness",k:"reg",p:"vsarc",enz:"Impaired function of the somatic system and its related vascular, lymphatic and neural elements",inh:"—",hi:1,
  mech:"Somatic dysfunction is diagnosed by finding at least some of the TART criteria: <b>T</b>issue texture changes, positional <b>A</b>symmetry, <b>R</b>estriction of motion and <b>T</b>enderness.",
@@ -12729,7 +12748,7 @@ odc:{n:"Oxygen content & the hemoglobin dissociation curve",k:"reg",p:"lmgas",en
  labs:["—"],
  buzz:["Left is lower (P50)"],
  src:["Costanzo ch 5 — Respiratory physiology","Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids"],
- tx:["—"],q:["oxygen hemoglobin dissociation curve","oxyhemoglobin dissociation curve","dissociation curve","p50","bohr effect","oxygen content"]},
+ tx:["—"],q:["oxygen hemoglobin dissociation curve","oxyhemoglobin dissociation curve","dissociation curve","p50","bohr effect","oxygen content","=decreased 2 3 bpg shifts the curve leftward","=decreased temperature decreased co2 decreased h+ decreased 2 3 bpg"]},
 
 co2trans:{n:"CO₂ transport & the Haldane effect",k:"reg",p:"lmgas",enz:"Mostly as bicarbonate made in red cells",inh:"—",fa:"686, 687",hi:1,
  mech:"CO₂ travels in blood three ways, mostly as bicarbonate made inside red cells by carbonic anhydrase.",
@@ -12737,7 +12756,7 @@ co2trans:{n:"CO₂ transport & the Haldane effect",k:"reg",p:"lmgas",enz:"Mostly
  labs:["—"],
  buzz:["Haldane at the lung, Bohr at the tissue"],
  src:["Costanzo ch 5 — Respiratory physiology","Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids"],
- tx:["—"],q:["haldane effect","carbaminohemoglobin","chloride shift","co2 transport","carbon dioxide transport"]},
+ tx:["—"],q:["haldane effect","carbaminohemoglobin","chloride shift","co2 transport","carbon dioxide transport","=h+ binds to hemoglobin while hco3 diffuses to plasma"]},
 
 chemorec:{n:"Control of breathing — chemoreceptors",k:"reg",p:"lmctrl",enz:"CO₂ drives breathing; low O₂ only below 60 mm Hg",inh:"—",fa:"299",hi:1,
  mech:"Breathing is driven mainly by CO₂, sensed through the pH of brain interstitial fluid; low O₂ adds drive through the peripheral chemoreceptors only when it falls far.",
@@ -12865,7 +12884,7 @@ erpf:{n:"Renal plasma flow & filtration fraction",k:"reg",p:"rpglom",enz:"PAH cl
  labs:["—"],
  buzz:["PAH for flow, inulin for filtration"],
  src:["Costanzo ch 6 — Renal physiology","Guyton ch 27 — Glomerular Filtration, Renal Blood Flow, and Their Control"],
- tx:["—"],q:["effective renal plasma flow","renal plasma flow","para aminohippuric acid","pah clearance","filtration fraction","effective rpf equals the clearance of pah"]},
+ tx:["—"],q:["effective renal plasma flow","renal plasma flow","para aminohippuric acid","pah clearance","filtration fraction","effective rpf equals the clearance of pah","clearance of pah equals urine concentration times urine flow"]},
 
 glomdyn:{n:"Changes in glomerular dynamics",k:"reg",p:"rpglom",enz:"Read the filtration fraction to tell them apart",inh:"—",fa:"601",hi:1,
  mech:"Each change moves GFR and RPF differently, and the filtration fraction (GFR / RPF) tells them apart.",
@@ -13337,7 +13356,7 @@ nerveap:{n:"Nerve action potential",k:"reg",p:"mpap",enz:"Na⁺ in, then K⁺ ou
  labs:["—"],
  buzz:["Na⁺ in, then K⁺ out"],
  src:["Costanzo ch 1 — Cellular physiology","Guyton ch 5 — Membrane Potentials and Action Potentials"],
- tx:["—"],q:["nerve action potential","neuronal action potential","inactivation gate","activation gate"]},
+ tx:["—"],q:["nerve action potential","neuronal action potential","inactivation gate","activation gate","repolarization is defined by the combination of na+ channel inactivation","=continued k+ efflux through voltage gated k+ channels after repolarization","hyperpolarization or the afterhyperpolarization"]},
 
 refractory:{n:"Refractory periods & accommodation",k:"reg",p:"mpap",enz:"Why a nerve cannot fire again at once",inh:"—",hi:1,
  mech:"During the <b>absolute refractory period</b> — almost the whole action potential — no stimulus, however strong, can fire another, because the Na⁺ inactivation gates stay closed until the membrane repolarizes. During the <b>relative refractory period</b>, overlapping the afterhyperpolarization, a larger-than-usual inward current can fire one, because K⁺ conductance is still high.",
@@ -13353,7 +13372,7 @@ conduction:{n:"Conduction velocity — diameter & myelin",k:"reg",p:"mpcond",enz
  labs:["—"],
  buzz:["Bigger and myelinated = faster"],
  src:["Costanzo ch 1 — Cellular physiology","Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
- tx:["—"],q:["saltatory conduction","nodes of ranvier","node of ranvier","length constant","cable properties"]},
+ tx:["—"],q:["saltatory conduction","nodes of ranvier","node of ranvier","length constant","cable properties","=a larger cross sectional area of axoplasm lowers internal resistance"]},
 
 fibertypes:{n:"Nerve fiber types",k:"reg",p:"mpcond",enz:"Aα to C — biggest and fastest to smallest and slowest",inh:"—",fa:"504",hi:0,
  mech:"Nerve fibers are classified by diameter, conduction velocity and myelination.",
@@ -13361,7 +13380,7 @@ fibertypes:{n:"Nerve fiber types",k:"reg",p:"mpcond",enz:"Aα to C — biggest a
  labs:["—"],
  buzz:["A delta plane is fast, but a taxC is slow"],
  src:["Costanzo ch 3 — Neurophysiology"],
- tx:["—"],q:["nerve fiber types","a delta fibers","aδ fibers","c fibers"]},
+ tx:["—"],q:["nerve fiber types","a delta fibers","aδ fibers","c fibers","=a alpha fibers","=a delta also designated group iii"]},
 
 glia:{n:"Glial cells",k:"reg",p:"mpcond",enz:"Support, myelin, CSF and defense",inh:"—",fa:"503",hi:1,
  mech:"Glia support neurons. CNS glia come from neuroectoderm — except microglia, which come from mesoderm; PNS glia come from neural crest.",
@@ -13385,7 +13404,7 @@ fluidcomp:{n:"Body fluid compartments — 60-40-20",k:"reg",p:"ufcomp",enz:"Wher
  labs:["—"],
  buzz:["60-40-20: total water, inside, outside","HIKIN’: HI K⁺ INtracellularly"],
  src:["Costanzo ch 6 — Renal physiology","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
- tx:["—"],q:["body fluid compartments","total body water","evans blue","interstitial fluid volume"]},
+ tx:["—"],q:["body fluid compartments","total body water","evans blue","interstitial fluid volume","extracellular fluid corresponds to the 20","extracellular fluid is divided into interstitial fluid"]},
 
 fluidshifts:{n:"Fluid shifts — volume contraction & expansion",k:"reg",p:"ufshift",enz:"Water follows osmolarity across cell membranes",inh:"—",hi:1,
  mech:"NaCl stays in the ECF, and water crosses cell membranes only when ECF and ICF osmolarities differ. A gain or loss changes the ECF first; any change in its osmolarity then moves water until both compartments match again.",
@@ -13393,7 +13412,7 @@ fluidshifts:{n:"Fluid shifts — volume contraction & expansion",k:"reg",p:"ufsh
  labs:["Hematocrit and plasma protein concentration show which way the ECF moved"],
  buzz:["Sweat is hyposmotic","SIADH swells both compartments"],
  src:["Costanzo ch 6 — Renal physiology","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
- tx:["—"],q:["isosmotic volume contraction","hyperosmotic volume contraction","hyposmotic volume contraction","isosmotic volume expansion","hyperosmotic volume expansion","hyposmotic volume expansion","darrow yannet","fluid shifts","=ecf osmolarity"]},
+ tx:["—"],q:["isosmotic volume contraction","hyperosmotic volume contraction","hyposmotic volume contraction","isosmotic volume expansion","hyperosmotic volume expansion","hyposmotic volume expansion","darrow yannet","fluid shifts","=ecf osmolarity","when extracellular osmolarity rises above intracellular osmolarity","isotonic nacl is confined to the ecf","ingested nacl raises ecf osmolarity","adding an impermeant solute only to the ecf","sweat is hyposmotic relative to the ecf"]},
 
 countercurrent:{n:"Countercurrent multiplication & urea recycling",k:"reg",p:"ufconc",enz:"Building the medullary osmotic gradient",inh:"—",fa:"608",hi:1,
  mech:"The loop of Henle deposits NaCl in the deep medulla. The thick ascending limb pumps NaCl out but is impermeable to water (the single effect); flow of tubular fluid carries the effect deeper, building the corticopapillary osmotic gradient. Urea recycling adds to it, and the vasa recta preserve it.",
@@ -13618,7 +13637,7 @@ tissueo2:{n:"O₂ & CO₂ exchange in the tissues",k:"reg",p:"gxtis",enz:"Delive
  labs:["Hemoglobin “buffers” tissue PO₂: releasing the basal 5 mL O₂/100 mL needs PO₂ to fall to about 40 mm Hg, which caps tissue PO₂ there; in heavy exercise the steep slope of the curve releases much more O₂ for little further fall — tissue PO₂ is held between about 15 and 40 mm Hg","Cutting flow to a quarter raises interstitial PCO₂ from 45 to about 60 mm Hg"],
  buzz:["Cells need only 1–3 mm Hg","Utilization coefficient 25% at rest, 75–85% in exercise"],
  src:["Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids","Guyton ch 40 — Principles of Gas Exchange; Diffusion of Oxygen and Carbon Dioxide Through Respiratory Membranes"],
- tx:["—"],q:["utilization coefficient","tissue po2","interstitial po2","interstitial fluid po2","interstitial pco2","interstitial fluid pco2","intracellular po2","intracellular pco2","tissue pco2","blood flow limited","oxygen extraction","oxygen buffer"]},
+ tx:["—"],q:["utilization coefficient","tissue po2","interstitial po2","interstitial fluid po2","interstitial pco2","interstitial fluid pco2","intracellular po2","intracellular pco2","tissue pco2","blood flow limited","oxygen extraction","oxygen buffer","=1 to 3 mm hg is the minimum required"]},
 
 fxdescribe:{n:"Describing a fracture",k:"reg",p:"fxgen",enz:"Skin, pieces, alignment, and why it broke",inh:"—",hi:1,
  mech:"A fracture is a loss of bone integrity from mechanical injury, weakened bone, or both — the commonest pathologic condition of bone. A handful of qualifiers describe each one and steer treatment.",
@@ -13881,7 +13900,7 @@ insulinact:{n:"Insulin receptor & metabolic effects",k:"reg",p:"hmfuel",enz:"Sto
  labs:["—"],
  buzz:["Receptor tyrosine kinase → IRS → GLUT4","Insulin drives K⁺ into cells"],
  src:["Guyton ch 79 — Insulin, Glucagon, and Diabetes Mellitus","Costanzo ch 9 — Endocrine physiology"],
- tx:["—"],q:["insulin receptor","insulin receptor substrate","irs 1","irs1","glut4","glut 4","insulin signaling","effects of insulin","insulin action"]},
+ tx:["—"],q:["insulin receptor","insulin receptor substrate","irs 1","irs1","glut4","glut 4","insulin signaling","effects of insulin","insulin action","insulin is the prototypical receptor tyrosine kinase"]},
 
 glucagonact:{n:"Glucagon actions & control",k:"reg",p:"hmfuel",enz:"The hyperglycemic hormone",inh:"—",fa:"337, 341",hi:1,
  mech:"Glucagon is a 29-amino-acid peptide from the islet α cells. It binds a Gs-coupled receptor on hepatocytes → adenylyl cyclase → cAMP → protein kinase A → phosphorylase kinase → phosphorylase a → glycogen breakdown. It raises blood glucose within minutes.",
@@ -14290,7 +14309,7 @@ lesionlocal:{n:"Localizing a lesion — crossed vs uncrossed deficits",k:"reg",p
  labs:["—"],
  buzz:["Crossed = brainstem","The cranial nerve gives the level"],
  src:["Fundamental Neuroscience ch 1 — Orientation to the Structure and Imaging of the Central Nervous System","Fundamental Neuroscience ch 11 — The Medulla Oblongata","Fundamental Neuroscience ch 12 — The Pons and Cerebellum","Fundamental Neuroscience ch 13 — The Midbrain"],
- tx:["—"],q:["crossed deficit","crossed deficits","alternating deficits","alternating hemiplegia","uncrossed deficits","lesion localization","localizing a lesion","deficits of the body only"]},
+ tx:["—"],q:["crossed deficit","crossed deficits","alternating deficits","alternating hemiplegia","uncrossed deficits","lesion localization","localizing a lesion","deficits of the body only","crossed findings","crossed signs","=an accompanying ipsilateral cranial nerve deficit","deficits restricted strictly to the body","a discrete sensory level marking a specific spinal segment"]},
 
 brainvesicles:{n:"Brain vesicles & the neural tube wall",k:"reg",p:"bsdev",enz:"Three primary vesicles, five secondary",inh:"—",hi:1,
  mech:"After the anterior neuropore closes, the neural tube forms three <b>primary vesicles</b>: <b>prosencephalon</b> (forebrain), <b>mesencephalon</b> (midbrain) and <b>rhombencephalon</b> (hindbrain). The prosencephalon divides into the <b>telencephalon</b> (cerebral hemispheres, most basal nuclei) and <b>diencephalon</b> (thalamus, hypothalamus, pineal); the mesencephalon stays single and becomes the midbrain; the rhombencephalon divides into the <b>metencephalon</b> (pons and cerebellum) and <b>myelencephalon</b> (medulla).",
@@ -14403,7 +14422,7 @@ clearratio:{n:"Clearance ratio — what the tubule did",k:"reg",p:"naclear",enz:
  labs:["C<sub>x</sub> = U<sub>x</sub> × V ÷ P<sub>x</sub> · clearance ratio = C<sub>x</sub> ÷ C<sub>inulin</sub>"],
  buzz:["Ratio > 1 = secreted · < 1 = reabsorbed or not filtered"],
  src:["Costanzo ch 6 — Renal physiology"],
- tx:["—"],q:["clearance ratio","glomerular marker","filtered but neither reabsorbed nor secreted","filtered and then secreted","filtered and then partially reabsorbed","neither reabsorbed nor secreted","saturable process","albumin clearance"]},
+ tx:["—"],q:["clearance ratio","glomerular marker","filtered but neither reabsorbed nor secreted","filtered and then secreted","filtered and then partially reabsorbed","neither reabsorbed nor secreted","saturable process","albumin clearance","clearance equals urine concentration times urine flow divided by plasma concentration"]},
 
 bunratio:{n:"BUN, creatinine & the BUN:creatinine ratio",k:"reg",p:"naclear",enz:"Urea is reabsorbed; creatinine is not",inh:"—",fa:"601, 620",hi:1,
  mech:"Both urea and creatinine leave the blood by glomerular filtration, so both rise when GFR falls — which is why BUN and serum creatinine are used to estimate GFR. They separate in volume contraction: urea is reabsorbed and creatinine is not, and hypovolemia increases proximal reabsorption of all solutes, urea included, so BUN climbs more than creatinine.",
@@ -14588,7 +14607,7 @@ autolevels:{n:"Autonomic levels — the course table",k:"reg",p:"neians",enz:"Wh
  labs:["—"],
  buzz:["Heart: ventricles T1–3, atria T4–5"],
  src:["OCOM OMM — SDL 14 lecture: Neuroendocrine/Immune II"],
- tx:["—"],q:["ventricular representation","atrial representation","inferior hypogastric plexus","sympathetic innervation mapping","mapping of sympathetic","proximal two thirds of the transverse colon","thoracolumbar outflow","=t1 to l2","=t2 to t6"]},
+ tx:["—"],q:["ventricular representation","atrial representation","inferior hypogastric plexus","sympathetic innervation mapping","mapping of sympathetic","proximal two thirds of the transverse colon","thoracolumbar outflow","=t1 to l2","=t2 to t6","the kidney and upper ureter receive sympathetic input from t10 to t11"]},
 
 reflexhist:{n:"Reflex research — Burns to Beal",k:"reg",p:"neians",enz:"How viscerosomatic reflexes were proven",inh:"—",hi:1,
  mech:"Osteopathic reflex concepts rest on more than a century of observation and experiment.",
@@ -14841,7 +14860,7 @@ steroidrec:{n:"Steroid receptor action — the androgen receptor",k:"reg",p:"agA
  labs:["—"],
  buzz:["Receptor + hormone → dimer on DNA → new protein"],
  src:["Costanzo ch 9 — Endocrine physiology","Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)"],
- tx:["—"],q:["steroid receptor","steroid responsive elements","=androgen response elements","=forms homodimers","=receptor pair attachment","=binding of testosterone or dht to the receptor","=loss of androgen responsive gene transcription","binds an intracellular mineralocorticoid receptor"]},
+ tx:["—"],q:["steroid receptor","steroid responsive elements","=androgen response elements","=forms homodimers","=receptor pair attachment","=binding of testosterone or dht to the receptor","=loss of androgen responsive gene transcription","binds an intracellular mineralocorticoid receptor","lipophilic hormones can cross the plasma membrane","estrogen is a steroid hormone derived from cholesterol"]},
 
 gonadpanel:{n:"Testosterone & LH panel — primary vs secondary hypogonadism",k:"reg",p:"agPanel",enz:"Read testosterone with LH (and FSH)",inh:"—",fa:"655–656",hi:1,
  mech:"Pair testosterone with LH to place the problem. <b>Low testosterone, high LH</b>: hypergonadotropic (primary) hypogonadism — the testis fails. <b>Low testosterone, low LH</b>: hypogonadotropic (secondary) — the hypothalamus or pituitary fails. <b>High testosterone, low LH</b>: a testosterone-secreting tumor or exogenous androgenic steroids. <b>High testosterone, high LH</b>: androgen insensitivity.",
@@ -15476,7 +15495,7 @@ fluidmeasure:{n:"Measuring fluid compartments — dilution method & Gibbs-Donnan
  labs:["—"],
  buzz:["Inject, equilibrate, subtract urine loss, divide"],
  src:["Costanzo ch 6 — Renal physiology","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
- tx:["—"],q:["dilution method","indicator dilution","gibbs donnan","donnan effect","=the amount injected minus the amount excreted"]},
+ tx:["—"],q:["dilution method","indicator dilution","gibbs donnan","donnan effect","=the amount injected minus the amount excreted","total blood volume can be calculated indirectly from measured plasma volume","=plasma has a slightly lower concentration of small anions","the corrected dose is"]},
 
 khandling:{n:"Potassium along the nephron",k:"reg",p:"gkK",enz:"Proximal 67% · thick ascending limb 20% · the distal nephron decides",inh:"—",fa:"609",hi:1,
  mech:"About 98% of body K⁺ is inside cells (150 vs 4.5 mEq/L), and intake varies from 50 to 150 mEq/day, so urinary excretion must match intake (external K⁺ balance). K⁺ is freely filtered; the <b>proximal tubule reabsorbs ≈67%</b> along with isosmotic fluid, and the <b>thick ascending limb ≈20%</b> — K⁺ enters on the Na⁺-K⁺-2Cl⁻ cotransporter and leaves through basolateral K⁺ channels (or leaks back into the lumen, making it lumen-positive). These fractions stay fixed; the <b>late distal tubule and collecting duct</b> fine-tune excretion.",
@@ -16133,7 +16152,7 @@ restk:{n:"Why the resting potential is negative — K⁺ leak & fixed anions",k:
  labs:["—"],
  buzz:["Resting potential sits near E_K because K⁺ leaks"],
  src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
- tx:["—"],q:["k2p","k2p channels","tandem pore","two pore domain","leak channels","potassium leak channels","=high resting k permeability through k2p","=k leak channels of the k2p","=k diffuses down its concentration gradient out of the cell","=no net movement because the electrical and chemical"]},
+ tx:["—"],q:["k2p","k2p channels","tandem pore","two pore domain","leak channels","potassium leak channels","=high resting k permeability through k2p","=k leak channels of the k2p","=k diffuses down its concentration gradient out of the cell","=no net movement because the electrical and chemical","because k+ permeability dominates k+ ions passively diffuse","=they cannot cross the membrane so their fixed negative charge"]},
 
 ionchanfam:{n:"Ion channel families — what each one does",k:"reg",p:"icChan",enz:"Voltage, ligand, cyclic-nucleotide, mechanical, acid, temperature",inh:"—",fa:"504",hi:1,
  mech:"Fundamental Neuroscience’s channel families: <b>voltage-gated Na⁺, K⁺ and Ca²⁺</b> channels make action potentials and transmitter release; <b>tandem-pore K⁺</b> channels set the resting potential; <b>CNG</b> (cyclic-nucleotide-gated) channels link smell and vision to voltage; <b>HCN</b> (hyperpolarization-activated) channels set the rate of firing — the pacemaker current; <b>Piezo2</b> opens with membrane stretch for touch; <b>TRP</b> channels serve heat, cold and chemical senses; <b>ASIC</b> channels sense acid; <b>ENaC</b> moves fluid by osmotic forces; transmitter-gated channels such as the nicotinic receptor (blocked by curare) carry fast synaptic signals.",
@@ -16149,7 +16168,7 @@ gradedap:{n:"Graded potentials vs action potentials",k:"reg",p:"icSignal",enz:"O
  labs:["—"],
  buzz:["Graded = local, decremental, summating · AP = all-or-none, propagated"],
  src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
- tx:["—"],q:["graded potential","graded potentials","generator potential","length constant","time constant","=a graded potentials amplitude varies","=a graded postsynaptic potential that decays","=the graded potential would have decayed"]},
+ tx:["—"],q:["graded potential","graded potentials","generator potential","length constant","time constant","=a graded potentials amplitude varies","=a graded postsynaptic potential that decays","=the graded potential would have decayed","=action potentials are all or none events"]},
 
 nachtox:{n:"Sodium-channel blockers & toxins",k:"drug",p:"icChan",enz:"Use-dependent block vs pore block vs slowed inactivation",inh:"—",fa:"246",hi:1,
  mech:"<b>Local anesthetics</b> (and some antiarrhythmics and phenytoin) bind a site inside the Na⁺ channel pore reachable only when the channel is open — so the block is <b>use-dependent</b>: the more the channel opens, the more channels are plugged. <b>Tetrodotoxin</b> (puffer fish, a salamander) and <b>saxitoxin</b> (red-tide dinoflagellates) bind the closed channel from outside and prevent it opening. <b>Scorpion venom</b> slows Na⁺ inactivation and shifts activation to more negative voltages — pain, spasms and eventually paralysis (Fundamental Neuroscience).",
@@ -16189,7 +16208,7 @@ txfail:{n:"When a psychotropic fails — five questions",k:"reg",p:"prFail",enz:
  labs:["Plasma levels when absorption or metabolism is in doubt"],
  buzz:["Before calling it resistant: diagnosis, dose, time, interactions, adherence"],
  src:["Kaplan & Sadock ch 21 — Psychopharmacology"],
- tx:["—"],q:["treatment failure","=whether the diagnosis was correct","=that the drug was given at an adequate dose","=drug noncompliance arising from a complicated regimen","=a pharmacokinetic or pharmacodynamic interaction with the newly added drug","=it may be a medication side effect that mimics relapse","=treatment resistance for which"]},
+ tx:["—"],q:["treatment failure","=whether the diagnosis was correct","=that the drug was given at an adequate dose","=drug noncompliance arising from a complicated regimen","=a pharmacokinetic or pharmacodynamic interaction with the newly added drug","=it may be a medication side effect that mimics relapse","=treatment resistance for which","=adherence and dosing along with the accuracy of the original diagnosis"]},
 
 discont:{n:"Half-life, withdrawal & discontinuation syndromes",k:"reg",p:"prFail",enz:"Short half-life + abrupt stop = withdrawal",inh:"—",hi:1,
  mech:"As a rule, the more abruptly a drug is stopped and the <b>shorter its elimination half-life</b>, the more likely clinically significant withdrawal is; with short-acting drugs, withdrawal can follow missed doses or occur between doses. Taper after prolonged use — it lowers but does not remove the risk (Kaplan & Sadock).",
@@ -16951,11 +16970,11 @@ prozones:{n:"Prostate zones & glands",k:"reg",p:"poPros",enz:"BPH in the transit
 
 bphpath:{n:"How BPH grows — DHT made by stromal cells",k:"dz",p:"poPros",enz:"Type 2 5α-reductase lives in the stroma",inh:"—",fa:"672, 673",hi:1,
  mech:"<b>Dihydrotestosterone</b> is the main prostatic androgen, made from testosterone by <b>type 2 5α-reductase</b>, which is expressed in <b>stromal cells</b>, not epithelium. DHT binds androgen receptors in both stroma and epithelium more avidly than testosterone, driving growth factors that expand both. Type 1 5α-reductase in liver and skin adds circulating DHT.",
- find:["Histologic BPH in up to 90% of men by 80; it is not premalignant","5α-reductase inhibitors: <b>finasteride</b> (half-life about 8 h; DHT falls within 8 h) moderately shrinks the prostate; <b>dutasteride</b> acts more slowly with a much longer half-life; side effects include decreased libido (Katzung)","Androgens are permissive; several lines of evidence suggest estrogens contribute too (Robbins)"],
+ find:["Histologic BPH in up to 90% of men by 80; it is not premalignant","5α-reductase inhibitors: <b>finasteride</b> (half-life about 8 h; DHT falls within 8 h) moderately shrinks the prostate; <b>dutasteride</b> acts more slowly with a much longer half-life; side effects include decreased libido (Katzung)","Androgens are permissive; several lines of evidence suggest estrogens contribute too (Robbins)","5α-reductase inhibitors lower PSA by about 50%, so a measured PSA must be doubled when screening for prostate cancer; both are teratogenic to male fetuses (course reading)"],
  labs:["—"],
  buzz:["Stromal DHT drives BPH; finasteride blocks it"],
- src:["Robbins ch 21 — The lower urinary tract and male genital system","Katzung ch 40 — The Gonadal Hormones & Inhibitors"],
- tx:["α₁-blockers relax smooth muscle; 5α-reductase inhibitors shrink the gland"],q:["type 2 5 alpha reductase","=prostatic stromal cells"]},
+ src:["Robbins ch 21 — The lower urinary tract and male genital system","Katzung ch 40 — The Gonadal Hormones & Inhibitors","OCOM Nephro — SDL 46 reading: ScholarRx, Pharmacotherapy of male reproductive disorders"],
+ tx:["α₁-blockers relax smooth muscle; 5α-reductase inhibitors shrink the gland"],q:["type 2 5 alpha reductase","=prostatic stromal cells","five alpha reductase inhibitors lower psa"]},
 
 hgpin:{n:"High-grade PIN & the basal cell layer",k:"dz",p:"poPros",enz:"Benign glands keep basal cells — cancer loses them",inh:"—",fa:"672",hi:1,
  mech:"<b>High-grade prostatic intraepithelial neoplasia (HGPIN)</b> is a precursor: large, branching, architecturally benign acini lined by atypical cells with prominent nucleoli, but they still keep at least part of a <b>basal cell layer</b> and an intact basement membrane. Both HGPIN and cancer predominate in the peripheral zone; about 80% of prostates removed for cancer harbor HGPIN.",
@@ -17189,6 +17208,400 @@ visstreams:{n:"LGN layers, V1 & the two visual streams",k:"reg",p:"vscort",enz:"
  buzz:["Where = dorsal, parietal · what = ventral, temporal"],
  src:["Guyton ch 52 — The Eye: III. Central Neurophysiology of Vision"],
  tx:["—"],q:["magnocellular layers","parvocellular layers","color blobs","calcarine fissure","dorsal visual stream","ventral visual stream","=the dorsal stream projects to the occipitoparietal cortex","=layers i and ii are magnocellular"]},
+
+/* ── cerebral cortex · adrenal gland · RAAS drugs · body fluids · rheumatoid & infectious arthritis · foot & ankle · anxiety treatment (m35) ─── */
+ctxlobes:{n:"Cerebral lobes & their boundaries",k:"reg",p:"ctLobe",enz:"Six lobes, each bounded by a named sulcus",inh:"—",hi:1,
+ mech:"On the basis of its major sulci the cortex is divided into <b>six lobes</b>: five on the surface — frontal, parietal, temporal, occipital and the limbic lobe on the medial surface — and the <b>insular lobe</b>, hidden inside the lateral sulcus. Four are named for the overlying skull bones. What defines a lobe is a region separated from its neighbors by a <b>named sulcus</b>.",
+ find:["Lateral surface: the <b>central sulcus</b>, the <b>lateral (sylvian) sulcus</b> and the lateral end of the <b>parietooccipital sulcus</b>; a line from that sulcus to the preoccipital notch completes the occipital border","The <b>insula</b> lies deep to the lateral sulcus, separated from the frontal, parietal and temporal opercula by the <b>circular sulcus</b>","Medial occipital lobe: the <b>calcarine sulcus</b> separates the cuneus (above) from the lingual gyrus (below); primary visual cortex (area 17) lines both banks","Inferior parietal lobule = the angular and supramarginal gyri; the supramarginal gyrus curves around the end of the lateral sulcus"],
+ labs:["—"],
+ buzz:["Six lobes: four named for skull bones, plus the insula and the limbic lobe"],
+ src:["Fundamental Neuroscience ch 16 — The Telencephalon"],
+ tx:["—"],q:["insular lobe","circular sulcus","calcarine sulcus","cuneus","lingual gyrus","parietooccipital sulcus","preoccipital notch","supramarginal gyrus","angular gyrus","=separated from adjacent cortex by a named sulcus"]},
+
+ctxlayers:{n:"Neocortex — six layers, granular and agranular",k:"reg",p:"ctArea",enz:"Layer IV takes input · layer V sends output",inh:"—",hi:1,
+ mech:"Neocortex has six layers. <b>Layer IV</b>, the internal granular layer of stellate cells, is the main <b>input</b> layer; <b>layer V</b> is the main <b>projection</b> layer. In primary sensory cortex layer IV is enlarged and layer V reduced — <b>heterotypical granular cortex</b>; in primary motor cortex the pattern reverses — <b>heterotypical agranular cortex</b>.",
+ find:["Most of the remaining neocortex, including association cortex, is homotypical — all six layers distinct","Layer VI (multiform) sends axons to subcortical targets such as the thalamus and to other cortical regions","Brodmann identified 47 cytoarchitectural areas, and most coincide with functional regions — area 17 is primary visual cortex, area 4 primary motor cortex","A vertical, <b>columnar</b> organization is superimposed on the layers: Mountcastle showed neurons within a column a few millimeters across share overlapping receptive fields"],
+ labs:["—"],
+ buzz:["Sensory cortex: fat layer IV · motor cortex: fat layer V"],
+ src:["Fundamental Neuroscience ch 32 — The Cerebral Cortex"],
+ tx:["—"],q:["granular cortex","agranular cortex","internal granular layer","heterotypical","homotypical","cortical columns","columnar organization","cytoarchitecture","brodmann areas"]},
+
+ctxareas:{n:"Primary, association & language areas — the Brodmann map",k:"reg",p:"ctArea",enz:"Sensory · motor · unimodal · multimodal",inh:"—",fa:"524, 529",hi:1,
+ mech:"Cortex falls into four functional categories: primary <b>sensory</b>, <b>motor</b>, <b>unimodal association</b> and <b>multimodal association</b> cortex. Primary sensory areas (except olfaction) receive thalamocortical fibers from relay nuclei of their own modality.",
+ find:["Primary somatosensory cortex: areas 3, 1 and 2 — input from the ventral posterolateral and ventral posteromedial nuclei","Primary visual cortex: area 17 on the banks of the calcarine sulcus (lateral geniculate input) · primary auditory cortex: area 41 in the transverse temporal gyri (medial geniculate input)","Primary motor cortex: area 4 · Broca area: areas 44 and 45 of the left inferior frontal gyrus","Wernicke aphasia: the supramarginal and angular gyri (areas 37, 39, 40) and posterior superior temporal gyrus (area 22)","Multimodal association cortex is tied to the most complex functions — logical analysis, judgment, language and imagination"],
+ labs:["—"],
+ buzz:["3-1-2 feel · 4 move · 17 see · 41 hear · 44/45 speak"],
+ src:["Fundamental Neuroscience ch 32 — The Cerebral Cortex"],
+ tx:["—"],q:["primary somatosensory cortex","primary auditory cortex","transverse temporal gyri","heschl","association cortex","multimodal association cortex","unimodal association cortex","brodmann area 17","area 17","=areas 3 1 and 2"]},
+
+ctxwhite:{n:"Cerebral white matter — association, commissural & projection fibers",k:"reg",p:"ctLobe",enz:"Within a hemisphere · across · up and down",inh:"—",hi:1,
+ mech:"All fibers linking cortex with other regions pass through the subcortical white matter, which holds three kinds of fibers. <b>Association fibers</b> link areas within one hemisphere; <b>commissural fibers</b> link corresponding structures of the two sides; <b>projection fibers</b> — corticofugal and corticopetal — run through the <b>internal capsule</b>.",
+ find:["Association bundles: short fibers between adjacent gyri; the superior longitudinal fasciculus (frontal, parietal, occipital), the <b>arcuate fasciculus</b> (frontal ↔ temporal), the inferior longitudinal fasciculus (temporal ↔ occipital) and the uncinate fasciculus (frontal ↔ temporal)","Three interhemispheric commissures: the <b>corpus callosum</b> (by far the largest), the anterior commissure and the hippocampal commissure","The anterior commissure is the first to appear, in the lamina terminalis"],
+ labs:["—"],
+ buzz:["Corpus callosum = the biggest commissure"],
+ src:["Fundamental Neuroscience ch 16 — The Telencephalon"],
+ tx:["—"],q:["corpus callosum","anterior commissure","hippocampal commissure","commissural fibers","association fibers","projection fibers","superior longitudinal fasciculus","uncinate fasciculus","inferior longitudinal fasciculus","=corpus callosum"]},
+
+ctxdominance:{n:"Cerebral dominance & language",k:"reg",p:"ctSyn",enz:"Left hemisphere in almost everyone right-handed",inh:"—",fa:"524",hi:1,
+ mech:"In most people language is processed in the <b>left hemisphere</b>: lesions that impair language are left-sided in about 95% of cases. Almost all right-handed people and about half of left-handed people are left-dominant, so in most of the population the right hemisphere is the nondominant one.",
+ find:["Language — communication with symbols organized by grammar — goes beyond any single sense, though vision and hearing are closely tied to it","Dominant parietal damage gives Gerstmann syndrome; nondominant parietal damage gives hemineglect"],
+ labs:["—"],
+ buzz:["Right-handed → left-dominant, almost always"],
+ src:["Fundamental Neuroscience ch 32 — The Cerebral Cortex"],
+ tx:["—"],q:["cerebral dominance","dominant hemisphere","nondominant hemisphere","hemispheric dominance","left hemisphere dominance","handedness"]},
+
+agnosia:{n:"Agnosias — prosopagnosia & other failures of recognition",k:"dz",p:"ctSyn",enz:"The sensation is intact; its meaning is lost",inh:"—",fa:"526",hi:1,
+ mech:"Agnosias are higher-level disorders of perception, usually confined to one sense: the patient cannot recognize complex stimuli — faces or letters by sight, tunes or words by sound — although the primary sensation is intact. They come from damage to <b>modality-specific sensory association cortex</b>.",
+ find:["Visual agnosia: cannot recognize a familiar object by sight · auditory agnosia: cannot recognize sounds · tactile agnosia (astereognosis): cannot identify a coin or key by touch, or a number drawn on the palm","Olfactory, gustatory and color agnosias also occur","<b>Prosopagnosia</b> (Guyton): inability to recognize faces, after extensive damage to the medial undersides of both occipital lobes and the medioventral temporal lobes — with little other loss of brain function"],
+ labs:["—"],
+ buzz:["Sees the face, cannot say whose it is"],
+ src:["Fundamental Neuroscience ch 32 — The Cerebral Cortex","Guyton ch 58 — Cerebral Cortex, Intellectual Functions of the Brain, Learning, and Memory"],
+ tx:["—"],q:["agnosia","agnosias","prosopagnosia","visual agnosia","auditory agnosia","tactile agnosia","astereognosis","face recognition"]},
+
+apraxia:{n:"Apraxia",k:"dz",p:"ctSyn",enz:"Strength intact, the learned act fails",inh:"—",hi:1,
+ mech:"Apraxia is a disorder of motor control after damage to <b>parietal association cortex, premotor cortex or the supplementary motor area</b>. There is no paralysis and strength may be normal, yet the patient cannot coordinate muscles into complex behavior — they can see, name and explain a hammer, and lift it, but cannot show how to drive a nail with it.",
+ find:["<b>Apraxia of speech</b> makes speaking difficult; it is separate from aphasia, which disrupts the internal processing of language symbols (spoken, written or signed)","Premotor and supplementary motor infarcts give apraxia without weakness, spasticity or change in tone"],
+ labs:["—"],
+ buzz:["Knows the hammer, cannot use it"],
+ src:["Fundamental Neuroscience ch 32 — The Cerebral Cortex","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement"],
+ tx:["—"],q:["apraxia of speech","ideomotor apraxia","limb apraxia"]},
+
+prefrontal:{n:"Prefrontal cortex — judgment, foresight & Phineas Gage",k:"reg",p:"ctSyn",enz:"Plans for future operation",inh:"—",fa:"524",hi:1,
+ mech:"The <b>prefrontal association cortex</b> is the large expanse in front of the primary motor and premotor cortices — the other major region of multimodal association cortex. It has long been tied to distinctly human traits: <b>judgment, foresight, a sense of purpose, responsibility and social propriety</b>.",
+ find:["Phineas Gage (1848): a tamping iron passed through his frontal lobes; the case became one of the earliest accounts of how brain injury changes higher functions","Prefrontal damage (frontal lobe syndrome): disinhibition, impulsivity, loss of empathy and impaired executive function"],
+ labs:["—"],
+ buzz:["Prefrontal = the brain’s planner"],
+ src:["Fundamental Neuroscience ch 32 — The Cerebral Cortex"],
+ tx:["—"],q:["prefrontal association cortex","phineas gage","executive function"]},
+
+aldoaction:{n:"Aldosterone action — the mineralocorticoid receptor",k:"reg",p:"adCortex",enz:"ENaC, Na⁺/K⁺-ATPase and ROMK — after a delay",inh:"—",fa:"339",hi:1,
+ mech:"Aldosterone is lipid-soluble, so it diffuses into tubular epithelial cells and binds a cytoplasmic <b>mineralocorticoid receptor (MR)</b>. The complex moves to the nucleus and induces mRNA for the proteins of Na⁺ and K⁺ transport: luminal <b>ENaC</b> (Na⁺ entry), basolateral <b>Na⁺/K⁺-ATPase</b> and luminal <b>ROMK</b> (K⁺ secretion). Because it works through gene transcription, about <b>45 minutes</b> pass before transport rises, with the peak after several hours.",
+ find:["The MR binds cortisol with high affinity too; 11β-HSD2 in the tubular cell converts most cortisol to cortisone, which binds MR poorly","Spironolactone blocks the MR; amiloride blocks ENaC","Some steroid actions may also be rapid and nongenomic, through membrane receptors"],
+ labs:["—"],
+ buzz:["Steroid → nucleus → new channels, so slow"],
+ src:["Guyton ch 78 — Adrenocortical Hormones"],
+ tx:["—"],q:["aldosterone action","mechanism of aldosterone","aldosterone receptor","=binds a cytoplasmic mineralocorticoid receptor"]},
+
+aldoctrl:{n:"What drives aldosterone — K⁺ and angiotensin II",k:"reg",p:"adCortex",enz:"K⁺ and Ang II strong · ACTH permissive · Na⁺ and ANP brake",inh:"—",fa:"339",hi:1,
+ mech:"Aldosterone secretion by the zona glomerulosa is controlled almost independently of cortisol and androgens. <b>Raised extracellular K⁺</b> and <b>raised angiotensin II</b> are by far the most potent stimuli — a small percentage rise in K⁺ can increase secretion severalfold.",
+ find:["Raised Na⁺ concentration slightly decreases secretion; ANP from stretched atria decreases it","ACTH is necessary for normal secretion but has little effect on its rate in most conditions","Angiotensin II rises when renal blood flow falls or Na⁺ is lost"],
+ labs:["—"],
+ buzz:["K⁺ up or Ang II up → aldosterone up"],
+ src:["Guyton ch 78 — Adrenocortical Hormones"],
+ tx:["—"],q:["regulation of aldosterone","stimuli for aldosterone"]},
+
+adrandro:{n:"Adrenal androgens — DHEA",k:"reg",p:"adCortex",enz:"Weak androgens from the zona reticularis",inh:"—",fa:"339",hi:1,
+ mech:"The adrenal cortex continually secretes moderately active male hormones, the most important being <b>dehydroepiandrosterone (DHEA)</b>, especially in fetal life. Normally their effects are weak, but some are converted to testosterone in extra-adrenal tissues.",
+ find:["In women, much of the growth of pubic and axillary hair results from adrenal androgens","Childhood adrenal androgens contribute to early development of the male sex organs","The adrenal cortex also secretes minute amounts of progesterone and estrogens"],
+ labs:["—"],
+ buzz:["Women’s pubic and axillary hair = adrenal androgens"],
+ src:["Guyton ch 78 — Adrenocortical Hormones"],
+ tx:["—"],q:["adrenal androgens","dehydroepiandrosterone","dhea"]},
+
+adrmed:{n:"Adrenal medulla — circulating epinephrine",k:"reg",p:"adMed",enz:"About 80% epinephrine · effects last 5–10 times longer",inh:"—",fa:"234, 355",hi:1,
+ mech:"Sympathetic stimulation of the adrenal medullae releases large amounts of epinephrine and norepinephrine into the blood — on average about <b>80% epinephrine</b> and 20% norepinephrine. They act on all tissues much as direct sympathetic stimulation does, but the effects last <b>5–10 times longer</b>, because the hormones are removed from the blood only over <b>2–4 minutes</b>.",
+ find:["Nerve-released norepinephrine stays active only a few seconds: 50–80% is taken back up into the nerve ending, most of the rest diffuses away, and a little is destroyed by MAO (in nerve endings) and COMT (diffusely in tissues)","Circulating catecholamines stay active until they diffuse into tissue and are destroyed by COMT, mainly in the liver","Circulating hormones reach tissues with no direct sympathetic innervation"],
+ labs:["Pheochromocytoma: plasma or urine metanephrines"],
+ buzz:["Hormone version of the sympathetic system — slower and longer"],
+ src:["Guyton ch 61 — The Autonomic Nervous System and the Adrenal Medulla"],
+ tx:["—"],q:["circulating catecholamines","adrenal medullary catecholamines","=catecholamines enter the systemic circulation","=catecholamines released into the bloodstream enter the systemic circulation"]},
+
+catsynth:{n:"Catecholamine synthesis — tyrosine to epinephrine",k:"reg",p:"adMed",enz:"Tyrosine → dopa → dopamine → NE → epinephrine",inh:"—",fa:"82, 331",hi:1,
+ mech:"Synthesis begins in the axoplasm and finishes inside the secretory vesicles: <b>tyrosine</b> is hydroxylated to <b>dopa</b>, dopa is decarboxylated to <b>dopamine</b>, dopamine is transported into the vesicles and hydroxylated to <b>norepinephrine</b>. In the adrenal medulla about 80% of the norepinephrine is then <b>methylated to epinephrine</b>.",
+ find:["The methylating enzyme, <b>PNMT</b>, is in the adrenal medulla but not in sympathetic postganglionic neurons, and it needs <b>cortisol</b> from the surrounding cortex (Costanzo)","MAO in nerve endings and COMT in tissues break catecholamines down"],
+ labs:["—"],
+ buzz:["Methylation is the adrenal’s extra step"],
+ src:["Guyton ch 61 — The Autonomic Nervous System and the Adrenal Medulla","Costanzo ch 2 — Autonomic nervous system"],
+ tx:["—"],q:["catecholamine synthesis","tyrosine hydroxylase","dopa decarboxylase","dopamine beta hydroxylase","pnmt","phenylethanolamine n methyltransferase"]},
+
+epine:{n:"Epinephrine vs norepinephrine",k:"reg",p:"adMed",enz:"NE squeezes vessels · epinephrine drives the heart and metabolism",inh:"—",fa:"241",hi:1,
+ mech:"<b>Norepinephrine</b> constricts most vessels, including those of muscle, so it greatly raises total peripheral resistance and arterial pressure. <b>Epinephrine</b>, with its greater β effects, stimulates the heart more and constricts muscle vessels only weakly — it raises pressure less but cardiac output more.",
+ find:["Epinephrine has <b>5–10 times</b> the metabolic effect of norepinephrine and can raise whole-body metabolic rate up to 100% above normal; it increases glycogenolysis in liver and muscle and glucose release","Katzung: norepinephrine raises both systolic and diastolic pressure and the baroreflex slows the heart; epinephrine’s β₂ vasodilation in skeletal muscle can lower total peripheral resistance, so diastolic pressure may fall","Norepinephrine activates β₁ about as potently as epinephrine but has little β₂ effect"],
+ labs:["—"],
+ buzz:["NE: pressure up, reflex bradycardia · Epi: output up, diastolic may fall"],
+ src:["Guyton ch 61 — The Autonomic Nervous System and the Adrenal Medulla","Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs"],
+ tx:["—"],q:["epinephrine vs norepinephrine","=norepinephrine preferentially activates alpha 1","=epinephrine activates both alpha and beta adrenergic receptors"]},
+
+reninrel:{n:"Renin release & the angiotensin cascade",k:"reg",p:"rxRaas",enz:"Low pressure · sympathetic · low distal Na⁺ → renin",inh:"—",fa:"605",hi:1,
+ mech:"Renin release from the kidney cortex is stimulated by <b>reduced renal arterial pressure</b>, <b>sympathetic stimulation</b>, and reduced Na⁺ delivery to the distal tubule. Renin cleaves angiotensinogen to the inactive decapeptide <b>angiotensin I</b>, which <b>ACE</b> — mainly endothelial — converts to the vasoconstrictor octapeptide <b>angiotensin II</b>.",
+ find:["Angiotensin II constricts arterioles and retains Na⁺; angiotensin II and III both stimulate aldosterone release","β blockers reduce renin secretion","Tissue RAS (eg, heart) may drive trophic changes such as cardiac hypertrophy","About 20% of people with essential hypertension have inappropriately low and 20% inappropriately high plasma renin activity"],
+ labs:["—"],
+ buzz:["Renin is rate-limiting; ACE lives on endothelium"],
+ src:["Katzung ch 11 — Antihypertensive Agents"],
+ tx:["—"],q:["renin release","angiotensinogen","angiotensin i","angiotensin converting enzyme","renin angiotensin system","plasma renin activity"]},
+
+acei:{n:"ACE inhibitors — the -prils",k:"drug",p:"rxDrug",enz:"Less angiotensin II, more bradykinin",inh:"—",fa:"628",hi:1,
+ mech:"Captopril and the other -prils block peptidyl dipeptidase — the enzyme that converts angiotensin I to II and, as <b>plasma kininase</b>, inactivates <b>bradykinin</b>. Lowering angiotensin II and raising bradykinin both lower blood pressure (a bradykinin antagonist blunts captopril’s effect). Resistance falls without reflex tachycardia.",
+ find:["Enalapril and all but lisinopril are prodrugs activated in the liver; enalaprilat is the IV form","<b>CKD and diabetes</b>: they cut proteinuria and stabilize function by dilating the efferent arteriole and lowering intraglomerular pressure — recommended in diabetes even without hypertension; also heart failure and after MI","Adverse: first-dose hypotension when volume-depleted, <b>acute renal failure</b> with bilateral renal artery stenosis (or a solitary kidney), <b>hyperkalemia</b>, <b>dry cough</b> and <b>angioedema</b> (bradykinin, substance P), altered taste, rash","Contraindicated in pregnancy (2nd and 3rd trimesters: fetal hypotension, anuria, renal failure; first-trimester risk too)","NSAIDs blunt the effect by blocking bradykinin’s prostaglandin-mediated vasodilation; K⁺ supplements or K⁺-sparing diuretics → hyperkalemia"],
+ labs:["Creatinine and K⁺ after starting"],
+ buzz:["Cough and angioedema = bradykinin"],
+ src:["Katzung ch 11 — Antihypertensive Agents","OCOM Nephro — SDL 46 reading: ScholarRx, Renin-angiotensin-aldosterone system inhibitors"],
+ tx:["Hypertension, heart failure, post-MI, diabetic and proteinuric CKD"],q:["ace inhibitor cough","kininase","=bradykinin buildup that increases vascular permeability","bradykinin accumulation","enalaprilat","ace inhibitors in pregnancy","ace also degrades bradykinin"]},
+
+arbs:{n:"Angiotensin receptor blockers — the -sartans",k:"drug",p:"rxDrug",enz:"Block AT₁ · leave bradykinin alone",inh:"—",fa:"628",hi:1,
+ mech:"Losartan, valsartan and the other -sartans block the <b>angiotensin II type 1 (AT₁) receptor</b>. They do not affect bradykinin, so they are more selective than ACE inhibitors — and can block angiotensin more completely, because enzymes other than ACE also make angiotensin II.",
+ find:["Benefits match ACE inhibitors in heart failure and chronic kidney disease","Same hazards including pregnancy; cough and angioedema can occur but are uncommon — many clinicians now start with an ARB","Combining an ACE inhibitor with an ARB or aliskiren is not recommended (toxicity in trials)","Valsartan + sacubitril (a neprilysin inhibitor) is used for heart failure"],
+ labs:["—"],
+ buzz:["Same benefit, no bradykinin cough"],
+ src:["Katzung ch 11 — Antihypertensive Agents"],
+ tx:["—"],q:["at1 receptor","angiotensin ii type 1 receptor","valsartan","candesartan","irbesartan","olmesartan","telmisartan","sartans"]},
+
+aliskiren:{n:"Aliskiren — direct renin inhibitor",k:"drug",p:"rxDrug",enz:"Blocks the first step",inh:"—",fa:"628",hi:1,
+ mech:"Aliskiren, the first nonpeptide renin inhibitor, binds renin and blocks its action on angiotensinogen, lowering plasma renin activity, angiotensin I and II and aldosterone. It lowers blood pressure about as well as ACE inhibitors and ARBs and does not raise bradykinin.",
+ find:["Toxicity: hyperkalemia, renal impairment; potential teratogen","Not to be combined with ACE inhibitors or ARBs"],
+ labs:["—"],
+ buzz:["Renin inhibitor: no angiotensin I made"],
+ src:["Katzung ch 17 — Vasoactive Peptides","Katzung ch 11 — Antihypertensive Agents"],
+ tx:["—"],q:["direct renin inhibitor","renin inhibitor","renin inhibitors","=blocking renin from cleaving angiotensinogen"]},
+
+mras:{n:"Mineralocorticoid receptor antagonists — spironolactone & eplerenone",k:"drug",p:"rxDrug",enz:"Block aldosterone at its receptor",inh:"—",fa:"627",hi:1,
+ mech:"Spironolactone and eplerenone bind mineralocorticoid receptors and blunt aldosterone’s action in the collecting tubule; amiloride and triamterene instead block ENaC directly. Because K⁺ secretion is coupled to Na⁺ entry there, both groups spare K⁺.",
+ find:["Spironolactone, a steroid, also acts at androgen and progesterone receptors: gynecomastia, decreased libido","Eplerenone is several hundredfold less active at androgen and progesterone receptors — far less gynecomastia","Finerenone: a nonsteroidal MR antagonist that spreads more evenly between heart and kidney and causes somewhat less hyperkalemia","Hyperkalemia risk rises with renal insufficiency, ACE inhibitors or ARBs; NSAIDs can blunt their action"],
+ labs:["Watch K⁺"],
+ buzz:["Spironolactone → gynecomastia; eplerenone spares it"],
+ src:["Katzung ch 15 — Diuretic Agents"],
+ tx:["Primary hyperaldosteronism, heart failure, resistant hypertension"],q:["mineralocorticoid receptor antagonist","mineralocorticoid receptor antagonists","aldosterone antagonist","aldosterone antagonists","eplerenone","finerenone"]},
+
+raasgfr:{n:"RAAS blockers & GFR — the efferent arteriole",k:"reg",p:"rxRaas",enz:"Lose angiotensin II, lose efferent tone",inh:"—",fa:"628",hi:1,
+ mech:"Normally angiotensin II helps hold up GFR by constricting the <b>efferent arteriole</b>. Drugs that lower angiotensin II or block its effect dilate the efferent arteriole, lowering glomerular pressure — protective in diabetic and proteinuric kidneys, but dangerous when GFR already depends on angiotensin II.",
+ find:["Bilateral renal artery stenosis (or stenosis of a solitary kidney) and volume depletion → acute kidney injury","A modest rise in creatinine after starting is expected; avoid in bilateral renal artery stenosis","Risk of hyperkalemia is highest with CKD, diabetic kidney disease and other K⁺-retaining drugs"],
+ labs:["—"],
+ buzz:["Efferent relaxes → GFR falls"],
+ src:["OCOM Nephro — SDL 46 reading: ScholarRx, Renin-angiotensin-aldosterone system inhibitors","Katzung ch 11 — Antihypertensive Agents"],
+ tx:["—"],q:["=efferent arteriole","efferent arteriolar dilation","prerenal acute kidney injury"]},
+
+plasmaosm:{n:"Plasma osmolarity — the estimate",k:"reg",p:"flComp",enz:"2 × Na⁺ + glucose/18 + BUN/2.8",inh:"—",fa:"599",hi:1,
+ mech:"Plasma osmolarity can be estimated from its major solutes: <b>2 × plasma Na⁺ + glucose/18 + BUN/2.8</b> (Na⁺ in mEq/L, glucose and BUN in mg/dL). Normal body-fluid osmolarity is about 290 mOsm/L — 300 for simplicity. Osmolarity is per liter of solution; osmolality per kilogram of water, nearly the same in body fluids.",
+ find:["Because Na⁺ and its anions are more than 90% of ECF solute, plasma Na⁺ is a reasonable stand-in for osmolarity (Guyton)","In steady state ICF and ECF osmolarities are equal — water crosses cell membranes freely to erase any gradient"],
+ labs:["Example: Na⁺ 145, glucose 90, BUN 14 → 290 + 5 + 5 = 300 mOsm/L"],
+ buzz:["Double the sodium, add the small change"],
+ src:["Costanzo ch 6 — Renal physiology","Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
+ tx:["—"],q:["plasma osmolarity","calculated osmolarity","serum osmolality","=approximately 300 mosm l","=the two compartment osmolarities match"]},
+
+tonicity:{n:"Tonicity vs osmolarity",k:"reg",p:"flComp",enz:"Only impermeant solute moves water",inh:"—",fa:"599",hi:1,
+ mech:"<b>Isotonic, hypotonic and hypertonic</b> describe what a solution does to cell volume, which depends on its <b>impermeant</b> solute. <b>Isosmotic, hyperosmotic and hypo-osmotic</b> describe only its osmolarity relative to cells, whether or not the solute can enter. A cell in 282 mOsm/L of impermeant solute neither shrinks nor swells.",
+ find:["0.9% NaCl is isotonic — it can be infused without upsetting the ICF–ECF balance; stronger NaCl is hypertonic","A 5% glucose solution is isosmotic, but once the glucose is metabolized it behaves as free water","Solutions given for nutrition are made nearly isosmotic or infused slowly"],
+ labs:["—"],
+ buzz:["Tonicity = impermeant solute · osmolarity = all solute"],
+ src:["Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
+ tx:["—"],q:["tonicity","isosmotic","hyperosmotic","hypo osmotic","effective osmole","0 9 sodium chloride"]},
+
+hyponat:{n:"Hyponatremia — dehydration or overhydration",k:"dz",p:"flNa",enz:"Sodium lost, or water gained",inh:"—",fa:"342, 538",hi:1,
+ mech:"Plasma Na⁺ is normally 135–145 mmol/L. Hyponatremia comes from <b>loss of Na⁺</b> (diarrhea, vomiting, diuretic overuse, Na⁺-wasting kidney disease, Addison disease) — with low ECF volume — or from <b>excess water</b> (SIADH, bronchogenic tumors, heart failure, cirrhosis, polydipsia) — with high ECF volume. Either way water moves into cells and <b>ICF volume rises</b>.",
+ find:["A rapid fall causes brain cell edema: headache, nausea, lethargy, disorientation; below about 115–120 mmol/L, seizures, coma and death — the skull lets the brain expand only about 10% before herniation","In chronic hyponatremia the brain sheds solutes to limit swelling; correcting too fast causes <b>osmotic demyelination</b> — keep correction below 10–12 mmol/L in 24 hours and 18 mmol/L in 48 hours","Hyponatremia is the most common electrolyte disorder"],
+ labs:["Plasma Na⁺ below 135 mmol/L"],
+ buzz:["Correct chronic hyponatremia slowly"],
+ src:["Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
+ tx:["Treat the cause; slow correction"],q:["hyponatremia","osmotic demyelination","osmotic demyelination syndrome","central pontine myelinolysis","hyponatremic"]},
+
+hypernat:{n:"Hypernatremia — water lost or sodium gained",k:"dz",p:"flNa",enz:"Cells shrink",inh:"—",hi:1,
+ mech:"Hypernatremia comes from <b>water loss</b> — central or nephrogenic diabetes insipidus, excessive sweating — with low ECF volume, or from <b>Na⁺ excess</b> — Cushing disease, primary aldosteronism — with high ECF volume. In both, water leaves the cells and <b>ICF volume falls</b>.",
+ find:["Hyperosmotic contraction (sweating, DI): ECF and ICF both shrink; plasma protein rises, hematocrit stays about the same (Costanzo)"],
+ labs:["Plasma Na⁺ above 145 mmol/L"],
+ buzz:["Hypernatremia shrinks cells"],
+ src:["Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema","Costanzo ch 6 — Renal physiology"],
+ tx:["Replace water"],q:["hypernatremia","hypernatremic"]},
+
+edemasafe:{n:"Edema safety factors & intracellular edema",k:"reg",p:"flEdema",enz:"Low compliance · lymph · protein washdown",inh:"—",hi:1,
+ mech:"<b>Intracellular edema</b> follows hyponatremia, depressed tissue metabolism or poor nutrition: when blood flow is too low, membrane pumps fail, Na⁺ leaks in and water follows. For <b>extracellular edema</b>, three safety factors normally keep fluid from accumulating.",
+ find:["(1) Low compliance of the interstitium while its pressure is negative (about −3 mm Hg in loose subcutaneous tissue) — small volume gains raise pressure a lot","(2) Lymph flow can rise 10- to 50-fold","(3) Washdown of interstitial protein lowers interstitial colloid osmotic pressure as filtration rises","The abnormality must usually be severe before serious edema develops"],
+ labs:["—"],
+ buzz:["Three brakes on edema"],
+ src:["Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
+ tx:["—"],q:["intracellular edema","safety factors against edema","edema safety factor","interstitial compliance","protein washdown","lymph flow"]},
+
+rapath:{n:"Rheumatoid arthritis — how the synovitis starts",k:"reg",p:"arRA",enz:"CD4 T cells, cytokines and citrullinated antigens",inh:"—",fa:"472",hi:1,
+ mech:"The autoimmune response is started by <b>CD4⁺ helper T cells</b> reacting against a joint antigen. <b>TNF, IL-1 and IL-6</b> from macrophages recruit leukocytes and drive synovial proteases that destroy cartilage; <b>IL-17</b> from Th17 cells recruits neutrophils and monocytes; <b>RANKL</b> on activated T cells stimulates osteoclasts; IFN-γ from Th1 cells activates macrophages. TNF is a key mediator — the evidence is the success of TNF antagonists.",
+ find:["The synovium often holds germinal centers with plasma cells making antibodies against <b>citrullinated peptides</b> — arginine converted to citrulline in fibrinogen, type II collagen, α-enolase and vimentin","About 50% of the risk is genetic; <b>HLA-DR4</b> is associated with ACPA-positive RA, perhaps because a citrullinated epitope that mimics microbial epitopes is presented by DR4; <b>PTPN22</b> variants are shared with juvenile idiopathic arthritis","Infection (including periodontitis) and smoking may promote citrullination of self proteins, creating new epitopes","Prevalence about 0.25–1%, peak in the third to fourth decades, three times more common in women"],
+ labs:["—"],
+ buzz:["Citrulline + HLA-DR4 + smoking"],
+ src:["Robbins ch 26 — Bones, joints, and soft tissue tumors"],
+ tx:["—"],q:["citrullination","citrullinated peptides","citrullinated proteins","molecular mimicry in ra","smoking and rheumatoid arthritis","periodontitis","ra is a polygenic disorder"]},
+
+raser:{n:"RA serology — ACPA vs rheumatoid factor",k:"reg",p:"arRA",enz:"ACPA is the specific one",inh:"—",fa:"472",hi:1,
+ mech:"<b>Anti-citrullinated peptide antibody (ACPA)</b> is a diagnostic marker found in up to 70% of patients, and with T cells reactive to citrullinated proteins may add to disease severity and persistence. <b>Rheumatoid factor</b> — IgM and IgA antibodies against the Fc of IgG — is present in about 80%, may deposit in joints as immune complexes, but also appears in some people without RA.",
+ find:["About <b>20% of patients are seronegative</b>; diagnosis then rests on clinical and radiographic findings","In a minority, especially those lacking ACPA and RF, the disease may stabilize or even regress","ACPA helps separate RA from other inflammatory polyarthritis"],
+ labs:["ACPA, RF; ESR and CRP"],
+ buzz:["ACPA specific · RF sensitive but not specific"],
+ src:["Robbins ch 26 — Bones, joints, and soft tissue tumors"],
+ tx:["—"],q:["acpa","anti citrullinated peptide antibody","anti citrullinated protein antibody","seronegative ra","seronegative rheumatoid arthritis","=acpa has greater specificity than rf"]},
+
+rapannus:{n:"RA joint pathology — pannus to ankylosis",k:"dz",p:"arRA",enz:"Villous synovium eats cartilage",inh:"—",fa:"472",hi:1,
+ mech:"The synovium becomes edematous and hyperplastic with delicate bulbous villi. Five features: <b>synovial cell hyperplasia</b>; dense infiltrates of CD4⁺ T cells, B cells (often in follicles), plasma cells, dendritic cells and macrophages; <b>angiogenesis</b>; fibrin-rich exudate with neutrophils; and <b>osteoclastic activity</b> that lets synovium invade bone — periarticular erosions and subchondral cysts.",
+ find:["Together these form the <b>pannus</b> — edematous synovium, inflammatory cells, granulation tissue and fibroblasts — which grows over and erodes cartilage, then bridges the bones as fibrous ankylosis that ossifies into bony ankylosis","Rheumatoid nodules (forearm, elbows, occiput, lumbosacral): central fibrinoid necrosis rimmed by palisaded macrophages","Severe disease: leukocytoclastic vasculitis; uveitis and keratoconjunctivitis","Radiographs: effusions, juxta-articular osteopenia, erosions, joint-space narrowing"],
+ labs:["—"],
+ buzz:["Pannus → fibrous → bony ankylosis"],
+ src:["Robbins ch 26 — Bones, joints, and soft tissue tumors"],
+ tx:["—"],q:["=pannus","rheumatoid synovitis","synovial hyperplasia","fibrous ankylosis","bony ankylosis","juxta articular osteopenia"]},
+
+raclin:{n:"RA vs OA — the clinical pattern",k:"reg",p:"arRA",enz:"MCP and PIP, morning stiffness · DIP and CMC, worse with use",inh:"—",fa:"472, 473",hi:1,
+ mech:"RA is a <b>symmetric</b> arthritis of <b>small joints first</b> — hands and feet, then wrists, ankles, elbows and knees. In the hand it involves the <b>MCP and PIP joints</b>, unlike osteoarthritis. Joints are swollen, warm and painful, and pain is worse in the <b>morning or after inactivity</b>, unlike OA.",
+ find:["About half begin with malaise, fatigue and diffuse aching before joints are involved; about 10% have acute onset over days","Course: chronic, waxing and waning, with progressive enlargement and loss of motion","Tendon and ligament inflammation produces ulnar deviation and swan-neck and boutonnière deformities","OA by contrast favors the DIP joints and first carpometacarpal joint (First Aid)"],
+ labs:["—"],
+ buzz:["RA: MCP + PIP, spares DIP"],
+ src:["Robbins ch 26 — Bones, joints, and soft tissue tumors"],
+ tx:["—"],q:["metacarpophalangeal and proximal interphalangeal","mcp and pip","symmetric polyarthritis","morning stiffness","=ra preferentially involves the metacarpophalangeal"]},
+
+dmards:{n:"DMARDs — conventional, targeted and biologic",k:"drug",p:"arRA",enz:"Slow the joint damage, not just the pain",inh:"—",fa:"496",hi:1,
+ mech:"Conventional synthetic DMARDs include <b>methotrexate</b>, azathioprine, <b>hydroxychloroquine</b>, cyclophosphamide, cyclosporine, <b>leflunomide</b>, mycophenolate and <b>sulfasalazine</b>. Biologic DMARDs approved for RA: <b>abatacept</b> (T-cell costimulation), <b>rituximab</b> (B cells), <b>tocilizumab</b> and sarilumab (IL-6 receptor), IL-1 blockers and five TNF-α blockers. The JAK inhibitors are targeted synthetic DMARDs.",
+ find:["<b>Leflunomide</b>: its metabolite inhibits dihydroorotate dehydrogenase (pyrimidine synthesis), arresting T cells in G₁; half-life 19 days, shortened to about 1 day by cholestyramine; diarrhea in 25%; as effective as methotrexate","<b>Sulfasalazine</b> → sulfapyridine (probably the active part in RA) + 5-aminosalicylic acid; slow acetylators get most of the toxicity","<b>Abatacept</b>: CTLA-4–IgG1 Fc fusion protein that binds CD80/CD86 on antigen-presenting cells, blocking CD28 costimulation","<b>Rituximab</b>: chimeric anti-CD20 that depletes B cells; synovial B-cell depletion tracks the response","Tocilizumab binds soluble and membrane IL-6 receptors"],
+ labs:["Screen for TB and hepatitis before biologics"],
+ buzz:["Methotrexate first; biologics when it is not enough"],
+ src:["Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout"],
+ tx:["—"],q:["dmard","dmards","disease modifying antirheumatic","leflunomide","sulfasalazine","hydroxychloroquine","tocilizumab","sarilumab","csdmard","bdmard"]},
+
+suparth:{n:"Suppurative arthritis — who gets which bug",k:"dz",p:"arInf",enz:"S. aureus most often · the setting predicts the rest",inh:"—",fa:"474",hi:1,
+ mech:"Bacteria usually reach the joint by <b>hematogenous spread</b>. <b>S. aureus</b> is the most common cause at all ages in the United States. Neonates: group B streptococcus or spread from epiphyseal osteomyelitis. Sickle cell disease: <b>Salmonella</b>. Terminal complement (C5–C9) deficiency: <b>disseminated gonococcal infection</b>.",
+ find:["Classic picture: a suddenly painful, swollen joint with restricted motion, fever, leukocytosis and high CRP; usually one joint — knee, hip, shoulder, elbow, wrist or sternoclavicular","<b>Axial joints</b> (eg, sternoclavicular) are most often involved in people who inject drugs","Gram-negative septic arthritis mainly affects older adults, the immunosuppressed and people who inject drugs (UpToDate)","Predisposed: immunodeficiency, debilitating illness, joint trauma, chronic arthritis, IV drug use","Cartilage regenerates poorly, so destruction can leave permanent deformity"],
+ labs:["Joint aspiration: purulent fluid with the organism"],
+ buzz:["Hot single joint → tap it"],
+ src:["Robbins ch 26 — Bones, joints, and soft tissue tumors","OCOM Rheum — SDL 38 reading: UpToDate, Septic arthritis of native joints in adults"],
+ tx:["Drainage plus antibiotics"],q:["suppurative arthritis","pyogenic arthritis","bacterial arthritis","axial joint involvement","=the sternoclavicular joint"]},
+
+synfluid:{n:"Septic arthritis — tapping the joint & first antibiotics",k:"reg",p:"arInf",enz:"Gram stain, culture, count, crystals — before antibiotics",inh:"—",fa:"474",hi:1,
+ mech:"Before antibiotics, synovial fluid goes for <b>Gram stain, culture, white cell count with differential and crystals</b>, with two sets of blood cultures and radiographs. A positive Gram stain or culture — or a positive blood culture with compatible fluid — makes the diagnosis; if both are negative, <b>purulent fluid (over 20,000 cells/µL, mostly neutrophils)</b> makes it presumptive.",
+ find:["Usually monomicrobial; S. aureus (including MRSA) is the most common cause in adults; streptococci also matter","About 20% are oligo- or polyarticular; the knee is involved in more than half; older patients may be afebrile","Treatment: joint drainage (needle, arthroscopy or arthrotomy) plus antibiotics — vancomycin for gram-positive cocci; a third-generation cephalosporin for gram-negative bacilli without Pseudomonas risk; antipseudomonal coverage for the immunosuppressed and people who inject drugs","Mortality 5–18% at one year"],
+ labs:["Synovial fluid WBC > 20,000/µL, neutrophil-predominant"],
+ buzz:["Tap before treating"],
+ src:["OCOM Rheum — SDL 38 reading: UpToDate, Septic arthritis of native joints in adults"],
+ tx:["Drain + vancomycin (gram-positive cocci)"],q:["synovial fluid analysis","synovial fluid white blood cell","joint aspiration"]},
+
+lymearth:{n:"Lyme arthritis — late and large-joint",k:"dz",p:"arInf",enz:"Knee effusions in recurring attacks",inh:"—",fa:"144",hi:1,
+ mech:"Lyme arthritis is a <b>late</b> manifestation, beginning weeks to months after infection; about 30% of US patients present this way, often without a remembered rash. It is intermittent or persistent arthritis of a few <b>large joints, especially the knee</b> — then shoulder, ankle, elbow, TMJ and wrist; small joints of the hands and feet are very unusual.",
+ find:["Attacks begin abruptly and last weeks to months; large effusions often recur after aspiration; popliteal cysts may form","Not very painful unless tense; little lasting dysfunction after it resolves","Early disease brings migratory arthralgias, not frank arthritis","<b>Postinfectious (antibiotic-refractory) Lyme arthritis</b>: persists after oral and IV antibiotics; managed with DMARDs (hydroxychloroquine, methotrexate, TNF inhibitor) and/or synovectomy"],
+ labs:["All patients have positive IgG serology; synovial fluid WBC usually 10,000–25,000/µL; PCR adds to — never replaces — serology"],
+ buzz:["Big swollen knee in an outdoorsy patient → Lyme serology"],
+ src:["OCOM Rheum — SDL 38 reading: UpToDate, Musculoskeletal manifestations of Lyme disease","Robbins ch 26 — Bones, joints, and soft tissue tumors"],
+ tx:["Antibiotics"],q:["lyme arthritis","postinfectious lyme arthritis","antibiotic refractory lyme arthritis","=monoarthritis of the knee is the most common presentation"]},
+
+otherarth:{n:"Mycobacterial & viral arthritis",k:"dz",p:"arInf",enz:"TB: slow, granulomatous · viruses: acute or reactive",inh:"—",fa:"474",hi:1,
+ mech:"<b>Mycobacterial arthritis</b> is a chronic progressive arthritis of adults, from adjacent osteomyelitis or hematogenous spread from (usually pulmonary) infection. Onset is insidious; caseating granulomas form, synovium grows as a pannus and erodes the joint margins, ending in fibrous ankylosis. Weight-bearing joints are favored — hips, knees, ankles in that order.",
+ find:["<b>Viral arthritis</b>: most often alphavirus, parvovirus B19, rubella, EBV and hepatitis B and C; acute to subacute; from direct joint infection (rubella, some alphaviruses) or an infection-triggered autoimmune reaction"],
+ labs:["—"],
+ buzz:["TB joint = slow, hip first"],
+ src:["Robbins ch 26 — Bones, joints, and soft tissue tumors"],
+ tx:["—"],q:["mycobacterial arthritis","tuberculous arthritis","viral arthritis","parvovirus arthritis"]},
+
+mtss:{n:"Medial tibial stress syndrome — shin splints",k:"dz",p:"ftLeg",enz:"Diffuse posteromedial tibial pain in runners",inh:"—",fa:"465",hi:1,
+ mech:"Repetitive activity overloads the <b>posterior compartment muscles</b> — tibialis posterior, soleus, flexor digitorum longus — causing a <b>traction periostitis</b> at their origins on the <b>posteromedial tibia</b>, then bone remodeling, a weak cortex, cortical thickening and, without rest, fracture.",
+ find:["Classic: a runner with <b>diffuse</b> pain along the distal posteromedial tibia at the junction of the middle and distal thirds; pain eases with warm-up, recurs after exercise and is present the next morning; follows a sudden increase in training or new shoes or terrain","Tenderness along the posteromedial border, NOT localized; neurovascular exam normal","<b>Overpronation</b> is the one confirmed risk factor; females are three times more likely than males","X-ray, bone scan and MRI are often negative; scan shows patchy, diffuse uptake","Affects 13.6–20% of runners and 35% of military recruits"],
+ labs:["Imaging often negative"],
+ buzz:["Diffuse = shin splints · focal = stress fracture"],
+ src:["OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury"],
+ tx:["Rest, ice, NSAIDs; correct foot alignment, shoes and gait; cross-train; rarely release of the superficial posterior compartment"],q:["medial tibial stress syndrome","shin splints","mtss","traction periostitis","overpronation","=posteromedial tibial periosteum"]},
+
+gastroc:{n:"Gastrocnemius strain — tennis leg",k:"dz",p:"ftLeg",enz:"Lunge forward with the ankle dorsiflexed",inh:"—",hi:1,
+ mech:"Injury comes from <b>sudden acceleration from a standstill with the ankle dorsiflexed</b> — lunging forward — an eccentric overstretch, probably as the muscle shifts from eccentric to isometric contraction. It typically involves the <b>medial belly</b> of the gastrocnemius or its musculotendinous junction.",
+ find:["Acute tearing sensation (or gradual onset); tenderness at the site; dorsiflexion reproduces the pain; rope-like bands; a palpable defect in grade III","Grades: I — pain on calf raise or hop, back in 10–12 days · II — cannot continue, loss of dorsiflexion, 16–21 days · III — immediate severe pain, positive Thompson test, palpable defect, 6 months after surgery","X-rays unnecessary; ultrasound or MRI help grade beyond grade I"],
+ labs:["—"],
+ buzz:["Tennis leg = medial gastrocnemius"],
+ src:["OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury"],
+ tx:["Ice, heel lift, crutches if needed; strengthening within 24 hours — concentric, then weighted, then eccentric calf lowering"],q:["gastrocnemius strain","tennis leg","medial gastrocnemius","=sudden acceleration from a stationary position with the ankle in dorsiflexion","=begin concentric calf strengthening exercises"]},
+
+anklesprain:{n:"Ankle sprains — types, grades & management",k:"dz",p:"ftAnkle",enz:"Lateral 70–90% · inversion of the plantarflexed foot",inh:"—",fa:"458",hi:1,
+ mech:"<b>Lateral</b> sprains (ATFL, then calcaneofibular and posterior talofibular ligaments) are 70–90% of sprains, from <b>inversion with the foot plantarflexed</b>; the ATFL tears in about 70%. <b>Medial</b> (deltoid) sprains come from eversion and dorsiflexion and are often multiligamentous with medial malleolar avulsion. <b>Syndesmotic</b> (“high”) sprains come from dorsiflexion plus external rotation.",
+ find:["Tests: lateral — anterior drawer, talar tilt · medial/syndesmotic — external rotation test, squeeze test","Grades: 1 stretch/microtears, walks with little pain · 2 incomplete tear, bears weight with pain, moderate swelling and mild instability · 3 complete tear, cannot bear weight, large swelling within 1–2 hours, positive stress test","Ottawa rules: X-ray for posterior lateral or medial malleolar tenderness or inability to bear weight for 4 steps; foot films for navicular or 5th metatarsal pain","Over 90% heal without surgery in 6–12 weeks; a stirrup brace allows flexion-extension but blocks inversion-eversion (reading)","Pain beyond 3 months: suspect a chondral or osteochondral defect (MRI) or persistent laxity (stress X-ray)"],
+ labs:["—"],
+ buzz:["ATFL first"],
+ src:["OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury","OCOM Ortho — SDL 7 reading: Practical Office Orthopedics ch 5, The foot and ankle"],
+ tx:["PRICE; grade 1 early rehab, grade 2–3 brief immobilization; medial or syndesmotic — immobilize, non–weight bearing, ortho referral"],q:["ankle sprain grading","grade 3 ankle sprain","syndesmotic sprain","squeeze test","anterior drawer test","talar tilt","stirrup brace"]},
+
+pttd:{n:"Posterior tibial tendon dysfunction — adult-acquired flatfoot",k:"dz",p:"ftAnkle",enz:"Too many toes · cannot do a single heel raise",inh:"—",hi:1,
+ mech:"A progressive degenerative disease of the <b>tibialis posterior tendon</b>, which runs behind the medial malleolus into the medial arch and stabilizes the hindfoot. The tendon thickens and can no longer glide, the arch collapses and the heel tilts laterally — the commonest cause of medial arch pain and acquired flatfoot in adults (over 50 with atraumatic medial arch pain → most likely diagnosis).",
+ find:["Exam from behind: lateral heel tilt and external foot rotation — the <b>“too many toes” sign</b>; the patient cannot rise onto the ball of the foot on one leg","Grade 1: pain and swelling, single heel raise still possible, no deformity · Grade 2: cannot do a single-leg heel raise, pes planus and forefoot abduction · Grade 3: grade 2 plus a fixed subtalar joint","Early on the collapsed arch is still flexible and an arch support restores it; untreated it becomes rigid and needs surgery","Increasing risk after 40; usually unilateral"],
+ labs:["Clinical diagnosis"],
+ buzz:["Adult flatfoot = tibialis posterior"],
+ src:["OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury","OCOM Ortho — SDL 7 reading: Practical Office Orthopedics ch 5, The foot and ankle"],
+ tx:["Grades 1–2: activity modification, analgesics, arch support or UCBL brace, PT with resisted inversion · grade 3: foot and ankle surgeon"],q:["posterior tibial tendon dysfunction","pttd","too many toes sign","adult acquired flatfoot","single heel raise","single leg heel raise","=activity modification medial arch support orthotics"]},
+
+achtend:{n:"Achilles tendinopathy — treatment & cautions",k:"dz",p:"ftAnkle",enz:"Stretch and load it · never inject it",inh:"—",hi:1,
+ mech:"Achilles tendinopathy (tendinitis, paratendinitis, tendinosis, enthesopathy) can be acute or chronic and insertional or midportion, usually after an increase in activity. It affects 24% of competitive athletes and 6–17% of recreational runners.",
+ find:["Risk factors: prior tendinopathy, poor running mechanics (excess supination, inadequate dorsiflexion), worn footwear, weak plantarflexors, leg-length discrepancy, older age, male sex, overweight","Reading: like plantar fasciitis — worst with the first steps of the day; calf stretches, night splints, NSAIDs, occasionally casting","<b>Cortisone injection is not recommended</b> in or around the Achilles — it predisposes to rupture","A violent “pop” in the calf or heel suggests rupture; Thompson test (squeeze the calf, no plantarflexion); repair is compromised if delayed beyond a week or two"],
+ labs:["—"],
+ buzz:["No steroid near the Achilles"],
+ src:["OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury","OCOM Ortho — SDL 7 reading: Practical Office Orthopedics ch 5, The foot and ankle"],
+ tx:["Activity modification, gastrosoleus mobilization, PT (eccentric calf training)"],q:["achilles tendinopathy treatment","eccentric calf training","eccentric loading","insertional achilles","=eccentric loading applies mechanical tension"]},
+
+heelpain:{n:"Retrocalcaneal bursitis & Sever disease",k:"dz",p:"ftFoot",enz:"Heel pain behind the calcaneus — adult bursa or child apophysis",inh:"—",hi:1,
+ mech:"The <b>retrocalcaneal bursa</b> lies between the posterior calcaneus and the Achilles tendon, just above its insertion; its inflammation is strongly tied to Achilles tendinosis and calcaneal enthesopathy. It is one of the three commonest bursitis sites, more common in adults, and often confused with plantar fasciitis.",
+ find:["Bursitis: heel pain from overuse; tender, swollen posterior calcaneus, worse with dorsiflexion · treat with cold, analgesics, footwear change, Achilles stretching, steroid injection; surgery rarely","<b>Calcaneal apophysitis (Sever disease)</b>: traction at the growth plate where the Achilles inserts, from running and jumping; boys around 8, girls around 6; two-thirds bilateral; lasts 3–4 years","Sever: insidious, chronic, worse with activity and with shoes lacking heel cushioning · treat with activity reduction, heel cushioning, cold, stretching, NSAIDs, PT; immobilize if recalcitrant"],
+ labs:["—"],
+ buzz:["Child’s heel pain after running = Sever"],
+ src:["OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury"],
+ tx:["Conservative"],q:["retrocalcaneal bursa","retrocalcaneal bursitis","sever disease","calcaneal apophysitis","=the retrocalcaneal bursa is positioned"]},
+
+plantarfasc:{n:"Plantar fasciitis",k:"dz",p:"ftFoot",enz:"First-step heel pain in the morning",inh:"—",fa:"465",hi:1,
+ mech:"The plantar fascia runs from the plantar calcaneus to the metatarsal heads like a bowstring, holding up the arch. Inflamed at its <b>calcaneal attachment</b>, it causes heel pain that is worst on the <b>first steps in the morning</b> — overnight the foot drifts into plantarflexion, the fascia shortens, and the first step stretches it abruptly. Usually over 40, men more than women.",
+ find:["Tender at the plantar fascia’s calcaneal attachment; the fascia may feel tight","A plantar heel spur on X-ray is a result of chronic ischemic inflammation, not the cause","Treatment: NSAIDs plus plantar fascia and Achilles stretches, heel pads, night splints, a walking cast in extreme cases; steroid injection works but is very painful and can atrophy the plantar fat pad; surgery divides the fascia (complete release relieves more pain but may flatten the arch)"],
+ labs:["X-ray may show a heel spur — not the cause"],
+ buzz:["Morning first-step heel pain"],
+ src:["OCOM Ortho — SDL 7 reading: Practical Office Orthopedics ch 5, The foot and ankle"],
+ tx:["Stretching, NSAIDs, heel pads, night splints"],q:["plantar fasciitis","plantar fascia","heel spur","plantar heel spur"]},
+
+morton:{n:"Morton neuroma",k:"dz",p:"ftFoot",enz:"A pebble in the shoe at the third web space",inh:"—",hi:1,
+ mech:"Movement between adjacent metatarsal heads irritates the common digital nerve as it passes between them. It is most common in the <b>third web space</b> (between the 3rd and 4th toes): metatarsals 4 and 5 share the cuboid and move together, so the most motion is between the 3rd and 4th heads.",
+ find:["Pain that “feels like a pebble” under the foot, radiating to the toes, worse in high heels or narrow toe boxes; numbness or tingling","Metatarsal shift test reproduces the pain; large neuromas splay the toes","X-rays show little; MRI may show inflammation","Treatment: wide, low-heeled shoes, a metatarsal pad, steroid injection; surgery resects it — leaving numbness but no motor loss (purely sensory nerve)"],
+ labs:["—"],
+ buzz:["Third web space, high heels"],
+ src:["OCOM Ortho — SDL 7 reading: Practical Office Orthopedics ch 5, The foot and ankle"],
+ tx:["Shoe change, metatarsal pad, injection, resection"],q:["morton neuroma","mortons neuroma","interdigital neuroma","metatarsal shift test","third web space"]},
+
+bunions:{n:"Bunions, hammertoes & corns",k:"dz",p:"ftFoot",enz:"Bony prominences against the shoe",inh:"—",hi:1,
+ mech:"A <b>bunion</b> forms when the proximal phalanx of the big toe deviates laterally and the first metatarsal medially, leaving a medial prominence at the MTP joint. A <b>hammertoe</b> combines MTP extension with flexion at one or more interphalangeal joints. <b>Corns and calluses</b> are the skin’s response to rubbing against the shoe and can ulcerate.",
+ find:["Common, often asymptomatic, more frequent with age; treat only for pain or threatened skin breakdown","Pads and orthopedic shoes with a wide toe box usually suffice; osteotomy with fixation if they fail"],
+ labs:["—"],
+ buzz:["Big toe out, first metatarsal in"],
+ src:["OCOM Ortho — SDL 7 reading: Practical Office Orthopedics ch 5, The foot and ankle"],
+ tx:["Padding, wide shoes; surgery if needed"],q:["bunion","bunions","hallux valgus","hammertoe","hammertoes","corns and calluses"]},
+
+legnerves:{n:"Leg nerve entrapments — peroneal & saphenous",k:"dz",p:"ftNerve",enz:"Think of them when compartment pressures are normal",inh:"—",fa:"457",hi:1,
+ mech:"Consider a nerve injury when the picture suggests exertional compartment syndrome but pressures are normal. The usual culprits are the common peroneal, superficial peroneal and saphenous nerves; trauma can injure all three.",
+ find:["<b>Common peroneal</b>: at the fibular head and lateral compartment, from repetitive inversion/eversion (running, cycling), braces and casts — burning, shooting pain to the dorsum of the foot and toe webs, ± foot drop","<b>Superficial peroneal</b>: entrapped where it exits the <b>crural fascia proximal to the lateral malleolus</b> — bodybuilding, horse racing, running, soccer, tennis; burning superficial pain and reduced sensation at the sinus tarsi and dorsolateral foot; tender to percussion, ± fascial defect","<b>Saphenous</b>: at the medial knee fascia — pain and numbness of the medial knee and calf, no motor deficit","Workup: nerve conduction and EMG"],
+ labs:["NCS/EMG"],
+ buzz:["Normal compartment pressures → think nerve"],
+ src:["OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury"],
+ tx:["Gait analysis, neuromodulators, TENS, PT, anti-inflammatories; steroid injection, hydrodissection or surgical release"],q:["superficial peroneal nerve","superficial fibular nerve","saphenous nerve entrapment","nerve entrapment","=at the crural fascia proximal to the lateral malleolus"]},
+
+anxrx:{n:"Treating anxiety disorders — SSRIs first",k:"drug",p:"axRx",enz:"Start low, go slow, wait 8–12 weeks",inh:"—",fa:"580",hi:1,
+ mech:"<b>SSRIs are first-line</b> for most anxiety disorders (SNRIs too for GAD, panic disorder and social anxiety disorder). Start low and go slow; higher routine doses are not recommended, though a subgroup benefits. A short course of benzodiazepine alongside may help at the start.",
+ find:["<b>8–12 weeks</b> at optimum doses may be needed to judge efficacy","Good evidence for <b>maintenance for at least 6 months</b>; in panic disorder benefit may last 1–3 years, and maintenance should be stopped very slowly","Benzodiazepines are most useful for rapid control of severe symptoms — short term (lorazepam, alprazolam) while an SSRI is started and slowly raised","Second line: TCAs, MAOIs, mirtazapine, agomelatine, buspirone, pregabalin, quetiapine (varies by disorder)","β-Blockers only for performance anxiety; hydroxyzine is an alternative to benzodiazepines for acute treatment with some evidence in GAD"],
+ labs:["—"],
+ buzz:["SSRI now, benzo bridge, judge at 8–12 weeks, keep 6 months"],
+ src:["Kaplan & Sadock ch 8 — Anxiety Disorders"],
+ tx:["—"],q:["anxiety disorder treatment","treatment of anxiety disorders","pharmacotherapy of anxiety","=8 to 12 week window","=maintenance treatment lasting at least 6 months","performance anxiety","=continue treatment with periodic monitoring and a gradual taper"]},
+
+panictx:{n:"Panic disorder & agoraphobia — treatment",k:"drug",p:"axRx",enz:"SSRI or venlafaxine · CBT corrects the catastrophic misreading",inh:"—",fa:"580",hi:1,
+ mech:"For panic disorder, <b>SSRIs or the SNRI venlafaxine</b> are first-line; TCAs and MAOIs work but are less preferred; mirtazapine is second line. Benzodiazepines are effective but mainly for short-term use or exacerbations. Long-term antidepressant therapy prevents relapse.",
+ find:["Cognitive therapy targets the patient’s false belief that mild bodily sensations mean impending panic, doom or death, and teaches that attacks are time-limited and not life-threatening","For agoraphobia the goal of medication is the comorbid panic attacks; behavior therapy gives the most rapid and complete reduction of agoraphobia","Caffeine or nicotine can worsen panic symptoms","Rule out medical mimics: hypo- and hyperthyroidism, hyperparathyroidism, pheochromocytoma, insulinoma hypoglycemia, seizures, vestibular disease, arrhythmias, COPD and asthma, drugs"],
+ labs:["—"],
+ buzz:["Panic: SSRI + CBT; benzo only short term"],
+ src:["Kaplan & Sadock ch 8 — Anxiety Disorders"],
+ tx:["—"],q:["panic disorder treatment","treatment of panic disorder","agoraphobia treatment","panic attacks mimic"]},
+
+gadsadtx:{n:"GAD, social anxiety & specific phobia — treatment",k:"drug",p:"axRx",enz:"GAD: SSRI/SNRI · social: SSRI/SNRI or CBT · phobia: exposure",inh:"—",fa:"580, 581",hi:1,
+ mech:"<b>GAD</b>: SSRIs and SNRIs first; alternatives agomelatine, pregabalin, buspirone and quetiapine. <b>Social anxiety disorder</b>: SSRIs and SNRIs first; pregabalin and clonazepam also have strong evidence; phenelzine works but is rarely used; TCAs, buspirone and quetiapine are not recommended. <b>Specific phobia</b>: behavioral therapy is first-line — in vivo exposure is the treatment of choice.",
+ find:["CBT has substantial effects in GAD, panic disorder and social anxiety disorder; some guidelines make individual CBT first-line for social anxiety; group CBT also helps","Interpersonal skills training for social anxiety disorder","β-Blockers may help performance anxiety but not other social anxiety"],
+ labs:["—"],
+ buzz:["Phobia → exposure, not pills"],
+ src:["Kaplan & Sadock ch 8 — Anxiety Disorders"],
+ tx:["—"],q:["generalized anxiety disorder treatment","social anxiety disorder treatment","specific phobia treatment","=in vivo exposure","pregabalin","clonazepam"]},
+
+behavtx:{n:"Behavioral therapies for anxiety — exposure & desensitization",k:"reg",p:"axRx",enz:"Change without insight",inh:"—",hi:1,
+ mech:"Behavior therapy assumes change can happen without insight into causes. Techniques include positive and negative reinforcement, <b>systematic desensitization</b>, flooding, implosion, <b>graded exposure</b>, response prevention, thought stopping, relaxation, panic control therapy, self-monitoring and hypnosis.",
+ find:["For specific phobia: gradually increasing exposure to the feared stimulus (eg, climbing higher floors) while practicing relaxation until each step is mastered","Virtual reality exposure suits situations hard to reproduce in the office, such as flying","Supportive psychotherapy is a common adjunct to medication, though lacking empirical support; insight-oriented therapy may help but studies are weak"],
+ labs:["—"],
+ buzz:["Graded exposure + relaxation"],
+ src:["Kaplan & Sadock ch 8 — Anxiety Disorders"],
+ tx:["—"],q:["systematic desensitization","graded exposure","exposure therapy","flooding","implosion","virtual reality exposure","behavior therapy"]},
+
+/* ── link-sweep gap card: reactive attachment / disinhibited social engagement (m35) ─── */
+rad:{n:"Reactive attachment & disinhibited social engagement disorders",k:"dz",p:"devdz",enz:"Grossly pathologic care → withdrawn or indiscriminately friendly",inh:"—",hi:1,
+ mech:"Both disorders are aberrant social behaviors in a young child that reflect grossly negligent parenting and maltreatment disrupting normal attachment; the diagnosis presumes caregiving deprivation is the cause. <b>Reactive attachment disorder</b>: a consistent pattern of emotionally withdrawn responses toward caregivers, limited positive affect, sadness and minimal social responsiveness. <b>Disinhibited social engagement disorder</b>: the child actively approaches unfamiliar adults in an overly familiar way, checks back with caregivers less and goes off with strangers without hesitation.",
+ find:["The child must have a developmental age of at least 9 months; reactive attachment disorder is not due to autism spectrum disorder","Care that ignores emotional or physical needs, or repeated changes of caregiver (frequent foster placements)","Can present as failure to thrive — malnourished, behind on motor and verbal milestones","Attachment patterns (Ainsworth’s strange situation): secure, insecure or disorganized"],
+ labs:["—"],
+ buzz:["Neglect → withdrawn (RAD) or too friendly with strangers (DSED)"],
+ src:["Kaplan & Sadock ch 2 — Neurodevelopmental Disorders and Other Childhood Disorders"],
+ tx:["Check nutrition and ongoing abuse first — hospitalize a malnourished child; the strategy depends on the child’s state and how pathologic the caregiving is; involve child protective services"],q:["reactive attachment disorder","disinhibited social engagement disorder","strange situation","=a developmental age of 9 months"]},
 
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
@@ -25668,7 +26081,7 @@ MAPS.sleepdev = {
   {id:"dvC",l:"Learning, anxiety and safety",x:420,y:1200,p:"devdz",s:"school-age presentations"},
   {id:"dv17",l:"Separation anxiety · selective mutism",x:1020,y:1160,p:"devdz",s:"school refusal · silent at school only",m:["separation"]},
   {id:"dv18",l:"Enuresis · encopresis",x:1020,y:1240,p:"devdz",s:"alarm · desmopressin · treat constipation",m:["enuresis"]},
-  {id:"dv19",l:"Child abuse and neglect",x:1020,y:1320,p:"devdz",s:"report every suspicion · retinal hemorrhages",m:["childabuse", "factitious"]},
+  {id:"dv19",l:"Child abuse and neglect",x:1020,y:1320,p:"devdz",s:"report every suspicion · retinal hemorrhages",m:["childabuse", "factitious","rad"]},
   {id:"bh1",l:"Immature defenses",x:1020,y:1510,p:"devbeh",s:"denial · projection · displacement · splitting",m:["egodefenses"]},
   {id:"bh2",l:"Mature defenses — SASH",x:1620,y:1510,p:"devbeh",s:"sublimation · altruism · suppression · humor",m:["egodefenses"]},
   {id:"bh3",l:"Transference",x:2220,y:1510,p:"devbeh",s:"the patient's feelings land on the physician",m:["egodefenses"]},
@@ -30847,7 +31260,7 @@ MAPS.sportsortho = {
 
 MAPS.gasx = {
  t:"Gas Exchange & Pulmonary Blood Flow", sub:"Partial pressures set every gradient · gases cross a thin, vast membrane · the lung’s low-pressure circulation and its zones · how the lung stays dry · and where O₂ and CO₂ go in the tissues",
- w:3300, h:2154,
+ w:3300, h:2814,
  fa:"300, 316, 684–688",
  src:["Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid","Guyton ch 40 — Principles of Gas Exchange; Diffusion of Oxygen and Carbon Dioxide Through Respiratory Membranes","Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids","Costanzo ch 5 — Respiratory physiology"],
  comps:[
@@ -30910,7 +31323,8 @@ MAPS.gasx = {
   {id:"t7",l:"Response to exercise",x:1020,y:1130,p:"gxtis",s:"more O₂ extracted and delivered",m:["exercisephys"]},
   {id:"tx1",l:"→ Acid-Base & Electrolytes",x:1620,y:1130,p:"neutral",k:"ghost",go:"acidbase"}],
  plots:[
-  {x:140,y:1494,w:2400,h:600,kind:"co2dc",t:"CO₂ dissociation curve and the Haldane effect"}],
+  {x:140,y:1494,w:2400,h:600,kind:"co2dc",t:"CO₂ dissociation curve and the Haldane effect"},
+  {x:140,y:2154,w:2400,h:600,kind:"difflim",t:"Diffusion- vs perfusion-limited gas transfer"}],
  edges:[
   {a:"g1",b:"g2",p:"gxlaw"},
   {a:"m1",b:"m2",p:"gxmem"},
@@ -33161,9 +33575,9 @@ MAPS.neckpain = {
 
 MAPS.ionchan = {
  t:"Resting Potential, Ion Channels & Graded Potentials", sub:"How cells keep their volume and why the resting potential is negative · the channel families — K2P, CNG, HCN, Piezo, TRP, ASIC, ENaC and aquaporins · graded vs action potentials, sodium-channel blockers and toxins, and why demyelination blocks conduction",
- w:3300, h:1532,
+ w:3300, h:2192,
  fa:"504",
- src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function"],
+ src:["Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function","Costanzo ch 1 — Cellular physiology"],
  comps:[
   {x:140,y:110,w:3020,h:120,l:"At rest"},
   {x:140,y:290,w:3020,h:120,l:"Channel families"},
@@ -33197,7 +33611,8 @@ MAPS.ionchan = {
   {id:"s4",l:"Conduction velocity",x:2220,y:530,p:"icSignal",s:"diameter · myelin",m:["conduction","fibertypes"]},
   {id:"s5",l:"Demyelination",x:2820,y:530,p:"icSignal",k:"hub",s:"conduction block",m:["demyelin","ms"]}],
  plots:[
-  {x:140,y:872,w:2400,h:600,kind:"gradap",t:"Graded vs action potentials over distance"}],
+  {x:140,y:872,w:2400,h:600,kind:"gradap",t:"Graded vs action potentials over distance"},
+  {x:140,y:1532,w:2400,h:600,kind:"kpot",t:"Extracellular K⁺ and the membrane potential"}],
  edges:[
   {a:"r1",b:"r2",p:"icRest"},
   {a:"r3",b:"r4",p:"icRest"},
@@ -34182,7 +34597,360 @@ MAPS.tissues = {
   {a:"x6",b:"x7",p:"tsTissue"}]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["index","Index"]];
+MAPS.cortex = {
+ t:"Cerebral Cortex & Lobes", sub:"The six lobes and the sulci that bound them · six-layered neocortex, granular vs agranular · primary, association and language areas on the Brodmann map · association, commissural and projection fibers · dominance, aphasia, agnosia, apraxia, neglect and the prefrontal cortex",
+ w:3300, h:974,
+ fa:"524, 526, 529",
+ src:["Fundamental Neuroscience ch 16 — The Telencephalon", "Fundamental Neuroscience ch 32 — The Cerebral Cortex", "Guyton ch 58 — Cerebral Cortex, Intellectual Functions of the Brain, Learning, and Memory"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Lobes and white matter"},
+  {x:140,y:290,w:3020,h:120,l:"Layers and functional areas"},
+  {x:140,y:470,w:3020,h:200,l:"Lesion syndromes"}],
+ panels:[
+  {x:140,y:730,w:1480,h:182,kw:136,t:"Primary areas (Fundamental Neuroscience ch 32)",rows:[
+   ["Somatosensory","areas 3, 1, 2 · postcentral gyrus · VPL/VPM input"],
+   ["Motor","area 4 · precentral gyrus"],
+   ["Visual","area 17 · calcarine sulcus · lateral geniculate input"],
+   ["Auditory","area 41 · transverse temporal gyri · medial geniculate input"],
+   ["Broca","areas 44, 45 · left inferior frontal gyrus"],
+   ["Wernicke","area 22 with 39, 40 · posterior superior temporal"]]},
+  {x:1680,y:730,w:1480,h:116,kw:120,t:"White matter (Fundamental Neuroscience ch 16)",rows:[
+   ["Association","within a hemisphere · arcuate, uncinate, longitudinal fasciculi"],
+   ["Commissural","corpus callosum · anterior and hippocampal commissures"],
+   ["Projection","internal capsule · corticofugal and corticopetal"]]}],
+ nodes:[
+  {id:"l1",l:"Six lobes",x:420,y:170,p:"ctLobe",k:"hub",s:"each bounded by a named sulcus",m:["ctxlobes"]},
+  {id:"l2",l:"Insula",x:1020,y:170,p:"ctLobe",s:"circular sulcus",m:["ctxlobes"]},
+  {id:"l3",l:"Calcarine sulcus",x:1620,y:170,p:"ctLobe",s:"cuneus above, lingual below",m:["ctxlobes","viscortex"]},
+  {id:"l4",l:"Limbic lobe",x:2220,y:170,p:"ctLobe",s:"medial rim",m:["limbiclobe"]},
+  {id:"l5",l:"White matter",x:2820,y:170,p:"ctLobe",s:"association · commissural · projection",m:["ctxwhite"]},
+  {id:"a1",l:"Six layers",x:420,y:350,p:"ctArea",k:"hub",s:"IV input · V output",m:["ctxlayers"]},
+  {id:"a2",l:"Brodmann map",x:1020,y:350,p:"ctArea",s:"3-1-2 · 4 · 17 · 41 · 44/45",m:["ctxareas"]},
+  {id:"a3",l:"Motor areas",x:1620,y:350,p:"ctArea",s:"area 4 · area 6",m:["motorcortex"]},
+  {id:"a4",l:"Visual streams",x:2220,y:350,p:"ctArea",s:"where vs what",m:["visstreams"]},
+  {id:"a5",l:"Association cortex",x:2820,y:350,p:"ctArea",s:"unimodal · multimodal",m:["ctxareas"]},
+  {id:"s1",l:"Dominance",x:420,y:530,p:"ctSyn",k:"hub",s:"left in ~95%",m:["ctxdominance"]},
+  {id:"s2",l:"Aphasias",x:1020,y:530,p:"ctSyn",s:"Broca · Wernicke · conduction",m:["aphasia"]},
+  {id:"s3",l:"Agnosias",x:1620,y:530,p:"ctSyn",s:"prosopagnosia",m:["agnosia"]},
+  {id:"s4",l:"Apraxia",x:2220,y:530,p:"ctSyn",s:"knows the tool, cannot use it",m:["apraxia"]},
+  {id:"s5",l:"Neglect & Gerstmann",x:2820,y:530,p:"ctSyn",s:"parietal lesions",m:["cortexlesions"]},
+  {id:"s6",l:"Prefrontal cortex",x:420,y:610,p:"ctSyn",k:"hub",s:"judgment · Phineas Gage",m:["prefrontal"]},
+  {id:"s7",l:"Frontotemporal dementia",x:1020,y:610,p:"ctSyn",s:"personality first",m:["ftd"]}],
+ edges:[
+  {a:"l1",b:"l2",p:"ctLobe"},
+  {a:"l2",b:"l3",p:"ctLobe"},
+  {a:"a1",b:"a2",p:"ctArea"},
+  {a:"a2",b:"a3",p:"ctArea"},
+  {a:"s1",b:"s2",p:"ctSyn"},
+  {a:"s2",b:"s3",p:"ctSyn"},
+  {a:"s6",b:"s7",p:"ctSyn"}]
+};
+
+MAPS.adrenal = {
+ t:"Adrenal Gland — Cortex to Medulla", sub:"The three cortical zones and their signals · aldosterone — what drives it and how it acts on the principal cell · cortisol and the 11β-HSD2 shield · adrenal androgens · the medulla: catecholamine synthesis, circulating epinephrine, epinephrine vs norepinephrine · Conn, Cushing, Addison, CAH and pheochromocytoma",
+ w:3300, h:1630,
+ fa:"331, 339, 355",
+ src:["Guyton ch 78 — Adrenocortical Hormones", "Guyton ch 61 — The Autonomic Nervous System and the Adrenal Medulla", "Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs", "Costanzo ch 2 — Autonomic nervous system","Guyton ch 30 — Renal Regulation of Potassium, Calcium, Phosphate, and Magnesium; Integration of Renal Mechanisms for Control of Blood Volume and Extracellular Fluid Volume"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Adrenal cortex"},
+  {x:140,y:370,w:3020,h:120,l:"Disorders"},
+  {x:140,y:550,w:3020,h:120,l:"Adrenal medulla"}],
+ panels:[
+  {x:140,y:730,w:1480,h:138,kw:120,t:"Zone → product → driver (Guyton; First Aid)",rows:[
+   ["Glomerulosa","aldosterone · K⁺, angiotensin II"],
+   ["Fasciculata","cortisol · ACTH"],
+   ["Reticularis","DHEA, androstenedione · ACTH"],
+   ["Medulla","epinephrine 80%, norepinephrine 20% · sympathetic nerves"]]},
+  {x:1680,y:730,w:1480,h:138,kw:162,t:"Aldosterone control (Guyton ch 78)",rows:[
+   ["K⁺ ↑","strong stimulus"],
+   ["Angiotensin II ↑","strong stimulus"],
+   ["ACTH","permissive"],
+   ["Na⁺ ↑, ANP","decrease it"]]}],
+ nodes:[
+  {id:"c1",l:"Three zones",x:420,y:170,p:"adCortex",k:"hub",s:"salt · sugar · sex",m:["zonereg"]},
+  {id:"c2",l:"Aldosterone control",x:1020,y:170,p:"adCortex",s:"K⁺ and angiotensin II",m:["aldoctrl"]},
+  {id:"c3",l:"Aldosterone action",x:1620,y:170,p:"adCortex",s:"MR → ENaC, pump, ROMK",m:["aldoaction"]},
+  {id:"c4",l:"11β-HSD2 shield",x:2220,y:170,p:"adCortex",s:"licorice breaks it",m:["ame"]},
+  {id:"c5",l:"Aldosterone escape",x:2820,y:170,p:"adCortex",s:"pressure natriuresis",m:["aldoescape"]},
+  {id:"c6",l:"Cortisol actions",x:420,y:250,p:"adCortex",k:"hub",s:"A BIG FIB",m:["cortisolact"]},
+  {id:"c7",l:"Adrenal androgens",x:1020,y:250,p:"adCortex",s:"DHEA",m:["adrandro"]},
+  {id:"c8",l:"21-Hydroxylase deficiency",x:1620,y:250,p:"adCortex",s:"salt wasting · virilization",m:["cah21"]},
+  {id:"c9",l:"11β-Hydroxylase deficiency",x:2220,y:250,p:"adCortex",s:"DOC → hypertension",m:["cah11"]},
+  {id:"d1",l:"Conn syndrome",x:420,y:430,p:"adDz",k:"hub",s:"renin low, aldosterone high",m:["conn"]},
+  {id:"d2",l:"Cushing syndrome",x:1020,y:430,p:"adDz",s:"cortisol excess",m:["cushing"]},
+  {id:"d3",l:"Adrenal insufficiency",x:1620,y:430,p:"adDz",s:"Addison disease",m:["addison"]},
+  {id:"d4",l:"Steroid suppression",x:2220,y:430,p:"adDz",s:"stress dosing",m:["gcsupp"]},
+  {id:"d5",l:"Pheochromocytoma",x:2820,y:430,p:"adDz",s:"episodic hypertension",m:["pheo"]},
+  {id:"m1",l:"Catecholamine synthesis",x:420,y:610,p:"adMed",k:"hub",s:"tyrosine → epinephrine",m:["catsynth"]},
+  {id:"m2",l:"PNMT",x:1020,y:610,p:"adMed",s:"needs cortisol",m:["catsynth"]},
+  {id:"m3",l:"Circulating epinephrine",x:1620,y:610,p:"adMed",s:"80% · 2–4 minutes",m:["adrmed"]},
+  {id:"m4",l:"Epinephrine vs NE",x:2220,y:610,p:"adMed",s:"output vs resistance",m:["epine"]},
+  {id:"m5",l:"Neuroblastoma",x:2820,y:610,p:"adMed",s:"childhood medullary tumor",m:["neuroblastoma"]}],
+ plots:[
+  {x:140,y:930,w:1480,h:640,kind:"aldoesc",t:"Aldosterone excess and absence over days"},
+  {x:1680,y:930,w:1480,h:640,kind:"catbolus",t:"Catecholamine boluses — pressure and heart rate"}],
+ edges:[
+  {a:"c1",b:"c2",p:"adCortex"},
+  {a:"c2",b:"c3",p:"adCortex"},
+  {a:"c3",b:"c4",p:"adCortex"},
+  {a:"c6",b:"c7",p:"adCortex"},
+  {a:"d1",b:"d2",p:"adDz"},
+  {a:"d2",b:"d3",p:"adDz"},
+  {a:"m1",b:"m2",p:"adMed"},
+  {a:"m2",b:"m3",p:"adMed"},
+  {a:"m3",b:"m4",p:"adMed"}]
+};
+
+MAPS.raasrx = {
+ t:"RAAS & Its Drugs", sub:"What releases renin and how angiotensin II is made · ACE inhibitors and bradykinin, ARBs, aliskiren, mineralocorticoid receptor antagonists and sacubitril · the efferent arteriole, GFR and hyperkalemia · cough, angioedema, renal artery stenosis and pregnancy",
+ w:3300, h:772,
+ fa:"605, 627, 628",
+ src:["Katzung ch 11 — Antihypertensive Agents", "Katzung ch 15 — Diuretic Agents", "Katzung ch 17 — Vasoactive Peptides", "OCOM Nephro — SDL 46 reading: ScholarRx, Renin-angiotensin-aldosterone system inhibitors"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"The renin–angiotensin–aldosterone system"},
+  {x:140,y:290,w:3020,h:200,l:"Drugs and their catches"}],
+ panels:[
+  {x:140,y:550,w:1480,h:160,kw:248,t:"Where each drug acts (Katzung ch 11)",rows:[
+   ["Aliskiren","renin → angiotensin I"],
+   ["ACE inhibitors","angiotensin I → II · and bradykinin breakdown"],
+   ["ARBs","AT₁ receptor"],
+   ["Spironolactone, eplerenone","mineralocorticoid receptor"],
+   ["β-Blockers","reduce renin release"]]},
+  {x:1680,y:550,w:1480,h:160,kw:205,t:"Catches (Katzung; course reading)",rows:[
+   ["Dry cough, angioedema","ACE inhibitors (bradykinin)"],
+   ["Hyperkalemia","all — worst with CKD, diabetes, K⁺-sparing drugs"],
+   ["Acute kidney injury","bilateral renal artery stenosis, volume depletion"],
+   ["Pregnancy","contraindicated"],
+   ["Gynecomastia","spironolactone, not eplerenone"]]}],
+ nodes:[
+  {id:"r1",l:"Renin release",x:420,y:170,p:"rxRaas",k:"hub",s:"pressure ↓ · sympathetic · distal Na⁺",m:["reninrel"]},
+  {id:"r2",l:"Angiotensin II",x:1020,y:170,p:"rxRaas",s:"constricts · retains Na⁺",m:["reninrel"]},
+  {id:"r3",l:"Aldosterone",x:1620,y:170,p:"rxRaas",s:"zona glomerulosa",m:["aldoctrl"]},
+  {id:"r4",l:"Efferent arteriole",x:2220,y:170,p:"rxRaas",s:"holds GFR up",m:["raasgfr"]},
+  {id:"r5",l:"ANP & BNP",x:2820,y:170,p:"rxRaas",s:"the opposing arm",m:["natriuretic"]},
+  {id:"d1",l:"ACE inhibitors",x:420,y:350,p:"rxDrug",k:"hub",s:"-pril · bradykinin",m:["acei","raasdrugs"]},
+  {id:"d2",l:"ARBs",x:1020,y:350,p:"rxDrug",s:"-sartan · AT₁",m:["arbs"]},
+  {id:"d3",l:"Aliskiren",x:1620,y:350,p:"rxDrug",s:"renin inhibitor",m:["aliskiren"]},
+  {id:"d4",l:"MR antagonists",x:2220,y:350,p:"rxDrug",s:"spironolactone · eplerenone",m:["mras"]},
+  {id:"d5",l:"Sacubitril-valsartan",x:2820,y:350,p:"rxDrug",s:"neprilysin",m:["natriuretic","arbs"]},
+  {id:"d6",l:"Cough & angioedema",x:420,y:430,p:"rxDrug",k:"hub",s:"bradykinin, substance P",m:["acei","hae"]},
+  {id:"d7",l:"Hyperkalemia",x:1020,y:430,p:"rxDrug",s:"less aldosterone",m:["hyperk"]},
+  {id:"d8",l:"Renal artery stenosis",x:1620,y:430,p:"rxDrug",s:"GFR falls",m:["renovascular","raasgfr"]},
+  {id:"d9",l:"Pregnancy",x:2220,y:430,p:"rxDrug",s:"fetal kidney injury",m:["acei"]}],
+ edges:[
+  {a:"r1",b:"r2",p:"rxRaas"},
+  {a:"r2",b:"r3",p:"rxRaas"},
+  {a:"r3",b:"r4",p:"rxRaas"},
+  {a:"d1",b:"d2",p:"rxDrug"},
+  {a:"d2",b:"d3",p:"rxDrug"},
+  {a:"d6",b:"d7",p:"rxDrug"},
+  {a:"d7",b:"d8",p:"rxDrug"}]
+};
+
+MAPS.fluids = {
+ t:"Body Fluids & Fluid Shifts", sub:"The 60-40-20 compartments and how each is measured · Gibbs-Donnan · plasma osmolarity and tonicity · the six volume disturbances · hyponatremia and hypernatremia, brain swelling and osmotic demyelination · capillary exchange, edema and the safety factors",
+ w:3300, h:1714,
+ fa:"599, 603, 538",
+ src:["Costanzo ch 6 — Renal physiology", "Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Compartments and osmolarity"},
+  {x:140,y:370,w:3020,h:120,l:"Sodium and water"},
+  {x:140,y:550,w:3020,h:120,l:"Capillary exchange and edema"}],
+ panels:[
+  {x:140,y:730,w:1480,h:182,kw:230,t:"Volume disturbances (Costanzo Table 6.2)",rows:[
+   ["Isosmotic expansion","isotonic saline · ECF ↑, ICF —"],
+   ["Isosmotic contraction","diarrhea · ECF ↓, ICF —"],
+   ["Hyperosmotic expansion","high NaCl intake · ECF ↑, ICF ↓"],
+   ["Hyperosmotic contraction","sweating, DI · ECF ↓, ICF ↓"],
+   ["Hyposmotic expansion","SIADH · ECF ↑, ICF ↑"],
+   ["Hyposmotic contraction","adrenal insufficiency · ECF ↓, ICF ↑"]]},
+  {x:1680,y:730,w:1480,h:138,kw:273,t:"Sodium disorders (Guyton Table 25.4)",rows:[
+   ["Hyponatremia — dehydration","diarrhea, diuretics, Addison · ECF ↓, ICF ↑"],
+   ["Hyponatremia — overhydration","SIADH, heart failure, cirrhosis · ECF ↑, ICF ↑"],
+   ["Hypernatremia — dehydration","diabetes insipidus, sweating · ECF ↓, ICF ↓"],
+   ["Hypernatremia — overhydration","Cushing, primary aldosteronism · ECF ↑, ICF ↓"]]}],
+ nodes:[
+  {id:"c1",l:"60-40-20",x:420,y:170,p:"flComp",k:"hub",s:"TBW · ICF · ECF",m:["fluidcomp"]},
+  {id:"c2",l:"Measuring them",x:1020,y:170,p:"flComp",s:"dilution markers",m:["fluidmeasure"]},
+  {id:"c3",l:"Gibbs-Donnan",x:1620,y:170,p:"flComp",s:"protein holds cations in plasma",m:["fluidmeasure"]},
+  {id:"c4",l:"Plasma osmolarity",x:2220,y:170,p:"flComp",s:"2 Na⁺ + glucose/18 + BUN/2.8",m:["plasmaosm"]},
+  {id:"c5",l:"Tonicity",x:2820,y:170,p:"flComp",s:"impermeant solute only",m:["tonicity"]},
+  {id:"c6",l:"Volume shifts",x:420,y:250,p:"flComp",k:"hub",s:"six disturbances",m:["fluidshifts"]},
+  {id:"c7",l:"Cell volume",x:1020,y:250,p:"flComp",s:"impermeant protein",m:["osmobal"]},
+  {id:"c8",l:"Effective arterial volume",x:1620,y:250,p:"flComp",s:"what the kidney senses",m:["eabv"]},
+  {id:"n1",l:"Hyponatremia",x:420,y:430,p:"flNa",k:"hub",s:"Na⁺ lost or water gained",m:["hyponat"]},
+  {id:"n2",l:"SIADH",x:1020,y:430,p:"flNa",s:"water retained",m:["siadh"]},
+  {id:"n3",l:"Osmotic demyelination",x:1620,y:430,p:"flNa",s:"correct slowly",m:["hyponat"]},
+  {id:"n4",l:"Hypernatremia",x:2220,y:430,p:"flNa",s:"water lost or Na⁺ gained",m:["hypernat"]},
+  {id:"n5",l:"Diabetes insipidus",x:2820,y:430,p:"flNa",s:"free water lost",m:["di"]},
+  {id:"e1",l:"Starling forces",x:420,y:610,p:"flEdema",k:"hub",s:"filtration vs absorption",m:["capfluid"]},
+  {id:"e2",l:"Edema safety factors",x:1020,y:610,p:"flEdema",s:"compliance · lymph · washdown",m:["edemasafe"]},
+  {id:"e3",l:"Intracellular edema",x:1620,y:610,p:"flEdema",s:"pumps fail",m:["edemasafe"]},
+  {id:"e4",l:"Pulmonary edema",x:2220,y:610,p:"flEdema",s:"the lung’s own margin",m:["pulmedema"]}],
+ plots:[
+  {x:140,y:974,w:1480,h:680,kind:"dyannet",t:"Darrow–Yannet — the six volume changes"},
+  {x:1680,y:974,w:1480,h:680,kind:"clearance",t:"Clearance against plasma concentration"}],
+ edges:[
+  {a:"c1",b:"c2",p:"flComp"},
+  {a:"c2",b:"c3",p:"flComp"},
+  {a:"c4",b:"c5",p:"flComp"},
+  {a:"c6",b:"c7",p:"flComp"},
+  {a:"n1",b:"n2",p:"flNa"},
+  {a:"n2",b:"n3",p:"flNa"},
+  {a:"n4",b:"n5",p:"flNa"},
+  {a:"e1",b:"e2",p:"flEdema"}]
+};
+
+MAPS.raarth = {
+ t:"Rheumatoid & Infectious Arthritis", sub:"How rheumatoid synovitis starts — CD4 T cells, cytokines, citrullination, HLA-DR4 · ACPA vs rheumatoid factor · pannus to ankylosis · the RA hand vs OA · DMARDs · septic arthritis by setting, tapping the joint and first antibiotics · Lyme, mycobacterial and viral arthritis",
+ w:3300, h:852,
+ fa:"472, 474, 496",
+ src:["Robbins ch 26 — Bones, joints, and soft tissue tumors", "Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout", "OCOM Rheum — SDL 38 reading: UpToDate, Septic arthritis of native joints in adults", "OCOM Rheum — SDL 38 reading: UpToDate, Musculoskeletal manifestations of Lyme disease"],
+ comps:[
+  {x:140,y:110,w:3020,h:200,l:"Rheumatoid arthritis"},
+  {x:140,y:370,w:3020,h:200,l:"Infectious arthritis"}],
+ panels:[
+  {x:140,y:630,w:1480,h:138,kw:120,t:"RA vs OA (Robbins; First Aid)",rows:[
+   ["Joints","RA: MCP, PIP, wrists, symmetric · OA: DIP, first CMC"],
+   ["Stiffness","RA: morning, eases with use · OA: worse with use"],
+   ["Serology","RA: ACPA, RF · OA: none"],
+   ["Pathology","RA: pannus, erosions · OA: cartilage wear, osteophytes"]]},
+  {x:1680,y:630,w:1480,h:160,kw:222,t:"Septic joint by setting (Robbins; UpToDate)",rows:[
+   ["Most adults","S. aureus"],
+   ["Neonates","group B streptococcus"],
+   ["Sickle cell disease","Salmonella"],
+   ["C5–C9 deficiency","disseminated gonococcal infection"],
+   ["People who inject drugs","axial joints · gram-negatives, Pseudomonas"]]}],
+ nodes:[
+  {id:"r1",l:"How it starts",x:420,y:170,p:"arRA",k:"hub",s:"CD4 · TNF · citrulline",m:["rapath"]},
+  {id:"r2",l:"ACPA vs RF",x:1020,y:170,p:"arRA",s:"70% · 80% · 20% seronegative",m:["raser"]},
+  {id:"r3",l:"Pannus",x:1620,y:170,p:"arRA",s:"erodes cartilage and bone",m:["rapannus"]},
+  {id:"r4",l:"The RA hand",x:2220,y:170,p:"arRA",s:"MCP + PIP, spares DIP",m:["raclin"]},
+  {id:"r5",l:"Rheumatoid arthritis",x:2820,y:170,p:"arRA",s:"the overview",m:["ra"]},
+  {id:"r6",l:"DMARDs",x:420,y:250,p:"arRA",k:"hub",s:"methotrexate first",m:["dmards","mtx"]},
+  {id:"r7",l:"TNF-α inhibitors",x:1020,y:250,p:"arRA",s:"screen for TB",m:["tnfdrugs"]},
+  {id:"r8",l:"Abatacept",x:1620,y:250,p:"arRA",s:"blocks CD28 costimulation",m:["ctla4ig","dmards"]},
+  {id:"r9",l:"JAK inhibitors",x:2220,y:250,p:"arRA",s:"targeted synthetic",m:["jakinh"]},
+  {id:"r10",l:"Osteoarthritis",x:2820,y:250,p:"arRA",s:"DIP and first CMC",m:["oa"]},
+  {id:"i1",l:"Who gets which bug",x:420,y:430,p:"arInf",k:"hub",s:"S. aureus · Salmonella · gonococcus",m:["suparth"]},
+  {id:"i2",l:"Tap the joint",x:1020,y:430,p:"arInf",s:"WBC > 20,000, mostly PMNs",m:["synfluid"]},
+  {id:"i3",l:"Septic arthritis",x:1620,y:430,p:"arInf",s:"drain + antibiotics",m:["septicarth"]},
+  {id:"i4",l:"Lyme arthritis",x:2220,y:430,p:"arInf",s:"big knee effusions",m:["lymearth","lyme"]},
+  {id:"i5",l:"TB & viral arthritis",x:2820,y:430,p:"arInf",s:"slow vs acute",m:["otherarth"]},
+  {id:"i6",l:"Reactive arthritis",x:420,y:510,p:"arInf",k:"hub",s:"after GU or GI infection",m:["reactive"]},
+  {id:"i7",l:"Septic hip in children",x:1020,y:510,p:"arInf",s:"Kocher criteria",m:["septichip"]}],
+ edges:[
+  {a:"r1",b:"r2",p:"arRA"},
+  {a:"r2",b:"r3",p:"arRA"},
+  {a:"r3",b:"r4",p:"arRA"},
+  {a:"r6",b:"r7",p:"arRA"},
+  {a:"r7",b:"r8",p:"arRA"},
+  {a:"i1",b:"i2",p:"arInf"},
+  {a:"i2",b:"i3",p:"arInf"},
+  {a:"i6",b:"i7",p:"arInf"}]
+};
+
+MAPS.footleg = {
+ t:"Foot, Ankle & Leg Problems", sub:"Shin splints vs stress fracture · gastrocnemius strain (tennis leg) · ankle sprains — lateral, medial, high; grades and the Ottawa rules · posterior tibial tendon dysfunction · Achilles tendinopathy, retrocalcaneal bursitis and Sever disease · plantar fasciitis, Morton neuroma, bunions · peroneal and saphenous nerve entrapment",
+ w:3300, h:1176,
+ fa:"458, 465",
+ src:["OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury", "OCOM Ortho — SDL 7 reading: Practical Office Orthopedics ch 5, The foot and ankle"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"Leg"},
+  {x:140,y:290,w:3020,h:120,l:"Ankle and hindfoot"},
+  {x:140,y:470,w:3020,h:200,l:"Heel and forefoot"},
+  {x:140,y:730,w:3020,h:120,l:"Nerves"}],
+ panels:[
+  {x:140,y:910,w:1480,h:204,kw:273,t:"Where it hurts (course lecture and reading)",rows:[
+   ["Diffuse posteromedial tibia","shin splints"],
+   ["Medial calf after a lunge","gastrocnemius strain"],
+   ["Lateral ankle after inversion","ATFL sprain"],
+   ["Medial arch, adult","posterior tibial tendon dysfunction"],
+   ["Plantar heel, first steps","plantar fasciitis"],
+   ["Posterior heel, child","Sever disease"],
+   ["Third web space","Morton neuroma"]]},
+  {x:1680,y:910,w:1480,h:116,kw:120,t:"Ankle sprain grades (course lecture)",rows:[
+   ["Grade 1","stretch · walks with little pain"],
+   ["Grade 2","partial tear · bears weight with pain, mild instability"],
+   ["Grade 3","complete tear · cannot bear weight, positive stress test"]]}],
+ nodes:[
+  {id:"l1",l:"Shin splints",x:420,y:170,p:"ftLeg",k:"hub",s:"diffuse posteromedial pain",m:["mtss"]},
+  {id:"l2",l:"Stress fracture",x:1020,y:170,p:"ftLeg",s:"focal tenderness",m:["stressfx"]},
+  {id:"l3",l:"Tennis leg",x:1620,y:170,p:"ftLeg",s:"medial gastrocnemius",m:["gastroc"]},
+  {id:"l4",l:"Compartment syndrome",x:2220,y:170,p:"ftLeg",s:"pain out of proportion",m:["compartment"]},
+  {id:"l5",l:"Tibial shaft fractures",x:2820,y:170,p:"ftLeg",s:"open, compartment risk",m:["tibshaft"]},
+  {id:"a1",l:"Ankle sprains",x:420,y:350,p:"ftAnkle",k:"hub",s:"lateral · medial · high",m:["anklesprain","anklefx"]},
+  {id:"a2",l:"Ottawa rules",x:1020,y:350,p:"ftAnkle",s:"who needs an X-ray",m:["anklefx"]},
+  {id:"a3",l:"Unstable fractures",x:1620,y:350,p:"ftAnkle",s:"Weber · Maisonneuve",m:["anklestab"]},
+  {id:"a4",l:"Tibialis posterior",x:2220,y:350,p:"ftAnkle",s:"too many toes",m:["pttd","flatfoot"]},
+  {id:"a5",l:"Achilles",x:2820,y:350,p:"ftAnkle",s:"tendinopathy and rupture",m:["achtend","achilles"]},
+  {id:"f1",l:"Plantar fasciitis",x:420,y:530,p:"ftFoot",k:"hub",s:"first-step heel pain",m:["plantarfasc"]},
+  {id:"f2",l:"Retrocalcaneal bursitis",x:1020,y:530,p:"ftFoot",s:"behind the heel",m:["heelpain"]},
+  {id:"f3",l:"Sever disease",x:1620,y:530,p:"ftFoot",s:"child’s heel apophysis",m:["heelpain"]},
+  {id:"f4",l:"Morton neuroma",x:2220,y:530,p:"ftFoot",s:"third web space",m:["morton"]},
+  {id:"f5",l:"Bunions & hammertoes",x:2820,y:530,p:"ftFoot",s:"shoe pressure",m:["bunions"]},
+  {id:"f6",l:"Foot fractures",x:420,y:610,p:"ftFoot",k:"hub",s:"Jones · Lisfranc",m:["footfx"]},
+  {id:"f7",l:"Clubfoot",x:1020,y:610,p:"ftFoot",s:"congenital",m:["clubfoot"]},
+  {id:"n1",l:"Nerve entrapments",x:420,y:790,p:"ftNerve",k:"hub",s:"normal compartment pressures",m:["legnerves"]},
+  {id:"n2",l:"Superficial peroneal",x:1020,y:790,p:"ftNerve",s:"crural fascia above the malleolus",m:["legnerves"]},
+  {id:"n3",l:"Common peroneal",x:1620,y:790,p:"ftNerve",s:"fibular neck · foot drop",m:["peroneal"]},
+  {id:"n4",l:"Saphenous",x:2220,y:790,p:"ftNerve",s:"medial knee and calf, no weakness",m:["legnerves"]}],
+ edges:[
+  {a:"l1",b:"l2",p:"ftLeg"},
+  {a:"l2",b:"l3",p:"ftLeg"},
+  {a:"a1",b:"a2",p:"ftAnkle"},
+  {a:"a2",b:"a3",p:"ftAnkle"},
+  {a:"f1",b:"f2",p:"ftFoot"},
+  {a:"f2",b:"f3",p:"ftFoot"},
+  {a:"f6",b:"f7",p:"ftFoot"},
+  {a:"n1",b:"n2",p:"ftNerve"},
+  {a:"n2",b:"n3",p:"ftNerve"}]
+};
+
+MAPS.anxtx = {
+ t:"Anxiety Disorders & Treatment", sub:"Panic disorder, agoraphobia, GAD, social anxiety, specific phobia and separation anxiety · SSRIs first, SNRIs, the benzodiazepine bridge, buspirone, pregabalin and β-blockers for performance anxiety · 8–12 weeks to judge, at least 6 months to maintain · CBT, exposure and systematic desensitization · medical mimics",
+ w:3300, h:750,
+ fa:"580, 581",
+ src:["Kaplan & Sadock ch 8 — Anxiety Disorders", "Katzung ch 30 — Antidepressant Agents"],
+ comps:[
+  {x:140,y:110,w:3020,h:120,l:"The disorders"},
+  {x:140,y:290,w:3020,h:200,l:"Treatment"}],
+ panels:[
+  {x:140,y:550,w:1480,h:138,kw:153,t:"First line by disorder (Kaplan & Sadock Table 8-6)",rows:[
+   ["GAD","SSRIs, SNRIs · alt: pregabalin, buspirone, agomelatine"],
+   ["Panic disorder","SSRIs, venlafaxine · CBT"],
+   ["Social anxiety","SSRIs, SNRIs · CBT; β-blockers only for performance"],
+   ["Specific phobia","in vivo exposure therapy"]]},
+  {x:1680,y:550,w:1480,h:138,kw:144,t:"Pharmacotherapy pointers (Kaplan & Sadock Table 8-7)",rows:[
+   ["Start","low and slow"],
+   ["Benzodiazepine","short-term bridge"],
+   ["Judge efficacy","after 8–12 weeks at optimum dose"],
+   ["Maintain","at least 6 months, then taper slowly"]]}],
+ nodes:[
+  {id:"d1",l:"Panic disorder",x:420,y:170,p:"axDx",k:"hub",s:"attacks peak in minutes",m:["panic"]},
+  {id:"d2",l:"Agoraphobia",x:1020,y:170,p:"axDx",s:"fear of no escape",m:["phobia"]},
+  {id:"d3",l:"GAD",x:1620,y:170,p:"axDx",s:"worry ≥ 6 months",m:["gad"]},
+  {id:"d4",l:"Specific & social phobia",x:2220,y:170,p:"axDx",s:"feared object or scrutiny",m:["phobia"]},
+  {id:"d5",l:"Separation anxiety",x:2820,y:170,p:"axDx",s:"and selective mutism",m:["separation"]},
+  {id:"t1",l:"SSRIs first",x:420,y:350,p:"axRx",k:"hub",s:"8–12 weeks · 6 months",m:["anxrx","ssri"]},
+  {id:"t2",l:"SNRIs",x:1020,y:350,p:"axRx",s:"venlafaxine",m:["snri"]},
+  {id:"t3",l:"Benzodiazepine bridge",x:1620,y:350,p:"axRx",s:"short term only",m:["benzos"]},
+  {id:"t4",l:"Buspirone",x:2220,y:350,p:"axRx",s:"GAD alternative",m:["serodrugs"]},
+  {id:"t5",l:"By disorder",x:2820,y:350,p:"axRx",s:"panic · GAD · social",m:["panictx","gadsadtx"]},
+  {id:"t6",l:"CBT",x:420,y:430,p:"axRx",k:"hub",s:"correct the misreading",m:["panictx"]},
+  {id:"t7",l:"Exposure therapy",x:1020,y:430,p:"axRx",s:"graded · desensitization",m:["behavtx"]},
+  {id:"t8",l:"Mindfulness & relaxation",x:1620,y:430,p:"axRx",s:"psychological input",m:["mindbody"]}],
+ edges:[
+  {a:"d1",b:"d2",p:"axDx"},
+  {a:"d3",b:"d4",p:"axDx"},
+  {a:"t1",b:"t2",p:"axRx"},
+  {a:"t2",b:"t3",p:"axRx"},
+  {a:"t3",b:"t4",p:"axRx"},
+  {a:"t6",b:"t7",p:"axRx"},
+  {a:"t7",b:"t8",p:"axRx"}]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -34190,16 +34958,16 @@ const TOPICS = [
   ["path","Pathology",["genpath","neoplasia","thromboemb"]],
   ["cardio","Cardiac",["cardiac","cardcycle","valves","ihd","chd","vasc","vascshock","htnrx","rhythm"]],
   ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","highalt","hypoxia","lungdz","pleural","lungcancer","respinf","respdrug"]],
-  ["renal","Renal",["nephron","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","histoembryo","glom","renvasc","buffers","acidbase","akickd","endocrine"]],
+  ["renal","Renal",["nephron","fluids","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","histoembryo","glom","renvasc","raasrx","buffers","acidbase","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","liver","gitract","abdanat"]],
   ["heme","Heme/Onc",["rbc","hemostasis","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","softtissue","tumark"]],
   ["immuno","Immunology",["immune","innate","lymphdev","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
-  ["endo","Endocrine",["axes","pitgh","thyroid","hormones","gcpharm","rclass","pancreas","fuelstate"]],
+  ["endo","Endocrine",["axes","pitgh","thyroid","adrenal","hormones","gcpharm","rclass","pancreas","fuelstate"]],
   ["devrepro","Repro & Development",["sexdev","androgen","repro","placenta","obgyn","malerepro","prosobs","embryo"]],
-  ["neuro","Neuro",["neurotx","synapse","ans","membrane","ionchan","spine","brainstem","chemvisc","motorctl","cerebellum","gaze","weakness","stroke","brainvessels","brainreg","meninges","basal","neuroer","seizhead"]],
-  ["behav","Psych & Behavior",["limbmem","psychmse","dsmdx","psychdx","psychtx","psyrxprin","psychsom","somatcare","substance","sleepdev","neurodev"]],
+  ["neuro","Neuro",["neurotx","synapse","ans","membrane","ionchan","spine","brainstem","chemvisc","motorctl","cerebellum","gaze","weakness","stroke","brainvessels","brainreg","cortex","meninges","basal","neuroer","seizhead"]],
+  ["behav","Psych & Behavior",["limbmem","psychmse","dsmdx","psychdx","anxtx","psychtx","psyrxprin","psychsom","somatcare","substance","sleepdev","neurodev"]],
   ["eent","EENT",["eyecn","anteye","vision","ent","hearing","larynx"]],
-  ["msk","Musculoskeletal",["muscle","bone","bonehisto","arthritis","crystals","derm","plexus","orthoinj","sportsortho","legfx","orthowork","neckpain","shoulder","ptrehab","integrative"]],
+  ["msk","Musculoskeletal",["muscle","bone","bonehisto","arthritis","raarth","crystals","derm","plexus","orthoinj","sportsortho","legfx","footleg","orthowork","neckpain","shoulder","ptrehab","integrative"]],
   ["omm","OMM",["vsomatic","neiomm","chapman","omt","lbp","agingomt","chestomt","ommmech","janda","cranial","jones"]],
   ["id","Infectious",["microlab","abx","antiviral","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
   ["pharm","Pharm",["pkpd","cyp","adr","aging","tox","environ","anesth","pain"]],
@@ -34647,6 +35415,23 @@ const FUEL={glyc:[[0,9],[1,6],[2,1],[3,0],[4,0]],gng:[[0,0.5],[1,2],[2,5],[3,7],
   pB:[[0,1],[1,2],[2,5],[3,6],[4,3],[5,9]],pU:[[0,2],[1,2.5],[2,5],[3,6],[4,3]]};
 /* estimated average glucose (mg/dL) = 28.7 × HbA1c − 46.7 (Nathan 2008) */
 const eag=a=>28.7*a-46.7, EAG=[[4,eag(4)],[12,eag(12)]];
+/* Darrow–Yannet boxes: ICF from 0 to icf litres, ECF from icf to icf+ecf, height = osmolarity (Costanzo ch 6;
+   a 70-kg body, ICF 28 L and ECF 14 L at 290 mOsm/L; each change is 2 L of water or 600 mOsm of NaCl) */
+const DYB=(icf,ecf,osm)=>[{pts:[[0,0],[0,osm],[icf,osm],[icf,0]],close:true,lab:"Intracellular"},{pts:[[icf,0],[icf,osm],[icf+ecf,osm],[icf+ecf,0]],close:true,lab:"Extracellular"}];
+/* clearance against plasma concentration, relative units: inulin = GFR; glucose 0 below threshold; PAH = RPF until secretion saturates (Costanzo ch 6; schematic) */
+const CLR={inu:[[0.2,125],[10,125]],cre:[[0.2,135],[10,135]],glu:[[0.2,0],[3,0],[3.5,18],[4,31],[5,50],[6,62.5],[8,78],[10,87.5]],
+  pah:[[0.2,625],[2,625],[2.5,525],[3,458],[4,375],[5,325],[6,292],[8,250],[10,225]]};
+/* partial pressure along the pulmonary capillary, % of alveolar (Costanzo ch 5, Figs 5.18–5.19; shapes schematic) */
+const capp=(p0,k)=>{ const pts=[]; for(let x=0;x<=1.0001;x+=0.02) pts.push([x,100-(100-p0)*Math.exp(-k*x)]); return pts; };
+/* membrane potential against extracellular K⁺ (log axis): E_K = 60 log(K_o/155); resting potential by a Goldman form with P_Na/P_K 0.02 (schematic) */
+const ek=k=>60*Math.log10(k/155), vm=k=>60*Math.log10((k+0.02*140)/(155+0.02*15));
+const kcurve=f=>{ const pts=[]; for(let l=0;l<=2.0001;l+=0.05) pts.push([l,f(Math.pow(10,l))]); return pts; };
+/* days of aldosterone excess or absence, % of baseline (Guyton ch 30; shapes schematic) */
+const ALDO={nN:[[-2,100],[14,100]],
+  xN:[[-2,100],[0,100],[0.5,40],[3,40],[4.5,85],[5.5,100],[14,100]],xE:[[-2,100],[0,100],[3,111],[5,113],[14,113]],xP:[[-2,100],[0,100],[3,105],[5,110],[14,110]],
+  aN:[[-2,100],[0,100],[0.5,160],[3,150],[6,125],[14,115]],aE:[[-2,100],[0,100],[4,90],[8,86],[14,85]],aP:[[-2,100],[0,100],[4,94],[8,90],[14,89]]};
+/* a bolus at minute 1 peaking at minute 2 and fading by minute 6 (Katzung ch 9, Table 9–4 and Figs 9–6, 9–7; shapes schematic) */
+const bol=(a,b)=>[[0,a],[1,a],[1.5,a+0.6*(b-a)],[2,b],[3,a+0.85*(b-a)],[4,a+0.55*(b-a)],[5,a+0.25*(b-a)],[6,a+0.08*(b-a)],[8,a]];
 const PLOTS={
   glomcap:{xl:"Distance along the glomerular capillary",yl:"Pressure (mm Hg)",xr:[0,1],yr:[0,60],xt:[0,0.5,1],xtl:["afferent end","halfway","efferent end"],yt:[0,10,20,30,40,50,60],ref:true,vars:[
     {l:"Normal",cap:"Costanzo’s values. PGC stays at 45 mm Hg along the capillary because the efferent arteriole holds it up; PBS is 10; πGC climbs as protein-free fluid is filtered out. Filtration happens wherever the net pressure is above zero.",
@@ -35095,6 +35880,93 @@ const PLOTS={
     {l:"Treatment target",cap:"Robbins: keep HbA1c below 7% in most patients with diabetes — about 154 mg/dL on average; continuous monitoring adds “time in range” as a newer goal.",
      key:[["7","≈ 154 mg/dL"]],
      d:()=>[{pts:EAG,lab:"Average glucose",marks:[[7,154,"7% ≈ 154"]]},{x:7,lab:"target below 7%"}]}]},
+  dyannet:{xl:"Volume (L) — intracellular | extracellular",yl:"Osmolarity (mOsm/L)",xr:[0,46],yr:[0,340],xt:[0,10,20,30,40],yt:[0,100,200,290],ref:true,vars:[
+    {l:"Normal",cap:"Darrow–Yannet diagram (Costanzo): each box is a compartment — width its volume, height its osmolarity. A 70-kg adult: ICF 28 L and ECF 14 L at about 290 mOsm/L. Water crosses cell membranes until both osmolarities match; NaCl stays in the ECF.",
+     key:[["ICF","Left box — 28 L"],["ECF","Right box — 14 L"]],
+     d:()=>DYB(28,14,290)},
+    {l:"Isosmotic expansion",cap:"Isotonic saline infusion (Costanzo): the fluid stays in the ECF and its osmolarity does not change, so no water shifts; ECF volume rises, and hematocrit and plasma protein fall by dilution.",
+     key:[["ECF","↑"],["ICF","no change"],["Osm","no change"]],
+     d:()=>DYB(28,16,290)},
+    {l:"Isosmotic contraction",cap:"Diarrhea (Costanzo): isosmotic fluid is lost from the ECF, so no water shifts; ECF volume falls, and hematocrit and plasma protein rise.",
+     key:[["ECF","↓"],["ICF","no change"]],
+     d:()=>DYB(28,12,290)},
+    {l:"Hyperosmotic expansion",cap:"High NaCl intake (Costanzo): ECF osmolarity rises, water leaves the cells — ECF ↑, ICF ↓, osmolarity ↑ in both. Here 600 mOsm of NaCl added.",
+     key:[["Osm","↑ in both"],["ICF","↓ — water drawn out"]],
+     d:()=>DYB(26.7,15.3,304)},
+    {l:"Hyperosmotic contraction",cap:"Sweating, fever or diabetes insipidus (Costanzo): the water lost is hyposmotic, ECF osmolarity rises and water leaves the cells — both volumes ↓. Here 2 L of water lost.",
+     key:[["ECF","↓"],["ICF","↓"],["Osm","↑"]],
+     d:()=>DYB(26.7,13.3,304.5)},
+    {l:"Hyposmotic expansion",cap:"SIADH (Costanzo): retained water lowers osmolarity and spreads two-thirds into the cells — both volumes ↑. Here 2 L of water gained.",
+     key:[["ECF","↑"],["ICF","↑"],["Osm","↓"]],
+     d:()=>DYB(29.3,14.7,277)},
+    {l:"Hyposmotic contraction",cap:"Adrenal insufficiency (Costanzo): NaCl is lost from the ECF, its osmolarity falls and water moves into the cells — ECF ↓, ICF ↑; hematocrit and protein rise. Here 600 mOsm lost.",
+     key:[["ECF","↓"],["ICF","↑"],["Osm","↓"]],
+     d:()=>DYB(29.45,12.55,275.7)}]},
+  clearance:{xl:"Plasma concentration (relative)",yl:"Renal clearance (mL/min)",xr:[0,10],yr:[0,700],xt:[0,2,4,6,8,10],yt:[0,125,300,500,625],ref:true,vars:[
+    {l:"Inulin",cap:"Costanzo: inulin is freely filtered and neither reabsorbed nor secreted, so its clearance equals the GFR (about 125 mL/min) at every plasma concentration.",
+     key:[["GFR","Clearance of inulin"]],
+     d:()=>[{pts:CLR.inu,lab:"Clearance"},{y:125,lab:"GFR"}]},
+    {l:"Creatinine",cap:"Costanzo: creatinine is freely filtered but also secreted a little, so its clearance slightly overestimates the GFR — the convenient endogenous marker (shapes schematic).",
+     key:[["> GFR","Small secretion"]],
+     d:()=>[{pts:CLR.cre,lab:"Clearance"},{y:125,lab:"GFR"}]},
+    {l:"Glucose",cap:"Costanzo: below threshold all filtered glucose is reabsorbed, so its clearance is zero; once carriers saturate, glucose spills and its clearance rises toward — but never reaches — the GFR (schematic, no splay).",
+     key:[["0","Below threshold"],["Tm","Carriers saturated"]],
+     d:()=>[{pts:CLR.glu,lab:"Clearance",marks:[[3,0,"threshold"]]},{y:125,lab:"GFR"}]},
+    {l:"PAH",cap:"Costanzo: PAH is filtered and secreted. While the secretory carriers have room, nearly all PAH entering the kidney is excreted and its clearance approximates renal plasma flow; past Tm, secretion is fixed and clearance falls toward the GFR.",
+     key:[["RPF","Clearance at low concentration"],["Tm","Secretion saturated"]],
+     d:()=>[{pts:CLR.pah,lab:"Clearance",marks:[[2,625,"Tm reached"]]},{y:125,lab:"GFR"},{y:625,lab:"≈ RPF"}]}]},
+  difflim:{xl:"Distance along the pulmonary capillary",yl:"Partial pressure in capillary blood (% of alveolar)",xr:[0,1],yr:[0,108],xt:[0,0.333,0.667,1],xtl:["Start","⅓","⅔","End"],yt:[0,25,50,75,100],ref:true,vars:[
+    {l:"O₂ at rest",cap:"Costanzo: in a normal lung at rest O₂ is perfusion-limited — capillary PO₂ starts at 40 (mixed venous), equilibrates with alveolar PO₂ of 100 about one-third of the way along, and only more blood flow can carry more O₂.",
+     key:[["⅓","Equilibrated by one-third"],["flow","Perfusion-limited"]],
+     d:()=>[{pts:capp(40,14.4),lab:"Capillary blood",marks:[[0.333,99.5,"equilibrated"]]},{y:100,lab:"alveolar"}]},
+    {l:"N₂O",cap:"Costanzo: nitrous oxide does not bind hemoglobin, so its partial pressure in blood rises at once and equilibrates very early — the extreme of perfusion-limited exchange.",
+     key:[["fast","Equilibrates almost at once"]],
+     d:()=>[{pts:capp(0,30),lab:"Capillary blood"},{y:100,lab:"alveolar"}]},
+    {l:"CO",cap:"Costanzo: CO binds hemoglobin avidly, so its partial pressure in blood rises only slightly; the gradient persists along the whole capillary — diffusion-limited, which is why CO measures diffusing capacity.",
+     key:[["gradient","Never equilibrates"],["DL","Diffusion-limited"]],
+     d:()=>[{pts:[[0,0],[1,5]],lab:"Capillary blood"},{y:100,lab:"alveolar"}]},
+    {l:"O₂ in fibrosis",cap:"Costanzo: in fibrosis or emphysema, or very strenuous exercise, O₂ transfer becomes diffusion-limited — capillary PO₂ rises slowly and may not reach alveolar PO₂ by the end (shape schematic).",
+     key:[["DL","Diffusion-limited O₂"]],
+     d:()=>[{pts:capp(40,1.4),lab:"Capillary blood"},{y:100,lab:"alveolar"}]}]},
+  kpot:{xl:"Extracellular K⁺ (mM, log scale)",yl:"Membrane potential (mV)",xr:[0,2],yr:[-140,0],xt:[0,0.301,0.602,1,1.301,1.602,2],xtl:["1","2","4","10","20","40","100"],yt:[-140,-120,-100,-80,-60,-40,-20,0],ref:true,vars:[
+    {l:"E_K (Nernst)",cap:"Costanzo: E = −60 log(Cᵢ/Cₑ) at 37 °C, so E_K changes 60 mV for each tenfold change in extracellular K⁺; at normal K⁺ it is about −95 mV. Plotted on a log axis it is a straight line.",
+     key:[["60","mV per tenfold change"]],
+     d:()=>[{pts:kcurve(ek),lab:"E_K",marks:[[0.602,Math.round(ek(4)),"≈ −95 mV"]]}]},
+    {l:"Resting potential",cap:"Resting membranes are far more permeable to K⁺ than to Na⁺, so the resting potential sits near E_K but a little less negative; at low K⁺ the small Na⁺ permeability matters more and the curve bends away from E_K (Goldman form, schematic).",
+     key:[["Pₖ ≫ P_Na","Near E_K"]],
+     d:()=>[{pts:kcurve(vm),lab:"Membrane potential",marks:[[0.602,Math.round(vm(4)),"rest"]]}]},
+    {l:"Hyperkalemia",cap:"Costanzo: raised extracellular K⁺ depolarizes the resting membrane, as the Nernst equation predicts; the sustained depolarization closes Na⁺ inactivation gates (accommodation), so muscle becomes weak rather than excitable.",
+     key:[["↑","Depolarized"],["inact","Na⁺ channels inactivated"]],
+     d:()=>[{pts:kcurve(vm),lab:"Membrane potential",marks:[[0.845,Math.round(vm(7)),"7 mM"]]}]},
+    {l:"Hypokalemia",cap:"Lower extracellular K⁺ makes the resting potential more negative — hyperpolarized — moving it away from threshold (schematic).",
+     key:[["↓","Hyperpolarized"]],
+     d:()=>[{pts:kcurve(vm),lab:"Membrane potential",marks:[[0.398,Math.round(vm(2.5)),"2.5 mM","below"]]}]}]},
+  aldoesc:{xl:"Days",yl:"% of baseline",xr:[-2,14],yr:[0,180],xt:[0,2,4,6,8,10,12,14],yt:[0,50,100,150],ref:true,vars:[
+    {l:"Normal",cap:"At steady state Na⁺ excretion equals intake, and ECF volume and arterial pressure are stable.",
+     key:[["100","Excretion = intake"]],
+     d:()=>[{pts:ALDO.nN,lab:"Na⁺ excretion"},{pts:ALDO.nN,lab:"ECF volume"},{pts:ALDO.nN,lab:"Arterial pressure"}]},
+    {l:"Aldosterone excess",cap:"Guyton: with excess aldosterone (Conn syndrome) Na⁺ retention is transient — after a few days ECF volume is up 10–15% and arterial pressure rises, then the kidneys escape and excrete Na⁺ equal to intake, by pressure natriuresis and suppressed angiotensin II (shapes schematic).",
+     events:[[0,"aldosterone up"]],key:[["escape","Excretion returns to intake"],["10–15%","ECF volume rise"]],
+     d:()=>[{pts:ALDO.xN,lab:"Na⁺ excretion",marks:[[5.5,100,"escape"]]},{pts:ALDO.xE,lab:"ECF volume"},{pts:ALDO.xP,lab:"Arterial pressure"}]},
+    {l:"Aldosterone absent",cap:"Guyton: without aldosterone (Addison disease) the kidneys excrete more Na⁺ and water, ECF volume falls and pressure tends to drop — severe depletion unless large amounts of salt and water are taken in (shapes schematic).",
+     events:[[0,"aldosterone lost"]],key:[["↑","Na⁺ excretion exceeds intake"],["↓","ECF and pressure fall"]],
+     d:()=>[{pts:ALDO.aN,lab:"Na⁺ excretion"},{pts:ALDO.aE,lab:"ECF volume"},{pts:ALDO.aP,lab:"Arterial pressure"}]}]},
+  catbolus:{xl:"Minutes",yl:"mm Hg  ·  beats/min",xr:[0,8],yr:[40,190],xt:[0,1,2,3,4,5,6,7,8],yt:[40,60,80,100,120,140,160,180],vars:[
+    {l:"Phenylephrine",cap:"Katzung: a selective α₁ agonist raises peripheral resistance, so systolic, diastolic and mean pressure rise; the baroreflex raises vagal tone and slows the heart, which may be quite marked (shapes schematic).",
+     events:[[1,"IV bolus"]],key:[["α₁","Resistance ↑↑"],["reflex","Heart rate ↓↓"]],
+     d:()=>[{pts:bol(120,165),lab:"Systolic"},{pts:bol(80,110),lab:"Diastolic"},{pts:bol(70,50),lab:"Heart rate"}]},
+    {l:"Norepinephrine",cap:"Katzung: α₁, α₂ and β₁ but little β₂ — peripheral resistance and both systolic and diastolic pressure rise; the compensatory baroreflex tends to overcome the direct β₁ speeding of the heart (shapes schematic).",
+     events:[[1,"IV bolus"]],key:[["β₁ < reflex","Heart rate falls"]],
+     d:()=>[{pts:bol(120,165),lab:"Systolic"},{pts:bol(80,105),lab:"Diastolic"},{pts:bol(70,58),lab:"Heart rate"}]},
+    {l:"Epinephrine",cap:"Katzung: β₁ raises contractility and rate while β₂ dilates skeletal muscle vessels, so total peripheral resistance may fall — systolic rises, diastolic may fall, pulse pressure widens (shapes schematic).",
+     events:[[1,"IV bolus"]],key:[["β₂","Diastolic may fall"],["pulse","Pulse pressure ↑↑"]],
+     d:()=>[{pts:bol(120,155),lab:"Systolic"},{pts:bol(80,68),lab:"Diastolic"},{pts:bol(70,95),lab:"Heart rate"}]},
+    {l:"Isoproterenol",cap:"Katzung: a β agonist — heart rate rises markedly, β₂ vasodilation lowers diastolic pressure, systolic is maintained or slightly falls, and mean pressure falls (shapes schematic).",
+     events:[[1,"IV bolus"]],key:[["β","Heart rate ↑↑↑"],["mean","↓"]],
+     d:()=>[{pts:bol(120,118),lab:"Systolic"},{pts:bol(80,55),lab:"Diastolic"},{pts:bol(70,115),lab:"Heart rate"}]},
+    {l:"Phenylephrine after ganglionic block",cap:"Katzung Fig 9–7: with baroreflexes removed by trimethaphan, resting pressure is lower and heart rate higher, the pressor response to phenylephrine is far larger and there is no bradycardia — proof the slowing was reflex (shapes schematic).",
+     events:[[1,"IV bolus"]],key:[["no reflex","Heart rate unchanged"]],
+     d:()=>[{pts:bol(105,175),lab:"Systolic"},{pts:bol(68,118),lab:"Diastolic"},{pts:bol(85,85),lab:"Heart rate"}]}]},
   wiggers:{xl:"Time (s) — three beats at 75/min",yl:"Pressure (mm Hg)",xr:[0,2.4],yr:[0,190],xt:[0,0.4,0.8,1.2,1.6,2,2.4],yt:[0,40,80,120,160],
    strips:[{yl:"LV volume",yr:[25,170],h:110,d:V=>[{pts:lvVol(V.vol),lab:"LV volume"}]},
            {yl:"ECG",yr:[-0.45,1.25],h:80,d:()=>[{pts:WIG_ECG,lab:"ECG",col:"var(--ink-2)"},{txt:wigEach([[0.045,"P",0.55],[0.18,"QRS",1.35],[0.42,"T",0.7]])}]},
@@ -35349,7 +36221,13 @@ const PLOTCARDS={apnodal:["apphases","class4","avblock"],apventric:["apphases","
   cortrhythm:["cushing","gcsupp","addison"],ghday:["ghpulse","ghcontrol"],davenport:["abcompensation","respacid","metalk"],nephmin:["renalca","renalpo4","renalmg"],
   spiro:["lungvol","pfts"],paco2va:["alvvent","respacid","respalk"],
   thyfb:["thylabs","hypothyroid","hyperthyroid"],thycourse:["transthy","hyperthyroid","thylabs"],rbfpress:["rbfauto","myogenic","tgf","rbfvaso"],
-  presnat:["eabv","natriuretic"],fuelphase:["starvation","basalstate","ketones","insdefic"],a1c:["dmdx","t2dm"]};
+  presnat:["eabv","natriuretic"],fuelphase:["starvation","basalstate","ketones","insdefic"],a1c:["dmdx","t2dm"],
+  dyannet:["fluidshifts","fluidcomp","plasmaosm","tonicity"],clearance:["gfrcalc","erpf","glucthresh"],difflim:["respmem","pulmcirc"],
+  kpot:["eqpot","rmp","hyperk"],aldoesc:["aldoescape","conn","addison"],catbolus:["epine","alpha1drugs","adrmed"]};
+/* the graphs that use a card — the card lists them */
+function graphsOf(id){ const out=[];
+  VIEWS.forEach(([v])=>{ const m=MAPS[v]; ((m&&m.plots)||[]).forEach((p,i)=>{ if((PLOTCARDS[p.kind]||[]).includes(id)) out.push([v,i,p]); }); });
+  return out; }
 /* compare: open or close the overlay chips, or overlay (again: remove) a version */
 function plotCmp(pi,act,j){
   const key=state.view+":"+pi, C=PLOTCMP[key]||(PLOTCMP[key]={open:false,j:null});
@@ -35819,6 +36697,7 @@ function openLes(id,center,pick){
    <div class="dbody">
      ${res}
      ${pick===undefined?practiceHtml(id):""}
+     ${(gs=>gs.length?sec("Graphs",`<div class="pagehits">${gs.map(([v,i,p])=>`<button class="pagehit" data-plotgo="${v}:${i}">${esc(p.t)}<span class="galn"> · ${esc((VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1])}</span></button>`).join("")}</div>`):"")(graphsOf(id))}
      ${L.enz?sec("Enzyme / step",`<p><b>${esc(L.enz)}</b></p>`):""}
      ${L.mech?sec("Mechanism",`<div class="mechbox"><p>${L.mech}</p></div>`):""}
      ${sec("Presentation",ul(L.find))}
@@ -35833,6 +36712,8 @@ function openLes(id,center,pick){
   document.getElementById("dlink").onclick=copyLink;
   document.getElementById("dcmp").onclick=()=>openComparePick(id);
   drawer.querySelectorAll("[data-also]").forEach(b=>b.onclick=()=>{ setView(b.dataset.also); openLes(id,true); });
+  drawer.querySelectorAll("[data-plotgo]").forEach(b=>b.onclick=()=>{ const [v,i]=b.dataset.plotgo.split(":");
+    if(matchMedia("(max-width: 760px)").matches) closeDrawer(); goPlot(v,+i); });
   document.getElementById("drev").onclick=ev=>{ const on=!isRev(id); setRev(id,on);
     ev.currentTarget.setAttribute("aria-pressed",String(on)); ev.currentTarget.textContent=on?"✓ Reviewed":"Mark reviewed";
     renderRail(); if(state.view==="index") renderIndex(); };
@@ -36482,6 +37363,12 @@ function readHash(){
     if(state.view!==v||!booted) setView(v);
     openCompare(b,c); return true;
   }
+  /* #graph/<map>/<plot index> — "See it on a graph" in the question bank */
+  if(a==="graph"){
+    const m=MAPS[b], i=+c; if(!m||!m.plots||!m.plots[i]) return false;
+    if(!booted) setView(b);
+    goPlot(b,i); return true;
+  }
   if(b){
     if(!isView(a)) return false;
     if(state.view!==a||!booted) setView(a);
@@ -36910,8 +37797,12 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   cerebellum:"2026-10-08",meninges:"2026-10-08",brainvessels:"2026-10-08",neurodev:"2026-10-08",dsmdx:"2026-10-08",crystals:"2026-10-08",hypoxia:"2026-10-08",legfx:"2026-10-08",
   gaze:"2026-10-08",neckpain:"2026-10-08",ionchan:"2026-10-08",psyrxprin:"2026-10-08",somatcare:"2026-10-08",gcpharm:"2026-10-08",lymphdev:"2026-10-08",
   lungcancer:"2026-10-08",pitgh:"2026-10-08",buffers:"2026-10-08",renalmin:"2026-10-08",ventmech:"2026-10-08",shoulder:"2026-10-08",ctdis:"2026-10-08",
-  thyroid:"2026-10-08",innate:"2026-10-08",pleural:"2026-10-08",fuelstate:"2026-10-08",prosobs:"2026-10-08",rbflow:"2026-10-08",kshift:"2026-10-08",tissues:"2026-10-08"};
+  thyroid:"2026-10-08",innate:"2026-10-08",pleural:"2026-10-08",fuelstate:"2026-10-08",prosobs:"2026-10-08",rbflow:"2026-10-08",kshift:"2026-10-08",tissues:"2026-10-08",
+  cortex:"2026-10-08",adrenal:"2026-10-08",raasrx:"2026-10-08",fluids:"2026-10-08",raarth:"2026-10-08",footleg:"2026-10-08",anxtx:"2026-10-08"};
 const WHATSNEW=[
+  ["2026-10-08","New maps: <b>Cerebral Cortex &amp; Lobes</b> (Neuro), <b>Adrenal Gland — Cortex to Medulla</b> (Endocrine), <b>RAAS &amp; Its Drugs</b> and <b>Body Fluids &amp; Fluid Shifts</b> (Renal), <b>Rheumatoid &amp; Infectious Arthritis</b> and <b>Foot, Ankle &amp; Leg Problems</b> (MSK), <b>Anxiety Disorders &amp; Treatment</b> (Psych)."],
+  ["2026-10-08","New graphs: <b>Darrow–Yannet diagrams</b> for the six volume changes, <b>clearance against plasma concentration</b>, <b>diffusion- vs perfusion-limited gas transfer</b>, <b>extracellular K⁺ and the membrane potential</b>, <b>aldosterone excess and absence</b> over days, and <b>catecholamine boluses</b>."],
+  ["2026-10-08","Every card now lists the graphs that use it. In the question bank, an answered question offers <b>See it on a graph</b>, and each block home lists the <b>Graphs for this block</b>. More of your questions link to cards."],
   ["2026-10-08","New section: <b>Epithelium &amp; Tissue Types</b> (Biochemistry) — simple, stratified, pseudostratified and transitional epithelia, what each does and where to find it, plus the four basic tissues."],
   ["2026-10-08","New maps: <b>Thyroid Disease</b> and <b>Fed &amp; Fasting Fuel Use</b> (Endocrine), <b>Innate Immune Cells</b> (Immunology), <b>Pleural Disease</b> (Pulmonary), <b>Prostate &amp; Urinary Obstruction</b> (Repro), <b>Renal Blood Flow &amp; Autoregulation</b> and <b>Potassium Shifts</b> (Renal)."],
   ["2026-10-08","New graphs: the <b>TSH–free T4 feedback curve</b>, <b>thyroiditis vs Graves</b> over weeks, <b>renal autoregulation</b>, the <b>renal output curve</b> (pressure natriuresis), <b>who burns what</b> from fed to starvation, and <b>HbA1c vs average glucose</b>."],
@@ -36967,7 +37858,7 @@ function graphsIdxHtml(){
   const groups=TOPICS.map(([,l,vs])=>[l,vs.flatMap(v=>((MAPS[v]&&MAPS[v].plots)||[]).map((p,i)=>({v,i,p})))]).filter(g=>g[1].length);
   const n=groups.reduce((a,g)=>a+g[1].length,0); if(!n) return "";
   return `<details class="idx-sources graphs-idx"><summary>All graphs · ${n}${(r=>r?` · ${r} to review`:"")(Object.values(GMISS).reduce((a,m)=>a+Object.keys(m).length,0))}</summary>
-    <p>Every graph in the atlas, by system. Tap one to jump to it. A graph with three or more versions has a <b>Quiz me</b> chip that hides the name and asks you to pick it; <b>Compare</b> overlays a second version, dashed. <b>Quiz → Graph mix</b> runs ten at random — this map, this topic or everything — and brings back the versions you missed first, then lists what you missed. Each graph lists the cards it illustrates and the question-bank questions linked to them. Keys: ← → switch versions of the last graph you used, <b>q</b> quizzes, <b>c</b> compares.</p>
+    <p>Every graph in the atlas, by system. Tap one to jump to it. A graph with three or more versions has a <b>Quiz me</b> chip that hides the name and asks you to pick it; <b>Compare</b> overlays a second version, dashed. <b>Quiz → Graph mix</b> runs ten at random — this map, this topic or everything — and brings back the versions you missed first, then lists what you missed. Each graph lists the cards it illustrates and the question-bank questions linked to them, and each card lists its graphs. Keys: ← → switch versions of the last graph you used, <b>q</b> quizzes, <b>c</b> compares.</p>
     ${groups.map(([l,list])=>`<div class="gal-sec"><h4>${esc(l)}</h4><div class="pagehits">${list.map(({v,i,p})=>`<button class="pagehit" data-plotgo="${v}:${i}">${esc(p.t)}<span class="galn"> · ${esc(name(v))}${PLOTS[p.kind]&&PLOTS[p.kind].vars.length>=3?" · quiz":""}</span></button>`).join("")}</div></div>`).join("")}
   </details>`;
 }
