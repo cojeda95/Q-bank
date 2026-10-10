@@ -39934,6 +39934,7 @@ function dynSections(d,st){
     S.push({h:s.label,chips}); });
   /* the last row: a tour's own buttons while touring; otherwise the motion, Reset and the ways to study the map */
   const tail=st.tour?[{key:"tour:prev",l:"‹ Back",on:false},{key:"tour:next",l:st.tour.i<dynTour(d).length-1?"Next ›":"Start again",on:true},{key:"tour:auto",l:TOUR_T?"■ Stop":"▶ Play",on:!!TOUR_T},{key:"tour:end",l:"End the tour",on:false}]:[];
+  if(st.tour&&st.tour.i===dynTour(d).length-1&&mapQuizHref(state.view)) tail.push({key:"qb:go",l:"Quiz me · 3 questions",on:true});   // the tour ends on a quick quiz
   tail.push({key:"pause",l:dynPaused(st)?"Play the motion":"Pause the motion",on:false},{key:"reset",l:"Reset",on:false});
   if(!st.tour){
     if((d.readouts||[]).length) tail.push({key:"p:on",l:st.pred?"Stop predicting":"Predict the arrows",on:!!st.pred});
@@ -39941,6 +39942,7 @@ function dynSections(d,st){
     if(!st.quiz&&dynQuizable(d).length){ const r=nameitScores()[state.view]; tail.push({key:"quiz:new",l:r?`Name it · ${r[0]}/${r[1]}`:"Name it",on:false}); }
     if(st.cmp) tail.push({key:"cmp:show",l:"Side by side",on:true},{key:"cmp:off",l:"Unpin",on:false});
     else if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"cmp:pin",l:"Compare",on:false});
+    if(!(st.quiz&&!st.quiz.ans)&&mapQuizHref(state.view)) tail.push({key:"qb:go",l:"Quiz me · 3 questions",on:false});
     if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"link",l:st.copied?"✓ Link copied":"Copy link",on:!!st.copied});
     if(DYN_ABG[state.view]&&!(st.quiz&&!st.quiz.ans)){ tail.push({key:"abg:open",l:st.abg?"Blood gas: "+abgShort(st.abg):"Check a blood gas",on:!!st.abg});
       if(st.abg) tail.push({key:"abg:clear",l:"Clear it",on:false}); } }
@@ -40163,6 +40165,14 @@ function goSwitch(go){
   if(state.view!==v) setView(v);
   dynApplyStr(v,str); dynRedraw(); writeHash();
 }
+/* "Quiz me · 3 questions": the question-bank block with the most questions linked to this map's cards
+   (atlas-practice.js) opens #atlasmap/<map>/quick — three of them, misses and unseen ones first */
+function mapQuizHref(v){
+  const P=window.ATLAS_PRACTICE, rows=P&&P.maps&&P.maps[v];
+  if(!rows||!rows.length) return "";
+  const best=rows.reduce((a,b)=>b[1]>a[1]?b:a), dir=P.blocks[best[0]][0];
+  return `../${encodeURIComponent(dir)}/index.html#atlasmap/${encodeURIComponent(v)}/quick`;
+}
 function dynSet(k,timer){
   const v=state.view, m=MAPS[v]; if(!m||!m.dyn||m.dyn.lazy) return;
   const st=dynSt(v), [a,b,c,dd]=k.split(":"), sw=(m.dyn.switches||[]).find(q=>q.id===b);
@@ -40184,6 +40194,7 @@ function dynSet(k,timer){
     else
     if(b==="end"){ st.quiz=null; NMIX=null; } else { NMIX=null; dynQuiz(v); } }
   else if(a==="q"&&st.quiz&&!st.quiz.ans){ const ok=b===st.quiz.k; st.quiz.ans=b; st.qz.n++; if(ok) st.qz.ok++; nameitSave(v,ok,st.quiz.s+":"+st.quiz.k); if(NMIX){ NMIX.k++; if(ok) NMIX.ok++; } }
+  else if(a==="qb"){ const h=mapQuizHref(v); if(h) window.open(h,"_blank","noopener"); return; }
   else if(a==="link"){ writeHash(); const u=location.href;
     try{ navigator.clipboard.writeText(u).then(()=>{ const s2=DYN[v]; if(!s2) return; s2.copied=true; dynRedraw(); setTimeout(()=>{ if(DYN[v]){ DYN[v].copied=false; if(state.view===v) dynRedraw(); } },1800); },()=>{ prompt("Copy this link:",u); }); }catch(e){ prompt("Copy this link:",u); }
     return; }

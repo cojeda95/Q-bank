@@ -318,6 +318,102 @@ function logAttempt(rec) {
   saveAttempts(list);
   atlasNoteAnswer(rec);
 }
+/* ── Why did you miss it? ─────────────────────────────────────────────
+   After a wrong answer, one tap tags the miss: didn't know it, misread the question,
+   or second-guessed a right first instinct. The tag rides on that attempt (`why`), so
+   it syncs with the rest of the attempt log and Analytics can show the pattern. */
+const MISS_WHY = [['know', 'Didn’t know it'], ['misread', 'Misread the question'], ['doubt', 'Second-guessed myself']];
+function tagMiss(qid, ts, why) {
+  const list = loadAttempts();
+  for (let i = list.length - 1; i >= 0; i--) {
+    if (list[i].id === qid && list[i].ts === ts) {
+      if (why) list[i].why = why; else delete list[i].why;
+      break;
+    }
+  }
+  saveAttempts(list);
+}
+function missWhyHtml(rec) {
+  if (!rec || rec.correct || !rec.ts) return '';
+  return `<div class="miss-why" role="group" aria-label="Why did you miss it?"><span class="mw-k">Why did you miss it?</span>${MISS_WHY.map(([k, l]) =>
+    `<button class="mw-b${rec.why === k ? ' on' : ''}" data-why="${k}" aria-pressed="${rec.why === k}">${l}</button>`).join('')}</div>`;
+}
+function bindMissWhy(q, rec, rerender) {
+  main.querySelectorAll('.mw-b').forEach(b => b.addEventListener('click', () => {
+    rec.why = rec.why === b.dataset.why ? '' : b.dataset.why;
+    tagMiss(q.id, rec.ts, rec.why);
+    rerender();
+  }));
+}
+
+/* ── Report a problem with a question ────────────────────────────────
+   "Report" under a question opens a short form (what's wrong + an optional note). The
+   report is written as its own document in the cloud project the PIN sync uses
+   (syncs/QREPORT-<block>-<time>-<random>, no PIN or personal data), so the site owner
+   can list them all with tools/reports.py. Reports that can't be sent (offline) wait in
+   this browser and go out the next time a block page opens. */
+const REPORT_DB = { projectId: 'q-bank-cache', apiKey: 'AIzaSyAvYYQ5gAjcRN4W52ulCZ5nuA9BsuvNqN4' };   // the same project as sync.js
+const LS_REPORTS = 'qbank_reports_v1';
+const REPORT_WHY = [['key', 'The answer key is wrong'], ['explain', 'The explanation is wrong or unclear'],
+  ['typo', 'Typo or confusing wording'], ['other', 'Something else']];
+function loadReports() {
+  try { return JSON.parse(localStorage.getItem(LS_REPORTS)) || []; } catch (e) { return []; }
+}
+function saveReports(list) {
+  try { localStorage.setItem(LS_REPORTS, JSON.stringify(list.slice(-200))); } catch (e) {}
+}
+function reportedIds() {
+  const dir = blockDirName();
+  return new Set(loadReports().filter(r => r.block === dir).map(r => String(r.qid)));
+}
+async function sendReport(r) {
+  const id = `QREPORT-${r.block}-${r.ts}-${r.nonce}`;
+  const url = `https://firestore.googleapis.com/v1/projects/${REPORT_DB.projectId}/databases/(default)/documents/syncs/${encodeURIComponent(id)}?key=${REPORT_DB.apiKey}`;
+  const s = v => ({ stringValue: String(v == null ? '' : v) });
+  const fields = { kind: s('question-report'), block: s(r.block), qid: s(r.qid), reason: s(r.reason), note: s(r.note),
+    exam: s(r.exam), sdl: s(r.sdl), picked: s(r.picked), stem: s((r.stem || '').slice(0, 160)), _createdAt: { timestampValue: new Date(r.ts).toISOString() } };
+  const res = await fetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields }) });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+}
+function flushReports() {
+  const list = loadReports(), waiting = list.filter(r => !r.sent);
+  if (!waiting.length || !navigator.onLine) return;
+  waiting.reduce((p, r) => p.then(() => sendReport(r).then(() => { r.sent = Date.now(); saveReports(list); }).catch(() => {})), Promise.resolve());
+}
+function reportBtnHtml(q) {
+  const done = reportedIds().has(String(q.id));
+  return `<button class="report-btn${done ? ' done' : ''}" id="reportBtn" title="Tell the site owner something is wrong with this question">${done ? '⚑ Reported' : '⚑ Report a problem'}</button>`;
+}
+function bindReportBtn(q, picked) {
+  const btn = document.getElementById('reportBtn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const old = document.getElementById('reportForm');
+    if (old) { old.remove(); return; }
+    const form = document.createElement('div');
+    form.className = 'report-form'; form.id = 'reportForm';
+    form.innerHTML = `<p class="rf-h">What’s wrong with this question?</p>
+      <div class="rf-why">${REPORT_WHY.map(([k, l], i) => `<label><input type="radio" name="rfWhy" value="${k}"${i ? '' : ' checked'}> ${l}</label>`).join('')}</div>
+      <textarea id="rfNote" rows="3" maxlength="600" placeholder="Optional: what should it say? (a page or source helps)"></textarea>
+      <div class="rf-row"><button class="btn" id="rfSend">Send report</button><button class="btn secondary" id="rfCancel">Cancel</button><span class="rf-msg" id="rfMsg"></span></div>`;
+    btn.closest('.q-meta-row').insertAdjacentElement('afterend', form);
+    form.querySelector('#rfCancel').addEventListener('click', () => form.remove());
+    form.querySelector('#rfSend').addEventListener('click', () => {
+      const r = { block: blockDirName(), qid: q.id, reason: (form.querySelector('input[name="rfWhy"]:checked') || {}).value || 'other',
+        note: form.querySelector('#rfNote').value.trim(), exam: q.examNumber || (session && session.examNumber) || '',
+        sdl: q.sdlNumber || (session && session.sdlNumber) || '', picked: picked || '', stem: q.stem || '',
+        ts: Date.now(), nonce: Math.random().toString(36).slice(2, 8), sent: 0 };
+      const list = loadReports(); list.push(r); saveReports(list);
+      const msg = form.querySelector('#rfMsg'), send = form.querySelector('#rfSend');
+      send.disabled = true; msg.textContent = 'Sending…';
+      sendReport(r).then(() => { r.sent = Date.now(); saveReports(list); msg.textContent = 'Thanks — sent.'; })
+        .catch(() => { msg.textContent = 'Saved — it will send when you’re back online.'; })
+        .then(() => { btn.textContent = '⚑ Reported'; btn.classList.add('done'); setTimeout(() => form.remove(), 1600); });
+    });
+  });
+}
+setTimeout(flushReports, 4000);
+
 function lastAttemptMap() {
   // Later entries overwrite earlier ones, so this reflects the most recent
   // outcome per question — a question you missed once but have since
@@ -703,12 +799,14 @@ function render() {
     renderToughestQueue();
   } else if (parts[0] === 'analytics') {
     renderAnalytics();
+  } else if (parts[0] === 'whymiss' && parts[1]) {
+    renderWhyMissQueue(parts[1]);
   } else if (parts[0] === 'studysheet') {
     renderStudySheet();
   } else if (parts[0] === 'atlas' && parts[1]) {
     renderAtlasPractice(decodeURIComponent(parts[1]), parts[2] === 'missed');
   } else if (parts[0] === 'atlasmap' && parts[1]) {
-    renderAtlasMapPractice(decodeURIComponent(parts[1]), parts[2] === 'missed');
+    renderAtlasMapPractice(decodeURIComponent(parts[1]), parts[2] === 'missed', parts[2] === 'quick');
   } else if (parts[0] === 'atlascards' && parts[1]) {
     renderAtlasCardsPractice(decodeURIComponent(parts[1]).split(','), parts[2] ? decodeURIComponent(parts[2]) : '');
   } else if (parts[0] === 'sdlcards' && parts[1]) {
@@ -2373,6 +2471,7 @@ function renderPracticeQuestion() {
       <div class="feedback-banner ${record.correct ? 'correct' : 'incorrect'}">
         ${record.correct ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
       </div>
+      ${missWhyHtml(record)}
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
@@ -2397,7 +2496,7 @@ function renderPracticeQuestion() {
       <div class="q-card">
         <div class="q-meta-row">
           <span class="q-objective">Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''} ${q.bloomLevel ? `<span class="bloom-badge">${escapeHtml(q.bloomLevel)}</span>` : ''}</span>
-          <button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button>
+          <span class="q-meta-btns">${reportBtnHtml(q)}<button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button></span>
         </div>
         <div class="q-stem">${escapeHtml(q.stem)}</div>
         ${choiceListOpen(q)}${gridHeaderHtml(q, !answered)}${choicesHtml}</div>
@@ -2414,6 +2513,8 @@ function renderPracticeQuestion() {
   `;
   if (answered && !(window.ATLAS_CARDS && ATLAS_INDEX && window.ATLAS_PRACTICE)) refreshRailWhenReady(q, picked);
 
+  bindReportBtn(q, answered ? record.letter : null);
+  if (answered) bindMissWhy(q, record, renderPracticeQuestion);
   document.getElementById('flagBtn').addEventListener('click', () => {
     toggleFlag(q.id);
     renderPracticeQuestion();
@@ -2430,13 +2531,14 @@ function renderPracticeQuestion() {
   function finalizeAnswer(confidence) {
     const letter = session.pendingLetter;
     const correct = letter === q.correct;
-    session.records[session.index] = { letter, confidence, correct };
+    const ts = Date.now();
+    session.records[session.index] = { letter, confidence, correct, ts };
     session.pendingLetter = null;
     if (!correct) triggerWrongFlash();
     logAttempt({
       id: q.id, sdlNumber: session.sdlNumber, sdlTitle: findSdl(session.sdlNumber).sdl.title,
       examNumber: session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
-      batch: q.batch, correct, confidence, mode: 'practice', ts: Date.now(),
+      batch: q.batch, correct, confidence, mode: 'practice', ts,
     });
     renderPracticeQuestion();
   }
@@ -2698,7 +2800,7 @@ function renderExamQuestion() {
     <div class="q-card">
       <div class="q-meta-row">
         <span class="q-objective">Objective ${q.objective ?? ''}</span>
-        <button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for later'}</button>
+        <span class="q-meta-btns">${reportBtnHtml(q)}<button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for later'}</button></span>
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
       ${choiceListOpen(q)}${gridHeaderHtml(q, !locked)}${choicesHtml}</div>
@@ -2714,6 +2816,7 @@ function renderExamQuestion() {
     </div>
   `;
 
+  bindReportBtn(q, null);
   document.getElementById('flagBtn').addEventListener('click', () => {
     toggleFlag(q.id);
     renderExamQuestion();
@@ -3006,6 +3109,7 @@ function renderFlaggedQuestion() {
       <div class="feedback-banner ${record.correct ? 'correct' : 'incorrect'}">
         ${record.correct ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
       </div>
+      ${missWhyHtml(record)}
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${atlasLinksHtml(q, record.correct ? null : record.letter)}
@@ -3025,7 +3129,7 @@ function renderFlaggedQuestion() {
     <div class="q-card">
       <div class="q-meta-row">
         <span class="q-objective">${escapeHtml(q.sdlTitle)} · Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''}</span>
-        <button class="flag-btn flagged" id="flagBtn">&#9733; Flagged</button>
+        <span class="q-meta-btns">${reportBtnHtml(q)}<button class="flag-btn flagged" id="flagBtn">&#9733; Flagged</button></span>
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
       ${choiceListOpen(q)}${gridHeaderHtml(q, !answered)}${choicesHtml}</div>
@@ -3039,6 +3143,8 @@ function renderFlaggedQuestion() {
   `;
 
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+  bindReportBtn(q, answered ? record.letter : null);
+  if (answered) bindMissWhy(q, record, renderFlaggedQuestion);
   document.getElementById('flagBtn').addEventListener('click', () => {
     toggleFlag(q.id);
     // Refresh this same view (item stays visible until navigating away).
@@ -3055,13 +3161,14 @@ function renderFlaggedQuestion() {
   function finalizeAnswer(confidence) {
     const letter = session.pendingLetter;
     const correct = letter === q.correct;
-    session.records[session.index] = { letter, confidence, correct };
+    const ts = Date.now();
+    session.records[session.index] = { letter, confidence, correct, ts };
     session.pendingLetter = null;
     if (!correct) triggerWrongFlash();
     logAttempt({
       id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
       objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
-      correct, confidence, mode: 'flagged', ts: Date.now(),
+      correct, confidence, mode: 'flagged', ts,
     });
     renderFlaggedQuestion();
   }
@@ -3280,7 +3387,9 @@ function renderSdlMissed(sdlNumber) {
    "Practice this map" opens #atlasmap/<map id>: every question in this block that
    links to any card pinned on that map (atlas-terms.js lists each map's cards).
    tools/build-atlas.py counts them the same way for the map's buttons. */
-function renderAtlasMapPractice(mapId, missedOnly) {
+/* #atlasmap/<map id>/quick — "Quiz me" on a moving map: 3 of those questions, ones you
+   missed last time first, then ones you haven't seen, then the rest; then a short summary. */
+function renderAtlasMapPractice(mapId, missedOnly, quick) {
   const route = window.location.hash;
   main.innerHTML = `<p class="loading">Finding questions…</p>`;
   ATLAS_READY.then(() => {
@@ -3314,16 +3423,37 @@ function renderAtlasMapPractice(mapId, missedOnly) {
       document.getElementById('backHome').addEventListener('click', () => setRoute(''));
       return;
     }
+    let pick = shuffle(qs);
+    if (quick) {
+      const last = lastAttemptMap(), rank = q => !last[q.id] ? 1 : last[q.id].correct ? 2 : 0;
+      pick = pick.sort((a, b) => rank(a) - rank(b)).slice(0, 3);
+    }
     session = {
       mode: 'review',
-      queueLabel: 'Atlas — ' + entry[0] + (missedOnly ? ' · your misses' : ''),
-      questions: shuffle(qs),
+      queueLabel: (quick ? 'Quick quiz — ' : 'Atlas — ') + entry[0] + (missedOnly ? ' · your misses' : ''),
+      questions: pick,
       index: 0,
-      records: new Array(qs.length).fill(null),
+      records: new Array(pick.length).fill(null),
       pendingLetter: null,
+      quickMap: quick ? mapId : null,
     };
     renderReviewQuestion();
   });
+}
+function renderQuickDone() {
+  const id = session.quickMap, total = session.questions.length, ok = session.records.filter(r => r && r.correct).length;
+  const name = ATLAS_MAPS && ATLAS_MAPS[id] ? ATLAS_MAPS[id][0] : id;
+  main.innerHTML = `
+    <div class="result-summary">
+      <div class="big-pct">${ok}/${total}</div>
+      <div class="sub">Quick quiz — ${escapeHtml(name)}</div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn" id="quickMore">3 more</button>
+      <a class="btn secondary" href="#atlasmap/${encodeURIComponent(id)}">Practice the whole map</a>
+      ${ATLAS_URL ? `<a class="btn secondary" href="${ATLAS_URL}#${encodeURIComponent(id)}">Back to the map</a>` : ''}
+    </div>`;
+  document.getElementById('quickMore').addEventListener('click', () => renderAtlasMapPractice(id, false, true));
 }
 
 /* ── Practice from an atlas graph ────────────────────────────────────────
@@ -3455,6 +3585,7 @@ function renderReviewQuestion() {
       <div class="feedback-banner ${record.correct ? 'correct' : 'incorrect'}">
         ${record.correct ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
       </div>
+      ${missWhyHtml(record)}
       <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
@@ -3475,7 +3606,7 @@ function renderReviewQuestion() {
     <div class="q-card">
       <div class="q-meta-row">
         <span class="q-objective">${escapeHtml(q.sdlTitle)} · Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''}</span>
-        <button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button>
+        <span class="q-meta-btns">${reportBtnHtml(q)}<button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button></span>
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
       ${choiceListOpen(q)}${gridHeaderHtml(q, !answered)}${choicesHtml}</div>
@@ -3489,6 +3620,8 @@ function renderReviewQuestion() {
   `;
 
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+  bindReportBtn(q, answered ? record.letter : null);
+  if (answered) bindMissWhy(q, record, renderReviewQuestion);
   document.getElementById('flagBtn').addEventListener('click', () => {
     toggleFlag(q.id);
     renderReviewQuestion();
@@ -3504,13 +3637,14 @@ function renderReviewQuestion() {
   function finalizeAnswer(confidence) {
     const letter = session.pendingLetter;
     const correct = letter === q.correct;
-    session.records[session.index] = { letter, confidence, correct };
+    const ts = Date.now();
+    session.records[session.index] = { letter, confidence, correct, ts };
     session.pendingLetter = null;
     if (!correct) triggerWrongFlash();
     logAttempt({
       id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
       objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
-      correct, confidence, mode: 'review', ts: Date.now(),
+      correct, confidence, mode: 'review', ts,
     });
     renderReviewQuestion();
   }
@@ -3545,6 +3679,8 @@ function renderReviewQuestion() {
           session.index++;
           session.pendingLetter = null;
           renderReviewQuestion();
+        } else if (session.quickMap) {
+          renderQuickDone();
         } else {
           setRoute('');
         }
@@ -3723,10 +3859,48 @@ function renderAnalytics() {
 
     <div class="section-label">Confidence Calibration</div>
     ${calibrationHtml}
+
+    <div class="section-label">Why You Miss</div>
+    ${whyMissHtml(attempts)}
   `;
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
   const drillToughestBtn = document.getElementById('drillToughestBtn');
   if (drillToughestBtn) drillToughestBtn.addEventListener('click', () => setRoute('toughest'));
+}
+
+/* "Why You Miss" on Analytics: the misses you tagged, by reason, with the advice that
+   fits each — and a drill of the questions whose latest miss carries that tag (#whymiss/<k>). */
+const MISS_TIPS = {
+  know: 'Content gaps — re-read the atlas card or SDL before drilling again.',
+  misread: 'Reading errors — slow down on the last line of the stem, and underline “EXCEPT”, “most likely” and “next step”.',
+  doubt: 'Changed a right answer — trust your first pick unless you find a concrete reason to switch.',
+};
+function whyMissHtml(attempts) {
+  const misses = attempts.filter(a => !a.correct), tagged = misses.filter(a => a.why);
+  if (!tagged.length) return '<p class="setup-hint">After a wrong answer, tap why you missed it — didn’t know it, misread the question, or second-guessed yourself. Your pattern shows up here.</p>';
+  const n = k => tagged.filter(a => a.why === k).length;
+  const top = MISS_WHY.map(([k]) => k).sort((a, b) => n(b) - n(a))[0];
+  const last = lastAttemptMap();
+  const drillN = k => Object.values(last).filter(a => !a.correct && a.why === k).length;
+  return `<table class="breakdown-table"><thead><tr><th>Reason</th><th>Misses</th><th>Share</th><th></th></tr></thead><tbody>
+    ${MISS_WHY.map(([k, l]) => `<tr><td>${l}</td><td>${n(k)}</td><td>${Math.round(100 * n(k) / tagged.length)}%</td>
+      <td>${drillN(k) ? `<a class="amap-go" href="#whymiss/${k}">Drill ${drillN(k)}</a>` : ''}</td></tr>`).join('')}
+    </tbody></table>
+    <p class="setup-hint">${tagged.length} of ${misses.length} misses tagged. Most often: <b>${escapeHtml((MISS_WHY.find(x => x[0] === top) || ['', ''])[1])}</b> — ${MISS_TIPS[top]}</p>`;
+}
+function renderWhyMissQueue(k) {
+  const label = (MISS_WHY.find(x => x[0] === k) || [])[1];
+  const last = lastAttemptMap();
+  const qs = Object.values(last).filter(a => !a.correct && a.why === k).map(a => findQuestionById(a.id)).filter(q => q && q.id);
+  if (!label || !qs.length) {
+    main.innerHTML = `<button class="back-link" id="backHome">&larr; Analytics</button><h1>Why you miss</h1>
+      <p class="empty-state">Nothing to drill here — none of your latest misses carry that tag.</p>`;
+    document.getElementById('backHome').addEventListener('click', () => setRoute('analytics'));
+    return;
+  }
+  session = { mode: 'review', queueLabel: 'Missed — ' + label, questions: shuffle(qs), index: 0,
+    records: new Array(qs.length).fill(null), pendingLetter: null };
+  renderReviewQuestion();
 }
 
 /* ── Printable Study Sheet (missed + flagged) ────────────────────────── */

@@ -115,13 +115,19 @@ function mergeProgress(a, b) {
 
 function mergeAttempts(a, b) {
   const combined = (a || []).concat(b || []);
-  const seen = new Set();
+  const seen = new Map();
   const deduped = [];
   combined.forEach(rec => {
     const k = `${rec.id}|${rec.ts}|${rec.mode}`;
-    if (seen.has(k)) return;
-    seen.add(k);
-    deduped.push(rec);
+    const prev = seen.get(k);
+    if (prev) {
+      // the same answer from both sides: keep a "why did you miss it" tag from either
+      if (!prev.why && rec.why) prev.why = rec.why;
+      return;
+    }
+    const copy = Object.assign({}, rec);
+    seen.set(k, copy);
+    deduped.push(copy);
   });
   deduped.sort((x, y) => (x.ts || 0) - (y.ts || 0));
   return deduped.slice(-MAX_ATTEMPTS_STORED);

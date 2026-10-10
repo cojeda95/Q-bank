@@ -407,6 +407,13 @@ with at least `SDL_MIN` (3) answers, weakest first, each with Redo N missed
 review run), Atlas cards and Practice. Both routes have Continue-card labels in
 `rememberPlace`.
 
+**Quiz me · 3 questions** (drafts, 2026-10-10): every moving map whose cards link to
+question-bank questions gets a "Quiz me · 3 questions" chip in its controls — and on the
+last step of a Tour — (`mapQuizHref` in the kit). It opens the block with the most linked
+questions (`atlas-practice.js`) at `#atlasmap/<map id>/quick`: `renderAtlasMapPractice`
+takes three of them, missed-last-time first, then unseen, then the rest, and ends on a
+summary (`renderQuickDone`) with 3 more, Practice the whole map and Back to the map.
+
 ### Taking the reader to a pin
 
 `flashPins` → `centerOn` is the one path every search result, link and "Same pathway"
@@ -779,6 +786,25 @@ how long ago it was, adds "question i of n" from `<folder>_practicesession_v1` w
 session matches, and links back to `<folder>/index.html<hash>`. It checks the folder against
 the hub's tiles and the hash against a pattern before using either, and stays hidden when
 nothing is saved.
+
+### Why did you miss it? · Report a problem (drafts, 2026-10-10)
+
+After a wrong answer in Practice, Review, Flagged and atlas practice, a chip row asks **why
+you missed it** — didn't know it, misread the question, second-guessed yourself
+(`missWhyHtml` / `bindMissWhy` / `tagMiss`). The tag is stored as `why` on that attempt in
+`<block>_attempts_v1`, so it syncs; `mergeAttempts` in `sync.js` keeps a tag from either
+side. Analytics shows **Why You Miss** (`whyMissHtml`): counts and share per reason, a tip for
+the most common one, and a Drill link per reason (`#whymiss/<reason>`,
+`renderWhyMissQueue` — questions whose latest try was a miss with that tag).
+
+Every question view (Practice, Review, Flagged, the exam) has **⚑ Report a problem**
+(`reportBtnHtml` / `bindReportBtn`): what's wrong (answer key, explanation, wording, other)
+and an optional note. Each report is its own document, `syncs/QREPORT-<block>-<ms>-<random>`,
+in the same Firestore project as the PIN sync (`REPORT_DB` in `shared/app.js`) — block,
+question id, reason, note, exam, SDL, the letter picked and the first 160 characters of the
+stem; no PIN. Reports that fail to send wait in `qbank_reports_v1` and are retried
+(`flushReports`) a few seconds after a block page opens. The owner lists them with
+`python3 -I tools/reports.py` (`--block nephro`, `--json`, `--delete <id>` once handled).
 
 ## Cross-device sync
 

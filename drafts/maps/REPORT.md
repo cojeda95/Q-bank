@@ -142,3 +142,75 @@ numbers are schematic and say so on the map. Looked at one zoomed state of each.
   hypertrophic scar, keloid. A venule with the four extravasation steps, a skin wound per phase, a tensile-strength bar. Readouts (4):
   neutrophils, macrophages, type III, type I collagen. Pins 5 cards. FA pp. 210–214. Looked at: proliferative + keloid.
 - **UNVERIFIED (1):** macrophages shown ↑ only in the inflammatory step.
+
+## Batch: big gaps · 2026-10-10 — eighteen moving maps, 0 new cards, every one `OK · 0 warnings`
+All facts restate the pinned cards (fact-checked on the Mac); `fa` and `src` are the union of the pinned cards' pages and
+textbook chapters. All 29 drafts modules were inserted together into a scratch copy and built cleanly (270 maps, 73 moving).
+Screenshots looked at: syncope (AS, torsades), fever & rash (Kawasaki), name the bug (Shigella), anemia (B12, dark theme),
+pancreatitis (gallstone), amyloid (AL + polarized light), neoplasia (metastasis + tumor suppressor), blisters (pemphigus,
+pemphigoid), lesions (ulcer), bias (confounding).
+
+**Twelve are decision trees** built by one shared layout (pasted into each module, no kit change): a `one` switch picks the answer, the
+path to it lights up (drawn under the boxes) and a dot travels it; a clue box shows that answer's tell; the readouts give the labs.
+- **sxsyncope** — Syncope (`k_sxsyncope.py`) · Symptoms, after sxchest. 11 answers (reflex ×3, orthostatic ×3, AS, HCM, complete
+  block, torsades, seizure mimic). Readouts: BP on standing, heart rate, QT, murmur with Valsalva. 12 cards.
+  **UNVERIFIED (1):** heart rate ↓ in vasovagal/carotid sinus (standard, not on the syncope card).
+- **sxedema** — Edema (`k_sxedema.py`) · after sxdyspnea. 8 answers (DVT, lymphedema, HF, dihydropyridine CCB, nephrotic, cirrhosis,
+  kwashiorkor, leaky capillaries). Readouts: the four Starling forces + albumin. 9 cards.
+  **UNVERIFIED (1):** Pc ↑ for DVT and CCBs (capfluid lists only heart failure for ↑ Pc).
+- **sxfever** — Fever & Hyperthermia (`k_sxfever.py`) · after sxams. Fever vs NMS, serotonin syndrome, malignant hyperthermia,
+  anticholinergic, sympathomimetic, heat stroke, thyroid storm. Readouts: set point, CK, sweating, pupils, reflexes. 11 cards.
+- **sxrash** — Fever & Rash (`k_sxrash.py`) · after sxams. 12 answers by morphology (vesicles, macules, red tongue, palms/soles,
+  petechiae, targets). Readouts: platelets, ESR/CRP, ASO, RPR. 13 cards.
+- **sxweight** — Weight Loss (`k_sxweight.py`) · after sxams. Appetite up (thyroid, T1DM) vs down (TB, Hodgkin, cachexia, Addison,
+  celiac, MDD, anorexia). Readouts: appetite, TSH, glucose, Na⁺, K⁺. 11 cards.
+- **sxjoint** — Joint Pain (`k_sxjoint.py`) · after sxams. Tap the hot joint (septic, gout, CPPD) or read the pattern (RA, OA, AS,
+  PsA, reactive, SLE). Readouts: synovial WBC, ESR/CRP, RF/anti-CCP, HLA-B27, ANA. 10 cards.
+- **sxgibleed** — GI Bleeding (`k_sxgibleed.py`) · after sxabdpain. Upper (PUD, varices, Mallory-Weiss) vs lower (diverticulosis,
+  angiodysplasia, Meckel, hemorrhoids, CRC, UC). Readouts: BUN:Cr, Hb, platelets, PT. 12 cards.
+- **anemiasim** — Anemia Work-Up (`l_anemiasim.py`) · Heme/Onc, after rbc. MCV → iron studies / reticulocyte index / MMA; 12 answers.
+  Readouts: MCV, retic index, ferritin, TIBC, LDH, MMA. 17 cards.
+- **lftsim** — Liver Tests Decoder (`l_lftsim.py`) · GI, after liver. Bilirubin only (Gilbert, hemolysis, Dubin-Johnson), hepatocellular
+  (acetaminophen, viral, alcohol, MASLD, AIH), cholestatic (CBD stone, PBC, PSC), ALP from bone. 6 readouts. 13 cards.
+- **bugid** — Name the Bug (`m_bugid.py`) · Infectious, after microlab. 15 organisms through catalase → coagulase → novobiocin,
+  hemolysis → optochin / bacitracin / 6.5% NaCl, maltose, lactose, oxidase, H₂S. Readouts are test results (↑ positive, ↓ negative):
+  catalase, coagulase, lactose, oxidase. 20 cards.
+- **ethicsim** — Who Decides? Consent & Capacity (`n_ethicsim.py`) · Biostats & Ethics, after ethics. Emergency, adult with capacity,
+  therapeutic privilege, directive, surrogate, minor exceptions, emancipated, parents, Jehovah's Witness parent. No readouts (the
+  answers are people). 7 cards.
+- **designsim** — Study Design Picker (`n_designsim.py`) · after biostats. RCT, crossover, case series, cross-sectional, case-control,
+  cohort, ecological, with the measure each gives. No readouts. 8 cards.
+
+**Six are drawn:**
+- **pancsim** — Pancreatitis in Motion (`l_pancsim.py`) · GI, after liver. Duodenum, ampulla, duct, acini, CBD; zymogens activate in
+  the duodenum (enterokinase site) — or inside the gland for gallstone / alcohol / hypertriglyceridemia / hypercalcemia, with calcium
+  soaps; chronic draws fibrosis and calcifications. Readouts: lipase, Ca²⁺, ALP/direct bili, TG, fecal elastase, glucose. 8 cards.
+- **amylsim** — Amyloid in Motion (`o_amylsim.py`) · Pathology, after genpath. Precursor cell → β-sheet fibril → organs for AL, AA,
+  β2-microglobulin, Aβ, calcitonin, amylin; toggle for Congo red under polarized light. 5 readouts. 11 cards.
+  **UNVERIFIED (1):** "salmon pink under ordinary light" (the amyloidosis card gives only apple-green birefringence).
+- **neosim** — Neoplasia in Motion (`o_neosim.py`) · Pathology, after neoplasia. `steps` (auto): normal → dysplasia → CIS → invasive →
+  metastasis on a drawn epithelium/basement membrane/vessel; `one`: oncogene (one hit) vs tumor suppressor (two hits). Readouts: N:C
+  ratio, basement membrane intact, E-cadherin, metalloproteinases. 11 cards.
+- **blistsim** — Blisters — Where the Skin Splits (`m_blistsim.py`) · Musculoskeletal, after derm. SSSS, pemphigus, pemphigoid, DH,
+  SJS/TEN drawn at their split level with the immunofluorescence pattern. Readouts (↑ present): Nikolsky, oral mucosa, eosinophils,
+  anti-tTG. 9 cards.
+- **lesionsim** — Skin Lesions Drawn to Scale (`m_lesionsim.py`) · after skinbasics. 14 lesion words in profile against a 1 cm ruler.
+  Readouts: above the surface, > 1 cm, fluid-filled, below the basement membrane. 6 cards.
+- **biassim** — Bias in Motion (`n_biassim.py`) · Biostats, after biostats. A study pipeline; 9 biases light the stage they enter
+  (dropouts, confounder, screening timelines for lead-time/length-time) with the fix. No readouts. 5 cards. The lead-time years are
+  illustrative and the map says so.
+
+Dropped from the offer: the "gross vs micro pattern matcher" (injsim already draws each necrosis pattern) and a separate anemia
+symptom map (anemiasim covers it).
+
+## Features · 2026-10-10 — report a question, why-you-missed tags, Quiz me on moving maps (**the kit changed**; kit.js updated)
+- **⚑ Report a problem** (`shared/app.js`, `shared/style.css`) on Practice, Review, Flagged and exam questions: reason + note → its own
+  document `syncs/QREPORT-<block>-<ms>-<random>` in the sync's Firestore project (no PIN); unsent reports wait in `qbank_reports_v1`
+  and retry when a block page opens. **`tools/reports.py`** lists them (`--block`, `--json`, `--delete <id>`). The rules already allow
+  these document names (probe write + delete, both confirmed gone). Tested with Firestore intercepted in a headless browser.
+- **Why did you miss it?** — after a wrong answer, three chips tag the attempt (`why`), synced (`sync.js mergeAttempts` keeps a tag
+  from either side). Analytics → **Why You Miss**: counts, share, a tip for the top reason, and a Drill per reason (`#whymiss/<k>`).
+- **Quiz me · 3 questions** — a chip on every moving map with linked questions, and on a Tour's last step (`mapQuizHref` in the kit);
+  opens the block with the most linked questions at `#atlasmap/<map>/quick` (misses first, then unseen), ending on a summary with
+  3 more / Practice the whole map / Back to the map. Tested on nephflow → nephro.
+- PIPELINE.md documents all three.

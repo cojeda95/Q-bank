@@ -1087,3 +1087,20 @@ h1 { font-size: 1.9rem; line-height: 1.15; margin: 6px 0 6px; }
 }
 /* buttons don't inherit the page font on their own */
 button, input, select, textarea { font-family: inherit; }
+
+/* Report a problem · why did you miss it (shared/app.js) */
+.q-meta-btns { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.report-btn { background: none; border: 1px solid var(--grey-border); border-radius: 6px; padding: 4px 10px; font-size: 0.85rem; cursor: pointer; color: var(--text-muted); }
+.report-btn:hover { border-color: var(--red); color: var(--red); }
+.report-btn.done { color: var(--green); border-color: var(--green); background: var(--green-bg); }
+.report-form { margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--grey-border); border-radius: 10px; background: var(--card-bg); }
+.report-form .rf-h { margin: 0 0 8px; font-weight: 700; color: var(--navy); }
+.report-form .rf-why { display: grid; gap: 4px; margin-bottom: 8px; font-size: 0.92rem; }
+.report-form textarea { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid var(--grey-border); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 0.92rem; }
+.report-form .rf-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.report-form .rf-msg { font-size: 0.88rem; color: var(--grey-text); }
+.miss-why { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 12px; }
+.miss-why .mw-k { font-size: 0.85rem; font-weight: 700; color: var(--grey-text); margin-right: 4px; }
+.miss-why .mw-b { background: none; border: 1px solid var(--grey-border); border-radius: 999px; padding: 4px 12px; font-size: 0.85rem; cursor: pointer; color: var(--text); }
+.miss-why .mw-b.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+@media print { .report-btn, .miss-why, .report-form { display: none !important; } }
