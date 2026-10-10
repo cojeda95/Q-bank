@@ -279,3 +279,35 @@ insert and build together (282 maps, 85 moving). Looked at one zoomed state of e
   `st` (steps, auto): fetus, first breath, newborn (the shunts close and the remnant labels appear). `dx` (one, 6): PDA, PPHN, patent
   foramen ovale, D-TGA, indomethacin, alprostadil (PGE₁). Readouts: PVR, pulmonary blood flow, LA pressure, preductal − postductal
   sat, continuous murmur. 7 cards. Checked in screenshots: fetus, and newborn + PDA.
+- **vestsim** — Vertigo in Motion (`d_vestsim.py`) · EENT, after cochflow. Both labyrinths (canals, utricle/saccule, cochlea) →
+  CN VIII → vestibular nuclei (compare the sides) → MLF → eyes, plus the facial nerve to a face. The pupils show nystagmus as a drift
+  (slow phase) and a jump (fast phase). `dx` (one, 11): head turn, warm/cold caloric, BPPV, Ménière, vestibular neuritis,
+  labyrinthitis, vestibular schwannoma, AICA, PICA, Bell palsy. 5 readouts. 12 cards. Looked at: neuritis, AICA.
+  **UNVERIFIED (1):** fast phase away from a one-sided loss — derived from two card lines (a lesion is read as a head turn away from
+  that side; the fast phase follows the turn), not stated on one card.
+- **murmursim** — Murmurs & Maneuvers in Motion (`c_murmursim.py`) · Cardiac, after valves. Chest with APT M + Erb point, a heart
+  with the abnormal jet, and a phonocardiogram with a cursor. Two `one` switches: lesion (AS, HCM, MR, TR, VSD, ASD, MVP, AR, MS) ×
+  maneuver (standing/Valsalva, squatting, leg raise, handgrip, inspiration, expiration); the murmur grows/shrinks, the MVP click
+  moves. 3 readouts. 11 cards. Looked at: AS + handgrip, MVP + standing. **UNVERIFIED (1):** the card's general rules ("most
+  murmurs"; expiration → left-sided louder) applied to lesions without their own line (TR, MS, VSD; MS, MVP).
+- **pltsim** — Platelets in Motion (`l_pltsim.py`) · Heme/Onc, after coagflow. Injured vessel: collagen, vWF, adhesion row and
+  aggregate; one platelet close up with GpIb, GpIIb/IIIa, P2Y12 and COX-1 sites. `dz` (one, 11): ITP, TTP/HUS, DIC, vWD,
+  Bernard-Soulier, Glanzmann, uremia, aspirin, clopidogrel, abciximab, HIT. 5 readouts (count, bleeding time, PT, PTT,
+  schistocytes). 12 cards. Looked at: Glanzmann, TTP.
+- **watersim** — Water Balance in Motion (`r_watersim.py`) · Renal, after urineconc. Hypothalamus → posterior pituitary → ADH in the
+  blood → V2 receptor → aquaporin-2 → water into the hyperosmotic medulla; urine cup. `dx` (one, 9): water deprivation, water load,
+  SIADH, central DI, nephrogenic DI, primary polydipsia, lithium, desmopressin, vaptans; toggle `dd` gives desmopressin on top (the
+  DI work-up). 5 readouts. 11 cards. Looked at: SIADH, nephrogenic DI, central DI + desmopressin.
+- **odcsim** — The O₂ Curve in Motion (`i_odcsim.py`) · Pulmonary, after gasx. A schematic dissociation curve (shapes drawn, no
+  P50 numbers shown) with a dot riding lungs → tissues and an "unloaded" bracket, plus a red cell. `sh` (one, 13): exercise, Bohr,
+  fever, altitude, cold, HbF, myoglobin, CO, methemoglobin, anemia, polycythemia, cyanide, sickle cell. 5 readouts. 9 cards.
+  Looked at: CO, Bohr.
+- **archsim** — Pharyngeal Arches in Motion (`c_archsim.py`) · Repro & Development, after embryo. Clefts / arches / pouches (CAP)
+  with neural crest flowing into the arches and the outflow tract; face and neck beside. `dx` (one, 7): DiGeorge, Treacher Collins,
+  Pierre Robin, cleft lip, cleft palate, thyroglossal duct cyst, pharyngeal cleft cyst. 5 readouts. 6 cards. Looked at: DiGeorge,
+  Pierre Robin.
+- **toxinsim** — Bacterial Toxins in Motion (`m_toxinsim.py`) · Infectious, after toxins. A gut cell (Gs, Gi, adenylyl cyclase,
+  GC-C, cAMP/cGMP → CFTR, ribosome/EF-2), two synapses (NMJ; inhibitory interneuron) and an APC–T-cell pair. `tx` (one, 10):
+  cholera, E. coli LT and ST, pertussis, diphtheria, Pseudomonas exotoxin A, C. perfringens α-toxin, botulinum, tetanus,
+  superantigen. 5 readouts. 9 cards. Looked at: cholera, tetanus.
+- Kit unchanged for all seven.
