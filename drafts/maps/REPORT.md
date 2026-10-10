@@ -465,3 +465,41 @@ The previously pushed maps were audited — their `d=0` mods are all on mutually
   root; `dx` (one: migraine, tension, cluster, trigeminal neuralgia) × `ph` (steps auto: aura, headache) × `rx` (one, 6) — a drug
   works only where its card lists it for that headache. Aura origin not drawn (card silent). 4 readouts. 4 cards. `fa` 532.
 - **UNVERIFIED (0)** in this batch. Kit unchanged for all twelve.
+
+## Batch: twelve more moving maps (protozoa → viruses) · 2026-10-10 — 0 new cards, all `OK · 0 warnings`
+Facts drawn only from the pinned cards; where a card is silent the map leaves it out or labels the drawing schematic. All 102
+drafts modules pass check; no duplicate map ids. Lane-key note: check.py compares lane keys only against the live atlas, so a
+clash between two drafts slips past it — the pain map first reused `pnDz` (pneumonia map) and was renamed `pwDz`/`pwPath`.
+- **protosim** — Protozoa in Motion (`m_protosim.py`) · Infectious, after fungpar. Body with brain, nodes, heart, gut, liver/spleen,
+  skin, red cells, genital tract; `dx` (one, 6: Naegleria, T brucei, Babesia, T cruzi, Leishmania, Trichomonas) + `asplen` and
+  `treat` toggles. Vectors named only where the card names them. 5 readouts. 6 cards. `fa` 153, 154, 155.
+- **shsim** — The Shoulder in Motion (`j_shsim.py`) · Musculoskeletal, after shoulder. Arm abducts in `ab` steps (0–150°) with SALT
+  muscles lighting; `dx` (one, 5: impingement, cuff tear, frozen shoulder, GH OA, AC OA). Frozen-shoulder stop angle is schematic.
+  4 readouts. 5 cards. `fa` 451.
+- **anessim** — Anesthetics in Motion (`n_anessim.py`) · Pharm, after anesth. Alveolus → blood → brain bars with a MAC line; `ag`
+  (one: N₂O, volatile, propofol, etomidate) × `t` (steps) + `sux` (malignant hyperthermia) and `ptx` toggles. Bar heights schematic.
+  6 readouts. 4 cards. `fa` 565, 566.
+- **laxsim** — Laxatives in Motion (`g_laxsim.py`) · GI, after gidrugs. Lumen, epithelium (ClC-2, GC-C → CFTR, NHE3), enteric plexus;
+  `rx` (one, 9) + `opioid` toggle (PAMORA undoes it). 3 readouts. 5 cards. `fa` 130, 399, 408, 567.
+- **cystsim** — Kidney Cysts in Motion (`r_cystsim.py`) · Renal, after renvasc. Kidney section sized per disease + primary-cilium
+  inset; `dx` (one, 8: ADPKD, ARPKD, medullary cystic, nephronophthisis, sponge kidney, multicystic dysplasia, simple, complex).
+  4 readouts. 8 cards. `fa` 58, 596, 597, 622.
+- **footsim** — The Foot in Motion (`j_footsim.py`) · Musculoskeletal, after footleg. Medial side view + forefoot top view; `st`
+  (steps: heel, midfoot, push-off) × `dx` (one, 8) + `morning` toggle. Geometry schematic. 4 readouts. 6 cards. `fa` 465, 491, 538, 545.
+- **fxsim** — Growth Plates & Arm Injuries in Motion (`j_fxsim.py`) · Musculoskeletal, after sportsortho. Salter-Harris I–V on a bone
+  end (`sh`) + upper limb with the nerve at each landmark (`inj`, one, 9). 3 readouts. 6 cards. `fa` 450, 463, 467.
+- **painsim** — Pain Gone Wrong in Motion (`n_painsim.py`) · Pharm, after pain. Spinothalamic route to VPL and S1; `dx` (one:
+  neuropathic, thalamic, phantom, fibromyalgia) × `rx` (one, 5) — pain eases only where the card pairs drug and condition.
+  4 readouts. 6 cards. `fa` 235, 477, 529.
+- **labsim** — Lab Techniques in Motion (`a_labsim.py`) · Biochemistry, after molbio. `tech` (one, 9: PCR, Southern, Northern, Western,
+  ELISA, flow, karyotype, FISH, CRISPR) × `ph` (steps 1–3). Drawings schematic. 2 readouts. 4 cards. `fa` 50, 51, 52, 53.
+- **alvdzsim** — Alveoli in Trouble in Motion (`i_alvdzsim.py`) · Pulmonary, after lungdz. Two alveoli (Laplace), lungs with apices and
+  bases, RV; `dx` (one, 7: neonatal RDS, coal, silica, asbestos, beryllium, PAP, pulmonary hypertension) + `beta` toggle.
+  5 readouts. 4 cards. `fa` 679, 696, 698, 706.
+- **prossim** — The Prostate in Motion (`c_prossim.py`) · Repro, after prosobs. Zones, urethra, ejaculatory ducts, rectum, spine,
+  gland-lining and Gleason insets; `dx` (one: BPH, HGPIN, adenocarcinoma) × `gl` (one, 4 scores) + α₁-blocker and finasteride
+  toggles. Zone shapes schematic. 4 readouts. 6 cards. `fa` 646, 647, 672, 673.
+- **negsim** — Negative-Strand Viruses in Motion (`m_negsim.py`) · Infectious, after virus. Body with nerve, airway, glands, vessels;
+  `dx` (one: rabies, RSV, croup, mumps, Ebola) + `pep` toggle (rabies immune globulin + vaccine; palivizumab). 5 readouts. 5 cards.
+  `fa` 164, 166, 167, 169.
+- **UNVERIFIED (0)** in this batch. Kit unchanged for all twelve.
