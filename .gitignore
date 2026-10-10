@@ -6,3 +6,6 @@
 *.bak
 *.bak-*
 *.ocom-stale-*
+
+# drafts branch scratch builds
+drafts/.scratch/
