@@ -265,3 +265,17 @@ insert and build together (282 maps, 85 moving). Looked at one zoomed state of e
   CTLA-4, PD-1) → calcineurin → NFAT → IL-2 → CD25 → mTOR → clones; `x` (one, 8): anergy, superantigen, cyclosporine/tacrolimus,
   abatacept/belatacept, basiliximab, sirolimus, checkpoint inhibitor, bare lymphocyte syndrome. 4 readouts. 11 cards. Looked at:
   cyclosporine. **UNVERIFIED (1):** PD-L1 drawn on the APC (the card places it on tumor cells; the label says so).
+- **csfsim** — CSF Flow in Motion (`e_csfsim.py`) · Neuro, after meninges. Choroid plexus → lateral ventricles → foramen of Monro →
+  third ventricle → aqueduct → fourth ventricle → subarachnoid space → arachnoid granulations → sinus, plus the spinal canal
+  (foramen magnum, C7, T12, conus, L3, L5, S2). `blk` (one, 11): Monro block, aqueductal stenosis, Dandy-Walker, communicating,
+  NPH, ex vacuo, IIH, choroid plexus papilloma, syringomyelia, conus medullaris syndrome, cauda equina syndrome. The fourth-ventricle
+  exits are drawn: Magendie (midline) and the paired Luschka (lateral), each with its own CSF dot; Dandy-Walker crosses out all three.
+  Ventricles upstream
+  of the block dilate and those downstream stay small. Readouts: ICP, lateral ventricle size, papilledema, leg reflexes, saddle anesthesia.
+  10 cards. Checked in screenshots: aqueductal stenosis, default and Dandy-Walker. **UNVERIFIED (1):** Magendie midline /
+  Luschka lateral (from the neuro question explanations; the csfflow card names only the foramina).
+- **fetalsim** — Fetal Circulation in Motion (`c_fetalsim.py`) · Cardiac, after chd. Placenta → umbilical vein → ductus venosus →
+  IVC → RA → foramen ovale → LA → brain; SVC → RV → pulmonary artery → ductus arteriosus → descending aorta → umbilical arteries.
+  `st` (steps, auto): fetus, first breath, newborn (the shunts close and the remnant labels appear). `dx` (one, 6): PDA, PPHN, patent
+  foramen ovale, D-TGA, indomethacin, alprostadil (PGE₁). Readouts: PVR, pulmonary blood flow, LA pressure, preductal − postductal
+  sat, continuous murmur. 7 cards. Checked in screenshots: fetus, and newborn + PDA.
