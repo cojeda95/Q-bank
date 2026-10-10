@@ -503,3 +503,16 @@ clash between two drafts slips past it — the pain map first reused `pnDz` (pne
   `dx` (one: rabies, RSV, croup, mumps, Ebola) + `pep` toggle (rabies immune globulin + vaccine; palivizumab). 5 readouts. 5 cards.
   `fa` 164, 166, 167, 169.
 - **UNVERIFIED (0)** in this batch. Kit unchanged for all twelve.
+
+## Feature · 2026-10-10 — floating switches on wider screens (**the kit changed**; kit.js updated)
+- On screens wider than 1000 px the phone sheet (#dynSheet) now also serves as a **floating, draggable, resizable card**
+  over the map. It keeps the same on-screen size at any zoom. **Auto** (default): it appears once the canvas panel is
+  less than ~85% on screen (you zoomed in) and disappears when the panel is back in view. **Pin** keeps it up at any zoom;
+  **Hide** leaves a "Switches ▴" button that brings it back pinned. Position and mode are remembered per device
+  (`mla-dsfloat`, `mla-dsfloat-pos`). Phones keep the docked sheet unchanged.
+- Code: kit section (`dsDesk`, `dynPanelOut`, `dynFloatCheck`, `dsPlace`, `dsSave`; `dynSheetRender` / `dynSheetInit`
+  branches), **plus two edits outside the kit section** that the owner's batch tooling does not carry: `applyCam` now calls
+  `dynFloatCheck()`, and a `@media (min-width:1001px)` CSS block after the m40 phone-sheet CSS.
+- Tested headless (Chromium, 1600×1000, Nephron in Motion): hidden at Fit → appears after 4× zoom-in → a chip click
+  switches the map and the address → drag moves it and saves the spot → Fit hides it → Hide shows the button → button
+  pins it, still up at Fit → at 420 px wide the old docked sheet shows. No page errors. PIPELINE.md documents it.
