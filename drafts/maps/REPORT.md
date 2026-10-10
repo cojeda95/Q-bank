@@ -214,3 +214,54 @@ symptom map (anemiasim covers it).
   opens the block with the most linked questions at `#atlasmap/<map>/quick` (misses first, then unseen), ending on a summary with
   3 more / Practice the whole map / Back to the map. Tested on nephflow → nephro.
 - PIPELINE.md documents all three.
+
+## Batch: complement + ribs · 2026-10-10 — two moving maps, 0 new cards, both `OK · 0 warnings`
+All 31 drafts modules insert and build together (272 maps).
+- **complsim** — Complement in Motion (`h_complsim.py`) · Immunology, after innate. Classical / lectin / alternative entries feed a
+  C3 hub that drives opsonization, anaphylatoxins and the MAC; the brakes (DAF/CD59 on a red cell, C1 esterase inhibitor) below.
+  `def` (one): early components (C1q, C4, C2) · C3 deficiency · C5–C9 · eculizumab · HAE · PNH — ✕ on the broken step, flows stop or
+  misfire (MAC onto the red cell in PNH, bradykinin in HAE). Readouts: C3, C4, CH50, LDH, haptoglobin. Pins 10 cards. FA pp. 104–106,
+  113, 140, 427–428, 476, 676. Looked at: PNH.
+  **UNVERIFIED (1):** "immune complexes cleared poorly" as the reason early-component deficiency predisposes to SLE.
+- **ribsim** — Rib Motion in Motion (`n_ribsim.py`) · OMM, after ommmech. `br` (steps, auto 3 s): exhale/inhale drives four panels —
+  pump handle (side), bucket handle (front), caliper ribs 11–12 (top), ribs 1–12. `dys` (one): ribs 4–6 as an inhaled group (key
+  rib = bottom) or exhaled group (key rib = top) — BITE. `met` (one): the muscle-energy muscle for an exhaled rib at each level (rib 1
+  anterior/middle scalenes · 2 posterior scalene · 3–5 pectoralis minor · 6–9 serratus anterior · 10–11 latissimus dorsi · 12 quadratus
+  lumborum, from the ribresp card's course-slide table). Readouts: front-to-back depth, side-to-side width. Pins 6 cards. No FA pages
+  (`fa=''`); sources Foundations ch 31/35, Atlas of Osteopathic Techniques ch 9–10, OCOM OMM texts. Looked at: inhale + exhaled
+  group + ribs 6–9. The rib drawings are schematic.
+
+## Batch: moving versions of ten static topics · 2026-10-10 — ten moving maps, 0 new cards, all `OK · 0 warnings`
+Each sits next to the static map it animates (pins that map's cards; the static map is untouched). All 41 drafts modules
+insert and build together (282 maps, 85 moving). Looked at one zoomed state of each.
+- **energysim** — Energy Metabolism in Motion (`a_energysim.py`) · Biochemistry, after core. Glycolysis → PDH → TCA → complexes I–IV
+  pumping H⁺ → ATP synthase. `blk` (one, 11): PK deficiency, PDH deficiency, thiamine, arsenic, fluoroacetate, rotenone, antimycin,
+  cyanide, CO, oligomycin, uncoupler. Readouts: lactate, O₂ use, ATP, venous O₂ sat, temperature, citrate. 12 cards. Looked at: cyanide.
+- **ureasim** — Urea Cycle in Motion (`a_ureasim.py`) · after nitrogen. Hepatocyte mitochondrion + cytosol; gut → liver → astrocyte.
+  `def` (one): CPS-1/NAGS, OTC, ASS, ASL, arginase, hepatic encephalopathy, orotic aciduria (the look-alike). Readouts: ammonia, BUN,
+  orotic acid, citrulline, MCV. 7 cards. Looked at: OTC. **UNVERIFIED (1):** aspartate in at ASS / fumarate out at ASL.
+- **gsdsim** — Glycogen Storage Diseases in Motion (`a_gsdsim.py`) · after core. Liver (fasting) and muscle (exercise) side by side,
+  `st` (steps) + `gsd` (one, 7: von Gierke, Pompe, Cori, Andersen, McArdle, Hers, Tarui). 6 readouts. 7 cards. Looked at: fasting + von
+  Gierke. **UNVERIFIED (1):** muscle lacks glucose-6-phosphatase (the card lists liver, kidney, gut).
+- **lsdsim** — Lysosomal Storage in Motion (`a_lsdsim.py`) · after lysosome. Golgi M6P tag → lysosome; `lsd` (one, 9) fills the
+  lysosome with that substrate, or (I-cell) sends enzymes to the blood. Readouts (↑ present): HSM, cherry-red spot, corneal clouding,
+  neuropathy, urinary GAGs, plasma enzymes. 11 cards. Looked at: Hurler.
+- **rxsim** — Psych Drugs at the Receptors (`b_rxsim.py`) · Psych & Behavior, after psyrxprin. D₂ in the four dopamine pathways +
+  5-HT₂A, H₁, muscarinic, α₁, Na⁺ channel, NET/SERT; `rx` (one, 7): haloperidol, chlorpromazine, clozapine, olanzapine, risperidone,
+  aripiprazole, amitriptyline. 6 readouts. 9 cards. Looked at: chlorpromazine. **UNVERIFIED (1):** chlorpromazine's effects drawn at
+  H₁/muscarinic/α₁ (the card names the effects, not the receptors).
+- **sleepsim** — Sleep Stages in Motion (`b_sleepsim.py`) · after sleepdev. EEG per stage (`stg` steps, auto) + a schematic hypnogram
+  with a moving dot; `who` (one): depression, narcolepsy, alcohol/benzodiazepines, aging. 4 readouts. 9 cards. Looked at: N2 + narcolepsy.
+- **sexsim** — Sex Differentiation in Motion (`c_sexsim.py`) · Repro & Development, after sexdev. Gonad → ducts → external genitalia
+  with AMH, testosterone and DHT flowing; `dx` (one, 9): typical XY/XX, Swyer, AIS, 5α-reductase, PMDS, CAH (46,XX), Turner,
+  Klinefelter. Readouts: androgens, DHT, LH, FSH, estradiol. 9 cards. Looked at: PMDS. **UNVERIFIED (1):** Wolffian duct regressed in AIS.
+- **pregsim** — Pregnancy Hormones in Motion (`c_pregsim.py`) · after placenta. A schematic 40-week hCG/progesterone/estriol chart with a
+  cursor (`wk` steps) + corpus luteum, placenta, fetoplacental unit; `dx` (one): ectopic, mole, twins, trisomy 21, trisomy 18. 3 readouts.
+  9 cards. Looked at: weeks 12–20 + trisomy 21.
+- **antidsim** — Poison & Antidote in Motion (`g_antidsim.py`) · Pharm, after tox. Poison → target → harm; `give` toggle sends the
+  antidote, which competes, binds (pair excreted), blocks/replenishes, or bypasses/replaces; `p` (one, 16 poisons). 4 readouts. 18 cards.
+  Looked at: digoxin + Fab. **UNVERIFIED (1):** the mechanism lines for physostigmine, methylene blue and 100% O₂.
+- **tcellsim** — T-Cell Activation in Motion (`h_tcellsim.py`) · Immunology, after immune. APC–T-cell synapse (MHC II–TCR, B7–CD28,
+  CTLA-4, PD-1) → calcineurin → NFAT → IL-2 → CD25 → mTOR → clones; `x` (one, 8): anergy, superantigen, cyclosporine/tacrolimus,
+  abatacept/belatacept, basiliximab, sirolimus, checkpoint inhibitor, bare lymphocyte syndrome. 4 readouts. 11 cards. Looked at:
+  cyclosporine. **UNVERIFIED (1):** PD-L1 drawn on the APC (the card places it on tumor cells; the label says so).
