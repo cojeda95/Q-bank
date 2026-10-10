@@ -311,3 +311,39 @@ insert and build together (282 maps, 85 moving). Looked at one zoomed state of e
   cholera, E. coli LT and ST, pertussis, diphtheria, Pseudomonas exotoxin A, C. perfringens α-toxin, botulinum, tetanus,
   superantigen. 5 readouts. 9 cards. Looked at: cholera, tetanus.
 - Kit unchanged for all seven.
+- **aasim** — Amino Acid Disorders in Motion (`a_aasim.py`) · Biochemistry, after nitrogen. Three catabolic lines (Phe → Tyr →
+  melanin / catecholamines / homogentisate → FAA → fumarate; BCAAs → α-ketoacids → propionyl-CoA → methylmalonyl-CoA → succinyl-CoA;
+  Met → homocysteine → cystathionine → cysteine with remethylation) + a tubule with the two transporters. `dx` (one, 12): PKU, BH4,
+  albinism, alkaptonuria, tyrosinemia I, MSUD, propionic, methylmalonic, homocystinuria (CBS / remethylation), Hartnup, cystinuria.
+  Substrate piles up, spill box names the product. 6 readouts. 10 cards. Looked at: PKU, MMA.
+- **faosim** — Fatty Acid Oxidation in Motion (`a_faosim.py`) · Biochemistry, after lipid. Blood → acyl-CoA → CPT-I/CPT-II →
+  β-oxidation spiral → acetyl-CoA → ketones/ETC; peroxisome (ABCD1, α-oxidation, plasmalogens). `fast` toggle (default on) + `dx`
+  (one, 7): carnitine deficiency, valproate, CPT-II, MCAD, Refsum, X-ALD, Zellweger. 7 readouts. 8 cards. Looked at: MCAD, X-ALD.
+- **sugarsim** — Fructose & Galactose in Motion (`a_sugarsim.py`) · Biochemistry, after core. Fructose (fructokinase, aldolase B),
+  galactose (lactase, galactokinase, GALT, aldose reductase → galactitol in the lens), polyol (aldose reductase, sorbitol DH).
+  `dx` (one, 5): HFI, essential fructosuria, classic galactosemia, galactokinase, hyperglycemia. 6 readouts. 5 cards. Looked at: GALT.
+- **chemosim** — Chemo & DNA Repair in Motion (`l_chemosim.py`) · Heme/Onc, after chemo. Cell-cycle wheel with cells moving and
+  checkpoints, a DNA strip, nucleotide supply, spindle and the five repair pathways. `rx` (one, 13 drugs) piles cells at their phase,
+  marks the DNA lesion, gives the toxicity; `rp` (one, 5): XP, Lynch, BRCA, Fanconi, A-T. 5 readouts. 20 cards. Looked at:
+  vincristine, cisplatin + A-T.
+- **aortasim** — The Aorta in Motion (`c_aortasim.py`) · Cardiac, after vasc. Heart → arch branches (vertebral) → descending →
+  renals → iliacs, + an artery-wall inset; `pl` (steps, auto): dysfunction → fatty streak → fibrous plaque → complicated;
+  `dx` (one, 8): AAA, TAA, dissection A/B, subclavian steal (vertebral flow reverses), PAD, cholesterol emboli, Mönckeberg.
+  5 readouts. 8 cards. Looked at: steal + fibrous plaque, dissection A.
+- **szsim** — Antiseizure Drugs in Motion (`e_szsim.py`) · Neuro, after seizhead. Excitatory neuron (Na⁺ channel, Ca²⁺ channel,
+  SV2A, glutamate), inhibitory interneuron (GABA-A), glia (GABA transaminase), thalamocortical loop (T-type Ca²⁺), EEG strip.
+  `sz` (one, 4) × `rx` (one, 9). 4 readouts. 12 cards. Looked at: absence; focal + valproate.
+- **parasim** — Parasite Life Cycles in Motion (`m_parasim.py`) · Infectious, after fungpar. Schematic body with three ways in;
+  `p` (one, 15) sends the parasite along its route (dashed path + moving dots), lights the organs it damages, tags finding + drug.
+  5 readouts. 12 cards. Looked at: Strongyloides, P. vivax.
+- **esosim** — Swallowing in Motion (`g_esosim.py`) · GI, after gitract. Pharynx → UES → esophagus → LES → stomach, bolus on a
+  peristaltic wave; `liq` toggle (solids/liquids) + `dx` (one, 9): achalasia, distal esophageal spasm, GERD, Barrett, Schatzki ring,
+  stricture, Plummer-Vinson web, Zenker, Mallory-Weiss. 5 readouts. 9 cards. Looked at: achalasia, Zenker.
+- **pedsim** — Pedigree Simulator (`a_pedsim.py`) · Biochemistry, after genetics. One three-generation family; `mode` (steps, 5
+  patterns) fills it in, `gen` (steps, auto) reveals generations while the mutant allele travels down. 3 readouts. 5 cards.
+  Looked at: XLR, AR, mitochondrial. The families are illustrations (one possible family per pattern), stated on the map.
+- **avsim** — Antiviral Targets in Motion (`m_avsim.py`) · Infectious, after antiviral. Four cells: herpes (drug → viral kinase →
+  host kinases → DNA polymerase), HCV (polyprotein, NS3/4A, NS5A, NS5B), HBV (cccDNA, pgRNA, RT), influenza (PA endonuclease,
+  neuraminidase). `hv` (steps HSV/CMV) + `tk` toggle (kinase-mutant) + `rx` (one, 10). 4 readouts. 13 cards. Looked at:
+  acyclovir on CMV, foscarnet on a TK mutant. HIV left to hivflow.
+- Kit unchanged for all ten. Also fixed: `chemosim` used `var(--ink-1)`, which isn't defined — now `var(--ink)`.
