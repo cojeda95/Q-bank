@@ -544,3 +544,38 @@ pass check; no duplicate map ids or lane keys across drafts (checked separately 
   (SERT), adenosine A₂A cell; `drug` (one: nicotine, caffeine, MDMA) × `phase` (steps: using, withdrawal/after) + `rx` toggle +
   `stage` (one, 5 stages of change). 5 readouts. 7 cards. `fa` 585, 586, 589, 594, 633.
 - **UNVERIFIED (0)** in this batch. Kit unchanged for all eight.
+
+## Batch: eight more moving maps · 2026-10-10 — 0 new cards, all `OK · 0 warnings`
+Facts drawn only from the pinned cards; drawings labelled schematic. All 118 drafts modules pass check; no duplicate map ids or
+lane keys across drafts (checked separately — check.py compares only with the atlas).
+- **thytsim** — Thyroid Tumors in Motion (`l_thytsim.py`) · Endocrine, after thyroid. Lobe with follicles, C cells, capsule,
+  nodes, veins, neck structures, distant organs; `dx` (one, 5: follicular adenoma, follicular ca, papillary, anaplastic,
+  medullary) + `fna` toggle. 4 readouts. 4 cards. `fa` 347, 356.
+- **voxsim** — Larynx & Voice in Motion (`d_voxsim.py`) · EENT, after larynx. Glottis from above, CN X → superior and recurrent
+  laryngeal nerves, resonators; `act` (steps: breathe, speak, whisper, strain/swallow, sing high) × `lx` (one: left RLN palsy,
+  external branch, nodules, polyp, papillomas). 4 readouts. 5 cards. `fa` 286, 288, 347, 638, 690, 703, 704.
+- **cervsim** — The Cervical Spine in Motion (`j_cervsim.py`) · Musculoskeletal, after neckpain. Axial vertebra + arm root
+  territories; `dz` (one: spondylosis, foraminal, central, hyperextension) × `rt` (steps C5–C8) + `test` toggle (Spurling /
+  Lhermitte & Hoffman). 4 readouts. 4 cards. `fa` 458, 521.
+- **tfsim** — Blood Transfusion in Motion (`h_tfsim.py`) · Heme/Onc, after transfuse. Blood bank tubes + unit → line → patient;
+  `lab` (one: typing, screen, crossmatch, DAT) × `pt` (one, 6: fever last time, immunocompromised, IgA-deficient, massive
+  transfusion, platelet unit, Rh− mother) + `fix` toggle. 5 readouts. 6 cards. `fa` 110, 112, 117, 162, 170, 249, 411, 416, 434, 731.
+- **plsim** — Pleural Fluid in Motion (`p_plsim.py`) · Pulmonary, after pleural. Lung, pleural space, chest-wall capillary and
+  lymphatic; `mech` (one, 5 Robbins mechanisms) × `fl` (one: clear, blood, chyle, pus, tumor). 5 readouts. 3 cards. `fa` 699.
+- **orbitsim** — The Orbit & Tears in Motion (`n_orbitsim.py`) · EENT, after anteye. Front view of the orbit walls, apex, lacrimal
+  path + front of the eye and a cornea slice; `orb` (one: blowout, SOF, apex) + `blk` toggle × `eye` (one, 6: hordeolum,
+  chalazion, sebaceous ca, pterygium, keratoconus, Fuchs). 5 readouts. 6 cards. `fa` 559 (other cards carry none).
+- **cbsim** — Cerebellar Lesions in Motion (`b_cbsim.py`) · Neuro, after cerebellum. Dentate → SCP crossing → VL thalamus → cortex
+  → pyramidal crossing, vermis → both vestibular nuclei, body; `les` (one: right hemisphere, vermis, midbrain past the crossing,
+  dorsal columns) + `eyes` (Romberg) toggle. 5 readouts. 3 cards. `fa` 510, 524, 544.
+- **glyxsim** — Glycolysis Odds & Ends in Motion (`a_glyxsim.py`) · Biochemistry, after core. Glycolysis, 2,3-BPG and F-2,6-BP
+  branches, lactate, pyruvate carboxylase, TCA; `hor` (steps: fed, fasting) × `x` (one, 6: hexokinase, fluoride, PC/biotin,
+  ethanol, IDH, SDH). 6 readouts. 7 cards. `fa` 66, 70, 74, 75.
+- **UNVERIFIED (0)** in this batch. Kit unchanged for all eight.
+- **Open issue, not fixed (flagged for review): wrong practice questions on the transfusion map.** tfsim's "Practice this map"
+  shows Neuro · 3 and Psych · 2. All 5 come from the atlas card `antiglobulin` (the other five cards on the map link to no
+  questions). Its alias `DAT · IAT` makes "DAT" match questions about the **dopamine transporter (DAT)**: psych sdl04_q12,
+  sdl37_q16; neuro sdl05_q16, sdl05_q40, sdl05_q46 (cocaine, amphetamine, methylphenidate, reuptake). The links are built by
+  `tools/build-atlas.py` (`links_for`) into `resources/atlas-practice.js` and `atlas-qlinks.js`, so the same false links also
+  appear on the atlas card itself, not just this map. Possible fix (needs a decision on main): stop using the bare "DAT" alias
+  for matching, or require a Coombs or antiglobulin context. Nothing changed here.
