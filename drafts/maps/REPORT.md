@@ -380,3 +380,42 @@ insert and build together (282 maps, 85 moving). Looked at one zoomed state of e
   male") placed in the adolescent band — the cards give no age range.
 - Kit unchanged for all nine. Also fixed in passing: two shapes drawn with `when=[]` (always shown) in mapksim and bonesim drafts
   before they were saved.
+
+## Batch: nine more moving maps · 2026-10-10 — 0 new cards, all `OK · 0 warnings`
+Facts drawn only from the pinned cards; where a card is silent the map leaves the step out and says so in the module header.
+All 78 drafts modules pass check; no duplicate map ids or lane keys.
+- **colsim** — Collagen Assembly in Motion (`a_colsim.py`) · Biochemistry, after collagen. α-chains (Gly-X-Y) → hydroxylation (vit C,
+  Fe²⁺) → triple helix → propeptides cut → lysyl oxidase cross-links (Cu); `dx` (one, 8: scurvy, OI, kyphoscoliotic, arthrochalasia,
+  dermatosparaxis, Menkes, vascular, classic) × `ty` (one, types I–IV). No glycosylation step and no in/out-of-cell location — no card
+  states them. 11 cards. `fa` 48, 49, 67, 212.
+- **frysim** — Spinal Mechanics & OMT in Motion (`o_frysim.py`) · OMM, after omt. T3–T9 from behind + top-view vertebra; `fr` (one:
+  type I group curve, type II single segment, Principle III) × `tx` (one, 7 techniques) on an ease–neutral–barrier strip. 8 cards.
+  `fa` empty (OMM cards cite no First Aid pages).
+- **lbpsim** — Low Back Pain in Motion (`o_lbpsim.py`) · OMM, after lbp. Lumbar side view with `pos` (steps auto: flexion, neutral,
+  extension) + pelvis/legs from behind; `dx` (one, 6: disc, stenosis, spondylolisthesis, psoas, leg length, iliolumbar), each with
+  its OMT line. 6 cards. `fa` empty.
+- **pnasim** — Pneumonia in Motion (`i_pnasim.py`) · Pulmonary, after respinf. Mucociliary escalator, alveolar macrophage, one lobe
+  through `st` (steps auto: congestion → red → gray hepatization → resolution); `dx` (one, 6 defense failures, mycoplasma, abscess).
+  4 readouts. 5 cards. `fa` 125, 134, 148, 188, 680, 702.
+- **gxsim** — Bacterial Gene Transfer in Motion (`m_gxsim.py`) · Infectious, after microlab. Donor → recipient; `gx` (one:
+  transformation, F⁺ conjugation, Hfr, generalized and specialized transduction, transposition) + `dnase` toggle (blocks
+  transformation only). 4 cards. `fa` 128, 129.
+- **altsim** — Climbing to Altitude in Motion (`i_altsim.py`) · Pulmonary, after highalt. Climber on a mountain, `alt` (steps auto:
+  sea level, 10,000 ft, 20,000 ft, 20,000 ft acclimatized) with barometric and alveolar PO₂ bars (card numbers only), ventilation
+  1.65× → ≈5×, renal HCO₃⁻ excretion, Hct 40–45 → ≈60%; `dx` (one, 6: AMS, HACE, HAPE, chronic mountain sickness, natives, O₂).
+  5 readouts. 5 cards. `fa` 299, 688. Looked at: acclimatized; 20,000 ft + HAPE.
+- **scrotsim** — The Scrotum in Motion (`c_scrotsim.py`) · Repro & Development, after malerepro. Aorta, IVC, kidneys, testicular
+  arteries, gonadal veins (left into the renal vein at a right angle), close-up testis/epididymis/tunica; `dx` (one, 8: torsion,
+  epididymitis, left and right varicocele, hydrocele, spermatocele, cryptorchidism, germ cell tumor) + `lift` (Prehn) and `light`
+  (transillumination) toggles, both off by default. The descent path is a labelled schematic — no card gives its stages. 5 readouts.
+  6 cards. `fa` 669, 670, 671. Looked at: torsion; hydrocele + light (caught and fixed toggles starting on — `def_` was not remapped).
+- **btsim** — Brain Tumors in Motion (`e_btsim.py`) · Heme/Onc, after tumcns. Midline brain with ventricles, aqueduct, 4th ventricle,
+  pineal, sella, cerebellum, tentorium and cord, CSF flowing; `tu` (one, 11) grows each tumor where its card puts it — those that
+  block CSF dilate the ventricles, medulloblastoma drops metastases, hemangioblastoma raises red cells; `ag` (one: children, adults)
+  rings the tumors the cards tie to each age. CPA drawn on the midline view, labelled lateral. 6 readouts. 12 cards. `fa` 539, 540,
+  542. Looked at: medulloblastoma; glioblastoma + children; meningioma (moved the corpus callosum label off the butterfly).
+- **myelsim** — Myeloid Neoplasms in Motion (`l_myelsim.py`) · Heme/Onc, after hemeonc. Stem cell → red-cell, granulocyte and
+  platelet lanes → blood, spleen, skull/skin box; `dx` (one, 9: AML, APL, MDS, CML, blast crisis, PV, ET, myelofibrosis, LCH) +
+  `drug` toggle (card-stated treatment for AML, APL, CML, PV). Intermediate granulocyte stages left unnamed — no card names them.
+  6 readouts. 6 cards. `fa` 436, 437, 438, 439, 440, 447. Looked at: APL; myelofibrosis.
+- **UNVERIFIED (0)** in this batch. Kit unchanged for all nine.
