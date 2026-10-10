@@ -90,3 +90,55 @@
   list and a new mix scope `"weak"`. The Index section "Your weakest moving maps" gets "▶ Mix your weakest — 10 Name-it
   questions"; the mix reads "Moving-map mix (your weakest maps)", missed options come back first as before, the scope chip
   offers "All moving maps", and if the weak list empties mid-mix it falls back to all moving maps. Tested with seeded scores.
+
+## Batch: the empty topics · 2026-10-10 — eight moving maps, 0 new cards, every one `OK · 0 warnings`
+All facts restate pinned cards (fact-checked on the Mac) with their First Aid pages; curves, bar heights and example
+numbers are schematic and say so on the map. Looked at one zoomed state of each.
+
+### testsim — Diagnostic Test Simulator (`f_testsim.py`) · Biostats & Ethics, after biostats
+- `cut` (steps: cutoff 44 / 50 / 56) × `prev` (steps: 1% / 10% / 50%). Healthy N(40, 8) and diseased N(60, 8) curves with FP/FN shaded,
+  the ROC curve with the cutoff point, a 2 × 2 table for 1000 people and bars for sensitivity, specificity, PPV, NPV, plus LR+ — all
+  computed from the formulas on `sensspec`, `ppvnpv`, `cutoff`, `likelihood`. Readouts (5) compare with middle cutoff at 10%,
+  computed per state. Pins 10 cards. FA pp. 259–262. Looked at: low cutoff + 1% (PPV 3.2%, NPV 100%).
+
+### pksim — Pharmacokinetics & Dose–Response Simulator (`g_pksim.py`) · Pharm, after pkpd
+- `pk` (one): loading dose · double the dose · CYP inducer (t½ ×0.5) · CYP inhibitor (t½ ×2) · zero- vs first-order. A dose every
+  half-life (bolus model) against a therapeutic window, with the 4–5 half-life steady-state band. `pd` (one): competitive ·
+  noncompetitive · partial agonist · more potent agonist on a log dose–response curve. Readouts (5): steady-state level, time to steady
+  state, half-life, potency, efficacy. Pins 12 cards (clearance, dosing, elimination, efficacypotency, antagonists, ti, cyp…).
+  FA pp. 229–233, 251. Looked at: inhibitor + competitive antagonist.
+
+### hypsim — Hypersensitivity Types in Motion (`h_hypsim.py`) · Immunology, after hypimm
+- `ex` (one, 13): anaphylaxis, allergic asthma, blood in IgA deficiency · warm AIHA, myasthenia gravis, Graves, Goodpasture · SLE,
+  serum sickness, Arthus · contact dermatitis, PPD, GVHD. Four mechanism columns (mast cell, antibody on a cell with the three outcomes,
+  complexes in a vessel, T cells), a timeline of onset. Readouts (4): tryptase, allergen-specific IgE, complement, direct Coombs.
+  Pins 16 cards. FA pp. 110–111. Looked at: myasthenia gravis.
+
+### idsim — Immunodeficiency Simulator (`h_idsim.py`) · Immunology, after hypimm
+- `id` (one, 12): Bruton, CVID, IgA deficiency, hyper-IgM, DiGeorge, SCID, Wiskott-Aldrich, Job, LAD, Chédiak-Higashi, CGD, C5–C9.
+  The lymphocyte line and the neutrophil's path with an ✕ at the broken step, antibody bars per disorder, infection clues.
+  Readouts (6): B cells, T cells, IgG, IgM, IgE, neutrophils — "–" where a card says "normal or ↓". Pins 17 cards. FA pp. 104–105,
+  113–115, 126. Looked at: hyper-IgM.
+
+### hypoxsim — Hypoxemia Simulator, A–a gradient & 100% O₂ (`i_hypoxsim.py`) · Pulmonary, after hypoxia
+- `hx` (one): altitude, hypoventilation, V/Q mismatch, diffusion limitation, shunt, dead space (PE); `o2` toggle (100% O₂). One
+  alveolus and capillary per cause, the alveolar gas equation worked through, the five causes checked off. Readouts (4): PaO₂, PaCO₂,
+  A–a gradient, PaO₂ on 100% O₂. Pins 13 cards. FA pp. 684–687. Looked at: shunt on 100% O₂.
+- **UNVERIFIED (2):** the example blood-gas numbers (illustrative, chosen for direction); the reason dead space widens the A–a gradient.
+
+### pftsim — PFTs & Flow–Volume Loops (`i_pftsim.py`) · Pulmonary, after lungdz
+- `pf` (one): emphysema/COPD, asthma, ILD, neuromuscular weakness, severe obesity. Flow–volume loop vs normal, RV/FRC/TLC bars, tags
+  for FEV₁/FVC and DLCO. Readouts (5): FEV₁, FEV₁/FVC, TLC, RV, DLCO. Pins 9 cards. FA pp. 682–683, 692. Looked at: COPD.
+- **Left "–":** RV in restriction and asthma's DLCO (no card gives them).
+
+### injsim — Cell Injury & Death Simulator (`j_injsim.py`) · Pathology, after genpath
+- `inj` (one): reversible, irreversible, apoptosis, coagulative, liquefactive, caseous, fat, fibrinoid, gangrenous. One cell through
+  the stages and a tissue patch per necrosis pattern. Readouts (4): cell volume, membrane integrity, inflammation, serum enzymes.
+  Pins 15 cards. FA pp. 202–206. Looked at: irreversible injury.
+- **UNVERIFIED (1):** cell volume ↑ in irreversible injury.
+
+### healsim — Inflammation & Wound Healing in Motion (`j_healsim.py`) · Pathology, after genpath
+- `t` (steps, auto 5 s): minutes → inflammatory → proliferative → remodeling; `dx` (one): vitamin C, copper, zinc deficiency, LAD,
+  hypertrophic scar, keloid. A venule with the four extravasation steps, a skin wound per phase, a tensile-strength bar. Readouts (4):
+  neutrophils, macrophages, type III, type I collagen. Pins 5 cards. FA pp. 210–214. Looked at: proliferative + keloid.
+- **UNVERIFIED (1):** macrophages shown ↑ only in the inflammatory step.
