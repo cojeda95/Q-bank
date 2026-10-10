@@ -160,6 +160,7 @@ function kitArt(m){
     const name=s.c&&LES[s.c]?LES[s.c].n:"";
     out.push(`<g class="nf-site${blocked||stopped||closed?" off":""}"${s.c?` data-plotles="${s.c}"`:""} tabindex="0" role="button" aria-label="${esc((s.l?s.l+": "+(s.s||""):s.aria||"Site")+(name?" — opens "+name:""))}">${ions}${ic}${lab}</g>`);
   });
+  if(st.abg&&DYN_ABG[state.view]&&!hide) out.push(abgMarks(DYN_ABG[state.view],st));
   /* the switches, readouts and note — on the canvas here; phones also get them as an HTML sheet (dynSheetRender) */
   if(!DYN_NOPANEL) out.push(`<g class="nf-ctl">${dynPanelSvg(m,d,st)}</g>`);
   return out.join("");
@@ -196,7 +197,9 @@ function dynSections(d,st){
     if(!st.quiz&&dynQuizable(d).length){ const r=nameitScores()[state.view]; tail.push({key:"quiz:new",l:r?`Name it · ${r[0]}/${r[1]}`:"Name it",on:false}); }
     if(st.cmp) tail.push({key:"cmp:show",l:"Side by side",on:true},{key:"cmp:off",l:"Unpin",on:false});
     else if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"cmp:pin",l:"Compare",on:false});
-    if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"link",l:st.copied?"✓ Link copied":"Copy link",on:!!st.copied}); }
+    if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"link",l:st.copied?"✓ Link copied":"Copy link",on:!!st.copied});
+    if(DYN_ABG[state.view]&&!(st.quiz&&!st.quiz.ans)){ tail.push({key:"abg:open",l:st.abg?"Blood gas: "+abgShort(st.abg):"Check a blood gas",on:!!st.abg});
+      if(st.abg) tail.push({key:"abg:clear",l:"Clear it",on:false}); } }
   S.push({h:"",chips:tail});
   return S;
 }
@@ -440,6 +443,7 @@ function dynSet(k,timer){
   else if(a==="link"){ writeHash(); const u=location.href;
     try{ navigator.clipboard.writeText(u).then(()=>{ const s2=DYN[v]; if(!s2) return; s2.copied=true; dynRedraw(); setTimeout(()=>{ if(DYN[v]){ DYN[v].copied=false; if(state.view===v) dynRedraw(); } },1800); },()=>{ prompt("Copy this link:",u); }); }catch(e){ prompt("Copy this link:",u); }
     return; }
+  else if(a==="abg"){ if(b==="open"){ dynAbg(v); return; } st.abg=null; }
   else if(a==="cmp"){ if(b==="pin") st.cmp={str:dynStateStr(v),l:dynStateLabel(m.dyn,st)}; else if(b==="off") st.cmp=null; else if(b==="show"){ dynCompare(v); return; } }
   else if(a==="p"){
     if(b==="on"){ st.pred=st.pred?null:{g:{},chk:false}; if(st.pred) st.auto=null; }   // predicting holds the phase still
@@ -581,5 +585,99 @@ function dynCompare(v){
     if(e.target===el||e.target.closest("[data-cmpx]")) close(); });
   el.querySelectorAll("svg").forEach(s=>{ try{ if(dynPaused(cur)) s.pauseAnimations(); }catch(e){} });
   const x=el.querySelector("[data-cmpx]"); if(x) x.focus();
+}
+/* ── ABG calculator (drafts, 2026-10): type a blood gas on a map that lists itself in DYN_ABG — the disorder, the
+   expected compensation, and the values marked on the map's own graphs at the current time step. The rules are the
+   ones the acid–base timeline (abtime) draws: Winters; PaCO₂ +0.6 per HCO₃⁻ in metabolic alkalosis; HCO₃⁻ +1/+3 per
+   10 mm Hg in respiratory acidosis and −2/−4 in respiratory alkalosis (acute/chronic). Keep the two in step.
+   plots: [key, x0, x1, top, height, low, high] in canvas px and units; cols: the time step's column centres. ── */
+const DYN_ABG={
+  abtime:{plots:{ph:[420,2320,1180,220,7.0,7.7],pco2:[420,2320,1460,220,20,70],hco3:[420,2320,1740,220,8,40]},
+          step:"time",cols:{sec:657,min:1132,day:1607,days:2082},dz:"dz",
+          go:{ma:"ma",malk:"malk",ara:"ara",cra:"cra",aralk:"aralk",cralk:"cralk",mxra:"mxra"},
+          time:{ma:"day",malk:"day",ara:"min",cra:"days",aralk:"min",cralk:"days",mxra:"day"}}
+};
+// UNVERIFIED: the normal ranges (pH 7.35–7.45, PaCO₂ 35–45, HCO₃⁻ 22–26) — standard values, not yet checked against First Aid
+const ABG_N={ph:[7.35,7.45],pco2:[35,45],hco3:[22,26]};
+const abgShort=g=>`${g.ph.toFixed(2)} / ${Math.round(g.pco2)} / ${Math.round(g.hco3)}`;
+const r1=x=>Math.round(x*10)/10;
+/* reads a blood gas: {lines:[…], go:map key of the matching disorder or ""} */
+function abgRead(ph,pco2,hco3){
+  const L=[], hh=6.1+Math.log10(hco3/(0.03*pco2));
+  if(Math.abs(hh-ph)>0.05) L.push(`Check the numbers: from PaCO₂ and HCO₃⁻, Henderson–Hasselbalch gives pH ${hh.toFixed(2)}, not ${ph.toFixed(2)}.`);
+  const acid=ph<ABG_N.ph[0], alk=ph>ABG_N.ph[1], hiC=pco2>ABG_N.pco2[1], loC=pco2<ABG_N.pco2[0], loB=hco3<ABG_N.hco3[0], hiB=hco3>ABG_N.hco3[1];
+  let go="";
+  const off=(meas,exp,tol,hi,lo)=>meas>exp+tol?hi:meas<exp-tol?lo:"";
+  if(acid&&loB){
+    const e=1.5*hco3+8; go="ma";
+    L.push(`Acidemia with a low HCO₃⁻: metabolic acidosis.`,`Winters: expected PaCO₂ = 1.5 × ${r1(hco3)} + 8 = ${r1(e)} ± 2; measured ${r1(pco2)}.`);
+    const x=off(pco2,e,2,"PaCO₂ is above the expected range — a respiratory acidosis as well.","PaCO₂ is below the expected range — a respiratory alkalosis as well.");
+    L.push(x||"Within the range: an appropriately compensated metabolic acidosis."); if(x&&pco2>e) go="mxra";
+  } else if(acid&&hiC){
+    const a=24+0.1*(pco2-40), c=24+0.3*(pco2-40); go="ara";
+    L.push(`Acidemia with a high PaCO₂: respiratory acidosis.`,`Expected HCO₃⁻: acute ${r1(a)}, chronic ${r1(c)}; measured ${r1(hco3)}.`);
+    if(hco3<a-2) L.push("HCO₃⁻ is below even the acute value — a metabolic acidosis as well.");
+    else if(hco3>c+2) L.push("HCO₃⁻ is above even the chronic value — a metabolic alkalosis as well.");
+    else if(hco3>=c-1){ go="cra"; L.push("Near the chronic value: the kidneys have compensated (chronic)."); }
+    else if(hco3<=a+1) L.push("Near the acute value: the kidneys have not yet acted (acute).");
+    else L.push("Between the two: acute-on-chronic, or the kidneys partway there.");
+  } else if(alk&&hiB){
+    const e=40+0.6*(hco3-24); go="malk";
+    L.push(`Alkalemia with a high HCO₃⁻: metabolic alkalosis.`,`Expected PaCO₂ ≈ 40 + 0.6 × ${r1(hco3-24)} = ${r1(e)}; measured ${r1(pco2)}.`);
+    // UNVERIFIED: the ± 2 tolerance here is a display choice (the rule gives a point, not a range)
+    L.push(off(pco2,e,2,"PaCO₂ is well above that — a respiratory acidosis as well.","PaCO₂ is well below that — a respiratory alkalosis as well.")||"Close to it: an appropriately compensated metabolic alkalosis.");
+  } else if(alk&&loC){
+    const a=24-0.2*(40-pco2), c=24-0.4*(40-pco2); go="aralk";
+    L.push(`Alkalemia with a low PaCO₂: respiratory alkalosis.`,`Expected HCO₃⁻: acute ${r1(a)}, chronic ${r1(c)}; measured ${r1(hco3)}.`);
+    if(hco3>a+2) L.push("HCO₃⁻ is above even the acute value — a metabolic alkalosis as well.");
+    else if(hco3<c-2) L.push("HCO₃⁻ is below even the chronic value — a metabolic acidosis as well.");
+    else if(hco3<=c+1){ go="cralk"; L.push("Near the chronic value: the kidneys have compensated (chronic)."); }
+    else if(hco3>=a-1) L.push("Near the acute value: the kidneys have not yet acted (acute).");
+    else L.push("Between the two: the kidneys partway there.");
+  } else if(acid||alk){
+    L.push(`${acid?"Acidemia":"Alkalemia"}, but neither PaCO₂ nor HCO₃⁻ moves the way that explains it — recheck the numbers.`);
+  } else if((hiC&&hiB)||(loC&&loB)){
+    L.push("pH in the normal range, but PaCO₂ and HCO₃⁻ have both moved: two disorders pulling pH opposite ways (e.g., salicylate overdose), or a fully compensated one — compensation rarely brings pH all the way back.");
+  } else if(hiC||loC||loB||hiB) L.push("pH in the normal range with one value off — look again, or think of a mild or mixed disorder.");
+  else L.push("All three in the normal range.");
+  return {lines:L,go};
+}
+function abgMarks(cfg,st){
+  const g=st.abg, x=cfg.cols[st.sw[cfg.step]]||cfg.plots.ph[1]-60; let s="";
+  [["ph",g.ph,v=>v.toFixed(2)],["pco2",g.pco2,v=>Math.round(v)],["hco3",g.hco3,v=>Math.round(v)]].forEach(([k,v,f])=>{
+    const [,,top,h,lo,hi]=cfg.plots[k], c=Math.max(lo,Math.min(hi,v)), y=Math.round(top+h-(c-lo)/(hi-lo)*h), out=v!==c;
+    s+=`<path d="M${x} ${y-15} L${x+15} ${y} L${x} ${y+15} L${x-15} ${y} Z" style="fill:var(--bad);stroke:var(--surface);stroke-width:3"/>`+
+       `<text class="nf-l1" x="${x-22}" y="${y+5}" text-anchor="end">patient ${f(v)}${out?(v>hi?" ▲":" ▼"):""}</text>`; });
+  return s;
+}
+function dynAbg(v){
+  const m=MAPS[v], st=DYN[v]||dynSt(v), cfg=DYN_ABG[v]; if(!cfg) return;
+  const g=st.abg||{ph:7.27,pco2:26,hco3:12};
+  const old=document.getElementById("dynAbg"); if(old) old.remove();
+  const el=document.createElement("div"); el.id="dynAbg"; el.className="dcmp"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true");
+  el.setAttribute("aria-label","Check a blood gas");
+  const inp=(k,l,step,val)=>`<label class="abg-f"><span>${l}</span><input type="number" inputmode="decimal" step="${step}" data-abg="${k}" value="${val}"></label>`;
+  el.innerHTML=`<div class="dcmp-box abg-box"><div class="dcmp-h"><b>Check a blood gas</b><span class="ds-hb"><button class="ds-x" data-abgx>Close</button></span></div>
+    <div class="abg-row">${inp("ph","pH","0.01",g.ph)}${inp("pco2","PaCO₂ (mm Hg)","1",g.pco2)}${inp("hco3","HCO₃⁻ (mEq/L)","1",g.hco3)}</div>
+    <div class="abg-out" aria-live="polite"></div>
+    <div class="abg-row"><button class="ds-x abg-go" data-abggo>Show it on the graphs</button></div>
+    <p class="dcmp-sub">Uses the rules this map draws. A study aid, not for patient care.</p></div>`;
+  document.body.appendChild(el);
+  const val=()=>{ const o={}; el.querySelectorAll("[data-abg]").forEach(i=>{ o[i.dataset.abg]=parseFloat(i.value); }); return o; };
+  const ok=o=>o.ph>=6.8&&o.ph<=7.8&&o.pco2>=10&&o.pco2<=130&&o.hco3>=2&&o.hco3<=60;
+  const out=el.querySelector(".abg-out"), go=el.querySelector("[data-abggo]");
+  const upd=()=>{ const o=val(); if(!ok(o)){ out.innerHTML=`<p class="ds-note">Enter pH 6.8–7.8, PaCO₂ 10–130 and HCO₃⁻ 2–60.</p>`; go.disabled=true; return; }
+    go.disabled=false; out.innerHTML=abgRead(o.ph,o.pco2,o.hco3).lines.map(t=>`<p class="ds-note">${esc(t)}</p>`).join(""); };
+  el.addEventListener("input",upd); upd();
+  const back=document.activeElement;
+  const close=()=>{ el.remove(); removeEventListener("keydown",key,true); try{ back&&back.focus({preventScroll:true}); }catch(e){} };
+  const key=e=>{ if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); close(); } };
+  addEventListener("keydown",key,true);
+  el.addEventListener("click",e=>{
+    if(e.target.closest("[data-abggo]")){ const o=val(); if(!ok(o)) return; const r=abgRead(o.ph,o.pco2,o.hco3), s2=DYN[v]||dynSt(v);
+      if(r.go&&cfg.go[r.go]){ s2.sw[cfg.dz]=cfg.go[r.go]; if(cfg.time[r.go]) s2.sw[cfg.step]=cfg.time[r.go]; s2.auto=null; }
+      s2.abg=o; s2.tour=null; s2.quiz=null; s2.pred=null; close(); dynRedraw(); return; }
+    if(e.target===el||e.target.closest("[data-abgx]")) close(); });
+  const f=el.querySelector("[data-abg]"); if(f) f.focus();
 }
 const ART={ kit:kitArt };
