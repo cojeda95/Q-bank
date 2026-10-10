@@ -347,3 +347,36 @@ insert and build together (282 maps, 85 moving). Looked at one zoomed state of e
   neuraminidase). `hv` (steps HSV/CMV) + `tk` toggle (kinase-mutant) + `rx` (one, 10). 4 readouts. 13 cards. Looked at:
   acyclovir on CMV, foscarnet on a TK mutant. HIV left to hivflow.
 - Kit unchanged for all ten. Also fixed: `chemosim` used `var(--ink-1)`, which isn't defined — now `var(--ink)`.
+- **cransim** — Cranial Mechanism in Motion (`o_cransim.py`) · OMM, after cranial. Sphenoid and occiput at the SBS from the side
+  (flexion/extension, `ph` steps auto), from behind (torsion, rotation) and from above (side bending, lateral strain), with CSF
+  fluctuation moving. `st` (one, 6 strains) + `tx` (one: CV4, V-spread, venous sinus drainage, condylar). 3 readouts. 14 cards.
+  `fa` empty — the cards cite the Atlas of Osteopathic Techniques ch 18 and OCOM OMM, no First Aid pages. Looked at: flexion +
+  torsion; extension + lateral strain + venous sinus.
+- **pelvsim** — Pelvis in Motion (`o_pelvsim.py`) · OMM, after cranial. Pelvis from the front (ASIS, pubic tubercles) and behind
+  (PSIS under the thumbs); `ph` (steps auto: upright/bending) × `test` (standing/seated) × `dx` (one, 9 left-sided dysfunctions);
+  the thumb on the restricted side rides farther up, landmarks move as the cards say. 3 readouts. 5 cards. `fa` empty (Foundations
+  ch 31, 37–38; OCOM OMM). Looked at: standing + anterior innominate; outflare (caught and fixed reversed PSIS flare directions).
+- **vaxsim** — Vaccines in Motion (`h_vaxsim.py`) · Immunology, after vaccines. Injection site → APC → helper and cytotoxic T → B
+  cell → plasma cells and memory, toxin box; `vx` (one, 7). Polysaccharide bypasses T cells, conjugate brings T help. 5 readouts.
+  6 cards. Looked at: polysaccharide, conjugate.
+- **mapksim** — Growth Signals in Motion (`l_mapksim.py`) · Heme/Onc, after carcino. Growth factor → EGFR/HER2 → RAS (NF1 brake) →
+  BRAF → MEK → ERK → MYC; `mut` (one, 6 drivers) × `rx` (one, 4 drugs). A drug is shown working only against the driver its card
+  names (no inferred downstream efficacy). 3 readouts. 6 cards. Looked at: KRAS + cetuximab, BRAF + BRAF/MEK.
+- **bcellsim** — B Cells & Lymphomas in Motion (`l_bcellsim.py`) · Heme/Onc, after hemeonc. Marrow → blood → follicle (mantle,
+  germinal center, marginal zone) → plasma/memory, spleen, brain, chronic-antigen box; `ly` (one, 10) lights where each arises or
+  lives, only where the card names it (Burkitt says so). 4 readouts. 10 cards. Looked at: follicular.
+- **embsim** — Embryo & Gut-Tube Defects in Motion (`c_embsim.py`) · Repro & Development, after embryo. Weeks 1–8 timeline (`wk`
+  steps auto) with teratogen timing, and the fetal amniotic-fluid cycle (urine → fluid → swallowing → gut); `dx` (one, 8) breaks it,
+  `tg` (one, 7 teratogens). 4 readouts. 13 cards. Looked at: week 3 + TEF; week 4 + Potter + thalidomide.
+- **aqsim** — Aqueous Humor & Retina in Motion (`d_eyesim2.py`) · EENT, after eyesim. Ciliary body → posterior chamber → pupil →
+  angle → Schlemm, plus retina with central artery/vein, macula, disc; `dx` (one, 12) × `rx` (one, 6 incl. contraindicated
+  mydriatic). 5 readouts. 11 cards. Looked at: acute angle closure; CRAO + latanoprost.
+- **utisim** — UTI & Incontinence in Motion (`r_utisim.py`) · Renal, after akickd. Kidneys → ureters → bladder → urethra, urine
+  down and bacteria up; `dx` (one, 7: cystitis, acute and chronic pyelo, malakoplakia, stress/urgency/overflow). 5 readouts. 5 cards.
+  Looked at: acute pyelonephritis.
+- **bonesim** — Bones & Kids by Age in Motion (`j_bonesim.py`) · Musculoskeletal, after bone. Long bone (epiphysis, physis,
+  metaphysis, diaphysis), child's hip, tibial tuberosity, elbow, forearm; `age` (steps auto, 6) × `dx` (one, 15). 3 readouts.
+  14 cards. Looked at: adolescent + osteosarcoma; 5–7 + Perthes. **UNVERIFIED (1):** Ewing ("boy") and osteochondroma ("young
+  male") placed in the adolescent band — the cards give no age range.
+- Kit unchanged for all nine. Also fixed in passing: two shapes drawn with `when=[]` (always shown) in mapksim and bonesim drafts
+  before they were saved.
