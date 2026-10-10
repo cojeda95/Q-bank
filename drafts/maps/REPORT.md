@@ -516,3 +516,31 @@ clash between two drafts slips past it — the pain map first reused `pnDz` (pne
 - Tested headless (Chromium, 1600×1000, Nephron in Motion): hidden at Fit → appears after 4× zoom-in → a chip click
   switches the map and the address → drag moves it and saves the spot → Fit hides it → Hide shows the button → button
   pins it, still up at Fit → at 420 px wide the old docked sheet shows. No page errors. PIPELINE.md documents it.
+
+## Batch: eight more moving maps · 2026-10-10 — 0 new cards, all `OK · 0 warnings`
+Facts drawn only from the pinned cards; drawings labelled schematic where a card gives no geometry. All 110 drafts modules
+pass check; no duplicate map ids or lane keys across drafts (checked separately — check.py compares only with the atlas).
+- **placsim** — Bleeding in Pregnancy in Motion (`c_placsim.py`) · Repro, after obgyn. Uterus, placenta, spiral arteries,
+  cervix, bladder, maternal organs; `dx` (one, 10: previa, vasa previa, abruption, rupture, accreta, increta, percreta,
+  preeclampsia, preterm labor, PPH) × `rx` (one, 4: Mg, oxytocin, tocolytic, safe antihypertensive — each works only where its
+  card says). 5 readouts. 7 cards. `fa` 343, 433, 657, 658, 660, 675.
+- **netsim** — Pancreatic Endocrine Tumors in Motion (`l_netsim.py`) · Endocrine, after pancreas. Islet (α, β, δ, VIP site),
+  duodenal G cells, target organs; `dx` (one, 5: insulinoma, glucagonoma, somatostatinoma, VIPoma, gastrinoma) + `men` and `oct`
+  toggles (octreotide only for the tumors whose cards list it). 6 readouts. 6 cards. `fa` 338, 356, 357, 378.
+- **portsim** — Liver Blood Flow in Motion (`g_portsim.py`) · GI, after liver. Portal system with the three portosystemic
+  anastomoses + one lobule (zone 1 → 3, bile reverse); `dx` (one, 8: cirrhosis, PVT, Budd-Chiari, TIPS, zone 1/2/3 injuries,
+  acetaminophen). 5 readouts. 6 cards. `fa` 73, 244, 370, 371, 372, 374, 396, 397, 495.
+- **gonadsim** — Gonadal Tumors in Motion (`c_gonadsim.py`) · Repro, after malerepro. Ovary and testis by cell of origin, marker
+  strip, targets; `dx` (one, 11). Layout schematic. 5 readouts. 5 cards. `fa` 664, 665, 670, 671.
+- **htnsim** — Hypertension in Motion (`c_htnsim.py`) · Cardiac, after htnrx. Gauge, heart, aorta to six end organs, renal artery,
+  adrenal; `bp` (steps auto: normal → white coat → essential → urgency → emergency) × `cause` (one: atherosclerotic RAS, FMD,
+  Conn). Organ damage lights only at emergency. 5 readouts. 6 cards. `fa` 304, 350, 354, 623.
+- **bvitsim** — B Vitamins & Zinc in Motion (`a_bvitsim.py`) · Biochemistry, after vitamins. Vitamin → coenzyme → card-named
+  enzymes, tryptophan → niacin, body signs; `def` (one, 5) × `cause` (one, 6 card-named causes). 4 readouts. 5 cards. `fa` 65, 66, 69.
+- **zoosim** — Zoonoses & Bites in Motion (`m_zoosim.py`) · Infectious, after zoonoses. Eight sources → body organs; `dx` (one,
+  12) + `rx` toggle (drug or antivenom only where the card names one). 5 readouts. 9 cards.
+  `fa` 123, 125, 139, 144, 145, 147, 148, 320, 404, 433, 701.
+- **stimsim** — Stimulants & Addiction in Motion (`b_stimsim.py`) · Psych, after substance. VTA → accumbens, serotonin terminal
+  (SERT), adenosine A₂A cell; `drug` (one: nicotine, caffeine, MDMA) × `phase` (steps: using, withdrawal/after) + `rx` toggle +
+  `stage` (one, 5 stages of change). 5 readouts. 7 cards. `fa` 585, 586, 589, 594, 633.
+- **UNVERIFIED (0)** in this batch. Kit unchanged for all eight.
