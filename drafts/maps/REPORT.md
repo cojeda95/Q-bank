@@ -419,3 +419,49 @@ All 78 drafts modules pass check; no duplicate map ids or lane keys.
   `drug` toggle (card-stated treatment for AML, APL, CML, PV). Intermediate granulocyte stages left unnamed — no card names them.
   6 readouts. 6 cards. `fa` 436, 437, 438, 439, 440, 447. Looked at: APL; myelofibrosis.
 - **UNVERIFIED (0)** in this batch. Kit unchanged for all nine.
+
+## Batch: twelve more moving maps · 2026-10-10 — 0 new cards, all `OK · 0 warnings`
+Facts drawn only from the pinned cards; where a card is silent the map leaves it out and says so in the module header. All 90
+drafts modules pass check; no duplicate map ids (the emboli map was first drafted as `embsim`, which the embryo map already
+uses — renamed `embolsim` before saving) or lane keys. Readout note: the kit **sums** readout mods, so a `d=0` mod does not
+cancel an overlapping `d=±1`; four drafts in this batch had such overlaps and were fixed (hasim, myelsim, embolsim, cyansim).
+The previously pushed maps were audited — their `d=0` mods are all on mutually exclusive options, so they are unaffected.
+- **bleedsim** — Head Bleeds in Motion (`e_bleedsim.py`) · Neuro, after neuroer. Coronal section with sutures, dura, falx,
+  tentorium, foramen magnum; `dx` (one: epidural, acute and chronic subdural, SAH) × `ph` (steps auto: injury, early, later — lucid
+  interval, midline shift, vasospasm) × `hx` (one: subfalcine, uncal, central, tonsillar herniation). 5 readouts. 4 cards.
+  `fa` 528, 530, 543. Looked at: epidural late + uncal; chronic subdural; SAH + tonsillar (moved cerebellum and brainstem inside the skull).
+- **sacsim** — The Sacrum in Motion (`o_sacsim.py`) · OMM, after ommmech. Posterior view, sulci, ILAs, oblique axes; `walk` (steps
+  auto, shown only when nothing is stuck) × `dx` (one, 6: L-on-L, L-on-R, left unilateral flexion, right unilateral extension,
+  bilateral flexion/extension) + `sphinx` toggle. Only card-stated landmark sets drawn — no mirrored R-on-R / R-on-L. 2 readouts.
+  5 cards. `fa` empty (OMM cards cite no First Aid pages).
+- **akisim** — Acute Kidney Injury in Motion (`r_akisim.py`) · Renal, after akickd. Aorta → arterioles → glomerulus → tubule →
+  bladder → prostate; `dx` (one, 8: hypovolemia, NSAID, ACEi/ARB, ATN oliguric and recovery, AIN, GN, BPH) with Na⁺ reclaim, casts,
+  back-pressure and the card cut-offs (BUN:Cr, FENa, Uosm). 4 readouts. 5 cards. `fa` 597, 601, 607, 612, 618, 620, 621.
+- **embolsim** — Emboli in Motion (`p_embolsim.py`) · Pathology, after thromboemb. Whole-body circulation; `dx` (one, 6: DVT → PE,
+  fat, central-line air, decompression bubbles, amniotic fluid, left-atrial thrombus) + `pfo` toggle (paradoxical). 5 readouts.
+  6 cards. `fa` 284, 321, 691.
+- **bowelsim** — Bowel Blockages in Motion (`g_bowelsim.py`) · GI, after gitract. Gut as one tube with aorta/SMA; `dx` (one, 10: SBO,
+  ileus, intussusception, midgut and sigmoid volvulus, mesenteric and colonic ischemia, appendicitis, Hirschsprung, NEC). 5 readouts.
+  7 cards. `fa` 61, 390, 391, 392, 393.
+- **cyansim** — Cyanotic Heart Disease in Motion (`c_cyansim.py`) · Cardiac, after chd. Four chambers, lungs, body, blue/red/mixed
+  blood; `dx` (one, 6: truncus, tricuspid atresia, TAPVR, Ebstein, TOF, d-TGA) + `squat` and `pda` toggles. 3 readouts. 6 cards.
+  `fa` 285, 302.
+- **demsim** — Dementias Over Time (`e_demsim.py`) · Neuro, after cortex. Side view with lobes, hippocampus, ventricles, midbrain;
+  `dx` (one, 7: Alzheimer, FTD, Lewy, vascular, PSP, CJD, NPH) × `yr` (steps auto: early, middle, late) + `shunt` toggle. Spread
+  drawn only as far as each card states. 3 readouts. 8 cards. `fa` 174, 534, 535, 536.
+- **spreadsim** — Seizure Spread in Motion (`e_spreadsim.py`) · Neuro, after seizhead. Top view of both hemispheres + thalamus +
+  schematic EEG; `ph` (steps auto: aura, ictal, postictal) × `ty` (one, 6: focal aware, focal impaired, secondarily generalized,
+  absence, status, PNES) × `age` (one: causes by age, febrile). 3 readouts. 6 cards. `fa` 177, 530, 531.
+- **papezsim** — The Papez Circuit in Motion (`b_papezsim.py`) · Psych & Behavior, after limbmem. Midline limbic loop + hippocampal
+  inset (EC → DG → CA3 → CA1 → subiculum), amygdala fear output, VTA → accumbens; `dx` (one, 9 lesions). Positions schematic.
+  4 readouts. 8 cards. `fa` 64, 505, 509, 524, 575.
+- **lcsim** — Lung Cancer in Motion (`i_lcsim.py`) · Pulmonary, after lungcancer. Chest with SVC and mediastinal nerves, target organs;
+  `dx` (one, 7: adeno, squamous, small cell, large cell, carcinoid, Pancoast, SVC syndrome) with card-stated hormones (ACTH, ADH,
+  PTHrP, hCG) + `tki` toggle. 4 readouts. 8 cards. `fa` 224, 352, 446, 703, 704.
+- **carditsim** — Heart Infection & Inflammation in Motion (`c_carditsim.py`) · Cardiac, after valves. Heart and valves, throat,
+  joints, embolic targets; `dx` (one, 8: acute, subacute and tricuspid endocarditis, acute rheumatic fever, chronic rheumatic
+  stenosis, NBTE, myocarditis, myxoma). 5 readouts. 5 cards. `fa` 318, 319, 320.
+- **hasim** — Headaches in Motion (`e_hasim.py`) · Neuro, after seizhead. Side view with meningeal vessels, trigeminal V1–V3, CN V
+  root; `dx` (one: migraine, tension, cluster, trigeminal neuralgia) × `ph` (steps auto: aura, headache) × `rx` (one, 6) — a drug
+  works only where its card lists it for that headache. Aura origin not drawn (card silent). 4 readouts. 4 cards. `fa` 532.
+- **UNVERIFIED (0)** in this batch. Kit unchanged for all twelve.

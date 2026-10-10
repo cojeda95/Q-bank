@@ -109,7 +109,7 @@ sites = [dict(x=560, y=780, n=[0, 1], w=10, t='rec', l='', aria='AML', c='aml', 
          dict(x=2200, y=1040, n=[1, 0], w=10, t='rec', l='', aria='Langerhans cell histiocytosis', c='lch', ions=[])]
 
 readouts = [
-  dict(l='Blasts in blood', mods=[dict(when=D('aml', 'blast'), d=1), dict(when=['dx:aml&drug'], d=0)]),
+  dict(l='Blasts in blood', mods=[dict(when=D('aml', 'blast'), d=1), dict(when=['dx:aml&drug'], d=-1)]),
   dict(l='Neutrophils', mods=[dict(when=D('aml', 'blast', 'mds'), d=-1), dict(when=DR('apl', False), d=-1), dict(when=DR('cml', False), d=1)]),
   dict(l='Hematocrit', mods=[dict(when=D('aml', 'apl', 'mds', 'blast'), d=-1), dict(when=DR('pv', False), d=1)]),
   dict(l='Platelets', mods=[dict(when=D('aml', 'apl', 'mds', 'blast'), d=-1), dict(when=D('et'), d=1)]),
