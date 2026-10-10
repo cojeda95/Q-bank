@@ -180,7 +180,8 @@ function dynSections(d,st){
       const chips=Q.ch.map((k,i)=>{ const o=s.options.find(x=>x[0]===k); return {key:"q:"+k,l:(Q.ans?(k===Q.k?"✓ ":k===Q.ans?"✗ ":""):(i+1)+" · ")+o[1],on:!!Q.ans&&k===Q.k}; });
       if(Q.ans&&NMIX){ const tp=topicOf(state.view);
         chips.push(NMIX.k<NMIX.n?{key:"quiz:mix",l:"Next map ›",on:true}:{key:"quiz:mix10",l:"Another 10",on:true});
-        if(tp&&mixPool(tp[0]).length>=3) chips.push({key:"quiz:scope",l:NMIX.scope?"All moving maps":"Only "+tp[1],on:false});
+        if(NMIX.scope==="weak") chips.push({key:"quiz:scope",l:"All moving maps",on:false});
+        else if(tp&&mixPool(tp[0]).length>=3) chips.push({key:"quiz:scope",l:NMIX.scope?"All moving maps":"Only "+tp[1],on:false});
         chips.push({key:"quiz:end",l:"Done",on:false}); }
       else if(Q.ans) chips.push({key:"quiz:new",l:"Another one",on:false},{key:"quiz:end",l:"Done",on:false});
       S.push({h:Q.ans?"Name it — the answer":"Name it — which one is on?",chips}); return; }
@@ -214,7 +215,7 @@ function dynReadouts(d,st){
 function dynNotes(d,st){
   const R=dynReadouts(d,st), live=R.filter(r=>r.dir), Q=st.quiz;
   if(Q&&!Q.ans){ const s=d.switches.find(x=>x.id===Q.s);
-    return [`${NMIX?`Moving-map mix${NMIX.scope?" ("+(TOPICS.find(t=>t[0]===NMIX.scope)||["",""])[1]+")":""} ${NMIX.k+1} of ${NMIX.n} · ${NMIX.ok} right so far. `:""}Name it: one choice under “${s.label}” is switched on. Read the drawing${R.length?" and the results":""}, then pick it from the ${Q.ch.length} choices.`]; }
+    return [`${NMIX?`Moving-map mix${NMIX.scope?" ("+mixScopeName(NMIX.scope)+")":""} ${NMIX.k+1} of ${NMIX.n} · ${NMIX.ok} right so far. `:""}Name it: one choice under “${s.label}” is switched on. Read the drawing${R.length?" and the results":""}, then pick it from the ${Q.ch.length} choices.`]; }
   if(st.pred&&!st.pred.chk) return [live.length
     ?"Predict: pick ↑, ↓ or ↔ for each result, then press Check. The explanation comes back when you check."
     :"Pick a drug, disease or lesion first — then predict which way each result moves."];
@@ -507,11 +508,19 @@ const nitMissed=maps=>Object.keys(PROG.nitm).map(k=>{ const [v,so]=k.split("|"),
 /* Quiz → Moving-map mix: ten Name-it questions, each on a random moving map */
 let NMIX=null;
 const topicOf=v=>TOPICS.find(t=>t[2].includes(v));
-const mixPool=scope=>VIEWS.map(x=>x[0]).filter(v=>MAPS[v]&&MAPS[v].art==="kit"&&MAPS[v].dyn&&dynQuizable(MAPS[v].dyn).length&&(!scope||(topicOf(v)||[])[0]===scope));
+/* your weakest moving maps: Name it + Predict scores, at least 2 tries, not all right, lowest share first (the Index list, the "weak" mix) */
+const weakScore=v=>{ const a=PROG.nit[v]||[0,0], b=PROG.prd[v]||[0,0]; return [a[0]+b[0],a[1]+b[1]]; };
+const weakMaps=n=>[...new Set(Object.keys(PROG.nit).concat(Object.keys(PROG.prd)))].filter(v=>MAPS[v]&&weakScore(v)[1]>=2&&weakScore(v)[0]<weakScore(v)[1])
+  .sort((a,b)=>weakScore(a)[0]/weakScore(a)[1]-weakScore(b)[0]/weakScore(b)[1]||weakScore(b)[1]-weakScore(a)[1]).slice(0,n);
+const mixScopeName=s=>s==="weak"?"your weakest maps":(TOPICS.find(t=>t[0]===s)||["",""])[1];
+const mixPool=scope=>{ const kit=v=>MAPS[v]&&MAPS[v].art==="kit"&&MAPS[v].dyn&&dynQuizable(MAPS[v].dyn).length;
+  if(scope==="weak") return weakMaps(10).filter(kit);
+  return VIEWS.map(x=>x[0]).filter(v=>kit(v)&&(!scope||(topicOf(v)||[])[0]===scope)); };
 function startNameMix(scope){ NMIX={k:0,n:10,ok:0,scope:scope||null}; nameMixNext(); }
 function nameMixNext(){
   if(!NMIX) return;
   let pool=mixPool(NMIX.scope).filter(v=>v!==state.view); if(!pool.length) pool=mixPool(NMIX.scope);
+  if(!pool.length){ NMIX.scope=null; pool=mixPool(null).filter(v=>v!==state.view); }   // the weak list emptied: all moving maps
   const miss=nitMissed(pool), want=miss.length?miss[Math.floor(Math.random()*miss.length)]:null;
   const v=want?want[0]:pool[Math.floor(Math.random()*pool.length)], mix=NMIX;
   if(state.view!==v) setView(v);

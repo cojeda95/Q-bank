@@ -563,6 +563,11 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 .info-block.atlas .atlas-graph { display: block; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--atlas-line); font-size: 0.88rem; font-weight: 600; color: var(--atlas-ink); text-decoration: none; }
 .info-block.atlas .atlas-graph:hover { text-decoration: underline; }
 .info-block.atlas .atlas-graph::after { content: " \2197"; font-weight: 400; opacity: .6; }
+.info-block.atlas .atlas-move-cta { display: flex; flex-direction: column; gap: 2px; margin: 0 0 10px; padding: 10px 14px; border: 1px solid var(--atlas-ink); border-radius: 12px; background: var(--card-bg); color: var(--atlas-ink); text-decoration: none; }
+.info-block.atlas .atlas-move-cta:hover { box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.info-block.atlas .atlas-move-cta .amc-k { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; opacity: .8; }
+.info-block.atlas .atlas-move-cta .amc-t { font-size: 0.95rem; font-weight: 700; }
+.info-block.atlas .atlas-move-cta .amc-t::after { content: " \2197"; font-weight: 400; opacity: .6; }
 .info-block.atlas .atlas-picked { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--atlas-line); }
 .info-block.atlas .atlas-picked-lbl { font-size: 0.82rem; font-weight: 600; opacity: .8; margin-right: 2px; }
 .info-block.atlas .atlas-picked .atlas-link { margin-right: 0; }

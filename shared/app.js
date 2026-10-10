@@ -203,7 +203,10 @@ function atlasLinksHtml(q, picked) {
   // a moving map for the best card: with that card's switch already on if one exists, else the map itself
   const mv = ATLAS_MOVES && cards.map(c => ATLAS_MOVES.find(x => x[1] && x[4].includes(c.id)) || ATLAS_MOVES.find(x => !x[1] && x[4].includes(c.id))).find(Boolean);
   const moveHtml = mv ? `<a class="atlas-graph atlas-move" href="${ATLAS_URL}#${encodeURIComponent(mv[0])}${mv[1] ? '/~' + mv[1].split(':').map(encodeURIComponent).join(':') : ''}" target="_blank" rel="noopener">See it move: ${escapeHtml(mv[3])}${mv[2] ? ' — ' + escapeHtml(mv[2]) : ''}</a>` : '';
-  return `<div class="info-block atlas"><b>On the Lesion Atlas</b>${cards.map(link).join('')}${graphHtml}${moveHtml}${pickedHtml}${table}</div>`;
+  // Missed it: the moving map for the right answer goes first, as a prompt to watch it.
+  const missed = picked && q && picked !== q.correct && mv;
+  const ctaHtml = missed ? `<a class="atlas-move-cta" href="${ATLAS_URL}#${encodeURIComponent(mv[0])}${mv[1] ? '/~' + mv[1].split(':').map(encodeURIComponent).join(':') : ''}" target="_blank" rel="noopener"><span class="amc-k">Missed it? Watch it move</span><span class="amc-t">${escapeHtml(mv[3])}${mv[2] ? ' — ' + escapeHtml(mv[2]) : ''}</span></a>` : '';
+  return `<div class="info-block atlas">${ctaHtml}<b>On the Lesion Atlas</b>${cards.map(link).join('')}${graphHtml}${missed ? '' : moveHtml}${pickedHtml}${table}</div>`;
 }
 
 /* Missed questions feed the Lesion Atlas review list. The atlas keeps its

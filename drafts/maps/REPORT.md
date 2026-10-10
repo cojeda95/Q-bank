@@ -46,3 +46,47 @@
 - Tested in Chromium: 9 blood gases read as the rules give; dialog → graph marks → chip → clear; no chip on other moving maps;
   no page errors. `abtime`'s dyn data is untouched — the axes are copied into `DYN_ABG.abtime` (from a_abtime.py: X0 420, CW 475,
   plot tops 1180/1460/1740, height 220); if that module's layout moves, update them.
+
+## lyteecg — Electrolytes & the ECG (`c_lyteecg.py`) · 2026-10-10 · topic Cardiac, after ecgsim
+- **Switches:** `ly` (one) — Low K⁺ (`hypok`) · High K⁺ early / worse / severe (`hyperk`, First Aid's progression peaked T → wide
+  QRS + P lost → sine wave) · High Ca²⁺ (`ecglytes`) · Low Ca²⁺ (`hypopara`) · Low Mg²⁺ (`mgpo4`). `rx` (one) — treat high K⁺ in
+  order: IV calcium gluconate · insulin + glucose · β₂-agonist · bicarbonate · loop diuretic · binder (patiromer) · dialysis.
+- **Drawing:** a lead II strip (3 beats, generated per state; sine wave and torsades drawn as their own traces) with the parts
+  labelled and a QT bracket (normal / short / long); a muscle cell (Na⁺/K⁺-ATPase, K⁺ channel, calcium gluconate site); K⁺ exit
+  routes (kidney, gut, dialysis) lit by the treatment; a "what the patient shows" row.
+- **Readouts (6):** Serum K⁺ · T wave · QRS width · QT interval · Serum Ca²⁺ · K⁺ after the drug (↔ calcium gluconate, ↓ the rest).
+- **Cards:** 0 new; 16 existing pinned on 7 nodes (ecglytes, hyperk, tls, rhabdo, digoxin, hypok, periodicpara, kinsulin,
+  khandling, nakpump, hypopara, hyperpara1, mgpo4, longqt, loopdiuretics, ksparing).
+- **Sources:** First Aid 2025 pp. 298, 348–349, 608–609 (as the pinned cards cite) · Costanzo ch 6 · Katzung ch 14–15 · Guyton ch 80.
+- **`# UNVERIFIED` (2 facts):** calcium gluconate leaves K⁺ unchanged (readout ↔ + note) — inferred from the stabilize → shift →
+  remove order; patiromer acting in the gut (the gut route box).
+- Waveforms are schematic (caption says so). check.py: `lyteecg: 0 new cards, 7 nodes, 3 sites, 5 flows` · `OK · 0 warnings`.
+  Looked at: Low K⁺; High K⁺ worse + loop diuretic (both zoomed).
+
+## pthsim — Calcium & PTH Lab Simulator (`e_pthsim.py`) · 2026-10-10 · topic Endocrine, after hormones
+- **Switch** `dz` (one): Primary (`hyperpara1`) · Secondary — kidney disease (`hyperpara2`) · Tertiary (`renalod`) · Vitamin D
+  deficiency (`vitddef`) · Hypoparathyroidism (`hypopara`) · Pseudohypoparathyroidism (`pha`) · FHH (`fhh`) · Malignancy — PTHrP
+  (`hcmalig`) · Sarcoidosis (`sarcoid`).
+- **Drawing:** the four glands behind the thyroid (one adenoma / all four enlarged / dimmed / suppressed per option) with the
+  Ca²⁺-sensing receptor (✕ "set too high" for FHH); bone with its PTH receptor; kidney — proximal PO₄³⁻ reabsorption, distal
+  Ca²⁺ reabsorption, 1α-hydroxylase; gut Ca²⁺ absorption; the feedback loop with a tumor (PTHrP) or granulomas (calcitriol);
+  a "what the patient shows" row. PTH receptors show ✕ "no response" for pseudohypoparathyroidism.
+- **Readouts (5):** Serum Ca²⁺ · Serum PO₄³⁻ · PTH · Calcitriol · Urine Ca²⁺ — "–" wherever the pinned cards give no direction
+  (e.g., PO₄³⁻ in FHH and sarcoidosis, calcitriol in vitamin D deficiency, urine Ca²⁺ outside primary and FHH).
+- **Cards:** 0 new; 17 existing pinned on 9 nodes (pthaction, casr, calcitriol, vitddef, pthneph, renalpo4, hyperpara1,
+  hyperpara2, renalod, hypopara, pha, hcmalig, sarcoid, fhh, ckdphos, ckd, calciumdrugs).
+- **Sources:** First Aid 2025 pp. 336–337, 348–349, 361, 621–622 · Costanzo ch 9 · Guyton ch 80 · Katzung ch 42 · Robbins ch 24.
+- **`# UNVERIFIED` (1 fact):** PTH ↓ in sarcoidosis (inferred from the hypercalcemia). Also for the checker: tertiary PO₄³⁻ ↑ rests on
+  the `ckdphos` card (late CKD keeps phosphate high despite high PTH); the panel's "High Ca²⁺, PTH low → … vitamin D excess" row
+  comes from the `vitddef` card's toxicity line.
+- check.py: `pthsim: 0 new cards, 9 nodes, 7 sites, 6 flows` · `OK · 0 warnings`. Looked at: Primary; FHH (both zoomed).
+
+## Site features · 2026-10-10 (code only — no sourcing)
+- **"Missed it? Watch it move"** (`shared/app.js` `atlasLinksHtml`, `shared/style.css` `.atlas-move-cta`): after a wrong answer, when
+  a moving map covers the right answer's card, the "See it move" link becomes a highlighted prompt at the top of the atlas box
+  (practice, flagged, review and exam results all use this function). Unchanged after a right answer. Tested on nephro
+  (5α-reductase question → Steroid Synthesis & CAH in Motion, 5α-Reductase switch on).
+- **Weakest-maps mix** (atlas kit + Index — **the kit changed again**; kit.js updated): `weakMaps(n)` is now shared by the Index
+  list and a new mix scope `"weak"`. The Index section "Your weakest moving maps" gets "▶ Mix your weakest — 10 Name-it
+  questions"; the mix reads "Moving-map mix (your weakest maps)", missed options come back first as before, the scope chip
+  offers "All moving maps", and if the weak list empties mid-mix it falls back to all moving maps. Tested with seeded scores.
