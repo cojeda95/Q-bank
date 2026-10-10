@@ -601,6 +601,20 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
   .mapwrap.ds-open .minimap{display:none}
   .drawer:not([hidden]) ~ .dynsheet,.drawer:not([hidden]) ~ .dynbtn{display:none}
 }
+/* the floating switches on wider screens — same size on screen at any zoom; drag by the title bar, resize from the corner */
+@media (min-width:1001px){
+  .dynsheet.ds-float:not([hidden]){display:block;position:absolute;z-index:7;width:360px;min-width:260px;max-width:min(680px,92%);max-height:min(72%,640px);min-height:80px;
+    overflow:auto;resize:both;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 14px 12px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+  .dynsheet.ds-float .ds-h{top:0;cursor:grab;touch-action:none;user-select:none}
+  .dynsheet.ds-float .ds-h b::before{content:"⠿ ";color:var(--ink-3)}
+  .dynsheet.ds-float .ds-x.on{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+  .dynsheet.ds-drag{opacity:.93} .dynsheet.ds-drag .ds-h{cursor:grabbing}
+  .dynsheet.ds-float .ds-chip{padding:4px 10px;font-size:12.5px;gap:5px}
+  .dynsheet.ds-float .ds-sh{margin:9px 0 4px} .dynsheet.ds-float .ds-chips{gap:5px}
+  .dynsheet.ds-float .ds-note{font-size:13px}
+  .dynbtn:not([hidden]){display:inline-flex;align-items:center;gap:6px;position:absolute;right:16px;bottom:58px;z-index:6;padding:8px 16px;border-radius:999px;
+    border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 13.5px var(--font-ui);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.14)}
+}
 .ds-h{position:sticky;top:-6px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0 6px;background:var(--surface);z-index:1}
 .ds-h b{font:700 14.5px var(--font-ui);color:var(--ink)}
 .ds-hb{display:flex;gap:6px;flex:none}
@@ -40067,16 +40081,43 @@ function dynPanelSvg(m,d,st){
    "peek" (the default) is a slim bar — what's on, the result arrows, the note's first sentence; "full" opens every
    switch; "off" leaves a Switches button. Only "off" is remembered on this device. ── */
 let DYNSHEET="peek"; try{ if(localStorage.getItem("mla-dynsheet")==="off") DYNSHEET="off"; }catch(e){}
+/* ── the floating switches (wider than 1000 px): the same sheet as a small card that floats over the map. It comes up by
+   itself once you zoom in far enough that the panel drawn on the canvas is cut off or off screen, and goes away when the
+   whole panel is back in view ("auto"); "pin" keeps it up at any zoom; "off" leaves a Switches button. It keeps the same
+   size on screen however far you zoom; drag it by its title bar, resize it from its corner. Mode and spot are remembered. ── */
+const dsDesk=()=>innerWidth>1000;
+let DSFLOAT="auto", DSFULL=true, DSPOS=null, DSAUTO=false, DSCHK=0, DSWAS=null;
+try{ DSFLOAT=localStorage.getItem("mla-dsfloat")||"auto"; DSPOS=JSON.parse(localStorage.getItem("mla-dsfloat-pos")||"null"); }catch(e){}
+function dynPanelOut(){   // is the canvas panel less than ~85% on screen?
+  const g=svg&&svg.querySelector(".nf-ctl"); if(!g) return false;
+  const r=g.getBoundingClientRect(), v=clearRect(); if(!r.width||!r.height) return false;
+  const w=Math.max(0,Math.min(r.right,v.r)-Math.max(r.left,v.l)), h=Math.max(0,Math.min(r.bottom,v.b)-Math.max(r.top,v.t));
+  return w*h<0.85*r.width*r.height;
+}
+function dynFloatCheck(){   // called on every camera move; re-renders only when the answer changes
+  if(DSCHK||!dsDesk()) return;
+  DSCHK=requestAnimationFrame(()=>{ DSCHK=0; const m=MAPS[state.view]; if(!m||m.art!=="kit"||!m.dyn) return;
+    const out=dynPanelOut(); if(out!==DSAUTO){ DSAUTO=out; if(DSFLOAT==="auto") dynSheetRender(); } });
+}
+function dsPlace(el){
+  const wrap=document.getElementById("mapwrap"); if(!wrap||!el) return;
+  const W=wrap.clientWidth, H=wrap.clientHeight, w=el.offsetWidth||360, p=DSPOS||{x:W-w-16,y:170};
+  el.style.left=Math.round(Math.max(8,Math.min(W-w-8,p.x)))+"px"; el.style.top=Math.round(Math.max(8,Math.min(H-60,p.y)))+"px";
+}
+function dsSave(){ try{ localStorage.setItem("mla-dsfloat",DSFLOAT); if(DSPOS) localStorage.setItem("mla-dsfloat-pos",JSON.stringify(DSPOS)); }catch(e){} }
 function dynSheetRender(){
   const el=document.getElementById("dynSheet"), btn=document.getElementById("dynBtn"), wrap=document.getElementById("mapwrap");
   if(!el||!btn) return;
-  const v=state.view, m=MAPS[v], kit=v!=="index"&&m&&m.art==="kit"&&m.dyn, open=kit&&DYNSHEET!=="off";
-  el.hidden=!open; btn.hidden=!kit||open; if(wrap) wrap.classList.toggle("ds-open",!!open);
+  const v=state.view, m=MAPS[v], kit=v!=="index"&&m&&m.art==="kit"&&m.dyn, desk=dsDesk();
+  const open=kit&&(desk?(DSFLOAT==="pin"||(DSFLOAT==="auto"&&DSAUTO)):DYNSHEET!=="off");
+  el.hidden=!open; btn.hidden=!kit||open||(desk&&DSFLOAT==="auto"); if(wrap) wrap.classList.toggle("ds-open",!!open&&!desk);
+  el.classList.toggle("ds-float",desk);
   if(!open) return;
-  const d=m.dyn, st=dynSt(v), full=DYNSHEET==="full";
+  const d=m.dyn, st=dynSt(v), full=desk?DSFULL:DYNSHEET==="full";
   el.classList.toggle("ds-full",full);
-  let h=`<div class="ds-h"><b>${esc(m.t)}</b><span class="ds-hb"><button class="ds-x" data-dsmode="${full?"peek":"full"}" aria-expanded="${full}">${full?"Less ▾":"Switches ▴"}</button><button class="ds-x" data-dsmode="off" aria-label="Hide the switches">Hide</button></span></div>`;
-  if(d.lazy){ el.innerHTML=h+`<p class="ds-note">${DYNFAIL[v]?"The drawing couldn’t load — check your connection, then reopen this map.":"Loading the drawing…"}</p>`; dynSheetSize(); return; }
+  let h=desk?`<div class="ds-h" title="Drag to move · resize from the corner"><b>${esc(m.t)}</b><span class="ds-hb"><button class="ds-x" data-dsmode="${full?"d:less":"d:more"}" aria-expanded="${full}">${full?"Less ▾":"More ▴"}</button><button class="ds-x${DSFLOAT==="pin"?" on":""}" data-dsmode="${DSFLOAT==="pin"?"d:auto":"d:pin"}" aria-pressed="${DSFLOAT==="pin"}" title="${DSFLOAT==="pin"?"Show only when zoomed in":"Keep this open at any zoom"}">${DSFLOAT==="pin"?"Pinned":"Pin"}</button><button class="ds-x" data-dsmode="d:off" aria-label="Hide the switches">Hide</button></span></div>`
+    :`<div class="ds-h"><b>${esc(m.t)}</b><span class="ds-hb"><button class="ds-x" data-dsmode="${full?"peek":"full"}" aria-expanded="${full}">${full?"Less ▾":"Switches ▴"}</button><button class="ds-x" data-dsmode="off" aria-label="Hide the switches">Hide</button></span></div>`;
+  if(d.lazy){ el.innerHTML=h+`<p class="ds-note">${DYNFAIL[v]?"The drawing couldn’t load — check your connection, then reopen this map.":"Loading the drawing…"}</p>`; dynSheetSize(); if(desk) dsPlace(el); return; }
   const secs=dynSections(d,st);
   if(full) secs.forEach(sec=>{
     h+=(sec.h?`<div class="ds-sh">${esc(sec.h)}</div>`:`<div class="ds-sh ds-gap"></div>`)+`<div class="ds-chips">${sec.chips.map(c=>
@@ -40102,7 +40143,7 @@ function dynSheetRender(){
   if(full||st.tour||st.quiz) h+=notes.map(t=>`<p class="ds-note">${esc(t)}</p>`).join("")+(full&&d.src?`<p class="ds-src">${esc(d.src)}</p>`:"");
   else if(notes.length){ const t=notes[0], cut=t.search(/[.!?](\s|$)/), first=cut>0&&cut<t.length-1?t.slice(0,cut+1):t;
     h+=`<p class="ds-note ds-clip">${esc(first)}${first.length<t.length||notes.length>1?` <button class="ds-more" data-dsmode="full">more</button>`:""}</p>`; }
-  const sc=el.scrollTop; el.innerHTML=h; el.scrollTop=sc; dynSheetSize();
+  const sc=el.scrollTop; el.innerHTML=h; el.scrollTop=sc; dynSheetSize(); if(desk) dsPlace(el);
 }
 /* the toolbar and the framing sit just above the sheet, however tall it is right now */
 function dynSheetSize(){
@@ -40114,13 +40155,32 @@ function dynSheetInit(){
   if(!el||!btn||el.dataset.bound) return; el.dataset.bound="1";
   el.addEventListener("click",ev=>{
     const b=ev.target.closest("[data-dyn]");
-    if(b){ const key=b.dataset.dyn; if(DYNSHEET==="full"&&/^([otq]:|tour:go|quiz:new|cmp:show)/.test(key)) DYNSHEET="peek";   // pick, then see it on the map
+    if(b){ const key=b.dataset.dyn; if(!dsDesk()&&DYNSHEET==="full"&&/^([otq]:|tour:go|quiz:new|cmp:show)/.test(key)) DYNSHEET="peek";   // pick, then see it on the map
       dynSet(key); return; }
-    const md=ev.target.closest("[data-dsmode]"); if(md){ DYNSHEET=md.dataset.dsmode;
+    const md=ev.target.closest("[data-dsmode]");
+    if(md&&dsDesk()){ const k=md.dataset.dsmode;   // the floating card's own buttons
+      if(k==="d:more"||k==="full") DSFULL=true; else if(k==="d:less") DSFULL=false;
+      else if(/^d:(pin|auto|off)$/.test(k)){ DSFLOAT=k.slice(2); dsSave(); }
+      dynSheetRender(); return; }
+    if(md){ DYNSHEET=md.dataset.dsmode;
       try{ if(DYNSHEET==="off") localStorage.setItem("mla-dynsheet","off"); else localStorage.removeItem("mla-dynsheet"); }catch(e){}
       dynSheetRender(); if(DYNSHEET==="off") dynFrame(); } });
-  btn.addEventListener("click",()=>{ DYNSHEET="peek"; try{ localStorage.removeItem("mla-dynsheet"); }catch(e){} dynSheetRender(); dynFrame(); });
-  addEventListener("resize",()=>dynSheetSize());
+  btn.addEventListener("click",()=>{
+    if(dsDesk()){ DSFLOAT="pin"; DSFULL=true; dsSave(); dynSheetRender(); return; }
+    DYNSHEET="peek"; try{ localStorage.removeItem("mla-dynsheet"); }catch(e){} dynSheetRender(); dynFrame(); });
+  /* drag the floating card by its title bar (not its buttons) */
+  let drag=null;
+  el.addEventListener("pointerdown",ev=>{
+    if(!dsDesk()||ev.button>0||!ev.target.closest(".ds-h")||ev.target.closest("button")) return;
+    ev.preventDefault(); drag={x:ev.clientX,y:ev.clientY,l:el.offsetLeft,t:el.offsetTop,id:ev.pointerId};
+    try{ el.setPointerCapture(ev.pointerId); }catch(e){} el.classList.add("ds-drag"); });
+  el.addEventListener("pointermove",ev=>{ if(!drag||ev.pointerId!==drag.id) return;
+    DSPOS={x:drag.l+ev.clientX-drag.x,y:drag.t+ev.clientY-drag.y}; dsPlace(el); });
+  const stop=ev=>{ if(!drag||ev.pointerId!==drag.id) return; drag=null; el.classList.remove("ds-drag");
+    if(DSPOS) DSPOS={x:el.offsetLeft,y:el.offsetTop}; dsSave(); };
+  el.addEventListener("pointerup",stop); el.addEventListener("pointercancel",stop);
+  addEventListener("resize",()=>{ dynSheetSize(); const d=dsDesk(); if(d!==DSWAS){ DSWAS=d; dynSheetRender(); } else if(d&&!el.hidden) dsPlace(el); dynFloatCheck(); });
+  DSWAS=dsDesk();
 }
 /* On a phone a moving map opens framed on its drawing (above the sheet), not the whole canvas with the panel */
 function dynFrame(){
@@ -40482,7 +40542,7 @@ function fitPanels(){
       const l=g.querySelector("line");if(l)l.setAttribute("x2",x+w-15);}
   });
 }
-function applyCam(){ if(cam) cam.setAttribute("transform",`translate(${state.tx.toFixed(2)} ${state.ty.toFixed(2)}) scale(${state.z.toFixed(3)})`); miniView(); }
+function applyCam(){ if(cam) cam.setAttribute("transform",`translate(${state.tx.toFixed(2)} ${state.ty.toFixed(2)}) scale(${state.z.toFixed(3)})`); miniView(); dynFloatCheck(); }
 /* ── overview map ─────────────────────────────────────────
    Zoomed into a big map it is easy to lose your place. A small overview in the corner
    shows the whole map with the part on screen outlined and the open card's pins as dots;

@@ -321,6 +321,12 @@ m40 additions:
 - **Predict the arrows:** a chip on every moving map with readouts; the reader guesses ↑ ↓ ↔, then Check.
 - **Phones (≤ 1000 px):** the switches, arrows and note sit in a docked sheet (#dynSheet) — a slim "peek"
   bar by default, "Switches ▴" for all of them; a moving map opens framed on its drawing (dynFrame).
+- **Wider screens (> 1000 px): floating switches.** The same #dynSheet becomes a small card (`.ds-float`) that floats over
+  the map at a fixed on-screen size. In "auto" (the default) it comes up by itself once the canvas panel (`.nf-ctl`) is
+  less than ~85% on screen — i.e. when you zoom in — and goes away when the panel is back in view (`dynFloatCheck`,
+  called from `applyCam`). **Pin** keeps it up at any zoom, **Hide** turns it off and leaves a "Switches ▴" button
+  (which pins it again). Drag it by its title bar, resize it from the corner; mode and position are remembered on the
+  device (`mla-dsfloat`, `mla-dsfloat-pos`). Less ▾ / More ▴ switch between the slim summary and every switch.
 m41 additions: a card that's on a moving map gets **See it move** (movesOf — the map with that card's switch on,
 else the map); on phones every static map opens on its first Walk section at a readable size (phoneFrame /
 frameSection), a **Sections** bar (#secBar) jumps between sections, and pins get a bigger tap ring (.phit,
