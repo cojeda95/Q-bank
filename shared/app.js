@@ -458,6 +458,9 @@ function saveExamSessionSnapshot() {
       timed: session.timed,
       totalSeconds: session.totalSeconds,
       deadlineAt: session.deadlineAt || null,
+      // set while the Pause button is on; the time left is frozen (deadlineAt is stale then)
+      paused: !!session.paused,
+      pausedRemainingMs: session.paused && session.timed ? Math.max(0, session.deadlineAt - session.pausedAt) : null,
       questions: session.questions,
       index: session.index,
       answers: session.answers,
@@ -1130,7 +1133,7 @@ function renderHome() {
     <div class="bh-card" id="resumeExamCard" role="button" tabindex="0">
       <span class="kicker">Resume exam</span>
       <span class="bh-title">${escapeHtml(examSessionLabel(resumeSnap))}</span>
-      <span class="bh-meta">Question ${resumeSnap.index + 1} of ${n} · ${done} answered${resumeSnap.timed ? (resumeSnap.deadlineAt - Date.now() <= 0 ? ' · time expired' : ` · ${formatTime((resumeSnap.deadlineAt - Date.now()) / 1000)} left`) : ' · untimed'}</span>
+      <span class="bh-meta">Question ${resumeSnap.index + 1} of ${n} · ${done} answered${examSnapLeftHtml(resumeSnap)}</span>
       <span class="bh-bar"><i style="width:${Math.round(100 * done / n)}%"></i></span>
       <span class="bh-actions"><span class="btn">Resume</span><button type="button" class="btn secondary" id="discardResumeBtn">Discard</button></span>
     </div>`;
@@ -2670,6 +2673,9 @@ function resumeExamSession() {
     return;
   }
 
+  const paused = !!snap.paused;
+  // a paused clock was frozen when the exam was left, so it picks up where it stopped
+  const deadlineAt = snap.timed && paused && snap.pausedRemainingMs != null ? Date.now() + snap.pausedRemainingMs : snap.deadlineAt;
   session = {
     mode: 'exam',
     examNumber: snap.examNumber,
@@ -2681,8 +2687,8 @@ function resumeExamSession() {
     answers: snap.answers,
     timed: snap.timed,
     totalSeconds: snap.totalSeconds,
-    deadlineAt: snap.deadlineAt,
-    remainingSeconds: snap.timed ? Math.max(0, Math.round((snap.deadlineAt - Date.now()) / 1000)) : null,
+    deadlineAt,
+    remainingSeconds: snap.timed ? Math.max(0, Math.round((deadlineAt - Date.now()) / 1000)) : null,
     timerId: null,
     submitted: false,
     timeSpentMs: Array.isArray(snap.timeSpentMs) && snap.timeSpentMs.length === snap.questions.length
@@ -2697,8 +2703,61 @@ function resumeExamSession() {
     return;
   }
 
+  if (paused) { pauseExam(); return; }
   if (session.timed) startExamTimer();
   renderExamQuestion();
+}
+
+/* Pause button on the exam screen: the clock stops, the question is hidden, and the
+   pause is saved with the run — leave from here and the home screen's Resume card
+   (or a refresh) brings you back to this pause with the same time left. */
+function pauseExam() {
+  if (!session || session.mode !== 'exam' || session.submitted) return;
+  flushQuestionTime();
+  if (session.timerId) { clearInterval(session.timerId); session.timerId = null; }
+  if (!session.paused) { session.paused = true; session.pausedAt = Date.now(); }
+  saveExamSessionSnapshot();
+  const total = session.questions.length;
+  const answered = session.answers.filter(a => a !== null).length;
+  const left = session.timed ? Math.max(0, Math.round((session.deadlineAt - session.pausedAt) / 1000)) : null;
+  main.innerHTML = `
+    <div class="quiz-header">
+      <span class="quiz-progress">${escapeHtml(examSessionLabel(session))} — Question ${session.index + 1} of ${total}</span>
+      <span class="timer paused">${session.timed ? formatTime(left) + ' · paused' : 'Untimed · paused'}</span>
+    </div>
+    <div class="q-card exam-paused">
+      <div class="paused-icon" aria-hidden="true">❚❚</div>
+      <h2>Exam paused</h2>
+      <p>${answered} of ${total} answered${session.timed ? ` · ${formatTime(left)} left` : ''}. The clock is stopped and the question is hidden until you resume.</p>
+      <p class="paused-note">Leaving is safe: the pause is saved, and the Resume card on this block's home brings you back here.</p>
+      <div class="next-row" style="justify-content:center; gap:10px;">
+        <button class="btn" id="resumePausedBtn">Resume exam</button>
+        <button class="btn secondary" id="leavePausedBtn">Leave for now</button>
+      </div>
+    </div>`;
+  const resumeBtn = document.getElementById('resumePausedBtn');
+  resumeBtn.addEventListener('click', unpauseExam);
+  resumeBtn.focus();
+  document.getElementById('leavePausedBtn').addEventListener('click', () => setRoute(''));
+}
+
+function unpauseExam() {
+  if (!session || !session.paused) return;
+  if (session.timed) session.deadlineAt += Date.now() - session.pausedAt;
+  session.paused = false;
+  session.pausedAt = null;
+  if (session.timed) {
+    session.remainingSeconds = Math.max(0, Math.round((session.deadlineAt - Date.now()) / 1000));
+    startExamTimer();
+  }
+  renderExamQuestion();
+}
+
+// "· 12:34 left" for a saved run, with the clock frozen if it was paused
+function examSnapLeftHtml(snap) {
+  if (!snap.timed) return snap.paused ? ' · untimed · paused' : ' · untimed';
+  if (snap.paused && snap.pausedRemainingMs != null) return ` · ${formatTime(snap.pausedRemainingMs / 1000)} left · paused`;
+  return snap.deadlineAt - Date.now() <= 0 ? ' · time expired' : ` · ${formatTime((snap.deadlineAt - Date.now()) / 1000)} left`;
 }
 
 function startExamTimer() {
@@ -2790,7 +2849,7 @@ function renderExamQuestion() {
   main.innerHTML = `
     <div class="quiz-header">
       <span class="quiz-progress">${escapeHtml(examSessionLabel(session))} — Question ${session.index + 1} of ${total}${instantFeedback ? ' · 📝 Instant Feedback' : ''}</span>
-      <span id="examTimer" class="timer">${session.timed ? formatTime(session.remainingSeconds) : 'Untimed'}</span>
+      <span class="timer-row"><span id="examTimer" class="timer">${session.timed ? formatTime(session.remainingSeconds) : 'Untimed'}</span><button type="button" class="btn secondary pause-btn" id="pauseBtn" title="Pause the exam — stops the clock">❚❚ Pause</button></span>
     </div>
     <div class="quiz-header">
       <span class="quiz-progress">${q.sdlTitle}</span>
@@ -2817,6 +2876,7 @@ function renderExamQuestion() {
   `;
 
   bindReportBtn(q, null);
+  document.getElementById('pauseBtn').addEventListener('click', pauseExam);
   document.getElementById('flagBtn').addEventListener('click', () => {
     toggleFlag(q.id);
     renderExamQuestion();
