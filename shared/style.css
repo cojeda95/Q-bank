@@ -1082,3 +1082,13 @@ h1 { font-size: 1.9rem; line-height: 1.15; margin: 6px 0 6px; }
 }
 /* buttons don't inherit the page font on their own */
 button, input, select, textarea { font-family: inherit; }
+
+/* Exam simulation pause: button beside the clock, and the paused screen that hides the question */
+.timer-row { display: inline-flex; align-items: center; gap: 8px; }
+.pause-btn { padding: 4px 10px; font-size: 0.85rem; min-height: 0; }
+.timer.paused { color: var(--grey-text); }
+.exam-paused { text-align: center; padding: 40px 24px; }
+.exam-paused h2 { margin: 6px 0 10px; color: var(--navy); }
+.exam-paused p { margin: 0 auto 10px; max-width: 520px; }
+.exam-paused .paused-note { font-size: 0.85rem; color: var(--grey-text); }
+.paused-icon { font-size: 2rem; color: var(--navy); letter-spacing: -4px; }
