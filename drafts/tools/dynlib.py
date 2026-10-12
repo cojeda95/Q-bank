@@ -155,7 +155,7 @@ def ctl_layout(dyn, w_map):
             y += 50
     x = X0; chip('Pause the motion'); chip('Reset')
     if dyn.get('readouts'): chip('Predict the arrows')
-    chip('Tour'); chip('Name it · 99/99'); chip('Side by side'); chip('Unpin'); chip('✓ Link copied')   # m42: the widest last row (a state pinned to compare)
+    chip('Tour'); chip('Name it · 99/99'); chip('Side by side'); chip('Unpin'); chip('✓ Link copied'); chip('Quiz me')   # m42: the widest last row (a state pinned to compare)
     if dyn.get('readouts'): y += 46
     y += 34
     # the longest set of notes that can show at once: each toggle's off-note, the longest note of each group
