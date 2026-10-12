@@ -852,3 +852,13 @@ atlas and the hub's due pill both skip it. Hiding known cards from the lists
 Card review is **opt-in** (`mla-review` = `"on"`, per device, not synced). While it is off,
 answers are still counted but nothing is scheduled, and no "due" message appears anywhere —
 not the map rings, the Due cards round, the rail lists or the hub pill.
+
+### m47 — the cloud-drafted maps, fact-checked (2026-10-12)
+The drafts branch's map modules are fact-checked on the Mac against the corpus in batches of ~20 (worktree
+~/Developer/qbank-drafts on local branch m47-qc), then inserted by atlas-review/batches/m47/assemble.py: it starts from
+base-drafts.html (main + the drafts site features), applies small patches (the Coombs card's "DAT" alias no longer links
+dopamine-transporter questions; the chronic respiratory compensation line; captions that collided when two switches were
+on — found by a new two-switch sweep over every moving map), and inserts every module listed in PASSED.txt with the
+drafts branch's dynlib (which leaves the page's kit alone — the kit now lives only in tools/atlas-src.html). Each new batch
+appends to PASSED.txt and reruns the same script.
+

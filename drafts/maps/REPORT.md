@@ -579,3 +579,15 @@ lane keys across drafts (checked separately — check.py compares only with the 
   `tools/build-atlas.py` (`links_for`) into `resources/atlas-practice.js` and `atlas-qlinks.js`, so the same false links also
   appear on the atlas card itself, not just this map. Possible fix (needs a decision on main): stop using the bare "DAT" alias
   for matching, or require a Coombs or antiglobulin context. Nothing changed here.
+
+## m47 — fact-check on the Mac · 2026-10-12 (all 118 modules) — LIVE on main (4d2ba17)
+Every module in this folder was fact-checked against the real corpus (FA 2025, the textbooks, Bootcamp, OCOM course
+texts), fixed in place and gap-filled; no `UNVERIFIED` tag is left, each ends `OK · 0 warnings`, and all 118 maps are
+in the atlas on main (359 maps, 162 moving). The modules here ARE the checked versions — build on them, don't revert.
+Typical fixes to avoid next time: reversed directions (OMM flexion/extension, sacral glides, short-leg crest), drawings
+off the anatomy (Achilles insertion, seminal vesicles, TEF fistula), a switch that changed nothing, drug logic that
+"worked" on every case (seizure drugs, octreotide, cetuximab), arrows no source gives, and FA page numbers that
+were off topic. Captions from two switches that can be on together must not share a spot — the Mac now sweeps every
+two-switch combination. Also fixed on main: the Coombs card's "DAT" alias, 8 existing cards (see the m47 ledger).
+This branch now carries main's atlas (tools/atlas-src.html with all 118 maps inserted), so check.py sees them as
+existing maps: new modules must use new ids.

@@ -47,6 +47,12 @@ Keep the kit's conventions: state lives in `DYN[v]` / `st`, controls are `data-d
 `dynSheetRender`, address = `dynStateStr`/`dynApplyStr`. Note in your report that the kit changed, so the owner copies the
 new kit section back into his batch tooling (`drafts/tools/kit.js` here should be updated to match).
 
+## Status (2026-10-12)
+All 118 map modules drafted here were fact-checked on the Mac and are live on main (see the m47 entry at the end of
+drafts/maps/REPORT.md). This branch was merged with main afterwards, so tools/atlas-src.html here = main's atlas
+(359 maps, 162 moving). The site features drafted here (ABG calculator, Missed it? Watch it move, weakest-maps mix,
+Report a problem, why-you-missed tags, Quiz me) are also on main. New work: new ids only.
+
 ## What exists already (don't rebuild)
 241 maps, 44 moving. Moving-map features: Predict the arrows, Tour (+Play), Name it (misses come back first; scores in
 `mla-progress` and PIN-synced), Compare (+Pin B), Copy link, Moving-map mix (`#quiz/moving`, can stay in one topic), keys
