@@ -1,6 +1,6 @@
 /* ── Dynamic maps kit (art:"kit") ───────────────────────────────────────────
    A drawn, moving map is plain data on the map, m.dyn:
-     kinds:    {kind:[group, "--colour-var"]}      particle kinds (an ion, a transmitter, a vesicle…)
+     kinds:    {kind:[group, "--colour-var", label?]}  particle kinds (an ion, a transmitter, a vesicle…); a label puts the colour in the "Key" row
      groups:   [[group, "label"]]                   the "Show" chips, one per group of kinds
      switches: [{id, label, type:"toggle", on:"chip text when on", off:"…when off", def:true}
                 | {id, label, type:"one", options:[[key,"label","cardid"],…]}     pick at most one option; the card

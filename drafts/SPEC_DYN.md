@@ -76,6 +76,14 @@ Lane keys: short camelCase starting with your map's 2-letter code, unique.
   (`vessel`/`tube` `mods`), a highlighted or added shape (`shapes` with `when`) — **and** show a note saying what
   happened and why, in 1–3 plain sentences with the exam-relevant consequence. Add `readouts` (↑ ↓ ↔) where the
   exam asks for directions (e.g. PT/PTT, TSH/T4, PaO₂/A–a gradient, QRS/QT, serum urate).
+- Particle kinds are `{key: [group, "--colour-var"]}`. When a group mixes several colours, give each kind a third element, a short
+  label (`["fuel", "--dk9", "NADH"]`): the panel lists one dot + name per colour under "Key", so no colour goes unexplained.
+- A long `one`/`steps` switch (10+ options) should carry `sections=[[label, [keys]], …]`: the panel then shows its chips under
+  sub-headings (e.g. antibiotics by target). Keys stay the same, so links, notes and Name it are unaffected.
+- Organs: never a bare circle or ellipse under an organ label — draw a silhouette (the Mac-side organs.py has outlines for
+  kidney, brain, liver, lungs, heart, stomach, pancreas, spleen, bladder, adrenal, ovary, gallbladder, thyroid, testis, thymus,
+  uterus, prostate) or use `<path>` with a recognisable outline.
+- Size the canvas to the content: `w`/`h` just past the switch column and the card rows (+60), no dead space.
 - Switch kinds: `toggle` (on/off: a hormone present), `one` (pick at most one: a drug, a disease, a lesion site),
   `steps` (phases of a cycle, always one, `auto: 3` steps through them by itself — for action-potential phases,
   a cascade's stages…). Conditions: `"adh"`, `"!adh"`, `"drug:loop"`, `"drug:*"`, `"a&b"`.

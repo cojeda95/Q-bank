@@ -53,6 +53,19 @@ drafts/maps/REPORT.md). This branch was merged with main afterwards, so tools/at
 (359 maps, 162 moving). The site features drafted here (ABG calculator, Missed it? Watch it move, weakest-maps mix,
 Report a problem, why-you-missed tags, Quiz me) are also on main. New work: new ids only.
 
+## Editorial pass (2026-10-12, on the Mac)
+- Every moving map was checked for consistency: particle colours are now labelled in a "Key" row (kit change: `kinds[k][2]`);
+  the labels for the 118 drafts maps live in the Mac-side assemble table, not in these modules — a new map should put its
+  labels straight into `kinds`. Three older maps got title + caption lines. Locator/picker maps have no readouts by design.
+
+## m48 site features (Mac, 2026-10-12)
+- Header: a kinds filter ahead of each system's map tabs (Reference · In motion · Simulators · Work-ups; `TIER` table).
+- Rail: "See also" chips between maps that cover one topic (`REL` clusters). New badge window is 14 days.
+- Kit: `sections` on long switches; `kinds[k][2]` colour labels → Key row. Titles follow one rule: "… in Motion" for flows,
+  "… Simulator" for pick-one maps, "… Work-Up" for symptom maps.
+- 97 canvases trimmed to their content; 73 organ outlines replaced bare circles/rects in 37 maps. These edits live in the
+  Mac-side assemble (resize.json, organs.py), not in the modules here — a new map should be drawn to size with real outlines.
+
 ## What exists already (don't rebuild)
 241 maps, 44 moving. Moving-map features: Predict the arrows, Tour (+Play), Name it (misses come back first; scores in
 `mla-progress` and PIN-synced), Compare (+Pin B), Copy link, Moving-map mix (`#quiz/moving`, can stay in one topic), keys
