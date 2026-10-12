@@ -862,3 +862,13 @@ on — found by a new two-switch sweep over every moving map), and inserts every
 drafts branch's dynlib (which leaves the page's kit alone — the kit now lives only in tools/atlas-src.html). Each new batch
 appends to PASSED.txt and reruns the same script.
 
+## m48 — editorial pass over the moving maps (2026-10-12)
+Every moving map was audited programmatically (kinds, groups, switches, notes, readouts, titles, card ids) and swept in the
+browser (162 maps / 4,495 states). Kit: `kinds[k][2]` is a colour label and the panel shows a **Key** row (one dot + name per
+colour; 397 labels across 106 maps); a long `one`/`steps` switch may carry `sections` and renders under sub-headings (14 switches).
+Site: a kinds filter ahead of each system's map tabs (Reference · In motion · Simulators · Work-ups, `TIER`), "See also" chips
+in the rail between maps on one topic (`REL`, 8 clusters), New badge window 14 days, titles on one rule ("… in Motion",
+"… Simulator", "… Work-Up"; 18 renamed, ids unchanged). Drawing: 97 canvases trimmed to their content (switch column pulled
+left, card rows lifted; measured per state in the browser), 73 organ outlines replaced bare circles/ellipses/rects in 37 maps
+(organs.py), three maps got title + caption lines, 16 info panels moved below taller switch panels. All of it is applied by
+batches/m47/assemble.py (kindlabels.json, tiers.json, resize.json, organs.py) on top of the drafts modules.
