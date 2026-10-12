@@ -50,7 +50,11 @@ for y, lab, sub in ((UES, 'UES', 'cricopharyngeus'), (LES, 'LES', 'relaxes for t
     text(lab, EX - W - 50, y + 6, 'nf-l1', 'end'); text(sub, EX - W - 50, y + 30, 'nf-l2', 'end')
 add(f'<rect x="{EX - 20}" y="{LES - 8}" width="40" height="16" rx="4" style="fill:var(--bad)"/>', when=O('ach'))
 text('LES won’t relax', EX + W + 90, LES + 6, 'nf-l1 dyn-tag', when=O('ach'))
-text('transient LES relaxations', EX + W + 90, LES + 6, 'nf-l1 dyn-tag', when=O('gerd', 'barrett'))
+text('transient drops in LES tone', EX + W + 90, LES + 6, 'nf-l1 dyn-tag', when=O('gerd', 'barrett'))
+text('weak LES, distal peristalsis lost — reflux', EX + W + 90, LES + 6, 'nf-l1 dyn-tag', when=O('scl'))
+add(f'<rect x="{EX - W - 34}" y="{LES - 12}" width="{2 * W + 68}" height="24" style="fill:var(--surface);opacity:.7"/>', when=O('scl'))   # LES faded
+add(f'<path d="M{EX - W} {LES - 420} V{LES - 20} M{EX + W} {LES - 420} V{LES - 20}" style="stroke:var(--surface);stroke-width:6;stroke-dasharray:14 12"/>', when=O('scl'))   # fibrosed distal wall
+text('liquid swallow', EX + 170, TOP - 76, 'nf-l1', when=['liq'])
 # lesions
 add(f'<rect x="{EX - W}" y="{LES - 140}" width="{2 * W}" height="120" style="fill:var(--bad);fill-opacity:.35"/>', when=O('barrett'))
 text('columnar + goblet cells above the Z line → adenocarcinoma', EX + W + 50, LES - 80, 'nf-l1 dyn-tag', when=O('barrett'))
@@ -77,39 +81,44 @@ pile(UES - 70, O('zenker'))
 def m(when, **kw): return dict(when=when, **kw)
 def stop_at(y): return f'M{EX} {TOP} V{y}'
 flows = [
-  dict(d=f'M{EX} {TOP} V{LES + 60}', len=LES + 60 - TOP, speed=110, r=22, base=dict(bol=1), unless=STUCK + O('zenker')),
-  dict(d=stop_at(LES - 40), len=LES - 40 - TOP, speed=110, r=22, base=dict(bol=1), when=STUCK_ANY),
-  dict(d=stop_at(LES - 350), len=LES - 350 - TOP, speed=110, r=22, base=dict(bol=1), when=['dx:strict&!liq']),
-  dict(d=stop_at(LES - 86), len=LES - 86 - TOP, speed=110, r=22, base=dict(bol=1), when=['dx:ring&!liq']),
-  dict(d=stop_at(UES + 40), len=UES + 40 - TOP, speed=60, r=22, base=dict(bol=1), when=['dx:web&!liq']),
-  dict(d=f'M{EX} {TOP} V{UES - 110} C{EX - 120} {UES - 120} {EX - 180} {UES - 60} {EX - 120} {UES - 70}', len=360, speed=80, r=22, base=dict(bol=1), when=O('zenker')),
-  dict(d=f'M{EX - W} {TOP} V{LES}', len=LES - TOP, speed=110, r=10, base=dict(wave=1), unless=O('ach', 'des')),
-  dict(d=f'M{EX + W} {TOP} V{LES}', len=LES - TOP, speed=110, r=10, base=dict(wave=1), unless=O('ach', 'des')),
+  dict(d=f'M{EX} {TOP} V{LES + 60}', len=LES + 60 - TOP, speed=110, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], unless=STUCK + O('zenker')),
+  dict(d=stop_at(LES - 40), len=LES - 40 - TOP, speed=110, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=STUCK_ANY),
+  dict(d=stop_at(LES - 350), len=LES - 350 - TOP, speed=110, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=['dx:strict&!liq']),
+  dict(d=stop_at(LES - 86), len=LES - 86 - TOP, speed=110, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=['dx:ring&!liq']),
+  dict(d=stop_at(UES + 40), len=UES + 40 - TOP, speed=60, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=['dx:web&!liq']),
+  dict(d=f'M{EX} {TOP} V{UES - 110} C{EX - 120} {UES - 120} {EX - 180} {UES - 60} {EX - 120} {UES - 70}', len=360, speed=80, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=O('zenker')),
+  dict(d=f'M{EX - W} {TOP} V{LES}', len=LES - TOP, speed=110, r=10, base=dict(wave=1), unless=O('ach', 'des', 'scl')),
+  dict(d=f'M{EX + W} {TOP} V{LES}', len=LES - TOP, speed=110, r=10, base=dict(wave=1), unless=O('ach', 'des', 'scl')),
+  dict(d=f'M{EX - W} {TOP} V{LES - 420}', len=LES - 420 - TOP, speed=110, r=10, base=dict(wave=1), when=O('scl')),   # proximal (striated) wave only
+  dict(d=f'M{EX + W} {TOP} V{LES - 420}', len=LES - 420 - TOP, speed=110, r=10, base=dict(wave=1), when=O('scl')),
   dict(d=f'M{EX - W} {UES + 60} V{LES - 60}', len=600, speed=300, r=10, base=dict(wave=5), when=O('des')),
   dict(d=f'M{EX + W} {LES - 60} V{UES + 60}', len=600, speed=260, r=10, base=dict(wave=5), when=O('des')),
-  dict(d=f'M{EX} {LES + 80} V{LES - 240}', len=320, speed=90, r=9, base=dict(acid=4), when=O('gerd', 'barrett')),
+  dict(d=f'M{EX} {LES + 80} V{LES - 240}', len=320, speed=90, r=9, base=dict(acid=4), when=O('gerd', 'barrett', 'scl')),
   dict(d=f'M{EX - W + 6} {LES + 20} C{EX - 150} {LES + 120} {EX - 150} {LES + 200} {EX - 120} {BOT + 60}', len=300, speed=80, r=8, base=dict(bl=4), when=O('mw')),
 ]
 sites = [dict(x=EX + W + 30, y=LES, n=[1, 0], w=10, t='rec', l='', aria='Lower esophageal sphincter', c='achalasia', ions=[]),
          dict(x=EX + W + 30, y=UES, n=[1, 0], w=10, t='rec', l='', aria='Swallowing', c='swallowing', ions=[])]
 
 readouts = [
-  dict(l='Dysphagia — solids', mods=[dict(when=STUCK + O('zenker', 'des'), d=1)]),
-  dict(l='Dysphagia — liquids', mods=[dict(when=O('ach'), d=1), dict(when=['dx:ring&liq', 'dx:strict&liq'], d=0)]),
-  dict(l='LES resting pressure', mods=[dict(when=O('ach'), d=1), dict(when=O('des'), d=0)]),
-  dict(l='Peristalsis', mods=[dict(when=O('ach', 'des'), d=-1)]),
+  dict(l='Dysphagia — solids', mods=[dict(when=O('ach', 'ring', 'strict', 'web', 'zenker', 'des', 'scl'), d=1)]),
+  dict(l='Dysphagia — liquids', mods=[dict(when=O('ach'), d=1), dict(when=O('ring', 'strict', 'web'), d=0)]),
+  dict(l='LES resting pressure', mods=[dict(when=O('ach'), d=1), dict(when=O('des'), d=0), dict(when=O('scl'), d=-1)]),
+  dict(l='Coordinated peristalsis', mods=[dict(when=O('ach', 'des', 'scl'), d=-1)]),
   dict(l='Cancer risk', mods=[dict(when=O('barrett', 'ach', 'web'), d=1)]),
 ]
 
 notes = {
   '': 'Swallowing starts voluntarily, then the medullary swallowing center takes over: the UES relaxes, the pharyngeal constrictors '
       'contract top to bottom, and primary peristalsis carries the bolus to the stomach in 8–10 seconds as the LES relaxes.',
-  'liq': 'Liquids: a mechanical narrowing (ring, stricture, web) lets them through — dysphagia starts with solids. Achalasia stops both.',
+  'liq': 'Liquids: a mechanical narrowing (ring, stricture, web) lets them through — dysphagia starts with solids. Achalasia, a motility '
+         'problem, stops both.',
   'dx:ach': 'Achalasia: the inhibitory (NO, VIP) neurons of the myenteric plexus degenerate, so the LES can’t relax and peristalsis fails — '
-            'dysphagia to solids AND liquids from the start, bird’s beak, ↑ LES pressure on manometry, ↑ cancer risk. Chagas is a cause.',
+            'dysphagia to solids AND liquids (an obstruction is mainly solids), bird’s beak, ↑ LES pressure on manometry, ↑ cancer risk. Chagas is a cause.',
   'dx:des': 'Distal esophageal spasm: uncoordinated contractions with a normal LES — corkscrew esophagus, chest pain. Nitrates, CCBs.',
-  'dx:gerd': 'GERD: transient LES relaxations let acid reflux — heartburn, regurgitation, cough, hoarseness; erosive esophagitis, '
+  'dx:gerd': 'GERD: transient drops in LES tone let acid reflux — heartburn, regurgitation, cough, hoarseness; erosive esophagitis, '
              'stricture, Barrett. Sliding hiatal hernia.',
+  'dx:scl': 'Scleroderma (CREST): smooth-muscle atrophy and fibrosis — ↓ LES pressure and lost distal peristalsis, the reverse of '
+            'achalasia. Acid refluxes: dysphagia, then stricture, Barrett esophagus and aspiration.',
   'dx:barrett': 'Barrett esophagus: years of reflux replace the distal squamous lining with columnar epithelium with goblet cells '
                 '(intestinal metaplasia) — can progress through dysplasia to adenocarcinoma.',
   'dx:ring': 'Schatzki ring: a circumferential band narrowing the distal esophagus — dysphagia and regurgitation; hiatal hernia, GERD.',
@@ -124,16 +133,16 @@ notes = {
 }
 
 dyn = dict(
-  kinds=dict(bol=['food', '--dk10'], wave=['wave', '--dk3'], acid=['acid', '--bad'], bl=['acid', '--nf-blood']),
+  kinds=dict(bol=['food', '--dk10'], liqd=['food', '--nf-h2o'], wave=['wave', '--dk3'], acid=['acid', '--bad'], bl=['acid', '--nf-blood']),
   groups=[['food', 'Bolus'], ['wave', 'Peristaltic wave'], ['acid', 'Acid · blood']],
   switches=[dict(id='liq', label='Swallow', type='toggle', on='Liquids', off='Solids', def_=False),
             dict(id='dx', label='What goes wrong', type='one', options=[
-              ['ach', 'Achalasia', 'achalasia'], ['des', 'Distal esophageal spasm', 'achalasia'], ['gerd', 'GERD', 'gerd'],
+              ['ach', 'Achalasia', 'achalasia'], ['des', 'Distal esophageal spasm', 'achalasia'], ['scl', 'Scleroderma esophagus', 'achalasia'], ['gerd', 'GERD', 'gerd'],
               ['barrett', 'Barrett esophagus', 'barrett'], ['ring', 'Schatzki ring', 'schatzki'], ['strict', 'Stricture', 'esostricture'],
               ['web', 'Plummer-Vinson web', 'esophagitis'], ['zenker', 'Zenker diverticulum', 'zenker'], ['mw', 'Mallory-Weiss tear', 'mallorywb']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 377, 384–385 · Robbins ch 17 · Guyton ch 64')
+  src='First Aid pp. 377, 383–385, 391 · Robbins ch 17 · Guyton ch 64 · Bootcamp GI')
 dyn['switches'][0]['def'] = dyn['switches'][0].pop('def_')
 
 MAP = dict(
@@ -141,14 +150,14 @@ MAP = dict(
   sub='Watch a bolus ride the peristaltic wave through both sphincters, switch solids for liquids, then see it stick, reflux or spill — '
       'achalasia, esophageal spasm, GERD, Barrett, Schatzki ring, stricture, Plummer-Vinson web, Zenker and Mallory-Weiss',
   w=3600, h=1900,
-  fa='377, 384, 385, 391',
+  fa='377, 383, 384, 385, 391',
   src=['Robbins ch 17 — The gastrointestinal tract', 'Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases',
        'Robbins ch 8 — Infectious diseases', 'Moore ch 8 — Neck', 'Bootcamp.com Gastroenterology — Esophagus',
        'Guyton ch 64 — Propulsion and Mixing of Food in the Alimentary Tract', 'Costanzo ch 8 — Gastrointestinal physiology'],
   lanes=[('eoMot', 'Motility', 'glycolysis'), ('eoMuc', 'Reflux & mucosa', 'tca'), ('eoObs', 'Narrowing & pouches', 'gluconeo')],
   nodes=[
     ('es1', 'Swallowing', 330, 1660, 'eoMot', 'reflex · peristalsis', ['swallowing'], 'hub'),
-    ('es2', 'Achalasia · spasm', 760, 1660, 'eoMot', 'bird’s beak · corkscrew', ['achalasia']),
+    ('es2', 'Achalasia · spasm', 760, 1660, 'eoMot', 'bird’s beak · corkscrew · CREST', ['achalasia']),
     ('es3', 'GERD', 1200, 1660, 'eoMuc', 'transient LES relaxation', ['gerd']),
     ('es4', 'Barrett esophagus', 1640, 1660, 'eoMuc', 'goblet cells', ['barrett']),
     ('es5', 'Esophagitis · webs', 2080, 1660, 'eoMuc', 'pill, Candida, Plummer-Vinson', ['esophagitis']),
@@ -157,8 +166,8 @@ MAP = dict(
     ('es8', 'Zenker diverticulum', 1200, 1790, 'eoObs', 'Killian triangle', ['zenker']),
     ('es9', 'Mallory-Weiss · Boerhaave', 1640, 1790, 'eoMuc', 'tear vs rupture', ['mallorywb'])],
   panels=[
-    (2500, PANY, 1000, 'Dysphagia: solids or liquids? (First Aid p. 384)', [
-      ('Solids AND liquids from the start', 'achalasia (motility)'),
+    (2500, PANY, 1000, 'Dysphagia: solids or liquids? (First Aid pp. 383–385 · Robbins ch 17)', [
+      ('Solids AND liquids', 'achalasia (motility)'),
       ('Solids first, progressive', 'stricture, cancer (obstruction)'),
       ('Solids, non-progressive', 'web, ring'),
       ('Pain on swallowing', 'esophagitis (pill, Candida, HSV, CMV)')])],

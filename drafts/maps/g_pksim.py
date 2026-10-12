@@ -6,7 +6,7 @@
 # antagonist, shows a partial agonist, or a more potent agonist. Curves are computed here; units are illustrative
 # (time in baseline half-lives, level relative to the target) — the captions say so.
 # No new cards: the rules restate the pinned cards (clearance, dosing, elimination, efficacypotency, antagonists, ti,
-# cypinducers, cypinhibitors — fact-checked against the corpus). Sources: First Aid 2025 pp. 229–233, 251.
+# cypinducers, cypinhibitors — fact-checked against the corpus). Sources: First Aid 2025 pp. 229–230, 232–233, 251; Katzung ch 2–4.
 import sys, math
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -75,6 +75,13 @@ for k in ('load', 'dbl', 'ind', 'inh'):
 FO = 'M' + ' L'.join(f'{tx(t / 50)} {cy(2.0 * math.exp(-math.log(2) * t / 50))}' for t in range(0, TMAX * 50 + 1))
 ZO = 'M' + ' L'.join(f'{tx(t / 50)} {cy(max(0.0, 2.0 - 0.35 * t / 50))}' for t in range(0, TMAX * 50 + 1))
 add(f'<path d="{FO}" {TR("--dk11")}/><path d="{ZO}" {TR("--dk3")}/>', when=K('zero'))
+# a dot rides the level along time, so the sawtooth and its climb to steady state are read in motion
+def plen(d):
+    pts = [tuple(map(float, q.strip().split())) for q in d[1:].split(' L')]
+    return round(sum(math.dist(a, b) for a, b in zip(pts, pts[1:])))
+LVL = [(series(**SCEN['base']), dict(unless=K('load', 'dbl', 'ind', 'inh', 'zero')))] + \
+      [(series(**SCEN[k]), dict(when=K(k))) for k in ('load', 'dbl', 'ind', 'inh')] + [(FO, dict(when=K('zero'))), (ZO, dict(when=K('zero')))]
+flows = [dict(d=d, len=plen(d), speed=max(140, round(plen(d) / 12)), r=10, base=dict(lvl=1), **w) for d, w in LVL]
 text('first-order: half of what is left, each half-life — a curve', tx(1.6), cy(0.85), TAG, when=K('zero'))
 text('zero-order: the same amount each time — a straight line', tx(3.7), cy(1.0), TAG, when=K('zero'))
 # steady state marker: 4–5 half-lives of the drug in use
@@ -139,7 +146,7 @@ readouts = [
   dict(l='Steady-state level', mods=[m(K('load'), 0), m(K('dbl', 'inh'), 1), m(K('ind'), -1)]),
   dict(l='Time to steady state', mods=[m(K('load', 'ind'), -1), m(K('dbl'), 0), m(K('inh'), 1)]),
   dict(l='Half-life', mods=[m(K('load', 'dbl'), 0), m(K('ind'), -1), m(K('inh'), 1)]),
-  dict(l='Potency', mods=[m(D('comp'), -1), m(D('potent'), 1)]),
+  dict(l='Potency', mods=[m(D('comp'), -1), m(D('noncomp'), 0), m(D('potent'), 1)]),
   dict(l='Efficacy', mods=[m(D('comp', 'potent'), 0), m(D('noncomp', 'partial'), -1)]),
 ]
 
@@ -163,7 +170,7 @@ notes = {
   'pd:comp': 'A competitive antagonist binds the same site reversibly: the agonist’s curve shifts right — potency falls, '
              'efficacy is unchanged, and more agonist overcomes it (flumazenil vs diazepam at GABA-A).',
   'pd:noncomp': 'A noncompetitive antagonist flattens the curve: efficacy falls and more agonist cannot overcome it '
-                '(phenoxybenzamine vs norepinephrine at α receptors).',
+                '(phenoxybenzamine vs norepinephrine at α receptors). Potency is unchanged.',
   'pd:partial': 'A partial agonist binds the same site with a lower maximal effect: alone it activates; given with a full agonist '
                 'it blocks — buprenorphine can precipitate withdrawal in someone on full opioids.',
   'pd:potent': 'A more potent agonist reaches the same effect with less drug — the curve shifts left at the same height. '
@@ -171,7 +178,7 @@ notes = {
 }
 
 dyn = dict(
-  kinds={}, groups=[],
+  kinds=dict(lvl=['lvl', '--accent']), groups=[['lvl', 'Plasma level over time']],
   switches=[dict(id='pk', label='Change the dosing', type='one',
                  options=[['load', 'Give a loading dose', 'dosing'], ['dbl', 'Double the dose', 'clearance'],
                           ['ind', 'Add a CYP inducer', 'cypinducers'], ['inh', 'Add a CYP inhibitor', 'cypinhibitors'],
@@ -179,9 +186,9 @@ dyn = dict(
             dict(id='pd', label='Change the dose–response', type='one',
                  options=[['comp', 'Competitive antagonist', 'antagonists'], ['noncomp', 'Noncompetitive antagonist', 'antagonists'],
                           ['partial', 'Partial agonist', 'antagonists'], ['potent', 'A more potent agonist', 'efficacypotency']])],
-  notes=notes, shapes=shapes, flows=[], sites=sites, readouts=readouts,
+  notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 229–233, 251 · illustrative curves')
+  src='First Aid pp. 229–230, 232–233, 251 · Katzung ch 2–4 · illustrative curves')
 
 MAP = dict(
   id='pksim', title='Pharmacokinetics & Dose–Response Simulator', topic='pharm', after='pkpd',
@@ -189,7 +196,7 @@ MAP = dict(
       'or inhibitor, or compare zero- and first-order elimination. Below, see what competitive and noncompetitive antagonists, a '
       'partial agonist and a more potent drug do to the dose–response curve. Tap a curve for its card',
   w=3500, h=2100,
-  fa='229–233, 251', src=[],
+  fa='229, 230, 232, 233, 251', src=[full('Katzung', 3), full('Katzung', 2), full('Katzung', 4)],
   lanes=[('pkKin', 'Pharmacokinetics', 'glycolysis'), ('pkDyn', 'Pharmacodynamics', 'tca'), ('pkCyp', 'Drug interactions', 'gluconeo')],
   nodes=[
     ('pk1', 'Half-life & steady state', 380, 1800, 'pkKin', 't½ = 0.7 × Vd ÷ CL', ['clearance', 'vd']),
@@ -204,9 +211,9 @@ MAP = dict(
       ('Half-life', 't½ = 0.7 × Vd ÷ CL'),
       ('Loading dose', 'Cp × Vd ÷ F — depends on volume'),
       ('Maintenance dose', 'Cp × CL × τ ÷ F — depends on clearance'),
-      ('Steady state', '4–5 half-lives · 50, 75, 87.5, 94% after 1–4'),
+      ('Steady state', '4–5 half-lives · 50% after 1, 75% after 2, 90% after 3.3'),
       ('Renal or liver failure', 'loading dose usually unchanged · lower the maintenance dose')]),
-    (2420, 1100, 1000, 'Curves and interactions (First Aid pp. 230–233, 251)', [
+    (2420, 1100, 1000, 'Curves and interactions (First Aid pp. 230, 232–233, 251)', [
       ('Zero-order', 'constant amount per time — phenytoin, ethanol, aspirin (high doses)'),
       ('Competitive antagonist', 'right shift · potency ↓ · surmountable'),
       ('Noncompetitive antagonist', 'flattened · efficacy ↓ · not surmountable'),

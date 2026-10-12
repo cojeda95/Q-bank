@@ -5,7 +5,7 @@
 # macrophages (or kills directly). A timeline below marks when each reaction appears. One `one` switch picks a
 # classic example; its type lights up with the example's own tag.
 # No new cards: the facts restate the pinned cards (hs1–hs4, igadef, asthma, warmaiha, mg, hyperthyroid,
-# goodpasture, sle, eczema, tb — fact-checked against the corpus). Sources: First Aid 2025 pp. 110–111.
+# goodpasture, sle, eczema, tb — fact-checked against the corpus). Sources: First Aid 2025 pp. 110–112, 114, 476; Robbins ch 6.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -61,7 +61,7 @@ add(f'<ellipse cx="{cx}" cy="{cy}" rx="120" ry="90" class="dyn-cell" style="stro
 text('a cell or basement membrane', cx, cy + 6, 'nf-l2', 'middle')
 add(ab(cx - 60, cy - 84) + ab(cx + 60, cy - 84) + ab(cx - 110, cy + 30, -70) + ab(cx + 110, cy + 30, 70))
 text('antibody binds an antigen fixed on the cell', X0[1] + 20, 620)
-OUT = [('destruction', 'opsonized, eaten, or lysed by complement', E('aiha')),
+OUT = [('destruction', 'opsonized and eaten, lysed by complement, or NK-cell ADCC', E('aiha')),
        ('inflammation', 'complement and Fc receptors activated', E('goodp')),
        ('dysfunction', 'the antibody blocks or stimulates a receptor', E('mg', 'graves'))]
 for j, (h, s, w) in enumerate(OUT):
@@ -101,7 +101,7 @@ text('kills the antigen-bearing cell directly', x + 20, 760)
 text('cytokines recruit and activate macrophages', x + 20, 784)
 text('24–48 hours to develop', x + 20, 808, 'dyn-cap')
 text('poison ivy, nickel — contact dermatitis', x + 20, 1040, TAG, when=E('contact'))
-text('induration over 24–48 hours after a PPD', x + 20, 1040, TAG, when=E('ppd'))
+text('induration peaks 24–72 hours after a PPD', x + 20, 1040, TAG, when=E('ppd'))
 text('donor T cells attack the host', x + 20, 1040, TAG, when=E('gvhd'))
 
 # ════════ the timeline ════════
@@ -118,6 +118,7 @@ def mark(f, lab, when):
     add(f'<circle cx="{x}" cy="{LY}" r="14" style="fill:var(--accent);stroke:var(--surface);stroke-width:3"/>', when=when)
     text(lab, x, LY - 30, TAG, 'middle', when=when)
 mark(0.02, 'minutes', T1)
+mark(0.22, 'late phase: hours', E('asthma'))
 mark(0.42, '24–48 hours', E('contact', 'ppd'))
 mark(0.85, '1–2 weeks after the foreign protein', E('serum'))
 text('type II and III autoimmune disease: ongoing, as long as the antibody is made', 180, 1440, TAG, when=E('aiha', 'mg', 'graves', 'goodp', 'sle'))
@@ -156,8 +157,8 @@ notes = {
               'cells release histamine, tryptase and leukotrienes. Serum tryptase marks the mast-cell activation. First and fast.',
   'ex:asthma': 'Allergic asthma (type I): allergen cross-links IgE in the airway; the immediate phase is followed hours later by '
                'a late phase as eosinophils are recruited. Skin prick tests or allergen-specific IgE confirm the sensitivity.',
-  'ex:iga': 'Selective IgA deficiency: the patient makes anti-IgA antibodies, so blood products containing IgA can cause '
-            'anaphylaxis — give washed or IgA-deficient blood.',
+  'ex:iga': 'Selective IgA deficiency (type I): the donor’s IgA is foreign to the patient, whose mast cells carry IgE against '
+            'it — blood products containing IgA can cause anaphylaxis within minutes. Give blood products without IgA.',
   'ex:aiha': 'Warm autoimmune hemolytic anemia (type II, destruction): IgG coats red cells, which are opsonized and removed. '
              'The direct Coombs test finds the antibody on the red-cell surface.',
   'ex:mg': 'Myasthenia gravis (type II, dysfunction): antibodies block the postsynaptic nicotinic ACh receptor — no cell is '
@@ -174,8 +175,8 @@ notes = {
                'complexes form there, with edema and fibrinoid necrosis.',
   'ex:contact': 'Contact dermatitis (type IV): poison ivy or nickel on the skin; sensitized T cells respond over 24–48 hours. '
                 'No antibody — the 4 Ts: T cells, Transplant rejection, TB skin test, Touching.',
-  'ex:ppd': 'PPD (type IV): Th1 cells recognize the tuberculin and release cytokines that recruit macrophages — induration '
-            'develops over 24–48 hours.',
+  'ex:ppd': 'PPD (type IV): sensitized Th1 cells recognize the tuberculin and release cytokines that recruit macrophages — '
+            'induration appears in 8–12 hours and peaks at 24–72 hours.',
   'ex:gvhd': 'Graft-versus-host disease (type IV): donor T cells attack the host’s tissues.',
 }
 
@@ -190,7 +191,7 @@ dyn = dict(
                           ['contact', 'Contact dermatitis', 'eczema'], ['ppd', 'PPD skin test', 'tb'], ['gvhd', 'Graft-versus-host disease', 'gvhd']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 110–111')
+  src='First Aid pp. 110–112, 114, 476 · Robbins ch 6')
 
 MAP = dict(
   id='hypsim', title='Hypersensitivity Types in Motion', topic='immuno', after='hypimm',
@@ -198,14 +199,14 @@ MAP = dict(
       'and T cells — with a timeline of when each appears. Pick a classic example to see its type, its tag and its labs. '
       'Tap a type for its card',
   w=3500, h=2100,
-  fa='110–111', src=[],
+  fa='110–112, 114, 476', src=[full('Robbins', 6)],
   lanes=[('hyAb', 'Antibody-mediated (I–III)', 'glycolysis'), ('hyT', 'T-cell mediated (IV)', 'tca'), ('hyEx', 'Examples', 'gluconeo')],
   nodes=[
     ('hy1', 'Type I', 380, 1800, 'hyAb', 'first and fast', ['hs1', 'asthma']),
-    ('hy2', 'Type II', 820, 1800, 'hyAb', 'destruction · inflammation · dysfunction', ['hs2', 'warmaiha', 'mg']),
+    ('hy2', 'Type II', 820, 1800, 'hyAb', 'destruction · inflammation · dysfunction', ['hs2', 'warmaiha', 'goodpasture']),
     ('hy3', 'Type III', 1260, 1800, 'hyAb', 'immune complexes', ['hs3', 'sle', 'psgn']),
     ('hy4', 'Type IV', 1700, 1800, 'hyT', 'the 4 Ts', ['hs4', 'eczema', 'tb']),
-    ('hy5', 'Receptor antibodies', 2140, 1800, 'hyEx', 'MG · Graves', ['hyperthyroid', 'goodpasture']),
+    ('hy5', 'Receptor antibodies', 2140, 1800, 'hyEx', 'MG · Graves', ['mg', 'hyperthyroid']),
     ('hy6', 'Transplant reactions', 380, 1940, 'hyEx', 'hyperacute · GVHD', ['hyperacute', 'gvhd']),
     ('hy7', 'IgA deficiency', 820, 1940, 'hyEx', 'anaphylaxis to blood', ['igadef'])],
   panels=[

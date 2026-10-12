@@ -46,7 +46,7 @@ text('(antigen-presenting cell)', 470, 356, 'nf-l2', 'middle')
 add('<ellipse cx="1590" cy="680" rx="720" ry="430" class="dyn-cell"/>')
 text('Naive CD4 T cell', 1590, 300, 'nf-l1', 'middle')
 # synapse pairs: APC side label, T side label, y
-# UNVERIFIED: PD-L1 is drawn on the APC for one picture; the checkpoint card places it on tumor cells
+# PD-L1 on the APC: Robbins ch 6 — PD-1's ligands PD-L1 and PD-L2 are expressed on a wide variety of cells
 PAIRS = [('MHC II + peptide', 'TCR–CD3 (+ CD4)', 430, 'signal 1'), ('B7 (CD80/86)', 'CD28', 600, 'signal 2'),
          ('B7', 'CTLA-4 (brake)', 770, ''), ('PD-L1 (tumor cells too)', 'PD-1 (brake)', 920, '')]
 for a, b, y, s in PAIRS:
@@ -58,7 +58,7 @@ add('<rect x="760" y="408" width="60" height="44" rx="12" style="fill:var(--surf
 text('no MHC II', 740, 470, 'nf-l1 dyn-tag', 'end', when=O('bls'))
 add('<rect x="760" y="578" width="60" height="44" rx="12" style="fill:var(--surface);stroke:var(--line-2);stroke-width:3"/>', when=O('anergy'))
 text('no B7 on this cell', 740, 650, 'nf-l1 dyn-tag', 'end', when=O('anergy'))
-add('<rect x="700" y="570" width="60" height="60" rx="12" style="fill:var(--dk11);fill-opacity:.7"/>', when=O('abat'))
+add('<rect x="744" y="570" width="40" height="60" rx="12" style="fill:var(--dk11);fill-opacity:.7"/>', when=O('abat'))
 text('CTLA-4-Ig covers B7', 680, 650, 'nf-l1 dyn-tag', 'end', when=O('abat'))
 add('<path d="M770 390 Q860 330 930 400" style="fill:none;stroke:var(--bad);stroke-width:10"/>', when=O('sag'))
 text('superantigen clamps MHC II to TCR Vβ — outside the groove', 740, 380, 'nf-l1 dyn-tag', 'end', when=O('sag'))
@@ -69,7 +69,7 @@ text('Calcineurin', 1280, 470, 'nf-l1', 'middle')
 text('NFAT', 1440, 560, 'nf-l2', 'middle')
 text('CD25 (IL-2 receptor α)', 1980, 330, 'nf-l1', 'middle')
 text('mTOR', 2030, 626, 'nf-l1', 'end')
-text('cell cycle → clones', 2060, 1000, 'nf-l1', 'middle')
+text('cell cycle → clones', 2060, 1050, 'nf-l1', 'middle')
 for i, (dx, dy) in enumerate(((0, 0), (90, 40), (-80, 50), (20, 100))):
     add(f'<circle cx="{2060 + dx}" cy="{870 + dy}" r="36" class="dyn-cell"/>', unless=O(*NO_PROL))
 add('<circle cx="2060" cy="900" r="36" class="dyn-cell"/>', when=O(*NO_PROL))
@@ -99,7 +99,7 @@ sites = [
 ]
 
 readouts = [
-  dict(l='IL-2', mods=[dict(when=O(*NO_NFAT), d=-1), dict(when=O(*BOOST), d=1)]),
+  dict(l='IL-2', mods=[dict(when=O(*NO_NFAT), d=-1), dict(when=O(*BOOST), d=1), dict(when=O('bas', 'siro'), d=0)]),
   dict(l='T-cell proliferation', mods=[dict(when=O(*NO_PROL), d=-1), dict(when=O(*BOOST), d=1)]),
   dict(l='Systemic cytokines (fever, shock)', mods=[dict(when=O('sag'), d=1)]),
   dict(l='CD4 count', mods=[dict(when=O('bls'), d=-1)]),
@@ -153,10 +153,11 @@ MAP = dict(
     ('tc7', 'Superantigens', 760, 1360, 'tcDz', 'outside the groove', ['superag']),
     ('tc8', 'Bare lymphocyte syndrome', 1180, 1360, 'tcDz', 'no MHC II', ['blsyn'])],
   panels=[
-    (2420, PANY, 1000, 'The pathway as drug targets (cards)', [
+    (2420, PANY, 1000, 'The pathway as drug targets (First Aid pp. 118–119 · Katzung ch 55)', [
       ('B7 → CD28', 'abatacept, belatacept'),
       ('Calcineurin → NFAT', 'cyclosporine, tacrolimus'),
       ('IL-2 → CD25', 'basiliximab'),
       ('mTOR', 'sirolimus'),
+      ('Purine synthesis → DNA', 'azathioprine, mycophenolate (IMP dehydrogenase)'),
       ('CTLA-4, PD-1 brakes', 'ipilimumab, pembrolizumab, nivolumab')])],
   dyn=dyn)

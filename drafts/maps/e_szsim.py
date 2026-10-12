@@ -34,6 +34,15 @@ NA = D('phen', 'carb', 'lamo', 'valp', 'topi')
 CA = D('gaba', 'valp')
 GABAUP = D('benzo', 'topi', 'valp')
 QUIET = NA + CA + D('leve', 'benzo')
+# which drug covers which seizure — FA p. 560 (narrow = focal; broad = focal and generalized; ethosuximide = absence only),
+# Katzung ch 24 (phenytoin also prevents tonic-clonic seizures; valproate treats absence; benzodiazepine then fosphenytoin or
+# IV valproate for status). Carbamazepine and gabapentin can worsen absence seizures (Katzung ch 24).
+ALLRX = ('phen', 'carb', 'lamo', 'valp', 'topi', 'leve', 'etho', 'gaba', 'benzo')
+WORKS = dict(focal=('phen', 'carb', 'gaba', 'valp', 'lamo', 'leve', 'topi'), absence=('etho', 'valp'),
+             gtc=('valp', 'lamo', 'leve', 'topi', 'phen'), status=('benzo', 'phen', 'valp'))
+OK = lambda *z: [f'sz:{k}&rx:{r}' for k in z for r in WORKS[k]]
+NOTOK = lambda *z: [f'sz:{k}&!rx:*' for k in z] + [f'sz:{k}&rx:{r}' for k in z for r in ALLRX if r not in WORKS[k]]
+WORSE = ['sz:absence&rx:carb', 'sz:absence&rx:gaba']
 def box(x0, y0, x1, y1, lab, cls='dyn-cell'):
     add(f'<rect x="{x0}" y="{y0}" width="{x1 - x0}" height="{y1 - y0}" rx="30" class="{cls}"/>')
     if lab: text(lab, (x0 + x1) // 2, y0 + 36, 'nf-l1', 'middle')
@@ -70,12 +79,18 @@ text('EEG', 330, EY - 56, 'nf-l1')
 def wave(amp, step, when=None, unless=None, cls='var(--ink-2)'):
     pts = ' '.join(f'L{x} {EY + (amp if (x // step) % 2 else -amp)}' for x in range(400, 1960, step))
     add(f'<path d="M400 {EY} {pts}" style="fill:none;stroke:{cls};stroke-width:3"/>', when=when, unless=unless)
-wave(8, 20, unless=['sz:*&!rx:*'] + [f'sz:{s}&rx:{r}' for s in ('focal', 'gtc', 'status', 'absence') for r in ()])
-wave(60, 26, when=['sz:focal&!rx:*', 'sz:gtc&!rx:*', 'sz:status&!rx:*'], cls='var(--bad)')
-add(f'<path d="M400 {EY} ' + ' '.join(f'L{x} {EY - 70} L{x + 12} {EY + 50} L{x + 60} {EY - 10}' for x in range(400, 1900, 86)) + '" style="fill:none;stroke:var(--bad);stroke-width:3"/>', when=['sz:absence&!rx:*'])
+wave(8, 20, unless=NOTOK('focal', 'gtc', 'status', 'absence'))
+wave(60, 26, when=NOTOK('focal', 'gtc', 'status'), cls='var(--bad)')
+add(f'<path d="M400 {EY} ' + ' '.join(f'L{x} {EY - 70} L{x + 12} {EY + 50} L{x + 60} {EY - 10}' for x in range(400, 1900, 86)) + '" style="fill:none;stroke:var(--bad);stroke-width:3"/>', when=NOTOK('absence'))
 text('3-Hz spike-and-wave', 1150, EY + 76, 'nf-l1 dyn-tag', 'middle', when=['sz:absence&!rx:*'])
 text('seizure activity', 1150, EY + 76, 'nf-l1 dyn-tag', 'middle', when=['sz:focal&!rx:*', 'sz:gtc&!rx:*', 'sz:status&!rx:*'])
 text('≥ 5 minutes, or no recovery between seizures', 1150, EY - 100, 'nf-l1 dyn-tag', 'middle', when=S('status'))
+text('controlled — this drug covers this seizure type', 1150, EY + 76, 'nf-l1', 'middle', when=OK('focal', 'absence', 'gtc', 'status'))
+text('still seizing — not a listed drug for this seizure type (FA p. 560)', 1150, EY + 76, 'nf-l1 dyn-tag', 'middle',
+     when=[c for c in NOTOK('focal', 'absence', 'gtc', 'status') if '!rx' not in c], unless=WORSE + ['sz:absence&rx:lamo'])
+text('lamotrigine is only possibly effective for absence (Katzung) — ethosuximide or valproate first', 1150, EY + 76, 'nf-l1 dyn-tag',
+     'middle', when=['sz:absence&rx:lamo'])
+text('still seizing — this drug can make absence seizures worse', 1150, EY + 76, 'nf-l1 dyn-tag', 'middle', when=WORSE)
 TOX = dict(phen='zero-order kinetics · gingival hyperplasia · hirsutism · fetal hydantoin · SJS',
            carb='SIADH · agranulocytosis, aplastic anemia · CYP inducer · trigeminal neuralgia',
            lamo='rash — SJS, DRESS', valp='hepatotoxicity · pancreatitis · neural tube defects (highest risk)',
@@ -94,7 +109,7 @@ flows = [
   dict(d='M1700 800 H1560', len=140, speed=70, r=8, base=dict(gab=2), mods=[m(GABAUP, set=dict(gab=5))]),
   dict(d='M1850 900 V960', len=60, speed=40, r=8, base=dict(gab=2), mods=[m(D('valp'), set=dict(gab=0))]),
   dict(d='M870 860 A220 110 0 1 1 869.9 859.9', len=1060, speed=150, r=9, base=dict(t=2),
-       mods=[m(S('absence'), set=dict(t=6)), m(D('etho'), set=dict(t=1))]),
+       mods=[m(S('absence'), set=dict(t=6)), m(D('etho'), set=dict(t=1)), m(['sz:absence&rx:valp'], set=dict(t=2))]),
 ]
 sites = [
   dict(x=940, y=410, n=[0, 1], w=26, t='ch', l='Na⁺ channel', s='held inactivated', c='phenytoin', ions=[['na', 'in', 2]],
@@ -111,31 +126,36 @@ sites = [
 ]
 
 readouts = [
-  dict(l='Neuronal firing', mods=[dict(when=['sz:focal&!rx:*', 'sz:gtc&!rx:*', 'sz:status&!rx:*'], d=1), dict(when=QUIET, d=-1)]),
+  dict(l='Neuronal firing', mods=[dict(when=NOTOK('focal', 'gtc', 'status'), d=1), dict(when=OK('focal', 'gtc', 'status'), d=0),
+                                  dict(when=[f'!sz:*&{c}' for c in QUIET], d=-1)]),
   dict(l='Glutamate release', mods=[dict(when=D('leve') + CA, d=-1)]),
   dict(l='GABA tone', mods=[dict(when=GABAUP, d=1)]),
-  dict(l='Thalamic 3-Hz rhythm', mods=[dict(when=['sz:absence&!rx:etho'], d=1), dict(when=D('etho'), d=-1)]),
+  dict(l='Thalamic 3-Hz rhythm', mods=[dict(when=NOTOK('absence'), d=1), dict(when=OK('absence'), d=0), dict(when=['!sz:*&rx:etho'], d=-1)]),
 ]
 
 notes = {
   '': 'Each antiseizure drug quiets neurons one of four ways: hold voltage-gated Na⁺ channels inactivated, block thalamic T-type Ca²⁺ '
       'channels, boost GABA, or reduce transmitter release (SV2A, α₂δ Ca²⁺ channels).',
-  'sz:focal': 'Focal seizures start in one area, most often the medial temporal lobe → carbamazepine, lamotrigine, levetiracetam.',
+  'sz:focal': 'Focal seizures start in one area, most often the medial temporal lobe → narrow-spectrum phenytoin, carbamazepine or '
+              'gabapentinoids, or any broad-spectrum drug (valproate, lamotrigine, levetiracetam, topiramate).',
   'sz:absence': 'Absence: ~10-s staring spells, 3-Hz spike-and-wave, no postictal confusion, provoked by hyperventilation — thalamic '
-                'T-type Ca²⁺ channels → ethosuximide (valproate is broad spectrum).',
-  'sz:gtc': 'Generalized tonic-clonic: both hemispheres from the outset → valproate, levetiracetam, lamotrigine.',
-  'sz:status': 'Status epilepticus: ≥ 5 minutes of seizure, or recurrent seizures without recovery — benzodiazepine (lorazepam) first.',
+                'T-type Ca²⁺ channels → ethosuximide, or valproate if tonic-clonic seizures coexist. Carbamazepine and gabapentin '
+                'can make absence worse.',
+  'sz:gtc': 'Generalized tonic-clonic: both hemispheres from the outset → broad spectrum: valproate, lamotrigine, levetiracetam, '
+            'topiramate; phenytoin also prevents tonic-clonic seizures (Katzung).',
+  'sz:status': 'Status epilepticus: ≥ 5 minutes of seizure, or recurrent seizures without recovery — benzodiazepine (lorazepam) first, '
+               'then IV fosphenytoin (or IV valproate).',
   'rx:phen': 'Phenytoin (fosphenytoin IV): holds Na⁺ channels inactivated; focal seizures. Zero-order kinetics; gingival hypertrophy, '
              'hirsutism, CYP induction, SJS/DRESS, fetal hydantoin syndrome.',
   'rx:carb': 'Carbamazepine: Na⁺-channel blocker for focal seizures; first line for trigeminal neuralgia; mood stabilizer. SIADH, '
-             'agranulocytosis and aplastic anemia (check counts), CYP induction, SJS.',
+             'agranulocytosis and aplastic anemia (check counts), CYP induction, SJS. Can worsen absence seizures.',
   'rx:lamo': 'Lamotrigine: broad-spectrum Na⁺-channel blocker; mood stabilizer. Rash — SJS, DRESS.',
   'rx:valp': 'Valproate: broad spectrum (absence too) — blocks Na⁺ and Ca²⁺ channels and inhibits GABA transaminase, so GABA builds up. '
              'Hepatotoxicity, pancreatitis, CYP inhibition, the highest teratogenic risk (neural tube defects).',
   'rx:topi': 'Topiramate: Na⁺ channels + GABA-A potentiation; migraine prophylaxis. Weight loss, kidney stones, angle-closure glaucoma.',
   'rx:leve': 'Levetiracetam: binds SV2A on synaptic vesicles and reduces glutamate release. Broad spectrum. Neuropsychiatric effects.',
   'rx:etho': 'Ethosuximide: blocks thalamic T-type Ca²⁺ channels — the 3-Hz rhythm. Absence seizures only.',
-  'rx:gaba': 'Gabapentin, pregabalin: act on voltage-gated Ca²⁺ channels; narrow-spectrum for focal seizures, more often for neuropathic pain.',
+  'rx:gaba': 'Gabapentin, pregabalin: act on voltage-gated Ca²⁺ channels; narrow-spectrum for focal seizures (can worsen absence), more often for neuropathic pain.',
   'rx:benzo': 'Benzodiazepines bind the GABA-A chloride channel and increase the frequency of opening (GABA must be present). '
               'Lorazepam first for status epilepticus.',
 }
@@ -152,14 +172,14 @@ dyn = dict(
               ['etho', 'Ethosuximide', 'ethosuximide'], ['gaba', 'Gabapentin', 'gabapentinoids'], ['benzo', 'Lorazepam', 'benzos']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 560–562 · Katzung ch 24')
+  src='First Aid pp. 230, 531, 532, 560–562, 632 · Katzung ch 24')
 
 MAP = dict(
   id='szsim', title='Antiseizure Drugs in Motion', topic='neuro', after='seizhead',
   sub='Pick a seizure and a drug: watch Na⁺ channels, Ca²⁺ channels, SV2A, GABA-A and the thalamic T-type rhythm respond — phenytoin, '
       'carbamazepine, lamotrigine, valproate, topiramate, levetiracetam, ethosuximide, gabapentin and lorazepam',
   w=3600, h=1900,
-  fa='531, 560, 561, 562, 632, 660',
+  fa='230, 531, 532, 560, 561, 562, 632',
   src=['Katzung ch 24 — Antiseizure Medications', 'Kaplan & Sadock ch 21 — Psychopharmacology', 'Katzung ch 22 — Sedative-Hypnotic Drugs'],
   lanes=[('szNa', 'Na⁺-channel drugs', 'glycolysis'), ('szCa', 'Ca²⁺ & release', 'tca'), ('szGaba', 'GABA & seizure types', 'gluconeo')],
   nodes=[
@@ -173,9 +193,9 @@ MAP = dict(
     ('sz8', 'Gabapentin · pregabalin', 1200, 1760, 'szCa', 'neuropathic pain', ['gabapentinoids']),
     ('sz9', 'Benzodiazepines · status', 1640, 1760, 'szGaba', 'lorazepam first', ['benzos', 'statusepi'])],
   panels=[
-    (2500, PANY, 1000, 'Seizure → first choices (First Aid p. 560)', [
-      ('Focal', 'carbamazepine, lamotrigine, levetiracetam'),
-      ('Absence', 'ethosuximide (valproate is broad)'),
-      ('Generalized tonic-clonic', 'valproate, levetiracetam, lamotrigine'),
-      ('Status epilepticus', 'lorazepam first')])],
+    (2500, PANY, 1000, 'Seizure → drugs (First Aid p. 560 · Katzung ch 24)', [
+      ('Focal', 'narrow: phenytoin, carbamazepine, gabapentinoids · or broad'),
+      ('Absence', 'ethosuximide or valproate · carbamazepine worsens it'),
+      ('Generalized tonic-clonic', 'broad: valproate, lamotrigine, levetiracetam, topiramate'),
+      ('Status epilepticus', 'lorazepam first, then fosphenytoin')])],
   dyn=dyn)

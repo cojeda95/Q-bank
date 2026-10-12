@@ -40,9 +40,9 @@ for k, (x, y, l) in SPOT.items():
     add(f'<circle cx="{x}" cy="{y - 26}" r="20" style="fill:var(--accent);stroke:var(--ink);stroke-width:3"/>', when=A(k))
 for x, y, l in ((260, 1300, 'sea level'), (620, 1000, '10,000 ft'), (1060, 560, '20,000 ft')):
     text(l, x + 36, y + 6, 'nf-l2')
-text('days to weeks at 20,000 ft — acclimatized', 760, 400, 'nf-l1 dyn-tag', 'middle', when=A('acc'))
+text('days to weeks at 20,000 ft — acclimatized', 760, 450, 'nf-l1 dyn-tag', 'middle', when=A('acc'))
 text('rapid ascent above 8,000–9,000 ft → acute mountain sickness', 760, 400, 'nf-l1 dyn-tag', 'middle', when=D('ams'))
-text('natives above 13,000 ft — arterial PO₂ ≈ 40 mm Hg', 760, 400, 'nf-l1 dyn-tag', 'middle', when=D('native'))
+text('natives at 15,000 ft — arterial PO₂ only ≈ 40 mm Hg', 760, 400, 'nf-l1 dyn-tag', 'middle', when=D('native'))
 
 # ════════ PO₂ bars ════════
 BY = 1300
@@ -65,16 +65,18 @@ text('acclimatized: alveolar PO₂ 53 (vs 40) — breathing more', 1740, 520, 'n
 # ════════ lung · kidney · blood ════════
 add('<ellipse cx="2160" cy="420" rx="110" ry="150" style="fill:var(--nf-h2o);fill-opacity:.08;stroke:var(--dk1);stroke-width:4"/>')
 text('ventilation', 2160, 610, 'nf-l1', 'middle')
-VT = dict(sea='1×', k10='≈ 1.65× (acute)', k20='≈ 1.65× (acute)', acc='≈ 5×')
+VT = dict(sea='1×', k10='up to ≈ 1.65× (acute)', k20='up to ≈ 1.65× (acute)', acc='≈ 5×')
 for k, s in VT.items(): text(s, 2160, 640, 'nf-l2', 'middle', when=A(k))
 add('<path d="M2090 800 C2020 800 2020 980 2090 980 C2130 980 2140 940 2120 890 C2140 840 2130 800 2090 800 Z" style="fill:var(--dk10);fill-opacity:.15;stroke:var(--dk10);stroke-width:4"/>')
 text('kidney', 2160, 1020, 'nf-l1', 'middle')
 text('excretes HCO₃⁻ over 2–5 days', 2160, 1050, 'nf-l2', 'middle', when=A('acc'))
 text('alkalosis brakes breathing', 2160, 1050, 'nf-l2', 'middle', when=A('k10', 'k20'))
+text('acetazolamide → NaHCO₃ diuresis', 2160, 1084, 'nf-l1 dyn-tag', 'middle', when=D('acz'))
 add('<path d="M1520 1460 H2380" style="stroke:var(--nf-blood);stroke-width:46;opacity:.18;stroke-linecap:round"/>')
 text('blood', 1500, 1468, 'nf-l1', 'end')
 HCT = dict(sea='Hct 40–45% · Hb 15', k10='Hct 40–45% · Hb 15', k20='Hct 40–45% · Hb 15', acc='Hct ≈ 60% · Hb ≈ 20 g/dL · volume +20–30%')
 for k, s in HCT.items(): text(s, 1950, 1530, 'nf-l2', 'middle', when=A(k))
+text('↑ EPO · ↑ 2,3-BPG → right shift, more O₂ unloaded', 1950, 1562, 'nf-l2', 'middle', when=A('acc'))
 
 # ════════ illness tags ════════
 TAG = dict(hace='HACE — cerebral arterioles dilate, capillaries leak (VEGF, cytokines)',
@@ -83,13 +85,18 @@ TAG = dict(hace='HACE — cerebral arterioles dilate, capillaries leak (VEGF, cy
            o2='Pure O₂ at 30,000 ft: alveolar PO₂ 139 (vs 18 on air)')
 for k, s in TAG.items(): text(s, 760, 400, 'nf-l1 dyn-tag', 'middle', when=D(k))
 add('<ellipse cx="2160" cy="420" rx="90" ry="120" style="fill:var(--nf-h2o);fill-opacity:.35;stroke:var(--bad);stroke-width:4;stroke-dasharray:8 6"/>', when=D('hape'))
+add('<ellipse cx="2160" cy="420" rx="96" ry="132" class="dyn-hl"/>', when=D('o2'))
+text('100% O₂ fills the space N₂ held', 2160, 226, 'nf-l1 dyn-tag', 'middle', when=D('o2'))
+add('<ellipse cx="1330" cy="300" rx="100" ry="66" style="fill:var(--dk7);fill-opacity:.15;stroke:var(--bad);stroke-width:4;stroke-dasharray:8 6"/>', when=D('hace'))
+text('brain — edema', 1330, 306, 'nf-l1', 'middle', when=D('hace'))
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
 flows = [
   dict(d='M2160 260 V560', len=300, speed=120, r=8, base=dict(air=2),
        mods=[m(A('k10', 'k20'), set=dict(air=3), speed=1.65), m(A('acc'), set=dict(air=6), speed=2.5)]),
-  dict(d='M2080 900 C2000 900 1990 1100 2000 1180', len=300, speed=80, r=8, base=dict(bic=3), when=A('acc')),
+  dict(d='M2080 900 C2000 900 1990 1100 2000 1180', len=300, speed=80, r=8, base=dict(bic=3), when=A('acc') + D('acz'),
+       mods=[m(D('acz'), set=dict(bic=6), speed=1.6)]),
   dict(d='M1540 1460 H2360', len=820, speed=110, r=9, base=dict(rbc=4),
        mods=[m(A('acc'), set=dict(rbc=8)), m(D('native'), set=dict(rbc=8)), m(D('cms'), set=dict(rbc=11), speed=0.4)]),
 ]
@@ -102,9 +109,10 @@ sites = [dict(x=1740, y=560, n=[0, -1], w=10, t='rec', l='', aria='Altitude and 
 readouts = [
   dict(l='Alveolar PO₂', mods=[dict(when=A('k10', 'k20', 'acc'), d=-1)]),
   dict(l='Ventilation', mods=[dict(when=A('k10', 'k20', 'acc'), d=1)]),
-  dict(l='Arterial pH (alkalosis)', mods=[dict(when=A('k10', 'k20'), d=1), dict(when=A('acc'), d=0)]),
+  dict(l='PaCO₂', mods=[dict(when=A('k10', 'k20', 'acc'), d=-1)]),
+  dict(l='Arterial pH (alkalosis)', mods=[dict(when=A('k10', 'k20', 'acc'), d=1), dict(when=D('acz'), d=-1)]),
   dict(l='Hematocrit', mods=[dict(when=A('acc'), d=1), dict(when=D('native', 'cms'), d=1)]),
-  dict(l='SaO₂', mods=[dict(when=A('k20', 'acc'), d=-1)]),
+  dict(l='SaO₂', mods=[dict(when=A('k10', 'k20', 'acc'), d=-1)]),
 ]
 
 notes = {
@@ -112,11 +120,11 @@ notes = {
       '(47 mm Hg) and CO₂ dilute the alveolar gas further.',
   'alt:sea': 'Sea level: 760 mm Hg, alveolar PO₂ 104 mm Hg, arterial saturation above 90%.',
   'alt:k10': '10,000 ft: 523 mm Hg, alveolar PO₂ 67 mm Hg; saturation stays ≥ 90% up to about here. Hypoxic drive raises '
-             'ventilation only ≈ 1.65× — blown-off CO₂ and the alkalosis brake the respiratory center.',
+             'ventilation only up to ≈ 1.65× — blown-off CO₂ and the alkalosis brake the respiratory center.',
   'alt:k20': '20,000 ft unacclimatized: 349 mm Hg, alveolar PO₂ 40 mm Hg, saturation about 73% on air.',
-  'alt:acc': 'Acclimatized: over 2–5 days the kidneys excrete HCO₃⁻, CSF bicarbonate and pH fall, the brake fades and ventilation '
-             'rises to ≈ 5× — alveolar PO₂ 53 at 20,000 ft. Over weeks Hct 40–45% → ≈ 60%, Hb 15 → ≈ 20 g/dL, diffusing capacity '
-             'up to ≈ 3×, more capillaries.',
+  'alt:acc': 'Acclimatized: over 2–5 days the kidneys excrete HCO₃⁻, CSF bicarbonate and pH fall toward normal, the brake fades and ventilation '
+             'rises to ≈ 5× — alveolar PO₂ 53 at 20,000 ft. Over weeks Hct 40–45% → ≈ 60%, Hb 15 → ≈ 20 g/dL, 2,3-BPG rises, '
+             'diffusing capacity up to ≈ 3×, more capillaries.',
   'dx:ams': 'Acute mountain sickness: fatigue, headache, dizziness, nausea, vomiting — a few hours to ≈ 2 days after rapid ascent '
             'above 8,000–9,000 ft. Give O₂ or descend.',
   'dx:hace': 'High-altitude cerebral edema: hypoxia dilates cerebral arterioles, raising capillary flow and pressure; VEGF and '
@@ -127,6 +135,8 @@ notes = {
             'heart failure — recovers within days to weeks at lower altitude.',
   'dx:native': 'High-altitude natives: arterial PO₂ ≈ 40 mm Hg, yet the extra hemoglobin carries more O₂ per volume of blood than '
                'in sea-level natives; large chest, larger heart.',
+  'dx:acz': 'Acetazolamide blocks carbonic anhydrase → a NaHCO₃ diuresis that offsets the respiratory alkalosis (what the kidney '
+            'does over 2–5 days), used for altitude sickness. Watch for metabolic acidosis, paresthesias, hypokalemia, sulfa allergy.',
   'dx:o2': 'Breathing pure O₂ replaces the nitrogen: alveolar PO₂ 139 mm Hg at 30,000 ft (vs 18 on air); saturation stays '
            '> 90% to about 39,000 ft.',
 }
@@ -139,17 +149,17 @@ dyn = dict(
             dict(id='dx', label='Show', type='one', options=[
               ['ams', 'Acute mountain sickness', 'altillness'], ['hace', 'HACE', 'altillness'], ['hape', 'HAPE', 'altillness'],
               ['cms', 'Chronic mountain sickness', 'altillness'], ['native', 'High-altitude natives', 'altnatives'],
-              ['o2', 'Breathing O₂', 'alttable']])],
+              ['acz', 'Acetazolamide', 'acetazolamide'], ['o2', 'Breathing O₂', 'alttable']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Guyton ch 44')
+  src='First Aid pp. 299, 626, 688 · Guyton ch 42, 44')
 
 MAP = dict(
   id='altsim', title='Climbing to Altitude in Motion', topic='pulmo', after='highalt',
   sub='Take a climber from sea level to 20,000 ft and watch alveolar PO₂ fall, ventilation rise, the kidneys excrete HCO₃⁻ and '
       'the hematocrit climb — then see mountain sickness, HACE, HAPE, chronic mountain sickness and high-altitude natives',
   w=3600, h=1900,
-  fa='299, 688',
+  fa='299, 626, 688',
   src=['Guyton ch 44 — Aviation, High Altitude, and Space Physiology', 'Guyton ch 42 — Regulation of Respiration'],
   lanes=[('alPhys', 'Physiology', 'glycolysis'), ('alDz', 'Illness', 'tca')],
   nodes=[
@@ -157,7 +167,7 @@ MAP = dict(
     ('al2', 'Ventilatory responses', 760, 1660, 'alPhys', '1.65× → 5×', ['ventresp']),
     ('al3', 'Acclimatization', 1200, 1660, 'alPhys', 'five changes', ['acclim']),
     ('al4', 'High-altitude natives', 1640, 1660, 'alPhys', 'PaO₂ ≈ 40', ['altnatives']),
-    ('al5', 'Mountain sickness', 2080, 1660, 'alDz', 'AMS · HACE · HAPE', ['altillness'])],
+    ('al5', 'Mountain sickness', 2080, 1660, 'alDz', 'AMS · HACE · HAPE', ['altillness', 'acetazolamide'])],
   panels=[
     (2500, PANY, 1000, 'Altitude table (Guyton ch 44)', [
       ('Sea level', '760 · PAO₂ 104'), ('10,000 ft', '523 · PAO₂ 67 (77 acclim.)'), ('20,000 ft', '349 · PAO₂ 40 (53 acclim.)'),

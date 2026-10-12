@@ -4,7 +4,8 @@
 # underneath (DAF/CD59 on our own red cells, C1 esterase inhibitor). One `one` switch breaks a piece: early
 # component deficiency, C3 deficiency, C5–C9 deficiency, eculizumab, hereditary angioedema, PNH — an ✕ on the
 # broken step, the flow stops or misfires, and a note names the disease. 5 readouts. Facts from the pinned cards
-# (complementreg, c3def, c5c9, c5drugs, hae, pnh, sle, meningococcus, chemokines, macrophage); FA pages in `fa`.
+# (complementreg, c3def, c5c9, c5drugs, hae, pnh, sle, meningococcus, chemokines, macrophage), checked against FA 104–105,
+# 427–428, 476, 676, Robbins ch 6 and 14, Katzung ch 55 and Bootcamp Immunology; FA pages in `fa`.
 # No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
@@ -116,27 +117,28 @@ sites = [
 
 # ════════ readouts ════════
 readouts = [
-  dict(l='C3', mods=[dict(when=O('c3'), d=-1), dict(when=O('mac', 'hae'), d=0)]),
+  dict(l='C3', mods=[dict(when=O('c3'), d=-1)]),
   dict(l='C4', mods=[dict(when=O('hae'), d=-1)]),
   dict(l='CH50', mods=[dict(when=O('early', 'c3', 'mac'), d=-1)]),
   dict(l='LDH', mods=[dict(when=O('pnh'), d=1)]),
   dict(l='Haptoglobin', mods=[dict(when=O('pnh'), d=-1)]),
+  dict(l='Neisseria risk', mods=[dict(when=O('mac', 'ecu'), d=1)]),
 ]
 
 notes = {
   '': 'Three triggers converge on C3: the classical pathway (C1 on antibody), the lectin pathway (MBL on microbial sugars) and '
       'the alternative pathway (spontaneous C3 cleavage). From C3: opsonization, anaphylatoxins and the membrane attack complex.',
-  # UNVERIFIED: the cards give early-component deficiency as an SLE risk; "cleared poorly" is the inferred mechanism
-  'def:early': 'Early classical components (C1q, C4, C2) missing: immune complexes are cleared poorly — a recognized risk factor '
-               'for systemic lupus erythematosus.',
+  'def:early': 'Early classical components (C1q, C4, C2) missing: less C3b is laid down to clear antigen–antibody complexes, so '
+               'they linger — a recognized risk for systemic lupus erythematosus. Also recurrent sinus and respiratory infections.',
   'def:c3': 'C3 deficiency removes opsonization, the anaphylatoxins and the MAC at once — serious, recurrent pyogenic infections '
             '(sinopulmonary, sepsis, meningitis) and immune complex glomerulonephritis. C3 low, CH50 abnormal.',
   'def:mac': 'Terminal (C5–C9) deficiency: complement still opsonizes but can’t lyse, and the MAC is what neutralizes Neisseria — '
-             'recurrent meningococcal and disseminated gonococcal infection. CH50 low with a normal C3.',
+             'recurrent meningococcal and disseminated gonococcal infection. CH50 low.',
   'def:ecu': 'Eculizumab and ravulizumab bind C5 so the MAC can’t form — they stop the hemolysis of PNH, at the price of the same '
              'life-threatening meningococcal risk as inherited C5–C9 deficiency.',
   'def:hae': 'Hereditary angioedema: without C1 esterase inhibitor, kallikrein runs on and makes bradykinin — recurrent swelling of '
-             'face, larynx and gut, not histamine-driven. Low C4 is the screening test; C3 is normal.',
+             'face, larynx and gut, not histamine-driven. Low C4 is the screening test; ACE inhibitors are contraindicated (they '
+             'raise bradykinin too); danazol is one treatment.',
   'def:pnh': 'PNH: a PIGA mutation in a stem cell removes the GPI anchor, so DAF (CD55) and CD59 are lost and complement lyses the '
              'red cells — intravascular hemolysis (LDH ↑, haptoglobin ↓) and venous thrombosis. Flow cytometry for CD55/CD59.',
 }
@@ -149,14 +151,14 @@ dyn = dict(
     ['ecu', 'Eculizumab (anti-C5)', 'c5drugs'], ['hae', 'C1 esterase inhibitor — HAE', 'hae'], ['pnh', 'No DAF/CD59 — PNH', 'pnh']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 104–105, 113, 140, 427–428 · Robbins ch 3, 6 · Katzung ch 55')
+  src='First Aid pp. 104–105, 140, 427–428, 476, 676 · Robbins ch 6, 14 · Katzung ch 55')
 
 MAP = dict(
   id='complsim', title='Complement in Motion', topic='immuno', after='innate',
   sub='Classical, lectin and alternative pathways feed one C3 hub that opsonizes, inflames and punches holes — break a piece '
       '(early components, C3, C5–C9, eculizumab, C1 inhibitor, DAF/CD59) and watch what stops and what disease follows',
   w=3500, h=1580,
-  fa='104–106, 113, 140, 427–428, 476, 676',
+  fa='104, 105, 140, 427, 428, 476, 676',
   src=[full('Robbins', 3), full('Robbins', 6), full('Robbins', 14), full('Katzung', 55)],
   lanes=[('cpPath', 'The cascade', 'glycolysis'), ('cpDef', 'Deficiencies', 'tca'), ('cpBrake', 'Brakes & drugs', 'gluconeo')],
   nodes=[
@@ -169,9 +171,9 @@ MAP = dict(
     ('cp7', 'PNH', 760, 1490, 'cpBrake', 'CD55 · CD59', ['pnh']),
     ('cp8', 'Eculizumab', 1180, 1490, 'cpBrake', 'anti-C5', ['c5drugs'])],
   panels=[
-    (2420, PANY, 1000, 'Reading C3 and C4 (complement cascade card)', [
-      ('Low C3, low C4', 'classical activation'),
-      ('Low C3, normal C4', 'alternative activation'),
-      ('Low C4, normal C3', 'hereditary angioedema'),
-      ('Low CH50, normal C3', 'terminal (C5–C9) deficiency')])],
+    (2420, PANY, 1000, 'Complement labs (First Aid pp. 104–105, 427 · Robbins ch 14 · Bootcamp)', [
+      ('CH50', 'screens the classical pathway'),
+      ('Low C4', 'hereditary angioedema — C4 consumed'),
+      ('↑ LDH, ↓ haptoglobin, Coombs negative', 'PNH — intravascular hemolysis'),
+      ('Flow cytometry: no CD55/CD59', 'PNH — the diagnostic test')])],
   dyn=dyn)

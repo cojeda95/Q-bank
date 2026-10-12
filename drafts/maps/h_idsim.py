@@ -6,7 +6,7 @@
 # the antibody bars are redrawn and readouts give the cell counts and immunoglobulins.
 # No new cards: every fact restates the pinned cards (xla, cvid, igadef, hyperigm, digeorge, scidx, wiskott, jobsyn,
 # lad1, chediak, cgd, c5c9 — fact-checked against the corpus). Arrows are "–" where a card gives "normal or ↓"
-# or no direction. Sources: First Aid 2025 pp. 104–105, 113–115, 126.
+# or no direction. Sources: First Aid 2025 pp. 104–105, 114–116, 126; Robbins ch 6.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -61,7 +61,7 @@ text('dashed line = normal', 1760, 400, 'dyn-cap')
 add(f'<path d="M{IGX - 20} {IGY - IGH // 2} H{IGX + 4 * 110}" class="dyn-dash"/><path d="M{IGX - 20} {IGY} H{IGX + 4 * 110}" class="dyn-line"/>')
 for i, g in enumerate(IG):
     text(g, IGX + i * 110 + 40, IGY + 26, 'nf-l1', 'middle')
-LV = dict(norm=[1, 1, 1, 1], xla=[.1, .1, .1, .1], cvid=[.4, .3, .3, 1], igadef=[1, 1, .05, 1], hyperigm=[1.6, .1, .1, .1],
+LV = dict(norm=[1, 1, 1, 1], xla=[.1, .1, .1, .1], cvid=[.4, .3, .3, .4], igadef=[1, 1, .05, 1], hyperigm=[1.6, .1, .1, .1],
           scid=[.1, .1, .1, .1], wiskott=[.4, 1, 1.6, 1.8], job=[1, 1, 1, 1.95])
 def bars(lv, when=None, unless=None):
     add(''.join(f'<rect x="{IGX + i * 110 + 10}" y="{IGY - round(IGH // 2 * v)}" width="60" height="{round(IGH // 2 * v)}" rx="6" '
@@ -74,7 +74,7 @@ text('bar heights are schematic — the direction is what matters', 1760, 720, '
 TAGS = dict(xla='no mature B cells → no antibody of any class', cvid='B cells present but no plasma cells',
             igadef='only IgA is missing', hyperigm='no class switch: IgM piles up, IgG/IgA/IgE never made',
             digeorge='no thymus → few T cells · no parathyroids → low Ca²⁺', scid='no T or NK cells; B cells cannot work alone',
-            wiskott='WASp lost: T cells and platelets cannot remodel actin', job='no Th17 → neutrophils never called: cold abscesses')
+            wiskott='WASp lost: leukocytes and platelets cannot remodel actin', job='no Th17 → neutrophils never called: cold abscesses')
 for k, t in TAGS.items():
     text(t, 180, 800, TAG, when=Z(k))
 
@@ -148,8 +148,9 @@ flows = [
 # ════════ 6. readouts ════════
 readouts = [
   dict(l='B cells', mods=[m(Z('xla'), d=-1), m(Z('cvid', 'hyperigm', 'digeorge'), d=0)]),
-  dict(l='T cells', mods=[m(Z('digeorge', 'scid'), d=-1)]),
+  dict(l='T cells', mods=[m(Z('digeorge', 'scid'), d=-1), m(Z('xla'), d=0)]),
   dict(l='IgG', mods=[m(Z('xla', 'cvid', 'hyperigm', 'scid'), d=-1), m(Z('igadef'), d=0)]),
+  dict(l='IgA', mods=[m(Z('igadef', 'xla', 'hyperigm', 'scid'), d=-1), m(Z('wiskott'), d=1)]),
   dict(l='IgM', mods=[m(Z('xla', 'wiskott'), d=-1), m(Z('hyperigm'), d=1), m(Z('igadef'), d=0)]),
   dict(l='IgE', mods=[m(Z('job', 'wiskott'), d=1), m(Z('xla', 'hyperigm'), d=-1)]),
   dict(l='Neutrophils', mods=[m(Z('lad'), d=1), m(Z('chediak'), d=-1)]),
@@ -179,13 +180,13 @@ notes = {
             'abscesses, retained baby teeth, coarse facies, eczema, fractures; very high IgE and eosinophilia.',
   'id:lad': 'Leukocyte adhesion deficiency: without CD18 neutrophils roll but cannot adhere and leave the blood — very high '
             'neutrophil count, no pus, delayed separation of the umbilical cord.',
-  'id:chediak': 'Chédiak-Higashi syndrome: LYST loss stops phagosome–lysosome fusion — giant granules in neutrophils, '
-                'neutropenia, partial albinism, neuropathy and mild bleeding.',
+  'id:chediak': 'Chédiak-Higashi syndrome: LYST loss stops phagosome–lysosome fusion — giant granules in '
+                'granulocytes and platelets, pancytopenia, partial albinism, neuropathy and mild bleeding.',
   'id:cgd': 'Chronic granulomatous disease: NADPH oxidase fails, so swallowed organisms are not killed. Catalase-positive '
             'organisms (S. aureus, Serratia, Nocardia, Burkholderia, Aspergillus) destroy their own H₂O₂. Abnormal DHR test; '
             'nitroblue tetrazolium stays yellow.',
-  'id:c5c9': 'Terminal complement (C5–C9) deficiency: complement can opsonize but cannot lyse — recurrent Neisseria infection. '
-             'CH50 low with a normal C3.',
+  'id:c5c9': 'Terminal complement (C5–C9) deficiency: complement can opsonize but cannot lyse — recurrent Neisseria bacteremia. '
+             'CH50 screens the classical pathway.',
 }
 
 dyn = dict(
@@ -199,7 +200,7 @@ dyn = dict(
                           ['cgd', 'Chronic granulomatous disease', 'cgd'], ['c5c9', 'Terminal complement (C5–C9)', 'c5c9']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 104–105, 113–115, 126')
+  src='First Aid pp. 104–105, 114–116, 126 · Robbins ch 6')
 
 MAP = dict(
   id='idsim', title='Immunodeficiency Simulator', topic='immuno', after='hypimm',
@@ -207,7 +208,7 @@ MAP = dict(
       'complex — pick a primary immunodeficiency to see the step it breaks, the antibody pattern and the infections that give '
       'it away. Tap a step for its card',
   w=3500, h=2100,
-  fa='104–105, 113–115, 126', src=[],
+  fa='104–105, 114–116, 126', src=[full('Robbins', 6)],
   lanes=[('idLym', 'Lymphocytes', 'glycolysis'), ('idPhag', 'Phagocytes & complement', 'tca'), ('idDx', 'Clues', 'gluconeo')],
   nodes=[
     ('id1', 'B-cell defects', 380, 1800, 'idLym', 'Bruton · CVID · IgA', ['xla', 'cvid', 'igadef']),
@@ -219,16 +220,16 @@ MAP = dict(
     ('id7', 'Catalase-positive bugs', 820, 1940, 'idDx', 'CGD organisms', ['catalasepos']),
     ('id8', 'Asplenia', 1260, 1940, 'idDx', 'encapsulated organisms', ['asplenia'])],
   panels=[
-    (2420, 860, 1000, 'Which defect, which infections (First Aid pp. 113–115)', [
+    (2420, 860, 1000, 'Which defect, which infections (First Aid pp. 114–116)', [
       ('B cells / antibody', 'encapsulated bacteria (sinopulmonary) · enteroviruses · Giardia'),
       ('T cells', 'viruses, fungi, Pneumocystis — opportunists'),
       ('Combined (SCID)', 'everything, from the first months'),
       ('Neutrophils', 'S. aureus and catalase-positives (CGD) · no pus (LAD)'),
       ('Terminal complement', 'Neisseria')]),
-    (2420, 1100, 1000, 'Labs that decide it (First Aid pp. 114–115, 126)', [
+    (2420, 1100, 1000, 'Labs that decide it (First Aid pp. 104, 114–115, 126)', [
       ('Bruton vs CVID', 'absent CD19⁺ B cells vs normal B-cell count'),
       ('Hyper-IgM', 'IgM normal or ↑ · IgG, IgA, IgE ↓'),
       ('SCID', 'low TRECs on newborn screening'),
       ('CGD', 'abnormal DHR flow cytometry · NBT stays yellow'),
-      ('C5–C9', 'CH50 ↓ with normal C3')])],
+      ('C5–C9', 'CH50 screens the classical pathway')])],
   dyn=dyn)

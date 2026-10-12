@@ -45,10 +45,11 @@ cell(1200, 300, 80, 'Helper T', 'T-cell help', '--dk5')
 cell(1200, 560, 80, 'Cytotoxic T', 'cellular immunity', '--dk1')
 cell(1600, 420, 80, 'B cell', '', '--dk7')
 cell(2000, 300, 70, 'Plasma cell', 'antibodies', '--dk4')
-cell(2000, 560, 70, 'Memory', '', '--dk9')
+cell(2000, 560, 70, 'Memory', 'needs T-cell help', '--dk9')
 add('<rect x="1850" y="760" width="400" height="140" rx="30" class="dyn-soft"/>'); text('Toxin', 2050, 800, 'nf-l1', 'middle')
 text('antibodies neutralize the toxin', 2050, 870, 'nf-l1 dyn-tag', 'middle', when=O('toxoid'))
 add(X(1270, 240, 14) + X(1270, 500, 14), when=TIND)
+text('no T-cell help → little class switching or memory', 2000, 672, 'nf-l1 dyn-tag', 'middle', when=TIND)
 text('polysaccharide can’t be presented to T cells — T-cell–independent', 1200, 200, 'nf-l1 dyn-tag', 'middle', when=TIND)
 text('carrier protein brings in T-cell help — T-cell–dependent', 1200, 200, 'nf-l1 dyn-tag', 'middle', when=O('conj'))
 text('replicates briefly — can revert to a virulent form', 450, 540, 'nf-l1 dyn-tag', 'middle', when=O('live'))
@@ -59,7 +60,7 @@ text('denatured toxin, receptor-binding site intact', 450, 540, 'nf-l1 dyn-tag',
 EX = dict(live='MMR, varicella, yellow fever, rotavirus, oral polio, intranasal flu, BCG, oral typhoid · NOT in pregnancy or immunodeficiency',
           killed='hepatitis A, typhoid (Vi, IM), rabies, IM influenza, Salk polio — “A TRIP could Kill you”',
           sub='hepatitis B (HBsAg), HPV, recombinant zoster, acellular pertussis',
-          conj='PCV13/15/20, Hib, meningococcal ACWY (on diphtheria toxoid) — infants at 2, 4, 6 months',
+          conj='PCV13/15/20, Hib, meningococcal ACWY (on diphtheria toxoid) · Hib and PCV at 2, 4, 6 months',
           ps='PPSV23 — pneumococcal polysaccharide, 23 serotypes', toxoid='tetanus, diphtheria — Td/Tdap every 10 years; Tdap each pregnancy',
           mrna='SARS-CoV-2 — safe in pregnancy; rare myocarditis in young males')
 for k, t in EX.items(): text(t, 1275, 1060, 'nf-l1', 'middle', when=O(k))
@@ -91,8 +92,9 @@ sites = [dict(x=800, y=490, n=[0, 1], w=10, t='rec', l='', aria='Live vaccines',
 readouts = [
   dict(l='Humoral (antibody)', mods=[dict(when=['vx:*'], d=1)]),
   dict(l='Cell-mediated', mods=[dict(when=CELL, d=1), dict(when=O('killed', 'ps'), d=-1)]),
-  dict(l='T-cell help', mods=[dict(when=O('conj', 'live', 'mrna'), d=1), dict(when=TIND, d=-1)]),
-  dict(l='Boosters needed', mods=[dict(when=O('killed', 'toxoid'), d=1)]),
+  dict(l='T-cell help', mods=[dict(when=TDEP, d=1), dict(when=TIND, d=-1)]),          # FA p. 103: protein → thymus-dependent
+  dict(l='Class switch & memory', mods=[dict(when=TDEP, d=1), dict(when=TIND, d=-1)]),
+  dict(l='Boosters needed', mods=[dict(when=O('killed', 'toxoid', 'ps'), d=1)]),
   dict(l='OK in immunodeficiency', mods=[dict(when=O('live'), d=-1)]),
 ]
 
@@ -106,7 +108,8 @@ notes = {
   'vx:sub': 'Subunit/recombinant: only the antigens that best stimulate immunity — fewer adverse reactions, but costlier and weaker.',
   'vx:conj': 'Conjugate: a capsular polysaccharide joined to a carrier protein brings in T-cell help — a T-cell–dependent response. '
              'Hib, PCV, meningococcal ACWY.',
-  'vx:ps': 'Plain polysaccharide (PPSV23): the capsule can’t be presented to T cells, so the response is mainly T-cell–independent.',
+  'vx:ps': 'Plain polysaccharide (PPSV23): the capsule can’t be presented to T cells, so the response is mainly T-cell–independent: weakly immunogenic, '
+           'little class switching or memory, boosters often needed.',
   'vx:toxoid': 'Toxoid: a toxin denatured but with its receptor-binding site intact — antibodies against the toxin; antitoxin wanes, '
                'so boosters every 10 years and after a wound if > 5 years.',
   'vx:mrna': 'mRNA: a lipid nanoparticle delivers mRNA and the patient’s cells make the protein (spike) — cellular and humoral immunity.',
@@ -120,14 +123,14 @@ dyn = dict(
     ['conj', 'Conjugate', 'vxconj'], ['ps', 'Polysaccharide only', 'vxconj'], ['toxoid', 'Toxoid', 'vxtoxoid'], ['mrna', 'mRNA', 'vxmrna']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 109, 114, 116, 125 · Katzung Appendix 1')
+  src='First Aid pp. 103, 109, 114, 116, 125 · Katzung Appendix 1')
 
 MAP = dict(
   id='vaxsim', title='Vaccines in Motion', topic='immuno', after='vaccines',
   sub='Follow the antigen from the injection site to APCs, T cells and B cells and see which arms each vaccine type uses — live, '
       'inactivated, subunit, conjugate vs polysaccharide, toxoid and mRNA',
   w=3600, h=1900,
-  fa='109, 114, 116, 125',
+  fa='103, 109, 114, 116, 125',
   src=['Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products'],
   lanes=[('vxWhole', 'Whole organism', 'glycolysis'), ('vxPart', 'Parts of it', 'tca'), ('vxGene', 'Genetic', 'gluconeo')],
   nodes=[

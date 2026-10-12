@@ -38,21 +38,23 @@ P = dict(
   benzo=('Benzodiazepine', 'GABA-A receptor', 'sedation, coma', 'Flumazenil', 'competes at the benzodiazepine site — can provoke seizures', 'compete'),
   op=('Organophosphate', 'acetylcholinesterase', 'miosis, DUMBBELSS, weakness', 'Atropine + pralidoxime', 'atropine blocks muscarinic receptors; pralidoxime regenerates the enzyme', 'compete'),
   ach=('Anticholinergic', 'muscarinic receptors', 'hot, dry, flushed, mydriasis, delirium', 'Physostigmine', 'inhibits cholinesterase — more ACh to outcompete the blocker', 'compete'),
-  apap=('Acetaminophen', 'NAPQI after glutathione runs out', 'hepatic necrosis — AST and ALT in the thousands', 'N-acetylcysteine', 'replenishes glutathione', 'block'),
-  meth=('Methanol · ethylene glycol', 'alcohol dehydrogenase → toxic acids', 'blindness · oxalate kidney injury', 'Fomepizole', 'blocks alcohol dehydrogenase — the parent alcohol is harmless', 'block'),
+  apap=('Acetaminophen', 'NAPQI after glutathione runs out', 'hepatic necrosis — aminotransferases ↑, PT ↑', 'N-acetylcysteine', 'replenishes glutathione', 'block'),
+  meth=('Methanol · ethylene glycol', 'alcohol dehydrogenase → toxic acids', 'blindness · oxalate kidney injury', 'Fomepizole', 'blocks alcohol dehydrogenase — the toxic acids are never made', 'block'),
   dig=('Digoxin', 'Na⁺/K⁺-ATPase', 'vomiting, yellow vision, arrhythmias', 'Digoxin immune Fab', 'antibody fragments bind digoxin', 'bind'),
   cn=('Cyanide', 'complex IV (cytochrome oxidase)', 'lactic acidosis; venous blood stays red', 'Hydroxocobalamin', 'binds cyanide → cyanocobalamin', 'bind'),
   hep=('Heparin', 'antithrombin', 'bleeding', 'Protamine sulfate', 'positive charge binds negatively charged heparin', 'bind'),
   fe=('Iron', 'GI mucosa, then every organ', 'GI bleeding, anion-gap acidosis', 'Deferoxamine', 'chelates iron', 'bind'),
   pb=('Lead', 'ALA dehydratase, ferrochelatase', 'anemia, encephalopathy, wrist drop', 'Succimer · EDTA · dimercaprol', 'chelate lead', 'bind'),
   war=('Warfarin', 'vitamin K–dependent factors II, VII, IX, X', 'bleeding, long PT', 'Vitamin K · PCC or FFP', 'vitamin K restores synthesis (slowly); PCC replaces now', 'bypass'),
-  tca=('Tricyclic overdose', 'cardiac Na⁺ channels', 'wide QRS, arrhythmia, seizures', 'Sodium bicarbonate', 'prevents the arrhythmia', 'bypass'),
+  tca=('Tricyclic overdose', 'cardiac Na⁺ channels', 'wide QRS, arrhythmia, seizures', 'Sodium bicarbonate', 'extra Na⁺ overcomes the Na⁺-channel block — QRS narrows', 'compete'),
   bb=('β-blocker', 'β₁ receptor', 'bradycardia, hypotension', 'Glucagon', 'raises cAMP without the β receptor', 'bypass'),
-  mhb=('Oxidizer (nitrites, dapsone)', 'hemoglobin Fe²⁺ → Fe³⁺', 'cyanosis unchanged by O₂, brown blood', 'Methylene blue', 'returns heme iron to Fe²⁺ (with vitamin C)', 'bypass'),
-  co=('Carbon monoxide', 'hemoglobin (and complex IV)', 'headache, confusion; normal pulse oximetry', '100% or hyperbaric O₂', 'displaces CO from hemoglobin', 'compete'),
+  mhb=('Oxidizer (nitrites, dapsone)', 'hemoglobin Fe²⁺ → Fe³⁺', 'cyanosis unchanged by O₂, brown blood', 'Methylene blue', 'a reducing agent — returns heme iron to Fe²⁺ (as does vitamin C)', 'bypass'),
+  co=('Carbon monoxide', 'hemoglobin (and complex IV)', 'headache, confusion; normal pulse oximetry', '100% or hyperbaric O₂', 'outcompetes CO for hemoglobin — CO-Hb half-life ~300 → ~80 min', 'compete'),
+  asa=('Aspirin (salicylate)', 'medulla (breathing) · uncoupled ox-phos', 'respiratory alkalosis, then anion-gap acidosis', 'Sodium bicarbonate', 'alkalinizes the urine — ionized salicylate is trapped and excreted', 'trap'),
 )
-# UNVERIFIED: the "how" for physostigmine (cholinesterase inhibitor), methylene blue (reducing Fe³⁺ back to Fe²⁺) and for 100% O₂ (displacing CO) are standard teaching; the cards name the treatment only
-FAM = {f: [k for k, v in P.items() if v[5] == f] for f in ('compete', 'bind', 'block', 'bypass')}
+# physostigmine = cholinesterase inhibitor (Katzung ch 8); methylene blue = reducing agent (Marks ch 42, FA 688); O₂ vs CO (FA 689);
+# bicarbonate for TCA and salicylate (Katzung ch 58)
+FAM = {f: [k for k, v in P.items() if v[5] == f] for f in ('compete', 'bind', 'block', 'bypass', 'trap')}
 
 text('Poison → target → harm, then the antidote', 180, 150, 'dyn-big')
 text('turn on “Give the antidote” to see how it works', 180, 176, 'dyn-cap')
@@ -72,11 +74,11 @@ for k, (poi, tgt, eff, ant, how, fam) in P.items():
     text(ant, 2090, 550, 'nf-l1', 'middle', when=w)
     text(how, 1300, 1110, 'nf-l1 dyn-tag', 'middle', when=[f'{SW}:{k}&give'])
 text('pick a poison on the right', 1300, 550, 'nf-l1', 'middle', unless=[f'{SW}:*'])
-FT = dict(compete='COMPETES at the target', bind='BINDS the poison', block='BLOCKS the toxic step / REPLENISHES', bypass='BYPASSES or REPLACES')
+FT = dict(compete='COMPETES at the target', bind='BINDS the poison', block='BLOCKS the toxic step / REPLENISHES', bypass='BYPASSES or REPLACES', trap='TRAPS it for excretion')
 for f, t in FT.items():
     text(t, 2090, 610, 'nf-l1 dyn-tag', 'middle', when=[f'{SW}:{k}&give' for k in FAM[f]])
 add('<path d="M1300 660 V840" class="dyn-line"/>')
-text('harm reversed', 1300, 820, 'nf-l1', 'middle', when=['give&p:*'])
+text('harm reversed', 1324, 770, 'nf-l1', when=['give&p:*'])
 add('<rect x="1060" y="860" width="480" height="120" rx="24" style="fill:var(--ok);fill-opacity:.18"/>', when=['give&p:*'])
 
 # ════════ motion ════════
@@ -89,7 +91,7 @@ flows = [
   # target → harm
   dict(d='M1300 660 V840', len=180, speed=80, r=7, base=dict(), when=O(*ALL), mods=[m(O(*ALL), set=dict(poi=3)), m(GIVE, set=dict(poi=0))]),
   # antidote → target (compete, block, bypass)
-  dict(d='M1880 540 H1580', len=300, speed=110, r=8, base=dict(), when=[f'give&{SW}:{k}' for k in FAM['compete'] + FAM['block'] + FAM['bypass']],
+  dict(d='M1880 540 H1580', len=300, speed=110, r=8, base=dict(), when=[f'give&{SW}:{k}' for k in FAM['compete'] + FAM['block'] + FAM['bypass'] + FAM['trap']],
        mods=[m(GIVE, set=dict(ant=6))]),
   # antidote → the poison on its way in, and the pair out to excretion (bind)
   dict(d='M1880 600 C1500 760 1000 760 850 560', len=1300, speed=140, r=8, base=dict(), when=[f'give&{SW}:{k}' for k in FAM['bind']],
@@ -103,12 +105,13 @@ sites = [dict(x=1300, y=420, n=[0, -1], w=40, t='rec', l='', aria='Toxidromes', 
 readouts = [
   dict(l='Toxic effect', mods=[dict(when=[f'{SW}:*&!give'], d=1), dict(when=[f'{SW}:*&give'], d=-1)]),
   dict(l='Pupil size', mods=[dict(when=[f'{SW}:opi&!give', f'{SW}:op&!give'], d=-1), dict(when=[f'{SW}:ach&!give'], d=1)]),
-  dict(l='Anion-gap acidosis', mods=[dict(when=[f'{SW}:meth&!give', f'{SW}:fe&!give', f'{SW}:cn&!give'], d=1)]),
+  dict(l='Anion-gap acidosis', mods=[dict(when=[f'{SW}:meth&!give', f'{SW}:fe&!give', f'{SW}:cn&!give', f'{SW}:co&!give', f'{SW}:asa&!give'], d=1)]),
   dict(l='QRS width', mods=[dict(when=[f'{SW}:tca&!give'], d=1)]),
 ]
 
 notes = {'': 'Every antidote works one of four ways: it competes at the target, binds the poison, blocks the step that makes it '
-             'toxic (or replenishes what it uses up), or bypasses the blocked route and replaces what was lost.',
+             'toxic (or replenishes what it uses up), or bypasses the blocked route and replaces what was lost. Bicarbonate for aspirin adds a fifth: '
+             'alkaline urine traps the drug for excretion.',
          'give': 'The antidote is on board — watch how it gets there and what it does to the poison’s flow.'}
 for k, (poi, tgt, eff, ant, how, fam) in P.items():
     notes[f'{SW}:{k}'] = f'{poi} acts on {tgt}: {eff}. Antidote: {ant} — {how}.'
@@ -120,19 +123,19 @@ dyn = dict(
     ['ach', 'Anticholinergic', 'antimusc'], ['apap', 'Acetaminophen', 'acetaminophen'], ['meth', 'Methanol · ethylene glycol', 'ethyleneglycol'],
     ['dig', 'Digoxin', 'digoxin'], ['cn', 'Cyanide', 'cyanide'], ['hep', 'Heparin', 'anticoagrev'], ['fe', 'Iron', 'ironrx'],
     ['pb', 'Lead', 'chelators'], ['war', 'Warfarin', 'anticoagrev'], ['tca', 'Tricyclic overdose', 'tca'], ['bb', 'β-blocker', 'glucagondrug'],
-    ['mhb', 'Methemoglobinemia', 'methb'], ['co', 'Carbon monoxide', 'cohb']]),
+    ['mhb', 'Methemoglobinemia', 'methb'], ['co', 'Carbon monoxide', 'cohb'], ['asa', 'Aspirin (salicylate)', 'aspirin']]),
     dict(id='give', label='Treatment', type='toggle', on='Antidote given', off='Give the antidote', **{'def': False})],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 70, 73, 239–240, 247, 326–327, 442, 567, 588, 593, 688–689 · Katzung ch 58')
+  src='First Aid pp. 70, 239–240, 247, 326–327, 431, 442, 496, 562, 567, 593, 688–689 · Katzung ch 8, 23, 58 · Marks ch 42')
 
 MAP = dict(
   id='antidsim', title='Poison & Antidote in Motion', topic='pharm', after='tox',
   sub='Pick a poison and watch it reach its target and do harm — then give the antidote and see whether it competes, binds the '
       'poison for excretion, blocks the toxic step or bypasses it; the readouts show the toxic effect, pupils, anion gap and QRS',
   w=3500, h=1600,
-  fa='70, 73, 239–240, 247, 326–327, 397, 431, 442, 495, 561–562, 567, 588, 593, 617, 688–689',
-  src=[full('Katzung', 58), full('Katzung', 57), full('Katzung', 31), full('Katzung', 7), full('Katzung', 34)],
+  fa='70, 233, 239–240, 247, 326–327, 397, 430–431, 440–442, 495–496, 562, 567, 588, 593, 617, 688–689',
+  src=[full('Katzung', 58), full('Katzung', 57), full('Katzung', 31), full('Katzung', 7), full('Katzung', 8), full('Katzung', 23), full('Katzung', 34), full('Marks', 42)],
   lanes=[('adRec', 'Receptor poisons', 'glycolysis'), ('adBind', 'Bound & chelated', 'tca'), ('adMet', 'Metabolism & blood', 'gluconeo')],
   nodes=[
     ('ad1', 'Toxidromes', 330, 1300, 'adRec', 'pupils · skin · vitals', ['toxidromes'], 'hub'),
@@ -142,12 +145,13 @@ MAP = dict(
     ('ad5', 'Iron · lead', 330, 1430, 'adBind', 'chelators', ['ironrx', 'chelators']),
     ('ad6', 'Anticoagulant reversal', 760, 1430, 'adBind', 'protamine · vitamin K', ['anticoagrev']),
     ('ad7', 'Acetaminophen · toxic alcohols', 1220, 1430, 'adMet', 'NAC · fomepizole', ['acetaminophen', 'ethyleneglycol']),
-    ('ad8', 'TCA · β-blocker', 1650, 1430, 'adMet', 'bicarbonate · glucagon', ['tca', 'glucagondrug']),
+    ('ad8', 'TCA · β-blocker · aspirin', 1650, 1430, 'adMet', 'bicarbonate · glucagon', ['tca', 'glucagondrug', 'aspirin']),
     ('ad9', 'MetHb · CO', 2030, 1430, 'adMet', 'methylene blue · O₂', ['methb', 'cohb'])],
   panels=[
-    (2420, PANY, 1000, 'Four ways an antidote works', [
-      ('Competes', 'naloxone, flumazenil, atropine, physostigmine'),
+    (2420, PANY, 1000, 'How antidotes work (Katzung ch 58 · FA p. 247)', [
+      ('Competes', 'naloxone, flumazenil, atropine, physostigmine, Na⁺ (bicarbonate) in TCA'),
       ('Binds', 'digoxin Fab, hydroxocobalamin, protamine, chelators'),
       ('Blocks or replenishes', 'fomepizole, N-acetylcysteine'),
-      ('Bypasses or replaces', 'glucagon, vitamin K / PCC, bicarbonate')])],
+      ('Bypasses or replaces', 'glucagon, vitamin K / PCC, methylene blue'),
+      ('Traps for excretion', 'bicarbonate for salicylate (alkaline urine)')])],
   dyn=dyn)

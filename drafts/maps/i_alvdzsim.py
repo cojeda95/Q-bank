@@ -47,7 +47,7 @@ add('<circle cx="480" cy="700" r="70" style="fill:var(--accent);fill-opacity:.45
 add('<rect x="940" y="800" width="60" height="40" rx="10" style="fill:var(--dk4);fill-opacity:.5"/>'); text('type II pneumocyte', 1010, 830, 'nf-l2')
 add('<circle cx="800" cy="620" r="30" style="fill:var(--dk10);fill-opacity:.4;stroke:var(--dk10);stroke-width:3"/>'); text('macrophage', 760, 580, 'nf-l2', 'end')
 add('<circle cx="800" cy="620" r="30" style="fill:none;stroke:var(--bad);stroke-width:4;stroke-dasharray:6 6"/>', when=D('pap'))
-text('no surfactant — small alveoli collapse into large: atelectasis, shunt', 680, 920, 'nf-l1 dyn-tag', 'middle', when=NOSURF)
+text('no surfactant — small alveoli collapse into large: atelectasis, hypoxemia', 680, 920, 'nf-l1 dyn-tag', 'middle', when=NOSURF)
 text('betamethasone before delivery — surfactant made', 680, 920, 'nf-l1 dyn-tag', 'middle', when=['dx:nrds&beta'])
 text('GM-CSF signaling lost — macrophages cannot clear surfactant', 680, 920, 'nf-l1 dyn-tag', 'middle', when=D('pap'))
 
@@ -70,11 +70,11 @@ for x in (LX - 120, LX + 120):
     add(f'<circle cx="{x}" cy="640" r="26" style="fill:none;stroke:var(--ink-2);stroke-width:5"/>', when=D('silica'))
 add(f'<path d="M{LX + 330} 700 C{LX + 340} 760 {LX + 340} 820 {LX + 330} 880" style="stroke:var(--surface);stroke-width:18"/>', when=D('asbestos'))
 add(f'<path d="M{LX + 330} 700 C{LX + 340} 760 {LX + 340} 820 {LX + 330} 880" style="fill:none;stroke:var(--ink-2);stroke-width:4"/>', when=D('asbestos'))
-for x, y in ((LX - 230, 700), (LX + 230, 700), (LX - 200, 600)):
+for x, y in ((LX - 220, 470), (LX + 220, 470), (LX - 190, 550)):   # FA p. 696: berylliosis affects the upper lobes
     add(f'<circle cx="{x}" cy="{y}" r="22" style="fill:var(--dk10);fill-opacity:.35;stroke:var(--dk10);stroke-width:3"/>', when=D('beryl'))
 TAG = dict(coal='coal — upper lobes, small rounded nodules · Caplan with RA', silica='silica — upper lobes, eggshell hilar nodes · macrophages impaired → TB',
            asbestos='asbestos — lower lobes, calcified pleural plaques, ferruginous bodies · carcinoma > mesothelioma; smoking synergy',
-           beryl='beryllium — noncaseating granulomas (aerospace)', nrds='preterm, grunting, retractions — ground glass · L:S ≥ 2.0 = mature',
+           beryl='beryllium — upper lobes, noncaseating granulomas (aerospace) · ↑ cancer, cor pulmonale', nrds='preterm, chest wall pulled in, cyanosis — ground glass · L:S ≥ 2 = mature',
            pap='bilateral patchy opacities · anti-GM-CSF autoantibodies (90%) · whole-lung lavage',
            ph='mean PA pressure > 20 mmHg — RV hypertrophy, parasternal heave → cor pulmonale')
 for k, s in TAG.items(): text(s, 1300, 1450, 'nf-l1 dyn-tag', 'middle', when=D(k))
@@ -92,7 +92,7 @@ flows = [
   dict(d='M480 700 H880', len=400, speed=80, r=9, base=dict(air=3), when=NOSURF),
   dict(d='M960 820 C920 780 900 760 880 740', len=110, speed=50, r=8, base=dict(surf=3), unless=NOSURF),
   dict(d='M860 700 C840 670 820 650 800 630', len=100, speed=50, r=8, base=dict(surf=2), unless=D('pap')),
-  dict(d=f'M{LX} 250 C{LX - 120} 320 {LX - 220} 400 {LX - 230} 460', len=300, speed=90, r=8, base=dict(dust=3), when=D('coal', 'silica')),
+  dict(d=f'M{LX} 250 C{LX - 120} 320 {LX - 220} 400 {LX - 230} 460', len=300, speed=90, r=8, base=dict(dust=3), when=D('coal', 'silica', 'beryl')),
   dict(d=f'M{LX} 250 C{LX + 200} 400 {LX + 280} 700 {LX + 260} 880', len=700, speed=90, r=8, base=dict(dust=3), when=D('asbestos')),
   dict(d='M500 1250 H1100', len=600, speed=120, r=9, base=dict(blood=3), mods=[m(D('ph'), speed=0.4)]),
 ]
@@ -102,29 +102,31 @@ sites = [dict(x=480, y=820, n=[0, 1], w=10, t='rec', l='', aria='Neonatal RDS', 
          dict(x=1140, y=1250, n=[1, 0], w=10, t='rec', l='', aria='Pulmonary hypertension', c='pulmhtn', ions=[])]
 
 readouts = [
-  dict(l='Alveolar collapse · shunt', mods=[dict(when=NOSURF, d=1)]),
+  dict(l='Alveolar collapse', mods=[dict(when=NOSURF, d=1)]),
+  dict(l='Lung compliance', mods=[dict(when=NOSURF + D('coal', 'silica', 'asbestos'), d=-1)]),   # FA p. 683, Robbins ch 10
   dict(l='Fibrosis', mods=[dict(when=D('coal', 'silica', 'asbestos'), d=1)]),
   dict(l='TB risk', mods=[dict(when=D('silica'), d=1)]),
-  dict(l='Lung carcinoma risk', mods=[dict(when=D('asbestos'), d=1)]),
+  dict(l='Lung carcinoma risk', mods=[dict(when=D('asbestos', 'silica', 'beryl'), d=1)]),   # FA p. 696
   dict(l='Right ventricle load', mods=[dict(when=D('ph'), d=1)]),
 ]
 
 notes = {
   '': 'Surfactant from type II pneumocytes lowers surface tension so small alveoli stay open (P = 2T/r); macrophages clear it and '
       'eat dust. Pick a disease.',
-  'dx:nrds': 'Neonatal RDS: too little surfactant — small alveoli collapse into large: diffuse atelectasis, a big right-to-left '
-             'shunt. Prematurity, maternal diabetes (fetal insulin), C-section without labor. Synthesis starts ~20 wk, mature ~35 '
-             'wk. Antenatal betamethasone; surfactant; CPAP.',
+  'dx:nrds': 'Neonatal RDS: too little surfactant — small alveoli collapse into large: diffuse atelectasis, stiff lungs (↓ compliance), '
+             'hypoxemia. Prematurity, maternal diabetes (fetal insulin), C-section before labor. Synthesis starts ~20 wk, mature ~35 '
+             'wk. Antenatal betamethasone; surfactant; assisted ventilation.',
   'dx:coal': 'Coal workers: upper lobes, small rounded nodules; Caplan syndrome with rheumatoid arthritis.',
   'dx:silica': 'Silicosis: sandblasting, foundries, mines — upper lobes, eggshell calcification of hilar nodes; silica impairs '
-               'macrophages → TB risk; whorled collagen nodules.',
+               'macrophages → TB risk; ↑ lung cancer and cor pulmonale.',
   'dx:asbestos': 'Asbestosis: shipbuilding, roofing, plumbing — lower lobes, ivory-white calcified pleural plaques, ferruginous '
                  'bodies; bronchogenic carcinoma > mesothelioma; strikingly synergistic with smoking.',
-  'dx:beryl': 'Berylliosis: aerospace and manufacturing — noncaseating granulomas; sometimes steroid-responsive.',
+  'dx:beryl': 'Berylliosis: aerospace and manufacturing — upper lobes, noncaseating granulomas, so sometimes steroid-responsive; ↑ cancer '
+            'and cor pulmonale.',
   'dx:pap': 'Pulmonary alveolar proteinosis: GM-CSF signaling fails (autoantibodies in 90%), macrophages cannot mature and clear '
             'surfactant, which fills the alveoli. Whole-lung lavage; GM-CSF.',
   'dx:ph': 'Pulmonary hypertension: mean PA pressure > 20 mmHg; the thin-walled RV hypertrophies (parasternal heave) and fails — '
-           'cor pulmonale. Groups 1–5; group 1: bosentan, sildenafil, epoprostenol, riociguat.',
+           'cor pulmonale. Groups 1–5; group 1: bosentan, sildenafil, epoprostenol.',
   'beta': 'Maternal betamethasone before preterm delivery is the key prevention of neonatal RDS.',
 }
 
@@ -138,7 +140,7 @@ dyn = dict(
             dict(id='beta', label='Prevention', type='toggle', on='Betamethasone given', off='Antenatal betamethasone', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 15')
+  src='First Aid pp. 679, 683, 696, 698, 706 · Robbins ch 10, 15')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -147,8 +149,8 @@ MAP = dict(
   sub='Take surfactant away and watch small alveoli empty into large ones, fill them with surfactant that macrophages cannot '
       'clear, settle coal, silica and asbestos where each goes, and load the right ventricle',
   w=3600, h=1900,
-  fa='679, 696, 698, 706',
-  src=['Robbins ch 15 — The lung'],
+  fa='679, 683, 696, 698, 706',
+  src=[full('Robbins', 15), full('Robbins', 10)],
   lanes=[('adSurf', 'Surfactant', 'tca'), ('adDust', 'Dust & vessels', 'glycolysis')],
   nodes=[
     ('ad1', 'Neonatal RDS', 330, 1720, 'adSurf', 'Laplace · L:S ratio', ['nrds'], 'hub'),
@@ -156,6 +158,6 @@ MAP = dict(
     ('ad3', 'Pneumoconioses', 1200, 1720, 'adDust', 'apices vs bases', ['pneumoconiosis']),
     ('ad4', 'Pulmonary hypertension', 1640, 1720, 'adDust', 'cor pulmonale', ['pulmhtn'])],
   panels=[
-    (2500, PANY, 1000, 'Where dust goes (Robbins ch 15)', [
-      ('Coal, silica', 'apices'), ('Asbestos', 'bases, pleural plaques'), ('Silica', 'eggshell nodes → TB'), ('Beryllium', 'granulomas')])],
+    (2500, PANY, 1000, 'Where dust goes (First Aid p. 696)', [
+      ('Coal, silica', 'apices'), ('Asbestos', 'bases, pleural plaques'), ('Silica', 'eggshell nodes → TB'), ('Beryllium', 'upper lobes, granulomas')])],
   dyn=dyn)

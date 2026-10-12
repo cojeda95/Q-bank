@@ -28,7 +28,7 @@ def box(x0, y0, x1, y1):
 
 TAG = 'nf-l2 dyn-tag'
 H = lambda *k: ['hx:' + x for x in k]
-FIX = H('alt', 'hypov', 'vq', 'diff')          # corrected by O₂
+FIX = H('alt', 'hypov', 'vq', 'diff', 'dead')  # corrected by O₂ (FA p. 685: dead space < 100% → 100% O₂ improves PaO₂)
 WIDE = H('vq', 'diff', 'shunt', 'dead')         # widened A–a
 
 # ════════ 1. the alveolus and its capillary ════════
@@ -56,6 +56,7 @@ text('blood passes the alveolus without picking up O₂', 230, 940, TAG, when=H(
 text('too few breaths — CO₂ builds up, alveolar O₂ falls', 230, 940, TAG, when=H('hypov'))
 text('thin air — less O₂ in every breath', 230, 940, TAG, when=H('alt'))
 text('100% O₂: the alveolar PO₂ rises and the blood picks it up', 230, 980, TAG, when=['o2&hx:alt', 'o2&hx:hypov', 'o2&hx:vq', 'o2&hx:diff'])
+text('100% O₂: the perfused units load more O₂ — PaO₂ improves', 230, 980, TAG, when=['o2&hx:dead'])
 text('100% O₂: blood never meets the extra O₂ — PaO₂ barely rises', 230, 980, TAG, when=['o2&hx:shunt'])
 text('pick a cause of hypoxemia', 230, 940, 'dyn-cap', unless=['hx:*'])
 
@@ -65,8 +66,9 @@ text('The alveolar gas equation', 1560, 166, 'dyn-big')
 text('room air at sea level: PAO₂ = 150 − PaCO₂ ÷ 0.8', 1560, 196, 'nf-l1')
 text('A–a gradient = PAO₂ − PaO₂ · normal ≈ age/4 + 4', 1560, 222, 'nf-l2')
 text('example values — illustrative', 1560, 248, 'dyn-cap')
-# UNVERIFIED: the example numbers below are illustrative, chosen to show the direction of each change
-EX = dict(norm=(40, 100, 95), alt=(40, 60, 55), hypov=(72, 60, 55), vq=(40, 100, 65), diff=(40, 100, 70), shunt=(40, 100, 60), dead=(40, 100, 70))
+# example numbers: illustrative, but each PAO₂ obeys FA p. 685 (150 − PaCO₂/0.8 at sea level); the altitude row is Guyton
+# Table 44.1 at 10,000 ft (PACO₂ 36, PAO₂ 67) with a normal A–a gap
+EX = dict(norm=(40, 100, 95), alt=(36, 67, 62), hypov=(72, 60, 55), vq=(40, 100, 65), diff=(40, 100, 70), shunt=(40, 100, 60), dead=(40, 100, 70))
 ROWS = [('PaCO₂', 0), ('PAO₂ (alveolar)', 1), ('PaO₂ (arterial)', 2)]
 for k, (c, A, a) in EX.items():
     w = [f'hx:{k}'] if k != 'norm' else None
@@ -116,9 +118,10 @@ sites = [
 # ════════ 5. readouts ════════
 readouts = [
   dict(l='PaO₂', mods=[m(['hx:*'], d=-1)]),
-  dict(l='PaCO₂', mods=[m(H('hypov'), d=1), m(H('alt', 'vq', 'diff', 'shunt'), d=0)]),
+  dict(l='PaCO₂', mods=[m(H('hypov'), d=1), m(H('alt'), d=-1), m(H('vq', 'diff', 'shunt'), d=0)]),   # altitude: ↑ ventilation → ↓ PaCO₂ (FA p. 688)
+  dict(l='PAO₂ (alveolar)', mods=[m(H('alt', 'hypov'), d=-1), m(H('vq', 'diff', 'shunt'), d=0)]),
   dict(l='A–a gradient', mods=[m(H('alt', 'hypov'), d=0), m(WIDE, d=1)]),
-  dict(l='PaO₂ on 100% O₂', mods=[m(['o2&hx:alt', 'o2&hx:hypov', 'o2&hx:vq', 'o2&hx:diff'], d=1), m(['o2&hx:shunt'], d=0)]),
+  dict(l='PaO₂ on 100% O₂', mods=[m(['o2&hx:alt', 'o2&hx:hypov', 'o2&hx:vq', 'o2&hx:diff', 'o2&hx:dead'], d=1), m(['o2&hx:shunt'], d=0)]),
 ]
 
 # ════════ 6. notes ════════
@@ -126,23 +129,21 @@ notes = {
   '': 'Hypoxemia has five causes. Two leave the alveolus short of O₂ (low inspired PO₂, hypoventilation) — the A–a gradient is '
       'normal. Three stop O₂ getting from a normal alveolus into the blood (V/Q mismatch, diffusion limitation, shunt) — the '
       'gradient widens. Then give 100% O₂: everything corrects except a true shunt.',
-  'hx:alt': 'High altitude: less O₂ in every breath, so alveolar and arterial PO₂ fall together — normal A–a gradient. '
-            'Supplemental O₂ fully corrects it.',
+  'hx:alt': 'High altitude: less O₂ in every breath, so alveolar and arterial PO₂ fall together — normal A–a gradient; '
+            'the extra breathing lowers PaCO₂. Supplemental O₂ corrects it.',
   'hx:hypov': 'Hypoventilation (opioids, obesity hypoventilation, neuromuscular disease): CO₂ builds up and displaces alveolar O₂ — '
               'PaCO₂ high, A–a gradient normal. O₂ helps the hypoxemia but does nothing for the CO₂.',
-  'hx:vq': 'V/Q mismatch (pneumonia, COPD): some alveoli get too little air for their blood — widened A–a gradient. '
+  'hx:vq': 'V/Q mismatch (COPD, pulmonary edema): some alveoli get too little air for their blood — widened A–a gradient. '
            'Supplemental O₂ raises the alveolar PO₂ even in poorly ventilated units, so it corrects.',
   'hx:diff': 'Diffusion limitation (interstitial fibrosis, edema): a thick membrane slows O₂ crossing — widened A–a gradient, '
              'and it corrects with O₂. CO₂ is rarely retained because it diffuses about 20 times faster than O₂.',
-  'hx:shunt': 'Right-to-left shunt (V/Q → 0: atelectasis, pneumonia, pulmonary edema, ARDS, intracardiac shunt): blood passes '
+  'hx:shunt': 'Right-to-left shunt (V/Q → 0: foreign body, atelectasis, pneumonia, ARDS, intracardiac shunt): blood passes '
               'alveoli with no air in them — widened A–a gradient, and 100% O₂ barely helps because that blood never meets it.',
-  'hx:dead': 'Dead space (V/Q → ∞): a pulmonary embolism stops perfusion, so ventilation of that region is wasted; blood is '
-             'diverted to other units, widening the A–a gradient.',
-  'o2': 'Giving 100% O₂ separates the causes: low inspired O₂, hypoventilation, V/Q mismatch and diffusion limitation all '
-        'correct; a true right-to-left shunt does not.',
+  'hx:dead': 'Dead space (V/Q → ∞): a pulmonary embolism stops perfusion, so ventilation of that region is wasted. First Aid '
+             'groups it with V/Q mismatch — widened A–a gradient — and 100% O₂ improves PaO₂ (unless dead space is 100%).',
+  'o2': 'Giving 100% O₂ separates the causes: low inspired O₂, hypoventilation, V/Q mismatch (dead space included) and diffusion '
+        'limitation all improve; a true right-to-left shunt does not.',
 }
-# UNVERIFIED: dead space widens the A–a gradient "because blood is diverted to other units" — the vq card names PE as dead space
-# but does not explain its A–a effect
 
 dyn = dict(
   kinds=dict(o2=['o2', '--dk2'], rbc=['rbc', '--dk12']),
@@ -153,7 +154,7 @@ dyn = dict(
             dict(id='o2', label='100% O₂', type='toggle', on='Breathing 100% O₂', off='Room air', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 684–687 · example values illustrative')
+  src='First Aid pp. 684–688 · Guyton ch 40, 43, 44 · example values illustrative')
 dyn['switches'][1]['def'] = dyn['switches'][1].pop('def_')
 
 MAP = dict(
@@ -162,7 +163,7 @@ MAP = dict(
       'shunt and dead space — with the alveolar gas equation worked through and a 100% O₂ switch that shows which causes correct. '
       'Tap the membrane or the numbers for their cards',
   w=3500, h=2100,
-  fa='684–687', src=[],
+  fa='684–688', src=[full('Guyton', 40), full('Guyton', 43), full('Guyton', 44)],
   lanes=[('hxGas', 'Gas exchange', 'glycolysis'), ('hxDz', 'Causes', 'tca')],
   nodes=[
     ('hx1', 'Five causes of hypoxemia', 380, 1300, 'hxGas', 'A–a and O₂ response', ['hypoxemia', 'hypoxtypes']),
@@ -179,7 +180,7 @@ MAP = dict(
       ('V/Q mismatch', 'widened A–a · corrects with O₂'),
       ('Diffusion limitation', 'widened A–a · corrects with O₂'),
       ('Right-to-left shunt', 'widened A–a · does NOT correct with O₂')]),
-    (2420, 1020, 1000, 'Remember (First Aid pp. 685–687)', [
+    (2420, 1020, 1000, 'Remember (First Aid pp. 685–687 · Guyton ch 43)', [
       ('Normal A–a', '≈ age/4 + 4 — under 14 before age 40'),
       ('Hypoxia ≠ hypoxemia', 'anemia and CO poisoning: tissue hypoxia with a normal PaO₂'),
       ('Cyanosis', 'needs ≈ 5 g/dL deoxyhemoglobin')])],

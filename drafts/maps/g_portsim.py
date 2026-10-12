@@ -36,7 +36,7 @@ text('left: portal vein in, hepatic veins out · right: one lobule, triad to cen
 LV = (700, 520)
 add(f'<path d="M{LV[0] - 260} {LV[1] - 60} C{LV[0] - 200} {LV[1] - 200} {LV[0] + 220} {LV[1] - 200} {LV[0] + 260} {LV[1] - 40} C{LV[0] + 200} {LV[1] + 120} {LV[0] - 200} {LV[1] + 140} {LV[0] - 260} {LV[1] - 60} Z" '
     'style="fill:var(--dk6);fill-opacity:.1;stroke:var(--dk6);stroke-width:4"/>', unless=D('cirr', 'bc'))
-add(f'<path d="M{LV[0] - 220} {LV[1] - 50} C{LV[0] - 170} {LV[1] - 160} {LV[0] + 180} {LV[1] - 160} {LV[0] + 220} {LV[1] - 40} C{LV[0] + 170} {LV[1] + 90} {LV[0] - 170} {LV[1] + 110} {LV[0] - 220} {LV[1] - 50} Z" '
+add(f'<path d="M{LV[0] - 260} {LV[1] - 60} C{LV[0] - 200} {LV[1] - 200} {LV[0] + 220} {LV[1] - 200} {LV[0] + 260} {LV[1] - 40} C{LV[0] + 200} {LV[1] + 120} {LV[0] - 200} {LV[1] + 140} {LV[0] - 260} {LV[1] - 60} Z" '
     'style="fill:var(--dk6);fill-opacity:.2;stroke:var(--bad);stroke-width:5"/>', when=D('cirr'))
 add(f'<path d="M{LV[0] - 300} {LV[1] - 60} C{LV[0] - 240} {LV[1] - 240} {LV[0] + 260} {LV[1] - 240} {LV[0] + 300} {LV[1] - 40} C{LV[0] + 240} {LV[1] + 160} {LV[0] - 240} {LV[1] + 180} {LV[0] - 300} {LV[1] - 60} Z" '
     'style="fill:var(--nf-blood);fill-opacity:.15;stroke:var(--bad);stroke-width:5"/>', when=D('bc'))
@@ -48,7 +48,7 @@ add(f'<path d="M{LV[0] + 150} {LV[1] - 100} C850 380 920 360 980 360" style="fil
 add('<path d="M870 330 l30 30 M900 330 l-30 30" class="nf-x"/>', when=D('bc'))
 add('<path d="M700 640 V900" style="stroke:var(--dk9);stroke-width:24;opacity:.35"/>'); text('portal vein', 720, 760, 'nf-l2')
 add('<path d="M690 760 h20" style="stroke:var(--bad);stroke-width:30"/>', when=D('pvt'))
-add('<path d="M700 900 C600 950 520 1000 420 1020" style="fill:none;stroke:var(--dk9);stroke-width:16;opacity:.35"/>'); text('splenic v.', 420, 1000, 'nf-l2', 'end')
+add('<path d="M700 900 C600 950 520 1000 420 1020" style="fill:none;stroke:var(--dk9);stroke-width:16;opacity:.35"/>'); text('splenic v.', 560, 940, 'nf-l2', 'end')
 add('<ellipse cx="360" cy="1040" rx="70" ry="44" style="fill:var(--dk10);fill-opacity:.15;stroke:var(--dk10);stroke-width:3"/>', unless=PORTAL_HTN)
 add('<ellipse cx="340" cy="1040" rx="110" ry="70" style="fill:var(--dk10);fill-opacity:.25;stroke:var(--bad);stroke-width:4"/>', when=PORTAL_HTN)
 text('spleen', 360, 1130, 'nf-l2', 'middle')
@@ -110,7 +110,8 @@ sites = [dict(x=LV[0] - 300, y=LV[1] - 120, n=[-1, -1], w=10, t='rec', l='', ari
 readouts = [
   dict(l='Portal pressure', mods=[dict(when=PORTAL_HTN, d=1), dict(when=D('tips'), d=-1)]),
   dict(l='Varices · caput medusae', mods=[dict(when=PORTAL_HTN, d=1)]),
-  dict(l='Liver size', mods=[dict(when=D('bc'), d=1), dict(when=D('cirr'), d=-1)]),
+  dict(l='Liver size', mods=[dict(when=D('bc'), d=1), dict(when=D('pvt'), d=0)]),
+  dict(l='Ascites', mods=[dict(when=PORTAL_HTN, d=1)]),
   dict(l='Encephalopathy risk', mods=[dict(when=D('tips', 'cirr'), d=1)]),
   dict(l='Transaminases', mods=[dict(when=D('viral', 'yf', 'isch', 'apap', 'bc'), d=1)]),
 ]
@@ -120,7 +121,7 @@ notes = {
       '(zone 1) to the central vein (zone 3), so oxygen falls along the way while bile runs the other direction.',
   'dx:cirr': 'Cirrhosis: stellate cells lay down bridging fibrosis around regenerative nodules — resistance inside the liver → '
              'portal hypertension: varices, caput medusae, anorectal varices, splenomegaly, ascites.',
-  'dx:pvt': 'Portal vein thrombosis: the block is before the liver, so the liver is not enlarged; portal hypertension, pain, '
+  'dx:pvt': 'Portal vein thrombosis: the block is before the liver, so the liver is not enlarged; portal hypertension, ascites, pain, '
             'bowel ischemia if it reaches the SMV. Cirrhosis, malignancy, pancreatitis, sepsis.',
   'dx:bc': 'Budd-Chiari: hepatic vein thrombosis or compression backs blood into the liver — centrilobular congestion (nutmeg), '
            'painful hepatomegaly, ascites, varices; no JVD. Polycythemia vera, hypercoagulability, postpartum, HCC.',
@@ -141,14 +142,14 @@ dyn = dict(
               ['isch', 'Zone 3 — ischemia', 'liverzones'], ['apap', 'Zone 3 — acetaminophen', 'acetaminophen']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 18')
+  src='First Aid pp. 372, 374, 396–397, 495 · Robbins ch 18')
 
 MAP = dict(
   id='portsim', title='Liver Blood Flow in Motion', topic='gi', after='liver',
   sub='Send gut blood up the portal vein, through the lobule from zone 1 to zone 3 and out the hepatic veins — then block it before, '
       'inside or after the liver, open the back roads, place a TIPS, and see which zone each injury hits',
   w=3600, h=1900,
-  fa='73, 244, 370, 371, 372, 374, 396, 397, 495',
+  fa='370, 371, 372, 374, 396, 397, 495',
   src=['Robbins ch 18 — Liver and gallbladder', 'Moore ch 5 — Abdomen'],
   lanes=[('pvFlow', 'Flow', 'glycolysis'), ('pvDz', 'Block & injury', 'tca')],
   nodes=[

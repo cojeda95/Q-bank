@@ -37,7 +37,7 @@ def stats(c, p):
     dz = round(N * PREVS[p]); ok = N - dz
     tp = round(dz * sens); fn = dz - tp; tn = round(ok * spec); fp = ok - tn
     ppv = tp / (tp + fp) if tp + fp else 0; npv = tn / (tn + fn) if tn + fn else 0
-    return dict(sens=sens, spec=spec, tp=tp, fp=fp, fn=fn, tn=tn, ppv=ppv, npv=npv, lrp=sens / (1 - spec), dz=dz, ok=ok)
+    return dict(sens=sens, spec=spec, tp=tp, fp=fp, fn=fn, tn=tn, ppv=ppv, npv=npv, lrp=sens / (1 - spec), lrn=(1 - sens) / spec, dz=dz, ok=ok)
 S = {(c, p): stats(c, p) for c in CUTS for p in PREVS}
 W = lambda c, p: [f'cut:{c}&prev:{p}']
 C = lambda *k: ['cut:' + x for x in k]
@@ -127,17 +127,19 @@ for i, (lab, k, f) in enumerate(ROWS):
         add(f'<rect x="{BX0}" y="{y - 18}" width="{round(BW * s[k])}" height="30" rx="8" style="fill:var(--accent);fill-opacity:.75"/>', when=W(c, p))
         text(pct(s[k]), BX0 + BW + 14, y + 4, 'nf-l1', when=W(c, p))
 for (c, p), s in S.items():
-    text(f'LR+ = sensitivity ÷ (1 − specificity) = {s["lrp"]:.1f}', 1460, 1350, 'nf-l2', when=W(c, p))
+    text(f'LR+ = sensitivity ÷ (1 − specificity) = {s["lrp"]:.1f}', 1460, 1340, 'nf-l2', when=W(c, p))
+    text(f'LR− = (1 − sensitivity) ÷ specificity = {s["lrn"]:.2f}', 1460, 1368, 'nf-l2', when=W(c, p))
 
 # ════════ 5. the rules ════════
 box(160, 1440, 2340, 1700)
 text('The rules', 180, 1476, 'dyn-big')
 text('SN-N-OUT: a highly sensitive test, when negative, rules the disease out — screen with it', 180, 1510, 'nf-l2')
 text('SP-P-IN: a highly specific test, when positive, rules it in — confirm with it', 180, 1534, 'nf-l2')
-text('lower cutoff → sensitivity and NPV up, specificity and PPV down', 180, 1580, TAG, when=C('lo'))
-text('higher cutoff → specificity and PPV up, sensitivity and NPV down', 180, 1580, TAG, when=C('hi'))
-text('low prevalence → most positives are false: PPV falls, NPV rises', 180, 1610, TAG, when=P('lo'))
-text('high prevalence → PPV rises, NPV falls — the test itself has not changed', 180, 1610, TAG, when=P('hi'))
+text('LR+ > 10 marks a highly specific test; LR− < 0.1 a highly sensitive one · pretest odds × LR = posttest odds', 180, 1558, 'nf-l2')
+text('lower cutoff → sensitivity and NPV up, specificity and PPV down', 180, 1604, TAG, when=C('lo'))
+text('higher cutoff → specificity and PPV up, sensitivity and NPV down', 180, 1604, TAG, when=C('hi'))
+text('low prevalence → most positives are false: PPV falls, NPV rises', 180, 1634, TAG, when=P('lo'))
+text('high prevalence → PPV rises, NPV falls — the test itself has not changed', 180, 1634, TAG, when=P('hi'))
 
 # ════════ 6. tap targets ════════
 sites = [
@@ -155,7 +157,7 @@ def ro(lab, k):
         diff = s[k] - BASE[k]
         mods.append(dict(when=W(c, p), d=0 if abs(diff) < 0.005 else (1 if diff > 0 else -1)))
     return dict(l=lab, mods=mods)
-readouts = [ro('Sensitivity', 'sens'), ro('Specificity', 'spec'), ro('PPV', 'ppv'), ro('NPV', 'npv'), ro('LR+', 'lrp')]
+readouts = [ro('Sensitivity', 'sens'), ro('Specificity', 'spec'), ro('PPV', 'ppv'), ro('NPV', 'npv'), ro('LR+', 'lrp'), ro('LR−', 'lrn')]
 
 # ════════ 8. notes ════════
 notes = {
@@ -189,7 +191,7 @@ MAP = dict(
       'and sensitivity, specificity, PPV and NPV change — sensitivity and specificity follow the cutoff; predictive values follow '
       'prevalence too. Tap a curve for its card',
   w=3500, h=2100,
-  fa='259–262', src=[],
+  fa='259–262, 265–266', src=[],
   lanes=[('tsTest', 'The test', 'glycolysis'), ('tsUse', 'Using the result', 'tca'), ('tsBias', 'Screening pitfalls', 'gluconeo')],
   nodes=[
     ('ts1', 'Sensitivity & specificity', 380, 1800, 'tsTest', 'SN-N-OUT · SP-P-IN', ['sensspec']),

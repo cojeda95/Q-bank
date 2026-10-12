@@ -5,13 +5,13 @@
 # pattern exams ask for: serum Ca²⁺, PO₄³⁻, PTH, calcitriol and urine Ca²⁺.
 # No new cards: every fact restates the pinned cards (hyperpara1, hyperpara2, renalod, hypopara, pha, fhh, hcmalig,
 # vitddef, sarcoid, pthaction, calcitriol, ckdphos — fact-checked against the corpus) with the First Aid pages they
-# cite. Arrows left "–" where those cards give no direction. Anything inferred is marked UNVERIFIED.
-# Sources: First Aid 2025 pp. 336–337, 348–349, 361, 621–622 · Costanzo ch 9 · Guyton ch 80 · Katzung ch 42 · Robbins ch 24.
+# cite, checked against Costanzo Table 9.17 and Robbins ch 24 (Causes of hypercalcemia). Arrows left "–" where no source gives one.
+# Sources: First Aid 2025 pp. 224, 336–337, 348–349, 361, 621–622, 695 · Costanzo ch 9 · Guyton ch 80 · Katzung ch 42 · Robbins ch 20, 24.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
 
-CZ9, GY80, KZ42, RB24 = full('Costanzo', 9), full('Guyton', 80), full('Katzung', 42), full('Robbins', 24)
+CZ9, GY80, KZ42, RB24, RB20 = full('Costanzo', 9), full('Guyton', 80), full('Katzung', 42), full('Robbins', 24), full('Robbins', 20)
 
 shapes = []
 def add(svg, when=None, unless=None):
@@ -86,7 +86,10 @@ text('more Ca²⁺ and PO₄³⁻ in the urine', 1660, 700, TAG, when=Z('p1'))
 text('Ca²⁺ held back — urine Ca²⁺ low', 1660, 700, TAG, when=Z('fhh'))
 text('too few nephrons to filter PO₄³⁻ — it is retained', 1660, 700, TAG, when=CKD)
 text('little calcitriol made', 1660, 724, TAG, when=Z('p2', 'hp'))
-text('kidney blind to PTH (Gs-α defect)', 1660, 700, TAG, when=Z('pha'))
+text('kidney blind to PTH (Gs-α defect) — PO₄³⁻ kept, urine cAMP ↓', 1660, 700, TAG, when=Z('pha'))
+text('no PTH — PO₄³⁻ kept, less Ca²⁺ reabsorbed', 1660, 700, TAG, when=Z('hp'))
+text('PTHrP acts like PTH — PO₄³⁻ and Ca²⁺ spill (high filtered load)', 1660, 700, TAG, when=Z('mal'))
+text('more Ca²⁺ in the urine — high filtered load', 1660, 700, TAG, when=Z('sarc'))
 
 # ════════ 4. blood ════════
 shapes.append(dict(vessel='M180 790 H2320', w=40, color='--dk12'))
@@ -147,7 +150,7 @@ flows = [
   dict(d='M1460 560 V770', len=210, speed=70, r=6, base=dict(ca=1, po4=1),
        mods=[m(Z('p1', 'p3', 'mal'), set=dict(ca=3, po4=2))]),
   dict(d='M1710 300 H2270', len=560, speed=110, r=6, base=dict(po4=2, ca=1),
-       mods=[m(Z('p1'), set=dict(po4=4, ca=3)), m(Z('mal'), set=dict(po4=4, ca=1)), m(CKD, set=dict(po4=1, ca=1)),
+       mods=[m(Z('p1'), set=dict(po4=4, ca=3)), m(Z('mal'), set=dict(po4=4, ca=3)), m(Z('hp', 'pha'), set=dict(po4=1, ca=1)), m(CKD, set=dict(po4=1, ca=1)),
              m(Z('fhh'), set=dict(ca=0, po4=2))]),
   dict(d='M210 1100 H1130', len=920, speed=110, r=6, base=dict(ca=2),
        mods=[m(Z('p1', 'sarc'), set=dict(ca=5)), m(Z('p2', 'vd', 'hp'), set=dict(ca=1))]),
@@ -164,13 +167,13 @@ sites = [
   dict(x=1250, y=300, n=[0, 1], w=20, t='rec', l='PTH receptor (bone)', s='osteoblasts → RANKL', ions=[], c='pthaction',
        boost=Z('p1', 'p3', 'mal'), block=Z('pha'), sfx=dict(block=' — no response'), lx=1250, ly=360, la='middle'),
   dict(x=1820, y=300, n=[0, 1], w=60, t='co', l='Na⁺–PO₄³⁻ reabsorption', s='PTH turns it down', reach=50, cross=True,
-       ions=[['po4', 'in', 1]], c='renalpo4', low=Z('p1', 'mal'), block=Z('pha'), sfx=dict(low=' — PTH holds it back', block=' — no PTH effect'),
+       ions=[['po4', 'in', 1]], c='renalpo4', low=Z('p1', 'mal'), boost=Z('hp', 'pha'), sfx=dict(low=' — PTH holds it back', boost=' — no PTH brake'),
        lx=1820, ly=410, la='middle'),
   dict(x=2150, y=300, n=[0, 1], w=60, t='ch', l='Ca²⁺ reabsorption', s='PTH turns it up', reach=50, cross=True,
-       ions=[['ca', 'in', 1]], c='pthneph', boost=Z('p1', 'mal', 'fhh'), low=Z('hp'), block=Z('pha'),
-       sfx=dict(block=' — no PTH effect'), lx=2150, ly=410, la='middle'),
+       ions=[['ca', 'in', 1]], c='pthneph', boost=Z('p1', 'mal', 'fhh'), low=Z('hp', 'pha'),
+       sfx=dict(low=' — little PTH effect'), lx=2150, ly=410, la='middle'),
   dict(x=1990, y=600, n=[0, -1], w=20, t='ex', l='1α-hydroxylase', s='25-OH-D → calcitriol', ions=[], c='calcitriol',
-       boost=Z('p1'), low=Z('p2', 'p3', 'hp', 'pha'), stop=Z('vd'), sfx=dict(stop=' — little vitamin D to activate'),
+       boost=Z('p1', 'mal'), low=Z('p2', 'p3', 'hp', 'pha'), stop=Z('vd'), sfx=dict(stop=' — little vitamin D to activate'),
        lx=1990, ly=540, la='middle'),
   dict(x=670, y=1060, n=[0, -1], w=80, t='co', l='Ca²⁺ absorption', s='calbindin, built by calcitriol', reach=60, cross=True,
        ions=[['ca', 'out', 1]], c='calcitriol', boost=Z('p1', 'sarc'), low=Z('p2', 'vd', 'hp'), lx=670, ly=950, la='middle'),
@@ -179,12 +182,14 @@ sites = [
 # ════════ 10. readouts ════════
 readouts = [
   dict(l='Serum Ca²⁺', mods=[m(HICA, d=1), m(LOCA, d=-1)]),
-  # p3: PO₄³⁻ ↑ rests on ckdphos (late CKD keeps phosphate high despite high PTH)
+  # p3: PO₄³⁻ ↑ — ckdphos and FA p. 622 (late CKD keeps phosphate high despite high PTH)
   dict(l='Serum PO₄³⁻', mods=[m(Z('p1', 'vd', 'mal'), d=-1), m(Z('p2', 'p3', 'hp', 'pha'), d=1)]),
-  # fhh: "PTH normal or minimally elevated" → ↔ · sarc: PTH ↓ — UNVERIFIED, inferred from the high Ca²⁺ (no card states it)
+  # fhh: "PTH normal or minimally elevated" → ↔ · sarc: PTH ↓ — Robbins ch 24 Table (granulomatous disease under "Decreased PTH")
   dict(l='PTH', mods=[m(HIPTH + Z('p3'), d=1), m(LOPTH, d=-1), m(Z('fhh'), d=0)]),
-  dict(l='Calcitriol', mods=[m(Z('p1', 'sarc'), d=1), m(Z('p2', 'hp'), d=-1)]),
-  dict(l='Urine Ca²⁺', mods=[m(Z('p1'), d=1), m(Z('fhh'), d=-1)]),
+  # Costanzo Table 9.17: 1,25-(OH)₂D ↑ in primary and in humoral hypercalcemia of malignancy, ↓ in hypo-, pseudohypo- and CKD
+  dict(l='Calcitriol', mods=[m(Z('p1', 'sarc', 'mal'), d=1), m(Z('p2', 'hp', 'pha'), d=-1)]),
+  # urine Ca²⁺ ↑ from the high filtered load: primary and malignancy (Costanzo Table 9.17), sarcoidosis (Robbins ch 20)
+  dict(l='Urine Ca²⁺', mods=[m(Z('p1', 'mal', 'sarc'), d=1), m(Z('fhh'), d=-1)]),
 ]
 
 # ════════ 11. notes ════════
@@ -200,22 +205,22 @@ notes = {
            'HIGH phosphate = kidney; with LOW phosphate = vitamin D.',
   'dz:p3': 'Tertiary hyperparathyroidism: after long stimulation in kidney disease a gland becomes autonomous — Ca²⁺ and PTH '
            'both high, PTH very high. Think of it in a long-term dialysis patient with high Ca²⁺; treated by parathyroidectomy.',
-  'dz:vd': 'Vitamin D deficiency: less Ca²⁺ and PO₄³⁻ absorbed, so Ca²⁺ ↓, PO₄³⁻ ↓, PTH ↑ and alkaline phosphatase ↑ — '
+  'dz:vd': 'Vitamin D deficiency: less Ca²⁺ and PO₄³⁻ absorbed, so Ca²⁺ and PO₄³⁻ ↓ (FA: normal or ↓ — PTH ↑ props Ca²⁺ up) '
+           'and alkaline phosphatase ↑ — '
            'rickets in children, osteomalacia in adults. Order 25-OH-D, the storage form, not calcitriol.',
-  'dz:hp': 'Hypoparathyroidism: without PTH the kidney stops reabsorbing Ca²⁺ and making calcitriol while phosphate is retained — '
+  'dz:hp': 'Hypoparathyroidism: without PTH the kidney reabsorbs less Ca²⁺ and makes less calcitriol while phosphate is retained — '
            'Ca²⁺ ↓, PO₄³⁻ ↑, PTH ↓. Tetany, Chvostek and Trousseau signs, long QT; often after a thyroidectomy. Check Mg²⁺.',
   'dz:pha': 'Pseudohypoparathyroidism type 1A: the glands work, but a Gs-α defect leaves kidney and bone blind to PTH — '
-            'Ca²⁺ ↓, PO₄³⁻ ↑ with PTH ↑, the giveaway. Albright hereditary osteodystrophy: short 4th and 5th metacarpals, '
+            'Ca²⁺ ↓, PO₄³⁻ ↑ and calcitriol ↓ with PTH ↑, the giveaway. Albright hereditary osteodystrophy: short 4th and 5th metacarpals, '
             'short stature, round face; maternally inherited.',
   'dz:fhh': 'Familial hypocalciuric hypercalcemia: an inactivating Ca²⁺-sensing receptor mutation makes the glands and tubule '
             'read Ca²⁺ as low — mild Ca²⁺ ↑, PTH normal or slightly ↑, and LOW urine Ca²⁺ (unlike primary '
             'hyperparathyroidism). Observation only.',
   'dz:mal': 'Hypercalcemia of malignancy, PTHrP route — squamous cell carcinomas (lung, head and neck) and renal, bladder, '
-            'breast and ovarian carcinoma make PTHrP, which acts on the PTH receptor: Ca²⁺ ↑, PO₄³⁻ ↓ and PTH ↓. High Ca²⁺ '
-            'with suppressed PTH = malignancy until proven otherwise.',
-  # UNVERIFIED: PTH ↓ in sarcoidosis — inferred from the hypercalcemia; the sarcoid card does not state it
+            'breast and ovarian carcinoma make PTHrP, which acts on the PTH receptor: Ca²⁺ ↑, PO₄³⁻ ↓, PTH ↓; like PTH it raises '
+            'calcitriol and urine Ca²⁺ (Costanzo). High Ca²⁺ with suppressed PTH = malignancy until proven otherwise.',
   'dz:sarc': 'Sarcoidosis: granuloma macrophages carry 1α-hydroxylase and make calcitriol, so the gut absorbs more Ca²⁺ — '
-             'Ca²⁺ ↑ and calcitriol ↑ while PTH is suppressed.',
+             'Ca²⁺ ↑, calcitriol ↑ and urine Ca²⁺ ↑ while PTH is suppressed (Robbins). Glucocorticoids shrink the granulomas.',
 }
 
 dyn = dict(
@@ -228,7 +233,7 @@ dyn = dict(
                           ['sarc', 'Sarcoidosis', 'sarcoid']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 336–337, 348–349, 361, 621–622 · Costanzo ch 9 · Guyton ch 80 · Katzung ch 42 · Robbins ch 24')
+  src='First Aid pp. 224, 336–337, 348–349, 361, 621–622, 695 · Costanzo ch 9 · Guyton ch 80 · Katzung ch 42 · Robbins ch 20, 24')
 
 MAP = dict(
   id='pthsim', title='Calcium & PTH Lab Simulator', topic='endo', after='hormones',
@@ -236,7 +241,7 @@ MAP = dict(
       'disorder to see what the glands and targets do and the lab pattern: Ca²⁺, PO₄³⁻, PTH, calcitriol and urine Ca²⁺. '
       'Tap a receptor or transporter for its card',
   w=3500, h=2100,
-  fa='336–337, 348–349, 361, 621–622', src=[CZ9, GY80, KZ42, RB24],
+  fa='224, 336–337, 348–349, 361, 621–622, 695', src=[CZ9, GY80, KZ42, RB24, RB20],
   lanes=[('ptGland', 'Parathyroid', 'glycolysis'), ('ptTarget', 'Bone, kidney & gut', 'gluconeo'), ('ptDz', 'Disorders', 'tca')],
   nodes=[
     ('pt1', 'PTH actions & control', 380, 1800, 'ptGland', 'raise Ca²⁺, trash PO₄³⁻', ['pthaction', 'casr']),
@@ -249,16 +254,16 @@ MAP = dict(
     ('pt8', 'Kidney disease', 1260, 1940, 'ptDz', 'phosphate retained', ['ckdphos', 'ckd']),
     ('pt9', 'Treatment', 1700, 1940, 'ptDz', 'bisphosphonates · cinacalcet', ['calciumdrugs'])],
   panels=[
-    (2420, 880, 1000, 'The lab patterns (First Aid pp. 348–349)', [
+    (2420, 880, 1000, 'The lab patterns (First Aid pp. 348–349 · Costanzo ch 9)', [
       ('Primary hyperparathyroidism', 'Ca²⁺ ↑ · PO₄³⁻ ↓ · PTH ↑ · urine Ca²⁺ ↑'),
       ('Secondary (CKD)', 'Ca²⁺ ↓ · PO₄³⁻ ↑ · PTH ↑ · calcitriol ↓'),
       ('Tertiary', 'Ca²⁺ ↑ · PTH ↑↑'),
-      ('Vitamin D deficiency', 'Ca²⁺ ↓ · PO₄³⁻ ↓ · PTH ↑ · ALP ↑'),
+      ('Vitamin D deficiency', 'Ca²⁺, PO₄³⁻ normal or ↓ · PTH ↑ · ALP ↑'),
       ('Hypoparathyroidism', 'Ca²⁺ ↓ · PO₄³⁻ ↑ · PTH ↓'),
       ('Pseudohypoparathyroidism', 'Ca²⁺ ↓ · PO₄³⁻ ↑ · PTH ↑'),
       ('FHH', 'Ca²⁺ ↑ · PTH normal or slightly ↑ · urine Ca²⁺ ↓'),
       ('Malignancy (PTHrP)', 'Ca²⁺ ↑ · PO₄³⁻ ↓ · PTH ↓')]),
-    (2420, 1180, 1000, 'Telling them apart (First Aid p. 349)', [
+    (2420, 1180, 1000, 'Telling them apart (First Aid pp. 348–349)', [
       ('Low Ca²⁺, high PO₄³⁻', 'kidney disease, hypoparathyroidism or pseudohypoparathyroidism'),
       ('Low Ca²⁺, low PO₄³⁻', 'vitamin D deficiency'),
       ('High Ca²⁺, urine Ca²⁺ high', 'primary hyperparathyroidism'),

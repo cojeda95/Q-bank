@@ -1,7 +1,7 @@
 # Laxatives in Motion (dynamic map, kit data) — drafted on the drafts branch, off the Mac.
 # A stretch of bowel: stool moving through the lumen, the epithelium with ClC-2, GC-C → CFTR and NHE3, and the enteric
 # plexus with μ-opioid receptors. A `rx` switch gives one laxative — bulk fiber, docusate, mineral oil, osmotic (PEG,
-# lactulose, magnesium), stimulant (senna, bisacodyl), lubiprostone, linaclotide, tenapanor or a peripheral opioid antagonist
+# lactulose, magnesium), stimulant (senna, bisacodyl), prucalopride (5-HT₄), lubiprostone, linaclotide, tenapanor or a peripheral opioid antagonist
 # — and shows where it acts; an `opioid` toggle slows propulsion (μ receptors) so the PAMORA has something to undo. The
 # small-bowel vs colon site of each channel is labelled only where the card names it. 3 readouts. Facts from the pinned
 # cards; FA pages in `fa`. No new cards.
@@ -54,11 +54,13 @@ add(f'<ellipse cx="1100" cy="640" rx="210" ry="96" style="fill:none;stroke:var(-
 for k, (x, _) in CH.items():
     add(f'<rect x="{x - 14}" y="{LY1 - 6}" width="28" height="82" rx="8" style="fill:var(--accent);opacity:.9"/>',
         when=R(dict(clc='lubi', gcc='lina', nhe='tena')[k]))
-add(f'<path d="M300 {LY1 + 130} H2000" style="stroke:var(--accent);stroke-width:14;opacity:.6"/>', when=R('stim'))
+add(f'<path d="M300 {LY1 + 130} H2000" style="stroke:var(--accent);stroke-width:14;opacity:.6"/>', when=R('stim', 'pru'))
+add(f'<path d="M{CH["nhe"][0] - 24} {LY1 + 4} l48 62 M{CH["nhe"][0] + 24} {LY1 + 4} l-48 62" class="nf-x"/>', when=R('tena'))
 TAG = dict(bulk='fiber swells into a gel — stretches the colon so it propels · bloating, flatus',
            docu='docusate — surfactant lets water and fat soak into stool', oil='mineral oil — lubricates; aspiration → lipid pneumonitis; ↓ A D E K',
            osm='unabsorbed solute holds water · Mg (not in renal failure), lactulose (ferments; traps NH₄⁺), PEG (isotonic prep)',
            stim='senna, bisacodyl — excite the enteric nerves and colonic secretion · melanosis coli (senna)',
+           pru='prucalopride — 5-HT₄ on enteric neurons → more ACh → strong propulsive colonic contractions',
            lubi='lubiprostone opens ClC-2 — chloride and water into the lumen · nausea',
            lina='linaclotide — GC-C → cGMP → CFTR opens · diarrhea; not in children',
            tena='tenapanor blocks NHE3 — Na⁺ and water stay in the lumen',
@@ -68,7 +70,7 @@ text('opioid: propulsion falls, tone rises — stool lingers and dries (no toler
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
-FAST = R('bulk', 'osm', 'stim', 'lubi', 'lina', 'tena')
+FAST = R('bulk', 'osm', 'stim', 'pru', 'lubi', 'lina', 'tena')
 flows = [
   dict(d='M320 640 H1980', len=1660, speed=90, r=11, base=dict(stool=4),
        mods=[m(FAST, speed=1.8), m(['opioid'], speed=0.3), m(['opioid&rx:pamora'], speed=3.3)]),
@@ -76,8 +78,8 @@ flows = [
   dict(d=f'M{CH["gcc"][0]} {LY1 + 60} V{LY0 + 60}', len=240, speed=90, r=8, base=dict(cl=3), when=R('lina')),
   dict(d=f'M{CH["nhe"][0]} {LY0 + 60} V{LY1 - 20}', len=220, speed=90, r=8, base=dict(na=3), when=R('tena')),
   dict(d=f'M{CH["nhe"][0]} {LY0 + 60} V{LY1 + 60}', len=280, speed=90, r=8, base=dict(na=3), unless=R('tena')),
-  dict(d=f'M500 {LY1 + 40} V{LY0 + 60}', len=240, speed=80, r=8, base=dict(h2o=3), when=R('osm', 'lubi', 'lina', 'tena', 'bulk')),
-  dict(d=f'M300 {LY1 + 130} H2000', len=1700, speed=200, r=8, base=dict(nerve=4), when=R('stim')),
+  dict(d=f'M500 {LY1 + 40} V{LY0 + 60}', len=240, speed=80, r=8, base=dict(h2o=3), when=R('osm', 'lubi', 'lina', 'tena', 'bulk', 'stim')),
+  dict(d=f'M300 {LY1 + 130} H2000', len=1700, speed=200, r=8, base=dict(nerve=4), when=R('stim', 'pru')),
 ]
 sites = [dict(x=1100, y=520, n=[0, -1], w=10, t='rec', l='', aria='Bulk-forming and softeners', c='bulklax', ions=[]),
          dict(x=500, y=520, n=[0, -1], w=10, t='rec', l='', aria='Osmotic laxatives', c='osmolax', ions=[]),
@@ -86,9 +88,10 @@ sites = [dict(x=1100, y=520, n=[0, -1], w=10, t='rec', l='', aria='Bulk-forming 
          dict(x=1760, y=LY1 + 130, n=[1, 0], w=10, t='rec', l='', aria='Peripheral opioid antagonists', c='pamora', ions=[])]
 
 readouts = [
-  dict(l='Stool water', mods=[dict(when=R('osm', 'lubi', 'lina', 'tena', 'docu', 'bulk'), d=1), dict(when=['opioid'], d=-1)]),
+  dict(l='Stool water', mods=[dict(when=R('osm', 'lubi', 'lina', 'tena', 'docu', 'bulk', 'oil', 'stim'), d=1), dict(when=['opioid'], d=-1),
+                               dict(when=['opioid&rx:pamora'], d=1)]),
   dict(l='Transit speed', mods=[dict(when=FAST, d=1), dict(when=['opioid'], d=-1), dict(when=['opioid&rx:pamora'], d=1)]),
-  dict(l='Bloating · flatus', mods=[dict(when=R('bulk', 'osm'), d=1)]),
+  dict(l='Bloating · flatus', mods=[dict(when=R('bulk', 'lina'), d=1)]),
 ]
 
 notes = {
@@ -100,17 +103,19 @@ notes = {
              'hospitalized patients.',
   'rx:oil': 'Mineral oil: lubricates stool and slows water absorption; aspiration → lipid pneumonitis; long-term → poor A, D, E, K.',
   'rx:osm': 'Osmotic: unabsorbed solute holds water. Mg hydroxide (avoid in renal insufficiency); lactulose/sorbitol ferment '
-            '(cramps) — lactulose traps NH₄⁺ in hepatic encephalopathy; PEG is isotonic for colonoscopy prep.',
+            '(flatus, cramps) — lactulose traps NH₄⁺ in hepatic encephalopathy; PEG is isotonic for colonoscopy prep, without the flatus.',
   'rx:stim': 'Stimulants: act on the enteric nervous system and colonic secretion. Senna (6–12 h oral) → melanosis coli; '
              'bisacodyl (6–10 h oral, 30–60 min rectal).',
+  'rx:pru': 'Prucalopride, a 5-HT₄ agonist: enteric neurons release more ACh, so the colon makes stronger, more frequent propulsive '
+            'contractions — chronic constipation. Unlike cisapride and tegaserod, no cardiac (hERG) risk.',
   'rx:lubi': 'Lubiprostone opens ClC-2 in the small intestine — chloride-rich fluid enters the lumen. Nausea; avoid if pregnancy '
              'possible.',
   'rx:lina': 'Linaclotide/plecanatide activate luminal guanylate cyclase-C → cGMP → CFTR opens → chloride and water out. Diarrhea; '
-             'not in children. (ETEC heat-stable toxin uses the same messenger.)',
-  'rx:tena': 'Tenapanor blocks NHE3 — Na⁺ and water stay in the lumen.',
+             'not in children; bloating, flatulence. (ETEC heat-stable toxin uses the same messenger.)',
+  'rx:tena': 'Tenapanor blocks NHE3 (✕) — Na⁺ is not absorbed, so Na⁺ and water stay in the lumen and soften the stool.',
   'rx:pamora': 'Methylnaltrexone (quaternary, cannot enter the brain), naloxegol, naldemedine block gut μ receptors — opioid '
-               'constipation reverses without losing analgesia. Alvimopan: postoperative ileus.',
-  'opioid': 'Opioids act on gut μ receptors: propulsive peristalsis falls, tone and nonpropulsive contractions rise — stool '
+               'constipation reverses without losing analgesia. Alvimopan: postoperative ileus. (Switch the opioid on to see what it undoes.)',
+  'opioid': 'Opioids act on gut μ receptors: in the colon propulsive peristalsis falls while tone rises — stool '
             'lingers and loses water. Tolerance never develops to this effect.',
 }
 
@@ -120,12 +125,13 @@ dyn = dict(
   switches=[dict(id='rx', label='Laxative', type='one', options=[
               ['bulk', 'Bulk fiber', 'bulklax'], ['docu', 'Docusate', 'bulklax'], ['oil', 'Mineral oil', 'bulklax'],
               ['osm', 'Osmotic (PEG, lactulose, Mg)', 'osmolax'], ['stim', 'Stimulant (senna, bisacodyl)', 'stimlax'],
+              ['pru', 'Prucalopride (5-HT₄)', 'prokinetic'],
               ['lubi', 'Lubiprostone', 'secretlax'], ['lina', 'Linaclotide', 'secretlax'], ['tena', 'Tenapanor', 'secretlax'],
               ['pamora', 'Methylnaltrexone / naloxegol', 'pamora']]),
             dict(id='opioid', label='Patient', type='toggle', on='On opioids', off='Start an opioid', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Katzung ch 62')
+  src='First Aid pp. 130, 408, 567 · Katzung ch 31, 62 · Bootcamp GI — large intestine')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -140,11 +146,11 @@ MAP = dict(
   nodes=[
     ('lx1', 'Bulk-forming & softeners', 330, 1700, 'lxStool', 'fiber · docusate · oil', ['bulklax'], 'hub'),
     ('lx2', 'Osmotic laxatives', 760, 1700, 'lxStool', 'PEG · lactulose · Mg', ['osmolax']),
-    ('lx3', 'Stimulant laxatives', 1200, 1700, 'lxGut', 'senna · bisacodyl', ['stimlax']),
+    ('lx3', 'Stimulant laxatives', 1200, 1700, 'lxGut', 'senna · bisacodyl · prucalopride', ['stimlax', 'prokinetic']),
     ('lx4', 'Intestinal secretagogues', 1640, 1700, 'lxGut', 'ClC-2 · GC-C · NHE3', ['secretlax']),
     ('lx5', 'Peripheral opioid antagonists', 2080, 1700, 'lxGut', 'gut μ only', ['pamora'])],
   panels=[
     (2500, PANY, 1000, 'Target of each (Katzung ch 62)', [
       ('Lubiprostone', 'ClC-2'), ('Linaclotide', 'GC-C → cGMP → CFTR'), ('Tenapanor', 'NHE3'), ('Methylnaltrexone', 'gut μ receptor'),
-      ('Senna', 'enteric nerves')])],
+      ('Senna', 'enteric nerves'), ('Prucalopride', '5-HT₄ on enteric neurons')])],
   dyn=dyn)

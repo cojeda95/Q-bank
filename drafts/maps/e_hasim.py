@@ -42,8 +42,9 @@ add('<path d="M1000 260 C1300 260 1460 480 1440 760 C1420 1000 1260 1140 1120 11
 add('<path d="M680 520 C760 360 1000 320 1180 380 C1340 440 1400 600 1380 760" style="fill:none;stroke:var(--dk4);stroke-width:34;opacity:.2;stroke-linecap:round"/>')
 text('cortex', 1300, 460, 'nf-l2')
 add('<path d="M720 470 C820 380 980 360 1100 400" style="fill:none;stroke:var(--nf-blood);stroke-width:12;opacity:.45"/>', unless=D('migraine'))
-add('<path d="M720 470 C820 380 980 360 1100 400" style="fill:none;stroke:var(--nf-blood);stroke-width:22;opacity:.7"/>', when=['dx:migraine&ph:pain'])
-add('<path d="M720 470 C820 380 980 360 1100 400" style="fill:none;stroke:var(--nf-blood);stroke-width:12;opacity:.45"/>', when=['dx:migraine&!ph:pain'])
+add('<path d="M720 470 C820 380 980 360 1100 400" style="fill:none;stroke:var(--nf-blood);stroke-width:22;opacity:.7"/>', when=['dx:migraine&ph:pain'], unless=['rx:triptan'])
+add('<path d="M720 470 C820 380 980 360 1100 400" style="fill:none;stroke:var(--nf-blood);stroke-width:12;opacity:.45"/>', when=['dx:migraine&!ph:pain', 'dx:migraine&ph:pain&rx:triptan'])
+text('triptan: vessel constricted, no CGRP release', 1000, 228, 'nf-l2', 'middle', when=['dx:migraine&ph:pain&rx:triptan'])
 text('meningeal vessels', 1110, 390, 'nf-l2')
 add('<circle cx="920" cy="860" r="34" style="fill:var(--dk7);fill-opacity:.35;stroke:var(--dk7);stroke-width:4"/>'); text('trigeminal ganglion', 960, 920, 'nf-l2')
 add('<path d="M920 860 C860 760 780 620 720 470" style="fill:none;stroke:var(--dk7);stroke-width:6"/>'); text('V1', 790, 600, 'nf-l1')
@@ -65,7 +66,9 @@ for k, s in TAG.items(): text(s, 1000, 1500, 'nf-l1 dyn-tag', 'middle', when=D(k
 PH = dict(aura='aura — a wave of cortical spreading depression (zigzags, scintillating scotoma)',
           pain='trigeminal afferents release CGRP and substance P → neurogenic inflammation → throbbing pain')
 for k, s in PH.items(): text(s, 1000, 1540, 'nf-l1', 'middle', when=[f'dx:migraine&ph:{k}'])
-text('works for this headache', 1000, 1580, 'nf-l1', 'middle', when=OK)
+PREV = ['dx:migraine&rx:cgrpab', 'dx:cluster&rx:verapamil']   # preventives (FA 532): fewer attacks, not an acute rescue
+text('works for this headache — acute treatment', 1000, 1580, 'nf-l1', 'middle', when=OK, unless=PREV)
+text('works for this headache — prevention: fewer attacks (not for the acute attack)', 1000, 1580, 'nf-l1', 'middle', when=PREV)
 text('not this drug’s card indication for this headache', 1000, 1580, 'nf-l2', 'middle', when=['rx:*&dx:*'], unless=OK)
 
 # ════════ motion ════════
@@ -74,7 +77,7 @@ STOP = lambda d: m([f'dx:{d}&rx:{r}' for r in WORKS[d]], set=dict(pain=0))
 flows = [
   dict(d='M760 500 C900 380 1100 380 1260 470 C1340 540 1380 640 1380 760', len=1000, speed=60, r=10, base=dict(wave=3), when=['dx:migraine&ph:aura']),
   dict(d='M740 500 C800 460 860 430 920 410', len=220, speed=70, r=8, base=dict(cgrp=4), when=['dx:migraine&ph:pain'],
-       mods=[m(['dx:migraine&rx:cgrpab'], set=dict(cgrp=0))]),
+       mods=[m(['dx:migraine&rx:cgrpab', 'dx:migraine&rx:triptan'], set=dict(cgrp=0))]),
   dict(d='M720 470 C780 620 860 760 920 860', len=440, speed=120, r=9, base=dict(pain=3), when=['dx:migraine&ph:pain'], mods=[STOP('migraine')]),
   dict(d='M640 650 C760 700 860 800 920 860', len=360, speed=140, r=9, base=dict(pain=4), when=D('cluster'), mods=[STOP('cluster')]),
   dict(d='M610 680 C600 720 590 760 580 800', len=130, speed=50, r=8, base=dict(tear=3), when=D('cluster'), mods=[STOP('cluster')]),
@@ -101,14 +104,15 @@ notes = {
                  'throbbing pain; aura is cortical spreading depression. Women, family history; triggers: sleep loss, menses, '
                  'stress, foods. Exclude medication overuse, SAH, GCA, mass.',
   'dx:tension': 'Tension-type: the commonest primary headache — steady, band-like, bilateral, 30 min to days; no nausea, no aura, '
-                'at most one of photo- or phonophobia.',
+                'at most one of photo- or phonophobia; more common in women.',
   'dx:cluster': 'Cluster: men; excruciating periorbital pain 15 min–3 h in repeated attacks, with same-side lacrimation, '
                 'rhinorrhea, conjunctival injection, sometimes Horner.',
   'dx:tn': 'Trigeminal neuralgia: an aberrant artery presses on the CN V root and demyelinates it, so touch fires pain fibers — '
            'seconds-long shocks in V2/V3, normal exam between attacks.',
   'rx:nsaid': 'NSAIDs: acute treatment for migraine and tension-type headache.',
-  'rx:triptan': 'Triptans (5-HT₁B/₁D agonists): acute migraine and cluster (sumatriptan) — avoid in coronary disease.',
-  'rx:cgrpab': 'Anti-CGRP antibodies: migraine prevention (with β-blockers, amitriptyline, topiramate, valproate, botulinum toxin).',
+  'rx:triptan': 'Triptans (5-HT₁B/₁D agonists) inhibit trigeminal activation, prevent CGRP/peptide release and constrict the '
+                'vessels: acute migraine and cluster (sumatriptan). Coronary vasospasm — avoid in CAD or vasospastic angina.',
+  'rx:cgrpab': 'Anti-CGRP antibodies bind CGRP or its receptor: migraine prevention (with β-blockers, amitriptyline, topiramate, valproate, botulinum toxin).',
   'rx:o2': '100% oxygen: acute cluster headache.',
   'rx:verapamil': 'Verapamil: cluster prevention.',
   'rx:carba': 'Carbamazepine or oxcarbazepine: trigeminal neuralgia.',
@@ -126,15 +130,15 @@ dyn = dict(
               ['o2', '100% O₂', 'clusterha'], ['verapamil', 'Verapamil', 'clusterha'], ['carba', 'Carbamazepine', 'trigeminal']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Katzung ch 16')
+  src='First Aid pp. 532, 562 · Katzung ch 16 · Guyton ch 49')
 
 MAP = dict(
   id='hasim', title='Headaches in Motion', topic='neuro', after='seizhead',
   sub='Run a migraine from aura to CGRP-driven pain, tighten a tension band, fire a cluster attack and a trigeminal shock — '
       'then give each its drug',
   w=3600, h=1900,
-  fa='532',
-  src=['Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids', 'Moore ch 9 — Head'],
+  fa='532, 562',
+  src=['Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids', 'Moore ch 9 — Head', full('Guyton', 49)],
   lanes=[('haPri', 'Primary headaches', 'tca'), ('haNeur', 'Neuralgia', 'glycolysis')],
   nodes=[
     ('ha1', 'Migraine', 330, 1760, 'haPri', 'CGRP · aura', ['migraine'], 'hub'),
@@ -142,7 +146,7 @@ MAP = dict(
     ('ha3', 'Cluster headache', 1200, 1760, 'haPri', 'periorbital · O₂', ['clusterha']),
     ('ha4', 'Trigeminal neuralgia', 1640, 1760, 'haNeur', 'V2/V3 · carbamazepine', ['trigeminal'])],
   panels=[
-    (2500, PANY, 1000, 'Drug for each (Katzung ch 16)', [
+    (2500, PANY, 1000, 'Drug for each (First Aid pp. 532, 562)', [
       ('Migraine', 'NSAID, triptan · prevent: anti-CGRP, β-blocker'), ('Tension-type', 'NSAID, acetaminophen'),
       ('Cluster', '100% O₂, sumatriptan · prevent: verapamil'), ('Trigeminal neuralgia', 'carbamazepine')])],
   dyn=dyn)

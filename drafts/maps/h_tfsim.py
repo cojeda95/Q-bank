@@ -82,6 +82,7 @@ text('patient', PX, PY + 250, 'nf-l1', 'middle')
 for i, (x, y) in enumerate(((BX + 50, BY + 60), (BX + 160, BY + 90), (BX + 80, BY + 240))):
     add(f'<circle cx="{x}" cy="{y}" r="20" style="fill:none;stroke:var(--dk9);stroke-width:5"/>', when=P('feb', 'ic'))
 text('donor white cells', BX + 240, BY + 60, 'nf-l2', when=P('feb', 'ic'))
+text('type A cells → a type O patient', BX + 240, BY + 60, 'nf-l2', when=P('abo'))
 text('IgA in donor plasma', BX + 240, BY + 60, 'nf-l2', when=P('iga'))
 text('bacteria (skin flora)', BX + 240, BY + 60, 'nf-l2', when=P('plt'))
 text('lysed old cells → K⁺', BX + 240, BY + 60, 'nf-l2', when=P('mt'))
@@ -89,7 +90,8 @@ add(f'<path d="M{BX + 20} {BY + 20} L{BX + 200} {BY + 280}" style="stroke:var(--
 # Rh mother
 add(f'<circle cx="{PX}" cy="{PY + 50}" r="70" style="fill:var(--dk11);fill-opacity:.2;stroke:var(--dk11);stroke-width:4"/>', when=P('rh'))
 text('Rh+ fetus', PX + 90, PY + 60, 'nf-l2', when=P('rh'))
-PTAG = dict(feb='febrile nonhemolytic reaction last time — cytokines from donor white cells built up in storage',
+PTAG = dict(abo='ABO mismatch — the patient’s preformed anti-A/anti-B lyse donor cells in the vessel: fever, flank pain, hemoglobinuria',
+            feb='febrile nonhemolytic reaction last time — cytokines from donor white cells built up in storage',
             ic='immunocompromised — donor T cells could engraft and attack the host (transfusion-associated GVHD)',
             iga='IgA-deficient with anti-IgA — donor IgA triggers anaphylaxis',
             mt='massive transfusion — citrate binds Ca²⁺ (tetany), old cells leak K⁺, platelets diluted, volume overload (TACO)',
@@ -98,18 +100,19 @@ PTAG = dict(feb='febrile nonhemolytic reaction last time — cytokines from dono
 for k, s in PTAG.items(): text(s, 1800, 1480, 'nf-l1 dyn-tag', 'middle', when=P(k))
 FTAG = dict(feb='leukoreduced unit — fewer white cells, no fever', ic='irradiated unit — donor T cells cannot divide',
             iga='IgA-free (IgA-deficient donor) product', rh='Rho(D) immune globulin at ~28 wk and within 72 h of an Rh+ birth — clears fetal cells first',
-            mt='give calcium · watch K⁺ · add platelets', plt='stop the unit, culture, start broad-spectrum antibiotics')
+            mt='slow the rate so the liver clears citrate · add platelet units · K⁺ still climbs', plt='start broad-spectrum antibiotics while awaiting the cultures',
+            abo='stop the transfusion at once · IV fluids to protect the kidneys')
 for k, s in FTAG.items(): text(s, 1800, 1520, 'nf-l1', 'middle', when=[f'fix&pt:{k}'])
 
 # ════════ motion ════════
-flows = [dict(d=LINE, len=900, speed=110, r=10, base=dict(rbc=4)),
+flows = [dict(d=LINE, len=900, speed=110, r=10, base=dict(rbc=4), mods=[dict(when=['pt:abo&fix'], set=dict(rbc=0))]),
          dict(d=LINE, len=900, speed=110, r=8, base=dict(wbc=2), when=['pt:feb&!fix', 'pt:ic&!fix']),
-         dict(d=LINE, len=900, speed=110, r=8, base=dict(bug=3), when=['pt:plt&!fix']),
+         dict(d=LINE, len=900, speed=110, r=8, base=dict(bug=3), when=P('plt')),
          dict(d=LINE, len=900, speed=150, r=7, base=dict(ion=4), when=P('mt')),
          dict(d=f'M{PX} {PY + 50} C{PX - 100} {PY - 100} {PX - 60} {PY - 200} {PX} {PY - 120}', len=400, speed=60, r=8,
               base=dict(rbc=2), when=P('rh')),
          dict(d=f'M{PX - 100} {PY - 120} C{PX - 200} {PY} {PX - 120} {PY + 80} {PX - 60} {PY + 60}', len=300, speed=60, r=7,
-              base=dict(ab=3), when=['pt:rh&!fix']),
+              base=dict(ab=3), when=['pt:rh&!fix', 'pt:abo&!fix']),
          dict(d='M420 600 H1020', len=600, speed=100, r=7, base=dict(rbc=2), when=LB('type', 'screen', 'xm', 'dat'))]
 sites = [dict(x=1100, y=470, n=[1, -1], w=10, t='rec', l='', aria='Antiglobulin (Coombs) test', c='antiglobulin', ions=[]),
          dict(x=230, y=420, n=[-1, -1], w=10, t='rec', l='', aria='Pretransfusion testing', c='pretransfuse', ions=[]),
@@ -119,12 +122,13 @@ sites = [dict(x=1100, y=470, n=[1, -1], w=10, t='rec', l='', aria='Antiglobulin 
          dict(x=BX - 60, y=BY + 420, n=[-1, 1], w=10, t='rec', l='', aria='Transfusion-transmitted infection', c='txinfect', ions=[])]
 
 readouts = [
-  dict(l='Reaction risk', mods=[dict(when=['pt:feb&!fix', 'pt:ic&!fix', 'pt:iga&!fix', 'pt:plt&!fix'], d=1),
+  dict(l='Reaction risk', mods=[dict(when=['pt:abo&!fix', 'pt:feb&!fix', 'pt:ic&!fix', 'pt:iga&!fix', 'pt:plt&!fix'], d=1),
                                 dict(when=['pt:feb&fix', 'pt:ic&fix', 'pt:iga&fix'], d=-1)]),
   dict(l='Ionized Ca²⁺', mods=[dict(when=['pt:mt&!fix'], d=-1)]),
   dict(l='K⁺', mods=[dict(when=P('mt'), d=1)]),
   dict(l='Platelets', mods=[dict(when=['pt:mt&!fix'], d=-1)]),
-  dict(l='Maternal anti-D', mods=[dict(when=['pt:rh&!fix'], d=1), dict(when=['pt:rh&fix'], d=-1)]),
+  dict(l='Anti-D made by the mother', mods=[dict(when=['pt:rh&!fix'], d=1), dict(when=['pt:rh&fix'], d=0)]),
+  dict(l='Direct Coombs (DAT)', mods=[dict(when=P('abo'), d=1), dict(when=P('feb', 'iga'), d=0)]),
 ]
 
 notes = {
@@ -140,11 +144,15 @@ notes = {
   'lab:dat': 'Direct antiglobulin test: positive in warm AIHA (IgG), cold agglutinin disease (C3), drug-induced hemolysis (penicillin, '
              'cephalosporins, α-methyldopa), hemolytic transfusion reactions and the infant in HDFN. Febrile, TRALI and anaphylactic '
              'reactions are DAT negative.',
-  'pt:feb': 'Febrile nonhemolytic reactions come from cytokines that build up from donor white cells in storage — leukoreduce after a first one.',
+  'pt:abo': 'Acute hemolytic reaction: an ABO-mismatched unit meets the patient’s preformed IgM anti-A or anti-B, which fix complement and '
+            'lyse the cells in the vessel within minutes — fever, hypotension, flank pain, hemoglobinuria; DAT positive. Usually a '
+            'clerical error. Stop the transfusion; IV fluids protect the kidneys.',
+  'pt:feb': 'Febrile nonhemolytic reactions come from cytokines that build up from donor white cells in storage (1–6 h; DAT negative) — '
+            'leukoreduce after a first one.',
   'pt:ic': 'Transfusion-associated GVHD: donor T cells attack an immunocompromised host — irradiate the unit.',
-  'pt:iga': 'IgA-deficient patients with anti-IgA antibodies can have anaphylaxis — give IgA-free products.',
-  'pt:mt': 'Massive transfusion: citrate in stored blood binds Ca²⁺ faster than the liver clears it → tetany; old lysed cells add K⁺; '
-           'platelets are diluted; the volume can overload the circulation (TACO).',
+  'pt:iga': 'IgA-deficient patients with anti-IgA antibodies can have anaphylaxis within minutes — give IgA-free products. DAT negative.',
+  'pt:mt': 'Massive transfusion: given too fast, citrate in stored blood outruns the liver, which normally clears it in minutes, and '
+           'binds Ca²⁺ → tetany; old lysed cells add K⁺; platelets are diluted; the volume can overload the circulation (TACO).',
   'pt:plt': 'Platelets are stored at room temperature, so skin bacteria from collection grow — up to ~1 in 5000 platelet transfusions. Viral '
             'risk per unit is about 1 in a million (HBV, HCV, HIV); hepatitis C is the classic transfusion virus; CMV can also pass.',
   'pt:rh': 'Rho(D) immune globulin is passive anti-D IgG given to an unsensitized Rh(D)-negative mother: ~28 weeks, within 72 h after an '
@@ -158,12 +166,12 @@ dyn = dict(
               ['type', 'ABO & Rh typing', 'pretransfuse'], ['screen', 'Antibody screen (IAT)', 'antiglobulin'],
               ['xm', 'Crossmatch', 'pretransfuse'], ['dat', 'Direct antiglobulin (DAT)', 'antiglobulin']]),
             dict(id='pt', label='Patient · unit', type='one', options=[
-              ['feb', 'Fever last time', 'prodmod'], ['ic', 'Immunocompromised', 'prodmod'], ['iga', 'IgA-deficient', 'prodmod'],
+              ['abo', 'Wrong unit (ABO mismatch)', 'transfusion'], ['feb', 'Fever last time', 'prodmod'], ['ic', 'Immunocompromised', 'prodmod'], ['iga', 'IgA-deficient', 'prodmod'],
               ['mt', 'Massive transfusion', 'massivetx'], ['plt', 'Platelet unit', 'txinfect'], ['rh', 'Rh-negative mother', 'rhig']]),
             dict(id='fix', label='Answer', type='toggle', on='Fixed', off='Apply the fix', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 14 · Guyton ch 36–37 · Katzung ch 55')
+  src='First Aid pp. 112, 411, 434 · Robbins ch 14 · Guyton ch 36–37 · Katzung ch 55')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -177,14 +185,14 @@ MAP = dict(
        'Guyton ch 37 — Hemostasis and Blood Coagulation', 'Katzung ch 55 — Immunopharmacology'],
   lanes=[('tsLab', 'Bench tests', 'tca'), ('tsUnit', 'The unit & patient', 'glycolysis')],
   nodes=[
-    ('ts1', 'Pretransfusion testing', 280, 1720, 'tsLab', 'type · screen · crossmatch', ['pretransfuse'], 'hub'),
+    ('ts1', 'Pretransfusion testing', 280, 1720, 'tsLab', 'type · screen · crossmatch', ['pretransfuse', 'transfusion'], 'hub'),
     ('ts2', 'Coombs: direct vs indirect', 680, 1720, 'tsLab', 'on cells · in serum', ['antiglobulin']),
     ('ts3', 'Modified blood products', 1080, 1720, 'tsUnit', 'leuko · irradiated · IgA-free', ['prodmod']),
     ('ts4', 'Massive transfusion', 1480, 1720, 'tsUnit', '↓Ca²⁺ ↑K⁺ ↓plt', ['massivetx']),
     ('ts5', 'Transfusion infection', 1880, 1720, 'tsUnit', 'platelets · HCV', ['txinfect']),
     ('ts6', 'Rho(D) immune globulin', 2280, 1720, 'tsUnit', 'Rh− mother', ['rhig'])],
   panels=[
-    (2500, PANY, 1000, 'Change the unit (Robbins ch 14)', [
+    (2500, PANY, 1000, 'Change the unit (First Aid p. 112 · Robbins ch 14 · Katzung ch 55)', [
       ('Fever last time', 'leukoreduce'), ('Immunocompromised', 'irradiate'), ('IgA-deficient', 'IgA-free product'),
       ('Rh− mother', 'Rho(D) immune globulin')])],
   dyn=dyn)

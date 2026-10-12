@@ -56,7 +56,8 @@ TAG = dict(aware='focal aware — consciousness kept; motor, sensory, autonomic 
 for k, s in TAG.items(): text(s, 1100, 1180, 'nf-l1 dyn-tag', 'middle', when=T(k))
 PH = dict(aura='aura — the early part: odd smells or tastes', ictal='ictal — first symptom to the end of seizure activity',
           post='postictal — gradual recovery to baseline')
-for k, s in PH.items(): text(s, 1100, 1220, 'nf-l1', 'middle', when=[f'ph:{k}'])
+for k, s in PH.items(): text(s, 1100, 1220, 'nf-l1', 'middle', when=[f'ph:{k}'], unless=(T('absence') if k == 'aura' else None))
+text('absence — no warning: no aura (Katzung ch 24)', 1100, 1220, 'nf-l1', 'middle', when=TP('absence', 'aura'))
 text('still seizing — benzodiazepine first, then fosphenytoin', 1100, 1260, 'nf-l1 dyn-tag', 'middle', when=TP('status', 'post'))
 text('no postictal confusion', 1100, 1260, 'nf-l1', 'middle', when=TP('absence', 'post'))
 
@@ -83,7 +84,8 @@ for k, s in AG.items(): text(s, 1100, 1580, 'nf-l1', 'middle', when=[f'age:{k}']
 def m(when, **kw): return dict(when=when, **kw)
 flows = [
   dict(d=f'M{FX} {FY} C760 760 820 680 880 600', len=300, speed=140, r=8, base=dict(fire=3), when=TP('impaired', 'ictal') + TP('secgen', 'ictal') + T('status')),
-  dict(d=f'M{FX} {FY} C800 700 1000 600 1300 560', len=700, speed=160, r=8, base=dict(fire=3), when=TP('secgen', 'ictal') + T('status')),
+  # secondary generalization: cortex engages the thalamus, which relays the discharge to both hemispheres (Katzung ch 24)
+  dict(d=f'M{FX} {FY} C850 800 1000 740 1100 720 C1200 680 1250 620 1300 560', len=640, speed=160, r=8, base=dict(fire=4), when=TP('secgen', 'ictal') + T('status')),
   dict(d='M1100 720 C1000 600 900 500 820 420', len=400, speed=160, r=8, base=dict(fire=3), when=TP('absence', 'ictal')),
   dict(d='M1100 720 C1200 600 1300 500 1380 420', len=400, speed=160, r=8, base=dict(fire=3), when=TP('absence', 'ictal')),
   dict(d=f'M{FX} {FY} C{FX + 30} {FY - 30} {FX + 50} {FY - 40} {FX + 70} {FY - 60}', len=100, speed=60, r=8, base=dict(fire=2), when=TP('aware', 'ictal')),
@@ -96,9 +98,9 @@ sites = [dict(x=FX - 30, y=FY - 40, n=[-1, -1], w=10, t='rec', l='', aria='Focal
          dict(x=560, y=1580, n=[-1, 0], w=10, t='rec', l='', aria='Febrile seizures', c='febrileseiz', ions=[])]
 
 readouts = [
-  dict(l='Consciousness', mods=[dict(when=TP('impaired', 'ictal') + TP('secgen', 'ictal') + TP('absence', 'ictal') + T('status'), d=-1),
+  dict(l='Consciousness', mods=[dict(when=TP('aware', 'ictal'), d=0),dict(when=TP('impaired', 'ictal') + TP('secgen', 'ictal') + TP('absence', 'ictal') + T('status'), d=-1),
                                 dict(when=TP('secgen', 'post') + TP('impaired', 'post'), d=-1)]),
-  dict(l='Epileptic discharge', mods=[dict(when=TP('aware', 'ictal') + TP('impaired', 'ictal') + TP('secgen', 'ictal') + TP('absence', 'ictal') + T('status'), d=1)]),
+  dict(l='Epileptic discharge', mods=[dict(when=T('pnes'), d=0),dict(when=TP('aware', 'ictal') + TP('impaired', 'ictal') + TP('secgen', 'ictal') + TP('absence', 'ictal') + T('status'), d=1)]),
   dict(l='Brain injury risk', mods=[dict(when=T('status'), d=1)]),
 ]
 
@@ -107,7 +109,9 @@ notes = {
       'the medial temporal lobe); generalized ones are diffuse. Epilepsy = recurrent, unprovoked seizures.',
   'ty:aware': 'Focal aware (simple partial): consciousness intact — motor, sensory, autonomic or psychic symptoms.',
   'ty:impaired': 'Focal impaired awareness (complex partial): consciousness impaired, automatisms.',
-  'ty:secgen': 'Focal seizures may spread and become secondarily generalized tonic-clonic seizures.',
+  'ty:secgen': 'Focal seizures may spread and become secondarily generalized: the cortex engages the thalamus, which relays the '
+               'discharge to both hemispheres. Tonic-clonic — stiffening then jerking, tongue biting, urinary incontinence, '
+               'postictal confusion.',
   'ty:absence': 'Absence: thalamic T-type Ca²⁺ channels drive 3 Hz spike-and-wave — ~10 s blank stares, many a day, triggered by '
                 'hyperventilation, no postictal confusion. Childhood (4–10 y), mostly remits by 12. Ethosuximide; valproate.',
   'ty:status': 'Status epilepticus: continuous seizure ≥ 5 minutes, or recurrent seizures without return to baseline — it can '
@@ -116,6 +120,8 @@ notes = {
              'correlate — no postictal phase, no autonomic disturbance, no tongue biting; often witnessed, vocal, with an aura.',
   'age:kid': 'Febrile seizures: provoked by fever in a young child — benign, not epilepsy; roseola (HHV-6) after days of high '
              'fever. Antipyretics are for comfort; they do not prevent future febrile seizures.',
+  'age:adult': 'Seizure causes in adults 18–65: tumor, trauma, stroke, infection.',
+  'age:old': 'Seizure causes over 65: stroke, tumor, trauma, metabolic, infection.',
 }
 
 dyn = dict(
@@ -129,7 +135,7 @@ dyn = dict(
               ['kid', 'Under 18', 'febrileseiz'], ['adult', '18–65', 'seizure'], ['old', 'Over 65', 'seizure']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Katzung ch 24')
+  src='First Aid pp. 177, 530, 531 · Katzung ch 24 · Guyton ch 60')
 
 MAP = dict(
   id='spreadsim', title='Seizure Spread in Motion', topic='neuro', after='seizhead',
@@ -147,7 +153,7 @@ MAP = dict(
     ('ss5', 'Febrile seizures', 2080, 1760, 'ssMimic', 'provoked · not epilepsy', ['febrileseiz']),
     ('ss6', 'Psychogenic events', 2520, 1760, 'ssMimic', 'normal video EEG', ['pnes'])],
   panels=[
-    (2500, PANY, 1000, 'Telling them apart (Katzung ch 24)', [
-      ('Absence', 'no postictal confusion'), ('Generalized tonic-clonic', 'postictal recovery'), ('Status', '≥ 5 min or no recovery'),
+    (2500, PANY, 1000, 'Telling them apart (First Aid p. 531)', [
+      ('Absence', 'no postictal confusion'), ('Generalized tonic-clonic', 'tongue biting, incontinence, postictal confusion'), ('Status', '≥ 5 min or no recovery'),
       ('PNES', 'normal EEG, no tongue biting')])],
   dyn=dyn)

@@ -52,7 +52,7 @@ tube(SB1, 30, unless=SBD + D('ami')); tube(SB1, 64, op=.35, when=SBD)
 tube(SB2, 30, unless=D('sbo', 'ileus', 'ami', 'midvolv')); tube(SB2, 12, op=.4, when=D('sbo')); tube(SB2, 64, op=.35, when=D('ileus'))
 tube(SB2, 30, col='--dk10', op=.6, when=D('midvolv'))
 tube(SB1, 34, col='--dk10', op=.6, when=D('ami')); tube(SB2, 34, col='--dk10', op=.6, when=D('ami'))
-text('small bowel', 1310, 700, 'nf-l2')
+text('small bowel', 1272, 905, 'nf-l2')
 tube(COL1, 40, unless=D('ileus', 'hirsch')); tube(COL1, 76, op=.35, when=D('ileus', 'hirsch'))
 tube(COL2, 40, unless=D('ileus', 'hirsch', 'sigvolv')); tube(COL2, 76, op=.35, when=D('ileus', 'hirsch', 'sigvolv'))
 tube(REC, 40, unless=D('hirsch')); tube(REC, 14, col='--bad', op=.6, when=D('hirsch'))
@@ -70,7 +70,7 @@ for r in (40, 28, 16):
     add(f'<circle cx="700" cy="1050" r="{r}" style="fill:none;stroke:var(--bad);stroke-width:5"/>', when=D('intus'))
 text('ileum telescopes into the cecum — target sign · currant jelly stool', 1100, 1640, 'nf-l1 dyn-tag', 'middle', when=D('intus'))
 add('<path d="M1000 760 c60 40 -60 60 0 100 c60 40 -60 60 0 100" style="fill:none;stroke:var(--bad);stroke-width:10"/>', when=D('midvolv'))
-text('midgut volvulus — infant with bilious vomiting: surgical emergency', 1100, 1640, 'nf-l1 dyn-tag', 'middle', when=D('midvolv'))
+text('midgut volvulus — malrotation in an infant: obstruction + lost blood supply', 1100, 1640, 'nf-l1 dyn-tag', 'middle', when=D('midvolv'))
 add('<path d="M1500 1180 c40 -40 80 0 40 40 c-40 40 0 80 40 40" style="fill:none;stroke:var(--bad);stroke-width:10"/>', when=D('sigvolv'))
 text('sigmoid volvulus — older adult · coffee bean sign', 1100, 1640, 'nf-l1 dyn-tag', 'middle', when=D('sigvolv'))
 add('<circle cx="1250" cy="790" r="20" style="fill:var(--bad)"/>', when=D('ami'))
@@ -80,6 +80,7 @@ for x, y in ((1620, 500), (1340, 1240)):
 text('watershed: splenic flexure and rectosigmoid — pain, then hematochezia', 1100, 1640, 'nf-l1 dyn-tag', 'middle', when=D('colisch'))
 text('periumbilical first (T8–T10 visceral) → McBurney point', 1100, 1640, 'nf-l1 dyn-tag', 'middle', when=D('app'))
 text('aganglionic rectum cannot relax — megacolon above · RET · Down syndrome', 1100, 1640, 'nf-l1 dyn-tag', 'middle', when=D('hirsch'))
+tube('M800 1000 L750 1050 H660 V820', 50, col='--dk10', op=.55, when=D('nec'))   # terminal ileum + proximal colon (FA 393)
 for x, y in ((720, 1040), (800, 1000), (660, 950), (660, 860)):
     add(f'<circle cx="{x}" cy="{y}" r="12" style="fill:var(--surface);stroke:var(--ink-2);stroke-width:3"/>', when=D('nec'))
 text('premature, formula-fed — gas in the bowel wall (pneumatosis)', 1100, 1640, 'nf-l1 dyn-tag', 'middle', when=D('nec'))
@@ -107,10 +108,10 @@ sites = [dict(x=1110, y=880, n=[1, 1], w=10, t='rec', l='', aria='Small bowel ob
          dict(x=620, y=880, n=[-1, 0], w=10, t='rec', l='', aria='Necrotizing enterocolitis', c='nec', ions=[])]
 
 readouts = [
-  dict(l='Distension', mods=[dict(when=D('sbo', 'ileus', 'midvolv', 'sigvolv', 'hirsch'), d=1)]),
+  dict(l='Distension', mods=[dict(when=D('sbo', 'ileus', 'midvolv', 'sigvolv', 'hirsch', 'nec'), d=1)]),
   dict(l='Flatus & stool', mods=[dict(when=D('sbo', 'ileus', 'midvolv', 'sigvolv', 'hirsch', 'intus'), d=-1)]),
   dict(l='Bowel ischemia', mods=[dict(when=D('ami', 'colisch', 'midvolv', 'sigvolv', 'intus', 'nec'), d=1)]),
-  dict(l='Blood in stool', mods=[dict(when=D('intus', 'ami', 'colisch'), d=1)]),
+  dict(l='Blood in stool', mods=[dict(when=D('intus', 'ami', 'colisch', 'nec'), d=1)]),
   dict(l='Bowel sounds', mods=[dict(when=D('ileus'), d=-1)]),
 ]
 
@@ -119,14 +120,14 @@ notes = {
       'stop its motion, twist it or cut its blood, and see what backs up.',
   'dx:sbo': 'Small bowel obstruction: fluid and gas build up above the block, the bowel collapses below. Adhesions, hernias, '
             'tumors; meconium ileus in CF newborns. Dilated loops with air-fluid levels and a transition zone. Decompress, '
-            'fluids, bowel rest; surgery if strangulated.',
+            'fluids, bowel rest; strangulation risks ischemia and perforation.',
   'dx:ileus': 'Ileus: hypomotility with no blockage — no flatus or stool, distension, ↓ bowel sounds, no transition zone. After '
-              'surgery, opioids, hypokalemia, sepsis. Correct K⁺.',
+              'surgery, opioids, hypokalemia, sepsis. Bowel rest, correct electrolytes, cholinergic drugs.',
   'dx:intus': 'Intussusception: proximal bowel telescopes into distal, usually at the ileocecal junction — colicky pain, '
               'currant jelly stools, sausage mass, target sign. Children: Peyer patch hypertrophy, Meckel, IgA vasculitis; '
               'adults: a tumor lead point.',
-  'dx:midvolv': 'Midgut volvulus: malrotation leaves a narrow mesentery and Ladd bands; the loop twists and loses its blood supply. '
-                'Bilious vomiting in an infant is a surgical emergency.',
+  'dx:midvolv': 'Midgut volvulus: malrotation (with Ladd bands) lets the midgut twist around its mesentery — obstruction, then '
+                'ischemia and infarction. Mostly infants and children; the vomiting may be bilious.',
   'dx:sigvolv': 'Sigmoid volvulus: older adults — coffee bean sign.',
   'dx:ami': 'Acute mesenteric ischemia: usually an SMA embolus (AF, recent MI, heart failure) — pain out of proportion to the '
             'exam, currant jelly stools. Chronic form: postprandial pain, fear of eating, weight loss.',
@@ -137,8 +138,8 @@ notes = {
   'dx:hirsch': 'Hirschsprung: neural crest cells fail to reach the distal colon — no Auerbach or Meissner plexus, so it cannot '
                'relax; megacolon above a transition zone. No meconium in 48 h; squirt sign; suction biopsy shows no ganglion '
                'cells. RET; Down syndrome. Resect the segment.',
-  'dx:nec': 'Necrotizing enterocolitis: premature, formula-fed infant; terminal ileum and proximal colon necrose — pneumatosis '
-            'intestinalis, portal venous gas, pneumoperitoneum.',
+  'dx:nec': 'Necrotizing enterocolitis: premature, formula-fed infant; terminal ileum and proximal colon necrose — bloody stools, '
+            'distension, pneumatosis intestinalis, portal venous gas, pneumoperitoneum.',
 }
 
 dyn = dict(
@@ -150,7 +151,7 @@ dyn = dict(
               ['app', 'Appendicitis', 'appendicitis'], ['hirsch', 'Hirschsprung', 'hirschsprung'], ['nec', 'NEC', 'nec']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 17')
+  src='First Aid pp. 61, 390–393 · Robbins ch 10, 17 · Bootcamp GI')
 
 MAP = dict(
   id='bowelsim', title='Bowel Blockages in Motion', topic='gi', after='gitract',
@@ -169,7 +170,7 @@ MAP = dict(
     ('bw6', 'Appendicitis', 2520, 1840, 'bwIsch', 'McBurney', ['appendicitis']),
     ('bw7', 'Necrotizing enterocolitis', 2960, 1840, 'bwIsch', 'pneumatosis', ['nec'])],
   panels=[
-    (2500, PANY, 1000, 'Imaging signs (Robbins ch 17)', [
+    (2500, PANY, 1000, 'Imaging signs (First Aid pp. 392–393)', [
       ('Air-fluid levels', 'small bowel obstruction'), ('Target sign', 'intussusception'), ('Coffee bean', 'sigmoid volvulus'),
       ('Thumbprinting', 'colonic ischemia'), ('Pneumatosis', 'NEC')])],
   dyn=dyn)
