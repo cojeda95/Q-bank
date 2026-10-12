@@ -1,8 +1,8 @@
 # Pedigree Simulator (dynamic map, kit data) — drafted on the drafts branch, off the Mac.
 # One three-generation family drawn as a pedigree (squares male, circles female; filled = affected, dot = carrier). A `steps`
 # switch picks the inheritance pattern — autosomal dominant, autosomal recessive, X-linked recessive, X-linked dominant,
-# mitochondrial — and the family fills in to match; a second `steps` switch (auto) reveals the generations one at a time
-# while the mutant allele travels down the lines from the parent who passes it. 3 readouts. Facts from the pinned cards;
+# mitochondrial — and the whole three-generation family fills in to match while the mutant allele travels down the lines
+# from the parent who passes it (the generation-by-generation reveal was dropped: the whole family reads better at once). 3 readouts. Facts from the pinned cards;
 # FA pp. 57–60. The family itself is an illustration — one possible family for each pattern. No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
@@ -27,10 +27,8 @@ def box(x0, y0, x1, y1):
 
 PANY = 1180
 MODES = ['ad', 'ar', 'xlr', 'xld', 'mito']
-GENS = ['g1', 'g2', 'g3']
-SEE = dict(I=['g1', 'g2', 'g3'], II=['g2', 'g3'], III=['g3'])
-def W(mode, gen): return [f'mode:{mode}&gen:{g}' for g in SEE[gen]]
-def WA(gen): return [f'gen:{g}' for g in SEE[gen]]
+def W(mode, gen): return [f'mode:{mode}']
+def WA(gen): return None     # every generation always shown
 Y = dict(I=420, II=760, III=1100)
 S = 64
 # id: (x, gen, sex)
@@ -53,7 +51,7 @@ PASS = dict(  # parent → child edges the mutant allele travels
 COUPLE = {'II': [('I1', 'I2')], 'III': [('II2', 'H2'), ('II3', 'W3')]}
 KIDS = {('I1', 'I2'): ['II1', 'II2', 'II3'], ('II2', 'H2'): ['III1', 'III2', 'III3'], ('II3', 'W3'): ['III4', 'III5', 'III6']}
 
-text('Pedigree simulator — pick a pattern, watch the family fill in', 180, 150, 'dyn-big')
+text('Pedigree simulator — pick a pattern, read the whole family', 180, 150, 'dyn-big')
 text('□ male · ○ female · filled = affected · dot = carrier · one possible family for each pattern', 180, 176, 'dyn-cap')
 for g, y in Y.items(): text(g, 300, y + 10, 'nf-h', 'middle', when=WA(g))
 
@@ -126,16 +124,13 @@ notes = {
               '50% of children.',
   'mode:mito': 'Mitochondrial: mtDNA comes only from the egg, so an affected mother can pass it to all her children and an affected father '
                'to none. Heteroplasmy varies severity; brain and muscle suffer most (ragged red fibers).',
-  'gen:g1': 'Generation I — the founders.', 'gen:g2': 'Generation II — the children, and two people who marry in.',
-  'gen:g3': 'Generation III — the grandchildren.',
 }
 
 dyn = dict(
   kinds=dict(al=['allele', '--bad']), groups=[['allele', 'Mutant allele']],
   switches=[dict(id='mode', label='Pattern', type='steps', options=[
               ['ad', 'Autosomal dominant'], ['ar', 'Autosomal recessive'], ['xlr', 'X-linked recessive'],
-              ['xld', 'X-linked dominant'], ['mito', 'Mitochondrial']]),
-            dict(id='gen', label='Generations', type='steps', auto=3, options=[['g1', 'I'], ['g2', 'I–II'], ['g3', 'I–III']])],
+              ['xld', 'X-linked dominant'], ['mito', 'Mitochondrial']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
   src='First Aid pp. 57–60 · Robbins ch 5')
@@ -143,7 +138,7 @@ dyn = dict(
 MAP = dict(
   id='pedsim', title='Pedigree Simulator', topic='bio', after='genetics',
   sub='One family, five inheritance patterns: pick autosomal dominant, autosomal recessive, X-linked recessive, X-linked dominant or '
-      'mitochondrial and watch the generations fill in as the mutant allele passes down',
+      'mitochondrial and watch the whole family fill in as the mutant allele passes down',
   w=3600, h=1900,
   fa='57, 58, 59, 60',
   src=['Robbins ch 5 — Genetic disorders', 'Marks ch 18 — An Introduction to Human Genetics',
