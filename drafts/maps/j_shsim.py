@@ -91,10 +91,13 @@ sites = [dict(x=1060, y=490, n=[0, -1], w=10, t='rec', l='', aria='Impingement',
 
 readouts = [
   dict(l='Pain overhead', mods=[dict(when=['dx:impinge&ab:a90', 'dx:impinge&ab:a150'], d=1)]),
-  dict(l='Strength', mods=[dict(when=D('tear'), d=-1)]),
+  dict(l='Strength', mods=[dict(when=D('tear'), d=-1), dict(when=D('frozen'), d=0)]),
   dict(l='Range of motion', mods=[dict(when=D('frozen', 'ghoa', 'acoa'), d=-1)]),
-  dict(l='Night pain', mods=[dict(when=D('impinge'), d=1)]),
+  dict(l='Night pain', mods=[dict(when=D('impinge', 'tear'), d=1)]),
+  dict(l='Morning stiffness', mods=[dict(when=D('ghoa', 'acoa'), d=1)]),
 ]
+# SDL 13: cuff injury (impingement or tear) — pain overhead, worse at night; frozen shoulder — "not so much pain or strength
+# loss", motion lost in many planes; GH and AC OA — morning stiffness, loss of motion
 
 notes = {
   '': 'Four cuff muscles (SItS) hold the humeral head in the glenoid. Abduction: supraspinatus 0–15°, deltoid 15–90°, trapezius '
@@ -102,13 +105,13 @@ notes = {
   'dx:impinge': 'Impingement: the supraspinatus is trapped between the humeral head and the acromion in the extra-articular '
                 'subacromial space (bursa may swell) — pain with overhead motion, referred to the deltoid insertion, worse at '
                 'night and lying on that side. Neer, Hawkins. Physical therapy first.',
-  'dx:tear': 'Cuff tendinosis and tears (supraspinatus most often torn): partial, full thickness or massive; weakness when '
-             'significant, drop arm test. MRI or ultrasound. PT first; surgery for recalcitrant, full-thickness, massive tears.',
+  'dx:tear': 'Cuff tendinosis and tears (supraspinatus most often injured — empty/full can test): partial, full thickness or '
+             'massive; night pain, weakness when significant, drop arm test. MRI or ultrasound. PT first; surgery for recalcitrant, full-thickness, massive tears.',
   'dx:frozen': 'Adhesive capsulitis: gradual global loss of motion in many planes; peak mid-50s; diabetes, thyroid disease. Pain '
-               'first, then stiffness. Early glenohumeral steroid injection + PT.',
+               'first, then stiffness; strength is mostly kept. Early glenohumeral steroid injection + PT.',
   'dx:ghoa': 'Glenohumeral OA: over 70, women; prior dislocation, fracture or big cuff tears. Anterior shoulder pain, worst with '
-             'abduction and external rotation.',
-  'dx:acoa': 'AC joint OA: superior shoulder pain, worst with adduction and forward flexion.',
+             'abduction and external rotation; morning stiffness, worse with inactivity.',
+  'dx:acoa': 'AC joint OA: superior shoulder pain, worst with adduction and forward flexion; morning stiffness, loss of motion.',
 }
 
 dyn = dict(
@@ -120,7 +123,7 @@ dyn = dict(
               ['ghoa', 'Glenohumeral OA', 'shoa'], ['acoa', 'AC joint OA', 'shoa']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='OCOM Ortho SDL 13')
+  src='OCOM Ortho SDL 13 · First Aid p. 451')
 
 MAP = dict(
   id='shsim', title='The Shoulder in Motion', topic='msk', after='shoulder',

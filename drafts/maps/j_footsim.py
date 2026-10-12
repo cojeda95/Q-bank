@@ -34,17 +34,18 @@ text('left: medial side view · right: top view of the forefoot · schematic', 1
 
 # ════════ side view ════════
 add(f'<path d="M400 {GY + 10} H1560" style="stroke:var(--ink-3);stroke-width:4"/>'); text('ground', 400, GY + 44, 'nf-l2')
-add('<ellipse cx="560" cy="860" rx="110" ry="80" style="fill:var(--dk6);fill-opacity:.2;stroke:var(--dk6);stroke-width:4"/>'); text('calcaneus', 470, 780, 'nf-l2', 'end')
+add('<ellipse cx="560" cy="860" rx="110" ry="80" style="fill:var(--dk6);fill-opacity:.2;stroke:var(--dk6);stroke-width:4"/>'); text('calcaneus', 575, 880, 'nf-l2', 'middle')
 add('<path d="M650 820 C760 700 960 680 1120 760 C1220 810 1280 860 1320 900" style="fill:none;stroke:var(--dk6);stroke-width:46;opacity:.2;stroke-linecap:round"/>')
 text('arch', 900, 680, 'nf-l2', 'middle')
-add('<path d="M600 800 C620 640 640 520 650 380" style="fill:none;stroke:var(--dk4);stroke-width:26;opacity:.4"/>'); text('Achilles', 670, 420, 'nf-l2')
-add('<circle cx="640" cy="790" r="20" style="fill:var(--nf-h2o);fill-opacity:.3;stroke:var(--dk9);stroke-width:3"/>'); text('bursa', 690, 800, 'nf-l2')
-add('<circle cx="640" cy="790" r="34" style="fill:var(--bad);fill-opacity:.5"/>', when=D('bursa'))
+# heel is on the left = posterior: the Achilles inserts on the posterior calcaneus; the bursa sits between them, just above the insertion
+add('<path d="M448 870 C425 700 440 540 470 380" style="fill:none;stroke:var(--dk4);stroke-width:26;opacity:.4"/>'); text('Achilles', 490, 420, 'nf-l2')
+add('<circle cx="472" cy="792" r="18" style="fill:var(--nf-h2o);fill-opacity:.3;stroke:var(--dk9);stroke-width:3"/>'); text('bursa', 400, 760, 'nf-l2', 'end')
+add('<circle cx="472" cy="792" r="30" style="fill:var(--bad);fill-opacity:.5"/>', when=D('bursa'))
 add('<path d="M580 935 C780 930 1100 935 1300 935" style="fill:none;stroke:var(--dk9);stroke-width:10"/>'); text('plantar fascia', 900, 975, 'nf-l2', 'middle')
 add('<circle cx="590" cy="930" r="30" style="fill:var(--bad);fill-opacity:.5"/>', when=D('pf'))
 add('<circle cx="590" cy="930" r="44" style="fill:var(--bad);fill-opacity:.7"/>', when=['dx:pf&morning'])
-add('<path d="M620 790 C630 830 640 860 650 880" style="stroke:var(--bad);stroke-width:12"/>', when=D('sever'))
-text('Achilles traction on the growth plate', 540, 700, 'nf-l1 dyn-tag', 'end', when=D('sever'))
+add('<path d="M470 900 C490 870 500 840 505 815" style="fill:none;stroke:var(--bad);stroke-width:12"/>', when=D('sever'))   # posteroinferior apophysis
+text('Achilles traction on the growth plate', 420, 700, 'nf-l1 dyn-tag', 'end', when=D('sever'))
 add('<circle cx="1310" cy="905" r="30" style="fill:var(--dk6);fill-opacity:.3;stroke:var(--dk6);stroke-width:3"/>'); text('MT heads', 1310, 860, 'nf-l2', 'middle')
 # toes
 TOE = dict(nl=('M1330 905 L1410 905 L1460 905 L1500 905',), ham=('M1330 905 L1380 860 L1430 910 L1480 905',),
@@ -61,7 +62,7 @@ for k, (x, l) in LOAD.items():
 
 # ════════ top view ════════
 TX, TY = 2000, 1000
-add(f'<rect x="{TX - 260}" y="{TY - 640}" width="560" height="760" rx="30" class="dyn-soft"/>'); text('top view (left foot)', TX - 240, TY - 660, 'nf-l1')
+add(f'<rect x="{TX - 260}" y="{TY - 640}" width="560" height="760" rx="30" class="dyn-soft"/>'); text('top view (right foot)', TX - 240, TY - 660, 'nf-l1')
 add(f'<path d="M{TX - 120} {TY} C{TX - 160} {TY - 160} {TX - 150} {TY - 300} {TX - 100} {TY - 380} M{TX + 140} {TY} C{TX + 150} {TY - 150} {TX + 140} {TY - 280} {TX + 120} {TY - 360}" '
     'style="fill:none;stroke:var(--dk6);stroke-width:6;opacity:.4"/>', unless=D('ma'))
 add(f'<path d="M{TX - 120} {TY} C{TX - 180} {TY - 160} {TX - 220} {TY - 280} {TX - 260} {TY - 360} M{TX + 140} {TY} C{TX + 120} {TY - 150} {TX + 60} {TY - 260} {TX - 20} {TY - 330}" '
@@ -96,7 +97,7 @@ flows = [
   dict(d=f'M{TX + 45} {TY - 390} C{TX + 45} {TY - 430} {TX + 45} {TY - 460} {TX + 45} {TY - 500}', len=110, speed=60, r=8, base=dict(pain=2), when=D('morton')),
 ]
 sites = [dict(x=520, y=950, n=[-1, 1], w=10, t='rec', l='', aria='Plantar fasciitis', c='plantarfasc', ions=[]),
-         dict(x=700, y=740, n=[1, -1], w=10, t='rec', l='', aria='Retrocalcaneal bursitis and Sever', c='heelpain', ions=[]),
+         dict(x=520, y=740, n=[1, -1], w=10, t='rec', l='', aria='Retrocalcaneal bursitis and Sever', c='heelpain', ions=[]),
          dict(x=TX + 140, y=TY - 430, n=[1, 0], w=10, t='rec', l='', aria='Morton neuroma', c='morton', ions=[]),
          dict(x=TX - 180, y=TY - 430, n=[-1, 0], w=10, t='rec', l='', aria='Bunions', c='bunions', ions=[]),
          dict(x=1520, y=860, n=[1, -1], w=10, t='rec', l='', aria='Claw and hammer toe', c='clawtoe', ions=[]),
@@ -112,7 +113,8 @@ readouts = [
 notes = {
   '': 'Weight lands on the heel, rolls through the midfoot and pushes off from the metatarsal heads; the plantar fascia holds '
       'up the arch like a bowstring. Add a problem to see where it hurts or bends.',
-  'dx:pf': 'Plantar fasciitis: inflamed calcaneal attachment; over 40, men > women; worst on the first morning steps. NSAIDs, '
+  'dx:pf': 'Plantar fasciitis: inflamed calcaneal attachment; over 40, men > women; obesity, long standing, running, flat feet; worst '
+           'on the first morning steps or after rest. NSAIDs, '
            'fascia and Achilles stretches, heel pads, night splints; injection can atrophy the fat pad.',
   'dx:bursa': 'Retrocalcaneal bursitis: between the posterior calcaneus and the Achilles — overuse; tender, swollen, worse with '
               'dorsiflexion; tied to Achilles tendinosis. Often confused with plantar fasciitis.',
@@ -122,9 +124,10 @@ notes = {
                'on the cuboid). Pebble feeling, tingling; wide low shoes, metatarsal pad, injection, resection (sensory only).',
   'dx:bunion': 'Bunion: the proximal phalanx deviates laterally and the 1st metatarsal medially — medial MTP prominence. Wide toe '
                'box; osteotomy if needed.',
-  'dx:ham': 'Hammer toe: MTP extended, PIP flexed, DIP often extended, usually the 2nd toe — weak lumbricals and interossei.',
-  'dx:claw': 'Claw toe: MTP hyperextended, PIP and DIP flexed, lateral four toes; corns on top, calluses under the heads; the '
-             'neuropathic (diabetic) foot; Charcot-Marie-Tooth.',
+  'dx:ham': 'Hammer toe: MTP extended, PIP flexed, DIP often extended, usually the 2nd toe — weak lumbricals and interossei. '
+            'With pes cavus in Charcot-Marie-Tooth and Friedreich ataxia.',
+  'dx:claw': 'Claw toe: MTP hyperextended, PIP and DIP flexed, lateral four toes; corns on top, calluses under the heads; part '
+             'of the neuropathic (diabetic) foot with Charcot joints and absent reflexes.',
   'dx:ma': 'Metatarsus adductus: forefoot turned in at the midtarsal apex, hindfoot and ankle dorsiflexion normal (unlike '
            'clubfoot); usually flexible; resolves by 12–18 months; more often with hip dysplasia.',
 }
@@ -139,7 +142,7 @@ dyn = dict(
             dict(id='morning', label='When', type='toggle', on='First step of the morning', off='First morning step', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='OCOM Ortho SDL 7')
+  src='OCOM Ortho SDL 7 lecture and reading · First Aid pp. 465, 491, 538, 545 · Moore ch 7 · Bootcamp')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -149,7 +152,9 @@ MAP = dict(
       'a bunion, hammer or claw toes or metatarsus adductus',
   w=3600, h=1900,
   fa='465, 491, 538, 545',
-  src=['OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury', 'Moore ch 7 — Lower Limb'],
+  src=['OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury', 'OCOM Ortho — SDL 7 reading: Practical Office Orthopedics ch 5, The foot and ankle',
+       'Moore ch 7 — Lower Limb', 'Bootcamp.com MSK — Foot & ankle',
+       'OCOM Ortho — SDL 9 reading: Pediatric orthopedic surgery (Current Diagnosis & Treatment in Orthopedics 6e ch 12)'],
   lanes=[('ftHeel', 'Heel', 'tca'), ('ftFore', 'Forefoot & toes', 'glycolysis')],
   nodes=[
     ('ft1', 'Plantar fasciitis', 330, 1700, 'ftHeel', 'first morning step', ['plantarfasc'], 'hub'),
@@ -159,7 +164,7 @@ MAP = dict(
     ('ft5', 'Claw vs hammer toe', 2080, 1700, 'ftFore', 'MTP · PIP · DIP', ['clawtoe']),
     ('ft6', 'Metatarsus adductus', 2520, 1700, 'ftFore', 'self-correcting', ['metadduct'])],
   panels=[
-    (2500, PANY, 1000, 'Toe deformities (OCOM Ortho SDL 7)', [
+    (2500, PANY, 1000, 'Toe deformities (OCOM SDL 7 reading · Moore ch 7)', [
       ('Claw toe', 'MTP ext · PIP flex · DIP flex'), ('Hammer toe', 'MTP ext · PIP flex · DIP ext'),
       ('Bunion', 'phalanx lateral · 1st MT medial')])],
   dyn=dyn)

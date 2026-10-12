@@ -102,11 +102,11 @@ T = [
   ('dg', 'hy', 'after a drug', 'A drug syndrome', 'which drug, which signs?', None),
   ('nm', 'dg', 'antipsychotic · lead-pipe rigidity', 'Neuroleptic malignant syndrome', 'CK ↑↑ · myoglobinuria', 'nms'),
   ('ss', 'dg', 'two serotonergic drugs · clonus', 'Serotonin syndrome', 'within hours · diarrhea', 'ss'),
-  ('mh', 'dg', 'inhaled anesthetic · succinylcholine', 'Malignant hyperthermia', 'end-tidal CO₂ ↑ · RYR1', 'mh'),
+  ('mh', 'dg', 'inhaled anesthetic · succinylcholine', 'Malignant hyperthermia', 'CO₂ ↑ (hypercapnia) · RYR1', 'mh'),
   ('ac', 'dg', 'hot, dry, flushed · big pupils', 'Anticholinergic toxicity', 'atropine · TCAs · diphenhydramine', 'ach'),
   ('sy', 'dg', 'sweating · big pupils · BP ↑', 'Sympathomimetic toxicity', 'cocaine · amphetamines', 'symp'),
   ('hs', 'hy', 'heat, humidity, exertion', 'Heat stroke', 'core > 40 °C · confused', 'heat'),
-  ('ts', 'hy', 'Graves + infection or surgery', 'Thyroid storm', 'delirium · tachyarrhythmia', 'storm'),
+  ('ts', 'hy', 'hyperthyroid + infection or surgery', 'Thyroid storm', 'delirium · tachyarrhythmia', 'storm'),
 ]
 pos, flows, ybot = tree(T, SW, Y0=270)
 text('Fever & hyperthermia — follow the clue down the tree', 180, 160, 'dyn-big')
@@ -115,9 +115,9 @@ text('each box asks one question; the dot travels the path to the answer you pic
 # ════════ the clues ════════
 C = {
   'fever': ['Fever — the thermostat is reset', 'IL-1 (the endogenous pyrogen) raises hypothalamic PGE₂, which resets the set point', 'NSAIDs and aspirin block that step'],
-  'nms': ['Neuroleptic malignant syndrome — after an antipsychotic', 'FEVER: Myoglobinuria, Fever, Encephalopathy, Vitals unstable, Enzymes (CK ↑), Rigidity', 'stop the drug · cooling · dantrolene, bromocriptine'],
+  'nms': ['Neuroleptic malignant syndrome — after an antipsychotic', 'FEVER: Myoglobinuria, Fever, Encephalopathy, Vitals unstable, Enzymes (CK ↑), Rigidity', 'onset over 1–3 days · stop the drug · cooling · dantrolene, bromocriptine'],
   'ss': ['Serotonin syndrome — two serotonergic drugs together', 'Activity (clonus, hyperreflexia), Autonomic (hyperthermia, sweating, diarrhea), Altered mental status', 'onset in hours · cyproheptadine if supportive care fails'],
-  'mh': ['Malignant hyperthermia — a RYR1 mutation meets the trigger', 'during anesthesia: rising end-tidal CO₂, tachycardia, masseter rigidity, hyperthermia', 'rhabdomyolysis, hyperkalemia · dantrolene'],
+  'mh': ['Malignant hyperthermia — a RYR1 mutation meets the trigger', 'within minutes of anesthesia: hypercapnia, tachycardia, masseter rigidity, hyperthermia', 'rhabdomyolysis, hyperkalemia · dantrolene'],
   'ach': ['Anticholinergic toxicity', 'hot as a hare, dry as a bone, red as a beet, blind as a bat, mad as a hatter', 'dry skin separates it from sympathomimetic toxicity · physostigmine'],
   'symp': ['Sympathomimetic toxicity — cocaine, amphetamines', 'mydriasis, sweating, tachycardia, hypertension, hyperthermia, agitation', 'chest pain or MI in a young patient'],
   'heat': ['Heat stroke — heat that can’t be shed', 'core temperature over 40 °C with confusion or delirium', 'rhabdomyolysis, AKI, DIC · rapid external cooling'],
@@ -134,6 +134,7 @@ readouts = [
   dict(l='Sweating', mods=[dict(when=O('ss', 'symp'), d=1), dict(when=O('ach'), d=-1)]),
   dict(l='Pupil size', mods=[dict(when=O('ss', 'ach', 'symp'), d=1)]),
   dict(l='Reflexes · clonus', mods=[dict(when=O('ss'), d=1)]),
+  dict(l='Bowel sounds', mods=[dict(when=O('ss'), d=1), dict(when=O('ach'), d=-1)]),
 ]
 
 # ════════ notes ════════
@@ -143,11 +144,11 @@ notes = {
   'dx:fever': 'Fever: IL-1, the endogenous pyrogen, raises PGE₂ in the hypothalamus and resets the set point upward — the step '
               'NSAIDs and aspirin block. IL-6 drives the liver’s acute-phase response.',
   'dx:nms': 'Neuroleptic malignant syndrome follows an antipsychotic: lead-pipe rigidity, fever, encephalopathy, unstable vitals and '
-            'a very high CK with myoglobinuria. Stop the drug; cool; dantrolene or bromocriptine.',
+            'a very high CK with myoglobinuria, building over 1–3 days. Stop the drug; cool; dantrolene or bromocriptine.',
   'dx:ss': 'Serotonin syndrome comes on within hours of combining serotonergic drugs: clonus and hyperreflexia, hyperthermia, '
-           'sweating, diarrhea and mydriasis. Stop the drugs; benzodiazepines; cyproheptadine.',
-  'dx:mh': 'Malignant hyperthermia: a mutant RYR1 releases calcium when exposed to inhaled anesthetics or succinylcholine — rising '
-           'end-tidal CO₂, rigidity, hyperthermia, hyperkalemia. Dantrolene blocks RYR1.',
+           'sweating, hyperactive bowel sounds with diarrhea, and mydriasis. Stop the drugs; benzodiazepines; cyproheptadine.',
+  'dx:mh': 'Malignant hyperthermia: a mutant RYR1 releases calcium when exposed to inhaled anesthetics or succinylcholine — hypercapnia, '
+           'rigidity, hyperthermia, hyperkalemia. Dantrolene blocks RYR1.',
   'dx:ach': 'Anticholinergic toxicity (atropine, TCAs, first-generation antihistamines, jimsonweed): hot, dry, flushed, mydriatic, '
             'delirious, with urinary retention. Dry skin separates it from sympathomimetic toxicity.',
   'dx:symp': 'Sympathomimetic toxicity (cocaine, amphetamines): mydriasis, sweating, tachycardia, hypertension, hyperthermia and '
@@ -167,7 +168,7 @@ dyn = dict(
     ['heat', 'Heat stroke', 'heatstroke'], ['storm', 'Thyroid storm', 'hyperthyroid']])],
   notes=notes, shapes=shapes, flows=flows, sites=[], readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 106, 239–241, 346, 530, 566, 587 (cards) · Guyton ch 74 · Katzung ch 58')
+  src='First Aid pp. 106, 209, 239–241, 346, 530, 566, 587, 589 · Guyton ch 74 · Katzung ch 16, 25, 58')
 
 MAP = dict(
   id='sxfever', title='Fever & Hyperthermia', topic='sx', after='sxams',
@@ -185,12 +186,13 @@ MAP = dict(
     ('xf4', 'Malignant hyperthermia', 1660, PY, 'xfDrug', 'RYR1', ['mhyper']),
     ('xf5', 'Toxidromes', 2020, PY, 'xfDrug', 'wet or dry?', ['toxidromes', 'antimusc', 'cocaine']),
     ('xf6', 'Heat illness', 330, PY + 130, 'xfHeat', 'cramps → stroke', ['heatstroke', 'heatillness']),
-    ('xf7', 'Thyroid storm', 800, PY + 130, 'xfHeat', 'Graves under stress', ['hyperthyroid'])],
+    ('xf7', 'Thyroid storm', 800, PY + 130, 'xfHeat', 'thyrotoxic, under stress', ['hyperthyroid'])],
   panels=[
-    (2420, PANY, 1000, 'Telling them apart (First Aid pp. 240, 587)', [
+    (2420, PANY, 1000, 'Telling them apart (First Aid pp. 240, 587 · Katzung Table 16–4)', [
       ('Lead-pipe rigidity, CK ↑↑', 'neuroleptic malignant syndrome'),
       ('Clonus, hyperreflexia', 'serotonin syndrome — hours'),
       ('Hot and DRY skin', 'anticholinergic'),
       ('Hot and SWEATY skin', 'sympathomimetic'),
-      ('In the operating room', 'malignant hyperthermia')])],
+      ('In the operating room', 'malignant hyperthermia'),
+      ('Onset', 'MH minutes · SS hours · NMS 1–3 days')])],
   dyn=dyn)

@@ -49,7 +49,7 @@ SHT = {'1': 'I — straight through the plate: epiphysis separates', '2': 'II �
        '3': 'III — plate, then out the epiphysis — into the joint: arthritis + growth arrest', '4': 'IV — across epiphysis, plate and metaphysis — bony bar if malreduced',
        '5': 'V — crush of the plate'}
 for k, s in SHT.items(): text(s, 600, 1060, 'nf-l1 dyn-tag', 'middle', when=S(k))
-text('any type can arrest growth — displacement and reduction matter more than the type', 600, 1100, 'nf-l2', 'middle', when=['sh:*'])
+text('higher types carry more growth-arrest risk; lines that cross the joint or misalign the plate do worst', 600, 1100, 'nf-l2', 'middle', when=['sh:*'])
 
 # ════════ arm ════════
 AX = 1760
@@ -66,14 +66,14 @@ add(f'<path d="M{AX - 40} 900 H{AX + 40}" style="stroke:var(--dk6);stroke-width:
 add(f'<circle cx="{AX - 62}" cy="900" r="16" style="fill:var(--dk6);fill-opacity:.4"/>', unless=I('medepi')); text('medial epicondyle', AX - 90, 890, 'nf-l2', 'end')
 add(f'<circle cx="{AX - 100}" cy="950" r="16" style="fill:var(--bad);fill-opacity:.6"/>', when=I('medepi'))
 OFF = I('postdis')
-def fore(dx, when=None, unless=None):
-    add(f'<path d="M{AX - 22 + dx} 930 L{AX - 26 + dx} 1300" style="stroke:var(--dk6);stroke-width:20;opacity:.3;stroke-linecap:round"/>', when=when, unless=unless)
-    add(f'<path d="M{AX + 26 + dx} 930 L{AX + 34 + dx} 1300" style="stroke:var(--dk6);stroke-width:24;opacity:.3;stroke-linecap:round"/>', when=when, unless=unless)
-fore(0, unless=OFF); fore(60, when=OFF)
+def fore(dy, when=None, unless=None):   # posterior dislocation: radius and ulna ride back and up behind the humerus — seen from the front, the forearm overlaps it
+    add(f'<path d="M{AX - 22} {930 + dy} L{AX - 26} {1300 + dy}" style="stroke:var(--dk6);stroke-width:20;opacity:.3;stroke-linecap:round"/>', when=when, unless=unless)
+    add(f'<path d="M{AX + 26} {930 + dy} L{AX + 34} {1300 + dy}" style="stroke:var(--dk6);stroke-width:24;opacity:.3;stroke-linecap:round"/>', when=when, unless=unless)
+fore(0, unless=OFF); fore(-70, when=OFF)
 text('ulna', AX - 90, 1150, 'nf-l2', 'end'); text('radius', AX + 70, 1150, 'nf-l2')
 # fracture marks
 def brk(x, y, when): add(f'<path d="M{x - 30} {y - 10} L{x + 30} {y + 10}" style="stroke:var(--bad);stroke-width:8"/>', when=when)
-brk(1515, 380, I('clav')); brk(AX, 840, I('supra')); brk(AX + 32, 1270, I('colles')); brk(AX - 24, 1100, I('monteggia')); brk(AX + 30, 1100, I('galeazzi'))
+brk(1515, 380, I('clav')); brk(AX, 840, I('supra')); brk(AX, 700, I('shaft')); brk(AX + 32, 1270, I('colles')); brk(AX - 24, 1100, I('monteggia')); brk(AX + 30, 1100, I('galeazzi'))
 add(f'<circle cx="{AX + 40}" cy="920" r="22" style="fill:none;stroke:var(--bad);stroke-width:6"/>', when=I('monteggia'))
 add(f'<circle cx="{AX}" cy="1300" r="26" style="fill:none;stroke:var(--bad);stroke-width:6"/>', when=I('galeazzi'))
 add(f'<path d="M{AX - 30} 520 H{AX + 30}" style="stroke:var(--bad);stroke-width:10"/>', when=I('ll'))
@@ -81,12 +81,13 @@ add(f'<path d="M{AX - 30} 520 H{AX + 30}" style="stroke:var(--bad);stroke-width:
 NV = dict(ax=(AX + 40, 560, 'axillary'), rad=(AX + 34, 720, 'radial'), med=(AX + 10, 860, 'median'), uln=(AX - 70, 930, 'ulnar'))
 for k, (x, y, l) in NV.items():
     add(f'<circle cx="{x}" cy="{y}" r="12" style="fill:var(--dk7);opacity:.7"/>'); text(l, x + (20 if k != 'uln' else -20), y + 30, 'nf-l2', None if k != 'uln' else 'end')
-RISK = dict(ax=I('antdis'), med=I('supra'), uln=I('postdis', 'medepi'))
+RISK = dict(ax=I('antdis'), rad=I('shaft'), med=I('supra'), uln=I('postdis', 'medepi'))
 for k, w in RISK.items():
     x, y, _ = NV[k]; add(f'<circle cx="{x}" cy="{y}" r="26" style="fill:none;stroke:var(--bad);stroke-width:6"/>', when=w)
 IT = dict(clav='clavicle — middle third; SCM lifts the medial piece, the arm’s weight drops the shoulder',
           antdis='anterior dislocation — head goes subcoracoid · Bankart, Hill-Sachs · axillary nerve: flat deltoid, numb patch',
           supra='supracondylar — distal fragment pulled over; median nerve or brachial vessels',
+          shaft='midshaft humerus — radial nerve in the spiral groove: wrist drop, triceps spared',
           postdis='posterior elbow dislocation — UCL tears; ulnar nerve', medepi='medial epicondyle avulsion (child) — ulnar nerve traction',
           colles='Colles — distal radius tilts dorsally: dinner fork · over 50, osteoporosis', monteggia='Monteggia — ulna fracture + radial head dislocation (missed in kids)',
           galeazzi='Galeazzi — radial shaft fracture + DRUJ disruption — needs ORIF', ll='Little League shoulder — stress injury of the proximal humeral physis in pitchers')
@@ -97,7 +98,7 @@ flows = [
   dict(d='M1460 330 C1440 300 1420 280 1400 250', len=100, speed=50, r=9, base=dict(pull=2), when=I('clav')),
   dict(d='M1640 460 C1650 500 1660 540 1670 580', len=130, speed=50, r=9, base=dict(pull=2), when=I('clav')),
   dict(d=f'M{AX - 10} 490 C{AX - 40} 520 {AX - 60} 550 {AX - 80} 580', len=110, speed=50, r=9, base=dict(pull=2), when=I('antdis')),
-  dict(d=f'M{AX + 32} 1270 C{AX + 50} 1250 {AX + 70} 1240 {AX + 90} 1235', len=70, speed=40, r=9, base=dict(pull=2), when=I('colles')),
+  dict(d=f'M{AX + 34} 1300 L{AX + 33} 1235', len=65, speed=30, r=9, base=dict(pull=2), when=I('colles')),   # radius shortens (the dorsal tilt is out of this plane)
 ]
 sites = [dict(x=420, y=450, n=[-1, 0], w=10, t='rec', l='', aria='Salter-Harris', c='salterharris', ions=[]),
          dict(x=1300, y=440, n=[-1, 1], w=10, t='rec', l='', aria='Clavicle fracture', c='clavfx', ions=[]),
@@ -108,8 +109,8 @@ sites = [dict(x=420, y=450, n=[-1, 0], w=10, t='rec', l='', aria='Salter-Harris'
 
 readouts = [
   dict(l='Growth plate involved', mods=[dict(when=['sh:*'] + I('ll'), d=1)]),
-  dict(l='Joint surface involved', mods=[dict(when=S('3'), d=1)]),
-  dict(l='Nerve at risk', mods=[dict(when=I('antdis', 'supra', 'postdis', 'medepi'), d=1)]),
+  dict(l='Joint surface involved', mods=[dict(when=S('3', '4'), d=1), dict(when=S('1', '2', '5'), d=0)]),
+  dict(l='Nerve at risk', mods=[dict(when=I('antdis', 'shaft', 'supra', 'postdis', 'medepi'), d=1)]),
 ]
 
 notes = {
@@ -124,8 +125,10 @@ notes = {
               'junction. SCM lifts the medial fragment; the shoulder drops and the lateral fragment rotates in.',
   'inj:antdis': 'Anterior shoulder dislocation: young athletes — extension and lateral rotation drive the head inferoanteriorly to '
                 'a subcoracoid spot. Bankart, Hill-Sachs; axillary nerve (flattened deltoid, numb deltoid skin).',
-  'inj:supra': 'Supracondylar humerus fracture (children): the distal fragment is pulled over the proximal; median nerve or '
-               'brachial vessels at risk.',
+  'inj:shaft': 'Midshaft humerus fracture: the radial nerve runs in the spiral groove — wrist drop; triceps and posterior arm '
+               'sensation are spared because their branches leave above the groove.',
+  'inj:supra': 'Supracondylar humerus fracture — the commonest elbow fracture in children: the distal fragment is pulled over the '
+               'proximal; median nerve or brachial artery at risk.',
   'inj:postdis': 'Posterior elbow dislocation: fall on the hand with the elbow flexed, or hyperextension; UCL tears, radial head, '
                  'coronoid or olecranon fractures; ulnar nerve.',
   'inj:medepi': 'Medial epicondyle avulsion in children: the UCL pulls the epicondyle off before it fuses — ulnar nerve traction.',
@@ -143,20 +146,22 @@ dyn = dict(
               ['4', 'Type IV', 'salterharris'], ['5', 'Type V', 'salterharris']]),
             dict(id='inj', label='Arm injury', type='one', options=[
               ['clav', 'Clavicle fracture', 'clavfx'], ['antdis', 'Anterior shoulder dislocation', 'shoulderdisloc'],
-              ['supra', 'Supracondylar fracture', 'elbowinj'], ['postdis', 'Posterior elbow dislocation', 'elbowinj'],
+              ['shaft', 'Midshaft humerus fracture', 'radialnerve'], ['supra', 'Supracondylar fracture', 'elbowinj'], ['postdis', 'Posterior elbow dislocation', 'elbowinj'],
               ['medepi', 'Medial epicondyle avulsion', 'elbowinj'], ['colles', 'Colles', 'forearmfx'],
               ['monteggia', 'Monteggia', 'forearmfx'], ['galeazzi', 'Galeazzi', 'forearmfx'], ['ll', 'Little League shoulder', 'littleleague']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Moore ch 3')
+  src='Moore ch 3 · First Aid pp. 450, 463, 467 · OCOM Ortho SDL 9 (pediatric) · Bootcamp · Salter-Harris: Cepela 2016')
 
 MAP = dict(
   id='fxsim', title='Growth Plates & Arm Injuries in Motion', topic='msk', after='sportsortho',
-  sub='Draw Salter-Harris I–V through a child’s growth plate, then break and dislocate the arm — clavicle, shoulder, elbow, Colles, '
+  sub='Draw Salter-Harris I–V through a child’s growth plate, then break and dislocate the arm — clavicle, shoulder, humerus, elbow, Colles, '
       'Monteggia, Galeazzi — and see which nerve sits next to each',
   w=3600, h=1900,
   fa='450, 463, 467',
-  src=['Moore ch 3 — Upper Limb', 'Pawlina ch 8 — Bone'],
+  src=['Moore ch 3 — Upper Limb', 'Pawlina ch 8 — Bone',
+       'OCOM Ortho — SDL 9 reading: Pediatric orthopedic surgery (Current Diagnosis & Treatment in Orthopedics 6e ch 12)',
+       'Bootcamp.com MSK — Childhood musculoskeletal pathology'],
   lanes=[('fxPed', 'Growth plate', 'tca'), ('fxArm', 'Upper limb', 'glycolysis')],
   nodes=[
     ('fx1', 'Salter-Harris fractures', 330, 1700, 'fxPed', 'types I–V', ['salterharris'], 'hub'),
@@ -164,8 +169,9 @@ MAP = dict(
     ('fx3', 'Clavicle fracture', 1200, 1700, 'fxArm', 'middle third', ['clavfx']),
     ('fx4', 'Shoulder dislocation', 1640, 1700, 'fxArm', 'anterior · axillary n.', ['shoulderdisloc']),
     ('fx5', 'Elbow fractures', 2080, 1700, 'fxArm', 'median · ulnar', ['elbowinj']),
-    ('fx6', 'Forearm & wrist fractures', 2520, 1700, 'fxArm', 'Colles · Monteggia', ['forearmfx'])],
+    ('fx6', 'Forearm & wrist fractures', 2520, 1700, 'fxArm', 'Colles · Monteggia', ['forearmfx']),
+    ('fx7', 'Radial nerve injury', 2960, 1700, 'fxArm', 'midshaft · wrist drop', ['radialnerve'])],
   panels=[
-    (2500, PANY, 1000, 'Bone → nerve (Moore ch 3)', [
+    (2500, PANY, 1000, 'Bone → nerve (Moore ch 3 · First Aid p. 450)', [
       ('Surgical neck', 'axillary'), ('Radial groove', 'radial'), ('Distal humerus', 'median'), ('Medial epicondyle', 'ulnar')])],
   dyn=dyn)

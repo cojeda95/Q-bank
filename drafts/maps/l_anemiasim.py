@@ -124,15 +124,15 @@ C = {
   'ida': ['Iron deficiency anemia', 'ferritin ↓, serum iron ↓, TIBC ↑, saturation ↓↓ · ↑ RDW, ↑ FEP', 'men and postmenopausal women: look for occult GI bleeding'],
   'acd': ['Anemia of chronic disease', 'IL-6 → hepcidin → ferroportin degraded → iron locked in macrophages', 'ferritin ↑, TIBC ↓ · normocytic early, microcytic late'],
   'thal': ['β-Thalassemia minor', 'mild microcytic anemia with normal iron studies · target cells', 'HbA2 ↑ (4–8%) · Mentzer index under 13'],
-  'lead': ['Lead poisoning', 'inhibits ALA dehydratase and ferrochelatase · basophilic stippling', 'children: encephalopathy, Burton lines · adults: colic, wrist and foot drop'],
-  'sidero': ['Sideroblastic anemia', 'ALA synthase fails (X-linked, alcohol, lead, isoniazid) — iron stranded in mitochondria', 'ringed sideroblasts · iron, ferritin and saturation ↑'],
+  'lead': ['Lead poisoning', 'inhibits ALA dehydratase and ferrochelatase · basophilic stippling', 'children: encephalopathy · adults: wrist and foot drop · Burton lines, colic'],
+  'sidero': ['Sideroblastic anemia', 'ALA synthase fails (X-linked, alcohol, lead, isoniazid) — iron stranded in mitochondria', 'ringed sideroblasts · iron ↑, ferritin ↑, TIBC normal or ↓'],
   'aplastic': ['Aplastic anemia', 'pancytopenia: fatigue, bleeding, infection · no splenomegaly', 'hypocellular, fatty marrow · drugs, viruses, radiation, Fanconi'],
-  'ckd': ['Anemia of chronic kidney disease', 'peritubular fibroblasts make too little erythropoietin', 'normocytic, ↓ reticulocytes · check iron too'],
+  'ckd': ['Anemia of chronic kidney disease', 'interstitial cells by the peritubular capillaries make too little EPO', 'normocytic, ↓ reticulocytes · treated with EPO'],
   'hs': ['Hereditary spherocytosis — extravascular hemolysis', 'spherocytes, ↑ MCHC, splenomegaly, pigment gallstones', 'EMA binding ↓ · Coombs negative'],
   'g6pd': ['G6PD deficiency — oxidant hemolysis', 'a few days after an oxidant: back pain, dark urine', 'Heinz bodies, bite cells · ↓ haptoglobin'],
   'aiha': ['Warm autoimmune hemolytic anemia', 'IgG coats the red cell — SLE, CLL, drugs (α-methyldopa, β-lactams)', 'direct Coombs positive · spherocytes'],
   'b12': ['B12 deficiency', 'megaloblastic anemia, hypersegmented neutrophils, glossitis', 'subacute combined degeneration · MMA ↑ and homocysteine ↑'],
-  'fol': ['Folate deficiency', 'megaloblastic anemia without neurologic findings', 'homocysteine ↑ with normal MMA · stores last 3–4 months'],
+  'fol': ['Folate deficiency', 'megaloblastic anemia without neurologic findings', 'homocysteine ↑ with normal MMA · develops over weeks to months'],
 }
 cy = clues(C, SW, 180, ybot + 70, 2140)
 PY = cy + 110; PANY = 700
@@ -142,7 +142,7 @@ O = lambda *k: [f'{SW}:{x}' for x in k]
 readouts = [
   dict(l='MCV', mods=[dict(when=O('ida', 'acd', 'thal', 'lead', 'sidero'), d=-1), dict(when=O('aplastic', 'ckd', 'hs', 'g6pd', 'aiha'), d=0),
                       dict(when=O('b12', 'fol'), d=1)]),
-  dict(l='Reticulocyte index', mods=[dict(when=O('ida', 'aplastic', 'ckd'), d=-1), dict(when=O('hs', 'g6pd', 'aiha'), d=1)]),
+  dict(l='Reticulocyte index', mods=[dict(when=O('ida', 'acd', 'aplastic', 'ckd'), d=-1), dict(when=O('hs', 'g6pd', 'aiha'), d=1)]),
   dict(l='Ferritin', mods=[dict(when=O('ida'), d=-1), dict(when=O('acd', 'sidero'), d=1), dict(when=O('thal'), d=0)]),
   dict(l='TIBC', mods=[dict(when=O('ida'), d=1), dict(when=O('acd'), d=-1), dict(when=O('thal'), d=0)]),
   dict(l='LDH', mods=[dict(when=O('hs', 'g6pd', 'aiha'), d=1)]),
@@ -153,20 +153,20 @@ readouts = [
 notes = {
   '': 'Anemia is a number, not a diagnosis. The MCV sorts it: microcytic (hemoglobin synthesis failed), normocytic (too few '
       'correct cells — is the marrow failing or racing?) or macrocytic (DNA synthesis failed).',
-  'dx:ida': 'Iron deficiency: stores empty first (ferritin ↓), then serum iron; the liver makes more transferrin, so TIBC rises — '
-            'the best discriminator from chronic disease. In men and postmenopausal women, look for GI blood loss.',
+  'dx:ida': 'Iron deficiency: ferritin and serum iron fall while transferrin rises, so TIBC is high — the opposite of chronic '
+            'disease. In men and postmenopausal women, assume GI blood loss until proven otherwise.',
   'dx:acd': 'Anemia of chronic disease: IL-6 drives hepcidin, which degrades ferroportin and locks iron inside macrophages. '
             'Ferritin is high, TIBC low — normocytic early, microcytic only if it persists.',
   'dx:thal': 'β-Thalassemia minor: a mild microcytic anemia with normal iron studies, target cells and a raised HbA2. A Mentzer '
              'index (MCV ÷ RBC count) under 13 favors thalassemia.',
   'dx:lead': 'Lead blocks ALA dehydratase and ferrochelatase and leaves ribosomal remnants — basophilic stippling. Children get '
-             'encephalopathy and Burton lines; adults get colic and wrist or foot drop.',
+             'encephalopathy, adults wrist or foot drop; Burton lines and colic complete it.',
   'dx:sidero': 'Sideroblastic anemia: ALA synthase, the first heme step, fails, so iron is stranded in mitochondria as ringed '
-               'sideroblasts. Iron, ferritin and saturation are high — the opposite of iron deficiency.',
+               'sideroblasts. Iron and ferritin are high, TIBC normal or low — the opposite of iron deficiency.',
   'dx:aplastic': 'Aplastic anemia: stem cells fail — pancytopenia with a hypocellular, fatty marrow and a low reticulocyte count, '
-                 'and no splenomegaly or lymphadenopathy.',
-  'dx:ckd': 'Anemia of chronic kidney disease: peritubular fibroblasts make too little erythropoietin, so a normocytic anemia '
-            'deepens as GFR falls; reticulocytes are low.',
+                 'and no splenomegaly (Robbins: if the spleen is big, doubt the diagnosis).',
+  'dx:ckd': 'Anemia of chronic kidney disease: the interstitial cells by the peritubular capillaries make too little erythropoietin, '
+            'so the anemia is normocytic with low reticulocytes; EPO treats it.',
   'dx:hs': 'Hereditary spherocytosis: spectrin or ankyrin defects make spherocytes that the spleen removes — extravascular '
            'hemolysis, ↑ MCHC, Coombs negative, ↓ EMA binding.',
   'dx:g6pd': 'G6PD deficiency: without NADPH, red cells can’t handle an oxidant — hemolysis a few days later with Heinz bodies, bite '
@@ -176,7 +176,7 @@ notes = {
   'dx:b12': 'B12 deficiency: methionine synthase fails (megaloblastic anemia) and methylmalonyl-CoA mutase fails (MMA ↑, myelin '
             'damage) — subacute combined degeneration.',
   'dx:fol': 'Folate deficiency: the same megaloblastic anemia but no neurologic signs and a normal MMA (homocysteine still rises). '
-            'Stores last only months — alcohol, pregnancy, phenytoin, methotrexate.',
+            'It develops in weeks to months (vs years for B12) — alcohol, pregnancy, phenytoin, methotrexate.',
 }
 
 dyn = dict(
@@ -188,15 +188,15 @@ dyn = dict(
     ['aiha', 'Warm AIHA', 'warmaiha'], ['b12', 'B12 deficiency', 'b12def'], ['fol', 'Folate deficiency', 'b9def']])],
   notes=notes, shapes=shapes, flows=flows, sites=[], readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 67, 422–430 (cards) · Robbins ch 14')
+  src='First Aid pp. 67, 422–430, 607 · Robbins ch 9, 14')
 
 MAP = dict(
   id='anemiasim', title='Anemia Work-Up', topic='heme', after='rbc',
   sub='MCV first, then iron studies, the reticulocyte index or methylmalonic acid — pick an answer and a dot follows the '
       'algorithm down the tree while the readouts show the MCV, reticulocytes, ferritin, TIBC, LDH and MMA that go with it',
   w=3500, h=1830,
-  fa='67, 77, 96, 209, 402, 413, 420, 422–430',
-  src=[full('Robbins', 14), full('Katzung', 33), full('Marks', 42)],
+  fa='67, 77, 96, 209, 402, 413, 420, 422–430, 607',
+  src=[full('Robbins', 14), full('Katzung', 33), full('Marks', 42), full('Robbins', 9)],
   lanes=[('anMicro', 'Microcytic', 'glycolysis'), ('anNormo', 'Normocytic', 'tca'), ('anMacro', 'Macrocytic', 'gluconeo')],
   nodes=[
     ('an1', 'Classifying anemia', 330, PY, 'anNormo', 'MCV · reticulocytes', ['anemiaapproach', 'reticindex'], 'hub'),
@@ -210,7 +210,7 @@ MAP = dict(
     (2420, PANY, 1000, 'Iron studies (First Aid pp. 423–425)', [
       ('Iron deficiency', 'iron ↓ · TIBC ↑ · ferritin ↓ · saturation ↓↓'),
       ('Chronic disease', 'iron ↓ · TIBC ↓ · ferritin ↑'),
-      ('Sideroblastic', 'iron ↑ · ferritin ↑ · saturation ↑'),
+      ('Sideroblastic', 'iron ↑ · TIBC normal/↓ · ferritin ↑'),
       ('Thalassemia trait', 'normal'),
       ('Hemochromatosis', 'iron ↑ · TIBC ↓ · ferritin ↑ · saturation ↑↑')])],
   dyn=dyn)

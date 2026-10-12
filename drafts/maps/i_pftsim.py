@@ -4,7 +4,7 @@
 # restriction (neuromuscular weakness, severe obesity: shifted to smaller volumes) — beside bars for RV, FRC and TLC
 # against normal, and FEV₁/FVC. Readouts: FEV₁, FEV₁/FVC, TLC, RV, DLCO.
 # No new cards: facts restate the pinned cards (pfts, lungvol, compliance, copd, asthma, ild, mg, gbs — fact-checked
-# against the corpus). Curves and bar heights are schematic. Sources: First Aid 2025 pp. 682–683, 692.
+# against the corpus). Curves and bar heights are schematic. Sources: First Aid 2025 pp. 682–683, 692–694, Costanzo ch 5.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -68,6 +68,12 @@ add(f'<path d="{loop(**NORM)}" class="dyn-trace" style="fill:var(--dk11);fill-op
 for k, kw in LOOPS.items():
     add(f'<path d="{loop(**kw)}" class="dyn-trace" style="fill:var(--dk3);fill-opacity:.1;stroke:var(--dk3);stroke-width:4"/>', when=P(k))
 text('dashed = normal', 1380, 230, 'dyn-cap', 'end', when=['pf:*'])
+def plen(d):                                   # length of an M…L…Z polyline, for the riding dot
+    pts = [tuple(map(float, q.split())) for q in d.strip('MZ ').split(' L')]
+    pts.append(pts[0])
+    return round(sum(((x1 - x0) ** 2 + (y1 - y0) ** 2) ** .5 for (x0, y0), (x1, y1) in zip(pts, pts[1:])))
+flows = [dict(d=loop(**NORM), len=plen(loop(**NORM)), speed=320, r=9, base=dict(air=3), unless=['pf:*'])]
+flows += [dict(d=loop(**kw), len=plen(loop(**kw)), speed=320, r=9, base=dict(air=3), when=P(k)) for k, kw in LOOPS.items()]
 text('shifted left (larger volumes) · scooped expiration — air trapped', 180, 1100, TAG, when=OBS)
 text('shifted right (smaller volumes) · shape kept, everything smaller', 180, 1100, TAG, when=REST)
 text('pick a pattern to compare with normal', 180, 1100, 'dyn-cap', unless=['pf:*'])
@@ -92,7 +98,7 @@ for k in LOOPS:
     add(''.join(f'<path d="M{BX + i * 220 + 10} {by(v)} H{BX + i * 220 + 130}" class="dyn-dash"/>' for i, v in enumerate(VOLS['norm'])), when=P(k))
 text('dashed = normal · heights schematic', 1460, 980, 'dyn-cap')
 text('RV, FRC and TLC up — hyperinflation', 1460, 1040, TAG, when=OBS)
-text('TLC down — the lung (or the chest) can’t fill', 1460, 1040, TAG, when=REST)
+text('RV, FRC and TLC down — the lung (or chest) can’t fill', 1460, 1040, TAG, when=REST)
 text('FEV₁ ÷ FVC below 70%', 1460, 1070, TAG, when=OBS)
 text('FEV₁ ÷ FVC normal or high', 1460, 1070, TAG, when=REST)
 text('DLCO low — alveolar surface destroyed', 1460, 1100, TAG, when=P('copd'))
@@ -111,7 +117,7 @@ readouts = [
   dict(l='FEV₁', mods=[m(['pf:*'], -1)]),
   dict(l='FEV₁/FVC', mods=[m(OBS, -1)]),
   dict(l='TLC', mods=[m(OBS, 1), m(REST, -1)]),
-  dict(l='RV', mods=[m(OBS, 1)]),
+  dict(l='RV', mods=[m(OBS, 1), m(REST, -1)]),
   dict(l='DLCO', mods=[m(P('copd', 'ild'), -1), m(EXT, 0)]),
 ]
 
@@ -123,7 +129,8 @@ notes = {
   'pf:copd': 'Emphysema / COPD (obstructive): airways close early and air is trapped — the loop shifts left with a scooped '
              'expiratory limb; FEV₁/FVC below 70%; RV, FRC and TLC up. Compliance is increased and DLCO is low (alveolar '
              'surface destroyed).',
-  'pf:asthma': 'Asthma (obstructive): bronchospasm narrows the airways — FEV₁/FVC low, with air trapping during an attack.',
+  'pf:asthma': 'Asthma (obstructive): bronchospasm narrows the airways — FEV₁/FVC low, with air trapping during an attack. '
+               'The obstruction is reversible: it improves with a bronchodilator, and spirometry may be normal between attacks.',
   'pf:ild': 'Interstitial lung disease (intrinsic restriction): a stiff, fibrotic lung — low compliance, TLC and FVC down, '
             'FEV₁/FVC normal or high; the loop shifts right. DLCO low and the A–a gradient widened.',
   'pf:nm': 'Respiratory muscle weakness (polio, myasthenia gravis, Guillain-Barré, ALS) — extrapulmonary restriction: the '
@@ -131,16 +138,16 @@ notes = {
   'pf:obese': 'Severe obesity (or scoliosis) — extrapulmonary restriction from the chest wall: TLC down, but DLCO and the A–a '
               'gradient are normal because the lung itself is healthy.',
 }
-# UNVERIFIED: RV direction in restriction left "–" (no card states it); asthma DLCO not given
+# RV ↓ in restriction: First Aid p. 692 + Bootcamp pulmonology. Asthma's DLCO left "–": no source in the corpus gives it.
 
 dyn = dict(
-  kinds={}, groups=[],
+  kinds=dict(air=['air', '--dk11']), groups=[],
   switches=[dict(id='pf', label='Pick a pattern', type='one',
                  options=[['copd', 'Emphysema / COPD', 'copd'], ['asthma', 'Asthma', 'asthma'], ['ild', 'Interstitial lung disease', 'ild'],
                           ['nm', 'Neuromuscular weakness', 'pfts'], ['obese', 'Severe obesity', 'pfts']])],
-  notes=notes, shapes=shapes, flows=[], sites=sites, readouts=readouts,
+  notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 682–683, 692 · schematic curves')
+  src='First Aid pp. 682–683, 692–694 · Costanzo ch 5 · Bootcamp pulmonology · schematic curves')
 
 MAP = dict(
   id='pftsim', title='PFTs & Flow–Volume Loops', topic='pulmo', after='lungdz',
@@ -148,7 +155,7 @@ MAP = dict(
       '(interstitial lung disease) or outside it (muscle weakness, obesity), against normal — with FEV₁, FEV₁/FVC, TLC, RV and '
       'DLCO. Tap the loop or the bars for their cards',
   w=3500, h=2100,
-  fa='682–683, 692', src=[],
+  fa='682–683, 692–694', src=['Costanzo ch 5 — Respiratory physiology'],
   lanes=[('pfObs', 'Obstructive', 'glycolysis'), ('pfRes', 'Restrictive', 'tca'), ('pfPhys', 'Mechanics', 'gluconeo')],
   nodes=[
     ('pf1', 'Obstructive vs restrictive', 380, 1300, 'pfPhys', 'FEV₁/FVC · TLC · DLCO', ['pfts']),
@@ -158,10 +165,10 @@ MAP = dict(
     ('pf5', 'Interstitial lung disease', 380, 1440, 'pfRes', 'stiff lung · ↓ DLCO', ['ild']),
     ('pf6', 'Muscle weakness', 820, 1440, 'pfRes', 'normal DLCO', ['mg', 'sleepapnea'])],
   panels=[
-    (2420, 760, 1000, 'The patterns (First Aid p. 692)', [
+    (2420, 760, 1000, 'The patterns (First Aid pp. 692, 694)', [
       ('Normal', 'FEV₁ and FVC over 80% predicted · FEV₁/FVC over 70%'),
       ('Obstructive', 'FEV₁/FVC < 70% · RV, FRC, TLC ↑ · loop shifted left, scooped'),
-      ('Restrictive', 'TLC ↓ · FEV₁/FVC normal or ↑ · loop shifted right'),
+      ('Restrictive', 'RV, FRC, TLC ↓ · FEV₁/FVC normal or ↑ · loop shifted right'),
       ('Intrinsic restriction', 'interstitial disease · DLCO ↓ · A–a ↑'),
       ('Extrapulmonary restriction', 'muscle weakness, chest wall · DLCO and A–a normal')])],
   dyn=dyn)

@@ -101,7 +101,7 @@ T = [
   ('dv', 'lo', 'warm, red, painful leg', 'Deep venous thrombosis', 'Virchow triad', 'dvt'),
   ('ly', 'lo', 'after node removal · filariasis', 'Lymphedema', 'lymph can’t drain', 'lymph'),
   ('ge', 'r', 'both legs or everywhere', 'Generalized', 'which Starling force changed?', None),
-  ('pc', 'ge', 'JVD · crackles · S3', 'Pushed out — ↑ Pc', '', None),
+  ('pc', 'ge', 'veins backed up or arterioles dilated', 'Pushed out — ↑ Pc', '', None),
   ('hf', 'pc', 'JVD · hepatomegaly · orthopnea', 'Heart failure', 'right-sided → peripheral edema', 'hf'),
   ('cc', 'pc', 'new amlodipine or nifedipine', 'Dihydropyridine CCB', 'ankle edema, flushing', 'ccb'),
   ('al', 'ge', 'low serum albumin', 'Not held in — ↓ πc', '', None),
@@ -131,7 +131,8 @@ PY = cy + 110; PANY = 660
 # ════════ readouts — the Starling forces (capfluid card) ════════
 O = lambda *k: [f'{SW}:{x}' for x in k]
 readouts = [
-  # UNVERIFIED: ↑ Pc for DVT (venous obstruction) and for dihydropyridine CCBs is standard physiology but not on the pinned cards
+  # ↑ Pc: Guyton ch 25 lists heart failure, venous obstruction and vasodilator drugs (↓ arteriolar resistance) under
+  # increased capillary pressure; FA p. 323: dihydropyridines mainly dilate arteries
   dict(l='Pc — capillary pressure', mods=[dict(when=O('hf', 'dvt', 'ccb'), d=1)]),
   dict(l='πc — plasma oncotic', mods=[dict(when=O('neph', 'cirr', 'kwash'), d=-1)]),
   dict(l='Kf — permeability', mods=[dict(when=O('leak'), d=1)]),
@@ -144,19 +145,20 @@ notes = {
   '': 'Edema is excess interstitial fluid. Two forces push fluid out of a capillary (Pc, πi) and two pull it back (πc, Pi) — '
       'first ask whether it is one limb or everywhere, then find the force that changed.',
   'dx:dvt': 'Deep venous thrombosis: one swollen, red, warm, painful leg after stasis (surgery, a long flight), '
-            'hypercoagulability or endothelial damage. Proximal leg clots are the source of pulmonary emboli.',
+            'hypercoagulability or endothelial damage. The blocked vein raises capillary pressure (↑ Pc) in that leg; proximal leg '
+            'clots are the source of pulmonary emboli.',
   'dx:lymph': 'Lymphedema: blocked or removed lymphatics leave fluid and protein in the tissue, so interstitial oncotic pressure '
               'rises and pulls out still more — after axillary node dissection, or from filariasis.',
   'dx:hf': 'Heart failure raises venous and capillary hydrostatic pressure (Pc). Right-sided failure gives JVD, hepatomegaly and '
            'peripheral edema; its most common cause is left-sided failure.',
-  'dx:ccb': 'Dihydropyridine calcium channel blockers (amlodipine, nifedipine) list peripheral edema among their adverse effects — '
-            'with flushing, dizziness and gingival hyperplasia.',
+  'dx:ccb': 'Dihydropyridine calcium channel blockers (amlodipine, nifedipine) mainly dilate arterioles, so more pressure reaches '
+            'the capillaries (↑ Pc) — peripheral edema, with flushing, dizziness and gingival hyperplasia.',
   'dx:neph': 'Nephrotic syndrome: podocyte injury lets more than 3.5 g of protein a day into the urine. Low albumin lowers plasma '
              'oncotic pressure (πc) — periorbital edema, then anasarca.',
   'dx:cirr': 'Cirrhosis: the failing liver makes too little albumin (↓ πc) and portal hypertension adds ascites. Low albumin and a '
              'long PT mark the lost synthetic function.',
   'dx:kwash': 'Kwashiorkor: protein lacking out of proportion to calories. Low albumin lowers πc and causes edema, which hides how '
-              'much weight has been lost — MEALS.',
+              'much weight has been lost — MEALS. Marasmus (calories short, no nutrient absent) causes no edema.',
   'dx:leak': 'Toxins, infections and burns damage the capillary wall and raise its permeability (Kf), so protein-rich fluid leaks '
              'into the tissue.',
 }
@@ -169,7 +171,7 @@ dyn = dict(
     ['kwash', 'Kwashiorkor', 'kwashiorkor'], ['leak', 'Leaky capillaries (burns, sepsis)', 'capfluid']])],
   notes=notes, shapes=shapes, flows=flows, sites=[], readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 69, 299, 301, 316, 321, 323, 396–397, 613 · Guyton ch 16 · Robbins ch 4')
+  src='First Aid pp. 69, 299, 301, 316, 321, 323, 396–397, 613 · Guyton ch 16, 25 · Robbins ch 4, 9')
 
 MAP = dict(
   id='sxedema', title='Edema', topic='sx', after='sxdyspnea',
@@ -177,7 +179,7 @@ MAP = dict(
       'while the readouts show capillary pressure, plasma and interstitial oncotic pressure and permeability. Tap a card pin '
       'for the details',
   w=3500, h=1540,
-  fa='69, 156, 244, 299, 301, 316, 321, 323, 372, 396, 397, 486, 613, 655',
+  fa='69, 156, 299, 301, 316, 321, 323, 372, 396, 397, 486, 613, 655',
   src=[full('Robbins', 4), full('Guyton', 16), full('Guyton', 25), full('Costanzo', 4), full('Katzung', 11), full('Robbins', 20),
        full('Robbins', 18), full('Robbins', 9)],
   lanes=[('xeLocal', 'Localized', 'glycolysis'), ('xeForce', 'Starling forces', 'tca'), ('xeCause', 'Generalized causes', 'gluconeo')],

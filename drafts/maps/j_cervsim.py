@@ -53,7 +53,7 @@ for s in (-1, 1):
     add(f'<path d="M{VX + s * 200} {VY + 190} l{s * 40} -50 l{s * 10} 60 Z" style="fill:var(--dk5);opacity:.6"/>', when=SP_)
     add(f'<path d="M{VX + s * 120} {VY - 160} Q{VX} {VY - 190} {VX - s * 0} {VY - 165}" style="fill:none;stroke:var(--dk11);stroke-width:18;opacity:.6"/>', when=SP_)
 text('osteophytes · thick ligamentum flavum · worn facets', VX, VY - 400, 'nf-l1', 'middle', when=SP_)
-# foraminal stenosis (left side pinched)
+# foraminal stenosis (one side pinched)
 add(f'<path d="M{VX + 250} {VY + 60} l50 40 l-30 40 Z" style="fill:var(--bad);opacity:.7"/>', when=Z('foram'))
 add(f'<path d="M{VX + 100} {VY + 20} C{VX + 260} {VY + 60} {VX + 350} {VY + 160} {VX + 480} {VY + 200}" style="fill:none;stroke:var(--bad);stroke-width:14;stroke-dasharray:18 10"/>', when=Z('foram'))
 # central stenosis: canal pinched, cord flattened
@@ -73,7 +73,7 @@ for i in range(5):
 text('thumb', AX - 40, 1180, 'nf-l2', 'end'); text('little', AX + 200, 1240, 'nf-l2')
 text('lateral', AX - 30, 280, 'nf-l2', 'end'); text('medial', AX + 190, 280, 'nf-l2')
 ZONE = dict(c5=f'<rect x="{AX}" y="320" width="70" height="260" rx="30"', c6=f'<path d="M{AX} 640 h70 v300 h-70 Z M{AX - 10} 1110 h66 v120 h-66 Z"',
-            c7=f'<path d="M{AX + 66} 1110 h66 v120 h-66 Z"', c8=f'<path d="M{AX + 90} 640 h70 v470 h-70 Z M{AX + 104} 1110 h66 v120 h-66 Z"')
+            c7=f'<path d="M{AX + 28} 1110 h66 v120 h-66 Z M{AX + 30} 985 h90 v105 h-90 Z"', c8=f'<path d="M{AX + 90} 640 h70 v470 h-70 Z M{AX + 104} 1110 h66 v120 h-66 Z"')
 for k, z in ZONE.items():
     add(f'{z} style="fill:var(--bad);fill-opacity:.45"/>', when=R(k))
 RTAG = dict(c5='C5 — numb lateral arm · weak shoulder abduction, external rotation, elbow flexion · biceps & brachioradialis reflexes',
@@ -84,7 +84,7 @@ for k, s in RTAG.items(): text(s, 1100, 1520, 'nf-l1', 'middle', when=R(k))
 TAG = dict(spond='spondylosis — on films in ~95% by 65 and does not track symptoms: neck & periscapular pain, stiffness',
            foram='foraminal stenosis — one root pinched: neck/arm pain, mild numbness, weakness only when severe',
            central='central stenosis — cord squeezed: clumsy hands, stiff legs, brisk reflexes, bowel/bladder trouble',
-           hyper='neck hyperextension on a narrow canal — central cord syndrome: arms weaker than legs')
+           hyper='neck hyperextension (whiplash, older patient) — central cord syndrome: arms weaker than legs')
 for k, s in TAG.items(): text(s, 1100, 1480, 'nf-l1 dyn-tag', 'middle', when=Z(k))
 text('Spurling: extend + tilt toward the sore side + press down → arm pain (~90% specific, ~45% sensitive)', 1100, 1560, 'nf-l1', 'middle', when=['test&dz:foram'])
 text('Lhermitte: flex the neck → shock down the spine · Hoffman: flick middle fingertip → thumb & index pinch', 1100, 1560, 'nf-l1', 'middle', when=['test&dz:central', 'test&dz:hyper'])
@@ -94,9 +94,11 @@ def sig(d, ln, when, kind='sig', n=3, sp=130):
     return dict(d=d, len=ln, speed=sp, r=8, base={kind: n}, when=when)
 ROOT = f'M{VX + 100} {VY + 20} C{VX + 260} {VY + 60} {VX + 350} {VY + 160} {VX + 480} {VY + 200} C{VX + 600} {VY + 230} {AX - 60} 600 {AX + 40} 800'
 flows = [sig(f'M{VX - 100} {VY + 20} C{VX - 260} {VY + 60} {VX - 350} {VY + 160} {VX - 480} {VY + 200}', 400, ['!dz:foram'], n=2),
-         sig(ROOT, 1000, ['!dz:foram'], n=2), sig(ROOT, 1000, Z('foram'), kind='pain', n=4, sp=90),
+         sig(ROOT, 1000, ['!dz:foram'], n=2),
+         dict(sig(ROOT, 1000, Z('foram'), kind='pain', n=4, sp=90), mods=[dict(when=['test'], add=dict(pain=4), speed=1.6)]),   # Spurling reproduces the arm pain
          sig(f'M{VX} {VY - 600} V{VY + 700}', 1300, ['!dz:central&!dz:hyper'], n=3),
-         sig(f'M{VX} {VY - 600} V{VY + 700}', 1300, Z('central', 'hyper'), kind='pain', n=1, sp=50)]
+         dict(sig(f'M{VX} {VY - 600} V{VY + 700}', 1300, Z('central', 'hyper'), kind='pain', n=1, sp=50),
+              mods=[dict(when=['test'], add=dict(pain=5), speed=4)])]   # Lhermitte: a shock down the spine on neck flexion
 sites = [dict(x=VX - 260, y=VY + 260, n=[-1, 1], w=10, t='rec', l='', aria='Cervical spondylosis & stenosis', c='cervspond', ions=[]),
          dict(x=VX + 380, y=VY + 300, n=[1, 1], w=10, t='rec', l='', aria='Cervical radiculopathy', c='cervradic', ions=[]),
          dict(x=VX - 180, y=VY - 40, n=[-1, -1], w=10, t='rec', l='', aria='Cervical myelopathy', c='cervmyel', ions=[]),
@@ -118,8 +120,9 @@ notes = {
               'loss is mild and weakness comes late. Clinical diagnosis, MRI for the cause. Pick a root to see its territory.',
   'dz:central': 'Cervical myelopathy: cord compression adds upper motor neuron signs — weak clumsy hands, spastic arms and legs, brisk '
                 'reflexes, bowel or bladder trouble. MRI; progressive myelopathy goes to a spine surgeon.',
-  'dz:hyper': 'Central cord syndrome: hyperextension on a spondylotic, narrow canal injures the central cord, where the arm fibers of the '
-              'lateral corticospinal tracts lie medially — arms weaker than legs.',
+  'dz:hyper': 'Central cord syndrome: neck hyperextension (whiplash, classically an older patient) injures the central cord or its sulcal '
+              'arteries, where the arm fibers of the lateral corticospinal tracts lie medially — arms weaker than legs, with patchy '
+              'bilateral pain and temperature loss and sometimes urinary retention.',
   'test': 'Spurling sign (neck extended, tilted to the sore side, pressed down) reproduces radicular pain: specific, not sensitive; '
           'shoulder abduction may ease it, Valsalva can worsen it. Lhermitte and Hoffman point to the cord.',
 }
@@ -133,7 +136,7 @@ dyn = dict(
             dict(id='test', label='Bedside sign', type='toggle', on='Sign tested', off='Test the sign', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='OCOM Ortho SDL 19 · Tintinalli ch 279')
+  src='OCOM Ortho SDL 19 · Tintinalli ch 279 · First Aid pp. 521, 523 · Fundamental Neuroscience ch 25 · Bootcamp')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -142,10 +145,11 @@ MAP = dict(
   sub='Wear down a cervical vertebra, then narrow a foramen to pinch C5, C6, C7 or C8, or narrow the canal to squeeze the cord — and run '
       'Spurling, Lhermitte and Hoffman',
   w=3600, h=1900,
-  fa='458, 521',
+  fa='521, 523',
   src=['OCOM Ortho — SDL 19 lecture: Neck and back pain and injury',
        'OCOM Ortho — SDL 19 reading: Neck and back pain (Tintinalli’s Emergency Medicine 9e ch 279)',
-       'Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement'],
+       'Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement',
+       'Bootcamp.com Neurology — Spinal cord syndromes'],
   lanes=[('csDeg', 'Degeneration', 'tca'), ('csNrv', 'Root & cord', 'glycolysis')],
   nodes=[
     ('cs1', 'Cervical spondylosis', 300, 1720, 'csDeg', 'films ≠ symptoms', ['cervspond'], 'hub'),

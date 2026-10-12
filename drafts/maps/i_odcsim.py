@@ -66,7 +66,7 @@ for k, (p50, n, top, w, u) in CURVES.items():
     add(f'<path d="{curve(p50, n, top)}" style="fill:none;stroke:var(--nf-blood);stroke-width:6"/>', when=w, unless=u)
     s100, s40 = sat(100, p50, n, top), sat(40, p50, n, top)
     add(f'<path d="M{px(108)} {py(s100)} H{px(114)} V{py(s40)} H{px(108)}" style="fill:none;stroke:var(--accent);stroke-width:4"/>', when=w, unless=u)
-text('unloaded', px(116), py(78), 'nf-l1', 'start')
+    text('unloaded', px(116), py((s100 + s40) / 2) + 5, 'nf-l1', 'start', when=w, unless=u)
 # P50 marker: the shift
 text('→ right shift: P50 rises', px(40), py(30), 'nf-l1 dyn-tag', 'start', when=RIGHT)
 text('← left shift: P50 falls', px(40), py(30), 'nf-l1 dyn-tag', 'start', when=LEFT)
@@ -98,18 +98,19 @@ flows = []
 for k, (p50, n, top, w, u) in CURVES.items():
     d = curve(p50, n, top, 100, 40).replace('M', 'M', 1)
     f = dict(d=d, len=900, speed=160, r=12, base=dict(o2=2))
+    if k == 'norm': f['mods'] = [m(O('anemia'), set=dict(o2=1)), m(O('poly'), set=dict(o2=4))]   # less / more Hb per dL
     if w: f['when'] = w
     if u: f['unless'] = u
     flows.append(f)
 flows.append(dict(d=f'M{RX + 60} {RY + 120} L{RX + 160} {RY + 260}', len=180, speed=80, r=8, base=dict(o2=3),
-                  mods=[m(RIGHT, set=dict(o2=5)), m(LEFT + LOWTOP + O('anemia'), set=dict(o2=1))]))
+                  mods=[m(RIGHT, set=dict(o2=5)), m(LEFT + LOWTOP + O('anemia', 'cn'), set=dict(o2=1))]))
 sites = [dict(x=px(70), y=Y0, n=[0, 1], w=10, t='rec', l='', aria='The dissociation curve', c='odc', ions=[]),
          dict(x=RX - 230, y=RY, n=[-1, 0], w=10, t='rec', l='', aria='Hemoglobin types', c='hbtypes', ions=[])]
 
 readouts = [
   dict(l='P50', mods=[dict(when=RIGHT, d=1), dict(when=LEFT + LOWTOP + O('myo'), d=-1)]),
-  dict(l='SaO₂', mods=[dict(when=LOWTOP, d=-1), dict(when=O('anemia', 'cn'), d=0)]),
-  dict(l='PaO₂', mods=[dict(when=O('alt'), d=-1), dict(when=LOWTOP + O('anemia', 'cn'), d=0)]),
+  dict(l='SaO₂', mods=[dict(when=LOWTOP, d=-1), dict(when=O('anemia', 'poly', 'cn'), d=0)]),
+  dict(l='PaO₂', mods=[dict(when=O('alt'), d=-1), dict(when=LOWTOP + O('anemia', 'poly', 'cn', 'exer'), d=0)]),
   dict(l='O₂ content', mods=[dict(when=LOWTOP + O('anemia'), d=-1), dict(when=O('poly'), d=1), dict(when=O('cn'), d=0)]),
   dict(l='O₂ unloading', mods=[dict(when=RIGHT, d=1), dict(when=LEFT + LOWTOP, d=-1)]),
 ]
@@ -117,7 +118,8 @@ readouts = [
 notes = {
   '': 'Hemoglobin binds O₂ cooperatively, so the curve is sigmoid. O₂ content = 1.34 × Hb × SaO₂ + 0.003 × PaO₂. Blood loads '
       'near full in the lungs and gives some up in the tissues; shifts match unloading to what the tissue needs.',
-  'sh:exer': 'Exercise shifts the curve right (↓ affinity, ↑ P50): more O₂ is unloaded to the working muscle.',
+  'sh:exer': 'Exercise shifts the curve right (↓ affinity, ↑ P50): more O₂ is unloaded to the working muscle. Mean arterial PO₂ '
+             'does not change.',
   'sh:acid': 'Bohr effect: ↑ H⁺ and CO₂ (↓ pH) shift the curve right — more unloading where metabolism is high.',
   'sh:fever': '↑ temperature shifts the curve right.',
   'sh:alt': 'High altitude: inspired PO₂ falls (hypoxemia, normal A–a gradient). Over time ↑ 2,3-BPG shifts the curve right and ↑ '
@@ -127,12 +129,14 @@ notes = {
             'the placenta.',
   'sh:myo': 'Myoglobin is a single chain: it binds O₂ more tightly and its curve is not sigmoid.',
   'sh:co': 'CO binds hemoglobin with >200× the affinity of O₂: it removes carrying capacity and left-shifts the remaining hemes. '
-           'Normal PaO₂, low SaO₂ on co-oximetry — the pulse oximeter reads falsely normal. 100% O₂, hyperbaric if severe.',
+           'It also inhibits complex IV. Normal PaO₂, low SaO₂ on co-oximetry — the pulse oximeter reads falsely normal. 100% O₂, '
+           'hyperbaric if severe.',
   'sh:metb': 'Methemoglobin (Fe³⁺) cannot bind O₂ and left-shifts the remaining hemes. Cyanosis that O₂ doesn’t fix, chocolate-brown '
              'blood, normal PaO₂. Nitrites, dapsone, benzocaine. Methylene blue.',
   'sh:anemia': 'Anemia: less O₂ content with a normal SaO₂ and PaO₂ — the curve is the same, there is just less hemoglobin.',
-  'sh:poly': 'Polycythemia: more O₂ content.',
-  'sh:cn': 'Cyanide: content, saturation and PaO₂ all normal — the block is in the mitochondria (complex IV), not the blood.',
+  'sh:poly': 'Polycythemia: more O₂ content with a normal SaO₂ and PaO₂ — more hemoglobin on the same curve.',
+  'sh:cn': 'Cyanide: content, saturation and PaO₂ all normal — the block is in the mitochondria (complex IV), not the blood. '
+           'The tissues can’t use the O₂, so venous blood stays bright red.',
   'sh:sickle': 'Sickle cell: Glu6Val in β-globin. Deoxygenated HbS polymerizes and bends the cell; hypoxia, dehydration and acidosis '
                'promote sickling, HbF prevents it.',
 }
@@ -171,7 +175,7 @@ MAP = dict(
     ('hb8', 'Hemoglobin types · HbF', 1200, 1760, 'hbType', 'α₂γ₂ left-shifted', ['hbtypes']),
     ('hb9', 'Sickle cell disease', 1640, 1760, 'hbType', 'Glu6Val', ['sickle'])],
   panels=[
-    (2500, PANY, 1000, 'Which way does it shift? (First Aid p. 688)', [
+    (2500, PANY, 1000, 'Which way does it shift? (First Aid p. 687)', [
       ('Right (↑ P50, ↑ unloading)', 'exercise, ↓ pH, ↑ CO₂, ↑ temp, ↑ 2,3-BPG'),
       ('Left (↓ P50)', '↓ temp, fetal Hb, CO, methemoglobin'),
       ('↓ SaO₂ + content, normal PaO₂', 'CO, methemoglobin'),

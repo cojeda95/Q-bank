@@ -128,7 +128,7 @@ C = {
   'auto': ['Orthostatic — autonomic failure', 'the reflex arm that should constrict vessels on standing is lost', 'midodrine (α₁ agonist) treats postural hypotension from autonomic insufficiency'],
   'as': ['Aortic stenosis — SAD: syncope, angina, dyspnea on exertion', 'crescendo–decrescendo murmur at the base, to the carotids · soft S2', 'each symptom marks a sharp drop in survival → valve replacement'],
   'hcm': ['Hypertrophic cardiomyopathy', 'syncope during exercise, sudden death in young athletes', 'murmur louder with Valsalva and standing, softer with squatting'],
-  'avb': ['Third-degree (complete) AV block', 'P waves march through independently · an escape rhythm sets the slow rate', 'infranodal block needs a pacemaker'],
+  'avb': ['Third-degree (complete) AV block', 'P waves march through independently · an escape rhythm sets the slow rate', 'Lyme disease is one cause · treatment: a pacemaker'],
   'lqt': ['Long QT → torsades de pointes', 'syncope or sudden death · ↓ K⁺, ↓ Mg²⁺, ↓ Ca²⁺ and bradycardia all prolong QT', 'QT drugs: class IA and III, macrolides, antipsychotics, TCAs, ondansetron'],
   'sz': ['A generalized tonic-clonic seizure, not a faint', 'stiffening then jerking, tongue biting, incontinence, postictal confusion', 'atonic “drop” seizures are the ones mistaken for fainting'],
 }
@@ -139,7 +139,7 @@ PY = cy + 110; PANY = 660
 O = lambda *k: [f'{SW}:{x}' for x in k]
 readouts = [
   dict(l='BP on standing', mods=[dict(when=O('hypov', 'drug', 'auto'), d=-1)]),
-  # UNVERIFIED: vasovagal bradycardia is standard teaching but not on the pinned syncope card
+  # vasovagal bradycardia: Guyton ch 18, Costanzo ch 4; carotid sinus vagal slowing: FA p. 299, Katzung ch 8
   dict(l='Heart rate', mods=[dict(when=O('hypov'), d=1), dict(when=O('avb', 'carot', 'vaso'), d=-1)]),
   dict(l='QT interval', mods=[dict(when=O('lqt'), d=1)]),
   dict(l='Murmur with Valsalva', mods=[dict(when=O('hcm'), d=1), dict(when=O('as'), d=-1)]),
@@ -165,7 +165,7 @@ notes = {
   'dx:hcm': 'Hypertrophic cardiomyopathy: syncope on exertion and sudden death in young athletes. The murmur gets louder with '
             'Valsalva and standing (a smaller LV), softer with squatting and handgrip.',
   'dx:avb': 'Complete heart block: the atria and ventricles beat independently and a slow escape rhythm sets the rate. '
-            'Mobitz II can progress to it abruptly — both need a pacemaker.',
+            'Mobitz II can progress to it — both are usually treated with a pacemaker.',
   'dx:lqt': 'Long QT lets early afterdepolarizations trigger torsades de pointes — syncope or sudden death. Low K⁺, Mg²⁺ or '
             'Ca²⁺, bradycardia and QT-prolonging drugs set it up; magnesium treats it.',
   'dx:sz': 'Tongue biting, incontinence and postictal confusion point to a generalized tonic-clonic seizure, not syncope. '
@@ -182,16 +182,16 @@ dyn = dict(
     ['lqt', 'Long QT → torsades', 'longqt'], ['sz', 'Seizure (a mimic)', 'gtc']])],
   notes=notes, shapes=shapes, flows=flows, sites=[], readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 296, 299, 311–318 (cards) · Robbins ch 12 · Costanzo ch 4')
+  src='First Aid pp. 241–243, 295–299, 311–318, 531 · Robbins ch 12 · Costanzo ch 4 · Guyton ch 18 · Katzung ch 8, 14')
 
 MAP = dict(
   id='sxsyncope', title='Syncope', topic='sx', after='sxchest',
   sub='Sort a faint as reflex, orthostatic or cardiac — pick an answer and a dot follows the clues down the tree, while '
       'the readouts show the blood pressure, heart rate, QT and murmur that go with it. Tap a card pin for the details',
   w=3500, h=1830,
-  fa='144, 243, 296, 299, 308, 311–313, 315, 317–318, 531',
+  fa='241, 243, 295–296, 299, 308, 311–313, 315, 317–318, 350, 531',
   src=[full('Robbins', 12), full('Costanzo', 4), full('Guyton', 18), full('Guyton', 23), full('Guyton', 13), full('Katzung', 10),
-       full('Katzung', 14), full('Guyton', 24)],
+       full('Katzung', 14), full('Guyton', 24), full('Katzung', 8), full('Robbins', 28), full('Fundamental Neuroscience', 29)],
   lanes=[('syRefl', 'Reflex & orthostatic', 'glycolysis'), ('syCard', 'Cardiac', 'tca'), ('syMimic', 'Mimics', 'gluconeo')],
   nodes=[
     ('sy1', 'Syncope', 330, PY, 'syRefl', 'reflex · orthostatic · cardiac', ['syncope'], 'hub'),

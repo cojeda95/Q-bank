@@ -65,6 +65,7 @@ TAG = dict(adeno='adenocarcinoma — peripheral, glands, TTF-1 · commonest, inc
            pancoast='Pancoast — apex invades the sympathetic plexus → Horner, ulnar pain', svc='SVC syndrome — head and arm congestion')
 for k, s in TAG.items(): text(s, 1000, 1400, 'nf-l1 dyn-tag', 'middle', when=D(k))
 text('EGFR/ALK/ROS1/MET inhibitor — shrinks a driver-mutant adenocarcinoma', 1000, 1440, 'nf-l1', 'middle', when=['dx:adeno&tki'])
+text('kinase inhibitor given — it acts only on a driver-mutant adenocarcinoma', 1000, 1440, 'dyn-cap', 'middle', when=['tki'], unless=['dx:adeno'])
 
 # ════════ motion ════════
 def hf(src, tgt, k, when):
@@ -91,6 +92,7 @@ readouts = [
   dict(l='Cortisol', mods=[dict(when=D('sclc'), d=1)]),
   dict(l='Calcium', mods=[dict(when=D('scc'), d=1)]),
   dict(l='Head & arm venous pressure', mods=[dict(when=D('svc'), d=1)]),
+  dict(l='Serum hCG', mods=[dict(when=D('large'), d=1)]),
 ]
 
 notes = {
@@ -98,12 +100,12 @@ notes = {
       'and ADH come mostly from small cell and hypercalcemia mostly from squamous carcinoma.',
   'dx:adeno': 'Adenocarcinoma: commonest in both sexes and in never-smokers; peripheral, TTF-1 ⊕. About a third carry targetable '
               'drivers — EGFR (more in nonsmoking Asian women), ALK, ROS1, MET, RET, BRAF; KRAS ~30% (worse, almost never in '
-              'never-smokers).',
+              'never-smokers). Linked to hypertrophic osteoarthropathy (clubbing).',
   'dx:scc': 'Squamous cell: smoking, men; central in segmental bronchi → obstruction, atelectasis; keratin pearls, p40; spreads '
             'outside the thorax later. PTHrP → hypercalcemia; cavitation.',
   'dx:sclc': 'Small cell: neuroendocrine, ~1% in nonsmokers, metastatic at diagnosis, almost always fatal. Salt-and-pepper '
              'chromatin, nuclear molding; chromogranin, synaptophysin, CD56. Commonest ectopic hormone maker — ACTH (Cushing), '
-             'ADH (SIADH). Very chemo- and radiosensitive.',
+             'ADH (SIADH); Lambert-Eaton (Ca²⁺-channel antibodies). Very chemo- and radiosensitive.',
   'dx:large': 'Large cell: undifferentiated, peripheral, anaplastic, tobacco-related; may make hCG → gynecomastia; poor chemo '
               'response — resect; poor prognosis.',
   'dx:carcinoid': 'Bronchial carcinoid: low-grade neuroendocrine, under 60, 20–40% nonsmokers; polyp into a mainstem bronchus '
@@ -127,7 +129,7 @@ dyn = dict(
             dict(id='tki', label='Drug', type='toggle', on='Kinase inhibitor given', off='Kinase inhibitor (adeno)', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 15')
+  src='First Aid pp. 224, 703–704, 447 · Robbins ch 15 · Katzung ch 54')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -136,7 +138,7 @@ MAP = dict(
   sub='Grow each lung cancer where it lives — peripheral adenocarcinoma and large cell, central squamous and small cell, a '
       'bronchial carcinoid, a Pancoast tumor — and watch ACTH, ADH, PTHrP and hCG reach their targets',
   w=3600, h=1900,
-  fa='224, 352, 446, 703, 704',
+  fa='224, 352, 447, 703, 704',
   src=['Robbins ch 15 — The lung', 'Katzung ch 54 — Cancer Chemotherapy'],
   lanes=[('lcNsc', 'Non-small cell', 'tca'), ('lcNe', 'Neuroendocrine', 'glycolysis'), ('lcSys', 'Spread & therapy', 'gluconeo')],
   nodes=[

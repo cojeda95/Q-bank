@@ -31,7 +31,7 @@ A = lambda *k: [f'age:{x}' for x in k]
 PANY = 1180
 def X(cx, cy, s=16): return f'<path d="M{cx - s} {cy - s} L{cx + s} {cy + s} M{cx + s} {cy - s} L{cx - s} {cy + s}" class="nf-x"/>'
 def ring(x, y, rx, ry, when): add(f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" style="fill:var(--bad);fill-opacity:.18;stroke:var(--bad);stroke-width:5"/>', when=when)
-# UNVERIFIED: Ewing (card: 'boy') and osteochondroma (card: 'young male') are placed in the adolescent band; the cards give no age range
+# Ewing (FA 471: males < 15; Bootcamp ~10–20) and osteochondroma (FA 470: males < 25; Bootcamp ~10–30) sit in the adolescent band
 AGE = dict(new=['ddh'], u5=['nurse', 'green', 'torus', 'bow'], s57=['lcp'], ado=['osteo', 'ewing', 'ochon', 'scfe', 'osgood'],
            ya=['gct', 'ench'], old=['chondro'])
 def lit(*k): return D(*k) + [f'age:{a}' for a, ks in AGE.items() if any(x in ks for x in k)]
@@ -57,7 +57,7 @@ add(f'<path d="M{BX + 120} 960 L{BX + 260} 880 L{BX + 280} 900 L{BX + 150} 990 Z
 ring(BX - 70, 400, 30, 30, D('ooid'))
 SIGN = dict(osteo='metaphysis near the knee · Codman triangle, sunburst', ewing='diaphysis · onion-skin · small round blue cells t(11;22)',
             gct='epiphysis after plates close · soap-bubble lytic lesion', ochon='metaphyseal stalk with a cartilage cap pointing away from the joint',
-            ooid='small cortical nidus — night pain relieved by NSAIDs', chondro='pelvis, proximal femur, humerus medulla · ring-and-arc calcification',
+            ooid='small cortical nidus — night pain relieved by NSAIDs', chondro='medulla of pelvis, proximal femur, humerus · popcorn calcification',
             ench='medulla of hand and foot bones · commonest tumor of the hand')
 for k, t in SIGN.items(): text(t, 1300, 1420, 'nf-l1 dyn-tag', 'middle', when=D(k))
 
@@ -75,7 +75,8 @@ HIP = dict(ddh='newborn: acetabulum underdeveloped — Ortolani/Barlow clunk; ul
            lcp='5–7, boys: avascular femoral head flattens and fragments; first x-ray often normal',
            scfe='obese young adolescent: epiphysis slips off the neck — hip or knee pain')
 for k, t in HIP.items(): text(t, 1300, 1420, 'nf-l1 dyn-tag', 'middle', when=D(k))
-ring(HX, HY, 140, 140, A('new', 's57') + ['age:ado&dx:scfe'])
+ring(HX, HY, 140, 140, A('new', 's57', 'ado'))
+ring(HX + 215, HY + 250, 95, 70, lit('chondro'))   # proximal femur (FA 471: medulla of pelvis, proximal femur, humerus)
 
 # ════════ knee tuberosity, elbow, forearm ════════
 add('<rect x="1950" y="260" width="380" height="300" rx="30" class="dyn-soft"/>'); text('Tibial tuberosity', 2140, 300, 'nf-l1', 'middle')
@@ -104,7 +105,7 @@ flows = [
   dict(d=f'M{HX + 200} {HY + 300} C{HX + 120} {HY + 160} {HX + 60} {HY + 80} {HX} {HY}', len=360, speed=90, r=8, base=dict(bl=3), mods=[m(D('lcp'), set=dict(bl=0))]),
   dict(d=f'M{HX} {HY} L{HX - 20} {HY + 40}', len=45, speed=15, r=12, base=dict(f=1), when=D('scfe')),
   dict(d=f'M{HX + 40} {HY + 20} L{HX + 130} {HY + 110}', len=130, speed=40, r=12, base=dict(f=1), when=D('ddh')),
-  dict(d='M1820 1000 V1110', len=110, speed=50, r=10, base=dict(f=2), when=D('bow', 'green')),
+  dict(d='M1820 1240 V1160', len=80, speed=50, r=10, base=dict(f=2), when=D('bow', 'green')),
   dict(d='M2330 1160 H2190', len=140, speed=50, r=10, base=dict(f=2), when=D('torus')),
   dict(d='M2300 790 H2200', len=100, speed=30, r=10, base=dict(f=1), when=D('nurse')),
 ]
@@ -131,8 +132,8 @@ notes = {
   'dx:ochon': 'Osteochondroma: the most common benign bone tumor — a metaphyseal stalk continuous with the marrow, cartilage cap pointing '
               'away from the joint; rarely becomes chondrosarcoma.',
   'dx:ooid': 'Osteoid osteoma: a small cortical nidus making prostaglandins — night pain relieved by NSAIDs.',
-  'dx:chondro': 'Chondrosarcoma: malignant cartilage in the medulla of the pelvis, proximal femur and humerus of older adults — ring-and-arc '
-                'calcification.',
+  'dx:chondro': 'Chondrosarcoma: malignant cartilage in the medulla of the pelvis, proximal femur and humerus of adults over 50 — lytic, with '
+                'intralesional (popcorn) calcifications; can arise from an osteochondroma.',
   'dx:ench': 'Enchondroma: benign hyaline cartilage in the medulla of the small hand and foot bones, ages 20–50; IDH1/2. Ollier, Maffucci.',
   'dx:ddh': 'Developmental dysplasia of the hip: the acetabulum develops abnormally — Ortolani and Barlow clunk; ultrasound (x-ray not '
             'useful until 4–6 months).',
@@ -182,7 +183,8 @@ MAP = dict(
     ('bo8', 'Nursemaid’s elbow', 1200, 1790, 'boFx', 'under 5', ['nursemaid']),
     ('bo9', 'Greenstick · torus · bowing', 1640, 1790, 'boFx', 'bends, buckles', ['pedsfx', 'bowingfx'])],
   panels=[
-    (2500, PANY, 1000, 'Location on the long bone (First Aid p. 470)', [
+    (2500, PANY, 1000, 'Location on the long bone (First Aid pp. 470–471; Bootcamp)', [
       ('Epiphysis', 'giant cell tumor (plates closed)'), ('Metaphysis', 'osteosarcoma, osteochondroma'),
-      ('Diaphysis', 'Ewing sarcoma'), ('Medulla, hands and feet', 'enchondroma')])],
+      ('Diaphysis', 'Ewing sarcoma'), ('Medulla, hands and feet', 'enchondroma'),
+      ('Medulla, pelvis and proximal femur', 'chondrosarcoma (over 50)')])],
   dyn=dyn)

@@ -70,7 +70,12 @@ ST = dict(cong=('Congestion — days 1–2', 'heavy, boggy, red; edema fluid, fe
 for k, (a, b) in ST.items():
     text(a, LX, LY + 440, 'nf-l1 dyn-tag', 'middle', when=S(k)); text(b, LX, LY + 472, 'nf-l2', 'middle', when=S(k))
 # abscess on the right lung
-add('<circle cx="1050" cy="1150" r="70" style="fill:var(--dk10);fill-opacity:.4;stroke:var(--bad);stroke-width:5"/>', when=D('abscess'))
+# a small front view (patient's right on the viewer's left): the right main bronchus is the steeper, more vertical one
+add('<ellipse cx="1040" cy="1150" rx="60" ry="100" style="fill:var(--nf-h2o);fill-opacity:.08;stroke:var(--dk1);stroke-width:3"/>'
+    '<ellipse cx="1170" cy="1150" rx="60" ry="100" style="fill:var(--nf-h2o);fill-opacity:.08;stroke:var(--dk1);stroke-width:3"/>'
+    '<path d="M1105 960 V1030 L1070 1110 M1105 1030 L1150 1075" style="fill:none;stroke:var(--dk3);stroke-width:12;opacity:.35;stroke-linecap:round"/>'
+    '<text class="nf-l1" x="1010" y="1090" text-anchor="middle">R</text><text class="nf-l1" x="1200" y="1090" text-anchor="middle">L</text>', when=D('abscess'))
+add('<circle cx="1040" cy="1185" r="32" style="fill:var(--dk10);fill-opacity:.4;stroke:var(--bad);stroke-width:5"/>', when=D('abscess'))
 text('aspiration abscess — usually right-sided and single (right main bronchus more vertical)', 1500, 1300, 'nf-l1 dyn-tag', 'middle', when=D('abscess'))
 text('oral anaerobes: Bacteroides, Fusobacterium, Peptococcus — clindamycin', 1500, 1330, 'nf-l2', 'middle', when=D('abscess'))
 
@@ -85,12 +90,12 @@ flows = [
 ]
 sites = [dict(x=340, y=260, n=[-1, 0], w=10, t='rec', l='', aria='Lung defenses', c='lungdefense', ions=[]),
          dict(x=LX, y=LY - 300, n=[0, -1], w=10, t='rec', l='', aria='Lobar pneumonia stages', c='lobarstages', ions=[]),
-         dict(x=1050, y=1080, n=[0, -1], w=10, t='rec', l='', aria='Lung abscess', c='lungabscess', ions=[]),
+         dict(x=1040, y=1230, n=[0, 1], w=10, t='rec', l='', aria='Lung abscess', c='lungabscess', ions=[]),
          dict(x=400, y=1000, n=[0, 1], w=10, t='rec', l='', aria='Mycoplasma', c='mycolab', ions=[])]
 
 readouts = [
   dict(l='Clearance', mods=[dict(when=D('cilia', 'retain', 'macro', 'asp', 'myco'), d=-1)]),
-  dict(l='Lobe airless (consolidated)', mods=[dict(when=S('red', 'gray'), d=1), dict(when=S('res'), d=-1)]),
+  dict(l='Lobe airless (consolidated)', mods=[dict(when=S('red', 'gray'), d=1)]),
   dict(l='Neutrophils in alveoli', mods=[dict(when=S('red', 'gray'), d=1)]),
   dict(l='Gram stain helps', mods=[dict(when=D('myco'), d=-1)]),
 ]
@@ -123,7 +128,7 @@ dyn = dict(
               ['myco', 'Mycoplasma attachment', 'mycolab'], ['abscess', 'Aspiration abscess', 'lungabscess']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 15')
+  src='First Aid pp. 148, 188, 680, 702 · Robbins ch 15')
 
 MAP = dict(
   id='pnasim', title='Pneumonia in Motion', topic='pulmo', after='respinf',
@@ -140,6 +145,6 @@ MAP = dict(
     ('pn4', 'Lung abscess', 1640, 1660, 'pnDz', 'right, single, anaerobes', ['lungabscess']),
     ('pn5', 'Mycoplasma', 2080, 1660, 'pnDz', 'no wall · P1', ['mycolab'])],
   panels=[
-    (2500, PANY, 1000, 'Lobar pneumonia by day (Robbins ch 15)', [
+    (2500, PANY, 1000, 'Lobar pneumonia by day (First Aid p. 702)', [
       ('Days 1–2', 'congestion'), ('Days 3–4', 'red hepatization'), ('Days 5–7', 'gray hepatization'), ('Day 8+', 'resolution')])],
   dyn=dyn)

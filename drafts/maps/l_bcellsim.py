@@ -35,7 +35,7 @@ def zone(x0, y0, x1, y1, lab, sub=''):
 def hi(x0, y0, x1, y1, when): add(f'<rect x="{x0}" y="{y0}" width="{x1 - x0}" height="{y1 - y0}" rx="30" style="fill:var(--bad);fill-opacity:.1;stroke:var(--bad);stroke-width:5"/>', when=when)
 
 text('B cells and the lymphomas — where each one comes from', 180, 150, 'dyn-big')
-text('a lit box = where the card places the tumor’s cell of origin or where it lives', 180, 176, 'dyn-cap')
+text('a lit box = where the tumor’s cell of origin sits, or where it lives', 180, 176, 'dyn-cap')
 
 zone(300, 260, 700, 640, 'Bone marrow', 'precursors · TdT')
 zone(800, 260, 1150, 640, 'Blood', 'mature B cells')
@@ -56,7 +56,7 @@ hi(300, 260, 700, 640, O('all'))
 hi(800, 260, 1150, 640, O('cll'))
 hi(300, 760, 700, 1000, O('hairy', 'cll'))
 add('<circle cx="1700" cy="640" r="250" style="fill:none;stroke:var(--bad);stroke-width:8"/>', when=O('mantle'))
-add('<circle cx="1700" cy="660" r="150" style="fill:var(--bad);fill-opacity:.15;stroke:var(--bad);stroke-width:8"/>', when=O('foll', 'dlbcl', 'hodg'))
+add('<circle cx="1700" cy="660" r="150" style="fill:var(--bad);fill-opacity:.15;stroke:var(--bad);stroke-width:8"/>', when=O('foll', 'burk', 'dlbcl', 'hodg'))
 add('<circle cx="1700" cy="640" r="330" style="fill:none;stroke:var(--bad);stroke-width:8"/>', when=O('malt'))
 hi(300, 1100, 1150, 1280, O('malt'))
 hi(800, 760, 1150, 1000, O('pcnsl'))
@@ -66,14 +66,14 @@ INFO = dict(
   hairy=('Hairy cell: marrow, spleen, liver — dry tap, massive spleen', 'BRAF V600E · TRAP ⊕ · cladribine'),
   mantle=('Mantle cell: naive mantle-zone B cells, cyclin D1 t(11;14), CD5 ⊕ CD23 ⊝', 'very aggressive · rituximab-based, bortezomib'),
   foll=('Follicular: BCL-2 t(14;18) — germinal-center cells that refuse to die', 'waxing-waning nodes · indolent · can become DLBCL'),
-  burk=('Burkitt: c-MYC t(8;14) next to the IgH promoter — starry sky', 'jaw (endemic, EBV) or abdomen · tumor lysis risk'),
-  dlbcl=('DLBCL: large germinal-center B cells in sheets — BCL-2, BCL-6', 'most common adult NHL · R-CHOP'),
+  burk=('Burkitt: germinal-center B cells, c-MYC t(8;14) beside IgH — starry sky', 'jaw (endemic) or pelvis/abdomen (sporadic) · EBV · tumor lysis risk'),
+  dlbcl=('DLBCL: large (post-)germinal-center B cells in sheets — BCL-2, BCL-6', 'most common adult NHL · R-CHOP'),
   malt=('Marginal zone: chronic antigen keeps marginal-zone B cells dividing — t(11;18)', 'gastric MALT regresses with H. pylori eradication'),
-  hodg=('Hodgkin: Reed-Sternberg cells, crippled germinal-center B cells — CD15 ⊕ CD30 ⊕', 'contiguous spread · EBV · ABVD'),
-  pcnsl=('Primary CNS lymphoma: EBV-driven, usually DLBCL type — AIDS', 'single ring-enhancing lesion vs toxoplasmosis · restore immunity'))
+  hodg=('Hodgkin: Reed-Sternberg cells from (post-)germinal-center B cells — CD15 ⊕ CD30 ⊕', 'contiguous spread · EBV · ABVD'),
+  pcnsl=('Primary CNS lymphoma: EBV-driven, usually DLBCL type — AIDS', 'often a single ring-enhancing mass — tell it from toxoplasmosis'))
 for k, (a, b) in INFO.items():
     text(a, 1300, 1400, 'nf-l1 dyn-tag', 'middle', when=O(k)); text(b, 1300, 1432, 'nf-l2', 'middle', when=O(k))
-text('Burkitt — the card names no cell of origin; MYC drives every cell to divide', 1700, 1060, 'nf-l1 dyn-tag', 'middle', when=O('burk'))
+text('Burkitt — MYC drives every germinal-center cell to divide', 1700, 1060, 'nf-l1 dyn-tag', 'middle', when=O('burk'))
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
@@ -93,7 +93,7 @@ sites = [dict(x=1700, y=810, n=[0, 1], w=10, t='rec', l='', aria='Follicular lym
          dict(x=500, y=640, n=[0, 1], w=10, t='rec', l='', aria='ALL', c='alleuk', ions=[])]
 
 readouts = [
-  dict(l='Growth rate', mods=[dict(when=O('burk', 'all', 'mantle', 'dlbcl'), d=1), dict(when=O('foll', 'cll', 'malt'), d=-1)]),
+  dict(l='Growth rate', mods=[dict(when=O('burk', 'all', 'mantle', 'dlbcl'), d=1), dict(when=O('foll', 'cll', 'malt', 'hairy'), d=-1)]),
   dict(l='TdT ⊕', mods=[dict(when=O('all'), d=1), dict(when=O('cll', 'mantle', 'foll', 'burk', 'dlbcl', 'hairy'), d=-1)]),
   dict(l='CD5 ⊕', mods=[dict(when=O('cll', 'mantle'), d=1), dict(when=O('foll'), d=-1)]),
   dict(l='Tumor lysis risk', mods=[dict(when=O('burk'), d=1)]),
@@ -111,14 +111,14 @@ notes = {
   'ly:mantle': 'Mantle cell lymphoma: naive mantle-zone B cells; cyclin D1 t(11;14) pushes G1 → S. CD5 ⊕ like CLL but CD23 ⊝.',
   'ly:foll': 'Follicular lymphoma: BCL-2 t(14;18) — germinal-center B cells that should die survive and accumulate; too little death, '
              'not too much division. Indolent, hard to cure.',
-  'ly:burk': 'Burkitt lymphoma: c-MYC t(8;14) under the always-active IgH promoter — the fastest-growing human tumor; starry-sky '
-             'macrophages eat the dead cells.',
-  'ly:dlbcl': 'DLBCL: large germinal-center B cells in diffuse sheets, alone or transformed from follicular lymphoma or CLL — aggressive '
+  'ly:burk': 'Burkitt lymphoma: a germinal-center B cell with c-MYC t(8;14) beside the strong IgH enhancers — among the fastest-growing '
+             'human tumors; starry-sky macrophages eat the dead cells.',
+  'ly:dlbcl': 'DLBCL: large germinal-center or post-germinal-center B cells in diffuse sheets, alone or transformed from follicular lymphoma or CLL — aggressive '
               'but potentially curable.',
   'ly:malt': 'Marginal zone lymphoma: chronic antigen stimulation keeps marginal-zone B cells dividing — H. pylori, Sjögren, Hashimoto. '
              'Early gastric MALT regresses when H. pylori is cleared.',
-  'ly:hodg': 'Hodgkin lymphoma: Reed-Sternberg cells are germinal-center B cells that lost their B-cell program; most of the node is a '
-             'reactive crowd. Contiguous spread, so stage predicts outcome.',
+  'ly:hodg': 'Hodgkin lymphoma: Reed-Sternberg cells come from germinal-center or post-germinal-center B cells; over 90% of the node '
+             'is a reactive crowd they recruit. Contiguous spread, so stage predicts outcome.',
   'ly:pcnsl': 'Primary CNS lymphoma: when T-cell surveillance fails, EBV-infected B cells grow in the brain — AIDS-defining.',
 }
 
@@ -130,14 +130,14 @@ dyn = dict(
     ['hodg', 'Hodgkin', 'hodgkin'], ['pcnsl', 'Primary CNS lymphoma', 'pcnsl']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 434–440 · Robbins ch 13')
+  src='First Aid pp. 222, 434–447 · Robbins ch 13, 28 · Katzung ch 54 · Bootcamp Heme/Onc')
 
 MAP = dict(
   id='bcellsim', title='B Cells & Lymphomas in Motion', topic='heme', after='hemeonc',
   sub='Follow a B cell from marrow to blood to the follicle’s mantle, germinal center and marginal zone, then light up where each '
       'leukemia or lymphoma comes from — ALL, CLL, hairy cell, mantle, follicular, Burkitt, DLBCL, MALT, Hodgkin and CNS lymphoma',
   w=3600, h=1900,
-  fa='107, 173, 220, 223, 429, 434, 435, 437, 439, 440, 444, 446, 447',
+  fa='107, 173, 220, 222–223, 429, 434–435, 437, 440, 444, 446–447',
   src=['Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus', 'Katzung ch 54 — Cancer Chemotherapy',
        'Katzung ch 55 — Immunopharmacology', 'Robbins ch 7 — Neoplasia', 'Robbins ch 28 — The central nervous system',
        'Robbins ch 6 — Diseases of the immune system', 'Robbins ch 17 — The gastrointestinal tract'],
@@ -153,7 +153,7 @@ MAP = dict(
     ('bc8', 'Marginal zone · MALT', 1200, 1790, 'bcNHL', 'H. pylori', ['malt']),
     ('bc9', 'Hodgkin · CNS lymphoma', 1640, 1790, 'bcHod', 'Reed-Sternberg · EBV', ['hodgkin', 'pcnsl'])],
   panels=[
-    (2500, PANY, 1000, 'Translocations (First Aid p. 437)', [
+    (2500, PANY, 1000, 'Translocations (First Aid pp. 435, 437)', [
       ('t(14;18)', 'follicular — BCL-2'), ('t(11;14)', 'mantle cell — cyclin D1'), ('t(8;14)', 'Burkitt — c-MYC'),
       ('t(11;18)', 'marginal zone'), ('t(9;22)', 'ALL — worse prognosis')])],
   dyn=dyn)

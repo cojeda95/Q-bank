@@ -4,7 +4,8 @@
 # apoptosis (shrinks, blebs, apoptotic bodies eaten, no inflammation), beside a tissue patch drawn for each necrosis
 # pattern (coagulative, liquefactive, caseous, fat, fibrinoid, gangrenous). One `one` switch picks the state.
 # No new cards: facts restate the pinned cards (cellinjury, necrosis, apoptosis, celladapt, freeradical, mi, tb,
-# acutepanc, pan — fact-checked against the corpus). Drawings are schematic. Sources: First Aid 2025 pp. 202–206.
+# acutepanc, pan — fact-checked against the corpus). Drawings are schematic. Sources: First Aid 2025 pp. 202–206;
+# Robbins ch 2 (table 2.2: necrosis enlarges the cell, apoptosis shrinks it).
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -54,9 +55,12 @@ add(f'<circle cx="{CX}" cy="{CY}" r="80" style="fill:none;stroke:var(--dk9);stro
 add(''.join(f'<circle cx="{CX + dx}" cy="{CY + dy}" r="14" style="fill:var(--dk9)"/>' for dx, dy in [(-40, -30), (30, 20), (50, -40), (-20, 40), (10, -5)]), when=DEAD)
 add(f'<circle cx="{CX}" cy="{CY}" r="40" style="fill:var(--dk9)"/>', when=I('apop'))
 text('nucleus', CX, CY + 110, 'nf-l2', 'middle', unless=I('apop'))
+# apoptosis: a macrophage eats the apoptotic bodies (no inflammation)
+add(f'<ellipse cx="{CX + 470}" cy="{CY + 210}" rx="80" ry="60" class="dyn-cell" style="stroke:var(--dk5);stroke-width:4"/>', when=I('apop'))
+text('macrophage', CX + 470, CY + 300, 'nf-l1', 'middle', when=I('apop'))
 # what each stage shows
 STAGE = dict(
-  rev=['REVERSIBLE: ATP falls → Na⁺/K⁺ and Ca²⁺ pumps stop → the cell swells', 'blebs · ribosomes detach (↓ protein synthesis) · chromatin clumps · myelin figures',
+  rev=['REVERSIBLE: ATP falls → Na⁺/K⁺ and Ca²⁺ pumps slow → the cell swells', 'blebs · ribosomes detach (↓ protein synthesis) · chromatin clumps · myelin figures',
        'myocytes stop contracting within 1–2 minutes of ischemia — still reversible'],
   irrev=['IRREVERSIBLE: the plasma membrane breaks — enzymes such as troponin leak out', 'Ca²⁺ floods in and activates degradative enzymes · mitochondria and lysosomes fail',
          'nucleus: pyknosis → karyorrhexis → karyolysis'],
@@ -100,7 +104,7 @@ PAT = dict(
   cas=['Caseous', 'TB, systemic fungi (Histoplasma), Nocardia', 'cheeselike debris walled off in a granuloma'],
   fat=['Fat', 'acute pancreatitis (lipase) or trauma (breast)', 'fatty acids bind Ca²⁺ — saponification, chalky white'],
   fibr=['Fibrinoid', 'vasculitis (polyarteritis nodosa), hypertensive emergency, preeclampsia', 'eosinophilic protein in the vessel wall'],
-  gang=['Gangrenous', 'distal limbs and the GI tract after chronic ischemia', 'dry = coagulative · wet = superinfected, liquefactive'])
+  gang=['Gangrenous', 'distal limbs and the GI tract after chronic ischemia', 'dry = coagulative · wet = superinfected, liquefactive on top'])
 for k, (h, where, how) in PAT.items():
     text(h, 1360, 860, 'dyn-big', when=I(k)); text(where, 1360, 890, 'nf-l1', when=I(k)); text(how, 1360, 916, TAG, when=I(k))
 text('normal tissue — pick a necrosis pattern', 1360, 860, 'dyn-cap', unless=NEC)
@@ -112,6 +116,7 @@ flows = [
   dict(d=f'M{CX + 200} {CY - 120} L{CX + 460} {CY - 300}', len=320, speed=70, r=6, base=dict(), mods=[m(DEAD, set=dict(enz=4))]),
   dict(d=f'M{CX - 470} {CY + 300} L{CX - 220} {CY + 120}', len=310, speed=70, r=6, base=dict(), mods=[m(DEAD, set=dict(ca=4))]),
   dict(d=f'M{CX - 470} {CY - 40} H{CX - 330}', len=140, speed=50, r=6, base=dict(), mods=[m(I('rev'), set=dict(na=3))]),
+  dict(d=f'M{CX + 300} {CY + 80} L{CX + 430} {CY + 190}', len=170, speed=40, r=12, base=dict(), mods=[m(I('apop'), set=dict(abody=2))]),
 ]
 
 # ════════ 4. sites ════════
@@ -124,12 +129,12 @@ sites = [
 
 # ════════ 5. readouts ════════
 readouts = [
-  dict(l='Cell volume', mods=[m(I('rev', 'irrev'), d=1), m(I('apop'), d=-1)]),
+  dict(l='Cell volume', mods=[m(I('rev') + DEAD, d=1), m(I('apop'), d=-1)]),
   dict(l='Membrane integrity', mods=[m(I('rev', 'apop'), d=0), m(DEAD, d=-1)]),
   dict(l='Inflammation', mods=[m(I('apop'), d=0), m(DEAD, d=1)]),
   dict(l='Serum enzymes (troponin)', mods=[m(I('rev'), d=0), m(I('irrev'), d=1)]),
 ]
-# UNVERIFIED: "cell volume ↑" for irreversible injury (swelling continues) — the cellinjury card describes swelling as the reversible sign
+# cell volume: necrosis = enlarged (swelling), apoptosis = reduced (shrinkage) — Robbins ch 2, table 2.2
 
 # ════════ 6. notes ════════
 notes = {
@@ -149,30 +154,30 @@ notes = {
              'cavity.',
   'inj:cas': 'Caseous necrosis: TB, systemic fungi such as Histoplasma, and Nocardia — cheeselike debris walled off in a granuloma.',
   'inj:fat': 'Fat necrosis: lipase in acute pancreatitis (or trauma, as in the breast) frees fatty acids that bind Ca²⁺ — '
-             'saponification, chalky white.',
+             'saponification, chalky white (dark blue on H&E).',
   'inj:fibr': 'Fibrinoid necrosis: immune vasculitis (polyarteritis nodosa) or hypertensive emergency and preeclampsia — '
               'eosinophilic protein in the vessel wall.',
   'inj:gang': 'Gangrenous necrosis: distal limbs and the GI tract after chronic ischemia — dry gangrene is coagulative; wet '
-              'gangrene is superinfected and liquefactive.',
+              'gangrene is superinfected — liquefactive on top of coagulative.',
 }
 
 dyn = dict(
-  kinds=dict(enz=['enz', '--dk7'], ca=['ca', '--nf-ca'], na=['na', '--nf-na']),
-  groups=[['enz', 'Leaking enzymes'], ['ca', 'Ca²⁺'], ['na', 'Na⁺ and water']],
+  kinds=dict(enz=['enz', '--dk7'], ca=['ca', '--nf-ca'], na=['na', '--nf-na'], abody=['abody', '--dk3']),
+  groups=[['enz', 'Leaking enzymes'], ['ca', 'Ca²⁺'], ['na', 'Na⁺ and water'], ['abody', 'Apoptotic bodies']],
   switches=[dict(id='inj', label='Pick a stage or a necrosis pattern', type='one',
                  options=[['rev', 'Reversible injury', 'cellinjury'], ['irrev', 'Irreversible injury', 'cellinjury'], ['apop', 'Apoptosis', 'apoptosis'],
                           ['coag', 'Coagulative necrosis', 'necrosis'], ['liq', 'Liquefactive necrosis', 'necrosis'], ['cas', 'Caseous necrosis', 'tb'],
                           ['fat', 'Fat necrosis', 'acutepanc'], ['fibr', 'Fibrinoid necrosis', 'pan'], ['gang', 'Gangrenous necrosis', 'necrosis']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 202–206')
+  src='First Aid pp. 202–206 · Robbins ch 2')
 
 MAP = dict(
   id='injsim', title='Cell Injury & Death Simulator', topic='path', after='genpath',
   sub='A cell taken from reversible to irreversible injury, or through apoptosis, beside a tissue patch for each necrosis pattern — '
       'coagulative, liquefactive, caseous, fat, fibrinoid and gangrenous. Tap the cell, the pump or the tissue for its card',
   w=3500, h=2100,
-  fa='202–206', src=[],
+  fa='202–206', src=[full('Robbins', 2)],
   lanes=[('ijCell', 'The cell', 'glycolysis'), ('ijDeath', 'Death', 'tca'), ('ijEx', 'Examples', 'gluconeo')],
   nodes=[
     ('ij1', 'Adaptations', 380, 1300, 'ijCell', 'hypertrophy → dysplasia', ['celladapt', 'epimeta']),

@@ -115,14 +115,14 @@ text('each box asks one question; the dot travels the path to the answer you pic
 
 # ════════ the clues ════════
 C = {
-  'sep': ['Septic arthritis — an emergency', 'hot, red, swollen joint, usually one; fever · S aureus most often in adults', 'purulent fluid, WBC > 50,000 · drain the joint + antibiotics'],
+  'sep': ['Septic arthritis — an emergency', 'hot, red, swollen joint, usually one; fever · S aureus commonest at any age; N gonorrhoeae (an STI) and streptococci too (FA 474)', 'purulent fluid, WBC > 50,000 · drain the joint + antibiotics'],
   'gout': ['Gout', 'attacks after a purine-rich meal, alcohol, surgery, dehydration or diuresis', 'needle-shaped, negatively birefringent crystals · urate can be normal in an attack'],
-  'cppd': ['Pseudogout — calcium pyrophosphate', 'acute monoarthritis, most often the knee, over 50', 'rhomboid, weakly positively birefringent crystals · chondrocalcinosis · check iron, PTH'],
+  'cppd': ['Pseudogout — calcium pyrophosphate', 'acute monoarthritis, most often the knee, over 50', 'rhomboid, weakly positively birefringent crystals · chondrocalcinosis · urate normal · check iron, PTH'],
   'ra': ['Rheumatoid arthritis', 'symmetric MCP, PIP and wrist (spares DIP) · morning stiffness > 1 hour', 'RF, anti-CCP (more specific) · marginal erosions on x-ray'],
   'oa': ['Osteoarthritis', 'weight-bearing joints, worse with use · Heberden (DIP) and Bouchard (PIP) nodes', 'noninflammatory fluid (WBC < 2000) · osteophytes, asymmetric narrowing'],
   'as': ['Ankylosing spondylitis — HLA-B27', 'inflammatory back pain: morning stiffness, better with exercise · sacroiliitis', 'bamboo spine, uveitis, aortic regurgitation, Achilles enthesitis'],
-  'psa': ['Psoriatic arthritis — HLA-B27', 'asymmetric, patchy, DIP · dactylitis (sausage fingers)', 'nail pitting, onycholysis · pencil-in-cup deformity'],
-  'rea': ['Reactive arthritis — HLA-B27', 'conjunctivitis, urethritis, arthritis after Shigella, Campylobacter, Salmonella, Chlamydia, Yersinia', 'sterile joint fluid · keratoderma blennorrhagicum'],
+  'psa': ['Psoriatic arthritis — HLA-B27', 'asymmetric, patchy, DIP · dactylitis (sausage fingers)', 'nail pitting, psoriasis · pencil-in-cup deformity of the DIP'],
+  'rea': ['Reactive arthritis — HLA-B27', 'conjunctivitis, urethritis, arthritis after Shigella, Campylobacter, Salmonella, Chlamydia, Yersinia', 'immune-mediated, after the infection · keratoderma blennorrhagicum'],
   'sle': ['Systemic lupus erythematosus', 'RASH OR PAIN — nonerosive arthritis with rash, serositis, ulcers, renal disease', 'ANA (sensitive), anti-dsDNA and anti-Sm (specific) · ↓ C3, C4 in flares'],
 }
 cy = clues(C, SW, 180, ybot + 70, 2140)
@@ -132,7 +132,8 @@ PY = cy + 110; PANY = 660
 O = lambda *k: [f'{SW}:{x}' for x in k]
 readouts = [
   dict(l='Synovial fluid WBC', mods=[dict(when=O('sep', 'ra'), d=1), dict(when=O('oa'), d=0)]),
-  dict(l='ESR · CRP', mods=[dict(when=O('ra', 'as', 'sle'), d=1)]),
+  dict(l='ESR · CRP', mods=[dict(when=O('sep', 'ra', 'as', 'psa', 'rea', 'sle'), d=1)]),
+  dict(l='Serum urate', mods=[dict(when=O('gout'), d=1), dict(when=O('cppd'), d=0)]),
   dict(l='RF · anti-CCP', mods=[dict(when=O('ra'), d=1)]),
   dict(l='HLA-B27', mods=[dict(when=O('as', 'psa', 'rea'), d=1)]),
   dict(l='ANA', mods=[dict(when=O('sle'), d=1)]),
@@ -143,7 +144,7 @@ notes = {
   '': 'Joint pain: one hot joint means tap it — pus or crystals decide it. Many joints: read the pattern (symmetric small joints, '
       'weight-bearing joints, the spine and DIP) and the stiffness.',
   'dx:sep': 'Septic arthritis: a hot, red, swollen joint with fever — purulent fluid with WBC over 50,000. S aureus is the commonest '
-            'adult cause; gonococcus in sexually active young adults. Drain it and give antibiotics.',
+            'cause at any age; disseminated gonococcal infection is another. Drain it and give antibiotics.',
   'dx:gout': 'Gout: needle-shaped, negatively birefringent urate crystals. Attacks follow purine-rich meals, alcohol, surgery, '
              'dehydration or diuresis — and serum urate can be normal during one.',
   'dx:cppd': 'Pseudogout: rhomboid, weakly positively birefringent calcium pyrophosphate crystals, most often in the knee after 50, '
@@ -157,7 +158,7 @@ notes = {
   'dx:psa': 'Psoriatic arthritis: asymmetric DIP arthritis, sausage digits, nail pitting and a pencil-in-cup deformity — HLA-B27, '
             'RF negative.',
   'dx:rea': 'Reactive arthritis: conjunctivitis, urethritis and arthritis after a GI or genitourinary infection — can’t see, can’t '
-            'pee, can’t bend my knee. The joint fluid is sterile.',
+            'pee, can’t bend my knee. It is immune-mediated, after the infection, not an infected joint.',
   'dx:sle': 'Lupus: a nonerosive arthritis with rash, serositis, ulcers, cytopenias or renal disease. ANA is the sensitive screen; '
             'anti-dsDNA and anti-Smith are specific; complement falls in flares.',
 }
@@ -170,18 +171,18 @@ dyn = dict(
     ['psa', 'Psoriatic arthritis', 'psa'], ['rea', 'Reactive arthritis', 'reactive'], ['sle', 'Lupus', 'sle']])],
   notes=notes, shapes=shapes, flows=flows, sites=[], readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 113, 472–476 (cards) · Robbins ch 26')
+  src='First Aid pp. 113, 472–476 · Robbins ch 26 · Katzung ch 36 · Bootcamp MSK')
 
 MAP = dict(
   id='sxjoint', title='Joint Pain', topic='sx', after='sxams',
   sub='One hot joint or many — tap it for pus or crystals, or read the pattern; a dot follows the case down the tree while '
-      'the readouts show the synovial fluid WBC, ESR/CRP, RF and anti-CCP, HLA-B27 and ANA',
+      'the readouts show the synovial fluid WBC, ESR/CRP, RF and anti-CCP, HLA-B27, ANA and urate',
   w=3500, h=1640,
   fa='113, 472–476',
-  src=[full('Robbins', 26), full('Robbins', 6), full('Katzung', 36)],
+  src=[full('Robbins', 26), full('Robbins', 6), full('Katzung', 36), 'Bootcamp.com MSK — Arthritis and Spondyloarthritis'],
   lanes=[('xjMono', 'One hot joint', 'glycolysis'), ('xjPoly', 'Many joints', 'tca'), ('xjB27', 'HLA-B27 & lupus', 'gluconeo')],
   nodes=[
-    ('xj1', 'Septic arthritis', 330, PY, 'xjMono', 'tap before antibiotics', ['septicarth', 'synfluid'], 'hub'),
+    ('xj1', 'Septic arthritis', 330, PY, 'xjMono', 'aspirate · drain · antibiotics', ['septicarth', 'synfluid'], 'hub'),
     ('xj2', 'Gout', 760, PY, 'xjMono', 'needles, negative', ['goutclin']),
     ('xj3', 'Pseudogout', 1160, PY, 'xjMono', 'rhomboids, positive', ['cppd']),
     ('xj4', 'Rheumatoid arthritis', 1580, PY, 'xjPoly', 'symmetric · spares DIP', ['ra']),
@@ -190,7 +191,7 @@ MAP = dict(
     ('xj7', 'Psoriatic · reactive', 780, PY + 130, 'xjB27', 'seronegative', ['psa', 'reactive']),
     ('xj8', 'Lupus', 1180, PY + 130, 'xjB27', 'RASH OR PAIN', ['sle'])],
   panels=[
-    (2420, PANY, 1000, 'Synovial fluid WBC (First Aid pp. 472–474)', [
+    (2420, PANY, 1000, 'Synovial fluid WBC (First Aid pp. 472–474 · Bootcamp MSK)', [
       ('Osteoarthritis', 'under 2,000/mm³ — noninflammatory'),
       ('Rheumatoid arthritis', 'about 5,000–50,000/mm³'),
       ('Septic arthritis', 'over 50,000/mm³ — purulent')])],

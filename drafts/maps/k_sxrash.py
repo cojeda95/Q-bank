@@ -104,6 +104,7 @@ T = [
   ('me', 'mp', 'cough, coryza, conjunctivitis · Koplik spots', 'Measles', 'hairline → down', 'meas'),
   ('ru', 'mp', 'postauricular nodes · arthralgias', 'Rubella', 'face → down, fine', 'rub'),
   ('ro', 'mp', 'days of high fever, then the rash', 'Roseola (HHV-6)', 'trunk first · infants', 'ros'),
+  ('fi', 'mp', 'slapped cheeks, then the body', 'Erythema infectiosum', 'parvovirus B19 · fifth disease', 'fifth'),
   ('tg', 'r', 'strawberry tongue', 'Red tongue, peeling skin', 'strep or vasculitis?', None),
   ('sc', 'tg', 'sore throat · sandpaper · circumoral pallor', 'Scarlet fever', 'S pyogenes toxin', 'scar'),
   ('ka', 'tg', 'fever ≥ 5 days · red eyes · swollen hands', 'Kawasaki disease', 'coronary aneurysms', 'kawa'),
@@ -126,9 +127,10 @@ C = {
   'meas': ['Measles — paramyxovirus', 'the 3 Cs (cough, coryza, conjunctivitis), then Koplik spots on the buccal mucosa', 'rash from the hairline down · pneumonia is the commonest cause of death'],
   'rub': ['Rubella', 'fine rash from the face down · postauricular lymphadenopathy · arthralgias', 'in pregnancy: PDA, cataracts, deafness, blueberry-muffin rash'],
   'ros': ['Roseola — HHV-6', 'high fever for several days (febrile seizures), then a macular rash from the trunk', 'children under 2'],
+  'fifth': ['Erythema infectiosum (fifth disease) — parvovirus B19', 'a febrile child, then a red “slapped cheek” rash on the face that spreads to the body', 'B19 infects RBC precursors: aplastic crisis in sickle cell disease · hydrops fetalis'],
   'scar': ['Scarlet fever — S pyogenes erythrogenic toxin', 'sandpaper rash neck → trunk, strawberry tongue, circumoral pallor', 'ASO and anti-DNase B show recent infection'],
   'kawa': ['Kawasaki disease — medium-vessel vasculitis', 'fever ≥ 5 days + CRASH: Conjunctivitis, Rash, Adenopathy, Strawberry tongue, Hand-foot edema', 'image the coronary arteries for aneurysms'],
-  'rmsf': ['Rocky Mountain spotted fever', 'headache, fever, rash — wrists and ankles, then trunk, palms and soles', 'Dermacentor tick · treat on clinical grounds'],
+  'rmsf': ['Rocky Mountain spotted fever', 'headache, fever, rash — wrists and ankles, then trunk, palms and soles', 'Dermacentor tick · thrombocytopenia · doxycycline, even in young children'],
   'syph': ['Secondary syphilis', 'rash including the palms and soles, condylomata lata, fever, lymphadenopathy', 'RPR/VDRL screen · FTA-ABS confirms'],
   'mening': ['Meningococcemia — N meningitidis', 'petechial hemorrhages, gangrene of the toes, shock, DIC', 'Waterhouse-Friderichsen: bilateral adrenal hemorrhage'],
   'sjs': ['Erythema multiforme → SJS → TEN', 'target lesions with a dusky center · SJS: fever, bullae, mucosa, Nikolsky +', 'drugs (sulfa, β-lactams, phenytoin), Mycoplasma, HSV'],
@@ -140,7 +142,7 @@ PY = cy + 110; PANY = 660
 # ════════ readouts ════════
 O = lambda *k: [f'{SW}:{x}' for x in k]
 readouts = [
-  dict(l='Platelets', mods=[dict(when=O('kawa'), d=1), dict(when=O('mening'), d=-1)]),
+  dict(l='Platelets', mods=[dict(when=O('kawa'), d=1), dict(when=O('rmsf', 'mening'), d=-1)]),
   dict(l='ESR · CRP', mods=[dict(when=O('kawa'), d=1)]),
   dict(l='ASO titer', mods=[dict(when=O('scar'), d=1)]),
   dict(l='RPR · VDRL', mods=[dict(when=O('syph'), d=1)]),
@@ -159,12 +161,14 @@ notes = {
             'cataracts and deafness in the baby.',
   'dx:ros': 'Roseola (HHV-6): several days of high fever — sometimes a febrile seizure — then a macular rash that starts on the '
             'trunk, in a child under 2.',
+  'dx:fifth': 'Erythema infectiosum (fifth disease): parvovirus B19 gives a febrile child a “slapped cheek” rash that later '
+               'spreads to the body. B19 infects RBC precursors — aplastic crisis in sickle cell disease, hydrops fetalis in the fetus.',
   'dx:scar': 'Scarlet fever: the erythrogenic toxin of S pyogenes gives a sandpaper rash, a strawberry tongue and circumoral '
              'pallor after pharyngitis. ASO and anti-DNase B show recent infection.',
   'dx:kawa': 'Kawasaki disease: fever for at least 5 days plus CRASH — conjunctivitis, rash, adenopathy, strawberry tongue, '
              'hand-foot changes. ESR, CRP and platelets rise; image the coronaries for aneurysms.',
   'dx:rmsf': 'Rocky Mountain spotted fever: headache, fever and a rash that begins at the wrists and ankles and spreads to the '
-             'trunk, palms and soles. Treat on clinical grounds — don’t wait for serology.',
+             'trunk, palms and soles; platelets fall. Doxycycline — even in children under 8 when RMSF is suspected.',
   'dx:syph': 'Secondary syphilis: a rash that includes the palms and soles, condylomata lata, fever and lymphadenopathy. '
              'Nontreponemal tests (RPR, VDRL) screen; FTA-ABS confirms.',
   'dx:mening': 'Meningococcemia: petechiae and purpura with shock and DIC (platelets fall); bilateral adrenal hemorrhage is '
@@ -179,23 +183,24 @@ dyn = dict(
   kinds=dict(pt=['pt', '--accent']), groups=[['pt', 'The case']],
   switches=[dict(id=SW, label='The answer', type='one', options=[
     ['vzv', 'Chickenpox', 'hsvvzv'], ['hfm', 'Hand-foot-mouth', 'childrashes'], ['meas', 'Measles', 'measles'],
-    ['rub', 'Rubella', 'rubella'], ['ros', 'Roseola', 'roseola'], ['scar', 'Scarlet fever', 'gas'], ['kawa', 'Kawasaki disease', 'kawasaki'],
+    ['rub', 'Rubella', 'rubella'], ['ros', 'Roseola', 'roseola'], ['fifth', 'Fifth disease (B19)', 'parvo'], ['scar', 'Scarlet fever', 'gas'], ['kawa', 'Kawasaki disease', 'kawasaki'],
     ['rmsf', 'Rocky Mountain spotted fever', 'rmsf'], ['syph', 'Secondary syphilis', 'syphilis'],
     ['mening', 'Meningococcemia', 'meningococcus'], ['sjs', 'EM · SJS · TEN', 'sjs'], ['lyme', 'Lyme disease', 'lyme']])],
   notes=notes, shapes=shapes, flows=flows, sites=[], readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 134, 140, 144–148, 162–167, 177, 251, 478 (cards)')
+  src='First Aid pp. 134, 140, 144–148, 161–167, 177, 251, 433, 478, 490 · Katzung ch 44 · Bootcamp Microbiology, MSK')
 
 MAP = dict(
   id='sxrash', title='Fever & Rash', topic='sx', after='sxams',
   sub='Sort a febrile rash by what the spots look like — vesicles, red macules, a red tongue, palms and soles, petechiae, '
       'targets — and a dot follows the clues down the tree, while the readouts show platelets, ESR/CRP, ASO and RPR',
   w=3500, h=1880,
-  fa='134, 140, 144–146, 148, 162–163, 166–167, 177, 251, 432–433, 478, 490',
-  src=[full('Robbins', 8), full('Robbins', 10), full('Robbins', 11), full('Robbins', 25), full('Katzung', 51)],
+  fa='134, 140, 144–146, 148, 161–163, 166–167, 177, 251, 432–433, 478, 490',
+  src=[full('Robbins', 8), full('Robbins', 10), full('Robbins', 11), full('Robbins', 25), full('Katzung', 51), full('Katzung', 44),
+       'Bootcamp.com Microbiology — Rickettsia', 'Bootcamp.com MSK — Kawasaki Disease'],
   lanes=[('xrVir', 'Viral exanthems', 'glycolysis'), ('xrBact', 'Bacteria & ticks', 'tca'), ('xrImm', 'Immune & drug', 'gluconeo')],
   nodes=[
-    ('xr1', 'Red rashes of childhood', 330, PY, 'xrVir', 'agent → pattern', ['childrashes'], 'hub'),
+    ('xr1', 'Red rashes of childhood', 330, PY, 'xrVir', 'agent → pattern', ['childrashes', 'parvo'], 'hub'),
     ('xr2', 'Measles · rubella', 760, PY, 'xrVir', 'head → down', ['measles', 'rubella']),
     ('xr3', 'Roseola · VZV', 1160, PY, 'xrVir', 'trunk first', ['roseola', 'hsvvzv']),
     ('xr4', 'Scarlet fever', 1560, PY, 'xrBact', 'S pyogenes', ['gas']),
@@ -205,7 +210,7 @@ MAP = dict(
     ('xr8', 'Kawasaki disease', 1160, PY + 130, 'xrImm', 'CRASH and burn', ['kawasaki']),
     ('xr9', 'EM · SJS · TEN', 1560, PY + 130, 'xrImm', 'targets · mucosa', ['sjs'])],
   panels=[
-    (2420, PANY, 1000, 'Rash on the palms and soles (cards)', [
+    (2420, PANY, 1000, 'Palms and soles (First Aid pp. 148, 478)', [
       ('Rocky Mountain spotted fever', 'wrists and ankles first'),
       ('Secondary syphilis', 'with condylomata lata'),
       ('Hand-foot-mouth disease', 'vesicles + oral ulcers'),

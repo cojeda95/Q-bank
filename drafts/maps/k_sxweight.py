@@ -105,10 +105,10 @@ T = [
   ('tb', 'ns', 'cough · hemoptysis · apical cavity', 'Tuberculosis', 'caseating granulomas', 'tb'),
   ('ho', 'ns', 'painless nodes · young adult', 'Hodgkin lymphoma', 'Reed-Sternberg cells', 'hodg'),
   ('cx', 'dn', 'known cancer or AIDS · muscle wasting', 'Cachexia', 'TNF-α from tumor and host', 'cach'),
-  ('ad', 'dn', 'salt craving · dark creases · dizzy standing', 'Adrenal insufficiency', 'Na⁺ ↓ · K⁺ ↑', 'addi'),
+  ('ad', 'dn', 'salt craving · dark knuckles · dizzy standing', 'Adrenal insufficiency', 'Na⁺ ↓ · K⁺ ↑', 'addi'),
   ('ce', 'dn', 'diarrhea · bloating · itchy vesicles', 'Celiac disease', 'malabsorption', 'celi'),
   ('ps', 'dn', 'mood or body image', 'Mind', '', None),
-  ('md', 'ps', 'anhedonia · early waking · guilt', 'Major depressive disorder', 'SIG E CAPS', 'mdd'),
+  ('md', 'ps', 'anhedonia · poor sleep · guilt', 'Major depressive disorder', 'SIG E CAPS', 'mdd'),
   ('an', 'ps', 'fear of weight gain · amenorrhea', 'Anorexia nervosa', 'BMI < 18.5', 'anor'),
 ]
 pos, flows, ybot = tree(T, SW, Y0=270)
@@ -138,6 +138,7 @@ readouts = [
   dict(l='Glucose', mods=[dict(when=O('t1dm'), d=1), dict(when=O('addi'), d=-1)]),
   dict(l='Na⁺', mods=[dict(when=O('addi'), d=-1)]),
   dict(l='K⁺', mods=[dict(when=O('addi'), d=1)]),
+  dict(l='Heart rate', mods=[dict(when=O('hyper'), d=1), dict(when=O('anor'), d=-1)]),   # FA pp. 344, 584
 ]
 
 # ════════ notes ════════
@@ -160,27 +161,27 @@ notes = {
   'dx:mdd': 'Major depressive disorder changes appetite and weight with depressed mood or anhedonia for 2 weeks or more '
             '(SIG E CAPS). Check TSH and the drug list.',
   'dx:anor': 'Anorexia nervosa: BMI under 18.5 with fear of weight gain. Starvation lowers leptin and GnRH — amenorrhea and '
-             'bone loss — with lanugo, bradycardia and hypothermia.',
+             'bone loss — with lanugo, bradycardia and hypothermia. The binge-purge type adds hypokalemia.',
 }
 
 dyn = dict(
   kinds=dict(pt=['pt', '--accent']), groups=[['pt', 'The case']],
   switches=[dict(id=SW, label='The answer', type='one', options=[
     ['hyper', 'Hyperthyroidism', 'hyperthyroid'], ['t1dm', 'Type 1 diabetes', 't1dm'], ['tb', 'Tuberculosis', 'tb'],
-    ['hodg', 'Hodgkin lymphoma', 'hodgkin'], ['cach', 'Cachexia (cancer, AIDS)', 'cachexia'], ['addi', 'Adrenal insufficiency', 'addison'],
+    ['hodg', 'Hodgkin lymphoma', 'hodgkin'], ['cach', 'Cachexia (cancer, AIDS)', 'cachexia'], ['addi', 'Primary adrenal insufficiency', 'addison'],
     ['celi', 'Celiac disease', 'celiac'], ['mdd', 'Major depression', 'mdd'], ['anor', 'Anorexia nervosa', 'anorexia']])],
   notes=notes, shapes=shapes, flows=flows, sites=[], readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 106, 138, 346, 350, 353, 388, 434, 578, 584 (cards)')
+  src='First Aid pp. 106, 138, 344–353, 388, 434, 490, 578, 584 · Robbins ch 7, 13, 17, 24 · Costanzo ch 9 · Kaplan & Sadock ch 7, 13')
 
 MAP = dict(
   id='sxweight', title='Weight Loss', topic='sx', after='sxams',
   sub='Appetite up or down, then the clue that splits each branch — a dot follows the case down the tree to thyroid, '
       'diabetes, TB, lymphoma, cachexia, the adrenals, the gut or the mind, while the readouts show TSH, glucose, Na⁺ and K⁺',
   w=3500, h=1640,
-  fa='106, 138, 172–173, 193, 197, 346, 350, 353, 388, 434, 578, 584',
+  fa='106, 138, 173, 344, 346, 350–351, 353, 388, 434, 490, 578, 584',
   src=[full('Robbins', 24), full('Robbins', 8), full('Robbins', 13), full('Robbins', 7), full('Robbins', 17), full('Kaplan & Sadock', 7),
-       full('Kaplan & Sadock', 13)],
+       full('Kaplan & Sadock', 13), full('Costanzo', 9), full('Robbins', 3), full('Robbins', 9)],
   lanes=[('xwHorm', 'Hormones', 'glycolysis'), ('xwInf', 'Infection & cancer', 'tca'), ('xwGut', 'Gut & mind', 'gluconeo')],
   nodes=[
     ('xw1', 'Hyperthyroidism', 330, PY, 'xwHorm', 'good appetite', ['hyperthyroid'], 'hub'),
@@ -196,6 +197,6 @@ MAP = dict(
     (2420, PANY, 1000, 'One clue each (cards)', [
       ('Appetite up', 'hyperthyroidism · type 1 diabetes'),
       ('Night sweats', 'tuberculosis · Hodgkin lymphoma'),
-      ('Salt craving, dark creases', 'primary adrenal insufficiency'),
+      ('Salt craving, dark knuckles', 'primary adrenal insufficiency'),
       ('Itchy vesicles on extensors', 'celiac disease (dermatitis herpetiformis)')])],
   dyn=dyn)

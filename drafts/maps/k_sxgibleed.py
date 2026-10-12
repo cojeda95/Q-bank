@@ -99,13 +99,13 @@ T = [
   ('up', 'r', 'hematemesis · melena · BUN:Cr > 20', 'Upper GI bleed', 'esophagus, stomach, duodenum', None),
   ('pu', 'up', 'epigastric pain · NSAIDs · H pylori', 'Peptic ulcer', 'the commonest complication', 'pud'),
   ('va', 'up', 'cirrhosis · caput medusae · splenomegaly', 'Esophageal varices', 'portal hypertension', 'var'),
-  ('mw', 'up', 'after violent retching', 'Mallory-Weiss tear', 'mucosal, at the GE junction', 'mw'),
+  ('mw', 'up', 'after severe vomiting', 'Mallory-Weiss tear', 'partial-thickness, GE junction', 'mw'),
   ('lo', 'r', 'hematochezia', 'Lower GI bleed', 'colon, rectum, anus — or Meckel', None),
   ('pl', 'lo', 'no pain', 'Painless bleeding', 'how old? what else?', None),
   ('dv', 'pl', 'over 60 · low-fiber diet', 'Diverticulosis', 'sigmoid · vasa recta', 'div'),
   ('ag', 'pl', 'aortic stenosis · ESRD · von Willebrand', 'Angiodysplasia', 'right colon', 'angio'),
   ('me', 'pl', 'a young child', 'Meckel diverticulum', 'ectopic gastric mucosa', 'meck'),
-  ('ih', 'pl', 'bright red on the paper', 'Internal hemorrhoids', 'above the pectinate line', 'hem'),
+  ('ih', 'pl', 'bright red blood', 'Internal hemorrhoids', 'above the pectinate line', 'hem'),
   ('ot', 'lo', 'with anemia, weight loss or diarrhea', 'Bleeding with a story', '', None),
   ('cr', 'ot', 'over 50 · iron deficiency · weight loss', 'Colorectal cancer', 'right: occult · left: obstruction', 'crc'),
   ('uc', 'ot', 'bloody diarrhea · from the rectum up', 'Ulcerative colitis', 'continuous, mucosal', 'uc'),
@@ -117,14 +117,14 @@ text('each box asks one question; the dot travels the path to the answer you pic
 # ════════ the clues ════════
 C = {
   'pud': ['Peptic ulcer disease', 'H pylori or NSAIDs · bleeding is the commonest complication', 'posterior duodenal ulcer → gastroduodenal artery · lesser curvature → left gastric'],
-  'var': ['Esophageal varices — portal hypertension', 'cirrhosis: caput medusae, splenomegaly, ascites, spider angiomas', 'nonselective β-blockers prevent the bleed · low platelets, long PT'],
-  'mw': ['Mallory-Weiss tear', 'longitudinal mucosal tear at the GE junction after retching → hematemesis', 'alcohol use disorder, bulimia · Boerhaave is the full-thickness rupture'],
+  'var': ['Esophageal varices — portal hypertension', 'cirrhosis: caput medusae, splenomegaly, ascites, spider angiomas', 'nonselective β-blockers prevent the bleed · octreotide for an acute bleed · low platelets, long PT'],
+  'mw': ['Mallory-Weiss tear', 'longitudinal partial-thickness tear at the GE junction after severe vomiting → hematemesis', 'alcohol use disorder, bulimia · Boerhaave is the full-thickness rupture'],
   'div': ['Diverticulosis — diverticular bleeding', 'painless hematochezia; about half of people over 60 have diverticula', 'false diverticula where the vasa recta pierce the wall · diverticulitis rarely bleeds'],
-  'angio': ['Angiodysplasia', 'painless hematochezia from dilated submucosal vessels, often the right colon', 'with aortic stenosis, end-stage renal disease, von Willebrand disease'],
+  'angio': ['Angiodysplasia', 'chronic, intermittent bleeding from dilated submucosal vessels, often the right colon', 'older adults · aortic stenosis, end-stage renal disease, von Willebrand disease · iron deficiency'],
   'meck': ['Meckel diverticulum', 'painless hematochezia or melena in a child under 2', 'ectopic gastric mucosa ulcerates the ileum · technetium-99m pertechnetate scan'],
   'hem': ['Internal hemorrhoids', 'painless bleeding — above the pectinate line, visceral innervation', 'external hemorrhoids and fissures (below the line) hurt'],
   'crc': ['Colorectal cancer', 'right side: occult bleeding, iron deficiency anemia, weight loss', 'left side: obstruction, hematochezia, narrow stools · iron deficiency in a man → colonoscopy'],
-  'uc': ['Ulcerative colitis', 'continuous mucosal inflammation from the rectum up · bloody diarrhea', 'crypt abscesses, pseudopolyps · PSC, p-ANCA · ↑ platelets in activity'],
+  'uc': ['Ulcerative colitis', 'continuous mucosal inflammation from the rectum up · bloody diarrhea', 'crypt abscesses, pseudopolyps · PSC, p-ANCA · reactive thrombocytosis'],
 }
 cy = clues(C, SW, 180, ybot + 70, 2140)
 PY = cy + 110; PANY = 660
@@ -137,6 +137,7 @@ readouts = [
   dict(l='Hemoglobin', mods=[dict(when=ALL, d=-1)]),
   dict(l='Platelets', mods=[dict(when=O('var'), d=-1), dict(when=O('uc'), d=1)]),
   dict(l='PT', mods=[dict(when=O('var'), d=1)]),
+  dict(l='Ferritin (iron stores)', mods=[dict(when=O('crc', 'angio'), d=-1)]),
 ]
 
 # ════════ notes ════════
@@ -145,22 +146,22 @@ notes = {
       'Then age, pain and the company the bleeding keeps name the source.',
   'dx:pud': 'Peptic ulcer disease is the classic upper bleed — H pylori or NSAIDs. A posterior duodenal ulcer erodes the '
             'gastroduodenal artery; a lesser-curvature gastric ulcer, the left gastric.',
-  'dx:var': 'Esophageal varices: portal hypertension from cirrhosis opens portosystemic collaterals. Low platelets (spleen) and a '
-            'long PT (lost synthesis) come with it; nonselective β-blockers prevent the bleed.',
-  'dx:mw': 'Mallory-Weiss tear: violent retching tears the mucosa at the GE junction → hematemesis. A full-thickness rupture with '
+  'dx:var': 'Esophageal varices: portal hypertension from cirrhosis opens portosystemic collaterals. Low platelets and a '
+            'long PT (lost synthesis) come with it; nonselective β-blockers prevent the bleed; octreotide treats an acute one.',
+  'dx:mw': 'Mallory-Weiss tear: severe vomiting tears the mucosa and submucosa at the GE junction → hematemesis. A full-thickness rupture with '
            'mediastinal air is Boerhaave syndrome.',
   'dx:div': 'Diverticulosis: painless hematochezia in an older adult from false diverticula where the vasa recta enter the wall. '
             'Diverticulitis — LLQ pain, fever — rarely bleeds.',
-  'dx:angio': 'Angiodysplasia: painless, intermittent bleeding from dilated submucosal vessels, often in the right colon — linked '
+  'dx:angio': 'Angiodysplasia: chronic, intermittent bleeding from dilated submucosal vessels, often in the right colon — linked '
               'to aortic stenosis, end-stage renal disease and von Willebrand disease.',
   'dx:meck': 'Meckel diverticulum: painless bleeding in a young child from ectopic gastric mucosa ulcerating the ileum — the rule '
              'of 2s; a technetium-99m pertechnetate scan finds it.',
   'dx:hem': 'Internal hemorrhoids sit above the pectinate line, where innervation is visceral — so they bleed painlessly. External '
             'hemorrhoids and anal fissures lie below it and hurt.',
   'dx:crc': 'Colorectal cancer: right-sided tumors bleed occultly (iron deficiency, weight loss); left-sided ones obstruct and '
-            'cause hematochezia. Iron deficiency in a man or postmenopausal woman means colonoscopy.',
+            'cause hematochezia. Iron deficiency in a man or postmenopausal woman raises the suspicion — colonoscopy.',
   'dx:uc': 'Ulcerative colitis: continuous mucosal inflammation from the rectum upward with bloody diarrhea, crypt abscesses and '
-           'pseudopolyps; reactive thrombocytosis marks activity.',
+           'pseudopolyps; reactive thrombocytosis is common.',
 }
 
 dyn = dict(
@@ -171,21 +172,22 @@ dyn = dict(
     ['hem', 'Internal hemorrhoids', 'hemorrhoids'], ['crc', 'Colorectal cancer', 'crc'], ['uc', 'Ulcerative colitis', 'crohn']])],
   notes=notes, shapes=shapes, flows=flows, sites=[], readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 373, 384, 387–397 (cards) · Robbins ch 17')
+  src='First Aid pp. 244, 373, 384, 387–396, 407 · Robbins ch 17 · Bootcamp Gastroenterology')
 
 MAP = dict(
   id='sxgibleed', title='GI Bleeding', topic='sx', after='sxabdpain',
   sub='Above or below the ligament of Treitz, then the clue that names the source — a dot follows the case down the tree '
-      'while the readouts show BUN:Cr, hemoglobin, platelets and PT',
+      'while the readouts show BUN:Cr, hemoglobin, platelets, PT and ferritin',
   w=3500, h=1640,
-  fa='244, 372–373, 384, 386–387, 389–391, 393, 395–397, 423–424',
-  src=[full('Robbins', 17), full('Robbins', 18), full('Costanzo', 8), full('Robbins', 14)],
+  fa='244, 372–373, 384, 386–387, 389–391, 393, 395–397, 407, 423–424',
+  src=[full('Robbins', 17), full('Robbins', 18), full('Costanzo', 8), full('Robbins', 14), full('Moore', 6),
+       'Bootcamp.com Gastroenterology — Acute Upper and Lower GI Bleeding'],
   lanes=[('xgUp', 'Upper GI', 'glycolysis'), ('xgLow', 'Lower GI', 'tca'), ('xgWork', 'Work-up', 'gluconeo')],
   nodes=[
     ('xg1', 'Upper vs lower bleeding', 330, PY, 'xgWork', 'ligament of Treitz', ['gibleed'], 'hub'),
     ('xg2', 'Peptic ulcer · gastritis', 780, PY, 'xgUp', 'H pylori · NSAIDs', ['pud', 'gastritis']),
     ('xg3', 'Varices', 1200, PY, 'xgUp', 'portal hypertension', ['cirrhosis']),
-    ('xg4', 'Mallory-Weiss', 1600, PY, 'xgUp', 'after retching', ['mallorywb']),
+    ('xg4', 'Mallory-Weiss', 1600, PY, 'xgUp', 'after vomiting', ['mallorywb']),
     ('xg5', 'Diverticulosis', 2000, PY, 'xgLow', 'painless, older', ['diverticular']),
     ('xg6', 'Angiodysplasia · Meckel', 330, PY + 130, 'xgLow', 'painless', ['angiodysplasia', 'meckel']),
     ('xg7', 'Hemorrhoids', 780, PY + 130, 'xgLow', 'pectinate line', ['hemorrhoids']),

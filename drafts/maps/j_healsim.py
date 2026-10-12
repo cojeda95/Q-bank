@@ -3,9 +3,10 @@
 # diapedesis → migration), then the three phases of repair — inflammatory (up to 3 days), proliferative (day 3 to
 # weeks: granulation tissue, type III collagen, angiogenesis, myofibroblast contraction) and remodeling (1 week to
 # 6+ months: type III replaced by type I, ~70–80% of strength by 3 months). A `steps` switch walks the time; a `one`
-# switch adds a problem (vitamin C, copper or zinc deficiency, LAD type 1, hypertrophic scar, keloid).
+# switch adds a problem (vitamin C, copper or zinc deficiency, glucocorticoid excess, LAD type 1, hypertrophic scar, keloid).
 # No new cards: facts restate the pinned cards (acuteinflam, woundheal, collagentypes, lad1, scurvy if present —
-# fact-checked against the corpus). Drawings are schematic. Sources: First Aid 2025 pp. 210–214.
+# fact-checked against the corpus). Drawings are schematic. Sources: First Aid 2025 pp. 48, 67, 69, 115, 210–214, 340;
+# Robbins ch 3 (repair: macrophages in granulation tissue, vitamin C and glucocorticoids slow healing).
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -87,6 +88,13 @@ text('hypertrophic scar: more type III, parallel, stays within the wound; seldom
 text('vitamin C deficiency: the proliferative phase is delayed', 1160, 900, TAG, when=D('vitc'))
 text('copper deficiency: the proliferative phase is delayed', 1160, 900, TAG, when=D('cu'))
 text('zinc deficiency: the zinc-dependent collagenases can’t remodel — healing is delayed', 1160, 900, TAG, when=D('zn'))
+text('glucocorticoid excess: ↓ fibroblast activity and collagen synthesis — poor healing, a weaker scar', 1160, 900, TAG, when=D('gc'))
+# a deficiency or steroids: the repair is marked on the wound bed
+add(f'<path d="M{GAP0 - 20} {EPI - 20} L{GAP0 + 30} 660 H{GAP1 - 30} L{GAP1 + 20} {EPI - 20} Z" class="dyn-lesion" style="stroke-dasharray:16 12"/>', when=D('vitc', 'cu', 'zn', 'gc'))
+text('no vitamin C → no proline/lysine hydroxylation → unstable collagen', (GAP0 + GAP1) // 2, 806, 'nf-l1', 'middle', when=D('vitc'))
+text('no copper → lysyl oxidase can’t cross-link the collagen', (GAP0 + GAP1) // 2, 806, 'nf-l1', 'middle', when=D('cu'))
+text('no zinc → collagenases can’t break down type III', (GAP0 + GAP1) // 2, 806, 'nf-l1', 'middle', when=D('zn'))
+text('cortisol → fewer fibroblasts at work, less collagen, less TGF-β', (GAP0 + GAP1) // 2, 806, 'nf-l1', 'middle', when=D('gc'))
 text('excess TGF-β drives hypertrophic and keloid scars', 1160, 952, 'nf-l2', when=D('keloid', 'hyper'))
 # tensile strength bar
 text('Tensile strength of the scar', 1160, 1030, 'nf-l1')
@@ -99,8 +107,8 @@ text('bar is schematic', 2260, 1120, 'dyn-cap', 'end')
 # ════════ 3. motion ════════
 def m(when, **kw): return dict(when=when, **kw)
 flows = [
-  dict(d='M300 420 H960', len=660, speed=110, r=7, base=dict(neu=3), mods=[m(T('min', 'inflam'), set=dict(neu=6)), m(D('lad'), set=dict(neu=9))]),
-  dict(d='M930 560 V700', len=140, speed=50, r=7, base=dict(), mods=[m(T('min', 'inflam'), set=dict(neu=3)), m(D('lad'), set=dict(neu=0))]),
+  dict(d='M300 420 H960', len=660, speed=110, r=7, base=dict(neu=3), mods=[m(T('min', 'inflam'), set=dict(neu=6)), m(D('lad', 'gc'), set=dict(neu=9))]),
+  dict(d='M930 560 V700', len=140, speed=50, r=7, base=dict(), mods=[m(T('min', 'inflam'), set=dict(neu=3)), m(D('lad'), set=dict(neu=0)), m(['dx:gc&t:min', 'dx:gc&t:inflam'], set=dict(neu=1))]),
   dict(d=f'M{GAP0 + 60} 700 Q{(GAP0 + GAP1) // 2} 600 {GAP1 - 60} 700', len=320, speed=60, r=8, base=dict(), mods=[m(T('inflam', 'prolif'), set=dict(mac=3))]),
 ]
 
@@ -112,13 +120,18 @@ sites = [
 ]
 
 # ════════ 5. readouts (compared with unwounded skin) ════════
+# macrophages stay through the proliferative phase (FA p. 212 effector cells; Robbins ch 3: granulation tissue holds mainly macrophages)
+# LAD / steroids: neutrophils stay in the blood (FA pp. 115, 340); vitamin C and steroids ↓ collagen synthesis (Robbins ch 3, FA p. 340)
+NOLOW = '&!dx:lad&!dx:gc'
+NOSYN = '&!dx:vitc&!dx:gc'
 readouts = [
-  dict(l='Neutrophils', mods=[m(T('min', 'inflam'), d=1)]),
-  dict(l='Macrophages', mods=[m(T('inflam'), d=1)]),
-  dict(l='Type III collagen', mods=[m(T('prolif'), d=1)]),
-  dict(l='Type I collagen', mods=[m(T('remod'), d=1)]),
+  dict(l='Neutrophils in the wound', mods=[m(['t:min' + NOLOW, 't:inflam' + NOLOW], d=1),
+                                           m(['dx:lad&t:min', 'dx:lad&t:inflam', 'dx:gc&t:min', 'dx:gc&t:inflam'], d=-1)]),
+  dict(l='Blood neutrophils', mods=[m(D('lad', 'gc'), d=1)]),
+  dict(l='Macrophages', mods=[m(T('inflam', 'prolif'), d=1)]),
+  dict(l='Type III collagen', mods=[m(['t:prolif' + NOSYN, 'dx:hyper', 'dx:keloid'], d=1), m(D('vitc', 'gc'), d=-1)]),
+  dict(l='Type I collagen', mods=[m(['t:remod' + NOSYN, 'dx:keloid'], d=1), m(D('vitc', 'gc'), d=-1)]),
 ]
-# UNVERIFIED: macrophages ↑ only in the inflammatory step here; the cards say they predominate late (peak 2–3 days) without an end point
 
 # ════════ 6. notes ════════
 notes = {
@@ -131,11 +144,15 @@ notes = {
               'granulation tissue — type III collagen, new capillaries (VEGF, FGF) — and myofibroblasts contract the wound.',
   't:remod': 'Remodeling (1 week to 6+ months): fibroblasts replace type III collagen with type I, using zinc-dependent '
              'collagenases. About 70–80% of the original strength returns by 3 months, and little more after that.',
-  'dx:vitc': 'Vitamin C deficiency delays the proliferative phase — granulation tissue and type III collagen come late.',
-  'dx:cu': 'Copper deficiency delays the proliferative phase.',
+  'dx:vitc': 'Vitamin C deficiency (scurvy) delays the proliferative phase: without vitamin C, proline and lysine are not '
+             'hydroxylated, so the collagen made is unstable — less collagen, poor wound healing.',
+  'dx:cu': 'Copper deficiency delays the proliferative phase: copper-containing lysyl oxidase cross-links collagen, and '
+           'without it the fibers are weak (the same defect as Menkes disease).',
   'dx:zn': 'Zinc deficiency delays remodeling — the collagenases that replace type III with type I are zinc-dependent.',
   'dx:lad': 'Leukocyte adhesion deficiency type 1: without CD18, neutrophils roll but cannot bind tightly or leave the vessel — '
-            'very high blood neutrophils, no pus at infected sites, delayed separation of the umbilical cord.',
+            'very high blood neutrophils, no pus at infected sites, impaired wound healing, delayed separation of the umbilical cord.',
+  'dx:gc': 'Glucocorticoid excess (Cushing or steroid drugs): cortisol lowers fibroblast activity and collagen synthesis — '
+           'poor wound healing and a weak scar (less TGF-β). It also inhibits WBC adhesion, so blood neutrophils rise.',
   'dx:hyper': 'Hypertrophic scar: more type III collagen, laid down in parallel, staying within the wound — it seldom recurs.',
   'dx:keloid': 'Keloid: much more type I and III collagen, disorganized, spreading beyond the wound (earlobes, face, upper limbs) '
                'and often recurring; more common in darker skin. Excess TGF-β drives both keloids and hypertrophic scars.',
@@ -148,30 +165,32 @@ dyn = dict(
                  options=[['min', 'Minutes — acute inflammation'], ['inflam', 'Up to 3 days — inflammatory'],
                           ['prolif', 'Day 3 to weeks — proliferative'], ['remod', '1 week to 6+ months — remodeling']]),
             dict(id='dx', label='Add a problem', type='one',
-                 options=[['vitc', 'Vitamin C deficiency', 'woundheal'], ['cu', 'Copper deficiency', 'woundheal'], ['zn', 'Zinc deficiency', 'woundheal'],
-                          ['lad', 'Leukocyte adhesion deficiency', 'lad1'], ['hyper', 'Hypertrophic scar', 'woundheal'], ['keloid', 'Keloid', 'woundheal']])],
+                 options=[['vitc', 'Vitamin C deficiency', 'scurvy'], ['cu', 'Copper deficiency', 'woundheal'], ['zn', 'Zinc deficiency', 'zinc'],
+                          ['gc', 'Glucocorticoid excess', 'cortisolact'], ['lad', 'Leukocyte adhesion deficiency', 'lad1'], ['hyper', 'Hypertrophic scar', 'woundheal'], ['keloid', 'Keloid', 'woundheal']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 210–214')
+  src='First Aid pp. 48, 67, 69, 115, 210–214, 340 · Robbins ch 3')
 
 MAP = dict(
   id='healsim', title='Inflammation & Wound Healing in Motion', topic='path', after='genpath',
   sub='Neutrophils leaving a venule in four steps, then a skin wound through the inflammatory, proliferative and remodeling '
       'phases — collagen type III to type I, strength returning to ~70–80% by 3 months. Add a deficiency, LAD, a hypertrophic '
-      'scar or a keloid. Tap the vessel or the wound for its card',
+      'scar, a keloid or steroids. Tap the vessel or the wound for its card',
   w=3500, h=2100,
-  fa='210–214', src=[],
+  fa='48, 67, 69, 115, 210–214, 340', src=[full('Robbins', 3), full('Robbins', 9)],
   lanes=[('hlInf', 'Inflammation', 'glycolysis'), ('hlRep', 'Repair', 'tca')],
   nodes=[
     ('hl1', 'Acute inflammation', 380, 1300, 'hlInf', 'extravasation in four steps', ['acuteinflam']),
     ('hl2', 'Leukocyte adhesion deficiency', 820, 1300, 'hlInf', 'no CD18', ['lad1']),
     ('hl3', 'Wound healing & scars', 1260, 1300, 'hlRep', 'three phases · keloids', ['woundheal']),
     ('hl4', 'Collagen types', 1700, 1300, 'hlRep', 'III early, I later', ['collagentypes']),
-    ('hl5', 'Labile, stable, permanent', 380, 1440, 'hlRep', 'who can regenerate', ['celltypes'])],
+    ('hl5', 'Labile, stable, permanent', 380, 1440, 'hlRep', 'who can regenerate', ['celltypes']),
+    ('hl6', 'What slows healing', 820, 1440, 'hlRep', 'vit C · zinc · cortisol', ['scurvy', 'zinc', 'cortisolact'])],
   panels=[
     (2420, 860, 1000, 'The phases (First Aid p. 212)', [
       ('Inflammatory', 'up to 3 days · platelets, neutrophils, macrophages'),
       ('Proliferative', 'day 3 to weeks · granulation tissue, type III collagen · vit C, copper'),
+      ('Steroids', '↓ fibroblast activity, ↓ collagen — poor healing (p. 340)'),
       ('Remodeling', '1 week to 6+ months · type III → type I · zinc collagenases'),
       ('Strength', '~70–80% by 3 months')]),
     (2420, 1060, 1000, 'Scars (First Aid p. 214)', [
