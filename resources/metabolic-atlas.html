@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 261 pan/zoom maps with 2171 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 281 pan/zoom maps with 2171 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="261 interactive maps. 2171 lesions pinned to the step they break.">
+<meta property="og:description" content="281 interactive maps. 2171 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -1823,6 +1823,54 @@ const PATHS = {
   arNorm:{n:"The pharyngeal apparatus",v:"--p-glycolysis"},
   arDz:{n:"Arch and pouch defects",v:"--p-tca"},
   arFace:{n:"Face and neck",v:"--p-gluconeo"},
+  cdEndo:{n:"Endocardium & valves",v:"--p-tca"},
+  cdMyo:{n:"Muscle & tumor",v:"--p-glycolysis"},
+  cyR2L:{n:"Right-to-left & mixing",v:"--p-tca"},
+  cyValve:{n:"Valve",v:"--p-glycolysis"},
+  ebWk:{n:"Weeks 1–8",v:"--p-glycolysis"},
+  ebGut:{n:"Gut & wall",v:"--p-tca"},
+  ebUro:{n:"Kidney & urinary",v:"--p-gluconeo"},
+  ftNorm:{n:"Fetal circulation",v:"--p-glycolysis"},
+  ftDz:{n:"Shunt problems",v:"--p-tca"},
+  ftCyan:{n:"Cyanotic lesions",v:"--p-gluconeo"},
+  gnOv:{n:"Ovary",v:"--p-tca"},
+  gnTe:{n:"Testis",v:"--p-glycolysis"},
+  htLevel:{n:"Levels",v:"--p-tca"},
+  htCause:{n:"Secondary causes",v:"--p-glycolysis"},
+  leK:{n:"Potassium",v:"--p-glycolysis"},
+  leCa:{n:"Calcium & magnesium",v:"--p-tca"},
+  leRx:{n:"Treating high K⁺",v:"--p-gluconeo"},
+  muNorm:{n:"Sounds & maneuvers",v:"--p-glycolysis"},
+  muSys:{n:"Systolic murmurs",v:"--p-tca"},
+  muDia:{n:"Diastolic murmurs & shunts",v:"--p-gluconeo"},
+  plPlac:{n:"Placenta",v:"--p-tca"},
+  plMat:{n:"Mother & labor",v:"--p-glycolysis"},
+  pzHorm:{n:"Hormones",v:"--p-glycolysis"},
+  pzDz:{n:"When it goes wrong",v:"--p-tca"},
+  pzAfter:{n:"After delivery",v:"--p-gluconeo"},
+  prNl:{n:"Normal",v:"--p-glycolysis"},
+  prDz:{n:"Disease",v:"--p-tca"},
+  scAcute:{n:"Acute scrotum",v:"--p-tca"},
+  scMass:{n:"Scrotal masses",v:"--p-glycolysis"},
+  sxGonad:{n:"Gonad & karyotype",v:"--p-glycolysis"},
+  sxHorm:{n:"Hormone signals",v:"--p-tca"},
+  sxDuct:{n:"Ducts",v:"--p-gluconeo"},
+  aqFront:{n:"Front of the eye",v:"--p-glycolysis"},
+  aqRet:{n:"Retina",v:"--p-tca"},
+  vbNorm:{n:"How balance works",v:"--p-glycolysis"},
+  vbPer:{n:"Inner ear causes",v:"--p-tca"},
+  vbCen:{n:"Nerve & brainstem causes",v:"--p-gluconeo"},
+  vxMus:{n:"Muscles & voice",v:"--p-tca"},
+  vxNrv:{n:"Nerves & lesions",v:"--p-glycolysis"},
+  hbBleed:{n:"Bleeds",v:"--p-tca"},
+  hbHern:{n:"Herniation",v:"--p-glycolysis"},
+  btSup:{n:"Supratentorial & dura",v:"--p-glycolysis"},
+  btPf:{n:"Posterior fossa & midline",v:"--p-tca"},
+  cfFlow:{n:"CSF flow",v:"--p-glycolysis"},
+  cfHydro:{n:"Hydrocephalus & pressure",v:"--p-tca"},
+  cfCanal:{n:"Spinal canal",v:"--p-gluconeo"},
+  dmNeuro:{n:"Neurodegenerative",v:"--p-tca"},
+  dmOther:{n:"Vascular, prion, reversible",v:"--p-glycolysis"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -38939,23 +38987,562 @@ MAPS.archsim = {
  edges:[]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["oral","Oral Cavity & Salivary Glands"],["skinbasics","Skin Basics — Layers, Lesions & Terms"],["gidrugs","GI Motility, Laxative & Antiemetic Drugs"],["cardproc","Cardiac Anatomy, Catheters & Vascular Access"],["transfuse","Blood Groups & Transfusion"],["nmjflow","Neuromuscular Junction in Motion"],["synflow","Monoamine Synapse in Motion"],["apflow","Action Potential in Motion"],["bgflow","Basal Ganglia in Motion"],["cordsim","Spinal Cord Lesion Simulator"],["stemsim","Brainstem Lesion Simulator"],["visfield","Visual Pathway Lesion Simulator"],["cardap","Cardiac Action Potential in Motion"],["coagflow","Coagulation Cascade in Motion"],["alvflow","Alveolus in Motion"],["asthflow","Asthma Airway in Motion"],["axisflow","HPA Axis in Motion"],["betaflow","β Cell in Motion"],["follflow","Thyroid Follicle in Motion"],["cochflow","Cochlea in Motion"],["gutabs","Gut Absorption in Motion"],["boneflow","Bone Remodeling in Motion"],["goutflow","Uric Acid & Gout in Motion"],["rajoint","Rheumatoid Joint in Motion"],["vsmotion","Viscerosomatic Reflex in Motion"],["lymphflow","Lymphatic Pump in Motion"],["biliflow","Bilirubin in Motion"],["ironflow","Iron in Motion"],["abflow","Acid–Base in Motion"],["glomsim","Glomerular Disease Locator"],["abxsim","Antibiotic Targets in Motion"],["misim","MI Locator"],["pvflow","Pressure–Volume Loop in Motion"],["edemaflow","Capillary & Edema in Motion"],["hivflow","HIV Life Cycle in Motion"],["eyesim","Pupil & Eye Movement Simulator"],["plexsim","Brachial Plexus Lesion Simulator"],["mensflow","Menstrual Cycle in Motion"],["baroflow","Autonomic Drugs & Baroreflex in Motion"],["shocksim","Shock Simulator"],["ecgsim","Conduction & ECG Simulator"],["cahflow","Steroid Synthesis & CAH in Motion"],["lipoflow","Lipoprotein Transport in Motion"],["hemeflow","Heme Synthesis & Porphyrias in Motion"],["nucflow","Nucleotide Synthesis & Drug Sites in Motion"],["acidflow","Parietal Cell in Motion"],["legsim","Lower Limb Nerve Lesion Simulator"],["abtime","Acid–Base Compensation Timeline"],["aasim","Amino Acid Disorders in Motion"],["bvitsim","B Vitamins & Zinc in Motion"],["colsim","Collagen Assembly in Motion"],["energysim","Energy Metabolism in Motion"],["faosim","Fatty Acid Oxidation in Motion"],["glyxsim","Glycolysis Odds & Ends in Motion"],["gsdsim","Glycogen Storage Diseases in Motion"],["labsim","Lab Techniques in Motion"],["lsdsim","Lysosomal Storage in Motion"],["pedsim","Pedigree Simulator"],["rtasim","Renal Tubular Acidosis Simulator"],["sugarsim","Fructose & Galactose in Motion"],["ureasim","Urea Cycle in Motion"],["cbsim","Cerebellar Lesions in Motion"],["papezsim","The Papez Circuit in Motion"],["rxsim","Psych Drugs at the Receptors"],["sleepsim","Sleep Stages in Motion"],["stimsim","Stimulants & Addiction in Motion"],["aortasim","The Aorta in Motion"],["archsim","Pharyngeal Arches in Motion"],["index","Index"]];
+MAPS.carditsim = {
+ t:"Heart Infection & Inflammation in Motion", sub:"Grow vegetations on the valves and follow their emboli, send strep antibodies to the heart and joints, inflame the muscle and drop a myxoma into the mitral valve",
+ w:3600, h:1900,
+ fa:"318, 319, 320",
+ src:["Robbins ch 12 — The heart", "Robbins ch 8 — Infectious diseases"],
+ art:"kit",
+ dyn:{"lazy":"acc7f7d450","switches":[{"id":"dx","label":"Lesion","type":"one","options":[["acute","Acute endocarditis","endocarditis"],["subacute","Subacute endocarditis","endocarditis"],["ivdu","Tricuspid (IV drug use)","endocarditis"],["rf","Acute rheumatic fever","rheumfever"],["rhd","Chronic rheumatic stenosis","rheumfever"],["nbte","NBTE / Libman-Sacks","nbte"],["myo","Myocarditis","myocarditis"],["myxoma","Atrial myxoma","myxoma"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:182,kw:179,t:"Vegetation by cause (Robbins ch 12)",rows:[
+   ["S aureus","large, normal valve, acute"],
+   ["Viridans strep","small, abnormal valve"],
+   ["IV drug use","tricuspid"],
+   ["NBTE","small, sterile, loosely attached"],
+   ["Libman-Sacks (SLE)","small, either side of the leaflet"],
+   ["Rheumatic fever","small, warty, along the line of closure"]]}],
+ nodes:[
+  {id:"cd1",l:"Infective endocarditis",x:330,y:1700,p:"cdEndo",k:"hub",s:"S aureus · viridans",m:["endocarditis"]},
+  {id:"cd2",l:"Rheumatic fever",x:760,y:1700,p:"cdEndo",s:"J♥NES · mitral",m:["rheumfever"]},
+  {id:"cd3",l:"Nonbacterial endocarditis",x:1200,y:1700,p:"cdEndo",s:"sterile · cancer · SLE",m:["nbte"]},
+  {id:"cd4",l:"Myocarditis",x:1640,y:1700,p:"cdMyo",s:"lymphocytes · arrhythmia",m:["myocarditis"]},
+  {id:"cd5",l:"Cardiac tumors",x:2080,y:1700,p:"cdMyo",s:"myxoma · rhabdomyoma",m:["myxoma"]}],
+ edges:[]
+};
+
+MAPS.cyansim = {
+ t:"Cyanotic Heart Disease in Motion", sub:"Watch blue and red blood keep apart in a normal heart, then rebuild it as truncus, tricuspid atresia, TAPVR, Ebstein, tetralogy or d-TGA — squat a tet spell and open a PDA",
+ w:3600, h:1900,
+ fa:"285, 302, 304",
+ src:["Robbins ch 12 — The heart", "Langman ch 13 — Cardiovascular System", "Bootcamp.com Cardiology — Cyanotic Congenital Heart Defects"],
+ art:"kit",
+ dyn:{"lazy":"9fc5e53574","switches":[{"id":"dx","label":"Lesion","type":"one","options":[["truncus","Truncus arteriosus","truncus"],["tria","Tricuspid atresia","triatresia"],["tapvr","TAPVR","tapvr"],["ebstein","Ebstein anomaly","ebstein"],["tof","Tetralogy of Fallot","tof"],["tga","d-TGA","dtga"]]},{"id":"squat","label":"Maneuver","type":"toggle","on":"Squatting","off":"Squat (TOF)","def":false},{"id":"pda","label":"Drug","type":"toggle","on":"PDA kept open","off":"Alprostadil (TGA)","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:170,t:"Mixing each lesion needs (First Aid p 302)",rows:[
+   ["Truncus","VSD"],
+   ["Tricuspid atresia","ASD + VSD or PDA"],
+   ["TAPVR","ASD (± PDA)"],
+   ["d-TGA","VSD, PDA or PFO"]]}],
+ nodes:[
+  {id:"cy1",l:"Tetralogy of Fallot",x:330,y:1780,p:"cyR2L",k:"hub",s:"PROVe · squat",m:["tof"]},
+  {id:"cy2",l:"d-TGA",x:760,y:1780,p:"cyR2L",s:"parallel circuits",m:["dtga"]},
+  {id:"cy3",l:"Truncus arteriosus",x:1200,y:1780,p:"cyR2L",s:"one trunk · 22q11",m:["truncus"]},
+  {id:"cy4",l:"Tricuspid atresia",x:1640,y:1780,p:"cyR2L",s:"ASD + VSD/PDA",m:["triatresia"]},
+  {id:"cy5",l:"TAPVR",x:2080,y:1780,p:"cyR2L",s:"veins to right heart",m:["tapvr"]},
+  {id:"cy6",l:"Ebstein anomaly",x:2520,y:1780,p:"cyValve",s:"lithium · WPW",m:["ebstein"]}],
+ edges:[]
+};
+
+MAPS.embsim = {
+ t:"Embryo & Gut-Tube Defects in Motion", sub:"Step through weeks 1–8 and see how a teratogen acts at each stage, then watch the fetus cycle amniotic fluid and break it — TEF, duodenal atresia, annular pancreas, gastroschisis, omphalocele, Potter, horseshoe kidney, posterior urethral valves",
+ w:3600, h:1900,
+ fa:"365, 366, 367, 501, 596, 597, 630, 631, 632, 633, 634, 635",
+ src:["Langman ch 5 — Third Week of Development: Trilaminar Germ Disc", "Langman ch 6 — Third to Eighth Weeks: The Embryonic Period", "Langman ch 9 — Birth Defects and Prenatal Diagnosis", "Langman ch 18 — Central Nervous System", "Katzung ch 59 — Special Aspects of Perinatal & Pediatric Pharmacology", "Robbins ch 10 — Diseases of infancy and childhood", "Fundamental Neuroscience ch 5 — Development of the Nervous System", "Langman ch 8 — Third Month to Birth: The Fetus and Placenta", "Robbins ch 22 — The female genital tract", "Robbins ch 17 — The gastrointestinal tract", "Langman ch 14 — Respiratory System", "Langman ch 15 — Digestive System", "Langman ch 7 — The Gut Tube and the Body Cavities", "Langman ch 16 — Urogenital System", "Moore ch 5 — Abdomen", "Robbins ch 20 — The kidney", "Robbins ch 19 — The pancreas", "Bootcamp.com Gastroenterology — Embryology", "Langman ch 22 — Answers to Problems", "Bootcamp.com Nephrology — Anatomy & Embryology"],
+ art:"kit",
+ dyn:{"lazy":"24f1906043","switches":[{"id":"wk","label":"When","type":"steps","auto":3,"options":[["w1","Week 1"],["w2","Week 2"],["w3","Week 3"],["w4","Week 4"],["w8","Week 8"],["fet","Fetal period"]]},{"id":"dx","label":"Defect","type":"one","options":[["tef","Esophageal atresia / TEF","tef"],["duod","Duodenal atresia","atresia"],["annular","Annular pancreas","annularpanc"],["gastro","Gastroschisis","walldefects"],["omph","Omphalocele","walldefects"],["potter","Renal agenesis (Potter)","potter"],["horse","Horseshoe kidney","horseshoe"],["puv","Posterior urethral valves","horseshoe"]]},{"id":"tg","label":"Teratogen","type":"one","options":[["valp","Antiepileptics","teratogens"],["iso","Isotretinoin","teratogens"],["thal","Thalidomide","teratogens"],["li","Lithium","teratogens"],["warf","Warfarin","teratogens"],["ace","ACE inhibitors","teratogens"],["alc","Alcohol","fas"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:116,kw:153,t:"Amniotic fluid tells you which side broke",rows:[
+   ["Polyhydramnios","can’t swallow it on — esophageal or duodenal atresia"],
+   ["Oligohydramnios","no urine — renal agenesis, valves, ACE inhibitors"],
+   ["↑ Maternal AFP","gastroschisis, omphalocele"]]}],
+ nodes:[
+  {id:"eb1",l:"Weeks 1–8",x:330,y:1660,p:"ebWk",k:"hub",s:"organogenesis",m:["earlydev"]},
+  {id:"eb2",l:"Germ layers",x:760,y:1660,p:"ebWk",s:"EMO PASSES",m:["germlayers"]},
+  {id:"eb3",l:"Teratogens · FAS",x:1200,y:1660,p:"ebWk",s:"weeks 3–8",m:["teratogens","fas"]},
+  {id:"eb4",l:"Morphogenesis · twins",x:1640,y:1660,p:"ebWk",s:"sequence, deformation",m:["morpherrors","twins"]},
+  {id:"eb5",l:"TEF · atresia",x:2080,y:1660,p:"ebGut",s:"can’t swallow",m:["tef","atresia"]},
+  {id:"eb6",l:"Gastroschisis · omphalocele",x:330,y:1790,p:"ebGut",s:"sac or no sac",m:["walldefects"]},
+  {id:"eb7",l:"Annular pancreas · VACTERL",x:760,y:1790,p:"ebGut",s:"ring · mesoderm",m:["annularpanc","vacterl"]},
+  {id:"eb8",l:"Potter sequence",x:1200,y:1790,p:"ebUro",s:"no urine",m:["potter"]},
+  {id:"eb9",l:"Horseshoe · valves",x:1640,y:1790,p:"ebUro",s:"IMA · male outlet",m:["horseshoe"]}],
+ edges:[]
+};
+
+MAPS.fetalsim = {
+ t:"Fetal Circulation in Motion", sub:"Follow placental blood through the ductus venosus, foramen ovale and ductus arteriosus, then take the first breath and watch the shunts close and become ligaments — and compare PDA, PPHN, a patent foramen ovale, transposition, indomethacin and alprostadil",
+ w:3500, h:1820,
+ fa:"284, 285, 287, 294, 302–304",
+ src:["Langman ch 13 — Cardiovascular System", "Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects", "Robbins ch 12 — The heart", "Bootcamp.com Cardiology — Acyanotic Congenital Heart Defects"],
+ art:"kit",
+ dyn:{"lazy":"87f9f2a48d","switches":[{"id":"st","label":"When","type":"steps","auto":4,"options":[["fetal","Fetus"],["birth","First breath"],["newborn","Newborn"]]},{"id":"dx","label":"What goes wrong · drugs","type":"one","options":[["pda","Patent ductus arteriosus","pda"],["pphn","PPHN","pphn"],["pfo","Patent foramen ovale","asd"],["dtga","D-transposition","dtga"],["indo","Indomethacin","pda"],["pge1","Alprostadil (PGE₁)","pda"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:800,w:1000,h:160,kw:179,t:"Shunt → remnant (First Aid p. 287)",rows:[
+   ["Ductus venosus","ligamentum venosum"],
+   ["Foramen ovale","fossa ovalis"],
+   ["Ductus arteriosus","ligamentum arteriosum"],
+   ["Umbilical vein","ligamentum teres"],
+   ["Umbilical arteries","medial umbilical ligaments"]]}],
+ nodes:[
+  {id:"ft1",l:"Fetal circulation",x:330,y:1620,p:"ftNorm",k:"hub",s:"three shunts",m:["fetalcirc"]},
+  {id:"ft2",l:"Patent ductus arteriosus",x:760,y:1620,p:"ftDz",s:"machinelike murmur",m:["pda"]},
+  {id:"ft3",l:"ASD · patent foramen ovale",x:1200,y:1620,p:"ftDz",s:"paradoxical emboli",m:["asd"]},
+  {id:"ft4",l:"PPHN",x:1620,y:1620,p:"ftDz",s:"right-to-left persists",m:["pphn"]},
+  {id:"ft5",l:"D-transposition",x:330,y:1750,p:"ftCyan",s:"parallel circuits",m:["dtga"]},
+  {id:"ft6",l:"Tetralogy · Eisenmenger",x:760,y:1750,p:"ftCyan",s:"PROVe · reversal",m:["tof","eisenmenger"]}],
+ edges:[]
+};
+
+MAPS.gonadsim = {
+ t:"Gonadal Tumors in Motion", sub:"Grow an ovarian or testicular tumor in the cell it comes from — epithelium, germ cell or sex cord-stroma — and follow its marker or hormone: CA 125, hCG, AFP, LDH, inhibin, estrogen, androgens",
+ w:3600, h:1900,
+ fa:"447, 664, 665, 670, 671",
+ src:["Robbins ch 22 — The female genital tract", "Robbins ch 21 — The lower urinary tract and male genital system", "Katzung ch 54 — Cancer Chemotherapy"],
+ art:"kit",
+ dyn:{"lazy":"61af03418e","switches":[{"id":"dx","label":"Tumor","type":"one","options":[["serous","Serous (ovary)","ovepi"],["mucinous","Mucinous (ovary)","ovepi"],["teratoma","Mature teratoma","ovgerm"],["dysg","Dysgerminoma","ovgerm"],["yolk","Yolk sac tumor","ovgerm"],["gran","Granulosa cell","ovstromal"],["fibroma","Fibroma (Meigs)","ovstromal"],["sl","Sertoli-Leydig","ovstromal"],["semi","Seminoma","testisgct"],["embryo","Embryonal carcinoma","testisgct"],["chorio","Choriocarcinoma","testisgct"],["leydig","Leydig cell tumor","testisstromal"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:204,kw:120,t:"Marker → tumor (Robbins ch 22)",rows:[
+   ["CA 125","epithelial (monitor)"],
+   ["AFP","yolk sac"],
+   ["hCG","choriocarcinoma, dysgerminoma"],
+   ["LDH","dysgerminoma"],
+   ["Inhibin","granulosa cell"],
+   ["PLAP","seminoma"],
+   ["hCG ± AFP","embryonal carcinoma (AFP if mixed)"]]}],
+ nodes:[
+  {id:"gn1",l:"Epithelial ovarian tumors",x:330,y:1720,p:"gnOv",k:"hub",s:"serous · CA 125",m:["ovepi"]},
+  {id:"gn2",l:"Ovarian germ cell tumors",x:760,y:1720,p:"gnOv",s:"teratoma · AFP · hCG",m:["ovgerm"]},
+  {id:"gn3",l:"Ovarian sex cord-stromal",x:1200,y:1720,p:"gnOv",s:"estrogen · Meigs",m:["ovstromal"]},
+  {id:"gn4",l:"Testicular germ cell tumors",x:1640,y:1720,p:"gnTe",s:"PLAP · AFP · hCG",m:["testisgct"]},
+  {id:"gn5",l:"Leydig & Sertoli tumors",x:2080,y:1720,p:"gnTe",s:"Reinke crystals",m:["testisstromal"]}],
+ edges:[]
+};
+
+MAPS.htnsim = {
+ t:"Hypertension in Motion", sub:"Step blood pressure from white coat to essential to urgency to emergency and watch the end organs, then add a renal artery stenosis or Conn syndrome and read renin and aldosterone",
+ w:3600, h:1900,
+ fa:"304, 306, 321, 354, 623",
+ src:["Robbins ch 11 — Blood vessels", "Katzung ch 11 — Antihypertensive Agents", "Robbins ch 24 — The endocrine system", "Costanzo ch 6 — Renal physiology"],
+ art:"kit",
+ dyn:{"lazy":"fecdc666dd","switches":[{"id":"bp","label":"Pressure","type":"steps","auto":3,"options":[["nl","Normal"],["wc","White coat"],["ess","Essential"],["urg","Urgency"],["emerg","Emergency"]]},{"id":"cause","label":"Secondary cause","type":"one","options":[["athero","Atherosclerotic renal artery stenosis","renovascular"],["fmd","Fibromuscular dysplasia","renovascular"],["conn","Conn syndrome","conn"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:116,kw:205,t:"Renin and aldosterone (Robbins ch 11)",rows:[
+   ["Renal artery stenosis","renin ↑ · aldosterone ↑"],
+   ["Conn syndrome","renin ↓ · aldosterone ↑"],
+   ["Urgency vs emergency","organ damage decides"]]}],
+ nodes:[
+  {id:"ht1",l:"Essential hypertension",x:330,y:1720,p:"htLevel",k:"hub",s:"≥ 130/80 · 90%",m:["htn"]},
+  {id:"ht2",l:"White-coat hypertension",x:760,y:1720,p:"htLevel",s:"home readings",m:["whitecoathtn"]},
+  {id:"ht3",l:"Hypertensive emergency",x:1200,y:1720,p:"htLevel",s:"organ damage",m:["htnemerg"]},
+  {id:"ht4",l:"Renovascular hypertension",x:1640,y:1720,p:"htCause",s:"renin ↑ aldo ↑",m:["renovascular"]},
+  {id:"ht5",l:"Conn syndrome",x:2080,y:1720,p:"htCause",s:"aldo ↑ renin ↓",m:["conn"]},
+  {id:"ht6",l:"Benign nephrosclerosis",x:2520,y:1720,p:"htCause",s:"hyaline arterioles",m:["nephrosclerosis"]}],
+ edges:[]
+};
+
+MAPS.lyteecg = {
+ t:"Electrolytes & the ECG", sub:"A lead II strip redrawn for low K⁺, high K⁺ as it worsens (peaked T → wide QRS → sine wave), high and low Ca²⁺ and low Mg²⁺ — then treat high K⁺ in order: stabilize, shift into cells, remove. Tap the pump or a channel for its card",
+ w:3500, h:2100,
+ fa:"298, 348–349, 361, 608–609",
+ src:["Costanzo ch 6 — Renal physiology", "Katzung ch 14 — Agents Used in Cardiac Arrhythmias", "Katzung ch 15 — Diuretic Agents", "Guyton ch 80 — Parathyroid Hormone, Calcitonin, Calcium and Phosphate Metabolism, Vitamin D, Bone, and Teeth", "Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves", "Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient"],
+ art:"kit",
+ dyn:{"lazy":"3d16fc60b1","switches":[{"id":"ly","label":"Pick an electrolyte change","type":"one","options":[["lok","Low K⁺","hypok"],["hk1","High K⁺ — early","hyperk"],["hk2","High K⁺ — worse","hyperk"],["hk3","High K⁺ — severe","hyperk"],["hica","High Ca²⁺","ecglytes"],["loca","Low Ca²⁺","hypopara"],["lomg","Low Mg²⁺","mgpo4"]]},{"id":"rx","label":"Treat high K⁺ — stabilize, shift, remove","type":"one","options":[["cag","IV calcium gluconate","hyperk"],["ins","Insulin + glucose","kinsulin"],["b2","β₂-agonist","kinsulin"],["bic","Bicarbonate","hyperk"],["loop","Loop diuretic","loopdiuretics"],["binder","Binder (patiromer)","hyperk"],["dial","Dialysis","hyperk"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:860,w:1000,h:160,kw:120,t:"Electrolytes on the ECG (First Aid p. 609; Guyton ch 80; Kaplan & Sadock ch 1)",rows:[
+   ["Low K⁺","flattened T waves, ST depression, prominent U waves"],
+   ["High K⁺","peaked T waves → wide QRS, P waves lost → sine wave"],
+   ["High Ca²⁺","short QT interval"],
+   ["Low Ca²⁺","long QT interval · tetany, Chvostek and Trousseau signs"],
+   ["Low Mg²⁺","torsades de pointes · often with low K⁺ and Ca²⁺"]]},
+  {x:2420,y:1100,w:1000,h:138,kw:136,t:"Treating high K⁺ (Bootcamp Nephrology; First Aid pp. 361, 608)",rows:[
+   ["1 · Stabilize","IV calcium gluconate — the heart first"],
+   ["2 · Shift in","insulin + glucose · β₂-agonist · bicarbonate"],
+   ["3 · Remove","loop diuretics · binders (patiromer) · dialysis"],
+   ["First","rule out pseudohyperkalemia — a hemolyzed sample"]]},
+  {x:2420,y:1320,w:1000,h:116,kw:153,t:"What moves K⁺ (Costanzo ch 6)",rows:[
+   ["Into cells","insulin · β₂-agonists · α-antagonists · alkalosis · hypo-osmolarity"],
+   ["Out of cells","insulin lack · β-blockers · α-agonists · acidosis · hyperosmolarity · cell lysis · exercise"],
+   ["Out of the body","the distal nephron: principal cells secrete K⁺ under aldosterone"]]}],
+ nodes:[
+  {id:"le1",l:"Electrolytes on the ECG",x:380,y:1800,p:"leK",s:"peaked T · U wave · QT",m:["ecglytes"]},
+  {id:"le2",l:"High K⁺",x:820,y:1800,p:"leK",s:"causes and treatment",m:["hyperk","tls","rhabdo","digoxin"]},
+  {id:"le3",l:"Low K⁺",x:1260,y:1800,p:"leK",s:"shifts and losses",m:["hypok","periodicpara"]},
+  {id:"le4",l:"K⁺ inside cells",x:1700,y:1800,p:"leK",s:"pump, shifts, nephron",m:["kinsulin","khandling","nakpump"]},
+  {id:"le5",l:"Calcium & the QT",x:380,y:1940,p:"leCa",s:"short or long",m:["hypopara","hyperpara1"]},
+  {id:"le6",l:"Magnesium",x:820,y:1940,p:"leCa",s:"torsades",m:["mgpo4","longqt"]},
+  {id:"le7",l:"Removing K⁺",x:1260,y:1940,p:"leRx",s:"urine · gut · dialysis",m:["loopdiuretics","ksparing"]}],
+ edges:[]
+};
+
+MAPS.murmursim = {
+ t:"Murmurs & Maneuvers in Motion", sub:"Pick a murmur and see where it is heard, when in the cycle it falls and which way the blood leaks — then stand, squat, raise the legs, squeeze or breathe and watch it get louder or softer",
+ w:3600, h:1900,
+ fa:"292, 294, 295, 296, 303, 315",
+ src:["Robbins ch 12 — The heart", "Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects", "Costanzo ch 4 — Cardiovascular physiology", "Moore ch 4 — Thorax", "Bootcamp.com Cardiology — Cardiac Cycle", "Bootcamp.com Cardiology — Valvular Disease", "Robbins ch 5 — Genetic disorders", "Langman ch 13 — Cardiovascular System"],
+ art:"kit",
+ dyn:{"lazy":"6c57744ced","switches":[{"id":"mm","label":"Lesion","type":"one","options":[["as","Aortic stenosis","aortstenosis"],["hcm","Hypertrophic cardiomyopathy","hcm"],["mr","Mitral regurgitation","mitralregurg"],["tr","Tricuspid regurgitation","mitralregurg"],["vsd","VSD","vsd"],["asd","ASD","asd"],["mvp","Mitral valve prolapse","mvp"],["ar","Aortic regurgitation","aortregurg"],["ms","Mitral stenosis","mitralsten"]]},{"id":"mv","label":"Maneuver","type":"one","options":[["stand","Standing · Valsalva","maneuvers"],["squat","Squatting","maneuvers"],["leg","Passive leg raise","maneuvers"],["grip","Handgrip","maneuvers"],["insp","Inspiration","maneuvers"],["exp","Expiration","maneuvers"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1160,w:1000,h:160,kw:342,t:"Where to listen (First Aid p. 295)",rows:[
+   ["Aortic — right 2nd space","aortic stenosis"],
+   ["Pulmonic — left 2nd space","pulmonic stenosis, ASD flow"],
+   ["Erb point — left 3rd space","aortic regurgitation"],
+   ["Tricuspid — lower left sternal border","TR, VSD"],
+   ["Mitral — apex","MR, MVP, MS"]]}],
+ nodes:[
+  {id:"mu1",l:"Heart sounds · where to listen",x:330,y:1620,p:"muNorm",k:"hub",s:"S1–S4 · APT M",m:["heartsounds","auscareas"]},
+  {id:"mu2",l:"Bedside maneuvers",x:760,y:1620,p:"muNorm",s:"preload · afterload",m:["maneuvers"]},
+  {id:"mu3",l:"Aortic stenosis",x:1200,y:1620,p:"muSys",s:"to the carotids",m:["aortstenosis"]},
+  {id:"mu4",l:"MR · TR",x:1640,y:1620,p:"muSys",s:"holosystolic",m:["mitralregurg"]},
+  {id:"mu5",l:"Mitral valve prolapse",x:2080,y:1620,p:"muSys",s:"midsystolic click",m:["mvp"]},
+  {id:"mu6",l:"Hypertrophic cardiomyopathy",x:330,y:1760,p:"muSys",s:"louder with Valsalva",m:["hcm"]},
+  {id:"mu7",l:"Aortic regurgitation",x:760,y:1760,p:"muDia",s:"wide pulse pressure",m:["aortregurg"]},
+  {id:"mu8",l:"Mitral stenosis",x:1200,y:1760,p:"muDia",s:"opening snap",m:["mitralsten"]},
+  {id:"mu9",l:"VSD · ASD",x:1640,y:1760,p:"muDia",s:"fixed split S2",m:["vsd","asd"]}],
+ edges:[]
+};
+
+MAPS.placsim = {
+ t:"Bleeding in Pregnancy in Motion", sub:"Move the placenta over the os, tear its vessels, separate it, let it invade, starve it of spiral-artery flow — and give magnesium, oxytocin, a tocolytic or a safe antihypertensive where each belongs",
+ w:3600, h:1900,
+ fa:"343, 433, 657, 658, 660, 675",
+ src:["Robbins ch 22 — The female genital tract", "Katzung ch 11 — Antihypertensive Agents", "Katzung ch 37 — Hypothalamic & Pituitary Hormones"],
+ art:"kit",
+ dyn:{"lazy":"67188a910d","switches":[{"id":"dx","label":"Problem","type":"one","options":[["previa","Placenta previa","previa"],["vasa","Vasa previa","previa"],["abrupt","Abruption","abruption"],["rupture","Uterine rupture","abruption"],["accreta","Accreta","accreta"],["increta","Increta","accreta"],["percreta","Percreta","accreta"],["pe","Preeclampsia","preeclampsia"],["ptl","Preterm labor","labordrugs"],["pph","Postpartum hemorrhage","pph"]]},{"id":"rx","label":"Drug","type":"one","options":[["mg","Magnesium sulfate","labordrugs"],["oxy","Oxytocin","labordrugs"],["toco","Tocolytic","labordrugs"],["htn","Pregnancy-safe antihypertensive","gesthtn"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:308,t:"Third-trimester bleeding (First Aid pp. 657–658)",rows:[
+   ["Painless","placenta previa"],
+   ["Painful + DIC","abruption"],
+   ["At membrane rupture + bradycardia","vasa previa"],
+   ["Scar + fetal parts palpable","uterine rupture"]]}],
+ nodes:[
+  {id:"pl1",l:"Placenta previa & vasa previa",x:330,y:1760,p:"plPlac",k:"hub",s:"painless",m:["previa"]},
+  {id:"pl2",l:"Abruption & uterine rupture",x:760,y:1760,p:"plPlac",s:"painful · DIC",m:["abruption"]},
+  {id:"pl3",l:"Placenta accreta spectrum",x:1200,y:1760,p:"plPlac",s:"won’t separate",m:["accreta"]},
+  {id:"pl4",l:"Preeclampsia & eclampsia",x:1640,y:1760,p:"plMat",s:"sFlt-1 · Mg",m:["preeclampsia"]},
+  {id:"pl5",l:"Gestational hypertension",x:2080,y:1760,p:"plMat",s:"no proteinuria",m:["gesthtn"]},
+  {id:"pl6",l:"Postpartum hemorrhage",x:2520,y:1760,p:"plMat",s:"4 Ts",m:["pph"]},
+  {id:"pl7",l:"Drugs in labor",x:2960,y:1760,p:"plMat",s:"TIN · oxytocin · Mg",m:["labordrugs"]}],
+ edges:[]
+};
+
+MAPS.pregsim = {
+ t:"Pregnancy Hormones in Motion", sub:"Step through pregnancy — hCG rescuing the corpus luteum, the placenta taking over, estriol from the fetoplacental unit, delivery and lactation — then compare ectopic pregnancy, a mole, twins and trisomies 21 and 18",
+ w:3500, h:1700,
+ fa:"61, 648, 651–653, 658–659",
+ src:["Costanzo ch 10 — Reproductive physiology", "Guyton ch 83 — Pregnancy and Lactation"],
+ art:"kit",
+ dyn:{"lazy":"b1329c09c8","switches":[{"id":"wk","label":"Stage","type":"steps","auto":4,"options":[["imp","Weeks 2–4 · implantation"],["peak","Weeks 8–10 · hCG peak"],["shift","Weeks 12–20 · placenta takes over"],["term","Delivery · lactation"]]},{"id":"dx","label":"Compare","type":"one","options":[["ect","Ectopic pregnancy","ectopic"],["mole","Hydatidiform mole","gtd"],["twin","Twins","hcghpl"],["t21","Trisomy 21","fpunit"],["t18","Trisomy 18","hcghpl"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:780,w:1000,h:138,kw:120,t:"hCG (First Aid pp. 61, 652)",rows:[
+   ["↑ hCG","multiple gestation, mole, choriocarcinoma, Down syndrome"],
+   ["↓ hCG","ectopic or failing pregnancy, Edwards, Patau"],
+   ["Peak","late first trimester, about weeks 8–10"],
+   ["Quad screen","hCG, inhibin A, estriol, AFP"]]}],
+ nodes:[
+  {id:"pg1",l:"hCG & hPL",x:330,y:1480,p:"pzHorm",k:"hub",s:"syncytiotrophoblast",m:["hcghpl"]},
+  {id:"pg2",l:"Corpus luteum rescue",x:760,y:1480,p:"pzHorm",s:"the luteal–placental shift",m:["lutealshift"]},
+  {id:"pg3",l:"Fetoplacental unit",x:1180,y:1480,p:"pzHorm",s:"estriol",m:["fpunit"]},
+  {id:"pg4",l:"Progesterone in pregnancy",x:1620,y:1480,p:"pzHorm",s:"quiets the uterus",m:["p4preg"]},
+  {id:"pg5",l:"Ectopic pregnancy",x:330,y:1610,p:"pzDz",s:"hCG too low",m:["ectopic"]},
+  {id:"pg6",l:"Molar pregnancy",x:800,y:1610,p:"pzDz",s:"hCG very high",m:["gtd"]},
+  {id:"pg7",l:"Lactation",x:1280,y:1610,p:"pzAfter",s:"prolactin · oxytocin",m:["lactphys","posteriorpit"]}],
+ edges:[]
+};
+
+MAPS.prossim = {
+ t:"The Prostate in Motion", sub:"See BPH squeeze the urethra from the transition zone and cancer grow in the peripheral zone, lose the basal layer and seed the spine — then grade it with Gleason and treat BPH with an α₁-blocker or finasteride",
+ w:3600, h:1900,
+ fa:"644, 672, 673",
+ src:["Robbins ch 21 — The lower urinary tract and male genital system", "Katzung ch 40 — The Gonadal Hormones & Inhibitors", "Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)"],
+ art:"kit",
+ dyn:{"lazy":"b11d978574","switches":[{"id":"dx","label":"Process","type":"one","options":[["bph","BPH","bphpath"],["pin","High-grade PIN","hgpin"],["ca","Adenocarcinoma","prostateca"]]},{"id":"gl","label":"Gleason","type":"one","options":[["g33","3 + 3","gleason"],["g34","3 + 4","gleason"],["g45","4 + 5","gleason"],["g55","5 + 5","gleason"]]},{"id":"alpha","label":"Drug","type":"toggle","on":"α₁-blocker given","off":"α₁-blocker","def":false},{"id":"fin","label":"Drug","type":"toggle","on":"Finasteride given","off":"Finasteride","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:116,kw:120,t:"Zone → disease (Robbins ch 21)",rows:[
+   ["Transition","BPH — obstructs"],
+   ["Peripheral","cancer, HGPIN — palpable"],
+   ["Basal cells","kept: benign/PIN · lost: cancer"]]}],
+ nodes:[
+  {id:"pr1",l:"Prostate zones",x:330,y:1700,p:"prNl",k:"hub",s:"transition vs peripheral",m:["prozones"]},
+  {id:"pr2",l:"Semen & accessory glands",x:760,y:1700,p:"prNl",s:"SV 60% · prostate 30%",m:["semen"]},
+  {id:"pr3",l:"BPH & stromal DHT",x:1200,y:1700,p:"prDz",s:"5α-reductase",m:["bphpath"]},
+  {id:"pr4",l:"High-grade PIN",x:1640,y:1700,p:"prDz",s:"basal cells kept",m:["hgpin"]},
+  {id:"pr5",l:"Prostate adenocarcinoma",x:2080,y:1700,p:"prDz",s:"peripheral · Batson",m:["prostateca"]},
+  {id:"pr6",l:"Gleason score",x:2520,y:1700,p:"prDz",s:"primary + secondary",m:["gleason"]}],
+ edges:[]
+};
+
+MAPS.scrotsim = {
+ t:"The Scrotum in Motion", sub:"Follow the testicular arteries and gonadal veins, then twist a testis, inflame the epididymis, dilate the pampiniform plexus, fill the tunica, leave a testis undescended or grow a tumor — and run the Prehn and transillumination tests",
+ w:3600, h:1900,
+ fa:"669, 670, 671",
+ src:["Robbins ch 21 — The lower urinary tract and male genital system", "Moore ch 5 — Abdomen"],
+ art:"kit",
+ dyn:{"lazy":"8c9f4eba72","switches":[{"id":"dx","label":"Problem","type":"one","options":[["torsion","Torsion","torsion"],["epi","Epididymitis","epididymitis"],["varic","Left varicocele","varicocele"],["rvaric","Right varicocele","varicocele"],["hydro","Hydrocele","hydrocele"],["sperm","Spermatocele","hydrocele"],["crypt","Cryptorchidism","cryptorchid"],["tumor","Germ cell tumor","testisgct"]]},{"id":"lift","label":"Test","type":"toggle","on":"Scrotum lifted","off":"Lift the scrotum","def":false},{"id":"light","label":"Test","type":"toggle","on":"Light on","off":"Shine a light","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:120,t:"Bedside tests (First Aid pp. 669–671)",rows:[
+   ["Prehn −","torsion"],
+   ["Prehn +","epididymitis"],
+   ["Lights up","hydrocele, spermatocele"],
+   ["No light","tumor, varicocele"]]}],
+ nodes:[
+  {id:"sc1",l:"Testicular torsion",x:330,y:1660,p:"scAcute",k:"hub",s:"Prehn −, no cremasteric",m:["torsion"]},
+  {id:"sc2",l:"Epididymitis & orchitis",x:760,y:1660,p:"scAcute",s:"Prehn +",m:["epididymitis"]},
+  {id:"sc3",l:"Varicocele",x:1200,y:1660,p:"scMass",s:"left · bag of worms",m:["varicocele"]},
+  {id:"sc4",l:"Hydrocele & spermatocele",x:1640,y:1660,p:"scMass",s:"transilluminate",m:["hydrocele"]},
+  {id:"sc5",l:"Cryptorchidism",x:2080,y:1660,p:"scMass",s:"heat · tumor risk",m:["cryptorchid"]},
+  {id:"sc6",l:"Germ cell tumors",x:2520,y:1660,p:"scMass",s:"firm · no light",m:["testisgct"]}],
+ edges:[]
+};
+
+MAPS.sexsim = {
+ t:"Sex Differentiation in Motion", sub:"SRY makes the gonad, AMH and testosterone sort the ducts, DHT shapes the external genitalia — pick a case (Swyer, androgen insensitivity, 5α-reductase, PMDS, CAH, Turner, Klinefelter) and watch which signal is missing and what develops",
+ w:3500, h:1480,
+ fa:"339, 639–640, 653, 655–656",
+ src:["Langman ch 16 — Urogenital System", "Pawlina ch 22 — Male Reproductive System", "Costanzo ch 10 — Reproductive physiology", "Robbins ch 5 — Genetic disorders"],
+ art:"kit",
+ dyn:{"lazy":"61fe7daf3d","switches":[{"id":"dx","label":"The case","type":"one","options":[["xy","Typical 46,XY","sexdevreg"],["xx","Typical 46,XX","sexdevreg"],["swyer","Swyer (46,XY, no SRY)","swyer"],["ais","Androgen insensitivity","ais"],["srd","5α-reductase deficiency","reductase5a"],["pmds","Persistent Müllerian duct","pmds"],["cah","21-hydroxylase CAH (46,XX)","cah21"],["turner","Turner (45,X)","turner"],["kline","Klinefelter (47,XXY)","klinefelter"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:760,w:1000,h:116,kw:256,t:"Read it backwards (sex differentiation card)",rows:[
+   ["Uterus present","AMH never acted — no testis, or AMH failed"],
+   ["No uterus, female outside","AMH worked, androgen didn’t"],
+   ["Male inside, female outside","testosterone → DHT failed"]]}],
+ nodes:[
+  {id:"sx1",l:"How sex differentiation runs",x:330,y:1270,p:"sxHorm",k:"hub",s:"SRY → AMH + T → DHT",m:["sexdevreg"]},
+  {id:"sx2",l:"Swyer · Turner",x:760,y:1270,p:"sxGonad",s:"streak gonads",m:["swyer","turner"]},
+  {id:"sx3",l:"Klinefelter",x:1160,y:1270,p:"sxGonad",s:"47,XXY",m:["klinefelter"]},
+  {id:"sx4",l:"Androgen insensitivity",x:1560,y:1270,p:"sxHorm",s:"no receptor",m:["ais"]},
+  {id:"sx5",l:"5α-reductase deficiency",x:1990,y:1270,p:"sxHorm",s:"no DHT",m:["reductase5a"]},
+  {id:"sx6",l:"Persistent Müllerian duct",x:330,y:1400,p:"sxDuct",s:"no AMH effect",m:["pmds","ductremnants"]},
+  {id:"sx7",l:"21-hydroxylase deficiency",x:780,y:1400,p:"sxHorm",s:"adrenal androgens",m:["cah21"]}],
+ edges:[]
+};
+
+MAPS.aqsim = {
+ t:"Aqueous Humor & Retina in Motion", sub:"Follow aqueous humor from the ciliary body to the canal of Schlemm, close the angle or clog the meshwork, give glaucoma drugs — then look behind at cataract, AMD, diabetic retinopathy, artery and vein occlusion, detachment, RP and ROP",
+ w:3600, h:1900,
+ fa:"475, 549, 550, 551, 552, 553, 557, 568",
+ src:["Katzung ch 10 — Adrenoceptor Antagonist Drugs", "Pawlina ch 24 — Eye", "Robbins ch 29 — The eye", "Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs", "Katzung ch 18 — The Eicosanoids: Prostaglandins, Thromboxanes, Leukotrienes, & Related Compounds", "Guyton ch 50 — The Eye: I. Optics of Vision", "Robbins ch 5 — Genetic disorders", "Robbins ch 26 — Bones, joints, and soft tissue tumors", "Katzung ch 55 — Immunopharmacology", "Katzung ch 60 — Special Aspects of Geriatric Pharmacology", "Robbins ch 24 — The endocrine system", "Robbins ch 11 — Blood vessels", "Moore ch 9 — Head", "Robbins ch 10 — Diseases of infancy and childhood"],
+ art:"kit",
+ dyn:{"lazy":"e5bf6ba3e4","switches":[{"id":"dx","label":"Disease","type":"one","options":[["oag","Open-angle glaucoma","glaucoma"],["acg","Acute angle closure","glaucoma"],["uve","Uveitis","uveitis"],["cat","Cataract","cataract"],["dry","Dry AMD","amd"],["wet","Wet AMD","amd"],["dr","Diabetic retinopathy","retinopathy"],["crao","Retinal artery occlusion","retinalocc"],["crvo","Retinal vein occlusion","retinalocc"],["det","Retinal detachment","retinaldetach"],["rp","Retinitis pigmentosa","retinitispig"],["rop","Retinopathy of prematurity","rop"]]},{"id":"rx","label":"Drug","type":"one","options":[["tim","Timolol","glaucomadrugs"],["brim","Brimonidine","glaucomadrugs"],["acz","Acetazolamide","glaucomadrugs"],["lat","Latanoprost","glaucomadrugs"],["pilo","Pilocarpine","glaucomadrugs"],["mydr","Mydriatic (epinephrine)","glaucomadrugs"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:213,t:"Glaucoma drugs (First Aid pp. 550–551, 568)",rows:[
+   ["Less aqueous made","timolol, brimonidine, acetazolamide"],
+   ["More outflow","latanoprost (uveoscleral), pilocarpine (trabecular)"],
+   ["Acute angle closure","β-blocker, α₂, pilocarpine, acetazolamide, mannitol"],
+   ["Never in angle closure","mydriatics (epinephrine)"]]}],
+ nodes:[
+  {id:"aq1",l:"Aqueous humor",x:330,y:1660,p:"aqFront",k:"hub",s:"90% trabecular",m:["aqueous"]},
+  {id:"aq2",l:"Glaucoma · drugs",x:760,y:1660,p:"aqFront",s:"open vs closed",m:["glaucoma","glaucomadrugs"]},
+  {id:"aq3",l:"Uveitis",x:1200,y:1660,p:"aqFront",s:"hypopyon",m:["uveitis"]},
+  {id:"aq4",l:"Cataract",x:1640,y:1660,p:"aqFront",s:"cloudy lens",m:["cataract"]},
+  {id:"aq5",l:"Macular degeneration",x:330,y:1790,p:"aqRet",s:"drusen · anti-VEGF",m:["amd"]},
+  {id:"aq6",l:"Diabetic retinopathy",x:760,y:1790,p:"aqRet",s:"VEGF",m:["retinopathy"]},
+  {id:"aq7",l:"Retinal vessel occlusion",x:1200,y:1790,p:"aqRet",s:"cherry-red spot",m:["retinalocc"]},
+  {id:"aq8",l:"Detachment · RP · ROP",x:1640,y:1790,p:"aqRet",s:"curtain · spicules",m:["retinaldetach","retinitispig","rop"]}],
+ edges:[]
+};
+
+MAPS.vestsim = {
+ t:"Vertigo in Motion", sub:"Two inner ears compared in the brainstem: turn the head, run a caloric test, then watch the eyes beat in BPPV, Ménière disease, vestibular neuritis, labyrinthitis, a vestibular schwannoma, AICA and PICA strokes and Bell palsy",
+ w:3600, h:1900,
+ fa:"166, 240, 506, 526, 527, 540, 546, 547, 548, 705",
+ src:["Costanzo ch 3 — Neurophysiology", "Fundamental Neuroscience ch 22 — The Vestibular System", "Fundamental Neuroscience ch 28 — Visual Motor Systems", "Pawlina ch 25 — Ear", "Katzung ch 15 — Diuretic Agents", "Fundamental Neuroscience ch 21 — The Auditory System", "Robbins ch 27 — Peripheral nerves and skeletal muscles", "Robbins ch 28 — The central nervous system", "Fundamental Neuroscience ch 14 — A Synopsis of Cranial Nerves of the Brainstem", "Fundamental Neuroscience ch 10 — An Overview of the Brainstem", "Moore ch 9 — Head", "Robbins ch 8 — Infectious diseases", "Moore ch 10 — Cranial Nerves", "Guyton ch 53 — The Sense of Hearing", "Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases", "Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids", "Katzung ch 8 — Cholinoceptor-Blocking Drugs", "Guyton ch 67 — Physiology of Gastrointestinal Disorders", "Bootcamp.com Pharmacology — Autonomic system", "Bootcamp.com Neurology — Vertigo"],
+ art:"kit",
+ dyn:{"lazy":"10d466e903","switches":[{"id":"dx","label":"Test · what goes wrong (left side)","type":"one","options":[["turnl","Head turns left","vestibular"],["warm","Warm water, left ear","nystagmus"],["cold","Cold water, left ear","nystagmus"],["bppv","BPPV","bppv"],["meniere","Ménière disease","meniere"],["neur","Vestibular neuritis","vestneuritis"],["lab","Labyrinthitis","vestneuritis"],["schwan","Vestibular schwannoma","schwannoma"],["aica","AICA stroke","aicastroke"],["pica","PICA stroke (Wallenberg)","wallenberg"],["bell","Bell palsy","bell"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:213,t:"Peripheral vs central nystagmus (First Aid p. 548 · Fund. Neurosci. ch 22)",rows:[
+   ["Inner ear","horizontal-torsional, one direction"],
+   ["","suppressed by visual fixation"],
+   ["Brainstem · cerebellum","any direction, even purely vertical"],
+   ["","not suppressed; diplopia, ataxia, dysmetria"],
+   ["Caloric test","COWS: cold opposite, warm same"]]}],
+ nodes:[
+  {id:"vs1",l:"Vestibular system",x:330,y:1620,p:"vbNorm",k:"hub",s:"canals · otoliths · VOR",m:["vestibular","nystagmus"]},
+  {id:"vs2",l:"Peripheral vs central",x:760,y:1620,p:"vbNorm",s:"who else is sick?",m:["vertigo"]},
+  {id:"vs3",l:"Hearing loss",x:1200,y:1620,p:"vbNorm",s:"Weber · Rinne",m:["hearingloss"]},
+  {id:"vs4",l:"Motion sickness drugs",x:1640,y:1620,p:"vbNorm",s:"scopolamine · meclizine",m:["motionrx"]},
+  {id:"vs5",l:"BPPV",x:330,y:1760,p:"vbPer",s:"rolls over → spins",m:["bppv"]},
+  {id:"vs6",l:"Ménière disease",x:760,y:1760,p:"vbPer",s:"men wear vests",m:["meniere"]},
+  {id:"vs7",l:"Vestibular neuritis",x:1200,y:1760,p:"vbPer",s:"hearing intact",m:["vestneuritis"]},
+  {id:"vs8",l:"Vestibular schwannoma",x:1640,y:1760,p:"vbCen",s:"CPA · NF2",m:["schwannoma"]},
+  {id:"vs9",l:"AICA · PICA strokes",x:2080,y:1760,p:"vbCen",s:"face vs hoarseness",m:["aicastroke","wallenberg"]},
+  {id:"vs10",l:"Bell palsy",x:2080,y:1620,p:"vbCen",s:"forehead involved",m:["bell"]}],
+ edges:[]
+};
+
+MAPS.voxsim = {
+ t:"Larynx & Voice in Motion", sub:"Breathe, speak, whisper, strain and sing high, and watch which muscle moves the vocal folds and which nerve runs it — then cut a recurrent or superior laryngeal nerve, or grow nodules, a polyp or papillomas",
+ w:3600, h:1900,
+ fa:"286, 288, 347, 638, 690, 703, 704",
+ src:["Moore ch 8 — Neck", "Guyton ch 38 — Pulmonary Ventilation", "Robbins ch 16 — Head and neck"],
+ art:"kit",
+ dyn:{"lazy":"34ee63fe30","switches":[{"id":"act","label":"Larynx is…","type":"steps","options":[["br","Deep breath in","larynxmus"],["ph","Speaking","vocalize"],["wh","Whispering","larynxmus"],["va","Straining · swallowing","larynxmus"],["hi","Singing high","larynxmus"]]},{"id":"lx","label":"Lesion","type":"one","options":[["rln","Left recurrent laryngeal palsy","laryngealnerves"],["ext","External branch injury","laryngealnerves"],["nod","Vocal fold nodules","vcnodule"],["pol","Vocal fold polyp","vcnodule"],["pap","Laryngeal papillomas","laryngealpap"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:127,t:"Who moves the folds (Moore ch 8)",rows:[
+   ["Open","posterior cricoarytenoid"],
+   ["Close","lateral cricoarytenoid, arytenoids"],
+   ["Tense","cricothyroid · ext. sup. laryngeal"],
+   ["All the rest","recurrent laryngeal"]]}],
+ nodes:[
+  {id:"vx1",l:"Laryngeal muscles",x:300,y:1720,p:"vxMus",k:"hub",s:"abduct · adduct · tense",m:["larynxmus"]},
+  {id:"vx2",l:"Voice: tone & resonance",x:700,y:1720,p:"vxMus",s:"larynx · mouth · sinuses",m:["vocalize"]},
+  {id:"vx3",l:"Laryngeal nerves",x:1100,y:1720,p:"vxNrv",s:"recurrent · superior",m:["laryngealnerves"]},
+  {id:"vx4",l:"Vocal fold nodules & polyps",x:1500,y:1720,p:"vxNrv",s:"hoarseness",m:["vcnodule"]},
+  {id:"vx5",l:"Laryngeal papillomas",x:1900,y:1720,p:"vxNrv",s:"HPV-6/11",m:["laryngealpap"]}],
+ edges:[]
+};
+
+MAPS.bleedsim = {
+ t:"Head Bleeds in Motion", sub:"Grow an epidural lens, a subdural crescent or a subarachnoid flood through time — lucid interval, midline shift, vasospasm — then push the brain under the falx, through the tentorium or into the foramen magnum",
+ w:3600, h:1900,
+ fa:"528, 530, 543",
+ src:["Robbins ch 28 — The central nervous system", "Fundamental Neuroscience ch 7 — The Meninges", "Moore ch 9 — Head"],
+ art:"kit",
+ dyn:{"lazy":"4f4ae6131b","switches":[{"id":"dx","label":"Bleed","type":"one","options":[["epi","Epidural","epidural"],["sub","Subdural, acute","subdural"],["subc","Subdural, chronic","subdural"],["sah","Subarachnoid","sah"]]},{"id":"ph","label":"Time","type":"steps","auto":3,"options":[["hit","Injury"],["lucid","Early"],["late","Later"]]},{"id":"hx","label":"Herniation","type":"one","options":[["cing","Subfalcine","herniation"],["uncal","Uncal","herniation"],["central","Central","herniation"],["tonsil","Tonsillar","herniation"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:162,t:"On CT (Robbins ch 28)",rows:[
+   ["Epidural","lens, stops at sutures"],
+   ["Subdural","crescent, crosses sutures"],
+   ["Acute vs chronic","bright vs dark"],
+   ["Subarachnoid","blood in cisterns and sulci"]]}],
+ nodes:[
+  {id:"hb1",l:"Epidural hematoma",x:330,y:1700,p:"hbBleed",k:"hub",s:"artery · lens · lucid",m:["epidural"]},
+  {id:"hb2",l:"Subdural hematoma",x:760,y:1700,p:"hbBleed",s:"veins · crescent",m:["subdural"]},
+  {id:"hb3",l:"Subarachnoid hemorrhage",x:1200,y:1700,p:"hbBleed",s:"aneurysm · thunderclap",m:["sah"]},
+  {id:"hb4",l:"Herniation syndromes",x:1640,y:1700,p:"hbHern",s:"falx · uncus · tonsils",m:["herniation"]}],
+ edges:[]
+};
+
+MAPS.btsim = {
+ t:"Brain Tumors in Motion", sub:"Grow each brain tumor where it lives — hemispheres, dura, CPA, cerebellum, 4th ventricle, pineal, sella — watch the ones that block CSF dilate the ventricles, and see which belong to children and which to adults",
+ w:3600, h:1900,
+ fa:"539, 540, 542",
+ src:["Robbins ch 28 — The central nervous system", "Robbins ch 24 — The endocrine system"],
+ art:"kit",
+ dyn:{"lazy":"529e7e78fa","switches":[{"id":"tu","label":"Tumor","type":"one","options":[["gbm","Glioblastoma","gbm"],["astro","Astrocytoma, IDH-mutant","astroidh"],["oligo","Oligodendroglioma","oligo"],["mening","Meningioma","meningioma"],["schwan","Schwannoma","schwannoma"],["hemangio","Hemangioblastoma","hemangioblastoma"],["pilo","Pilocytic astrocytoma","pilocytic"],["medullo","Medulloblastoma","medullo"],["ependy","Ependymoma","ependymoma"],["pineal","Pineal tumor","pineal"],["cranio","Craniopharyngioma","craniopharyngioma"]]},{"id":"ag","label":"Age","type":"one","options":[["ch","Children","pilocytic"],["ad","Adults","gbm"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:182,kw:170,t:"Hallmark histology (Robbins ch 28)",rows:[
+   ["Glioblastoma","pseudopalisading necrosis"],
+   ["Oligodendroglioma","fried-egg cells"],
+   ["Meningioma","whorls, psammoma"],
+   ["Pilocytic","Rosenthal fibers"],
+   ["Medulloblastoma","Homer-Wright rosettes"],
+   ["Ependymoma","perivascular pseudorosettes"]]}],
+ nodes:[
+  {id:"bt1",l:"Glioblastoma",x:330,y:1600,p:"btSup",k:"hub",s:"butterfly · EGFR",m:["gbm"]},
+  {id:"bt2",l:"Astrocytoma, IDH-mutant",x:760,y:1600,p:"btSup",s:"IDH + TP53 + ATRX",m:["astroidh"]},
+  {id:"bt3",l:"Oligodendroglioma",x:1200,y:1600,p:"btSup",s:"frontal · fried egg",m:["oligo"]},
+  {id:"bt4",l:"Meningioma",x:1640,y:1600,p:"btSup",s:"dural tail",m:["meningioma"]},
+  {id:"bt5",l:"Craniopharyngioma",x:2080,y:1600,p:"btSup",s:"suprasellar",m:["craniopharyngioma"]},
+  {id:"bt6",l:"Pilocytic astrocytoma",x:330,y:1780,p:"btPf",s:"cyst + nodule",m:["pilocytic"]},
+  {id:"bt7",l:"Medulloblastoma",x:760,y:1780,p:"btPf",s:"drop metastases",m:["medullo"]},
+  {id:"bt8",l:"Ependymoma",x:1200,y:1780,p:"btPf",s:"4th ventricle",m:["ependymoma"]},
+  {id:"bt9",l:"Hemangioblastoma",x:1640,y:1780,p:"btPf",s:"VHL · EPO",m:["hemangioblastoma"]},
+  {id:"bt10",l:"Schwannoma",x:2080,y:1780,p:"btPf",s:"CPA · CN VIII",m:["schwannoma"]},
+  {id:"bt11",l:"Pineal tumors",x:2520,y:1780,p:"btPf",s:"Parinaud",m:["pineal"]},
+  {id:"bt12",l:"Neurofibromatosis type 2",x:2520,y:1600,p:"btPf",s:"bilateral schwannomas",m:["nf2"]}],
+ edges:[]
+};
+
+MAPS.csfsim = {
+ t:"CSF Flow in Motion", sub:"CSF from the choroid plexus through the ventricles to the subarachnoid space, the venous sinus and down the spinal canal — block it at Monro, the aqueduct, the fourth-ventricle outlets or the granulations and watch what dilates, then compare NPH, pseudotumor, syrinx, conus medullaris and cauda equina",
+ w:3500, h:2160,
+ fa:"501–502, 506, 515, 520, 536",
+ src:["Fundamental Neuroscience ch 6 — The Ventricles, Choroid Plexus, and Cerebrospinal Fluid", "Fundamental Neuroscience ch 7 — The Meninges", "Fundamental Neuroscience ch 9 — The Spinal Cord", "Robbins ch 28 — The central nervous system", "Moore ch 2 — Back", "OCOM OMM — SDL 1 lecture: Low Back Pain I", "Foundations of Osteopathic Medicine ch 93 — Osteopathic Considerations in the Patient With Low Back Pain"],
+ art:"kit",
+ dyn:{"lazy":"efc4ba5a0f","switches":[{"id":"blk","label":"Block or lesion","type":"one","options":[["monro","Foramen of Monro (colloid cyst)","hydroceph"],["aque","Aqueductal stenosis","hydroceph"],["dw","Dandy-Walker","chiari"],["comm","Scarred granulations (communicating)","hydroceph"],["nph","Normal pressure hydrocephalus","nph"],["exvac","Ex vacuo ventriculomegaly","hydroceph"],["iih","Pseudotumor cerebri (IIH)","iih"],["cpp","Choroid plexus papilloma","csfflow"],["syr","Chiari I + syringomyelia","syringomyelia"],["conus","Conus medullaris syndrome","caudaequina"],["cauda","Cauda equina syndrome","caudaequina"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:800,w:1000,h:160,kw:230,t:"Which ventricles dilate (FA p. 536 · Fund. Neurosci. ch 6)",rows:[
+   ["Foramen of Monro","lateral only"],
+   ["Aqueduct","lateral + third"],
+   ["Fourth-ventricle outlets","all four"],
+   ["Arachnoid granulations","all four — communicating"],
+   ["Ex vacuo","big ventricles, normal pressure"]]}],
+ nodes:[
+  {id:"cf1",l:"CSF production & flow",x:330,y:1990,p:"cfFlow",k:"hub",s:"plexus → sinus",m:["csfflow","ventwalls"]},
+  {id:"cf2",l:"Hydrocephalus",x:760,y:1990,p:"cfHydro",s:"communicating or not",m:["hydroceph"]},
+  {id:"cf3",l:"NPH · pseudotumor",x:1160,y:1990,p:"cfHydro",s:"wobbly, wacky, wet · TOAD",m:["nph","iih"]},
+  {id:"cf4",l:"Chiari · Dandy-Walker",x:1580,y:1990,p:"cfHydro",s:"posterior fossa",m:["chiari"]},
+  {id:"cf5",l:"Syringomyelia",x:330,y:2110,p:"cfCanal",s:"cape-like loss",m:["syringomyelia"]},
+  {id:"cf6",l:"Cauda equina · conus",x:760,y:2110,p:"cfCanal",s:"below L1–L2",m:["caudaequina"]},
+  {id:"cf7",l:"Lumbar puncture",x:1160,y:2110,p:"cfCanal",s:"L3–L4 or L4–L5",m:["lpcsf","ntd"]}],
+ edges:[]
+};
+
+MAPS.demsim = {
+ t:"Dementias Over Time", sub:"Run each dementia from early to late — Alzheimer spreading from the hippocampus, frontotemporal, Lewy body, stepwise vascular, PSP, rapid CJD — and shunt the reversible one, NPH",
+ w:3600, h:1900,
+ fa:"174, 534, 535, 536",
+ src:["Robbins ch 28 — The central nervous system", "Kaplan & Sadock ch 3 — Neurocognitive Disorders", "Kaplan & Sadock ch 21 — Psychopharmacology", "Fundamental Neuroscience ch 6 — The Ventricles, Choroid Plexus, and Cerebrospinal Fluid"],
+ art:"kit",
+ dyn:{"lazy":"e3631399c9","switches":[{"id":"dx","label":"Disease","type":"one","options":[["alz","Alzheimer","alzheimer"],["ftd","Frontotemporal","ftd"],["lewy","Lewy body","lewy"],["vasc","Vascular","vascdementia"],["psp","PSP","psp"],["cjd","CJD","cjd"],["nph","NPH","nph"]]},{"id":"yr","label":"Time","type":"steps","auto":3,"options":[["e","Early"],["m","Middle"],["l","Late"]]},{"id":"shunt","label":"Treat","type":"toggle","on":"Shunted","off":"Shunt (NPH)","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:182,kw:144,t:"What goes first (FA pp. 534–535 · Robbins ch 28)",rows:[
+   ["Alzheimer","short-term memory"],
+   ["Frontotemporal","behavior or language"],
+   ["Lewy body","hallucinations, fluctuation"],
+   ["Vascular","stepwise; memory late"],
+   ["CJD","rapid, myoclonus"],
+   ["NPH","triad: gait, cognition, incontinence"]]}],
+ nodes:[
+  {id:"dm1",l:"Alzheimer disease",x:330,y:1700,p:"dmNeuro",k:"hub",s:"hippocampus first",m:["alzheimer"]},
+  {id:"dm2",l:"Frontotemporal dementia",x:760,y:1700,p:"dmNeuro",s:"behavior first",m:["ftd"]},
+  {id:"dm3",l:"Lewy body dementia",x:1200,y:1700,p:"dmNeuro",s:"hallucinations",m:["lewy"]},
+  {id:"dm4",l:"Progressive supranuclear palsy",x:1640,y:1700,p:"dmNeuro",s:"vertical gaze",m:["psp"]},
+  {id:"dm5",l:"Vascular dementia",x:2080,y:1700,p:"dmOther",s:"stepwise",m:["vascdementia"]},
+  {id:"dm6",l:"Creutzfeldt-Jakob disease",x:2520,y:1700,p:"dmOther",s:"weeks to months",m:["cjd"]},
+  {id:"dm7",l:"Normal pressure hydrocephalus",x:2960,y:1700,p:"dmOther",s:"wet, wobbly, wacky",m:["nph"]},
+  {id:"dm8",l:"Reversible causes",x:330,y:1840,p:"dmOther",s:"TSH · B12 · RPR",m:["dementiarev"]}],
+ edges:[]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["oral","Oral Cavity & Salivary Glands"],["skinbasics","Skin Basics — Layers, Lesions & Terms"],["gidrugs","GI Motility, Laxative & Antiemetic Drugs"],["cardproc","Cardiac Anatomy, Catheters & Vascular Access"],["transfuse","Blood Groups & Transfusion"],["nmjflow","Neuromuscular Junction in Motion"],["synflow","Monoamine Synapse in Motion"],["apflow","Action Potential in Motion"],["bgflow","Basal Ganglia in Motion"],["cordsim","Spinal Cord Lesion Simulator"],["stemsim","Brainstem Lesion Simulator"],["visfield","Visual Pathway Lesion Simulator"],["cardap","Cardiac Action Potential in Motion"],["coagflow","Coagulation Cascade in Motion"],["alvflow","Alveolus in Motion"],["asthflow","Asthma Airway in Motion"],["axisflow","HPA Axis in Motion"],["betaflow","β Cell in Motion"],["follflow","Thyroid Follicle in Motion"],["cochflow","Cochlea in Motion"],["gutabs","Gut Absorption in Motion"],["boneflow","Bone Remodeling in Motion"],["goutflow","Uric Acid & Gout in Motion"],["rajoint","Rheumatoid Joint in Motion"],["vsmotion","Viscerosomatic Reflex in Motion"],["lymphflow","Lymphatic Pump in Motion"],["biliflow","Bilirubin in Motion"],["ironflow","Iron in Motion"],["abflow","Acid–Base in Motion"],["glomsim","Glomerular Disease Locator"],["abxsim","Antibiotic Targets in Motion"],["misim","MI Locator"],["pvflow","Pressure–Volume Loop in Motion"],["edemaflow","Capillary & Edema in Motion"],["hivflow","HIV Life Cycle in Motion"],["eyesim","Pupil & Eye Movement Simulator"],["plexsim","Brachial Plexus Lesion Simulator"],["mensflow","Menstrual Cycle in Motion"],["baroflow","Autonomic Drugs & Baroreflex in Motion"],["shocksim","Shock Simulator"],["ecgsim","Conduction & ECG Simulator"],["cahflow","Steroid Synthesis & CAH in Motion"],["lipoflow","Lipoprotein Transport in Motion"],["hemeflow","Heme Synthesis & Porphyrias in Motion"],["nucflow","Nucleotide Synthesis & Drug Sites in Motion"],["acidflow","Parietal Cell in Motion"],["legsim","Lower Limb Nerve Lesion Simulator"],["abtime","Acid–Base Compensation Timeline"],["aasim","Amino Acid Disorders in Motion"],["bvitsim","B Vitamins & Zinc in Motion"],["colsim","Collagen Assembly in Motion"],["energysim","Energy Metabolism in Motion"],["faosim","Fatty Acid Oxidation in Motion"],["glyxsim","Glycolysis Odds & Ends in Motion"],["gsdsim","Glycogen Storage Diseases in Motion"],["labsim","Lab Techniques in Motion"],["lsdsim","Lysosomal Storage in Motion"],["pedsim","Pedigree Simulator"],["rtasim","Renal Tubular Acidosis Simulator"],["sugarsim","Fructose & Galactose in Motion"],["ureasim","Urea Cycle in Motion"],["cbsim","Cerebellar Lesions in Motion"],["papezsim","The Papez Circuit in Motion"],["rxsim","Psych Drugs at the Receptors"],["sleepsim","Sleep Stages in Motion"],["stimsim","Stimulants & Addiction in Motion"],["aortasim","The Aorta in Motion"],["archsim","Pharyngeal Arches in Motion"],["carditsim","Heart Infection & Inflammation in Motion"],["cyansim","Cyanotic Heart Disease in Motion"],["embsim","Embryo & Gut-Tube Defects in Motion"],["fetalsim","Fetal Circulation in Motion"],["gonadsim","Gonadal Tumors in Motion"],["htnsim","Hypertension in Motion"],["lyteecg","Electrolytes & the ECG"],["murmursim","Murmurs & Maneuvers in Motion"],["placsim","Bleeding in Pregnancy in Motion"],["pregsim","Pregnancy Hormones in Motion"],["prossim","The Prostate in Motion"],["scrotsim","The Scrotum in Motion"],["sexsim","Sex Differentiation in Motion"],["aqsim","Aqueous Humor & Retina in Motion"],["vestsim","Vertigo in Motion"],["voxsim","Larynx & Voice in Motion"],["bleedsim","Head Bleeds in Motion"],["btsim","Brain Tumors in Motion"],["csfsim","CSF Flow in Motion"],["demsim","Dementias Over Time"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
   ["bio","Biochemistry",["core","energysim","glyxsim","gsdsim","sugarsim","lipid","faosim","lipoflow","steroid","lysosome","lsdsim","nitrogen","aasim","ureasim","iemlab","nucleo","nucflow","collagen","colsim","ctdis","vitamins","bvitsim","cellcycle","cellbio","tissues","molbio","labsim","signal","genetics","pedsim"]],
   ["path","Pathology",["genpath","neoplasia","thromboemb"]],
-  ["cardio","Cardiac",["cardiac","cardcycle","pvflow","valves","ihd","misim","cardproc","chd","vasc","aortasim","vascshock","shocksim","htnrx","rhythm","cardap","ecgsim"]],
+  ["cardio","Cardiac",["cardiac","cardcycle","pvflow","valves","carditsim","murmursim","ihd","misim","cardproc","chd","cyansim","fetalsim","vasc","aortasim","vascshock","shocksim","htnrx","htnsim","rhythm","cardap","ecgsim","lyteecg"]],
   ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","alvflow","highalt","hypoxia","lungdz","asthflow","pleural","lungcancer","respinf","respdrug"]],
   ["renal","Renal",["nephron","nephflow","fluids","edemaflow","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","histoembryo","glom","glomsim","renvasc","raasrx","buffers","acidbase","abflow","abtime","rtasim","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","acidflow","gidrugs","liver","biliflow","gitract","gutabs","oral","abdanat"]],
-  ["heme","Heme/Onc",["rbc","ironflow","hemeflow","hemostasis","coagflow","transfuse","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","softtissue","tumark"]],
+  ["heme","Heme/Onc",["rbc","ironflow","hemeflow","hemostasis","coagflow","transfuse","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","btsim","softtissue","tumark"]],
   ["immuno","Immunology",["immune","innate","lymphdev","hypimm","cytokine","eicosanoid","transplant","mabs","vaccines"]],
   ["endo","Endocrine",["axes","axisflow","pitgh","thyroid","follflow","adrenal","cahflow","hormones","gcpharm","rclass","pancreas","betaflow","fuelstate"]],
-  ["devrepro","Repro & Development",["sexdev","androgen","repro","mensflow","placenta","obgyn","malerepro","prosobs","embryo","archsim"]],
-  ["neuro","Neuro",["neurotx","synapse","nmjflow","ans","baroflow","membrane","apflow","ionchan","spine","cordsim","brainstem","stemsim","chemvisc","motorctl","cerebellum","cbsim","gaze","weakness","stroke","brainvessels","brainreg","cortex","meninges","basal","bgflow","neuroer","seizhead"]],
+  ["devrepro","Repro & Development",["sexdev","sexsim","androgen","repro","mensflow","placenta","pregsim","obgyn","placsim","malerepro","gonadsim","scrotsim","prosobs","prossim","embryo","archsim","embsim"]],
+  ["neuro","Neuro",["neurotx","synapse","nmjflow","ans","baroflow","membrane","apflow","ionchan","spine","cordsim","brainstem","stemsim","chemvisc","motorctl","cerebellum","cbsim","gaze","weakness","stroke","brainvessels","brainreg","cortex","demsim","meninges","csfsim","basal","bgflow","neuroer","bleedsim","seizhead"]],
   ["behav","Psych & Behavior",["limbmem","papezsim","psychmse","dsmdx","psychdx","anxtx","psychtx","synflow","psyrxprin","rxsim","psychsom","somatcare","substance","stimsim","sleepdev","sleepsim","neurodev"]],
-  ["eent","EENT",["eyecn","eyesim","anteye","vision","visfield","ent","hearing","cochflow","larynx"]],
+  ["eent","EENT",["eyecn","eyesim","aqsim","anteye","vision","visfield","ent","hearing","cochflow","vestsim","larynx","voxsim"]],
   ["msk","Musculoskeletal",["muscle","bone","boneflow","bonehisto","arthritis","raarth","rajoint","crystals","goutflow","derm","skinbasics","plexus","plexsim","legsim","orthoinj","sportsortho","legfx","footleg","orthowork","neckpain","shoulder","ptrehab","integrative"]],
   ["omm","OMM",["vsomatic","vsmotion","lymphflow","neiomm","chapman","omt","lbp","agingomt","chestomt","ommmech","janda","cranial","jones"]],
   ["id","Infectious",["microlab","abx","abxsim","antiviral","hivflow","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
@@ -42609,9 +43196,9 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   misim:"2026-10-09",pvflow:"2026-10-09",edemaflow:"2026-10-09",hivflow:"2026-10-09",eyesim:"2026-10-09",plexsim:"2026-10-09",mensflow:"2026-10-09",
   baroflow:"2026-10-10",shocksim:"2026-10-10",ecgsim:"2026-10-10",cahflow:"2026-10-10",lipoflow:"2026-10-10",hemeflow:"2026-10-10",nucflow:"2026-10-10",acidflow:"2026-10-10",legsim:"2026-10-10",
   abtime:"2026-10-10",
-  aasim:"2026-10-12",bvitsim:"2026-10-12",colsim:"2026-10-12",energysim:"2026-10-12",faosim:"2026-10-12",glyxsim:"2026-10-12",gsdsim:"2026-10-12",labsim:"2026-10-12",lsdsim:"2026-10-12",pedsim:"2026-10-12",rtasim:"2026-10-12",sugarsim:"2026-10-12",ureasim:"2026-10-12",cbsim:"2026-10-12",papezsim:"2026-10-12",rxsim:"2026-10-12",sleepsim:"2026-10-12",stimsim:"2026-10-12",aortasim:"2026-10-12",archsim:"2026-10-12"};
+  aasim:"2026-10-12",bvitsim:"2026-10-12",colsim:"2026-10-12",energysim:"2026-10-12",faosim:"2026-10-12",glyxsim:"2026-10-12",gsdsim:"2026-10-12",labsim:"2026-10-12",lsdsim:"2026-10-12",pedsim:"2026-10-12",rtasim:"2026-10-12",sugarsim:"2026-10-12",ureasim:"2026-10-12",cbsim:"2026-10-12",papezsim:"2026-10-12",rxsim:"2026-10-12",sleepsim:"2026-10-12",stimsim:"2026-10-12",aortasim:"2026-10-12",archsim:"2026-10-12",carditsim:"2026-10-12",cyansim:"2026-10-12",embsim:"2026-10-12",fetalsim:"2026-10-12",gonadsim:"2026-10-12",htnsim:"2026-10-12",lyteecg:"2026-10-12",murmursim:"2026-10-12",placsim:"2026-10-12",pregsim:"2026-10-12",prossim:"2026-10-12",scrotsim:"2026-10-12",sexsim:"2026-10-12",aqsim:"2026-10-12",vestsim:"2026-10-12",voxsim:"2026-10-12",bleedsim:"2026-10-12",btsim:"2026-10-12",csfsim:"2026-10-12",demsim:"2026-10-12"};
 const WHATSNEW=[
-  ["2026-10-12","20 new moving maps — <b>Amino Acid Disorders in Motion</b>, <b>B Vitamins &amp; Zinc in Motion</b>, <b>Collagen Assembly in Motion</b>, <b>Energy Metabolism in Motion</b>, <b>Fatty Acid Oxidation in Motion</b>, <b>Glycolysis Odds &amp; Ends in Motion</b>, <b>Glycogen Storage Diseases in Motion</b>, <b>Lab Techniques in Motion</b>, <b>Lysosomal Storage in Motion</b>, <b>Pedigree Simulator</b>, <b>Renal Tubular Acidosis Simulator</b>, <b>Fructose &amp; Galactose in Motion</b>, <b>Urea Cycle in Motion</b>, <b>Cerebellar Lesions in Motion</b>, <b>The Papez Circuit in Motion</b>, <b>Psych Drugs at the Receptors</b>, <b>Sleep Stages in Motion</b>, <b>Stimulants &amp; Addiction in Motion</b>, <b>The Aorta in Motion</b>, <b>Pharyngeal Arches in Motion</b>."],
+  ["2026-10-12","40 new moving maps — <b>Amino Acid Disorders in Motion</b>, <b>B Vitamins &amp; Zinc in Motion</b>, <b>Collagen Assembly in Motion</b>, <b>Energy Metabolism in Motion</b>, <b>Fatty Acid Oxidation in Motion</b>, <b>Glycolysis Odds &amp; Ends in Motion</b>, <b>Glycogen Storage Diseases in Motion</b>, <b>Lab Techniques in Motion</b>, <b>Lysosomal Storage in Motion</b>, <b>Pedigree Simulator</b>, <b>Renal Tubular Acidosis Simulator</b>, <b>Fructose &amp; Galactose in Motion</b>, <b>Urea Cycle in Motion</b>, <b>Cerebellar Lesions in Motion</b>, <b>The Papez Circuit in Motion</b>, <b>Psych Drugs at the Receptors</b>, <b>Sleep Stages in Motion</b>, <b>Stimulants &amp; Addiction in Motion</b>, <b>The Aorta in Motion</b>, <b>Pharyngeal Arches in Motion</b>, <b>Heart Infection &amp; Inflammation in Motion</b>, <b>Cyanotic Heart Disease in Motion</b>, <b>Embryo &amp; Gut-Tube Defects in Motion</b>, <b>Fetal Circulation in Motion</b>, <b>Gonadal Tumors in Motion</b>, <b>Hypertension in Motion</b>, <b>Electrolytes &amp; the ECG</b>, <b>Murmurs &amp; Maneuvers in Motion</b>, <b>Bleeding in Pregnancy in Motion</b>, <b>Pregnancy Hormones in Motion</b>, <b>The Prostate in Motion</b>, <b>The Scrotum in Motion</b>, <b>Sex Differentiation in Motion</b>, <b>Aqueous Humor &amp; Retina in Motion</b>, <b>Vertigo in Motion</b>, <b>Larynx &amp; Voice in Motion</b>, <b>Head Bleeds in Motion</b>, <b>Brain Tumors in Motion</b>, <b>CSF Flow in Motion</b>, <b>Dementias Over Time</b>."],
   ["2026-10-10","New moving map — <b>Acid–Base Compensation Timeline</b> (Renal): buffers in seconds, the lungs in hours, the kidneys over days — and how far each disorder is expected to compensate."],
   ["2026-10-10","Moving maps: options you name wrong come back first, <b>Predict the arrows</b> keeps a score too, and both scores now sync with your PIN. Keys: <b>t</b> Tour, <b>n</b> Name it, <b>p</b> Predict, <b>c</b> Compare. The hub home has a <b>Moving-map mix</b> tile with your score."],
   ["2026-10-10","Moving maps: the mix can stay in one system (<b>Only Cardiac</b>), a Tour can <b>▶ Play</b> by itself, <b>Copy link</b> shares the exact state you’re on, Compare can <b>Pin B instead</b> to chain comparisons, and the Index lists your weakest maps for Name it. Block pages show your Name-it score on each moving map."],
