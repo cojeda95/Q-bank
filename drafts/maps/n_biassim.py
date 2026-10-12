@@ -1,8 +1,9 @@
 # Bias in Motion (dynamic map, kit data) — drafted on the drafts branch, off the Mac.
 # A drawn study pipeline — target population → who gets in → the groups → measuring the outcome → the answer — with
 # people flowing through it. One `one` switch picks a bias: the stage where it enters lights up and its mechanism is
-# drawn (a skewed sample, dropouts, a distorted measurement, a confounder linked to both sides, a screening
-# timeline for lead-time and length-time bias), with the fix underneath. No readouts — the answers are stages and
+# drawn (a skewed sample, dropouts, a distorted measurement, groups handled differently, a confounder linked to both
+# sides, a screening timeline for lead-time and length-time bias), with the fix underneath; effect modification is the
+# contrast (a real association that differs by stratum). No readouts — the answers are stages and
 # fixes, not arrows. Facts from the pinned cards (selectionbias, infobias, confounding, screenbias, rct); their FA
 # pages are in `fa`. No new cards.
 import sys
@@ -38,7 +39,7 @@ text('people flow left to right; the stage a bias enters lights up', 190, 196, '
 STG = [('pop', 'Target population', 'who the answer is for'), ('smp', 'Who gets in', 'sampling · allocation'),
        ('grp', 'The groups', 'followed over time'), ('mea', 'Measuring', 'exposure and outcome'), ('ans', 'The answer', 'RR · OR · survival')]
 SX = {k: 200 + i * 430 for i, (k, *_) in enumerate(STG)}
-HIT = dict(sel=['smp'], attr=['grp'], recall=['mea'], meas=['mea'], hawth=['grp'], pyg=['mea'], conf=['ans'], lead=['ans'], length=['smp'])
+HIT = dict(sel=['smp'], attr=['grp'], recall=['mea'], meas=['mea'], hawth=['grp'], pyg=['mea'], conf=['ans'], lead=['ans'], length=['smp'], proc=['grp'], effmod=['ans'])
 for k, lab, sub in STG:
     x = SX[k]
     add(f'<rect x="{x}" y="300" width="360" height="260" rx="22" class="dyn-soft"/>')
@@ -58,12 +59,18 @@ add(f'<rect x="{SX["grp"] + 60}" y="660" width="240" height="70" rx="14" style="
 text('lost to follow-up', SX['grp'] + 180, 702, 'nf-l1', 'middle', when=O('attr'))
 text('those who drop out have a different prognosis', SX['grp'], 770, 'nf-l2', when=O('attr'))
 # measurement-stage biases
-MEA = dict(recall=('cases remember exposures differently', 'knowing the diagnosis changes recall — case-control studies'),
+MEA = dict(recall=('cases remember exposures differently', 'knowing the diagnosis changes recall — retrospective (case-control)'),
            meas=('the data are systematically distorted', 'e.g., a faulty blood pressure cuff'),
            pyg=('the researcher’s belief changes the result', 'observer-expectancy (Pygmalion) bias'))
 for k, (a, b) in MEA.items():
     text(a, SX['mea'], 610, 'nf-l1 dyn-tag', when=O(k)); text(b, SX['mea'], 636, 'nf-l2', when=O(k))
 text('being watched changes behavior (Hawthorne effect)', SX['grp'], 610, 'nf-l1 dyn-tag', when=O('hawth'))
+# procedure bias: the groups are handled differently
+add(f'<rect x="{SX["grp"] + 40}" y="400" width="130" height="50" rx="10" style="fill:var(--accent);fill-opacity:.25;stroke:var(--accent);stroke-width:3"/>'
+    f'<rect x="{SX["grp"] + 190}" y="400" width="130" height="50" rx="10" style="fill:var(--surface);stroke:var(--ink-3);stroke-width:3"/>', when=O('proc'))
+text('treated', SX['grp'] + 105, 431, 'nf-l2', 'middle', when=O('proc')); text('control', SX['grp'] + 255, 431, 'nf-l2', 'middle', when=O('proc'))
+text('the groups are not treated the same', SX['grp'], 610, 'nf-l1 dyn-tag', when=O('proc'))
+text('e.g., more time in a specialized unit', SX['grp'], 636, 'nf-l2', when=O('proc'))
 # confounding: coffee and lung cancer, both linked to smoking
 add(f'<ellipse cx="{SX["mea"] + 180}" cy="760" rx="170" ry="54" style="fill:var(--dk5);fill-opacity:.25;stroke:var(--dk5);stroke-width:3"/>', when=O('conf'))
 text('Smoking', SX['mea'] + 180, 766, 'nf-l1', 'middle', when=O('conf'))
@@ -71,6 +78,12 @@ add(f'<path d="M{SX["mea"] + 30} 740 Q{SX["grp"] + 200} 680 {SX["grp"] + 180} 58
     f'<path d="M{SX["mea"] + 330} 740 Q{SX["ans"] + 120} 680 {SX["ans"] + 180} 580" style="fill:none;stroke:var(--dk5);stroke-width:4" marker-end="url(#ah-bsFlow)"/>', when=O('conf'))
 text('coffee drinkers', SX['grp'] + 40, 480, 'nf-l2', when=O('conf'))
 text('“coffee causes lung cancer”', SX['ans'] + 24, 480, 'nf-l2', when=O('conf'))
+# effect modification: a real association that differs between strata (OCP → DVT by smoking)
+add(f'<path d="M{SX["ans"] + 30} 420 H{SX["ans"] + 330}" style="stroke:var(--bad);stroke-width:12;stroke-linecap:round"/>'
+    f'<path d="M{SX["ans"] + 30} 520 H{SX["ans"] + 90}" style="stroke:var(--ink-3);stroke-width:12;stroke-linecap:round"/>', when=O('effmod'))
+text('smokers', SX['ans'] + 30, 402, 'nf-l2', when=O('effmod')); text('nonsmokers', SX['ans'] + 110, 525, 'nf-l2', when=O('effmod'))
+text('OCP → DVT: strong in smokers', SX['ans'], 610, 'nf-l1 dyn-tag', when=O('effmod'))
+text('little or none in nonsmokers', SX['ans'], 636, 'nf-l2', when=O('effmod'))
 
 # screening timelines (lead time, length time)
 TL0, TL1 = 300, 2200
@@ -96,8 +109,10 @@ text('screen', tx(5), 930, 'nf-l2', 'middle', when=O('length'))
 # the fix
 FIX = dict(sel='Fix: randomization and the right comparison group', attr='Fix: analyze by intention-to-treat — once randomized, always analyzed',
            recall='Fix: use records, shorten the time to recall', meas='Fix: standardized, objective methods planned in advance',
-           hawth='Fix: blinding, placebo, standardized methods', pyg='Fix: blinding',
-           conf='Fix: randomization, matching, crossover design — or stratify (the association vanishes)',
+           hawth='Fix: a placebo group; objective, standardized methods', pyg='Fix: blinding',
+           conf='Fix: randomization, matching, crossover, regression — stratified, the association vanishes',
+           proc='Fix: blinding and placebo — neither side knows the group assignments',
+           effmod='Not a bias: report a stratified analysis after testing for interaction',
            lead='Fix: compare back-end survival, adjusted for stage at diagnosis', length='Fix: a randomized trial of screening vs no screening')
 for k, t in FIX.items():
     text(t, 190, 1260, 'nf-l1', when=O(k))
@@ -117,17 +132,21 @@ notes = {
   'bias:sel': 'Selection bias: the sample does not represent the target population — convenience samples, or Berkson bias when cases '
               'or controls come from the hospital and are sicker. Randomize and pick the right comparison group.',
   'bias:attr': 'Attrition bias, a selection bias: people lost to follow-up have a different prognosis from those who stay, so the '
-               'groups drift apart.',
+               'groups drift apart. Intention-to-treat analysis (once randomized, always analyzed) guards against it.',
   'bias:recall': 'Recall bias: knowing the diagnosis changes what patients remember — common in retrospective case-control studies. '
                  'Use records and shorten the gap.',
   'bias:meas': 'Measurement bias: the data are systematically distorted, as by a faulty cuff. Standardized, objective methods planned '
                'in advance prevent it.',
-  'bias:hawth': 'Hawthorne effect: people change their behavior because they know they are being studied. Blinding and placebo '
-                'help.',
+  'bias:hawth': 'Hawthorne effect, a measurement bias: people change their behavior because they know they are being observed. A '
+                'placebo group and objective, standardized methods help.',
   'bias:pyg': 'Observer-expectancy (Pygmalion) bias: the researcher’s belief changes the outcome or how it is recorded. Blinding '
               'prevents it.',
   'bias:conf': 'Confounding: a third variable linked to both exposure and outcome — coffee seems to cause lung cancer because coffee '
                'drinkers smoke. The association disappears when stratified by smoking.',
+  'bias:proc': 'Procedure bias: subjects in different groups are not treated the same — e.g., the treatment group spends more '
+              'time in a specialized unit. Blinding and a placebo keep both sides from knowing the assignments.',
+  'bias:effmod': 'Effect modification is not a bias: the association is real but differs by subgroup — OCPs raise DVT risk '
+                'strongly in smokers, little or not at all in nonsmokers. Use a stratified analysis after testing for interaction.',
   'bias:lead': 'Lead-time bias: screening diagnoses earlier, so survival from diagnosis looks longer — but death comes at the same '
                'time. Compare back-end survival adjusted for stage.',
   'bias:length': 'Length-time bias: screening preferentially catches slow-growing disease with a long detectable phase; aggressive '
@@ -139,7 +158,7 @@ dyn = dict(
   switches=[dict(id=SW, label='Bias', type='one', options=[
     ['sel', 'Selection (Berkson)', 'selectionbias'], ['attr', 'Attrition', 'selectionbias'], ['recall', 'Recall', 'infobias'],
     ['meas', 'Measurement', 'infobias'], ['hawth', 'Hawthorne effect', 'infobias'], ['pyg', 'Observer-expectancy', 'infobias'],
-    ['conf', 'Confounding', 'confounding'], ['lead', 'Lead-time', 'screenbias'], ['length', 'Length-time', 'screenbias']])],
+    ['proc', 'Procedure', 'infobias'], ['conf', 'Confounding', 'confounding'], ['effmod', 'Effect modification (not a bias)', 'confounding'], ['lead', 'Lead-time', 'screenbias'], ['length', 'Length-time', 'screenbias']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=[],
   panel=dict(x=2420, y=110, w=1000),
   src='First Aid pp. 257, 262–263')
@@ -162,8 +181,9 @@ MAP = dict(
     (2420, PANY, 1000, 'Bias → prevention (First Aid pp. 262–263)', [
       ('Selection', 'randomization · right comparison group'),
       ('Recall', 'records · shorter recall time'),
-      ('Observer, measurement', 'blinding · placebo · standardized methods'),
-      ('Confounding', 'randomization · matching · crossover'),
+      ('Observer, procedure', 'blinding · placebo'),
+      ('Measurement', 'standardized methods · placebo group'),
+      ('Confounding', 'randomization · matching · crossover · regression'),
       ('Lead time', 'back-end survival adjusted for stage'),
       ('Length time', 'randomized trial of screening')])],
   dyn=dyn)

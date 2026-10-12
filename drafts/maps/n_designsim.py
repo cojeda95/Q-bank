@@ -105,6 +105,7 @@ T = [
   ('xs', 'ob', 'one moment in time — “what is happening?”', 'Cross-sectional', 'prevalence', 'xsec'),
   ('cc', 'ob', 'starts with disease, looks back at exposure', 'Case-control', 'odds ratio', 'cc'),
   ('ch', 'ob', 'starts with exposure, follows for disease', 'Cohort', 'incidence · relative risk', 'coh'),
+  ('tw', 'ob', 'twins or adoptees compared', 'Twin · adoption study', 'heritability vs environment', 'twin'),
   ('ec', 'ob', 'whole populations compared', 'Ecological', 'not for individuals', 'eco'),
 ]
 pos, flows, ybot = tree(T, SW, Y0=280)
@@ -119,6 +120,7 @@ C = {
   'xsec': ['Cross-sectional study', 'disease and risk factors measured at one moment', 'gives prevalence · association, not causation'],
   'cc': ['Case-control study', 'people with and without the disease, asked about past exposure', 'odds ratio = ad / bc · prone to recall bias'],
   'coh': ['Cohort study', 'exposed and unexposed followed for disease — prospective or retrospective', 'incidence and relative risk = [a/(a+b)] ÷ [c/(c+d)] · attrition bias'],
+  'twin': ['Twin concordance · adoption study', 'both MZ vs both DZ twins with the disease · siblings raised by biological vs adoptive parents', 'measures heritability vs environment (“nature vs nurture”)'],
   'eco': ['Ecological study', 'compares populations, not people', 'applying it to individuals is the ecological fallacy'],
 }
 cy = clues(C, SW, 180, ybot + 70, 2140, title='The design')
@@ -140,6 +142,8 @@ notes = {
             'gives an odds ratio (ad/bc) and is prone to recall bias.',
   'des:coh': 'A cohort study starts from exposed and unexposed people and follows them for disease, prospectively or retrospectively. '
              'It gives incidence and relative risk; loss to follow-up causes attrition bias.',
+  'des:twin': 'A twin concordance study compares how often both monozygotic vs both dizygotic twins develop the disease; an '
+              'adoption study compares siblings raised by biological vs adoptive parents. Both measure heritability vs environment.',
   'des:eco': 'An ecological study compares populations. Its findings can’t be applied to individuals — the ecological fallacy.',
 }
 
@@ -147,7 +151,7 @@ dyn = dict(
   kinds=dict(pt=['pt', '--accent']), groups=[['pt', 'The question']],
   switches=[dict(id=SW, label='The design', type='one', options=[
     ['rct', 'Randomized controlled trial', 'rct'], ['cross', 'Crossover trial', 'rct'], ['series', 'Case series', 'studydesigns'],
-    ['xsec', 'Cross-sectional', 'studydesigns'], ['cc', 'Case-control', 'oddsratio'], ['coh', 'Cohort', 'oddsratio'],
+    ['xsec', 'Cross-sectional', 'studydesigns'], ['cc', 'Case-control', 'oddsratio'], ['coh', 'Cohort', 'oddsratio'], ['twin', 'Twin · adoption', 'studydesigns'],
     ['eco', 'Ecological', 'studydesigns']])],
   notes=notes, shapes=shapes, flows=flows, sites=[], readouts=[],
   panel=dict(x=2420, y=110, w=1000),
@@ -157,7 +161,7 @@ MAP = dict(
   id='designsim', title='Study Design Picker', topic='stats', after='biostats',
   sub='Did the investigators assign the exposure, and where does the study start? Pick a design and a dot follows the '
       'questions down the tree to the measure it gives — prevalence, odds ratio or relative risk — and the bias it invites',
-  w=3500, h=1470,
+  w=3500, h=1570,
   fa='256–258, 261–263, 266',
   src=[],
   lanes=[('sdObs', 'Observational', 'glycolysis'), ('sdExp', 'Experimental', 'tca'), ('sdMeas', 'Measures & bias', 'gluconeo')],

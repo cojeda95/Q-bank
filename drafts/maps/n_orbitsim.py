@@ -53,6 +53,9 @@ add(f'<path d="M{OX - 120} {OY + 330} l40 30 l30 -40 l40 40 l30 -30" style="fill
 add(f'<path d="M{OX + 340} {OY - 80} l-20 40 l30 30 l-20 40" style="fill:none;stroke:var(--bad);stroke-width:8"/>', when=O('blow'))
 add(f'<ellipse cx="{OX}" cy="{OY + 120}" rx="200" ry="90" style="fill:var(--nf-blood);opacity:.3"/>', when=O('blow'))
 text('blood in the orbit → eye pushed forward', OX, OY + 270, 'nf-l1', 'middle', when=O('blow'))
+# FA 555: floor fracture can trap the inferior rectus / orbital fat and injure the infraorbital nerve (V2, in the floor — Moore ch 9)
+add(f'<path d="M{OX - 80} {OY + 345} q30 70 70 0" style="fill:var(--dk4);fill-opacity:.55;stroke:var(--bad);stroke-width:4"/>', when=O('blow'))
+text('inferior rectus / fat caught in the crack · infraorbital n. (V2) at risk', OX, OY + 475, 'nf-l1', 'middle', when=O('blow'))
 add(f'<path d="M{OX + 20} {OY + 40} Q{OX - 80} {OY + 30} {OX - 200} {OY - 80}" style="fill:none;stroke:var(--bad);stroke-width:22;stroke-linecap:round;opacity:.7"/>', when=O('sof', 'apex'))
 add(f'<circle cx="{OX + 60}" cy="{OY - 20}" r="40" style="fill:var(--bad);opacity:.5"/>', when=O('apex'))
 # lacrimal apparatus
@@ -86,14 +89,14 @@ for i in range(6):
     add(f'<circle cx="{CX + 60 + i * 75}" cy="{CY + 135}" r="9" style="fill:var(--dk4);opacity:.8"/>', when=E('fuchs'))
 add(f'<rect x="{CX}" y="{CY + 40}" width="500" height="80" style="fill:var(--nf-h2o);opacity:.35"/>', when=E('fuchs'))
 add(f'<path d="M{CX + 200} {CY} Q{CX + 250} {CY - 40} {CX + 320} {CY}" style="fill:var(--nf-blood);fill-opacity:.4;stroke:var(--bad);stroke-width:3"/>', when=E('pter'))
-OTAG = dict(blow='blowout fracture — rim intact, thin floor (→ maxillary sinus) and medial wall (→ ethmoid, sphenoid sinuses) break',
+OTAG = dict(blow='blowout fracture — rim holds; thin floor (→ maxillary sinus) or medial wall (→ ethmoid, sphenoid sinuses) breaks',
             sof='superior orbital fissure — III, IV, VI: eye frozen, ptosis · V1: cornea numb',
             apex='orbital apex — the fissure plus the optic canal: add blindness (II and ophthalmic a.)')
 for k, s in OTAG.items(): text(s, 1100, 1480, 'nf-l1 dyn-tag', 'middle', when=O(k))
 ETAG = dict(hord='hordeolum (sty) — infected gland at the lash line: painful, red, suppurative',
             chal='chalazion — blocked meibomian or Zeis gland leaks lipid: firm painless lipogranuloma',
             seb='sebaceous carcinoma — mimics a chalazion or blepharitis, pagetoid spread, to parotid & submandibular nodes',
-            pter='pterygium — sun-damaged fibrovascular wedge from the limbus onto the cornea under Bowman; never crosses the pupil',
+            pter='pterygium — sun-damaged fibrovascular wedge from the limbus onto the cornea in the Bowman plane; never crosses the pupil',
             kc='keratoconus — thin cone, Bowman layer breaks: irregular astigmatism (Down, Marfan, atopy) · rigid lenses, transplant',
             fuchs='Fuchs dystrophy — endothelium lost, guttata on Descemet: stroma swells, ground-glass blur · transplant')
 for k, s in ETAG.items(): text(s, 1100, 1520, 'nf-l1', 'middle', when=E(k))
@@ -116,9 +119,9 @@ sites = [dict(x=OX - 120, y=OY + 440, n=[-1, 1], w=10, t='rec', l='', aria='Orbi
 readouts = [
   dict(l='Eye movements', mods=[dict(when=O('sof', 'apex'), d=-1)]),
   dict(l='Corneal sensation', mods=[dict(when=O('sof', 'apex'), d=-1)]),
-  dict(l='Vision', mods=[dict(when=O('apex'), d=-1), dict(when=E('kc', 'fuchs'), d=-1)]),
+  dict(l='Vision', mods=[dict(when=O('apex'), d=-1), dict(when=E('kc', 'fuchs'), d=-1), dict(when=E('pter'), d=0)]),
   dict(l='Tear overflow', mods=[dict(when=['blk'], d=1)]),
-  dict(l='Lid pain', mods=[dict(when=E('hord'), d=1)]),
+  dict(l='Lid pain', mods=[dict(when=E('hord'), d=1), dict(when=E('chal'), d=0)]),
 ]
 
 notes = {
@@ -126,12 +129,12 @@ notes = {
       'ethmoid) and floor (maxilla) are thin. Tears from the superolateral lacrimal gland are blinked toward the medial canthus and drain to '
       'the inferior nasal meatus.',
   'orb:blow': 'Blowout fracture: a blow breaks the thin medial wall (into the ethmoid and sphenoid sinuses) or floor (into the maxillary '
-              'sinus) while the rim holds. Bleeding in the orbit pushes the eye forward. The roof is stronger but a sharp object can pass '
-              'into the frontal lobe.',
+              'sinus) while the rim holds. The floor is the classic site: the inferior rectus or orbital fat can be trapped in the crack, '
+              'and the infraorbital nerve (V2, cheek and upper lip) injured. Bleeding in the orbit pushes the eye forward.',
   'orb:sof': 'The superior orbital fissure carries III, IV and VI to the eye muscles, the frontal, lacrimal and nasociliary branches of V1, '
              'and the ophthalmic veins to the cavernous sinus — a lesion gives ophthalmoplegia, ptosis and lost corneal sensation.',
   'orb:apex': 'The optic canal (lesser wing of the sphenoid) lies just medial to the fissure and carries II and the ophthalmic artery; '
-              'add it and vision goes too. The recti arise from the common tendinous ring around both.',
+              'add it and vision goes too. The recti arise from the common tendinous ring around the canal and part of the fissure.',
   'blk': 'Tear drainage: lacrimal lake → puncta → canaliculi → lacrimal sac → nasolacrimal duct → inferior meatus. Secretion is driven by '
          'CN VII parasympathetics via the pterygopalatine ganglion. Block the drainage, or make too much, and tears overflow.',
   'eye:hord': 'Hordeolum: acute infection or duct obstruction of a lid gland at the lash line — painful, red, suppurative.',
@@ -156,7 +159,7 @@ dyn = dict(
               ['pter', 'Pterygium', 'pterygium'], ['kc', 'Keratoconus', 'corneadz'], ['fuchs', 'Fuchs dystrophy', 'corneadz']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Moore ch 9 · Robbins ch 29')
+  src='First Aid pp. 518, 555, 557, 559 · Moore ch 9 · Robbins ch 29')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -165,7 +168,7 @@ MAP = dict(
   sub='Break the thin orbital floor, damage the superior orbital fissure or the whole apex, block the tear duct — then put a sty, a chalazion, '
       'a pterygium, keratoconus or Fuchs dystrophy on the front of the eye',
   w=3600, h=1900,
-  fa='559',
+  fa='518, 555, 557, 559',
   src=['Moore ch 9 — Head', 'Robbins ch 29 — The eye'],
   lanes=[('obOrb', 'Orbit & tears', 'tca'), ('obEye', 'Lid & cornea', 'glycolysis')],
   nodes=[
@@ -178,5 +181,5 @@ MAP = dict(
   panels=[
     (2500, PANY, 1000, 'Through the apex (Moore ch 9)', [
       ('Optic canal', 'II, ophthalmic artery'), ('Superior orbital fissure', 'III, IV, V1, VI, ophthalmic veins'),
-      ('Inferior orbital fissure', 'from temporal/infratemporal fossa'), ('Tears end in', 'inferior nasal meatus')])],
+      ('Inferior orbital fissure', 'V2 → infraorbital n. in the floor'), ('Tears end in', 'inferior nasal meatus')])],
   dyn=dyn)

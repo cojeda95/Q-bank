@@ -4,7 +4,7 @@
 # each cystic disease where its card puts it and sizes the kidney: ADPKD (cysts in cortex and medulla, big), ARPKD
 # (dilated collecting ducts, big, Potter), medullary cystic kidney disease (small, fibrotic, no visible cysts), nephronophthisis
 # (corticomedullary cysts, small), medullary sponge kidney (dilated papillary ducts, stones), multicystic dysplasia, and simple
-# vs complex cysts. 4 readouts. Facts from the pinned cards; FA pages in `fa`. No new cards.
+# vs complex cysts. 5 readouts. FA 596–597, 622 + Robbins ch 20 (cystic diseases table, ciliopathy model). No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -48,15 +48,17 @@ for i, ang in enumerate((-60, -25, 0, 25, 60)):
     a = math.radians(180 + ang)
     bx, by = KX + 280 * math.cos(a), KY + 360 * math.sin(a)
     tx_, ty_ = KX + 60 * math.cos(a), KY + 80 * math.sin(a)
-    add(f'<path d="M{bx - 50 * math.sin(a):.0f} {by + 50 * math.cos(a):.0f} L{bx + 50 * math.sin(a):.0f} {by - 50 * math.cos(a):.0f} L{tx_:.0f} {ty_:.0f} Z" '
-        f'style="fill:var(--dk5);fill-opacity:.15;stroke:var(--dk5);stroke-width:2"/>', unless=D('mcdk'))
+    pyr = (f'<path d="M{bx - 50 * math.sin(a):.0f} {by + 50 * math.cos(a):.0f} L{bx + 50 * math.sin(a):.0f} {by - 50 * math.cos(a):.0f} L{tx_:.0f} {ty_:.0f} Z" '
+           f'style="fill:var(--dk5);fill-opacity:.15;stroke:var(--dk5);stroke-width:2"/>')
+    add(pyr, unless=D('mcdk') + SMALL)
+    add(f'<g transform="translate({KX} {KY}) scale(.72) translate({-KX} {-KY})">{pyr}</g>', when=SMALL)   # small kidneys: pyramids shrink with them
     for j in range(3):
         f = .35 + .2 * j
         add(f'<ellipse cx="{bx + (tx_ - bx) * f:.0f}" cy="{by + (ty_ - by) * f:.0f}" rx="12" ry="26" '
             f'transform="rotate({ang} {bx + (tx_ - bx) * f:.0f} {by + (ty_ - by) * f:.0f})" style="fill:var(--nf-h2o);fill-opacity:.7;stroke:var(--dk9);stroke-width:2"/>', when=D('arpkd'))
     add(f'<circle cx="{tx_ + 20 * math.cos(a):.0f}" cy="{ty_ + 20 * math.sin(a):.0f}" r="16" style="fill:var(--nf-h2o);fill-opacity:.7;stroke:var(--dk9);stroke-width:2"/>', when=D('msk'))
     add(f'<circle cx="{tx_ + 4 * math.cos(a):.0f}" cy="{ty_ + 4 * math.sin(a):.0f}" r="8" style="fill:var(--ink)"/>', when=D('msk'))
-    cm = (KX + 230 * math.cos(a), KY + 290 * math.sin(a))
+    cm = (KX + 215 * math.cos(a), KY + 275 * math.sin(a))   # just past the shrunken pyramids' bases
     add(f'<circle cx="{cm[0]:.0f}" cy="{cm[1]:.0f}" r="12" style="fill:var(--nf-h2o);fill-opacity:.7;stroke:var(--dk9);stroke-width:2"/>', when=D('nphp'))
 text('pyramids · papillae', KX - 40, KY + 30, 'nf-l2', 'end')
 add(f'<path d="M{KX + 200} {KY} H{KX + 420}" style="stroke:var(--dk5);stroke-width:30;opacity:.3"/>'); text('ureter', KX + 430, KY + 10, 'nf-l2')
@@ -69,7 +71,7 @@ add(f'<path d="M{KX - 380} {KY - 150} L{KX - 280} {KY - 90} M{KX - 330} {KY - 19
 for i in range(8):
     add(f'<path d="M{KX - 240 + i * 50} {KY - 300} l30 600" style="stroke:var(--ink-3);stroke-width:3;opacity:.5"/>', when=D('adtkd'))
 TAG = dict(adpkd='ADPKD — cysts through cortex and medulla, both kidneys enlarge · PKD1 (chr 16), PKD2 (chr 4)',
-           arpkd='ARPKD — dilated collecting ducts, big echogenic kidneys · infancy, Potter, hepatic fibrosis',
+           arpkd='ARPKD — dilated collecting ducts, big kidneys · infancy, Potter, hepatic fibrosis',
            adtkd='medullary cystic kidney disease — tubulointerstitial fibrosis, small kidneys, cysts usually not seen',
            nphp='nephronophthisis — small cysts at the corticomedullary junction, small kidneys · polyuria, salt wasting',
            msk='medullary sponge kidney — dilated papillary collecting ducts · hematuria, UTI, recurrent stones; function normal',
@@ -113,25 +115,26 @@ readouts = [
   dict(l='Urine concentrating ability', mods=[dict(when=D('adtkd', 'nphp'), d=-1)]),
   dict(l='Stones · UTI', mods=[dict(when=D('msk'), d=1)]),
   dict(l='Hypertension', mods=[dict(when=D('adpkd', 'arpkd'), d=1)]),
+  dict(l='Renal failure over time', mods=[dict(when=D('adpkd', 'arpkd', 'adtkd', 'nphp'), d=1), dict(when=D('msk', 'mcdk', 'simple'), d=0)]),
 ]
 
 notes = {
   '': 'Each tubular cell has one nonmotile primary cilium that senses flow; the polycystins, fibrocystin and nephrocystins sit '
       'on it and restrain proliferation. Pick a disease to see where its cysts form.',
   'dx:adpkd': 'ADPKD: PKD1 (chr 16) or PKD2 (chr 4); each cyst is clonal (second-hit somatic mutation). Bilateral big kidneys — '
-              'flank pain, hematuria, hypertension (ischemia → renin), UTIs; failure in about half. Berry aneurysms, MVP, '
+              'flank pain, hematuria, hypertension (↑ renin), UTIs; failure in about half. Berry aneurysms, MVP, '
               'liver cysts, diverticulosis. ACEi/ARB.',
-  'dx:arpkd': 'ARPKD: PKHD1 (fibrocystin) — collecting ducts dilate; enlarged echogenic kidneys prenatally, oligohydramnios → '
-              'Potter sequence; congenital hepatic fibrosis → portal hypertension.',
+  'dx:arpkd': 'ARPKD: PKHD1 (fibrocystin) — collecting ducts dilate; enlarged kidneys, often seen on prenatal ultrasound; '
+              'oliguric failure in utero → oligohydramnios → Potter sequence; congenital hepatic fibrosis → portal hypertension.',
   'dx:adtkd': 'Medullary cystic kidney disease: tubulointerstitial fibrosis — cannot concentrate urine; small kidneys; cysts '
-              'usually not seen. Transplant.',
+              'usually not seen. Progressive renal insufficiency; poor prognosis.',
   'dx:nphp': 'Nephronophthisis: commonest genetic cause of ESKD in children and young adults; cysts at the corticomedullary '
              'junction (may be too small to see); small kidneys; polyuria, polydipsia, salt wasting, growth retardation, anemia.',
   'dx:msk': 'Medullary sponge kidney: dilated papillary collecting ducts in adults — hematuria, UTIs, recurrent stones; function '
             'usually normal; benign.',
   'dx:mcdk': 'Multicystic dysplasia: the ureteric bud fails to induce the metanephric mesenchyme — irregular cysts, cartilage, '
-             'immature ducts; often with ureteropelvic obstruction. Unilateral: excellent prognosis; bilateral: Potter.',
-  'dx:simple': 'Simple cyst: ultrafiltrate, anechoic, very common, incidental — no treatment.',
+             'immature ducts; often with ureteropelvic obstruction. Unilateral: the other kidney works, excellent prognosis; bilateral: Potter.',
+  'dx:simple': 'Simple cyst: ultrafiltrate, anechoic, very common, incidental, typically asymptomatic; benign.',
   'dx:complex': 'Complex cyst: septations, enhancement or solid components — may be renal cell carcinoma; surveil or resect.',
 }
 
@@ -143,7 +146,7 @@ dyn = dict(
               ['mcdk', 'Multicystic dysplasia', 'mcdk'], ['simple', 'Simple cyst', 'renalcysts'], ['complex', 'Complex cyst', 'renalcysts']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 20')
+  src='First Aid pp. 58, 596–597, 622 · Robbins ch 20 · Langman ch 16')
 
 MAP = dict(
   id='cystsim', title='Kidney Cysts in Motion', topic='renal', after='renvasc',
@@ -163,7 +166,7 @@ MAP = dict(
     ('kc7', 'Multicystic dysplasia', 2960, 1720, 'kcOther', 'ureteric bud', ['mcdk']),
     ('kc8', 'Simple vs complex cysts', 330, 1850, 'kcOther', 'RCC risk', ['renalcysts'])],
   panels=[
-    (2500, PANY, 1000, 'Kidney size (Robbins ch 20)', [
+    (2500, PANY, 1000, 'Kidney size (Robbins ch 20 · First Aid p. 622)', [
       ('Big', 'ADPKD, ARPKD, multicystic dysplasia'), ('Small', 'medullary cystic, nephronophthisis'),
       ('Normal function', 'medullary sponge kidney')])],
   dyn=dyn)

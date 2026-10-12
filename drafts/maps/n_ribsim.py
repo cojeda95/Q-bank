@@ -107,7 +107,8 @@ MET = dict(r1=((1,), 'anterior and middle scalenes'), r2=((2,), 'posterior scale
 for k, (ribs, mus) in MET.items():
     a, b = ribs[0], ribs[-1]
     add(f'<rect x="1488" y="{RY(a) - 20}" width="384" height="{RY(b) - RY(a) + 36}" rx="10" style="fill:var(--accent);fill-opacity:.16;stroke:var(--accent);stroke-width:3"/>', when=[f'met:{k}'])
-    text(f'MET for an exhaled rib: {mus}', 1900, RY(b) + 30 if b < 12 else RY(b) - 20, 'nf-l1', when=[f'met:{k}'])
+    ty = RY(a) - 30 if k == 'r35' else (RY(b) + 30 if b < 12 else RY(b) - 20)   # r35 above its box: clear of the key-rib tags
+    text(f'MET for an exhaled rib: {mus}', 1900, ty, 'nf-l1', when=[f'met:{k}'])
 
 # breath in and out (the trachea in panel A)
 flows = [dict(d='M700 150 V330', len=180, speed=80, r=6, base=dict(air=3), when=INH),
@@ -124,14 +125,14 @@ readouts = [
 ]
 
 notes = {
-  '': 'Each rib turns about an axis through its costovertebral and costotransverse joints. Upper ribs move like a pump handle, '
-      'lower ribs like a bucket handle, and the floating ribs 11–12 like a caliper.',
+  '': 'Ribs 1–10 turn on an axis through their costovertebral and costotransverse joints: upper ribs pump handle, lower ribs '
+      'bucket handle. Ribs 11–12 (no costotransverse joint) swing like calipers.',
   'br:inh': 'Inhalation: the pump-handle ribs lift their front ends (the chest deepens), the bucket-handle ribs lift their sides '
             '(the chest widens), and ribs 11–12 swing posterior and lateral.',
   'br:exh': 'Exhalation: everything reverses — pump-handle fronts drop, bucket-handle sides fall, and ribs 11–12 move anterior and '
             'medial.',
-  'dys:inh': 'An inhaled rib moves freely up but is restricted coming down — it stops first on exhalation. In a group the key rib '
-             'is the BOTTOM one (BITE: Bottom Inhaled, Top Exhaled); treat it and the group releases.',
+  'dys:inh': 'An inhaled rib moves freely up but resists coming down — it stops first on exhalation. Key rib: the BOTTOM one '
+             '(BITE: Bottom Inhaled, Top Exhaled). Course lab: push it down as the patient exhales (respiratory assist) or HVLA.',
   'dys:exh': 'An exhaled rib moves freely down but is restricted going up — it stops first on inhalation. The key rib of an '
              'exhaled group is the TOP one. Treat with muscle energy using the muscle that lifts that rib.',
   'met:r1': 'Exhaled rib 1: muscle energy uses the anterior and middle scalenes (course slides).',

@@ -3,7 +3,7 @@
 # → ureter → bladder → urethra past the prostate. A `one` switch breaks it before, inside or after the kidney: hypovolemia,
 # NSAID (afferent), ACE inhibitor/ARB (efferent), ATN (oliguric and recovery phases), AIN, glomerulonephritis, BPH
 # obstruction. Sodium reabsorption, casts and back-pressure move; a lab strip and 4 readouts show BUN:Cr, FENa, urine
-# osmolality and creatinine with the card cut-offs. Facts from the pinned cards; FA pages in `fa`. No new cards.
+# osmolality and creatinine with the card cut-offs. FA 620–621 table + Robbins ch 20 + Guyton ch 32; FA pages in `fa`. No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -31,7 +31,7 @@ PANY = 1180
 GX, GY = 900, 560
 
 text('Acute kidney injury — before, inside or after the kidney', 180, 150, 'dyn-big')
-text('blood in from the left, urine out to the bladder · sodium pulled back into the blood in teal', 180, 176, 'dyn-cap')
+text('blood in from the left, urine out to the bladder · blue dots = sodium pulled back into the blood', 180, 176, 'dyn-cap')
 
 # ════════ plumbing ════════
 add('<path d="M300 260 V1300" style="stroke:var(--nf-blood);stroke-width:60;opacity:.25"/>'); text('aorta', 300, 240, 'nf-l1', 'middle')
@@ -66,7 +66,7 @@ for y in (900, 960, 1020):
     add(f'<rect x="1088" y="{y}" width="24" height="44" rx="10" style="fill:var(--dk6);opacity:.9"/>', when=D('atn'))
     add(f'<rect x="1408" y="{y}" width="24" height="44" rx="10" style="fill:var(--dk4);opacity:.9"/>', when=D('ain'))
     add(f'<rect x="1408" y="{y}" width="24" height="44" rx="10" style="fill:var(--nf-blood);opacity:.9"/>', when=D('gn'))
-TAG = dict(hypo='hemorrhage, vomiting, diarrhea, burns, over-diuresis — or heart failure, cirrhosis, sepsis',
+TAG = dict(hypo='hemorrhage, vomiting, diarrhea, burns — or heart failure, liver failure, sepsis',
            nsaid='NSAID — afferent arteriole constricts', acei='ACE inhibitor / ARB — efferent arteriole relaxes',
            atn='ATN — dead tubular cells slough into muddy brown casts', atnrec='ATN recovery — polyuric, hypokalemia',
            ain='AIN — drug hypersensitivity: WBC casts, urine eosinophils', gn='glomerulonephritis — RBC casts, dysmorphic red cells',
@@ -100,29 +100,32 @@ sites = [dict(x=600, y=GY + 60, n=[0, 1], w=10, t='rec', l='', aria='Pre-renal A
          dict(x=1600, y=1460, n=[-1, 0], w=10, t='rec', l='', aria='Post-renal AKI', c='postrenal', ions=[])]
 
 readouts = [
-  dict(l='Creatinine', mods=[dict(when=D(*PRE, 'atn', 'ain', 'gn', 'post'), d=1)]),
+  dict(l='Creatinine', mods=[dict(when=D(*PRE, 'atn', 'ain', 'gn', 'post'), d=1), dict(when=D('atnrec'), d=-1)]),
   dict(l='BUN:Cr ratio', mods=[dict(when=D(*PRE), d=1), dict(when=D('atn', 'ain', 'gn'), d=-1)]),
   dict(l='FENa', mods=[dict(when=D(*PRE), d=-1), dict(when=D('atn', 'ain', 'gn'), d=1)]),
   dict(l='Urine osmolality', mods=[dict(when=D(*PRE), d=1), dict(when=D('atn', 'ain', 'gn'), d=-1)]),
+  dict(l='Urine output', mods=[dict(when=D('hypo', 'atn'), d=-1), dict(when=D('atnrec'), d=1)]),
+  dict(l='Serum K⁺', mods=[dict(when=D('atn', 'acei'), d=1), dict(when=D('atnrec'), d=-1)]),
 ]
 
 notes = {
   '': 'Normal: blood filters at the glomerulus, the tubule reclaims sodium and water, and urine drains to the bladder. Break it '
       'before the kidney (perfusion), inside it (tubules, interstitium, glomeruli) or after it (obstruction).',
-  'dx:hypo': 'Pre-renal: less flow, lower GFR, but intact tubules starving for sodium — under aldosterone and ADH they reabsorb '
-             'sodium and water avidly and drag urea along; creatinine is not reabsorbed, so BUN:Cr > 20, FENa < 1%, Uosm > 500.',
-  'dx:nsaid': 'NSAIDs constrict the afferent arteriole (uncoupling autoregulation) — a pre-renal picture. Stop the drug.',
-  'dx:acei': 'ACE inhibitors / ARBs relax the efferent arteriole — filtration pressure falls; pre-renal picture. Bilateral renal '
-             'artery stenosis does the same.',
-  'dx:atn': 'ATN: the commonest intrinsic AKI in hospital. PCT and medullary thick ascending limb die first (highest demand, '
-            'lowest O₂); sloughed cells form muddy brown casts that block the lumen and back-leak filtrate. Oliguric '
+  'dx:hypo': 'Pre-renal: less flow, lower GFR and oliguria, but the tubules are intact and reabsorb sodium and water avidly, '
+             'dragging urea along; creatinine is not reabsorbed, so BUN:Cr > 20, FENa < 1%, Uosm > 500.',
+  'dx:nsaid': 'NSAIDs block the prostaglandins that dilate the afferent arteriole, so it narrows: RPF and GFR fall — a pre-renal '
+              'picture. Stop the drug (NSAIDs can also cause AIN).',
+  'dx:acei': 'ACE inhibitors / ARBs take away angiotensin II’s squeeze on the efferent arteriole — filtration pressure and GFR fall, '
+             'creatinine and K⁺ rise. Most dangerous with bilateral renal artery stenosis.',
+  'dx:atn': 'ATN: the commonest intrinsic AKI in hospital. The proximal tubule and medullary thick ascending limb are the most '
+            'vulnerable (the outer medulla gets the least O₂); sloughed cells form muddy brown casts that block the lumen and back-leak filtrate. Oliguric '
             'maintenance phase 1–3 weeks: hyperkalemia, acidosis, uremia.',
-  'dx:atnrec': 'ATN recovery phase: polyuric, with hypokalemia.',
+  'dx:atnrec': 'ATN recovery phase: polyuric; BUN and creatinine fall, with a risk of hypokalemia and loss of other electrolytes.',
   'dx:ain': 'AIN: drug hypersensitivity in the interstitium — WBC casts, urine eosinophils, sometimes fever and rash.',
   'dx:gn': 'Glomerulonephritis: RBC casts, dysmorphic red cells, hypertension.',
-  'dx:post': 'Post-renal: obstruction (BPH most often in older men; bilateral stones, tumor) pushes pressure back into Bowman’s '
-             'space and opposes filtration. Creatinine rises only if bilateral or in a solitary kidney. Relieve it — catheter, '
-             'stent or nephrostomy — then watch the diuresis.',
+  'dx:post': 'Post-renal: obstruction (BPH in older men, stones, tumor) pushes pressure back into Bowman’s space and opposes '
+             'filtration. Creatinine rises only if bilateral or in a solitary kidney. Relieve it (catheter; α-blocker for BPH) — '
+             'a large salt-rich diuresis often follows.',
 }
 
 dyn = dict(
@@ -134,14 +137,14 @@ dyn = dict(
               ['gn', 'Glomerulonephritis', 'intrarenal'], ['post', 'BPH obstruction', 'postrenal']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 20')
+  src='First Aid pp. 601, 611–612, 618, 620–621, 628 · Robbins ch 20 · Guyton ch 32')
 
 MAP = dict(
   id='akisim', title='Acute Kidney Injury in Motion', topic='renal', after='akickd',
   sub='Starve the kidney of blood, kill its tubules, inflame its interstitium or glomeruli, or block its outflow — and watch '
       'sodium handling, casts, BUN:Cr, FENa and urine osmolality move',
   w=3600, h=1900,
-  fa='597, 601, 607, 612, 618, 620, 621',
+  fa='601, 611, 612, 618, 620, 621, 628',
   src=['Robbins ch 20 — The kidney', 'Guyton ch 32 — Diuretics and Kidney Diseases'],
   lanes=[('akPre', 'Pre-renal', 'glycolysis'), ('akIn', 'Intrinsic', 'tca'), ('akPost', 'Post-renal', 'gluconeo')],
   nodes=[
@@ -151,7 +154,7 @@ MAP = dict(
     ('ak4', 'Urinary casts', 1640, 1780, 'akIn', 'which compartment', ['casts']),
     ('ak5', 'Post-renal AKI', 2080, 1780, 'akPost', 'BPH · hydronephrosis', ['postrenal'])],
   panels=[
-    (2500, PANY, 1000, 'Cut-offs (Robbins ch 20)', [
+    (2500, PANY, 1000, 'Cut-offs (First Aid p. 620)', [
       ('Pre-renal', 'BUN:Cr > 20 · FENa < 1% · Uosm > 500'), ('Intrinsic', 'BUN:Cr < 15 · FENa > 2% · Uosm < 350'),
       ('Post-renal', 'indices vary · hydronephrosis'), ('Casts', 'muddy brown ATN · WBC AIN · RBC GN')])],
   dyn=dyn)

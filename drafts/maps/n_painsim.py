@@ -30,7 +30,7 @@ def box(x0, y0, x1, y1):
 D = lambda *k: [f'dx:{x}' for x in k]
 R = lambda *k: [f'rx:{x}' for x in k]
 PANY = 1180
-WORKS = dict(neuro=('gaba', 'tca', 'caps'), fibro=('snri', 'tca', 'gaba'))
+WORKS = dict(neuro=('gaba', 'tca', 'snri', 'caps'), fibro=('snri', 'tca', 'gaba'))   # SNRI: diabetic neuropathy (FA 593, Katzung ch 30)
 OK = [f'dx:{d}&rx:{r}' for d, rs in WORKS.items() for r in rs]
 NERVE = 'M420 1350 C560 1300 720 1180 850 1070'
 CROSS = 'M850 1070 C880 1120 960 1150 1020 1120'
@@ -93,7 +93,7 @@ sites = [dict(x=560, y=1200, n=[-1, -1], w=10, t='rec', l='', aria='Neuropathic 
          dict(x=740, y=940, n=[-1, -1], w=10, t='rec', l='', aria='TENS', c='estim', ions=[])]
 
 readouts = [
-  dict(l='Pain', mods=[dict(when=D('neuro', 'thal', 'phantom', 'fibro'), d=1), dict(when=OK, d=-1)]),
+  dict(l='Pain', mods=[dict(when=D('neuro', 'thal', 'phantom', 'fibro'), d=1), dict(when=OK, d=-2)]),   # sums with the +1 above → ↓ once the listed drug is on
   dict(l='Spontaneous nerve firing', mods=[dict(when=D('neuro'), d=1)]),
   dict(l='Allodynia (light touch hurts)', mods=[dict(when=D('thal'), d=1)]),
   dict(l='Inflammatory markers', mods=[dict(when=D('fibro'), d=0)]),
@@ -103,13 +103,20 @@ notes = {
   '': 'Pain and temperature ride Aδ and C fibers to the dorsal horn; the second neuron crosses in the anterior white commissure '
       'within a segment or two and ascends to VPL; the third goes to the primary somatosensory cortex.',
   'dx:neuro': 'Neuropathic pain: dysfunction of the nerves themselves, carried by upregulated, persistently active voltage-gated '
-              'Na⁺ channels — diabetic neuropathy, postherpetic neuralgia. Gabapentinoids, TCAs, topical capsaicin.',
+              'Na⁺ channels — diabetic neuropathy, postherpetic neuralgia. Gabapentinoids, TCAs, SNRIs (duloxetine), topical capsaicin.',
   'dx:thal': 'Thalamic pain syndrome (Dejerine-Roussy): a thalamic lesion, perhaps a lenticulostriate occlusion — paresthesias '
              'first, then weeks to months later allodynia, hyperalgesia, dysesthesia on the opposite side; treatment-resistant.',
   'dx:phantom': 'Phantom limb pain: burning, aching or shock-like pain in an amputated limb, with reorganization of the primary '
                 'somatosensory cortex.',
   'dx:fibro': 'Fibromyalgia: chronic widespread musculoskeletal pain (all four quadrants, ≥ 3 months), tender points, stiffness, '
               'poor sleep, fatigue; normal ESR and imaging. Exercise, TCAs, SNRIs (duloxetine, milnacipran), pregabalin.',
+  'rx:gaba': 'Gabapentin and pregabalin bind the α2δ subunit of voltage-gated Ca²⁺ channels and reduce glutamate release — used for '
+             'postherpetic neuralgia, painful diabetic neuropathy and (pregabalin) fibromyalgia.',
+  'rx:tca': 'TCAs (amitriptyline, nortriptyline) block NE and 5-HT reuptake, strengthening monoamine pain control — analgesic apart from '
+            'any mood effect; used for neuropathic pain and fibromyalgia.',
+  'rx:snri': 'SNRIs block NE and 5-HT reuptake: duloxetine is used for diabetic neuropathy, duloxetine and milnacipran for fibromyalgia.',
+  'rx:caps': 'Capsaicin (hot peppers) overstimulates and then desensitizes nociceptive fibers (TRPV1), so less substance P is released — '
+             'topical use for neuropathic and musculoskeletal pain.',
   'rx:tens': 'TENS fires nerve action potentials that alter sensory input — thought to act through the gate mechanism and by '
              'releasing endogenous opioids and cortisol. Not with pacemakers, arrhythmias, thrombosis or on a pregnant abdomen.',
 }
@@ -124,16 +131,16 @@ dyn = dict(
               ['caps', 'Topical capsaicin', 'neuropathicpain'], ['tens', 'TENS', 'estim']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Fundamental Neuroscience ch 18')
+  src='First Aid pp. 235, 477, 529, 560, 568, 593 · Fundamental Neuroscience ch 18 · Katzung ch 24, 30')
 
 MAP = dict(
   id='painsim', title='Pain Gone Wrong in Motion', topic='pharm', after='pain',
   sub='Send pain up the spinothalamic tract, then make it misfire — neuropathic Na⁺ channels, a thalamic stroke, a phantom limb, '
       'fibromyalgia — and treat each with the drug its card lists',
   w=3600, h=1900,
-  fa='235, 477, 529',
+  fa='235, 477, 529, 560, 568, 593',
   src=['Fundamental Neuroscience ch 18 — The Somatosensory System II: Nociception, Thermal Sense, and Touch',
-       'Katzung ch 30 — Antidepressant Agents'],
+       'Katzung ch 30 — Antidepressant Agents', full('Katzung', 24)],
   lanes=[('pwPath', 'Pathway', 'glycolysis'), ('pwDz', 'Pain syndromes', 'tca')],
   nodes=[
     ('pn1', 'Spinothalamic tract', 330, 1780, 'pwPath', 'cross in 1–2 segments', ['stttract'], 'hub'),
@@ -143,7 +150,7 @@ MAP = dict(
     ('pn5', 'Fibromyalgia', 2080, 1780, 'pwDz', 'normal ESR', ['fibromyalgia']),
     ('pn6', 'Electrical stimulation & TENS', 2520, 1780, 'pwPath', 'gate mechanism', ['estim'])],
   panels=[
-    (2500, PANY, 1000, 'Drug for each (Katzung ch 30)', [
-      ('Neuropathic', 'gabapentinoid, TCA, capsaicin'), ('Fibromyalgia', 'exercise, TCA, SNRI, pregabalin'),
+    (2500, PANY, 1000, 'Drug for each (Katzung ch 24, 30)', [
+      ('Neuropathic', 'gabapentinoid, TCA, SNRI, capsaicin'), ('Fibromyalgia', 'exercise, TCA, SNRI, pregabalin'),
       ('Thalamic pain', 'treatment-resistant')])],
   dyn=dyn)

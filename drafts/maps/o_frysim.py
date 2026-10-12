@@ -57,6 +57,8 @@ for lv, y in zip(LV, YS):
 text('T4 E SRRR: one segment, extended, side bent AND rotated right', 1200, 260, 'nf-l1 dyn-tag', 'middle', when=F('t2'))
 text('short restrictor muscles · often at the top, apex or bottom of a Type I curve', 1200, 290, 'nf-l2', 'middle', when=F('t2'))
 text('Principle III: motion started in one plane changes motion in the others', 1200, 260, 'nf-l1 dyn-tag', 'middle', when=F('t3'))
+text('T6 restricted in rotation → also restricted in side bending and flexion/extension', 1200, 290, 'nf-l2', 'middle', when=F('t3'))
+add(f'<rect x="{CX - 104}" y="{YS[3] - 46}" width="208" height="92" rx="24" class="dyn-hl"/>', when=F('t3'))
 
 # ════════ one vertebra from above ════════
 VX, VY = 1300, 600
@@ -77,7 +79,7 @@ add(f'<path d="M400 {BY} H2300" style="stroke:var(--ink-3);stroke-width:6"/>')
 for x, lab in ((500, 'ease'), (1250, 'neutral'), (1900, 'restrictive barrier')):
     add(f'<path d="M{x} {BY - 40} V{BY + 40}" style="stroke:var({"--bad" if x == 1900 else "--ink-2"});stroke-width:{6 if x == 1900 else 3}"/>')
     text(lab, x, BY + 76, 'nf-l1', 'middle')
-add(f'<rect x="1900" y="{BY - 40}" width="300" height="80" rx="10" style="fill:var(--bad);fill-opacity:.1"/>'); text('restricted range', 2050, BY + 6, 'nf-l2', 'middle')
+add(f'<rect x="1900" y="{BY - 40}" width="300" height="80" rx="10" style="fill:var(--bad);fill-opacity:.1"/>'); text('restricted range', 2050, BY - 56, 'nf-l2', 'middle')
 TT = dict(cs=('Counterstrain — indirect, passive', 'shorten the tissue at the tender point until tenderness drops ≥70%, hold ~90 s, return slowly'),
           met=('MET — direct, the patient works', 'isometric contraction 3–5 s against a firm counterforce, relax, take up slack to the new barrier'),
           hvla=('HVLA — direct thrust', 'a quick, short thrust through the barrier of a localized restriction'),
@@ -91,7 +93,7 @@ for k in ('met', 'still', 'fpr'):
     add(f'<path d="M{1250 if k != "met" else 1880} {BY - 20} v-30 M{1230 if k != "met" else 1860} {BY - 30} l20 -20 l20 20" style="fill:none;stroke:var(--accent);stroke-width:4"/>', when=T(k))
 text('compression', 1150, BY - 40, 'nf-l2', 'middle', when=T('still', 'fpr'))
 text('patient contracts', 1780, BY - 40, 'nf-l2', 'middle', when=T('met'))
-text('contraindicated over severe osteoporosis, acute radiculopathy, spondylolisthesis, stenosis, inflamed joints', 1350, BY + 130, 'nf-l2', 'middle', when=T('hvla'))
+text('avoid at the involved level: severe osteoporosis, acute HNP with radiculopathy, spondylolisthesis, stenosis, inflamed joints', 1350, BY + 130, 'nf-l2', 'middle', when=T('hvla'))
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
@@ -99,6 +101,7 @@ PATH = dict(cs=(f'M1250 {BY} H520', 730, 80), met=(f'M1250 {BY} H1890', 640, 90)
             mfr=(f'M1250 {BY} H1880', 630, 50), still=(f'M1250 {BY} H560 M560 {BY} H2050', 1600, 200), fpr=(f'M1250 {BY} H560', 690, 160),
             func=(f'M1250 {BY} H600', 650, 70))
 flows = [dict(d=d, len=L, speed=sp, r=14, base=dict(seg=1), when=T(k)) for k, (d, L, sp) in PATH.items()]
+flows += [dict(d=f'M1250 {BY} H600', len=650, speed=50, r=14, base=dict(seg=1), when=T('mfr'))]   # MFR can also go toward ease
 flows += [dict(d=f'M{CX + 140} 300 V900', len=600, speed=90, r=8, base=dict(mv=3), when=F('t1', 't3'))]
 sites = [dict(x=CX + 100, y=YS[3], n=[1, 0], w=10, t='rec', l='', aria='Fryette principles', c='fryette', ions=[]),
          dict(x=500, y=BY, n=[0, -1], w=10, t='rec', l='', aria='Counterstrain', c='counterstrain', ions=[]),
@@ -117,14 +120,17 @@ notes = {
       'their ease. Techniques either go toward ease (indirect), toward the barrier (direct), or both.',
   'fr:t1': 'Type I dysfunction: a group curve such as T5–T8 N SRRL, held by long restrictor muscles.',
   'fr:t2': 'Type II dysfunction: one segment, flexed or extended, such as T4 E SRRR — short restrictors; usually at the top, apex or bottom '
-           'of a Type I curve. The cervical spine was left out: OA is Type I, AA mostly rotation, C2–C7 Type II.',
-  'fr:t3': 'Principle III (Nelson): starting motion in one plane modifies motion in the others.',
+           'of a Type I curve. Principles I and II are thoracic and lumbar only; the neck is Fryette-“like”: OA Type I-like, AA almost '
+           'pure rotation, C2–C6 Type II-like whatever the sagittal position, C7 thoracic-style (Foundations ch 31; the Atlas groups C2–C7).',
+  'fr:t3': 'Principle III (Nelson, 1948): starting motion in one plane modifies motion in the others — a segment restricted in '
+           'rotation is also restricted in side bending and flexion/extension, and freeing one plane frees the others.',
   'tx:cs': 'Counterstrain: passive, indirect — shorten the tissue around the tender point until tenderness drops by about 70%, hold about '
-           '90 seconds, return slowly. Good for acute flares and frail patients.',
+           '90 seconds, return slowly. Gentle and passive — ideal for acute, painful flare-ups.',
   'tx:met': 'Muscle energy: the patient contracts isometrically 3–5 s against an unyielding counterforce, relaxes, and the physician takes '
             'up slack to the new barrier (Golgi tendon organ inhibition). Type II FRS/ERS, sacral torsions.',
-  'tx:hvla': 'HVLA: a quick, short thrust through the barrier of a localized (often Type II) restriction. Avoid with severe osteoporosis, '
-             'acute disc herniation with radiculopathy, spondylolisthesis, stenosis, inflamed joints.',
+  'tx:hvla': 'HVLA: a quick, short thrust through the barrier of a localized (often Type II) restriction. Never over a fracture, '
+             'metastasis or osteomyelitis; the OCOM course says avoid it at the level of severe osteoporosis, acute HNP with '
+             'radiculopathy, spondylolisthesis, stenosis or an inflamed joint (the Atlas calls severe osteoporosis and severe HNP with radiculopathy absolute).',
   'tx:mfr': 'Myofascial release: engage the fascia toward the barrier (direct) or toward ease (indirect) and hold until it releases.',
   'tx:still': 'Still technique: into ease, add a compression, then carry through neutral into the previously restricted range and back.',
   'tx:fpr': 'Facilitated positional release: flatten the curve, compress, place into ease for 3–5 s — gentle and quick; unlike Still it '
@@ -167,7 +173,7 @@ MAP = dict(
     ('fy6', 'Still · FPR', 760, 1790, 'fyInd', 'compression', ['stilltech', 'fpr']),
     ('fy7', 'Functional technique', 1200, 1790, 'fyInd', 'stack ease', ['functech'])],
   panels=[
-    (2500, PANY, 1000, 'Fryette at a glance', [
+    (2500, PANY, 1000, 'Fryette at a glance (Foundations ch 31)', [
       ('Type I (neutral)', 'group · SB and R opposite · R toward convexity'), ('Type II (F or E)', 'one segment · SB and R same side'),
-      ('Principle III', 'one plane modifies the others'), ('Cervical', 'OA Type I · AA rotation · C2–C7 Type II')])],
+      ('Principle III', 'one plane modifies the others'), ('Cervical', 'OA Type I-like · AA rotation · C2–C6 Type II-like')])],
   dyn=dyn)

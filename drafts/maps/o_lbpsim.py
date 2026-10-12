@@ -46,8 +46,8 @@ def spine(tilt, when=None, unless=None, slip=False):
         if i < 4: out.append(f'<rect x="{BX - 100 + dx}" y="{y + 115}" width="200" height="50" rx="20" style="fill:var(--dk7);fill-opacity:.3"/>')
     add(''.join(out), when=when, unless=unless)
 spine(0, unless=P('flex', 'ext') + D('spondy'))
-spine(-14, when=['pos:flex&!dx:spondy'])
-spine(14, when=['pos:ext&!dx:spondy'])
+spine(14, when=['pos:flex&!dx:spondy'])
+spine(-14, when=['pos:ext&!dx:spondy'])
 spine(0, when=D('spondy'), slip=True)
 for i, lv in enumerate(LV): text(lv, BX - 150, Y0 + i * DY + 62, 'nf-l1', 'end')
 add(f'<path d="M{BX + 120} {Y0} V{Y0 + 5 * DY}" style="stroke:var(--nf-h2o);stroke-width:26;opacity:.35"/>', unless=['dx:sten&pos:ext'])
@@ -77,16 +77,28 @@ def pelvis(rot, when=None, unless=None):
         f'style="fill:var(--dk10);fill-opacity:.15;stroke:var(--dk10);stroke-width:4"/>'
         f'<path d="M{PX - 60} {PY - 120} L{PX + 60} {PY - 120} L{PX + 20} {PY + 120} L{PX - 20} {PY + 120} Z" style="fill:var(--dk7);fill-opacity:.25;stroke:var(--dk7);stroke-width:3"/></g>', when=when, unless=unless)
 pelvis(0, unless=D('lld', 'psoas'))
-pelvis(-6, when=D('lld')); pelvis(5, when=D('psoas'))
+pelvis(6, when=D('lld'))                                     # right short leg: right iliac crest and sacral base drop
+def pelvis_shift(dx, when):
+    add(f'<g transform="translate({dx} 0)"><path d="M{PX - 300} {PY - 80} C{PX - 340} {PY + 80} {PX - 160} {PY + 160} {PX} {PY + 160} C{PX + 160} {PY + 160} {PX + 340} {PY + 80} {PX + 300} {PY - 80} Z" '
+        f'style="fill:var(--dk10);fill-opacity:.15;stroke:var(--dk10);stroke-width:4"/>'
+        f'<path d="M{PX - 60} {PY - 120} L{PX + 60} {PY - 120} L{PX + 20} {PY + 120} L{PX - 20} {PY + 120} Z" style="fill:var(--dk7);fill-opacity:.25;stroke:var(--dk7);stroke-width:3"/></g>', when=when)
+pelvis_shift(60, D('psoas'))                                  # left psoas tight: pelvis shifts right, away from it
+add(f'<path d="M{PX - 70} {PY + 260} H{PX + 50}" style="stroke:var(--bad);stroke-width:4" marker-end="url(#ah-lbPelv)"/>', when=D('psoas'))
+
 add(f'<path d="M{PX - 180} {PY + 140} V{PY + 600} M{PX + 180} {PY + 140} V{PY + 600}" style="stroke:var(--dk10);stroke-width:40;opacity:.35;stroke-linecap:round"/>', unless=D('lld'))
 add(f'<path d="M{PX - 180} {PY + 140} V{PY + 600} M{PX + 180} {PY + 180} V{PY + 600}" style="stroke:var(--dk10);stroke-width:40;opacity:.35;stroke-linecap:round"/>', when=D('lld'))
 text('left', PX - 180, PY + 650, 'nf-l1', 'middle'); text('right', PX + 180, PY + 650, 'nf-l1', 'middle')
-text('right leg short → sacral base tilts, the spine compensates', PX, PY - 240, 'nf-l1 dyn-tag', 'middle', when=D('lld'))
-add(f'<circle cx="{PX - 260}" cy="{PY - 140}" r="26" style="fill:var(--bad);fill-opacity:.5"/>', when=D('ilio'))
-text('tender ~1 inch above and lateral to the PSIS · refers to groin, trochanter', PX, PY - 240, 'nf-l1 dyn-tag', 'middle', when=D('ilio'))
-text('list toward the tight psoas, pelvis shifts away', PX, PY - 240, 'nf-l1 dyn-tag', 'middle', when=D('psoas'))
-add(f'<path d="M{PX - 100} {PY - 400} V{PY - 160}" style="stroke:var(--dk10);stroke-width:30;opacity:.3"/>', unless=D('lld', 'psoas'))
-add(f'<path d="M{PX - 100} {PY - 400} C{PX - 60} {PY - 300} {PX - 140} {PY - 220} {PX - 100} {PY - 160}" style="fill:none;stroke:var(--dk10);stroke-width:30;opacity:.3"/>', when=D('lld', 'psoas'))
+text('right leg short → right sacral base low', PX + 120, PY - 260, 'nf-l1 dyn-tag', 'start', when=D('lld'))
+text('lumbar curve convex toward the short leg', PX + 120, PY - 228, 'nf-l2', 'start', when=D('lld'))
+add(f'<circle cx="{PX - 150}" cy="{PY - 125}" r="24" style="fill:var(--bad);fill-opacity:.5"/>', when=D('ilio'))
+text('tender ~1 inch above and lateral to the PSIS', PX + 120, PY - 260, 'nf-l1 dyn-tag', 'start', when=D('ilio'))
+text('refers to the groin or greater trochanter', PX + 120, PY - 228, 'nf-l2', 'start', when=D('ilio'))
+text('left psoas tight: list to the left', PX + 120, PY - 260, 'nf-l1 dyn-tag', 'start', when=D('psoas'))
+text('pelvis shifts right, away from it', PX + 120, PY - 228, 'nf-l2', 'start', when=D('psoas'))
+TRUNK = 'fill:none;stroke:var(--dk10);stroke-width:30;opacity:.3;stroke-linecap:round'
+add(f'<path d="M{PX} {PY - 420} V{PY - 135}" style="{TRUNK}"/>', unless=D('lld', 'psoas'))
+add(f'<path d="M{PX + 20} {PY - 135} C{PX + 90} {PY - 220} {PX + 90} {PY - 340} {PX} {PY - 420}" style="{TRUNK}"/>', when=D('lld'))   # convex right
+add(f'<path d="M{PX + 60} {PY - 135} L{PX - 70} {PY - 420}" style="{TRUNK}"/>', when=D('psoas'))   # list to the left
 TX = dict(disc='no HVLA at that level with radiculopathy — counterstrain for the protective spasm',
           sten='avoid forcing extension; release the psoas', spondy='no HVLA at the unstable level; indirect OMT above and below; TLSO brace',
           psoas='release L1/L2 first (HVLA or MET), counterstrain psoas and iliacus, then the pelvis; cold, not heat',
@@ -110,7 +122,7 @@ sites = [dict(x=BX, y=Y0 + 3 * DY + 140, n=[-1, 0], w=10, t='rec', l='', aria='D
 readouts = [
   dict(l='Leg pain', mods=[dict(when=D('disc') + ['dx:sten&pos:ext'], d=1), dict(when=['dx:sten&pos:flex'], d=-1)]),
   dict(l='HVLA at that level OK', mods=[dict(when=D('disc', 'spondy', 'sten'), d=-1), dict(when=D('psoas'), d=1)]),
-  dict(l='Lordosis', mods=[dict(when=D('spondy'), d=1), dict(when=D('disc', 'sten'), d=-1)]),
+  dict(l='Lordosis', mods=[dict(when=D('spondy'), d=1), dict(when=D('disc', 'sten', 'psoas'), d=-1)]),
   dict(l='Hamstrings tight', mods=[dict(when=D('disc', 'spondy', 'psoas'), d=1)]),
 ]
 
@@ -125,9 +137,9 @@ notes = {
   'dx:spondy': 'Spondylolysis: pars stress fracture, L5 in ~95%; spondylolisthesis: forward slip — step-off, hyperlordosis, tight '
                'hamstrings, pain with extension. No HVLA at the unstable level.',
   'dx:psoas': 'Psoas syndrome: iliopsoas spasm flexes the lumbar spine; L1/L2 holds a Type II FRS toward the tight psoas — release it first '
-              'or the findings recur. List toward the psoas, pelvic shift away.',
+              'or the findings recur. List toward the psoas, pelvic shift away; less lordosis.',
   'dx:lld': 'Short leg syndrome: anatomic or functional leg-length difference tilts the sacral base; pain worse as the day goes on. '
-            'Maximize compensation with OMT, then a heel lift.',
+            'The lumbar curve turns convex toward the short side. Maximize compensation with OMT, then a heel lift.',
   'dx:ilio': 'Iliolumbar ligament syndrome: strain from a short leg or microtrauma — exquisite tenderness ~1 inch superior and lateral to '
              'the PSIS, referring to the groin or trochanter.',
 }
@@ -140,7 +152,7 @@ dyn = dict(
               ['psoas', 'Psoas syndrome', 'psoassyn'], ['lld', 'Short leg syndrome', 'lld'], ['ilio', 'Iliolumbar ligament', 'iliolumbar']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Foundations of Osteopathic Medicine ch 42, 93 · OCOM OMM')
+  src='Foundations of Osteopathic Medicine ch 36, 42, 93 · OCOM OMM')
 
 MAP = dict(
   id='lbpsim', title='Low Back Pain in Motion', topic='omm', after='lbp',
@@ -159,7 +171,7 @@ MAP = dict(
     ('lb5', 'Short leg syndrome', 760, 1790, 'lbPelv', 'heel lift', ['lld']),
     ('lb6', 'Iliolumbar ligament', 1200, 1790, 'lbPelv', 'above the PSIS', ['iliolumbar'])],
   panels=[
-    (2500, PANY, 1000, 'Better or worse?', [
+    (2500, PANY, 1000, 'Better or worse? (OCOM OMM midterm guide)', [
       ('Stenosis', 'worse extending, better bending forward'), ('Spondylolisthesis', 'worse with extension'),
       ('Degenerative disc', 'worse sitting/standing, better moving'), ('Short leg', 'worse as the day goes on')])],
   dyn=dyn)

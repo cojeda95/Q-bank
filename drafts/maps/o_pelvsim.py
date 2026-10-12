@@ -31,6 +31,7 @@ PANY = 1180
 IS = D('ant', 'post', 'up', 'down', 'in', 'out', 'psup', 'pinf')      # iliosacral / pubic — the standing test finds them
 SI = D('sac')
 BEND = ['ph:bend']
+SACST = ['ph:bend&test:stand&dx:sac']   # Foundations ch 38: a sacral problem oftentimes turns the standing test positive too, but less
 POS = [f'ph:bend&test:stand&dx:{k}' for k in ('ant', 'post', 'up', 'down', 'in', 'out', 'psup', 'pinf')] + ['ph:bend&test:seat&dx:sac']
 def panel(x0, y0, x1, y1, t): add(f'<rect x="{x0}" y="{y0}" width="{x1 - x0}" height="{y1 - y0}" rx="36" class="dyn-soft"/>'); text(t, x0 + 30, y0 + 44, 'nf-l1')
 BONE = 'fill:var(--dk10);fill-opacity:.18;stroke:var(--dk10);stroke-width:4'
@@ -75,23 +76,25 @@ for k, (dx, dy) in MOVE_S.items():
 text('PSIS', RPS + 40, Y_S + 6, 'nf-l2')
 text('upright — note where the thumbs start', BX, 300, 'nf-l1 dyn-tag', 'middle', when=['ph:up'])
 text('bending forward: left thumb rides farther up — positive on the LEFT', BX, 300, 'nf-l1 dyn-tag', 'middle', when=POS)
-text('bending forward: thumbs travel together — negative', BX, 300, 'nf-l1 dyn-tag', 'middle', when=BEND, unless=POS)
-text('standing: legs pull on the pelvis — picks up iliosacral (innominate) problems', BX, 1060, 'nf-l1', 'middle', when=['test:stand'])
-text('seated: the femurs brace the innominates — picks up sacroiliac (sacral) problems', BX, 1060, 'nf-l1', 'middle', when=['test:seat'])
+text('bending forward: left thumb rises a little — the seated test moves more', BX, 300, 'nf-l1 dyn-tag', 'middle', when=SACST)
+text('bending forward: thumbs travel together — negative', BX, 300, 'nf-l1 dyn-tag', 'middle', when=BEND, unless=POS + SACST)
+text('standing: legs pull on the pelvis — picks up iliosacral (innominate) problems', BX, 1045, 'nf-l1', 'middle', when=['test:stand'])
+text('seated: the femurs brace the innominates — picks up sacroiliac (sacral) problems', BX, 1045, 'nf-l1', 'middle', when=['test:seat'])
 
 TAG = dict(ant='Anterior rotation: ASIS down, PSIS up — hamstring tightness, tender iliolumbar ligament',
            post='Posterior rotation: ASIS up, PSIS down — groin or medial knee pain, tender inguinal ligament',
            up='Upslip: ASIS and PSIS both up — weight caught on one leg', down='Downslip: ASIS and PSIS both down — rare',
            **{'in': 'Inflare: ASIS medial, PSIS lateral'}, out='Outflare: ASIS lateral, PSIS medial',
            psup='Superior pubic shear: left tubercle up — tender inguinal ligament, can mimic cystitis',
-           pinf='Inferior pubic shear: left tubercle down', sac='Sacral (sacroiliac) dysfunction: the seated test is the one that turns positive')
-for k, t in TAG.items(): text(t, 1350, 1100, 'nf-l1 dyn-tag', 'middle', when=D(k))
+           pinf='Inferior pubic shear: left tubercle down', sac='Sacral (sacroiliac) dysfunction: the seated test shows the greater excursion')
+for k, t in TAG.items(): text(t, 1350, 1120, 'nf-l1 dyn-tag', 'middle', when=D(k))
 
 # ════════ motion: the thumbs ════════
 def m(when, **kw): return dict(when=when, **kw)
 flows = [
   dict(d=f'M{RPS} {Y_S} V{Y_S - 120}', len=120, speed=40, r=14, base=dict(th=1), when=BEND),
-  dict(d=f'M{LPS} {Y_S} V{Y_S - 120}', len=120, speed=40, r=14, base=dict(th=1), when=BEND, unless=POS),
+  dict(d=f'M{LPS} {Y_S} V{Y_S - 120}', len=120, speed=40, r=14, base=dict(th=1), when=BEND, unless=POS + SACST),
+  dict(d=f'M{LPS} {Y_S} V{Y_S - 160}', len=160, speed=53, r=14, base=dict(th=1), when=SACST),
   dict(d=f'M{LPS} {Y_S} V{Y_S - 220}', len=220, speed=73, r=14, base=dict(th=1), when=POS),
 ]
 sites = [dict(x=BX + 420, y=Y_S - 260, n=[0, -1], w=10, t='rec', l='', aria='Flexion tests', c='flextests', ions=[]),
@@ -99,16 +102,20 @@ sites = [dict(x=BX + 420, y=Y_S - 260, n=[0, -1], w=10, t='rec', l='', aria='Fle
          dict(x=FX, y=Y_P, n=[0, -1], w=10, t='rec', l='', aria='Pubic shear', c='pubicshear', ions=[])]
 
 readouts = [
-  dict(l='Standing flexion test (left)', mods=[dict(when=IS, d=1), dict(when=SI, d=0)]),
+  dict(l='Standing flexion test (left)', mods=[dict(when=IS, d=1)]),
   dict(l='Seated flexion test (left)', mods=[dict(when=SI, d=1), dict(when=IS, d=0)]),
   dict(l='Left ASIS height', mods=[dict(when=D('post', 'up'), d=1), dict(when=D('ant', 'down'), d=-1), dict(when=D('in', 'out'), d=0)]),
+  dict(l='Left pubic tubercle height', mods=[dict(when=D('psup', 'post'), d=1), dict(when=D('pinf', 'ant'), d=-1)]),
+  dict(l='ASIS compression test (left)', mods=[dict(when=D('ant', 'post', 'up', 'down'), d=1)]),
 ]
 
 notes = {
   '': 'Thumbs on both PSISs, the patient bends forward: the PSIS that rides farther up and forward marks the restricted side. Standing, '
       'the legs pull on the pelvis, so a positive standing test points to an iliosacral (innominate) problem; seated, the femurs brace '
-      'the innominates, so a positive seated test points to a sacroiliac (sacral) problem.',
-  'test:seat': 'Seated flexion test. False positives either way: tight hamstrings, quadratus lumborum, iliopsoas, a short leg — treat and retest.',
+      'the innominates, so a positive seated test points to a sacroiliac (sacral) problem. Rule out a false-positive standing test '
+      'first: tight hamstrings, quadratus lumborum or iliopsoas, or a short leg.',
+  'test:seat': 'Seated flexion test: the femurs brace the innominates, so pulls from the legs drop out. A greater seated excursion '
+               'points to the sacrum; both tests negative means no dysfunction — or a bilateral one.',
   'dx:ant': 'Anterior innominate rotation (about the inferior transverse axis): ASIS inferior, PSIS superior; tends to bring that pubic '
             'bone down. Named for the free direction, on the side of the positive standing test.',
   'dx:post': 'Posterior innominate rotation: ASIS superior, PSIS inferior; brings that pubic bone up. Groin (rectus femoris) or medial '
@@ -116,12 +123,14 @@ notes = {
   'dx:up': 'Superior innominate shear (upslip): nonphysiologic — ASIS and PSIS both superior, the pubic ramus may be too; slackens the '
            'sacrotuberous ligament.',
   'dx:down': 'Inferior innominate shear (downslip): ASIS and PSIS both inferior; rare, and walking tends to reduce it.',
-  'dx:in': 'Inflare (about a vertical axis): ASIS medial, PSIS lateral. Treat any rotation first — until then a medial ASIS isn’t reliable.',
-  'dx:out': 'Outflare: ASIS lateral, PSIS medial.',
+  'dx:in': 'Inflare (about a vertical axis): ASIS medial, PSIS lateral, same-side pubic crest slightly posterior. Treat any rotation '
+           'first — until then a medial ASIS isn’t reliable.',
+  'dx:out': 'Outflare: ASIS lateral, PSIS medial, same-side pubic crest slightly anterior; positive standing flexion test on that side.',
   'dx:psup': 'Superior pubic shear: named for the side of the positive standing flexion test — a positive left test with a high left '
              'tubercle is a LEFT superior shear, not a right inferior one.',
   'dx:pinf': 'Inferior pubic shear: left tubercle low, positive standing test on the left.',
-  'dx:sac': 'A sacral (sacroiliac) dysfunction turns the seated flexion test positive; the femurs brace the innominates out of the picture.',
+  'dx:sac': 'A sacral (sacroiliac) dysfunction turns the seated flexion test positive — and often the standing test too, but with '
+            'less excursion than seated. Then read the sulci and ILAs (see The Sacrum in Motion).',
 }
 
 dyn = dict(
@@ -152,7 +161,7 @@ MAP = dict(
     ('pv4', 'Inflare · outflare', 1640, 1660, 'pvInn', 'vertical axis', ['innomflare']),
     ('pv5', 'Pubic shear', 2080, 1660, 'pvPub', 'named for the positive side', ['pubicshear'])],
   panels=[
-    (2500, PANY, 1000, 'Landmarks on the involved side', [
+    (2500, PANY, 1000, 'Landmarks on the involved side (Foundations ch 37, Table 37.5)', [
       ('Anterior rotation', 'ASIS ↓ · PSIS ↑'), ('Posterior rotation', 'ASIS ↑ · PSIS ↓'),
       ('Upslip / downslip', 'ASIS and PSIS both ↑ / both ↓'), ('Inflare / outflare', 'ASIS medial / lateral'),
       ('Pubic shear', 'tubercle ↑ or ↓ on the positive side')])],

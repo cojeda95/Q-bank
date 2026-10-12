@@ -47,6 +47,8 @@ for x in COLS:
         add(f'<circle cx="{cx}" cy="{cy}" r="16" style="fill:var(--dk9);opacity:.75"/>', unless=big)
         rx, ry = (34, 28) if (x // 140) % 2 else (30, 34)
         add(f'<ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" style="fill:var(--dk9);opacity:.9"/>', when=big)
+for x in COLS:   # metaplasia: the surface cells are replaced by another type (FA p. 202)
+    add(f'<rect x="{x - 62}" y="{BM - 222}" width="124" height="108" rx="14" style="fill:var(--dk5);fill-opacity:.28;stroke:var(--dk5);stroke-width:4"/>', when=S('meta'))
 text('surface', 250, BM - 168, 'nf-l2', 'end')
 text('basal', 250, BM - 58, 'nf-l2', 'end')
 # basement membrane — whole, or breached
@@ -59,6 +61,7 @@ for (x, y) in ((1200, 790), (1290, 800), (1240, 860)):
 text('metalloproteinases breach the membrane · E-cadherin lost', 1380, 830, 'nf-l1 dyn-tag', when=S('inv', 'met'))
 # the stage caption
 CAP = dict(nl='Normal: small, uniform nuclei on an intact basement membrane',
+           meta='Metaplasia: one cell type replaced by another (eg, Barrett esophagus) — reversible',
            dys='Dysplasia: pleomorphism, lost orientation, ↑ N:C ratio — often reversible',
            cis='Carcinoma in situ: severe dysplasia through the full thickness — membrane intact',
            inv='Invasive carcinoma: the basement membrane is breached',
@@ -70,7 +73,7 @@ for k, t in CAP.items():
 shapes.append(dict(vessel='M260 1030 H2240', w=60, color='--dk1'))
 text('blood vessel or lymphatic', 260, 980, 'nf-l2')
 text('→ liver · lung · bone · brain', 2240, 1110, 'nf-l1', 'end', when=S('met'))
-text('carcinomas mostly by lymph, sarcomas by blood', 2240, 1136, 'nf-l2', 'end', when=S('met'))
+text('carcinomas mostly by lymph, sarcomas by blood — except follicular thyroid, RCC, HCC, choriocarcinoma', 2240, 1136, 'nf-l2', 'end', when=S('met'))
 
 # ════════ the genes ════════
 box(160, 1220, 2340, 1560)
@@ -101,8 +104,8 @@ sites = [
 
 # ════════ readouts ════════
 readouts = [
-  dict(l='Nuclear : cytoplasm ratio', mods=[dict(when=S('dys', 'cis', 'inv', 'met'), d=1), dict(when=S('nl'), d=0)]),
-  dict(l='Basement membrane intact', mods=[dict(when=S('nl', 'dys', 'cis'), d=0), dict(when=S('inv', 'met'), d=-1)]),
+  dict(l='Nuclear : cytoplasm ratio', mods=[dict(when=S('dys', 'cis', 'inv', 'met'), d=1), dict(when=S('nl', 'meta'), d=0)]),
+  dict(l='Basement membrane intact', mods=[dict(when=S('nl', 'meta', 'dys', 'cis'), d=0), dict(when=S('inv', 'met'), d=-1)]),
   dict(l='E-cadherin', mods=[dict(when=S('inv', 'met'), d=-1), dict(when=S('nl'), d=0)]),
   dict(l='Metalloproteinase activity', mods=[dict(when=S('inv', 'met'), d=1), dict(when=S('nl'), d=0)]),
 ]
@@ -112,6 +115,9 @@ notes = {
   '': 'A neoplasm is an uncontrolled, often monoclonal proliferation. Malignancy advances in steps, and the basement membrane is '
       'the line between in situ and invasive disease.',
   'stage:nl': 'Normal epithelium: small, uniform nuclei in an orderly layer on an intact basement membrane.',
+  'stage:meta': 'Metaplasia: reprogrammed stem cells replace one cell type with another that suits the irritant — gastric acid '
+                'makes esophageal epithelium intestinal (Barrett), smoke makes bronchial epithelium squamous. Reversible, but a '
+                'persistent insult can carry it on to dysplasia (Barrett → adenocarcinoma).',
   'stage:dys': 'Dysplasia: pleomorphism, loss of orientation and a high nuclear-to-cytoplasmic ratio — disordered precancerous '
                'growth that is often reversible.',
   'stage:cis': 'Carcinoma in situ: irreversible severe dysplasia through the full thickness of the epithelium, with the basement '
@@ -119,7 +125,8 @@ notes = {
   'stage:inv': 'Invasive carcinoma: metalloproteinases (collagenases, hydrolases) breach the basement membrane and E-cadherin loss '
                'loosens cell contacts; cells crawl through the matrix on laminin and fibronectin to reach vessels.',
   'stage:met': 'Metastasis: tumor cells enter lymphatics or blood — carcinomas mostly by lymph, sarcomas by blood — and lodge in '
-               'liver, lung, bone or brain, where metastases outnumber primary tumors.',
+               'liver, lung, bone or brain, where metastases outnumber primary tumors. Four carcinomas spread by blood: follicular thyroid, '
+               'renal cell, hepatocellular and choriocarcinoma.',
   'gene:onc': 'An oncogene is a proto-oncogene with a gain-of-function mutation — one damaged allele is enough (RAS, MYC, HER2, '
               'BCR-ABL, BRAF, RET).',
   'gene:tsg': 'A tumor suppressor must lose both alleles — Knudson’s two hits. Inheriting one bad copy (Li-Fraumeni TP53, familial '
@@ -129,7 +136,7 @@ notes = {
 dyn = dict(
   kinds=dict(tum=['cells', '--bad'], rbc=['cells', '--dk1']), groups=[['cells', 'Cells']],
   switches=[dict(id=ST, label='Stage', type='steps', auto=4, options=[
-    ['nl', 'Normal'], ['dys', 'Dysplasia'], ['cis', 'Carcinoma in situ'], ['inv', 'Invasive carcinoma'], ['met', 'Metastasis']]),
+    ['nl', 'Normal'], ['meta', 'Metaplasia'], ['dys', 'Dysplasia'], ['cis', 'Carcinoma in situ'], ['inv', 'Invasive carcinoma'], ['met', 'Metastasis']]),
     dict(id='gene', label='Genetics', type='one', options=[['onc', 'Oncogene — one hit', 'oncogenes'], ['tsg', 'Tumor suppressor — two hits', 'tsgenes']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
@@ -137,7 +144,7 @@ dyn = dict(
 
 MAP = dict(
   id='neosim', title='Neoplasia in Motion', topic='path', after='neoplasia',
-  sub='An epithelium steps from normal to dysplasia, carcinoma in situ, invasion and metastasis — watch the nuclei grow, the '
+  sub='An epithelium steps from normal through metaplasia and dysplasia to carcinoma in situ, invasion and metastasis — watch the nuclei grow, the '
       'basement membrane give way and tumor cells ride a vessel away; then compare one-hit oncogenes with two-hit tumor suppressors',
   w=3500, h=1880,
   fa='202, 215–220',

@@ -1,6 +1,6 @@
 # Who Decides? — Consent & Capacity (dynamic map, kit data) — drafted on the drafts branch, off the Mac.
 # The consent questions drawn as a decision tree (one `one` switch; the path to the answer lights up and a dot
-# travels it): emergency → adult with capacity → advance directive → surrogate order → minors and their exceptions.
+# travels it): emergency → adult with capacity (waiver, therapeutic privilege) → advance directive → surrogate order → minors and their exceptions.
 # No readouts — the answers are people, not arrows. Every step is from the pinned cards (consent, capacity, advdir,
 # surrogate, minors, ethprinciples, confid); their FA pages are in `fa`. No new cards.
 import sys
@@ -96,10 +96,11 @@ def clues(C, sw, x, y, w, title='The tell'):
 SW = 'who'
 T = [
   ('r', None, '', 'A treatment decision', 'who gets to decide?', None),
-  ('em', 'r', 'life-threatening · no one to ask', 'Emergency', 'implied consent — treat', 'emerg'),
+  ('em', 'r', 'needs care now to prevent death or severe harm', 'Emergency', 'implied consent — treat', 'emerg'),
   ('ad', 'r', 'patient 18 or older', 'Adult', 'capacity for THIS decision?', None),
   ('ca', 'ad', 'understands, appreciates, reasons, chooses', 'Has capacity', '', None),
   ('pt', 'ca', 'agrees or refuses after full disclosure', 'The patient decides', 'informed consent — revocable', 'pt'),
+  ('wv', 'ca', 'explicitly gives up the right to be informed', 'Waiver', 'the patient waives consent', 'waiv'),
   ('tp', 'ca', 'disclosure would severely harm', 'Therapeutic privilege', 'a narrow exception', 'priv'),
   ('nc', 'ad', 'can’t do one of the four', 'Lacks capacity', 'did they leave instructions?', None),
   ('dr', 'nc', 'living will · medical power of attorney', 'Follow the directive', 'or the named agent', 'dir'),
@@ -116,15 +117,16 @@ text('each box asks one question; the dot travels the path to the answer you pic
 
 # ════════ the clues ════════
 C = {
-  'emerg': ['Emergency — implied consent', 'the E of WIPE: Waiver, legally Incompetent, therapeutic Privilege, Emergency', 'treat now; explain afterward'],
+  'emerg': ['Emergency — implied consent', 'the E of WIPE: Waiver, legally Incompetent, therapeutic Privilege, Emergency', 'implied consent may apply — treat'],
   'pt': ['The patient decides — informed consent', 'disclosure (interpreter if needed), understanding, capacity, voluntariness', 'a process, not a signature — revocable at any time, even orally'],
+  'waiv': ['Waiver', 'the patient explicitly relinquishes the right of informed consent', 'the W of WIPE — it has to be the patient’s own explicit choice'],
   'priv': ['Therapeutic privilege', 'withhold information only if disclosing it would severely harm the patient', 'a family asking you to hide a result is not a reason — explore why'],
-  'dir': ['Follow the advance directive', 'living will: specific interventions · medical power of attorney: an agent decides', 'a DNR means no CPR — not no intubation, feeding or chemotherapy'],
+  'dir': ['Follow the advance directive', 'living will: specific interventions · medical power of attorney: an agent decides', 'a DNR prohibits CPR — intubation, a feeding tube or chemotherapy can still be chosen'],
   'surr': ['The surrogate — substituted judgment', 'spouse → adult children → parents → adult siblings → other relatives', 'what the patient would have wanted, not what the surrogate prefers'],
   'sdr': ['Minors consent for themselves', 'contraception, STIs, prenatal care (usually not abortion), substance use treatment', 'emergencies and trauma too'],
   'eman': ['Emancipated minors', 'married, self-supporting or in the military', 'consent for themselves, like adults'],
   'par': ['Parents consent for a minor', 'laws vary by state · seek the minor’s assent even when not required', 'a pregnant 15-year-old decides about her own child'],
-  'jw': ['Transfuse the bleeding child', 'a Jehovah’s Witness parent can’t refuse blood for a minor in an emergency', 'an adult with capacity who refuses blood is not transfused'],
+  'jw': ['Transfuse the bleeding child', 'a Jehovah’s Witness parent can’t refuse blood for a minor in an emergency', 'a proxy can refuse for an adult whose wishes are known — not for a minor'],
 }
 cy = clues(C, SW, 180, ybot + 70, 2140, title='The rule')
 PY = cy + 110; PANY = 660
@@ -133,14 +135,17 @@ PY = cy + 110; PANY = 660
 notes = {
   '': 'Who decides depends on three questions: is it an emergency, is the patient an adult, and does the patient have capacity for '
       'this decision now? Capacity is a physician’s judgment about one decision; competence is a judge’s.',
-  'who:emerg': 'In an emergency with no one to ask, consent is implied — treat. Emergency is one of the WIPE exceptions to informed '
+  'who:emerg': 'When care is needed now to prevent death or severe harm, implied consent may apply — treat. Emergency is one of the WIPE exceptions to informed '
                'consent (Waiver, legally Incompetent, therapeutic Privilege, Emergency).',
   'who:pt': 'An adult with capacity decides — even to refuse. Consent needs disclosure, understanding, capacity and voluntariness, and '
             'the patient can revoke it at any time, even orally.',
+  'who:waiv': 'Waiver: a patient with capacity may explicitly give up the right of informed consent — the W of WIPE. It must be '
+              'the patient’s own explicit choice.',
   'who:priv': 'Therapeutic privilege lets you withhold information only when disclosure itself would severely harm the patient — not '
               'because the family asks.',
   'who:dir': 'Without capacity, follow the advance directive: a living will names specific interventions; a medical power of attorney '
-             'names an agent and is more flexible. A DNR covers CPR only.',
+             'names an agent and is more flexible. Prior oral statements count more if informed, specific and repeated to several '
+             'people. A DNR prohibits CPR only.',
   'who:surr': 'With no directive, a surrogate uses substituted judgment — what the patient would have wanted. Order: spouse, adult '
               'children, parents, adult siblings, other relatives.',
   'who:sdr': 'Minors can consent on their own for contraception, STIs, prenatal care (usually not abortion), substance use treatment, '
@@ -148,25 +153,25 @@ notes = {
   'who:eman': 'Emancipated minors — married, self-supporting or in the military — consent for themselves.',
   'who:par': 'Otherwise a parent consents for a minor, and the minor’s assent is still sought. A pregnant teenager decides about her '
              'own child, even if her parents disagree.',
-  'who:jw': 'A parent can’t refuse lifesaving blood for a bleeding child — transfuse. An adult Jehovah’s Witness with capacity who '
-            'refuses is not transfused.',
+  'who:jw': 'A parent can’t refuse emergent blood for a bleeding minor on faith alone — transfuse the child. A proxy can refuse '
+            'for an adult whose wishes are known, so the Jehovah’s Witness mother is not transfused.',
 }
 
 dyn = dict(
   kinds=dict(pt=['pt', '--accent']), groups=[['pt', 'The case']],
   switches=[dict(id=SW, label='Who decides', type='one', options=[
-    ['emerg', 'Emergency — implied consent', 'consent'], ['pt', 'Adult with capacity', 'consent'], ['priv', 'Therapeutic privilege', 'consent'],
+    ['emerg', 'Emergency — implied consent', 'consent'], ['pt', 'Adult with capacity', 'consent'], ['waiv', 'Waiver', 'consent'], ['priv', 'Therapeutic privilege', 'consent'],
     ['dir', 'Advance directive', 'advdir'], ['surr', 'Surrogate', 'surrogate'], ['sdr', 'Minor — sex, drugs, rock and roll', 'minors'],
     ['eman', 'Emancipated minor', 'minors'], ['par', 'Parents', 'minors'], ['jw', 'Parent refuses blood', 'minors']])],
   notes=notes, shapes=shapes, flows=flows, sites=[], readouts=[],
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 267–273 (cards) · Kaplan & Sadock ch 27')
+  src='First Aid pp. 267–269, 272–273 · Kaplan & Sadock ch 27–28 (OCOM SDL 42)')
 
 MAP = dict(
   id='ethicsim', title='Who Decides? Consent & Capacity', topic='stats', after='ethics',
   sub='Emergency, adult or minor, capacity or not, a directive or a surrogate — pick an answer and a dot follows the consent '
       'questions down the tree to who decides. Tap a card pin for the rule',
-  w=3500, h=1660,
+  w=3500, h=1760,
   fa='267–269, 272–273',
   src=[full('Kaplan & Sadock', 27), full('Kaplan & Sadock', 28), full('Kaplan & Sadock', 29)],
   lanes=[('ewAdult', 'Adults', 'glycolysis'), ('ewMinor', 'Minors', 'tca'), ('ewCore', 'Principles', 'gluconeo')],

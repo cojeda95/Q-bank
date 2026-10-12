@@ -1,6 +1,6 @@
 # Amyloid in Motion (dynamic map, kit data) — drafted on the drafts branch, off the Mac.
 # A precursor protein leaves its source cell, misfolds into a β-pleated sheet fibril and deposits in the organs that
-# type of amyloid targets. One `one` switch (the amyloid type: AL, AA, β2-microglobulin, Aβ, calcitonin, amylin)
+# type of amyloid targets. One `one` switch (the amyloid type: AL, AA, β2-microglobulin, Aβ, calcitonin, amylin, transthyretin)
 # changes the source cell, the particles and the organs lit up; a toggle (Congo red under polarized light) turns
 # the deposit apple-green. 5 readouts. Facts from the pinned cards (amyloidosis, myeloma, acutephase, carpaltunnel,
 # alzheimer, ich, medullary, t2dm, rcm, macroglos, nephrotic); their FA pages are in `fa`. No new cards.
@@ -43,6 +43,7 @@ SRC = dict(
   ab=('Neuron', 'amyloid β, cleaved from APP', 'APP gene is on chromosome 21'),
   cal=('Parafollicular C cell', 'calcitonin', 'medullary thyroid carcinoma'),
   amy=('Islet β cell', 'amylin, co-secreted with insulin', 'type 2 diabetes'),
+  ttr=('Plasma transthyretin', 'carries thyroxine and retinol', 'wild-type: aging heart · mutant: nerves'),
 )
 for k, (a, b, c) in SRC.items():
     text(a, 460, 770, 'nf-l1', 'middle', when=O(k)); text(b, 460, 794, 'nf-l2', 'middle', when=O(k)); text(c, 460, 818, 'dyn-cap', 'middle', when=O(k))
@@ -62,8 +63,8 @@ for i in range(5):
     y = 900 + i * 28
     add(f'<path d="M{990 + i * 6} {y} Q1090 {y - 26} {1190 - i * 6} {y}" style="fill:none;stroke:var(--bad);stroke-width:9;opacity:.55;stroke-linecap:round"/>', unless=['congo'])
     add(f'<path d="M{990 + i * 6} {y} Q1090 {y - 26} {1190 - i * 6} {y}" style="fill:none;stroke:var(--ok);stroke-width:9;stroke-linecap:round"/>', when=['congo'])
-# UNVERIFIED: salmon-pink under ordinary light is standard teaching but not on the amyloidosis card
-text('Congo red, ordinary light: salmon pink', 1090, 1130, 'nf-l2', 'middle', unless=['congo'])
+# FA 208: red/orange on nonpolarized light (Robbins ch 6: pink or red)
+text('Congo red, ordinary light: red-orange', 1090, 1130, 'nf-l2', 'middle', unless=['congo'])
 text('polarized light: apple-green birefringence', 1090, 1130, 'nf-l1', 'middle', when=['congo'])
 
 # ════════ 3. where it deposits ════════
@@ -73,7 +74,7 @@ ORG = [('kid', 'Kidney', 'mesangium → nephrotic syndrome'), ('hrt', 'Heart', '
        ('tng', 'Tongue', 'macroglossia'), ('nrv', 'Median nerve', 'carpal tunnel · neuropathy'),
        ('brn', 'Brain', 'plaques · lobar hemorrhage'), ('thy', 'Thyroid', 'amyloid stroma of the tumor'),
        ('isl', 'Pancreatic islet', 'islet amyloid')]
-HIT = dict(al=['kid', 'hrt', 'tng', 'nrv'], aa=['kid'], b2m=['nrv'], ab=['brn'], cal=['thy'], amy=['isl'])
+HIT = dict(al=['kid', 'hrt', 'tng', 'nrv'], aa=['kid'], b2m=['nrv'], ab=['brn'], cal=['thy'], amy=['isl'], ttr=['hrt', 'nrv'])
 OY = {o[0]: 250 + i * 130 for i, o in enumerate(ORG)}
 for k, lab, sub in ORG:
     y = OY[k]; who = [t for t, hs in HIT.items() if k in hs]
@@ -100,7 +101,7 @@ readouts = [
   dict(l='Serum light chains (κ or λ)', mods=[dict(when=O('al'), d=1)]),
   dict(l='Serum amyloid A · CRP', mods=[dict(when=O('aa'), d=1)]),
   dict(l='Urine protein', mods=[dict(when=O('al', 'aa'), d=1)]),
-  dict(l='ECG voltage', mods=[dict(when=O('al'), d=-1)]),
+  dict(l='ECG voltage', mods=[dict(when=O('al', 'ttr'), d=-1)]),   # FA 315: low voltage, especially in amyloidosis
   dict(l='Calcitonin', mods=[dict(when=O('cal'), d=1)]),
 ]
 
@@ -118,25 +119,30 @@ notes = {
   'typ:cal': 'Medullary thyroid carcinoma: the C cells’ calcitonin forms amyloid in the tumor stroma, which stains with Congo red. '
              'Serum calcitonin rises.',
   'typ:amy': 'In type 2 diabetes, amylin co-secreted with insulin deposits as islet amyloid as the β cells fail.',
-  'congo': 'Congo red–stained amyloid shows apple-green birefringence under polarized light — the diagnostic stain.',
+  'typ:ttr': 'Transthyretin (carries thyroxine and retinol): wild-type TTR deposits in the heart of men over 70 — the second most '
+             'common systemic amyloid; autosomal dominant variants hit peripheral and autonomic nerves (familial amyloid polyneuropathy) '
+             'and the heart.',
+  'congo': 'Congo red stains amyloid red-orange in ordinary light and gives apple-green birefringence under polarized light — the '
+           'diagnostic stain, shared by every type because of the cross-β-pleated fibrils.',
 }
 
 dyn = dict(
   kinds=dict(prot=['prot', '--dk9'], fib=['prot', '--dk11']), groups=[['prot', 'Protein']],
   switches=[dict(id=SW, label='Amyloid type', type='one', options=[
     ['al', 'AL — light chains', 'amyloidosis'], ['aa', 'AA — serum amyloid A', 'amyloidosis'], ['b2m', 'β2-microglobulin — dialysis', 'carpaltunnel'],
-    ['ab', 'Aβ — Alzheimer', 'alzheimer'], ['cal', 'Calcitonin — medullary thyroid', 'medullary'], ['amy', 'Amylin — type 2 diabetes', 't2dm']]),
+    ['ab', 'Aβ — Alzheimer', 'alzheimer'], ['cal', 'Calcitonin — medullary thyroid', 'medullary'], ['amy', 'Amylin — type 2 diabetes', 't2dm'],
+    ['ttr', 'Transthyretin — aging heart, familial neuropathy', 'amyloidosis']]),
     dict(id='congo', label='Stain', type='toggle', on='Polarized light', off='Ordinary light', **{'def': False})],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 208, 315, 345, 351, 436, 453, 528, 534 · Robbins ch 6')
+  src='First Aid pp. 208–209, 315, 347, 351, 436, 463, 528, 534 · Robbins ch 6')
 
 MAP = dict(
   id='amylsim', title='Amyloid in Motion', topic='path', after='genpath',
   sub='A precursor protein misfolds into β-pleated sheets and deposits where its type goes — pick AL, AA, β2-microglobulin, '
-      'Aβ, calcitonin or amylin to see the source cell and the organs fill, and turn on polarized light for apple-green birefringence',
+      'Aβ, calcitonin, amylin or transthyretin to see the source cell and the organs fill, and turn on polarized light for apple-green birefringence',
   w=3500, h=1560,
-  fa='106, 208–209, 315, 345, 351, 356, 436, 453, 463, 528, 534, 613',
+  fa='208–209, 212, 315, 347, 351, 356, 436, 463, 472, 528, 534, 613',
   src=[full('Robbins', 6), full('Robbins', 20), full('Robbins', 13), full('Robbins', 12), full('Robbins', 28), full('Robbins', 24)],
   lanes=[('amSys', 'Systemic amyloid', 'glycolysis'), ('amLoc', 'Localized amyloid', 'tca'), ('amOrg', 'Organ damage', 'gluconeo')],
   nodes=[
@@ -150,11 +156,12 @@ MAP = dict(
     ('am8', 'Nephrotic syndrome', 1220, 1430, 'amOrg', 'mesangial deposits', ['nephrotic']),
     ('am9', 'Carpal tunnel · macroglossia', 1660, 1430, 'amOrg', 'dialysis · AL', ['carpaltunnel', 'macroglos'])],
   panels=[
-    (2420, PANY, 1000, 'Precursor → disease (cards)', [
+    (2420, PANY, 1000, 'Precursor → disease (FA p 208 · Robbins ch 6)', [
       ('Light chains (AL)', 'myeloma, MGUS'),
       ('Serum amyloid A (AA)', 'chronic inflammation'),
       ('β2-microglobulin', 'long-term dialysis'),
       ('Amyloid β', 'Alzheimer · amyloid angiopathy'),
       ('Calcitonin', 'medullary thyroid carcinoma'),
-      ('Amylin', 'type 2 diabetes islets')])],
+      ('Amylin', 'type 2 diabetes islets'),
+      ('Transthyretin (ATTR)', 'aging heart · familial polyneuropathy')])],
   dyn=dyn)

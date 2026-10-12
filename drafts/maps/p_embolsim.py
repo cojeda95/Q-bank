@@ -99,8 +99,9 @@ sites = [dict(x=560, y=1560, n=[-1, 0], w=10, t='rec', l='', aria='DVT', c='dvt'
          dict(x=1270, y=820, n=[1, -1], w=10, t='rec', l='', aria='Embolus types', c='emboli', ions=[])]
 
 readouts = [
-  dict(l='Dead space (lung)', mods=[dict(when=D('dvt', 'fat', 'air', 'afe'), d=1)]),
-  dict(l='Hypoxemia', mods=[dict(when=D('dvt', 'fat', 'air', 'afe', 'dcs'), d=1)]),
+  dict(l='Dead space (lung)', mods=[dict(when=D('dvt', 'fat', 'air'), d=1)]),   # AFE harms mainly by clotting and vasoactive release, not obstruction (Robbins ch 4)
+  dict(l='Hypoxemia', mods=[dict(when=D('dvt', 'fat', 'air', 'afe'), d=1)]),
+  dict(l='PaCO₂', mods=[dict(when=D('dvt'), d=-1)]),   # PE: tachypnea, respiratory alkalosis (FA p. 691)
   dict(l='Brain emboli', mods=[dict(when=D('fat', 'mural', 'dcs') + ['dx:dvt&pfo'], d=1)]),
   dict(l='Petechial rash', mods=[dict(when=D('fat'), d=1)]),
   dict(l='DIC', mods=[dict(when=D('afe'), d=1)]),
@@ -121,8 +122,9 @@ notes = {
   'dx:afe': 'Amniotic fluid embolism: fluid and fetal cells enter the maternal circulation in labor or postpartum — sudden '
             'dyspnea, cyanosis, shock, seizures, coma, then DIC. Fetal squames and lanugo in the maternal lungs. High mortality.',
   'dx:mural': 'About 80% of systemic arterial emboli start as intracardiac mural thrombi — after LV infarcts or with left atrial '
-              'dilation and fibrillation.',
-  'pfo': 'Paradoxical embolism: a venous embolus crosses an ASD, VSD or patent foramen ovale into the systemic circulation.',
+              'dilation and fibrillation. Most lodge in the legs (75%) or the brain (10%); kidneys, spleen and gut are hit too.',
+  'pfo': 'Paradoxical embolism: a venous embolus crosses an ASD, VSD or patent foramen ovale (open in ~25% of people) into the '
+         'systemic circulation — pick the DVT to watch one reach the brain.',
 }
 
 dyn = dict(
@@ -144,7 +146,7 @@ MAP = dict(
   sub='Launch a thrombus, fat, air, nitrogen bubbles, amniotic fluid or a left-atrial clot and follow it to where it lodges — '
       'then open a PFO and watch a leg clot reach the brain',
   w=3600, h=2000,
-  fa='284, 321, 691',
+  fa='284, 321, 469, 691',
   src=['Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock',
        'Guyton ch 45 — Physiology of Deep-Sea Diving and Other Hyperbaric Conditions'],
   lanes=[('emVen', 'Venous → lung', 'glycolysis'), ('emArt', 'Arterial & paradoxical', 'tca')],
@@ -156,7 +158,7 @@ MAP = dict(
     ('em5', 'Air & decompression', 2080, 1840, 'emVen', 'bends · chokes', ['airemb']),
     ('em6', 'Amniotic fluid embolism', 2520, 1840, 'emVen', 'labor · DIC', ['afe'])],
   panels=[
-    (2500, PANY, 1000, 'FAT BAT (Robbins ch 4)', [
+    (2500, PANY, 1000, 'FAT BAT (First Aid p. 691 · Robbins ch 4)', [
       ('Fat', 'long-bone fracture, liposuction'), ('Air', 'divers, central lines'), ('Thrombus', 'deep leg veins; LA in AF'),
       ('Bacteria', 'infected vegetations'), ('Amniotic fluid', 'labor → DIC'), ('Tumor', 'blood or lymph')])],
   dyn=dyn)

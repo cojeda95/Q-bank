@@ -3,7 +3,7 @@
 # collecting-duct principal cell → cAMP → aquaporin-2 in the apical membrane → water follows the medullary gradient into the
 # interstitium, and less, more concentrated urine reaches the cup. A `one` switch shows water deprivation, a water load,
 # SIADH, central and nephrogenic DI, primary polydipsia, lithium, desmopressin and the vaptans; a toggle gives desmopressin
-# on top (the DI work-up). 5 readouts. Facts from the pinned cards; FA pages in `fa`. No new cards.
+# on top (the DI work-up). 5 readouts. FA 332–333, 342, 360 + Guyton ch 29, Katzung ch 15; FA pages in `fa`. No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -54,7 +54,7 @@ text('plasma dilute — ADH switched off', 560, 380, 'nf-l1 dyn-tag', 'middle', 
 text('plasma concentrated — ADH released', 560, 380, 'nf-l1 dyn-tag', 'middle', when=O('dry'))
 # SIADH: an ectopic source
 room(300, 820, 820, 940, '', 'dyn-soft')
-text('ADH from elsewhere: small cell lung cancer, CNS disease, drugs', 560, 870, 'nf-l1', 'middle', when=O('siadh'))
+text('excess ADH: ectopic (small cell lung cancer), CNS or lung disease, drugs', 560, 870, 'nf-l1', 'middle', when=O('siadh'))
 text('HEELD-up water (SSRIs, carbamazepine, cyclophosphamide)', 560, 900, 'nf-l2', 'middle', when=O('siadh'))
 text('no other ADH source', 560, 885, 'nf-l2', 'middle', unless=O('siadh'))
 # drug syringe
@@ -81,7 +81,7 @@ room(1640, 1290, 1880, 1400, '', 'dyn-soft')
 text('urine', 1760, 1440, 'nf-l1', 'middle')
 text('small volume, concentrated', 1760, 1470, 'nf-l1 dyn-tag', 'middle', when=CONC)
 text('large volume, dilute', 1760, 1470, 'nf-l1 dyn-tag', 'middle', when=DIL)
-text('high urine Na⁺ — aldosterone escape', 1760, 1500, 'nf-l2', 'middle', when=O('siadh'))
+text('high urine Na⁺ (↓ aldosterone, ↑ ANP)', 1760, 1500, 'nf-l2', 'middle', when=O('siadh'))
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
@@ -105,7 +105,7 @@ sites = [
 readouts = [
   dict(l='Plasma ADH', mods=[dict(when=O('dry', 'siadh'), d=1), dict(when=O('drink', 'cdi', 'poly'), d=-1)]),
   dict(l='Serum osmolality', mods=[dict(when=O('cdi', 'ndi', 'lith'), d=1), dict(when=O('siadh', 'poly'), d=-1)]),
-  dict(l='Serum Na⁺', mods=[dict(when=O('siadh'), d=-1)]),
+  dict(l='Serum Na⁺', mods=[dict(when=O('siadh'), d=-1), dict(when=O('vapt'), d=1)]),
   dict(l='Urine osmolality', mods=[dict(when=CONC, d=1), dict(when=DIL, d=-1)]),
   dict(l='Urine volume', mods=[dict(when=CONC, d=-1), dict(when=DIL, d=1)]),
 ]
@@ -117,7 +117,7 @@ notes = {
   'dx:dry': 'Water deprivation: plasma osmolality rises, ADH is released, aquaporin-2 goes in — a small volume of concentrated urine.',
   'dx:drink': 'Water load: plasma dilutes, ADH falls, the duct stays watertight — dilute urine, positive free-water clearance.',
   'dx:siadh': 'SIADH: ADH despite a low plasma osmolality — water is kept, serum Na⁺ falls, urine stays concentrated and urine Na⁺ '
-              'high (aldosterone escape). Euvolemic. Fluid restriction; correct slowly (osmotic demyelination).',
+              'high (aldosterone falls, ANP/BNP rise). Euvolemic. Fluid restriction; correct slowly (osmotic demyelination).',
   'dx:cdi': 'Central DI: no ADH from the posterior pituitary — dilute urine pours out, serum osmolality rises (hypernatremia if the '
             'patient cannot drink). Desmopressin raises urine osmolality by more than 50%.',
   'dx:ndi': 'Nephrogenic DI: ADH is there (normal or high) but the V2 pathway fails — hereditary V2 mutation, lithium, '
@@ -125,8 +125,9 @@ notes = {
   'dx:poly': 'Primary polydipsia: so much water that ADH is suppressed and serum osmolality is LOW; withhold water and the urine '
              'concentrates sharply.',
   'dx:lith': 'Lithium blocks the V2 pathway → nephrogenic DI.',
-  'dx:desmo': 'Desmopressin: a V2 agonist — central DI, von Willebrand disease, mild hemophilia A, nocturnal enuresis.',
-  'dx:vapt': 'Conivaptan, tolvaptan: V2 antagonists for SIADH — water is no longer reabsorbed. Correct slowly.',
+  'dx:desmo': 'Desmopressin: an ADH analog acting at V2 — central DI, von Willebrand disease, hemophilia A, nocturnal enuresis.',
+  'dx:vapt': 'Conivaptan, tolvaptan: ADH antagonists at the V2 receptor (conivaptan also blocks V1a) for SIADH — free water is '
+             'excreted and serum Na⁺ rises. Correct slowly.',
   'dd': 'Desmopressin test: urine osmolality rises more than 50% in central DI, little or not at all in nephrogenic DI.',
 }
 
@@ -140,7 +141,7 @@ dyn = dict(
             dict(id=DD, label='DI work-up', type='toggle', on='Desmopressin given', off='Give desmopressin', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 331–333, 342, 608 · Guyton ch 29 · Costanzo ch 6')
+  src='First Aid pp. 331–333, 342, 360, 608 · Guyton ch 29 · Costanzo ch 6 · Katzung ch 15')
 dyn['switches'][1]['def'] = dyn['switches'][1].pop('def_')
 
 MAP = dict(
@@ -155,7 +156,7 @@ MAP = dict(
        'Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function',
        'Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema',
        'Kaplan & Sadock ch 21 — Psychopharmacology', 'Katzung ch 29 — Antipsychotic Agents & Lithium',
-       'Katzung ch 58 — Management of the Poisoned Patient'],
+       'Katzung ch 58 — Management of the Poisoned Patient', 'Katzung ch 15 — Diuretic Agents'],
   lanes=[('waNorm', 'ADH and the collecting duct', 'glycolysis'), ('waDz', 'Too much or too little ADH', 'tca'), ('waRx', 'Drugs', 'gluconeo')],
   nodes=[
     ('wa1', 'Posterior pituitary — ADH', 330, 1620, 'waNorm', 'osmolality drives it', ['posteriorpit'], 'hub'),

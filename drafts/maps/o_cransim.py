@@ -44,18 +44,21 @@ panel(300, 230, 1300, 820, 'From the side — flexion and extension')
 SX, OX, BY = 620, 980, 560                     # sphenoid axis, occiput axis (foramen magnum level), SBS height
 SPHS = f'<path d="M{SX - 200} {BY - 60} L{SX + 120} {BY - 30} L{SX + 160} {BY + 20} L{SX - 180} {BY + 40} Z" style="{SPH}"/>'
 OCCS = f'<path d="M{OX - 160} {BY + 20} L{OX - 120} {BY - 30} C{OX + 40} {BY - 200} {OX + 220} {BY - 120} {OX + 240} {BY + 80} L{OX + 60} {BY + 120} Z" style="{OCC}"/>'
-for ang, when in ((0, None), (-8, FLEX), (8, EXT)):
-    u = FLEX + EXT if ang == 0 else None
-    add(rot(SPHS, ang, SX, BY), when=when, unless=u if when is None else None)
-    add(rot(OCCS, -ang, OX, BY), when=when, unless=u if when is None else None)
+LOCK = S('comp', 'vsup', 'vinf')               # these replace the breathing bones in the side view
+add(SPHS + OCCS, when=S('comp'))                 # compression: locked in neutral, no flexion/extension
+for ang, when in ((-8, FLEX), (8, EXT)):
+    add(rot(SPHS, ang, SX, BY), when=when, unless=LOCK)
+    add(rot(OCCS, -ang, OX, BY), when=when, unless=LOCK)
 for x in (SX, OX): add(f'<circle cx="{x}" cy="{BY}" r="9" style="fill:var(--ink-2)"/>')
 text('sphenoid', SX - 60, BY + 110, 'nf-l1', 'middle'); text('occiput', OX + 80, BY + 170, 'nf-l1', 'middle')
 text('SBS', (SX + OX) // 2 + 20, BY - 70, 'nf-l1', 'middle')
 add(f'<path d="M{(SX + OX) // 2 + 20} {BY - 56} V{BY - 10}" style="stroke:var(--ink-3);stroke-width:2"/>')
 text('• = transverse axes (body of the sphenoid · foramen magnum)', 800, 790, 'nf-l2', 'middle')
-text('flexion: SBS rises · skull widens, shortens front to back', 800, 300, 'nf-l1 dyn-tag', 'middle', when=FLEX)
-text('extension: SBS drops · skull narrows, lengthens', 800, 300, 'nf-l1 dyn-tag', 'middle', when=EXT)
+text('flexion: SBS rises · skull widens, shortens front to back', 800, 300, 'nf-l1 dyn-tag', 'middle', when=FLEX, unless=LOCK)
+text('extension: SBS drops · skull narrows, lengthens', 800, 300, 'nf-l1 dyn-tag', 'middle', when=EXT, unless=LOCK)
 add(f'<rect x="{SX + 100}" y="{BY - 50}" width="140" height="90" rx="10" style="fill:var(--bad);fill-opacity:.25;stroke:var(--bad);stroke-width:4"/>', when=S('comp'))
+add(f'<ellipse cx="{OX - 30}" cy="{BY + 95}" rx="70" ry="34" class="dyn-hl"/>', when=T('cond'))
+text('condyles · hypoglossal canal (CN XII)', OX - 30, BY + 200, 'nf-l2', 'middle', when=T('cond'))
 text('compression — rock hard, no motion', 800, 340, 'nf-l1 dyn-tag', 'middle', when=S('comp'))
 # vertical strain: same-direction rotation about the transverse axes
 for st, ang in (('vsup', -10), ('vinf', 10)):
@@ -73,8 +76,8 @@ add(rot(WING, -10, CX, CY) + rot(SQU, 10, CX, CY), when=S('tors'))
 add(rot(WING, 8, CX, CY) + rot(SQU, 8, CX, CY), when=S('sbr'))
 add(f'<circle cx="{CX}" cy="{CY}" r="9" style="fill:var(--ink-2)"/>')
 text('greater wings (sphenoid)', CX, CY - 90, 'nf-l2', 'middle'); text('occipital squama', CX, CY + 230, 'nf-l2', 'middle')
-text('right torsion: right greater wing up, right occiput down — opposite rotation', CX, 940, 'nf-l1 dyn-tag', 'middle', when=S('tors'))
-text('rotation: both turn the same way, dropping on the convex side', CX, 940, 'nf-l1 dyn-tag', 'middle', when=S('sbr'))
+text('right torsion: right greater wing up, right occiput down — opposite rotation', CX, 985, 'nf-l1 dyn-tag', 'middle', when=S('tors'))
+text('right side bending/rotation: both turn the same way, dropping on the convex (right) side', CX, 985, 'nf-l1 dyn-tag', 'middle', when=S('sbr'))
 
 # ════════ from above: side bending, lateral strain ════════
 panel(1350, 230, 2400, 1450, 'From above — vertical axes')
@@ -83,19 +86,19 @@ SPT = f'<rect x="{AX - 120}" y="{AY - 320}" width="240" height="280" rx="40" sty
 OCT = f'<rect x="{AX - 140}" y="{AY + 40}" width="280" height="300" rx="80" style="{OCC}"/>'
 add(SPT + OCT, unless=S('sbr', 'lat'))
 add(rot(SPT, -8, AX, AY - 180) + rot(OCT, 8, AX, AY + 190), when=S('sbr'))
-add(rot(SPT, 8, AX, AY - 180) + rot(OCT, 8, AX, AY + 190), when=S('lat'))
+add(rot(SPT, -8, AX, AY - 180) + rot(OCT, -8, AX, AY + 190), when=S('lat'))
 text('front (sphenoid)', AX, AY - 350, 'nf-l2', 'middle'); text('back (occiput)', AX, AY + 380, 'nf-l2', 'middle')
 add(f'<path d="M{AX - 200} {AY} H{AX + 200}" style="stroke:var(--ink-3);stroke-width:3;stroke-dasharray:8 8"/>'); text('SBS', AX + 220, AY + 6, 'nf-l2')
 text('side bending: opposite rotation — SBS closes on one side (concave), opens on the other', AX, 1310, 'nf-l1 dyn-tag', 'middle', when=S('sbr'))
-text('named for the convex side', AX, 1340, 'nf-l2', 'middle', when=S('sbr'))
+text('right side bending/rotation shown — named for the convex side', AX, 1340, 'nf-l2', 'middle', when=S('sbr'))
 text('lateral strain: same-direction rotation — a parallelogram head', AX, 1310, 'nf-l1 dyn-tag', 'middle', when=S('lat'))
-text('named for the side the basisphenoid shifts to', AX, 1340, 'nf-l2', 'middle', when=S('lat'))
+text('right lateral strain shown — basisphenoid shifts right, greater wings left', AX, 1340, 'nf-l2', 'middle', when=S('lat'))
 text('nonphysiologic — trauma, birth, dental work', AX, 1380, 'nf-l1', 'middle', when=NONPHYS)
 text('physiologic', AX, 1380, 'nf-l1', 'middle', when=S('tors', 'sbr'))
 
 # techniques — a vault/occiput hand outline and the fluid wave
 TT = dict(cv4='CV4: follow the occiput into extension, resist flexion until a still point, hold until the CRI returns',
-          vs='V-spread: crossed thumbs near lambda, a fluid impulse from the opposite side spreads the suture',
+          vs='V-spread: crossed thumbs just above lambda spread the parietals at the sagittal suture, working forward to bregma',
           vsd='Venous sinus drainage: transverse → confluence → occipital → superior sagittal sinus → metopic suture',
           cond='Condylar decompression: cephalad + lateral at the occiput base, then OA decompression with a chin tuck')
 for k, t in TT.items(): text(t, 1350, 1520, 'nf-l1', 'middle', when=T(k))
@@ -109,7 +112,7 @@ flows = [
        base=dict(csf=3), mods=[m(S('comp'), set=dict(csf=0)), m(T('cv4'), speed=0.3)]),
   dict(d=f'M{AX - 260} {AY + 260} H{AX + 260} M{AX} {AY + 260} V{AY + 340} M{AX} {AY + 340} V{AY - 340}', len=1000, speed=140, r=8,
        base=dict(ven=4), when=T('vsd')),
-  dict(d=f'M{AX + 100} {AY - 250} L{AX - 40} {AY - 300}', len=150, speed=50, r=9, base=dict(csf=3), when=T('vs')),
+  dict(d=f'M{AX} {AY + 320} V{AY - 300}', len=620, speed=80, r=9, base=dict(csf=4), when=T('vs')),   # lambda → bregma, midline
 ]
 sites = [dict(x=(SX + OX) // 2 + 20, y=BY, n=[0, 1], w=10, t='rec', l='', aria='Flexion and extension', c='sbsflexext', ions=[]),
          dict(x=CX, y=CY, n=[0, 1], w=10, t='rec', l='', aria='Torsion', c='sbstorsion', ions=[]),
@@ -127,8 +130,9 @@ notes = {
       'the cranial rhythmic impulse (CRI) and named at the SBS.',
   'ph:flex': 'Flexion: sphenoid and occiput rotate in opposite directions about their transverse axes; the basisphenoid and basiocciput '
              'rise, the occipital squama and greater wings drop. Paired bones externally rotate; the skull widens and shortens. '
-             'Inhalation favors flexion.',
-  'ph:ext': 'Extension: the reverse — paired bones internally rotate; the skull narrows and lengthens front to back.',
+             'Inhalation favors flexion; the sacral base moves posterosuperiorly (counternutation).',
+  'ph:ext': 'Extension: the reverse — paired bones internally rotate; the skull narrows and lengthens front to back. Exhalation '
+            'favors extension; the sacral base moves anteroinferiorly (nutation).',
   'st:tors': 'Torsion (physiologic): opposite rotation about an anteroposterior axis, named for the side of the elevated greater wing.',
   'st:sbr': 'Side bending/rotation (physiologic): opposite rotation about two vertical axes closes the SBS on one side; both bones also '
             'rotate the same way about the AP axis, dropping on the convex side. Named for the convexity.',
@@ -141,7 +145,9 @@ notes = {
             'parallelogram. Named for the direction the basisphenoid deviates.',
   'tx:cv4': 'CV4 (still point): the occiput isn’t forced into extension, it is kept from flexing until the fluctuation stops; hold until '
             'the CRI returns. Not on the mastoids (temporal external rotation). Can be done from the sacrum after acute head trauma.',
-  'tx:vs': 'V-spread and sutural spread use the CSF fluctuation, not muscular force, to release a restricted suture.',
+  'tx:vs': 'V-spread (interparietal sutural opening) frees the sagittal suture and helps drain the superior sagittal sinus. Its '
+           'cousin, sutural spread, sends a fluid impulse from the point opposite a restricted suture — both lean on the CSF '
+           'fluctuation, not muscular force.',
   'tx:vsd': 'Venous sinus drainage: clear thoracic outlet, cervical and OA dysfunction first; then transverse sinus → confluence → '
             'occipital sinus → superior sagittal sinus → metopic suture, with only the weight of the head.',
   'tx:cond': 'Condylar decompression balances the membrane at the hypoglossal canal (CN XII); usually before OA decompression.',
@@ -170,8 +176,8 @@ MAP = dict(
   src=['Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine', 'OCOM OMM — OMS2 written midterm study guide'],
   lanes=[('cmMech', 'The mechanism', 'glycolysis'), ('cmStr', 'Strain patterns', 'tca'), ('cmTx', 'Techniques', 'gluconeo')],
   nodes=[
-    ('cr1', 'Primary respiratory mechanism', 330, 1660, 'cmMech', 'five components', ['prm'], 'hub'),
-    ('cr2', 'Flexion · extension', 760, 1660, 'cmMech', 'named at the SBS', ['sbsflexext']),
+    ('cr1', 'Primary respiratory mechanism', 330, 1660, 'cmMech', 'five components', ['prm', 'cri'], 'hub'),
+    ('cr2', 'Flexion · extension', 760, 1660, 'cmMech', 'named at the SBS', ['sbsflexext', 'rtm']),
     ('cr3', 'Torsion · side bending', 1200, 1660, 'cmStr', 'physiologic', ['sbstorsion', 'sbssbr']),
     ('cr4', 'Compression', 1640, 1660, 'cmStr', 'no motion', ['sbscompress']),
     ('cr5', 'Vertical · lateral strain', 2080, 1660, 'cmStr', 'nonphysiologic', ['sbsvertical', 'sbslateral']),

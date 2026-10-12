@@ -63,24 +63,26 @@ NEUT = dict(unless=['dx:*'])
 for p in (SL, SR): sul(p, 'n', **NEUT); sul(p, 'n', when=['dx:lol&sphinx'])
 for p in (IL, IR): ila(p, 'n', **NEUT); ila(p, 'n', when=['dx:lol&sphinx'])
 ST = dict(lol=('n', 'deep', 'pi', 'n'), lor=('n', 'deep', 'pi', 'n'), luf=('deep', 'n', 'i', 'n'),
-          rue=('n', 'shallow', 'pi', 'n'), bf=('deep', 'deep', 'n', 'n'), be=('shallow', 'shallow', 'n', 'n'))
+          rue=('deep', 'shallow', 'i', 'n'), bf=('deep', 'deep', 'n', 'n'), be=('shallow', 'shallow', 'n', 'n'))
 for k, (a, b, c, d) in ST.items():
     un = ['dx:lol&sphinx'] if k == 'lol' else None
     sul(SL, a, when=D(k), unless=un); sul(SR, b, when=D(k), unless=un); ila(IL, c, when=D(k), unless=un); ila(IR, d, when=D(k), unless=un)
 add(f'<circle cx="{SR[0]}" cy="{SR[1]}" r="52" style="fill:none;stroke:var(--bad);stroke-width:5"/>', when=['dx:lor&sphinx'])
 text('sulcus', SL[0], SL[1] + 70, 'nf-l2', 'middle'); text('sulcus', SR[0], SR[1] + 70, 'nf-l2', 'middle')
 text('ILA', IL[0] - 60, IL[1] + 10, 'nf-l2', 'end'); text('ILA', IR[0] + 60, IR[1] + 10, 'nf-l2')
-text('● deep  ○ shallow  ■ ILA posterior / inferior', 1100, 1330, 'nf-l2', 'middle')
+text('● deep  ○ shallow sulcus · ■ ILA: lower = more inferior, larger = more posterior', 1100, 1330, 'nf-l2', 'middle')
 TAG = dict(lol='left-on-left — seated flexion + right · spring − · lordosis ↑ · L5 rotated right',
            lor='left-on-right — seated flexion + left · spring + · lordosis ↓ · L5 FRS right',
            luf='left unilateral flexion — seated flexion + left · ILA more inferior than posterior · spring −',
-           rue='right unilateral extension — seated flexion + right · shallow right sulcus · spring +',
+           rue='right unilateral extension — seated flexion + right · shallow right sulcus · left ILA inferior · spring +',
            bf='bilateral flexion — both sulci deep · lordosis ↑ · spring −',
            be='bilateral extension — both sulci shallow · lordosis ↓ · spring + · seated flexion equivocal')
 for k, s in TAG.items(): text(s, 1100, 290, 'nf-l1 dyn-tag', 'middle', when=D(k))
 text('sphinx: landmarks more symmetric', 1100, 1390, 'nf-l1', 'middle', when=['dx:lol&sphinx'])
 text('sphinx: landmarks more asymmetric', 1100, 1390, 'nf-l1', 'middle', when=['dx:lor&sphinx'])
 text('sphinx: stays asymmetric or unchanged', 1100, 1390, 'nf-l1', 'middle', when=['dx:luf&sphinx', 'dx:rue&sphinx'])
+text('sphinx: not used to sort bilateral lesions — read the spring test', 1100, 1390, 'nf-l1', 'middle', when=['dx:bf&sphinx', 'dx:be&sphinx'])
+text('sphinx: pick a stuck pattern to see what the test changes', 1100, 1390, 'nf-l1', 'middle', when=['sphinx&!dx:*'])
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
@@ -89,8 +91,10 @@ flows = [
        base=dict(rot=3), when=W('ls'), unless=['dx:*']),
   dict(d=f'M{SL[0]} {SL[1] - 90} C{SL[0] + 80} {SL[1] - 140} {SR[0] - 80} {SR[1] - 140} {SR[0]} {SR[1] - 90}', len=480, speed=80, r=9,
        base=dict(rot=3), when=W('rs'), unless=['dx:*']),
-  dict(d=f'M1100 820 C1100 700 1100 600 1100 470', len=350, speed=50, r=8, base=dict(rot=2), when=D('bf', 'luf')),
-  dict(d=f'M1100 470 C1100 600 1100 700 1100 820', len=350, speed=50, r=8, base=dict(rot=2), when=D('be', 'rue')),
+  dict(d='M1100 470 V820', len=350, speed=50, r=8, base=dict(rot=2), when=D('bf')),
+  dict(d='M1100 820 V470', len=350, speed=50, r=8, base=dict(rot=2), when=D('be')),
+  dict(d=f'M{SL[0] + 40} {SL[1] + 110} L{IL[0] - 10} {IL[1] - 90}', len=340, speed=50, r=8, base=dict(rot=2), when=D('luf')),
+  dict(d=f'M{IR[0] + 10} {IR[1] - 90} L{SR[0] - 40} {SR[1] + 110}', len=340, speed=50, r=8, base=dict(rot=2), when=D('rue')),
 ]
 sites = [dict(x=1100, y=1100, n=[0, 1], w=10, t='rec', l='', aria='Sacral axes', c='sacmotion', ions=[]),
          dict(x=SL[0] - 120, y=SL[1] + 200, n=[-1, 0], w=10, t='rec', l='', aria='Forward torsion', c='fwdtorsion', ions=[]),
@@ -99,27 +103,28 @@ sites = [dict(x=1100, y=1100, n=[0, 1], w=10, t='rec', l='', aria='Sacral axes',
          dict(x=IR[0] + 140, y=IR[1] + 120, n=[1, 1], w=10, t='rec', l='', aria='Bilateral flexion and extension', c='sacbilat', ions=[])]
 
 readouts = [
-  dict(l='Spring test positive', mods=[dict(when=D('lor', 'rue', 'be'), d=1), dict(when=D('lol', 'luf', 'bf'), d=-1)]),
+  dict(l='Lumbosacral spring stiffness', mods=[dict(when=D('lor', 'rue', 'be'), d=1), dict(when=D('lol', 'luf', 'bf'), d=-1)]),
   dict(l='Lumbar lordosis', mods=[dict(when=D('lol', 'bf'), d=1), dict(when=D('lor', 'be'), d=-1)]),
+  dict(l='Asymmetry on the sphinx test', mods=[dict(when=D('lol'), d=-1), dict(when=D('lor'), d=1), dict(when=D('luf', 'rue'), d=0)]),
 ]
 
 notes = {
   '': 'The sacrum moves only 2–4° between the ilia but acts as the body’s differential. Nutation (base forward) comes with lumbar '
       'extension; counternutation (base back) with lumbar flexion. The axes are a teaching model — research finds no fixed axes.',
-  'walk:ls': 'Walking (shown when nothing is stuck) — left stance: the sacrum turns forward about the left oblique axis (named for its superior pole — upper left SI joint '
+  'walk:ls&!dx:*': 'Walking — left stance: the sacrum turns forward about the left oblique axis (named for its superior pole — upper left SI joint '
              'to lower right) — left-on-left.',
-  'walk:rs': 'Walking (shown when nothing is stuck) — right stance: right-on-right about the right oblique axis.',
+  'walk:rs&!dx:*': 'Walking — right stance: right-on-right about the right oblique axis.',
   'dx:lol': 'Left-on-left (forward torsion): normal gait motion stuck to one side, often from a short leg (short right leg → more '
-            'left stance). Deep right sulcus, left ILA posterior and inferior; seated flexion positive on the right; spring '
-            'negative; lordosis increased; lumbar convex right, L5 neutral rotated right; left leg looks short supine.',
+            'left stance). Deep right sulcus, left ILA posterior and inferior (more posterior than inferior); seated flexion '
+            'positive on the right; spring negative; lordosis increased; lumbar convex right, L5 neutral rotated right; left leg looks short supine.',
   'dx:lor': 'Left-on-right (backward torsion): nonphysiologic — lumbar flexed and side bent, the sacrum counternutates and locks. '
             'Same landmarks as left-on-left, but seated flexion positive on the left, spring positive, lordosis reduced, sphinx '
             'worsens; L5 FRS right; crests level.',
   'dx:luf': 'Left unilateral flexion (commoner on the left): seated flexion positive left, deep left sulcus, left ILA more inferior '
             'than posterior, spring negative.',
-  'dx:rue': 'Right unilateral extension (commoner on the right): seated flexion positive right, shallow right sulcus, left ILA '
-            'posterior and inferior, spring positive.',
-  'dx:bf': 'Bilateral flexion: both sulci deep, more lordosis, spring negative — near-physiologic, rarely diagnosed.',
+  'dx:rue': 'Right unilateral extension (commoner on the right): seated flexion positive right, sulcus deep left and shallow '
+            'right, left ILA more inferior than posterior, spring positive — the spring test sets it apart from left flexion.',
+  'dx:bf': 'Bilateral flexion: both sulci deep, more lordosis, spring negative, seated flexion equivocal — near-physiologic, rarely diagnosed.',
   'dx:be': 'Bilateral extension: both sulci shallow, less lordosis, spring positive; destabilizes the pelvis — after lithotomy '
            'deliveries or repeated forward bending; pain worse bending backward. Seated flexion equivocal; PSISs rise early.',
   'sphinx': 'Sphinx test: forward torsions become more symmetric, backward torsions more asymmetric, unilateral lesions stay '
@@ -127,7 +132,7 @@ notes = {
 }
 
 dyn = dict(
-  kinds=dict(rot=['mov', '--accent']), groups=[['mov', 'Sacral motion (base up = flexion, down = extension, schematic)']],
+  kinds=dict(rot=['mov', '--accent']), groups=[['mov', 'Sacral motion (schematic: gliding down = flexion, up = extension)']],
   switches=[dict(id='walk', label='Walking', type='steps', auto=3, options=[['ls', 'Left stance'], ['rs', 'Right stance']]),
             dict(id='dx', label='Stuck', type='one', options=[
               ['lol', 'Left-on-left', 'fwdtorsion'], ['lor', 'Left-on-right', 'bwdtorsion'], ['luf', 'Left unilateral flexion', 'sacshear'],
@@ -157,5 +162,5 @@ MAP = dict(
   panels=[
     (2500, PANY, 1000, 'Spring and sphinx (Foundations ch 38)', [
       ('Forward torsion', 'spring − · sphinx more symmetric'), ('Backward torsion', 'spring + · sphinx more asymmetric'),
-      ('Unilateral', 'sphinx unchanged'), ('Bilateral extension', 'spring + · both sulci shallow')])],
+      ('Unilateral', 'sphinx stays asymmetric or unchanged'), ('Bilateral extension', 'spring + · both sulci shallow')])],
   dyn=dyn)

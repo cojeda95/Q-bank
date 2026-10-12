@@ -3,7 +3,7 @@
 # picks one of the five ways fluid collects — raised hydrostatic pressure (heart failure), leaky vessels (pneumonia), low oncotic
 # pressure (nephrotic syndrome), stronger negative pressure (atelectasis), blocked lymph (mediastinal carcinomatosis) — and an
 # `fl` switch shows what fills the space: clear transudate, blood, chyle, pus or a tumor-laden effusion.
-# Schematic. 5 readouts. Facts from the pinned cards (Robbins ch 15); FA page in `fa`. No new cards.
+# Schematic. 7 readouts. Robbins ch 15 + Guyton ch 39; FA 698–699 (Light's criteria, exam signs). No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -99,25 +99,29 @@ readouts = [
   dict(l='Plasma oncotic pressure', mods=[dict(when=M('ne'), d=-1)]),
   dict(l='Lymph drainage', mods=[dict(when=M('ly'), d=-1)]),
   dict(l='Pleural fluid', mods=[dict(when=['mech:*', 'fl:*'], d=1)]),
+  dict(l='Tactile fremitus · breath sounds', mods=[dict(when=['mech:*', 'fl:*'], d=-1)]),
+  dict(l="Light's ratios (protein, LDH)", mods=[dict(when=M('hf', 'ne'), d=0), dict(when=M('pna') + F('em', 'mt', 'ch'), d=1)]),
 ]
 
 notes = {
-  '': 'Normally no more than 15 mL of clear serous fluid lubricates the pleura. It collects when the balance tips: more pushed out of '
-      'capillaries, more leaking through them, less held back by plasma proteins, more sucked in, or less drained by lymph.',
+  '': 'Normally no more than 15 mL of clear serous fluid lubricates the pleura; lymphatics opening on the parietal pleura drain any excess. '
+      'It collects when the balance tips: more pushed out of capillaries, more leaking through them, less held back by plasma proteins, '
+      'more sucked in, or less drained by lymph. Any effusion: dull percussion, ↓ breath sounds and ↓ tactile fremitus.',
   'mech:hf': 'Heart failure raises hydrostatic pressure — the commonest cause of hydrothorax, usually with pulmonary congestion. Pressure '
-             'and oncotic causes give transudates.',
+             'and oncotic causes give transudates (clear, hypocellular; Light’s ratios not raised).',
   'mech:pna': 'Inflammation (pneumonia, TB, infarction, abscess, bronchiectasis, RA, lupus, uremia, metastases, radiation) makes vessels '
-              'leaky: serous, serofibrinous or fibrinous pleuritis — an exudate.',
+              'leaky: serous, serofibrinous or fibrinous pleuritis — an exudate (pleural/serum protein > 0.5 or LDH > 0.6).',
   'mech:ne': 'Low plasma oncotic pressure — nephrotic syndrome; also the generalized edema of renal failure and cirrhosis.',
   'mech:at': 'Atelectasis makes intrapleural pressure more negative and draws fluid in.',
   'mech:ly': 'Mediastinal carcinomatosis blocks lymphatic drainage.',
   'fl:hy': 'Hydrothorax: noninflammatory clear straw-colored fluid.',
   'fl:he': 'Hemothorax: blood — usually trauma or surgery, sometimes a ruptured aortic aneurysm (almost always fatal). Bloody exudate '
            '(hemorrhagic pleuritis) instead suggests a bleeding disorder, rickettsiae or tumor.',
-  'fl:ch': 'Chylothorax: milky lymph rich in emulsified fat — thoracic duct trauma or a malignancy obstructing a major lymphatic duct.',
+  'fl:ch': 'Chylothorax: milky lymph rich in emulsified fat (chylomicron triglycerides) — thoracic duct trauma or a malignancy obstructing '
+           'a major lymphatic duct. FA counts it with the exudates.',
   'fl:em': 'Empyema: loculated yellow-green pus of neutrophils from bacterial or fungal seeding, usually from the lung (rarely through the '
-           'diaphragm from a liver or subdiaphragmatic abscess, more often on the right). It organizes into adhesions. Drain it.',
-  'fl:mt': 'Metastatic implants, most often lung and breast, give serous or serosanguineous effusions with tumor cells — cytology helps.',
+           'diaphragm from a liver or subdiaphragmatic abscess, more often on the right). It organizes into adhesions; pleural glucose and pH fall. Drain it.',
+  'fl:mt': 'Metastatic implants, most often lung and breast, give serous or serosanguineous effusions with tumor cells — cytology helps. An exudate, often with low glucose.',
 }
 
 dyn = dict(
@@ -131,15 +135,15 @@ dyn = dict(
               ['em', 'Pus', 'pleuritis'], ['mt', 'Tumor cells', 'effmech']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 15')
+  src='Robbins ch 15 · Guyton ch 39 · First Aid pp. 698–699')
 
 MAP = dict(
   id='plsim', title='Pleural Fluid in Motion', topic='pulmo', after='pleural',
   sub='Raise capillary pressure, make vessels leak, drop plasma protein, collapse the lung or block the lymph, and watch the pleural space '
       'fill — then see it as clear fluid, blood, chyle, pus or a malignant effusion',
   w=3600, h=1900,
-  fa='699',
-  src=['Robbins ch 15 — The lung'],
+  fa='698–699',
+  src=['Robbins ch 15 — The lung', 'Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid'],
   lanes=[('pfMech', 'Mechanism', 'tca'), ('pfFluid', 'The fluid', 'glycolysis')],
   nodes=[
     ('pf1', 'Five ways fluid collects', 400, 1720, 'pfMech', 'pressure · leak · lymph', ['effmech'], 'hub'),
