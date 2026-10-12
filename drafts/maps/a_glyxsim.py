@@ -62,7 +62,9 @@ add(f'<path d="M{GX + 120} {Y["pyruvate"]} H{TX - TR - 10}" style="stroke:var(--
 text('pyruvate carboxylase (biotin)', GX + 300, Y['pyruvate'] - 14, 'nf-l2', 'middle')
 add(f'<circle cx="{TX}" cy="{TY}" r="{TR}" style="fill:none;stroke:var(--dk3);stroke-width:6;opacity:.6"/>')
 text('TCA cycle', TX, TY + 6, 'nf-l1', 'middle')
-TCA = [('oxaloacetate', 180), ('citrate', 250), ('isocitrate', 315), ('α-ketoglutarate', 20), ('succinate', 80), ('fumarate', 130)]
+# all eight intermediates, as on Core Carbon (pyruvate carboxylase feeds oxaloacetate at the left, then clockwise)
+TCA = [('oxaloacetate', 180), ('citrate', 225), ('isocitrate', 270), ('α-ketoglutarate', 315), ('succinyl-CoA', 0), ('succinate', 45),
+       ('fumarate', 90), ('malate', 135)]
 import math
 P = {}
 for l, a in TCA:
@@ -70,7 +72,9 @@ for l, a in TCA:
     add(f'<circle cx="{x:.0f}" cy="{y:.0f}" r="14" style="fill:var(--dk3);opacity:.7"/>')
     text(l, x + (24 if x >= TX else -24), y + (36 if y > TY + 50 else -20 if y < TY - 50 else 6), 'nf-l2', 'start' if x >= TX else 'end')
 text('IDH', P['isocitrate'][0] + 60, (P['isocitrate'][1] + P['α-ketoglutarate'][1]) / 2, 'nf-l2')
-text('SDH = complex II', TX - 50, TY + 300, 'nf-l2', 'middle')
+text('SDH = complex II', TX + 150, TY + 300, 'nf-l2', 'middle')
+mx, my = P['malate']
+add(f'<circle cx="{mx:.0f}" cy="{my:.0f}" r="34" style="fill:var(--dk10);fill-opacity:.4"/>', when=X('etoh'))   # NADH pushes OAA → malate
 # hits
 add(f'<path d="M{GX - 30} 340 l60 40 m0 -40 l-60 40" style="stroke:var(--bad);stroke-width:10"/>', when=X('hk'))
 add(f'<path d="M{GX - 30} 1060 l60 40 m0 -40 l-60 40" style="stroke:var(--bad);stroke-width:10"/>', when=X('pk'))

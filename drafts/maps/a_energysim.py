@@ -65,11 +65,14 @@ add('<path d="M720 920 H980" class="dyn-line"/>')
 TX, TY, TR = 1480, 640, 220
 add(f'<circle cx="{TX}" cy="{TY}" r="{TR}" style="fill:none;stroke:var(--dk2);stroke-width:5;stroke-dasharray:14 8"/>')
 text('TCA cycle', TX, TY + 6, 'dyn-big', 'middle')
-for ang, lab in ((200, 'Citrate'), (250, 'Isocitrate'), (320, 'α-Ketoglutarate'), (20, 'Succinyl-CoA'), (110, 'Oxaloacetate')):
-    x = TX + TR * math.cos(math.radians(ang)); y = TY + TR * math.sin(math.radians(ang))
+# all eight intermediates, as on Core Carbon: acetyl-CoA joins oxaloacetate at the left, then clockwise
+TCA8 = [(202.5, 'Citrate'), (247.5, 'Isocitrate'), (292.5, 'α-Ketoglutarate'), (337.5, 'Succinyl-CoA'), (22.5, 'Succinate'),
+        (67.5, 'Fumarate'), (112.5, 'Malate'), (157.5, 'Oxaloacetate')]
+for ang, lab in TCA8:
+    c, s_ = math.cos(math.radians(ang)), math.sin(math.radians(ang))
+    x = TX + TR * c; y = TY + TR * s_
     add(f'<circle cx="{round(x)}" cy="{round(y)}" r="10" style="fill:var(--dk2)"/>')
-    dx = -16 if 90 < ang < 270 else 16
-    text(lab, round(x + dx), round(y - 14), 'nf-l2', 'end' if dx < 0 else 'start')
+    text(lab, round(x + 22 * c), round(y + 22 * s_ + (18 if s_ > 0.3 else -6 if s_ < -0.3 else 6)), 'nf-l2', 'end' if c < 0 else 'start')
 add(f'<path d="M1210 900 Q1250 800 {TX - TR + 2} {TY}" class="dyn-line"/>')
 # ETC labels on the membrane
 CX = dict(I=360, III=560, IV=760, V=1000)
@@ -93,9 +96,9 @@ TAG = dict(pdh='PDH deficiency — pyruvate can’t enter: lactate and alanine p
 for k, t in TAG.items():
     if k in ('pk',): continue
     text(t, 1500, 1170, 'nf-l1 dyn-tag', 'middle', when=O(k))
-akx, aky = TX + TR * math.cos(math.radians(320)), TY + TR * math.sin(math.radians(320))
-add(X(round(akx) + 30, round(aky) + 30, 16), when=O('thia', 'ars'))
-add(X(TX + round(TR * math.cos(math.radians(225))), TY + round(TR * math.sin(math.radians(225))), 18), when=O('fluoro'))
+TA = lambda a, r=TR: (TX + round(r * math.cos(math.radians(a))), TY + round(r * math.sin(math.radians(a))))
+add(X(*TA(315), 16), when=O('thia', 'ars'))      # α-KG dehydrogenase: α-ketoglutarate → succinyl-CoA
+add(X(*TA(225), 18), when=O('fluoro'))           # aconitase: citrate → isocitrate
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
