@@ -57,17 +57,19 @@ for i in range(7):
 text('maturation blocked — blasts pile up', 640, 520, 'nf-l1 dyn-tag', 'middle', when=D('aml'), unless=['dx:aml&drug'])
 text('stalled as promyelocytes — granules full of procoagulant → DIC', 820, 520, 'nf-l1 dyn-tag', 'middle', when=DR('apl', False))
 text('ATRA + arsenic: promyelocytes mature into neutrophils', 820, 520, 'nf-l1 dyn-tag', 'middle', when=DR('apl'))
+text('cytarabine + anthracycline clear the blasts', 640, 520, 'nf-l1 dyn-tag', 'middle', when=['dx:aml&drug'])
 text('blast crisis — AML or ALL', 640, 520, 'nf-l1 dyn-tag', 'middle', when=D('blast'))
 text('full marrow, daughters die before release — fewer than 20% blasts', 850, 1080, 'nf-l1 dyn-tag', 'middle', when=D('mds'))
 for x in (620, 900, 1180):
     add(f'<path d="M{x - 20} {660} l40 40 M{x + 20} {660} l-40 40" class="nf-x"/>', when=D('mds'))
 text('BCR-ABL kinase always on — t(9;22)', 1210, 620, 'nf-l1 dyn-tag', 'middle', when=DR('cml', False))
 text('imatinib switches the kinase off', 1210, 620, 'nf-l1 dyn-tag', 'middle', when=DR('cml'))
-text('JAK2 V617F — on without EPO', 1000, 360, 'nf-l1 dyn-tag', 'middle', when=D('pv'))
-text('JAK2 on without TPO', 1000, 1050, 'nf-l1 dyn-tag', 'middle', when=D('et'))
+text('JAK2 V617F — on without EPO', 1000, 360, 'nf-l1 dyn-tag', 'middle', when=D('pv'), unless=['dx:pv&drug'])
+text('phlebotomy, hydroxyurea, ruxolitinib — fewer red cells', 1000, 360, 'nf-l1 dyn-tag', 'middle', when=['dx:pv&drug'])
+text('megakaryocytes flood the blood with platelets · JAK2 ⊕ in 30–50%', 1000, 1050, 'nf-l1 dyn-tag', 'middle', when=D('et'))
 for i in range(9):
     add(f'<path d="M{260 + i * 140} 300 l100 780" style="stroke:var(--ink-3);stroke-width:3;opacity:.5"/>', when=D('mf'))
-text('fibrosis — dry tap', 850, 1080, 'nf-l1 dyn-tag', 'middle', when=D('mf'))
+text('TGF-β from atypical megakaryocytes → fibrosis — dry tap', 850, 1080, 'nf-l1 dyn-tag', 'middle', when=D('mf'))
 
 # ════════ blood + spleen ════════
 add('<path d="M1600 300 V1100" style="stroke:var(--nf-blood);stroke-width:90;opacity:.12;stroke-linecap:round"/>')
@@ -93,12 +95,14 @@ def m(when, **kw): return dict(when=when, **kw)
 LOW = D('aml', 'apl', 'mds', 'blast', 'mf')
 flows = [
   dict(d='M340 650 C420 520 500 420 600 420 H1580', len=1300, speed=120, r=8, base=dict(rbc=3),
-       mods=[m(LOW, set=dict(rbc=1)), m(D('pv'), set=dict(rbc=8)), m(['dx:pv&drug', 'dx:aml&drug'], set=dict(rbc=3))]),
+       mods=[m(LOW, set=dict(rbc=1)), m(D('cml'), set=dict(rbc=2)), m(D('pv'), set=dict(rbc=8)),
+             m(['dx:pv&drug', 'dx:aml&drug', 'dx:cml&drug'], set=dict(rbc=3))]),
   dict(d='M340 710 C420 840 500 960 600 960 H1580', len=1300, speed=120, r=7, base=dict(plt=3),
-       mods=[m(LOW, set=dict(plt=1)), m(D('et'), set=dict(plt=8)), m(['dx:aml&drug'], set=dict(plt=3))]),
+       mods=[m(LOW, set=dict(plt=1)), m(D('et'), set=dict(plt=8)), m(DR('pv', False) + DR('cml', False), set=dict(plt=5)),
+             m(['dx:aml&drug'], set=dict(plt=3))]),
   dict(d='M346 680 H1580', len=1240, speed=120, r=8, base=dict(neu=3),
        mods=[m(D('aml', 'blast', 'mds', 'mf'), set=dict(neu=1)), m(DR('apl', False), set=dict(neu=0)), m(DR('apl'), set=dict(neu=5)),
-             m(D('cml'), set=dict(neu=9)), m(['dx:cml&drug', 'dx:aml&drug'], set=dict(neu=3))]),
+             m(D('cml'), set=dict(neu=9)), m(DR('pv', False), set=dict(neu=5)), m(['dx:cml&drug', 'dx:aml&drug'], set=dict(neu=3))]),
   dict(d='M600 600 C900 560 1300 560 1580 600', len=1000, speed=100, r=9, base=dict(blast=6), when=D('aml', 'blast'), unless=['dx:aml&drug']),
 ]
 sites = [dict(x=560, y=780, n=[0, 1], w=10, t='rec', l='', aria='AML', c='aml', ions=[]),
@@ -110,9 +114,12 @@ sites = [dict(x=560, y=780, n=[0, 1], w=10, t='rec', l='', aria='AML', c='aml', 
 
 readouts = [
   dict(l='Blasts in blood', mods=[dict(when=D('aml', 'blast'), d=1), dict(when=['dx:aml&drug'], d=-1)]),
-  dict(l='Neutrophils', mods=[dict(when=D('aml', 'blast', 'mds'), d=-1), dict(when=DR('apl', False), d=-1), dict(when=DR('cml', False), d=1)]),
-  dict(l='Hematocrit', mods=[dict(when=D('aml', 'apl', 'mds', 'blast'), d=-1), dict(when=DR('pv', False), d=1)]),
-  dict(l='Platelets', mods=[dict(when=D('aml', 'apl', 'mds', 'blast'), d=-1), dict(when=D('et'), d=1)]),
+  # MPN columns from First Aid's table (p. 438): PV ↑↑↑ · ET – – ↑ · myelofibrosis ↓ · CML ↓ ↑ ↑ (RBC, WBC, platelets)
+  dict(l='Neutrophils', mods=[dict(when=D('aml', 'blast', 'mds'), d=-1), dict(when=DR('apl', False), d=-1),
+                              dict(when=DR('cml', False) + DR('pv', False), d=1), dict(when=D('et'), d=0)]),
+  dict(l='Hematocrit', mods=[dict(when=D('aml', 'apl', 'mds', 'blast', 'mf') + DR('cml', False), d=-1), dict(when=DR('pv', False), d=1),
+                             dict(when=D('et'), d=0)]),
+  dict(l='Platelets', mods=[dict(when=D('aml', 'apl', 'mds', 'blast'), d=-1), dict(when=D('et') + DR('cml', False) + DR('pv', False), d=1)]),
   dict(l='Spleen size', mods=[dict(when=D('cml', 'mf', 'blast'), d=1)]),
   dict(l='DIC', mods=[dict(when=DR('apl', False), d=1)]),
 ]
@@ -130,8 +137,10 @@ notes = {
   'dx:blast': 'Untreated CML progresses to blast crisis — AML or ALL.',
   'dx:pv': 'Polycythemia vera: JAK2 V617F (> 95%) turns JAK2 on without EPO — high hematocrit with low EPO, itching after a warm '
            'shower, erythromelalgia, Budd-Chiari, DVT/PE.',
-  'dx:et': 'Essential thrombocythemia: JAK2-driven platelet excess — bleeding and thrombosis.',
-  'dx:mf': 'Myelofibrosis: teardrop cells, dry tap, massive splenomegaly.',
+  'dx:et': 'Essential thrombocythemia: megakaryocytes and platelets proliferate massively (JAK2 ⊕ in only 30–50%) — bleeding '
+           'and thrombosis; red and white counts normal.',
+  'dx:mf': 'Myelofibrosis: atypical megakaryocytes secrete TGF-β, fibroblasts scar the marrow — dry tap, teardrop red cells, '
+           'massive splenomegaly, anemia. JAK2 ⊕ in 30–50%.',
   'dx:lch': 'Langerhans cell histiocytosis: a clone of immature Langerhans (dendritic) cells, often BRAF V600E — child with lytic '
             'skull lesions and rash; S-100 ⊕, CD1a ⊕, Birbeck granules (tennis rackets).',
   'drug': 'Treatment from the cards — AML: cytarabine + an anthracycline · APL: all-trans retinoic acid + arsenic trioxide '
@@ -148,7 +157,7 @@ dyn = dict(
             dict(id='drug', label='Treat', type='toggle', on='Drug given', off='Give the drug', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 13')
+  src='First Aid pp. 436–439, 447 · Robbins ch 13')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -168,7 +177,7 @@ MAP = dict(
     ('my5', 'JAK2 V617F neoplasms', 2080, 1660, 'myMpn', 'PV · ET · myelofibrosis', ['jak2']),
     ('my6', 'Langerhans cell histiocytosis', 2520, 1660, 'myMpn', 'Birbeck granules', ['lch'])],
   panels=[
-    (2500, PANY, 1000, 'Marker → disease (Robbins ch 13)', [
-      ('t(15;17) PML-RARα', 'APL'), ('t(9;22) BCR-ABL', 'CML'), ('JAK2 V617F', 'PV, ET, myelofibrosis'),
+    (2500, PANY, 1000, 'Marker → disease (First Aid pp. 437–439)', [
+      ('t(15;17) PML-RARα', 'APL'), ('t(9;22) BCR-ABL', 'CML'), ('JAK2 V617F', 'PV (> 95%); ET, myelofibrosis (30–50%)'),
       ('Blasts ≥ 20%', 'AML (< 20%: MDS)'), ('CD1a, S-100', 'LCH')])],
   dyn=dyn)

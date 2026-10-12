@@ -35,7 +35,7 @@ def box(x0, y0, x1, y1, lab, cls='dyn-cell'):
 def panel(x0, y0, x1, y1, title):
     add(f'<rect x="{x0}" y="{y0}" width="{x1 - x0}" height="{y1 - y0}" rx="40" class="dyn-soft"/>'); text(title, x0 + 30, y0 + 44, 'dyn-big')
 # herpes logic
-HS_OK = ['rx:acv&hv:hsv&!tk', 'rx:gcv&hv:cmv&!tk'] + D('fos', 'cdv')
+HS_OK = ['rx:acv&hv:hsv&!tk', 'rx:gcv&!tk'] + D('fos', 'cdv')   # ganciclovir is also activated by HSV TK (Katzung ch 49: TK mutants are cross-resistant)
 HS_KIN_FAIL = ['rx:acv&hv:cmv', 'rx:acv&tk', 'rx:gcv&tk']
 HCV = D('previr', 'asvir', 'buvir')
 HBV = D('tdf')
@@ -47,7 +47,11 @@ text('HIV has its own map · pick a drug, then try HSV vs CMV and a kinase-mutan
 # ════════ herpes ════════
 panel(300, 260, 1300, 820, 'Herpes (HSV · VZV · CMV)')
 box(330, 390, 520, 450, 'Drug'); box(560, 390, 780, 450, 'Viral kinase'); box(820, 390, 1010, 450, 'Host kinases')
-text('TK (HSV/VZV) · UL97 (CMV)', 670, 480, 'nf-l2', 'middle')
+text('thymidine kinase (TK) · HSV/VZV', 670, 480, 'nf-l2', 'middle', when=['hv:hsv&!tk'])
+text('UL97 kinase · CMV', 670, 480, 'nf-l2', 'middle', when=['hv:cmv&!tk'])
+text('mutant TK · HSV/VZV', 670, 480, 'nf-l1 dyn-tag', 'middle', when=['hv:hsv&tk'])
+text('mutant UL97 · CMV', 670, 480, 'nf-l1 dyn-tag', 'middle', when=['hv:cmv&tk'])
+add('<rect x="552" y="382" width="236" height="76" rx="24" class="dyn-lesion" style="stroke-dasharray:10 8"/>', when=['tk'])
 add('<circle cx="1000" cy="640" r="150" style="fill:var(--dk2);fill-opacity:.08;stroke:var(--dk2);stroke-width:3"/>')
 text('nucleus', 1000, 760, 'nf-l2', 'middle')
 box(900, 610, 1100, 670, 'DNA polymerase')
@@ -94,7 +98,7 @@ text('“cap-snatching”', 1775, 1110, 'nf-l2', 'middle')
 def m(when, **kw): return dict(when=when, **kw)
 flows = [
   dict(d='M520 420 H560', len=40, speed=30, r=8, base=dict(drug=2), when=D('acv', 'gcv')),
-  dict(d='M780 420 H820', len=40, speed=30, r=8, base=dict(drug=2), when=D('acv', 'gcv', 'cdv'), unless=HS_KIN_FAIL),
+  dict(d='M780 420 H820', len=40, speed=30, r=8, base=dict(drug=2), when=D('acv', 'gcv'), unless=HS_KIN_FAIL),
   dict(d='M1010 420 C1060 460 1060 560 1010 610', len=220, speed=70, r=8, base=dict(drug=3), when=D('acv', 'gcv', 'cdv'), unless=HS_KIN_FAIL),
   dict(d='M425 450 C440 560 700 640 900 640', len=560, speed=110, r=8, base=dict(drug=3), when=D('fos')),
   dict(d='M425 450 C440 520 700 520 820 440', len=450, speed=110, r=8, base=dict(drug=3), when=D('cdv')),
@@ -122,7 +126,7 @@ sites = [
 readouts = [
   dict(l='Viral replication', mods=[dict(when=HS_OK + HCV + HBV + FLU, d=-1), dict(when=HS_KIN_FAIL, d=0)]),
   dict(l='Cure possible', mods=[dict(when=HCV, d=1), dict(when=HBV, d=-1)]),
-  dict(l='Kidney toxicity', mods=[dict(when=D('fos', 'cdv', 'gcv', 'acv'), d=1)]),
+  dict(l='Kidney toxicity', mods=[dict(when=D('fos', 'cdv', 'gcv', 'acv', 'tdf'), d=1)]),
   dict(l='Myelosuppression', mods=[dict(when=D('gcv'), d=1)]),
 ]
 
@@ -133,7 +137,7 @@ notes = {
   'hv:cmv': 'CMV has no TK; its UL97 kinase activates ganciclovir instead. Disease when cell-mediated immunity fails (AIDS, transplant).',
   'tk': 'Kinase-mutant virus: TK-deficient HSV resists acyclovir, UL97-mutant CMV resists ganciclovir — switch to foscarnet or cidofovir.',
   'rx:acv': 'Acyclovir (valacyclovir, famciclovir): a guanosine analogue phosphorylated first by viral TK, then host kinases; the '
-            'triphosphate inhibits viral DNA polymerase and ends the chain. HSV and VZV; weak against CMV. IV: crystal nephropathy — hydrate.',
+            'triphosphate inhibits viral DNA polymerase and ends the chain. HSV and VZV; no useful activity against CMV. IV: crystal nephropathy — hydrate.',
   'rx:gcv': 'Ganciclovir (valganciclovir): activated by CMV UL97, then host kinases — CMV retinitis, colitis, transplant prophylaxis. '
             'Myelosuppression, kidney toxicity.',
   'rx:fos': 'Foscarnet: a pyrophosphate analogue that binds the polymerase directly — no kinase needed, so it works on TK- and UL97-mutant '
@@ -144,7 +148,7 @@ notes = {
   'rx:buvir': 'Sofosbuvir (-buvir): a uridine analogue built into new RNA by NS5B — the chain stops. Backbone of HCV regimens; avoid '
               'with amiodarone (bradycardia).',
   'rx:tdf': 'Tenofovir, entecavir: stop HBV reverse transcription. None removes cccDNA, so therapy is long-term and stopping can cause a '
-            'flare. With HIV, use a regimen active against both.',
+            'flare. Tenofovir: nephropathy (Fanconi). With HIV, use a regimen active against both.',
   'rx:osel': 'Oseltamivir (zanamivir, peramivir): block neuraminidase, so new virions stay stuck to sialic acid. Influenza A and B, best '
              'within 48 hours.',
   'rx:balox': 'Baloxavir: blocks the PA cap-dependent endonuclease — no cap-snatching, no viral mRNA. Acts earlier than neuraminidase inhibitors.',
@@ -170,7 +174,7 @@ MAP = dict(
   sub='Herpes, hepatitis C, hepatitis B and influenza replicating side by side — give acyclovir, ganciclovir, foscarnet, cidofovir, '
       'a -previr, -asvir or -buvir, tenofovir, oseltamivir or baloxavir and see which step stops, and why kinase mutants resist',
   w=3600, h=1900,
-  fa='162, 170, 171, 172, 173, 180, 196, 197, 199',
+  fa='162, 166, 170, 171, 173, 180, 196, 197, 199',
   src=['Katzung ch 49 — Antiviral Agents', 'Katzung ch 51 — Clinical Use of Antimicrobial Agents', 'Robbins ch 8 — Infectious diseases',
        'Robbins ch 18 — Liver and gallbladder', 'Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products'],
   lanes=[('avHerp', 'Herpesviruses', 'glycolysis'), ('avHep', 'Hepatitis B and C', 'tca'), ('avFlu', 'Influenza', 'gluconeo')],

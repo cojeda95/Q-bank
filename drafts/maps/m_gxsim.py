@@ -37,7 +37,8 @@ def cell(x, lab, when=None, unless=None, lysed=False):
 
 text('Bacterial gene transfer — four ways DNA moves between bacteria', 180, 150, 'dyn-big')
 text('blue loop = chromosome · small ring = plasmid · red = the gene that moves', 180, 176, 'dyn-cap')
-cell(DX, 'Donor', unless=D('tf')); cell(DX, 'Donor — lysed', when=D('tf'), lysed=True)
+cell(DX, 'Donor', unless=D('tf', 'gen', 'spec')); cell(DX, 'Donor — lysed', when=D('tf'), lysed=True)
+cell(DX, 'Donor — lysed as new phages are released', when=D('gen', 'spec'), lysed=True)   # FA p. 128: release of new phage from lysed cell
 cell(RX, 'Recipient')
 for x in (DX, RX):
     add(f'<ellipse cx="{x}" cy="{CY}" rx="180" ry="110" style="fill:none;stroke:var(--dk1);stroke-width:6"/>')
@@ -45,9 +46,9 @@ add(f'<path d="M{DX - 40} {CY - 110} a40 30 0 0 0 80 0" style="fill:none;stroke:
 text('gene', DX, CY - 140, 'nf-l2', 'middle')
 # F plasmid in donor
 add(f'<circle cx="{DX + 200}" cy="{CY + 120}" r="40" style="fill:none;stroke:var(--dk4);stroke-width:6"/>', when=D('f', 'tn'))
-text('F plasmid', DX + 200, CY + 190, 'nf-l2', 'middle', when=D('f'))
+text('F plasmid', DX + 150, CY + 172, 'nf-l2', 'end', when=D('f'))
 add(f'<circle cx="{RX - 200}" cy="{CY + 120}" r="40" style="fill:none;stroke:var(--dk4);stroke-width:6;stroke-dasharray:8 6"/>', when=D('f'))
-text('recipient becomes F⁺', RX - 200, CY + 190, 'nf-l1 dyn-tag', 'middle', when=D('f'))
+text('recipient becomes F⁺', RX - 150, CY + 175, 'nf-l1 dyn-tag', None, when=D('f'))
 add(f'<path d="M{DX + 180} {CY - 110} a30 20 0 0 0 60 0" style="fill:none;stroke:var(--dk4);stroke-width:10"/>', when=D('hfr'))
 text('F integrated (Hfr)', DX + 210, CY - 150, 'nf-l2', 'middle', when=D('hfr'))
 text('recipient stays F⁻ but gains chromosomal genes', RX, CY + 260, 'nf-l1 dyn-tag', 'middle', when=D('hfr'))
@@ -58,13 +59,13 @@ text('sex pilus — mating bridge (live contact)', 1200, CY - 30, 'nf-l2', 'midd
 def phage(x, y, when): add(f'<path d="M{x} {y} l30 -30 l30 30 l-30 30 z M{x + 30} {y + 30} v60 M{x + 10} {y + 90} l20 -20 l20 20" style="fill:var(--dk7);fill-opacity:.3;stroke:var(--dk7);stroke-width:4"/>', when=when)
 phage(1170, 380, D('gen', 'spec'))
 add(f'<path d="M{DX - 220} {CY + 20} a40 25 0 0 0 80 0" style="fill:none;stroke:var(--dk7);stroke-width:10"/>', when=D('spec'))
-text('prophage (lysogenic)', DX - 180, CY + 80, 'nf-l2', 'middle', when=D('spec'))
+text('prophage (lysogenic)', DX - 210, CY + 125, 'nf-l2', 'middle', when=D('spec'))
 text('generalized: a lytic phage packs ANY piece of host DNA by mistake', 1200, 300, 'nf-l1 dyn-tag', 'middle', when=D('gen'))
 text('specialized: the prophage excises and takes only its neighbors', 1200, 300, 'nf-l1 dyn-tag', 'middle', when=D('spec'))
 text('naked DNA fragments taken up by a competent cell — SHiN', 1200, 300, 'nf-l1 dyn-tag', 'middle', when=D('tf'))
-add(X(1200, CY, 26), when=['gx:tf&dnase'])
-text('DNase destroys free DNA — transformation blocked', 1200, CY + 60, 'nf-l1 dyn-tag', 'middle', when=['gx:tf&dnase'])
-text('DNase does nothing — the DNA never leaves a cell or capsid', 1200, CY + 60, 'nf-l1 dyn-tag', 'middle', when=['dnase&!gx:tf'])
+add(X(1200, 400, 26), when=['gx:tf&dnase'])   # on the free-DNA arc, clear of the conjugation tap target
+text('DNase destroys free DNA — transformation blocked', 1200, CY + 330, 'nf-l1 dyn-tag', 'middle', when=['gx:tf&dnase'])
+text('DNase does nothing — the DNA never leaves a cell or capsid', 1200, CY + 330, 'nf-l1 dyn-tag', 'middle', when=['dnase&!gx:tf'])
 # transposon
 add(f'<rect x="{DX + 100}" y="{CY + 60}" width="60" height="20" rx="6" style="fill:var(--bad)"/>', when=D('tn'))
 text('transposase cuts or copies it into the plasmid — then the plasmid travels', 1200, 300, 'nf-l1 dyn-tag', 'middle', when=D('tn'))
@@ -109,7 +110,8 @@ notes = {
   'gx:f': 'Conjugation F⁺ × F⁻: the F plasmid codes for a sex pilus; one plasmid strand is copied across the bridge — the recipient becomes '
           'F⁺, no chromosomal DNA moves. The main route for spreading R plasmids.',
   'gx:hfr': 'Hfr × F⁻: with F integrated in the chromosome, the leading part drags flanking chromosomal genes across; the recipient stays F⁻.',
-  'gx:gen': 'Generalized transduction: a lytic phage packs a piece of host chromosome by mistake — any gene can travel.',
+  'gx:gen': 'Generalized transduction: a lytic phage cleaves the host chromosome and packs a piece of it by mistake; the new phages '
+            'leave the lysed cell and the next infection delivers that DNA — any gene can travel.',
   'gx:spec': 'Specialized transduction: a lysogenic prophage excises imprecisely and takes its neighboring genes — lysogenic conversion '
              'gives toxin genes (ABCD’S: erythrogenic, botulinum, cholera, diphtheria, Shiga).',
   'gx:tn': 'Transposons: transposase cuts or copies the element into another molecule (chromosome → plasmid); to leave the cell it rides a '

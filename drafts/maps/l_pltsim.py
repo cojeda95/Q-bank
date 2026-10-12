@@ -59,11 +59,11 @@ add(''.join(plt(x, y) for x, y in ROW1), unless=NO_ADH + O('itp'))
 add(''.join(plt(x, y) for x, y in ROW1[::2]), when=O('itp'))
 add(''.join(plt(x, y) for x, y in ROW2), unless=NO_AGG + O('itp'))
 add(''.join(plt(x, y) for x, y in ROW3), unless=NO_AGG + SMALL)
-text('platelets stick but never link up', 1250, LY0 + 60, 'nf-l1 dyn-tag', 'middle', when=O('glanz', 'gp2b3a'))
-text('no vWF bridge — nothing sticks', 1250, LY0 + 60, 'nf-l1 dyn-tag', 'middle', when=O('vwd'))
-text('no GpIb receptor — nothing sticks; giant platelets', 1250, LY0 + 60, 'nf-l1 dyn-tag', 'middle', when=O('bss'))
-text('weaker activation — a smaller plug', 1250, LY0 + 60, 'nf-l1 dyn-tag', 'middle', when=O('aspirin', 'p2y12', 'uremia'))
-text('IgG-coated platelets eaten by splenic macrophages', 1250, LY0 + 60, 'nf-l1 dyn-tag', 'middle', when=O('itp'))
+text('platelets stick but never link up', 1250, LY0 + 72, 'nf-l1 dyn-tag', 'middle', when=O('glanz', 'gp2b3a'))
+text('no vWF bridge — nothing sticks', 1250, LY0 + 72, 'nf-l1 dyn-tag', 'middle', when=O('vwd'))
+text('no GpIb receptor — nothing sticks; giant platelets', 1250, LY0 + 72, 'nf-l1 dyn-tag', 'middle', when=O('bss'))
+text('weaker activation — a smaller plug', 1250, LY0 + 72, 'nf-l1 dyn-tag', 'middle', when=O('aspirin', 'p2y12', 'uremia'))
+text('IgG-coated platelets eaten by splenic macrophages', 1250, LY0 + 72, 'nf-l1 dyn-tag', 'middle', when=O('itp'))
 
 # TTP: ultra-large vWF multimers and microthrombi in the lumen
 for x0 in (420, 1650):
@@ -86,7 +86,7 @@ text('one platelet, close up', PX, PY + 6, 'nf-l1', 'middle')
 def m(when, **kw): return dict(when=when, **kw)
 FEW = O('itp', 'ttp', 'dic', 'bss', 'hit')
 flows = [dict(d=f'M300 {y} H2200', len=1900, speed=220, r=9, base=dict(plt=3), mods=[m(FEW, set=dict(plt=1))]) for y in (520, 620, 700)]
-flows += [dict(d='M300 470 H2200', len=1900, speed=220, r=12, base=dict(rbc=4)),
+flows += [dict(d='M300 448 H2200', len=1900, speed=220, r=12, base=dict(rbc=4)),
           dict(d=f'M1180 {LY1 - 40} V{LY1 + 120}', len=160, speed=60, r=8, base=dict(rbc=3), when=O('vwd', 'bss', 'glanz', 'gp2b3a', 'dic', 'itp')),
           dict(d=f'M{PX - 120} {PY - 120} L{PX} {PY - PR - 30}', len=200, speed=80, r=7, base=dict(adp=3), unless=O('p2y12'))]
 sites = [
@@ -96,15 +96,15 @@ sites = [
        block=O('glanz', 'gp2b3a'), low=O('aspirin', 'p2y12'), sfx=dict(block=' — blocked / missing')),
   dict(x=PX, y=PY - PR, n=[0, -1], w=12, t='rec', l='P2Y12', s='ADP amplifies activation', c='p2y12', ions=[],
        block=O('p2y12')),
-  dict(x=PX, y=PY + PR, n=[0, 1], w=12, t='ch', l='COX-1 → TXA₂', s='aspirin: irreversible, 7–10 days', c='aspirin', ions=[],
+  dict(x=PX, y=PY + PR, n=[0, 1], w=12, t='ch', l='COX-1 → TXA₂', s='aspirin: irreversible, 8–10 days', c='aspirin', ions=[],
        block=O('aspirin')),
   dict(x=1250, y=LY1 + 20, n=[0, 1], w=10, t='rec', l='', aria='von Willebrand factor', c='vwd', ions=[]),
 ]
 
 readouts = [
-  dict(l='Platelet count', mods=[dict(when=FEW, d=-1), dict(when=O('vwd', 'glanz', 'uremia'), d=0)]),
-  dict(l='Bleeding time', mods=[dict(when=O('vwd', 'bss', 'glanz', 'aspirin', 'uremia'), d=1)]),
-  dict(l='PT', mods=[dict(when=O('dic'), d=1), dict(when=O('itp', 'ttp', 'aspirin'), d=0)]),
+  dict(l='Platelet count', mods=[dict(when=O('itp', 'ttp', 'dic', 'hit'), d=-1), dict(when=O('vwd', 'glanz', 'uremia'), d=0)]),
+  dict(l='Bleeding time', mods=[dict(when=O('vwd', 'bss', 'glanz', 'aspirin', 'uremia', 'itp', 'ttp', 'dic'), d=1)]),
+  dict(l='PT', mods=[dict(when=O('dic'), d=1), dict(when=O('itp', 'ttp', 'aspirin', 'vwd'), d=0)]),
   dict(l='PTT', mods=[dict(when=O('dic', 'vwd'), d=1), dict(when=O('itp', 'ttp', 'aspirin'), d=0)]),
   dict(l='Schistocytes', mods=[dict(when=O('ttp', 'dic'), d=1), dict(when=O('itp'), d=0)]),
 ]
@@ -116,18 +116,18 @@ notes = {
   'dz:itp': 'ITP: IgG against platelet glycoproteins (anti-GpIIb/IIIa) tags platelets for splenic macrophages. Isolated low platelets, '
             'normal PT and PTT, no schistocytes. Steroids or IVIG for bleeding.',
   'dz:ttp': 'TTP/HUS: without ADAMTS13, ultra-large vWF multimers grab platelets out of flowing blood into microthrombi, consuming '
-            'platelets and shredding red cells — schistocytes with NORMAL PT and PTT. HUS: the same triad after Shiga toxin diarrhea.',
-  'dz:dic': 'DIC: a massive stimulus (sepsis, trauma, obstetric, APL) activates coagulation everywhere — platelets and every factor '
+            'platelets and shredding red cells — schistocytes with NORMAL PT and PTT. HUS: the same triad after Shiga toxin (E. coli O157:H7) bloody diarrhea. TTP: plasma exchange.',
+  'dz:dic': 'DIC: a massive stimulus (sepsis, trauma, obstetric, pancreatitis, APL) activates coagulation everywhere — platelets and every factor '
             'are consumed, so the patient clots and bleeds at once: ↓ platelets, ↑ PT and PTT, ↓ fibrinogen, ↑ D-dimer.',
   'dz:vwd': 'von Willebrand disease: no vWF bridge, so platelets cannot adhere — mucocutaneous bleeding, long bleeding time with a '
             'normal count; PTT often long too, because vWF also protects factor VIII. Desmopressin releases stored vWF.',
-  'dz:bss': 'Bernard-Soulier: the GpIb receptor is missing, so platelets cannot stick even with vWF present; giant platelets and a '
-            'LOW count. Ristocetin fails, as in vWD.',
+  'dz:bss': 'Bernard-Soulier: the GpIb receptor is missing, so platelets cannot stick even with vWF present; giant platelets, count normal '
+            'or low. Ristocetin fails, as in vWD.',
   'dz:glanz': 'Glanzmann thrombasthenia: no GpIIb/IIIa, so platelets adhere but never link up — long bleeding time with a NORMAL '
               'count and size; ristocetin normal.',
-  'dz:uremia': 'Uremia: retained toxins impair platelet function — bleeding with a normal count and a long bleeding time. Dialysis; '
-               'desmopressin for uremic bleeding.',
-  'dz:aspirin': 'Aspirin acetylates COX-1 irreversibly, cutting TXA₂ for the platelet’s 7–10 day life — long bleeding time, no effect '
+  'dz:uremia': 'Uremia: in renal failure, retained uremic toxins interfere with platelet adhesion and aggregation — mucosal '
+               'bleeding with a normal count and a long bleeding time.',
+  'dz:aspirin': 'Aspirin acetylates COX-1 irreversibly, cutting TXA₂ for the platelet’s 8–10 day life — long bleeding time, no effect '
                 'on PT or PTT.',
   'dz:p2y12': 'P2Y12 inhibitors (clopidogrel, prasugrel, ticagrelor) block the ADP amplification loop that puts GpIIb/IIIa on the '
               'surface — a different amplifier from aspirin, so the two are combined after stenting.',
@@ -147,18 +147,18 @@ dyn = dict(
     ['hit', 'Heparin-induced thrombocytopenia', 'heparin']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 417, 432–433, 440–442 · Robbins ch 4, 14 · Katzung ch 34')
+  src='First Aid pp. 417, 432–433, 437, 440–442 · Robbins ch 4, 14 · Katzung ch 34, 36')
 
 MAP = dict(
   id='pltsim', title='Platelets in Motion', topic='heme', after='coagflow',
   sub='Watch platelets stick to exposed collagen through vWF and GpIb, amplify with ADP and TXA₂ and link through GpIIb/IIIa — then '
       'break each step: ITP, TTP/HUS, DIC, von Willebrand, Bernard-Soulier, Glanzmann, uremia, aspirin, clopidogrel, abciximab and HIT',
   w=3600, h=1900,
-  fa='254, 319, 417, 432, 433, 440, 441, 442, 496, 621, 693',
+  fa='254, 319, 417, 432, 433, 437, 440, 441, 442, 496, 621, 693',
   src=['Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock',
        'Marks ch 43 — Blood Plasma Proteins, Coagulation, and Fibrinolysis', 'Katzung ch 34 — Drugs Used in Disorders of Coagulation',
        'Robbins ch 14 — Red blood cell and bleeding disorders', 'Robbins ch 20 — The kidney',
-       'Katzung ch 37 — Hypothalamic & Pituitary Hormones'],
+       'Katzung ch 37 — Hypothalamic & Pituitary Hormones', full('Katzung', 36)],
   lanes=[('plNorm', 'Primary hemostasis', 'glycolysis'), ('plDz', 'Platelet disorders', 'tca'), ('plRx', 'Antiplatelet & heparin', 'gluconeo')],
   nodes=[
     ('pl1', 'Endothelium & collagen', 330, 1620, 'plNorm', 'injury starts it', ['endothreg'], 'hub'),

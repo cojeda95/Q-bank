@@ -54,13 +54,13 @@ for k, (x, y, l) in T.items():
 HIT = dict(ins=('glu',), gluc=('liver', 'skin', 'glu'), som=('gb', 'gut', 'stom', 'glu'), vip=('gut', 'stom'), zes=('stom', 'gut'))
 for d, ks in HIT.items():
     for k in ks:
-        x, y, _ = T[k]; add(f'<circle cx="{x}" cy="{y}" r="44" style="fill:var(--bad);fill-opacity:.3"/>', when=D(d), unless=[f'dx:{d}&oct'])
+        x, y, _ = T[k]; add(f'<circle cx="{x}" cy="{y}" r="44" style="fill:var(--bad);fill-opacity:.3"/>', when=D(d), unless=[f'dx:{d}&oct'] if d in ('gluc', 'som', 'vip') else None)
 GL = dict(ins='low — Whipple triad', gluc='high', som='high (insulin suppressed)')
 for d, s in GL.items(): text(s, 1900, 680, 'nf-l1 dyn-tag', 'middle', when=D(d))
-TAG = dict(ins='insulinoma — insulin ↑ and C-peptide ↑ while glucose falls · confusion, sweating · diazoxide or resect',
+TAG = dict(ins='insulinoma — insulin ↑ and C-peptide ↑ while glucose falls · confusion, syncope · resect, or diazoxide',
            gluc='glucagonoma — 6 D’s: dermatitis (necrolytic migratory erythema), diabetes, DVT, declining weight, depression, diarrhea',
            som='somatostatinoma — the brake stuck on: diabetes, gallstones (no CCK), steatorrhea, achlorhydria (no gastrin)',
-           vip='VIPoma — WDHA: watery diarrhea that continues fasting, hypokalemia, achlorhydria · “pancreatic cholera”',
+           vip='VIPoma — WDHA: watery diarrhea that continues fasting, hypokalemia, achlorhydria · a secretory diarrhea',
            zes='gastrinoma (Zollinger-Ellison) — multiple refractory ulcers in duodenum and jejunum; gastrin rises after secretin')
 for k, s in TAG.items(): text(s, 1100, 1480, 'nf-l1 dyn-tag', 'middle', when=D(k))
 text('octreotide (a somatostatin analogue) quiets the tumor’s hormone', 1100, 1520, 'nf-l1', 'middle', when=OCT)
@@ -73,7 +73,7 @@ text('MEN1 — the 3 Ps: parathyroid, pituitary, pancreas (gastrinoma, insulinom
 def go(src, tgt, kind, d, n=4):
     (x0, y0), (x1, y1) = src, T[tgt][:2]
     return dict(d=f'M{x0} {y0} C{(x0 + x1) / 2:.0f} {y0} {(x0 + x1) / 2:.0f} {y1} {x1 - 44} {y1}', len=900, speed=130, r=9,
-                base={kind: n}, when=D(d), mods=[dict(when=[f'dx:{d}&oct'], set={kind: 1})])
+                base={kind: n}, when=D(d), mods=[dict(when=[f'dx:{d}&oct'], set={kind: 1})] if d in ('gluc', 'som', 'vip') else [])
 B = lambda k: CELL[k][:2]
 flows = [go(B('beta'), 'glu', 'ins', 'ins'), go(B('alpha'), 'liver', 'glc', 'gluc'), go(B('alpha'), 'skin', 'glc', 'gluc', 2),
          go(B('delta'), 'gb', 'som', 'som'), go(B('delta'), 'stom', 'som', 'som', 2), go(B('delta'), 'gut', 'som', 'som', 2),
@@ -100,16 +100,19 @@ readouts = [
 notes = {
   '': 'Each islet cell makes one hormone: α glucagon, β insulin, δ somatostatin (the universal brake); G cells in the duodenum '
       'make gastrin. A tumor of one floods its hormone. Pick one.',
-  'dx:ins': 'Insulinoma: insulin secreted whatever the glucose — Whipple triad; insulin ↑, C-peptide ↑, proinsulin ↑ (injected '
-            'insulin: C-peptide ↓; a sulfonylurea screen separates the drug). ~10% MEN1. Resect; diazoxide.',
+  'dx:ins': 'Insulinoma: insulin secreted whatever the glucose — Whipple triad; insulin ↑ and C-peptide ↑ (injected '
+            'insulin: C-peptide ↓; a sulfonylurea also raises both, so screen for it). ~10% MEN1. Resect; diazoxide.',
   'dx:gluc': 'Glucagonoma: α-cell glucagon drives glycogenolysis and gluconeogenesis — 6 D’s: necrolytic migratory erythema, '
              'diabetes, DVT, declining weight, depression, diarrhea; anemia. Resect; octreotide.',
-  'dx:som': 'Somatostatinoma: the brake stuck on — insulin, glucagon, gastrin, CCK, secretin and enzymes all suppressed: diabetes, '
+  'dx:som': 'Somatostatinoma: the brake stuck on — insulin, glucagon, gastrin, CCK, secretin and GIP all suppressed: diabetes, '
             'gallstones, steatorrhea, achlorhydria. Resect; octreotide.',
   'dx:vip': 'VIPoma: VIP raises cAMP in the gut epithelium (like cholera) and inhibits acid — WDHA: watery diarrhea that continues '
-            'fasting, hypokalemia, achlorhydria; flushing. Octreotide, fluids and K⁺; resect.',
+            'fasting, hypokalemia, achlorhydria; flushing. Resect; octreotide when it can’t all come out.',
   'dx:zes': 'Zollinger-Ellison: a gastrinoma (duodenum, else pancreas) drives relentless acid — multiple refractory ulcers, '
             'diarrhea, steatorrhea (acid inactivates enzymes). Gastrin rises after secretin. PPIs. MEN1.',
+  'oct': 'Octreotide, a somatostatin analogue, inhibits the tumor’s hormone release — First Aid lists it for glucagonoma, '
+         'somatostatinoma (symptom control) and VIPoma, so only those three quiet here; insulinoma is resected (diazoxide), '
+         'gastrinoma gets PPIs and resection.',
   'men': 'MEN1 (menin, chromosome 11): Parathyroid, Pituitary (prolactinoma), Pancreas (gastrinoma, insulinoma). MEN2A/2B are RET.',
 }
 
@@ -124,7 +127,7 @@ dyn = dict(
             dict(id='oct', label='Drug', type='toggle', on='Octreotide given', off='Octreotide', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 24')
+  src='First Aid pp. 337–338, 356–357, 378 · Robbins ch 17, 24 · Katzung ch 11, 62 · Costanzo ch 8')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -133,8 +136,9 @@ MAP = dict(
   sub='Grow an insulinoma, glucagonoma, somatostatinoma, VIPoma or gastrinoma and watch its one hormone flood the liver, skin, '
       'gut, stomach and blood glucose — then show MEN1 and give octreotide',
   w=3600, h=1900,
-  fa='338, 356, 357, 378',
-  src=['Robbins ch 24 — The endocrine system', 'Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases'],
+  fa='337, 338, 356, 357, 378',
+  src=['Robbins ch 24 — The endocrine system', 'Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases',
+       full('Katzung', 11), full('Costanzo', 8), full('Robbins', 17)],
   lanes=[('ntIslet', 'Islet tumors', 'tca'), ('ntGut', 'Gut & syndrome', 'glycolysis')],
   nodes=[
     ('nt1', 'Insulinoma', 330, 1720, 'ntIslet', 'C-peptide ↑', ['insulinoma'], 'hub'),

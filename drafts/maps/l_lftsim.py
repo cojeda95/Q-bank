@@ -99,6 +99,7 @@ T = [
   ('r', None, '', 'Abnormal liver tests', 'which numbers rose?', None),
   ('bi', 'r', 'bilirubin up, enzymes normal', 'Bilirubin only', 'which fraction?', None),
   ('gi', 'bi', 'unconjugated · fasting, illness, stress', 'Gilbert syndrome', 'mildly ↓ UGT — benign', 'gil'),
+  ('cn', 'bi', 'unconjugated · from early life · kernicterus', 'Crigler-Najjar syndrome', 'absent UGT (type I)', 'cn'),
   ('he', 'bi', 'unconjugated · anemia · retics ↑', 'Hemolysis', 'too much bilirubin made', 'hemol'),
   ('dj', 'bi', 'conjugated · black liver', 'Dubin-Johnson syndrome', 'MRP2 excretion defect', 'dj'),
   ('hc', 'r', 'ALT and AST lead', 'Hepatocellular pattern', 'how high, what ratio?', None),
@@ -120,6 +121,7 @@ text('aminotransferases leak from hepatocytes · ALP and GGT rise when bile can�
 # ════════ the clues ════════
 C = {
   'gil': ['Gilbert syndrome', 'mildly ↓ UGT activity: jaundice with fasting, illness, stress, exertion', 'unconjugated bilirubin only; otherwise normal liver tests — benign'],
+  'cn': ['Crigler-Najjar syndrome', 'type I: absent UGT — jaundice and kernicterus early in life', 'unconjugated bilirubin only · type II is milder and responds to phenobarbital'],
   'hemol': ['Hemolysis — prehepatic', 'more heme broken down than the liver can conjugate', 'unconjugated bilirubin, LDH and reticulocytes ↑'],
   'dj': ['Dubin-Johnson syndrome', 'defective hepatic excretion (MRP2) → conjugated hyperbilirubinemia', 'grossly black liver · Rotor is the same without the black liver'],
   'apap': ['Acetaminophen toxicity', 'nausea first; liver injury shows up days later', 'AST and ALT in the thousands, ↑ INR · N-acetylcysteine'],
@@ -130,7 +132,7 @@ C = {
   'stone': ['Choledocholithiasis — a stone in the common bile duct', '↑ ALP, GGT, direct bilirubin and aminotransferases', 'ultrasound first · can cause pancreatitis and cholangitis'],
   'pbc': ['Primary biliary cholangitis', 'middle-aged woman, pruritus and fatigue, jaundice later', 'antimitochondrial antibody · ↑ ALP, IgM, cholesterol'],
   'psc': ['Primary sclerosing cholangitis', 'middle-aged man with ulcerative colitis · beaded ducts on MRCP or ERCP', 'p-ANCA · ↑ cholangiocarcinoma risk'],
-  'bone': ['ALP from bone, not liver', 'ALP up with a normal GGT points to bone', 'GGT rises only with cholestasis or infiltration'],
+  'bone': ['ALP from bone, not liver', 'ALP up with a normal GGT points to bone', 'GGT rises in liver and biliary disease (and with alcohol), not in bone'],
 }
 cy = clues(C, SW, 180, ybot + 70, 2140)
 PY = cy + 110; PANY = 700
@@ -138,12 +140,12 @@ PY = cy + 110; PANY = 700
 # ════════ readouts ════════
 O = lambda *k: [f'{SW}:{x}' for x in k]
 readouts = [
-  dict(l='ALT · AST', mods=[dict(when=O('apap', 'viral', 'alc', 'masld', 'aih', 'stone'), d=1), dict(when=O('gil', 'dj'), d=0)]),
-  dict(l='AST : ALT ratio', mods=[dict(when=O('alc'), d=1), dict(when=O('masld'), d=-1)]),
-  dict(l='ALP', mods=[dict(when=O('stone', 'pbc', 'psc', 'bone'), d=1), dict(when=O('gil', 'dj'), d=0)]),
+  dict(l='ALT · AST', mods=[dict(when=O('apap', 'viral', 'alc', 'masld', 'aih', 'stone'), d=1), dict(when=O('gil', 'cn', 'dj'), d=0)]),
+  dict(l='AST : ALT ratio', mods=[dict(when=O('alc'), d=1), dict(when=O('masld', 'viral'), d=-1)]),
+  dict(l='ALP', mods=[dict(when=O('stone', 'pbc', 'psc', 'bone'), d=1), dict(when=O('gil', 'cn', 'dj'), d=0)]),
   dict(l='GGT', mods=[dict(when=O('stone', 'pbc', 'psc', 'alc'), d=1), dict(when=O('bone'), d=0)]),
-  dict(l='Direct bilirubin', mods=[dict(when=O('dj', 'stone'), d=1), dict(when=O('gil', 'hemol'), d=0)]),
-  dict(l='Indirect bilirubin', mods=[dict(when=O('gil', 'hemol'), d=1)]),
+  dict(l='Direct bilirubin', mods=[dict(when=O('dj', 'stone'), d=1), dict(when=O('gil', 'cn', 'hemol'), d=0)]),
+  dict(l='Indirect bilirubin', mods=[dict(when=O('gil', 'cn', 'hemol'), d=1)]),
 ]
 
 # ════════ notes ════════
@@ -152,8 +154,10 @@ notes = {
       'can’t flow (cholestatic), and bilirubin alone points before or after conjugation.',
   'dx:gil': 'Gilbert syndrome: mildly reduced UGT activity gives an isolated unconjugated hyperbilirubinemia with fasting, illness or '
             'stress — every other liver test is normal. Benign.',
-  'dx:hemol': 'Hemolysis makes more bilirubin than the liver can conjugate — unconjugated bilirubin rises with LDH and reticulocytes, '
-              'while the liver enzymes stay normal.',
+  'dx:cn': 'Crigler-Najjar syndrome: UGT is absent (type I), so unconjugated bilirubin climbs from early life and can deposit in '
+           'the brain (kernicterus). Type II is milder and responds to phenobarbital, which induces the enzyme.',
+  'dx:hemol': 'Hemolysis makes more bilirubin than the liver can conjugate — unconjugated (indirect) bilirubin rises with LDH and '
+              'reticulocytes. Black pigment gallstones can follow.',
   'dx:dj': 'Dubin-Johnson syndrome: hepatic excretion (MRP2) fails, so conjugated bilirubin rises with otherwise normal tests and a '
            'grossly black liver. Rotor syndrome looks the same without the black liver.',
   'dx:apap': 'Acetaminophen overdose: NAPQI builds up once glutathione runs out. Nausea first, then AST and ALT in the thousands '
@@ -172,14 +176,14 @@ notes = {
             'fatigue, antimitochondrial antibody, ↑ ALP and IgM.',
   'dx:psc': 'Primary sclerosing cholangitis: onion-skin fibrosis beads the large ducts in a man with ulcerative colitis — p-ANCA, '
             'cholestatic enzymes, cholangiocarcinoma risk.',
-  'dx:bone': 'ALP rises with a normal GGT: the ALP is coming from bone. GGT rises only when bile flow is blocked or the liver is '
-             'infiltrated.',
+  'dx:bone': 'ALP rises with a normal GGT: the ALP is coming from bone. GGT rises in liver and biliary disease and with alcohol use, '
+             'but not in bone disease.',
 }
 
 dyn = dict(
   kinds=dict(pt=['pt', '--accent']), groups=[['pt', 'The case']],
   switches=[dict(id=SW, label='The answer', type='one', options=[
-    ['gil', 'Gilbert syndrome', 'bilirubin'], ['hemol', 'Hemolysis', 'hemolysislabs'], ['dj', 'Dubin-Johnson', 'bilirubin'],
+    ['gil', 'Gilbert syndrome', 'bilirubin'], ['cn', 'Crigler-Najjar', 'bilirubin'], ['hemol', 'Hemolysis', 'hemolysislabs'], ['dj', 'Dubin-Johnson', 'bilirubin'],
     ['apap', 'Acetaminophen toxicity', 'acetaminophen'], ['viral', 'Acute viral hepatitis', 'hav'], ['alc', 'Alcoholic hepatitis', 'ald'],
     ['masld', 'MASLD', 'masld'], ['aih', 'Autoimmune hepatitis', 'aih'], ['stone', 'Choledocholithiasis', 'gallstones'],
     ['pbc', 'Primary biliary cholangitis', 'pbc'], ['psc', 'Primary sclerosing cholangitis', 'psc'], ['bone', 'Bone (ALP alone)', 'lfts']])],
@@ -189,7 +193,7 @@ dyn = dict(
 
 MAP = dict(
   id='lftsim', title='Liver Tests Decoder', topic='gi', after='liver',
-  sub='Bilirubin alone, a hepatocellular pattern or a cholestatic one — pick an answer and a dot follows the pattern down '
+  sub='Bilirubin alone (Gilbert, Crigler-Najjar, hemolysis, Dubin-Johnson), a hepatocellular pattern or a cholestatic one — pick an answer and a dot follows the pattern down '
       'the tree while the readouts show ALT/AST, the AST:ALT ratio, ALP, GGT and both bilirubin fractions',
   w=3500, h=1900,
   fa='73, 170–172, 222, 397–403, 425, 427, 495, 588',

@@ -35,12 +35,13 @@ ORG = dict(node=(BX - 160, 700, 'lymph node'), trunk=(BX, 820, 'trunk skin'), pa
            valve=(BX + 60, 780, 'heart valve'), liver=(BX - 60, 940, 'liver'), kidney=(BX + 90, 960, 'kidneys'), calf=(BX - 90, 1260, 'calves'),
            eye=(BX + 40, 560, 'eyes'), clot=(BX + 260, 760, 'clotting (DIC)'), panc=(BX + 20, 1060, 'pancreas'), wound=(BX - 280, 900, 'bite wound'),
            syn=(BX + 260, 880, 'nerve terminals'))
-ROUTE = dict(plague=('rat', 'flea', ['node']), endty=('flea', 'flea', ['trunk']), epity=('louse', 'louse', ['trunk']), relap=('louse', 'louse', ['valve']),
+ROUTE = dict(plague=('rat', 'flea', ['node']), endty=('flea', 'flea', ['trunk']), epity=('louse', 'louse', ['trunk']), relap=('louse', 'louse', ['liver']),
              bruc=('cattle', 'cattle', ['liver']), lepto=('water', 'water', ['calf', 'eye', 'liver', 'kidney']), qfev=('cattle', 'cattle', ['lung', 'valve', 'liver']),
              bite=('dog', 'dog', ['wound']), pit=('snake', 'snake', ['wound', 'clot']), coral=('snake', 'snake', ['wound']),
              widow=('spider', 'spider', ['syn']), scorp=('spider', 'spider', ['panc']))
 RX = dict(plague='streptomycin', endty='doxycycline', epity='doxycycline', qfev='doxycycline', bruc='streptomycin (sometimes)',
-          pit='crotalid polyvalent immune Fab', coral='equine antivenin within 4 h', widow='antivenin if symptomatic', scorp='scorpion immune F(ab′)₂')
+          pit='crotalid polyvalent immune Fab', relap='doxycycline or penicillin G',
+          lepto='doxycycline · IV penicillin G for Weil disease', coral='equine antivenin within 4 h', widow='antivenin if symptomatic', scorp='scorpion immune F(ab′)₂')
 TREAT = [f'dx:{k}&rx' for k in RX]
 
 text('Zoonoses & bites — from the animal to the organ', 180, 150, 'dyn-big')
@@ -77,10 +78,10 @@ for d, (s1, s2, ts) in ROUTE.items():
     for t in ts:
         tx, ty, _ = ORG[t]
         flows.append(dict(d=f'M{x1} {y1 + 40} C{x1} {ty - 120} {tx} {y1 + 200} {tx} {ty - 30}', len=800, speed=130, r=9, base=dict(bug=3),
-                          when=D(d), mods=[dict(when=[f'dx:{d}&rx'], set=dict(bug=0))]))
+                          when=D(d), mods=[dict(when=[f'dx:{d}&rx'], set=dict(bug=0))] if d in RX else []))
 sites = [dict(x=ORG['node'][0], y=ORG['node'][1] - 50, n=[-1, -1], w=10, t='rec', l='', aria='Plague', c='plague', ions=[]),
          dict(x=BX + 200, y=640, n=[1, -1], w=10, t='rec', l='', aria='Typhus', c='typhus', ions=[]),
-         dict(x=ORG['valve'][0] + 40, y=ORG['valve'][1] - 50, n=[1, -1], w=10, t='rec', l='', aria='Relapsing fever', c='relapsing', ions=[]),
+         dict(x=ORG['liver'][0] + 10, y=ORG['liver'][1] + 55, n=[0, 1], w=10, t='rec', l='', aria='Relapsing fever', c='relapsing', ions=[]),
          dict(x=ORG['liver'][0] - 70, y=ORG['liver'][1] + 40, n=[-1, 1], w=10, t='rec', l='', aria='Brucellosis', c='brucella', ions=[]),
          dict(x=ORG['calf'][0], y=ORG['calf'][1] + 50, n=[0, 1], w=10, t='rec', l='', aria='Leptospirosis', c='lepto', ions=[]),
          dict(x=ORG['lung'][0] - 70, y=ORG['lung'][1] - 40, n=[-1, -1], w=10, t='rec', l='', aria='Q fever', c='qfever', ions=[]),
@@ -94,6 +95,7 @@ readouts = [
   dict(l='Jaundice', mods=[dict(when=D('lepto'), d=1)]),
   dict(l='Clotting factors', mods=[dict(when=D('pit'), d=-1)]),
   dict(l='Recurring fevers', mods=[dict(when=D('relap', 'bruc'), d=1)]),
+  dict(l='Serum lipase', mods=[dict(when=D('scorp'), d=1)]),
 ]
 
 notes = {
@@ -104,11 +106,11 @@ notes = {
               'opposite of RMSF). Doxycycline.',
   'dx:epity': 'Epidemic typhus: Rickettsia prowazekii, person to person by the human body louse; same central rash. Doxycycline.',
   'dx:relap': 'Relapsing fever: Borrelia recurrentis, human body louse — fevers recur as surface antigens change; seen on Wright or '
-              'Giemsa stain; Jarisch-Herxheimer reaction after antibiotics start.',
+              'Giemsa stain; hepatosplenomegaly, thrombocytopenia. Doxycycline or penicillin G — a Jarisch-Herxheimer reaction can follow.',
   'dx:bruc': 'Brucellosis: facultative intracellular coccobacilli from unpasteurized dairy or animal tissue and fluids — undulant '
              'fever. Streptomycin is sometimes used.',
   'dx:lepto': 'Leptospirosis: hook-ended spirochete in water with animal urine (surfers, tropics) — calf myalgias, conjunctival '
-              'suffusion, jaundice; Weil disease: liver and kidney failure, hemorrhage, anemia.',
+              'suffusion, jaundice; Weil disease: liver and kidney failure, hemorrhage, anemia. Doxycycline; IV penicillin G for Weil.',
   'dx:qfev': 'Q fever: Coxiella burnetii inhaled from cattle or sheep birth fluids — no vector, no rash; atypical pneumonia, '
              'hepatitis, culture-negative endocarditis. Doxycycline.',
   'dx:bite': 'Dog and cat bites: Pasteurella multocida cellulitis and osteomyelitis; cat scratch → Bartonella. Rabies and tetanus '
@@ -117,8 +119,10 @@ notes = {
   'dx:coral': 'Coral snake: equine antivenin within 4 hours; more than 7 vials → serum sickness in almost everyone.',
   'dx:widow': 'Black widow: α-latrotoxin causes explosive release of transmitter from cholinergic and adrenergic vesicles; a toxic '
               'cause of myocarditis. Antivenin only if symptomatic.',
-  'dx:scorp': 'Scorpion sting: a cause of acute pancreatitis (the S in I GET SMASHED). Scorpion immune F(ab′)₂ if symptomatic.',
-  'rx': 'Treatment from each card: streptomycin (plague), doxycycline (typhus, Q fever), antivenoms for snakes, black widow, scorpion.',
+  'dx:scorp': 'Scorpion sting: a cause of acute pancreatitis (the S in I GET SMASHED) — lipase rises. Scorpion immune F(ab′)₂ if '
+             'symptomatic.',
+  'rx': 'Treatment: streptomycin (plague), doxycycline (typhus, Q fever, relapsing fever, leptospirosis), antivenoms for snakes, '
+        'black widow, scorpion. No drug is drawn for bites (wound care, rabies and tetanus rules).',
 }
 
 dyn = dict(
@@ -131,7 +135,7 @@ dyn = dict(
             dict(id='rx', label='Treat', type='toggle', on='Treatment given', off='Give the treatment', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 8')
+  src='First Aid pp. 125, 144–148, 320, 404, 433 · Katzung ch 6, 45, Appendix 1 · Bootcamp Microbiology')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -141,7 +145,8 @@ MAP = dict(
       'from the animal to the organ — then treat',
   w=3600, h=2000,
   fa='123, 125, 139, 144, 145, 147, 148, 320, 404, 433, 701',
-  src=['Robbins ch 8 — Infectious diseases', 'Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products'],
+  src=['Robbins ch 8 — Infectious diseases', 'Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products',
+       full('Katzung', 45), full('Katzung', 6)],
   lanes=[('zoVec', 'Vectors & animals', 'tca'), ('zoVen', 'Bites & venom', 'glycolysis')],
   nodes=[
     ('zo1', 'Plague', 330, 1720, 'zoVec', 'flea · buboes', ['plague'], 'hub'),
@@ -154,7 +159,7 @@ MAP = dict(
     ('zo8', 'Snake envenomation', 760, 1850, 'zoVen', 'DIC · antivenom', ['snakebite']),
     ('zo9', 'Black widow & scorpion', 1200, 1850, 'zoVen', 'latrotoxin · pancreatitis', ['venom'])],
   panels=[
-    (2500, PANY, 1000, 'Reservoir → disease (Robbins ch 8)', [
+    (2500, PANY, 1000, 'Reservoir → disease (First Aid p 147)', [
       ('Flea', 'plague, endemic typhus'), ('Body louse', 'epidemic typhus, relapsing fever'), ('Dairy, livestock', 'brucellosis, Q fever'),
       ('Water with urine', 'leptospirosis'), ('Dog, cat', 'Pasteurella, Bartonella')])],
   dyn=dyn)

@@ -38,7 +38,7 @@ def node(x, y, lab, sub='', w=260):
 BLOCK = dict(tki='egfr', mab='egfr', trast='her2', braf='braf')
 # a block works only if the driver sits at or above the blocked step
 def works(drug, mut):   # only the drivers the cards pair each drug with
-    return mut in dict(tki=('none', 'egfrm'), mab=('none', 'egfrm'), trast=('her2',), braf=('braf',))[drug]
+    return mut in dict(tki=('none', 'egfrm'), mab=('none',), trast=('her2',), braf=('braf',))[drug]
 MUTS = ['none', 'egfrm', 'her2', 'kras', 'nf1', 'braf', 'myc']
 STOP = []
 for d in BLOCK:
@@ -46,6 +46,10 @@ for d in BLOCK:
         if works(d, mu):
             STOP.append(f'rx:{d}&!mut:*' if mu == 'none' else f'rx:{d}&mut:{mu}')
 ON = ['mut:*']
+STOPM = [x for x in STOP if '!mut' not in x]
+# drug + driver pairs the drug can't stop; cetuximab on EGFR-mutant lung is left without a verdict (the card pairs the
+# antibodies with RAS wild-type colon and head and neck cancer, the kinase inhibitors with EGFR-mutant lung)
+MISS = [f'rx:{d}&mut:{mu}' for d in BLOCK for mu in MUTS[1:] if not works(d, mu) and not (d == 'mab' and mu == 'egfrm')]
 
 text('Growth signals — EGFR/HER2 → RAS → BRAF → MEK → ERK → MYC', 180, 150, 'dyn-big')
 text('a driver mutation keeps the pathway on by itself · each drug works on the driver it targets', 180, 176, 'dyn-cap')
@@ -74,14 +78,17 @@ add(f'<rect x="1520" y="1084" width="260" height="72" rx="28" style="fill:none;s
 add(f'<rect x="610" y="434" width="260" height="72" rx="28" style="fill:none;stroke:var(--bad);stroke-width:5"/>', when=M('egfrm'))
 add(X(1500, 680, 14), when=M('nf1'))
 # drugs
-DRUG = dict(tki=(740, 430, 'erlotinib / osimertinib — kinase domain'), mab=(740, 330, 'cetuximab — blocks ligand binding'),
-            trast=(1160, 400, 'trastuzumab — outside domain'), braf=(950, 880, 'vemurafenib + trametinib — BRAF and MEK'))
-for k, (x, y, t) in DRUG.items():
-    add(f'<circle cx="{x + 150}" cy="{y}" r="22" style="fill:var(--accent);opacity:.8"/>', when=R(k))
-    text(t, x + 180, y + 6, 'nf-l2', when=R(k))
+# (marker x, y, label x, anchor, label) — the kinase inhibitor sits inside the cell, left of EGFR, so its label stays
+# clear of the HER2 bar and the "amplified" tag a driver can add
+DRUG = dict(tki=(600, 540, 570, 'end', 'erlotinib / osimertinib — kinase domain'), mab=(890, 330, 920, None, 'cetuximab — blocks ligand binding'),
+            trast=(1310, 400, 1340, None, 'trastuzumab — outside domain'), braf=(1100, 880, 1130, None, 'vemurafenib + trametinib — BRAF and MEK'))
+for k, (cx, cy, tx, an, t) in DRUG.items():
+    add(f'<circle cx="{cx}" cy="{cy}" r="22" style="fill:var(--accent);opacity:.8"/>', when=R(k))
+    text(t, tx, cy + 6, 'nf-l2', an, when=R(k))
 text('signal stopped', 1300, 1530, 'nf-l1', 'middle', when=STOP)
-text('this drug’s target isn’t what drives the pathway — the signal goes on', 1300, 1530, 'nf-l1 dyn-tag', 'middle', when=['rx:*'], unless=STOP)
-text('anti-EGFR antibodies don’t work in KRAS-mutant colon cancer', 1300, 1560, 'nf-l2', 'middle', when=['rx:mab&mut:kras', 'rx:tki&mut:kras'])
+text('this drug’s target isn’t what drives the pathway — the signal goes on', 1300, 1530, 'nf-l1 dyn-tag', 'middle', when=MISS + ['rx:trast&!mut:*', 'rx:braf&!mut:*'])
+text('EGFR-mutant lung cancer is treated with a kinase inhibitor — cetuximab is for RAS wild-type colon, head and neck', 1300, 1530, 'nf-l1 dyn-tag', 'middle', when=['rx:mab&mut:egfrm'])
+text('anti-EGFR antibodies don’t work in KRAS-mutant colon cancer', 1300, 1560, 'nf-l2', 'middle', when=['rx:mab&mut:kras'])
 text('alone, a BRAF inhibitor meets resistance and paradoxically turns the pathway on in normal cells — so with MEK', 1300, 1560, 'nf-l2', 'middle', when=['rx:braf&mut:braf'])
 text('cardiotoxicity — check the ejection fraction', 1300, 1560, 'nf-l2', 'middle', when=R('trast'))
 
@@ -108,9 +115,11 @@ sites = [dict(x=740, y=506, n=[0, 1], w=10, t='rec', l='', aria='EGFR inhibitors
          dict(x=1780, y=1120, n=[1, 0], w=10, t='rec', l='', aria='MYC', c='mycamp', ions=[])]
 
 readouts = [
-  dict(l='Signal without growth factor', mods=[dict(when=ON, d=1)]),
-  dict(l='Cell proliferation', mods=[dict(when=STOP, d=-1), dict(when=ON, d=1)]),
-  dict(l='Drug effective', mods=[dict(when=STOP, d=1), dict(when=['rx:*'], d=-1)]),
+  dict(l='Signal without growth factor', mods=[dict(when=ON, d=1), dict(when=STOPM, d=-1)]),   # a working drug cancels its driver
+  dict(l='Active RAS (GTP-bound)', mods=[dict(when=M('egfrm', 'her2', 'kras', 'nf1'), d=1), dict(when=M('braf', 'myc'), d=0),
+                                         dict(when=['rx:tki&mut:egfrm', 'rx:trast&mut:her2'], d=-2), dict(when=['rx:tki&!mut:*', 'rx:mab&!mut:*'], d=-1)]),
+  dict(l='Cell proliferation', mods=[dict(when=STOP, d=-2), dict(when=ON, d=1)]),   # a working drug outweighs its driver
+  dict(l='Drug effective', mods=[dict(when=STOP, d=1), dict(when=MISS, d=-1)]),
 ]
 
 notes = {

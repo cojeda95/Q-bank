@@ -49,10 +49,11 @@ ROUTE = dict(
   hook=['soil', 'skin', 'lung', 'sb'], strong=['soil', 'skin', 'lung', 'sb'], asc=['food', 'sb', 'lung', 'sb'],
   pin=['food', 'sb', 'colon', 'anus', 'food'], giar=['food', 'sb'], ent=['food', 'colon', 'liver'], cryp=['food', 'sb'],
   toxo=['food', 'sb', 'brain'], trich=['food', 'sb', 'muscle'], taen=['food', 'sb'], cyst=['food', 'sb', 'brain'],
+  diph=['food', 'sb'], echi=['food', 'sb', 'liver', 'lung'],
   schm=['soil', 'skin', 'veins', 'liver'], schh=['soil', 'skin', 'veins', 'bladder'])
 HIT = dict(falc=['rbc', 'brain'], vivax=['rbc', 'liver'], hook=['sb', 'skin'], strong=['sb', 'lung', 'skin'], asc=['sb', 'lung'],
            pin=['anus'], giar=['sb'], ent=['colon', 'liver'], cryp=['sb'], toxo=['brain'], trich=['muscle'], taen=['sb'],
-           cyst=['brain'], schm=['liver'], schh=['bladder'])
+           cyst=['brain'], diph=['sb'], echi=['liver', 'lung'], schm=['liver'], schh=['bladder'])
 TAG = dict(
   falc=('P. falciparum: infected red cells stick to capillaries — cerebral malaria', 'IV artesunate or quinine if severe'),
   vivax=('P. vivax/ovale: 48-h fevers; dormant hypnozoites in the liver relapse', 'chloroquine + primaquine for hypnozoites'),
@@ -60,13 +61,15 @@ TAG = dict(
   strong=('skin → lungs → duodenum; autoinfection → hyperinfection with steroids, HTLV-1', 'ivermectin or bendazoles'),
   asc=('eggs hatch in the gut, larvae through the lungs (Löffler), ileocecal obstruction', 'bendazoles'),
   pin=('females lay eggs around the anus at night — itching, scratching, back to the mouth', 'bendazoles, pyrantel pamoate'),
-  giar=('cysts in stream water; trophozoites coat the duodenum — fatty, foul, nonbloody diarrhea', 'tinidazole, nitazoxanide, metronidazole'),
-  ent=('flask-shaped colonic ulcers — bloody diarrhea; portal vein → anchovy-paste liver abscess', 'metronidazole; paromomycin for cyst passers'),
-  cryp=('chlorine-resistant oocysts — mild watery diarrhea; severe and chronic in AIDS', 'filter water; nitazoxanide'),
+  giar=('cysts in water; trophozoites in the duodenum — fatty, foul, nonbloody diarrhea', 'tinidazole, nitazoxanide, metronidazole'),
+  ent=('flask-shaped colonic ulcers — bloody diarrhea; via the blood → anchovy-paste liver abscess', 'metronidazole; paromomycin for cyst passers'),
+  cryp=('acid-fast oocysts in water — mild watery diarrhea; severe in AIDS', 'filter water; nitazoxanide'),
   toxo=('undercooked meat, cat feces; latent in brain — ring-enhancing lesions in AIDS', 'sulfadiazine + pyrimethamine (+ leucovorin)'),
   trich=('undercooked pork; larvae encyst in skeletal muscle — periorbital edema, myalgia', 'bendazoles'),
   taen=('larvae in undercooked pork → intestinal tapeworm (usually mild)', 'praziquantel'),
   cyst=('eggs from a human carrier → larvae encyst in the brain — seizures', 'albendazole for neurocysticercosis'),
+  diph=('larvae in raw freshwater fish → tapeworm takes up vitamin B12 → megaloblastic anemia', 'praziquantel, niclosamide'),
+  echi=('eggs in food soiled by dog feces → hydatid cysts in liver and lungs; rupture → anaphylaxis', 'albendazole; surgery for complicated cysts'),
   schm=('cercariae through the skin; eggs trapped in the liver — periportal fibrosis, portal HTN', 'praziquantel'),
   schh=('eggs in the bladder wall — hematuria, squamous cell carcinoma of the bladder', 'praziquantel'))
 for k, hits in HIT.items():
@@ -100,37 +103,41 @@ sites = [dict(x=C['rbc'][0], y=B['rbc'][3], n=[0, 1], w=10, t='rec', l='', aria=
          dict(x=C['sb'][0] + 150, y=B['sb'][3], n=[0, 1], w=10, t='rec', l='', aria='Giardia', c='giardia', ions=[])]
 
 readouts = [
-  dict(l='Anemia', mods=[dict(when=O('falc', 'vivax', 'hook'), d=1)]),
+  dict(l='Anemia', mods=[dict(when=O('falc', 'vivax', 'hook', 'diph'), d=1)]),
   dict(l='Diarrhea', mods=[dict(when=O('giar', 'ent', 'cryp'), d=1)]),
-  dict(l='Lungs on the route', mods=[dict(when=O('hook', 'strong', 'asc'), d=1)]),
-  dict(l='Liver involved', mods=[dict(when=O('vivax', 'ent', 'schm', 'falc'), d=1)]),
+  dict(l='Lungs on the route', mods=[dict(when=O('hook', 'strong', 'asc', 'echi'), d=1)]),
+  dict(l='Liver on the route', mods=[dict(when=O('vivax', 'ent', 'schm', 'falc', 'echi'), d=1)]),
   dict(l='CNS involved', mods=[dict(when=O('falc', 'toxo', 'cyst'), d=1)]),
 ]
 
 notes = {
   '': 'Parasites get in by a mosquito bite, by mouth (food, water, fingers) or straight through the skin (soil, fresh water). Where they '
       'travel decides the disease: through the lungs, into red cells, encysted in muscle or brain, or trapped as eggs in liver and bladder.',
-  'p:falc': 'Malaria: sporozoites infect hepatocytes, then merozoites invade red cells and burst out in synchronized cycles — cyclic fever, '
-            'anemia, splenomegaly. P. falciparum makes infected cells stick to capillaries of brain, kidney and lung.',
+  'p:falc': 'Malaria: sporozoites infect hepatocytes, then merozoites invade red cells and burst out — fever, anemia, splenomegaly. '
+            'P. falciparum gives a severe, irregular fever and makes infected cells occlude capillaries of brain, kidney and lung.',
   'p:vivax': 'P. vivax and ovale: 48-hour (tertian) fevers and dormant liver hypnozoites that relapse — add primaquine.',
   'p:hook': 'Hookworm: larvae enter bare feet (cutaneous larva migrans), pass through the lungs and attach to the small bowel to feed on '
             'blood — microcytic iron-deficiency anemia.',
   'p:strong': 'Strongyloides: skin → lungs → duodenum; it can finish its cycle inside one host (autoinfection), which runs away into '
-              'hyperinfection with glucocorticoids, transplant, lymphoma or HTLV-1 — often with gram-negative sepsis.',
+              'hyperinfection with glucocorticoids, transplant, lymphoma or HTLV-1 — often with sepsis from gut bacteria.',
   'p:asc': 'Ascaris: swallowed eggs hatch, larvae migrate through blood to the lungs (Löffler syndrome), are coughed up and swallowed and '
            'mature in the gut — obstruction at the ileocecal valve or biliary tree.',
   'p:pin': 'Pinworm: the female lays eggs on the perianal skin at night; scratching carries them back to the mouth — anal pruritus in '
            'children 5–10.',
-  'p:giar': 'Giardia: cysts in untreated water become trophozoites on the duodenal mucosa that block fat absorption — bloating, foul '
+  'p:giar': 'Giardia: cysts in untreated water become trophozoites in the small bowel that impair absorption — bloating, foul '
             'fatty nonbloody diarrhea. IgA deficiency raises the risk.',
-  'p:ent': 'Entamoeba histolytica: trophozoites invade the colon (flask-shaped ulcers, dysentery) and can reach the liver by the portal '
-           'vein — anchovy-paste abscess.',
-  'p:cryp': 'Cryptosporidium: acid-fast, chlorine-resistant oocysts in water — mild watery diarrhea, severe chronic diarrhea in AIDS.',
+  'p:ent': 'Entamoeba histolytica: trophozoites invade the colon (flask-shaped ulcers, dysentery) and can reach the liver through the '
+           'blood — anchovy-paste abscess.',
+  'p:cryp': 'Cryptosporidium: acid-fast oocysts in water — mild watery diarrhea, severe chronic diarrhea in AIDS.',
   'p:toxo': 'Toxoplasma: tissue cysts in undercooked meat or oocysts from cat litter; latent in brain and muscle, reactivates when CD4 falls '
             '(ring-enhancing lesions); crosses the placenta (chorioretinitis, hydrocephalus, calcifications).',
   'p:trich': 'Trichinella: larvae from undercooked pork enter the blood and encyst in striated muscle — fever, periorbital edema, myositis.',
   'p:taen': 'Taenia solium, larvae in undercooked pork: an intestinal tapeworm, usually mild.',
   'p:cyst': 'Taenia solium, eggs from a human carrier: larvae hatch and encyst throughout the body — neurocysticercosis, seizures.',
+  'p:diph': 'Diphyllobothrium latum (fish tapeworm): larvae in raw freshwater fish grow into a tapeworm that competes for vitamin B12 '
+            'in the gut — megaloblastic anemia.',
+  'p:echi': 'Echinococcus granulosus: eggs from dog feces (sheep are the intermediate host) hatch, cross the gut wall and form hydatid '
+            'cysts with eggshell calcification, mostly in liver and lungs; spilling a cyst can cause anaphylaxis.',
   'p:schm': 'Schistosoma mansoni/japonicum: cercariae penetrate skin in fresh water (snails are the intermediate host); adults live in '
             'venous plexuses and eggs trapped in the liver cause granulomas, periportal fibrosis and portal hypertension.',
   'p:schh': 'Schistosoma haematobium: eggs lodge in the bladder wall — hematuria, chronic inflammation, squamous metaplasia and squamous '
@@ -144,19 +151,20 @@ dyn = dict(
     ['strong', 'Strongyloides', 'strongyloides'], ['asc', 'Ascaris', 'ascaris'], ['pin', 'Pinworm', 'pinworm'], ['giar', 'Giardia', 'giardia'],
     ['ent', 'Entamoeba', 'entamoeba'], ['cryp', 'Cryptosporidium', 'cryptosporidium'], ['toxo', 'Toxoplasma', 'toxo'],
     ['trich', 'Trichinella', 'trichinella'], ['taen', 'Taenia — tapeworm', 'taenia'], ['cyst', 'Taenia — cysticercosis', 'taenia'],
+    ['diph', 'Diphyllobothrium', 'diphyllo'], ['echi', 'Echinococcus', 'echino'],
     ['schm', 'Schistosoma mansoni', 'schisto'], ['schh', 'Schistosoma haematobium', 'schisto']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 152–157 · Robbins ch 8 · Katzung ch 52–53')
+  src='First Aid pp. 152–157 · Robbins ch 8 · Katzung ch 46, 52–53 · Bootcamp Microbiology')
 
 MAP = dict(
   id='parasim', title='Parasite Life Cycles in Motion', topic='id', after='fungpar',
   sub='Follow each parasite in — by mosquito, mouth or skin — along its route through lungs, gut, liver, blood, muscle, brain or bladder, '
       'with what it damages and the drug: malaria, hookworm, Strongyloides, Ascaris, pinworm, Giardia, Entamoeba, Cryptosporidium, '
-      'Toxoplasma, Trichinella, Taenia and Schistosoma',
+      'Toxoplasma, Trichinella, the tapeworms and Schistosoma',
   w=3600, h=1900,
-  fa='152, 154, 156, 157',
-  src=['Robbins ch 8 — Infectious diseases', 'Katzung ch 52 — Antiprotozoal Drugs', 'Katzung ch 53 — Pharmacology of the Antihelminthic Drugs'],
+  fa='152, 153, 154, 155, 156, 157',
+  src=['Robbins ch 8 — Infectious diseases', full('Katzung', 46), 'Katzung ch 52 — Antiprotozoal Drugs', 'Katzung ch 53 — Pharmacology of the Antihelminthic Drugs'],
   lanes=[('paProt', 'Protozoa', 'glycolysis'), ('paNem', 'Nematodes', 'tca'), ('paFlat', 'Tapeworms & flukes', 'gluconeo')],
   nodes=[
     ('pa1', 'Malaria', 330, 1660, 'paProt', 'liver → red cells', ['malaria'], 'hub'),
@@ -167,12 +175,14 @@ MAP = dict(
     ('pa6', 'Ascaris · pinworm', 330, 1790, 'paNem', 'lungs · perianal', ['ascaris', 'pinworm']),
     ('pa7', 'Trichinella', 760, 1790, 'paNem', 'muscle cysts', ['trichinella']),
     ('pa8', 'Taenia', 1200, 1790, 'paFlat', 'tapeworm vs cysts', ['taenia']),
-    ('pa9', 'Schistosoma', 1640, 1790, 'paFlat', 'liver vs bladder', ['schisto'])],
+    ('pa9', 'Schistosoma', 1640, 1790, 'paFlat', 'liver vs bladder', ['schisto']),
+    ('pa10', 'Fish & dog tapeworms', 2080, 1790, 'paFlat', 'B12 · hydatid cysts', ['diphyllo', 'echino'])],
   panels=[
     (2500, PANY, 1000, 'The way in (First Aid pp. 152–157)', [
       ('Mosquito', 'malaria'),
       ('Through the skin', 'hookworm, Strongyloides, Schistosoma'),
       ('Water', 'Giardia, Entamoeba, Cryptosporidium'),
       ('Undercooked pork', 'Trichinella, Taenia tapeworm'),
-      ('Eggs (fecal-oral)', 'Ascaris, pinworm, cysticercosis')])],
+      ('Eggs (fecal-oral)', 'Ascaris, pinworm, cysticercosis, Echinococcus'),
+      ('Raw freshwater fish', 'Diphyllobothrium')])],
   dyn=dyn)

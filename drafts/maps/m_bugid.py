@@ -131,12 +131,12 @@ text('each box is one test; the dot travels the path to the organism you pick', 
 # ════════ the clues ════════
 C = {
   'sau': ['Staphylococcus aureus', 'catalase +, coagulase +, ferments mannitol · β-hemolytic', 'abscesses, osteomyelitis, acute endocarditis, toxic shock, scalded skin'],
-  'sep': ['Staphylococcus epidermidis', 'catalase +, coagulase −, novobiocin sensitive', 'biofilm on prosthetic joints and valves, catheters, shunts'],
-  'ssa': ['Staphylococcus saprophyticus', 'catalase +, coagulase −, novobiocin resistant', 'cystitis in a sexually active young woman'],
+  'sep': ['Staphylococcus epidermidis', 'catalase +, coagulase −, novobiocin sensitive', 'biofilm on prosthetic joints and valves, IV catheters · contaminates blood cultures'],
+  'ssa': ['Staphylococcus saprophyticus', 'catalase +, coagulase −, novobiocin resistant', 'uncomplicated cystitis in young women — second to E coli'],
   'spn': ['Streptococcus pneumoniae', 'α-hemolytic, optochin sensitive, bile soluble · capsule (Quellung)', 'community pneumonia, adult meningitis, otitis media'],
   'vir': ['Viridans streptococci', 'α-hemolytic, optochin resistant, bile insoluble', 'subacute endocarditis on damaged valves after dental work · caries'],
   'gas': ['Streptococcus pyogenes (group A)', 'β-hemolytic, bacitracin sensitive, PYR +', 'pharyngitis, impetigo, scarlet fever · rheumatic fever, PSGN'],
-  'gbs': ['Streptococcus agalactiae (group B)', 'β-hemolytic, bacitracin resistant, CAMP + and hippurate +', 'pneumonia, meningitis and sepsis in newborns'],
+  'gbs': ['Streptococcus agalactiae (group B)', 'β-hemolytic, bacitracin resistant, CAMP +, hippurate +, PYR −', 'pneumonia, meningitis and sepsis in newborns'],
   'ent': ['Enterococcus', 'γ (or α), grows in bile and 6.5% NaCl, PYR +', 'UTI, biliary infection, endocarditis after GI/GU procedures · VRE'],
   'sbo': ['Streptococcus gallolyticus (S bovis)', 'γ, grows in bile but not in 6.5% NaCl', 'bacteremia or endocarditis → colonoscopy (colorectal cancer)'],
   'nme': ['Neisseria meningitidis', 'gram-negative diplococcus · acid from maltose and glucose', 'meningitis in barracks and dorms · petechiae, Waterhouse-Friderichsen'],
@@ -157,6 +157,7 @@ readouts = [
   dict(l='Coagulase', mods=[dict(when=O('sau'), d=1), dict(when=O('sep', 'ssa'), d=-1)]),
   dict(l='Lactose fermentation', mods=[dict(when=O('eco'), d=1), dict(when=O('pse', 'sal', 'shi'), d=-1)]),
   dict(l='Oxidase', mods=[dict(when=O('pse'), d=1), dict(when=O('sal', 'shi'), d=-1)]),
+  dict(l='H₂S on TSI', mods=[dict(when=O('sal'), d=1), dict(when=O('shi'), d=-1)]),   # FA p. 139 algorithm
 ]
 
 # ════════ notes ════════
@@ -166,15 +167,16 @@ notes = {
   'bug:sau': 'S aureus: catalase-positive cocci in clusters that clot plasma (coagulase) and ferment mannitol — abscesses, '
              'osteomyelitis, acute endocarditis and the toxin diseases.',
   'bug:sep': 'S epidermidis: coagulase-negative and novobiocin-sensitive; its biofilm makes it the organism of prosthetic joints and '
-             'valves, catheters and shunts.',
-  'bug:ssa': 'S saprophyticus: coagulase-negative and novobiocin-resistant — cystitis in a sexually active young woman.',
+             'valves and IV catheters — and a common blood-culture contaminant.',
+  'bug:ssa': 'S saprophyticus: coagulase-negative and novobiocin-resistant — the second most common cause of uncomplicated UTI in '
+             'young women, after E coli.',
   'bug:spn': 'S pneumoniae: α-hemolytic, optochin-sensitive and bile-soluble, with a capsule (Quellung) — the commonest cause of '
              'community-acquired pneumonia and adult meningitis.',
   'bug:vir': 'Viridans streptococci: α-hemolytic but optochin-resistant and bile-insoluble — subacute endocarditis on damaged '
              'valves after dental work.',
   'bug:gas': 'Group A strep (S pyogenes): β-hemolytic, bacitracin-sensitive, PYR-positive — pharyngitis, impetigo and scarlet fever, '
              'then rheumatic fever or glomerulonephritis.',
-  'bug:gbs': 'Group B strep (S agalactiae): β-hemolytic, bacitracin-resistant, CAMP- and hippurate-positive — sepsis, pneumonia and '
+  'bug:gbs': 'Group B strep (S agalactiae): β-hemolytic, bacitracin-resistant, CAMP- and hippurate-positive, PYR-negative — sepsis, pneumonia and '
              'meningitis in newborns.',
   'bug:ent': 'Enterococcus grows in bile and 6.5% NaCl and is PYR-positive — UTI and endocarditis after GI or GU procedures; VRE '
              'swaps D-Ala-D-Ala for D-Ala-D-Lac.',

@@ -42,7 +42,7 @@ for i in range(5):
 text('follicles', TX - 260, TY - 290, 'nf-l2')
 for x, y in ((TX - 150, TY + 150), (TX + 150, TY - 80), (TX - 50, TY + 290)):
     add(f'<circle cx="{x}" cy="{y}" r="12" style="fill:var(--dk7);opacity:.7"/>')
-text('C cells (calcitonin)', TX + 170, TY - 50, 'nf-l2')
+text('C cells (calcitonin)', TX + 150, TY - 5, 'nf-l2')
 add(f'<path d="M{TX - 520} 300 V1300" style="stroke:var(--dk5);stroke-width:60;opacity:.12;stroke-linecap:round"/>'); text('trachea', TX - 520, 280, 'nf-l2', 'middle')
 add(f'<path d="M{TX - 420} 300 V1300" style="stroke:var(--dk6);stroke-width:40;opacity:.12;stroke-linecap:round"/>'); text('esophagus', TX - 420, 1340, 'nf-l2', 'middle')
 add(f'<path d="M{TX - 360} 400 C{TX - 350} 700 {TX - 360} 1000 {TX - 370} 1300" style="fill:none;stroke:var(--dk7);stroke-width:5"/>'); text('recurrent laryngeal n.', TX - 340, 1260, 'nf-l2')
@@ -72,9 +72,12 @@ add(f'<path d="M{TX - 520} 700 v120" style="stroke:var(--bad);stroke-width:30;op
 TAG = dict(aden='follicular adenoma — uniform follicles inside an intact capsule; does not recur or spread',
            fca='follicular carcinoma — through the capsule into veins → bone, lungs, liver, brain; nodes usually spared',
            pap='papillary — clear grooved nuclei, psammoma bodies; lymphatics → cervical nodes · ~85%, radiation · RET/PTC, BRAF',
-           ana='anaplastic — bulky mass growing over weeks into trachea, esophagus, nerve: dyspnea, dysphagia, hoarseness; death within a year',
+           ana='anaplastic — rapidly enlarging bulky mass into trachea, esophagus, nerve: dyspnea, dysphagia, hoarseness; death within a year',
            med='medullary — C cells → calcitonin → amyloid (Congo red) · RET: MEN2A/2B → prophylactic thyroidectomy')
 for k, s in TAG.items(): text(s, 1000, 1480, 'nf-l1 dyn-tag', 'middle', when=D(k))
+add(f'<path d="M{TX + 60} {TY - 470} L{TX - 20} {TY - 80}" style="stroke:var(--ink-2);stroke-width:6;stroke-linecap:round"/>'
+    f'<rect x="{TX + 44}" y="{TY - 550}" width="36" height="80" rx="6" style="fill:var(--surface);stroke:var(--ink-2);stroke-width:4"/>', when=['fna'])
+text('FNA needle', TX + 96, TY - 505, 'nf-l1', when=['fna'])
 text('FNA cannot tell follicular adenoma from carcinoma — the capsule must be examined after excision', 1000, 1520, 'nf-l1', 'middle', when=['fna&dx:aden', 'fna&dx:fca'])
 text('FNA: clear grooved nuclei ± psammoma bodies make the diagnosis', 1000, 1520, 'nf-l1', 'middle', when=['fna&dx:pap'])
 
@@ -92,8 +95,8 @@ sites = [dict(x=TX - 120, y=TY - 160, n=[-1, -1], w=10, t='rec', l='', aria='Pap
          dict(x=TX - 240, y=TY + 230, n=[-1, 1], w=10, t='rec', l='', aria='Medullary carcinoma', c='medullary', ions=[])]
 
 readouts = [
-  dict(l='Cervical node spread', mods=[dict(when=D('pap'), d=1), dict(when=D('fca'), d=-1)]),
-  dict(l='Blood-borne metastases', mods=[dict(when=D('fca'), d=1)]),
+  dict(l='Cervical node spread', mods=[dict(when=D('pap'), d=1), dict(when=D('fca', 'aden'), d=0)]),
+  dict(l='Blood-borne metastases', mods=[dict(when=D('fca', 'ana'), d=1), dict(when=D('aden'), d=0)]),
   dict(l='Calcitonin', mods=[dict(when=D('med'), d=1)]),
   dict(l='Airway & swallowing', mods=[dict(when=D('ana'), d=-1)]),
 ]
@@ -123,7 +126,7 @@ dyn = dict(
             dict(id='fna', label='Test', type='toggle', on='Needle aspirate', off='Do an FNA', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 24')
+  src='First Aid pp. 347, 356 · Robbins ch 24')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 

@@ -39,7 +39,7 @@ CX = 1270
 add(f'<rect x="{X0}" y="{SURF}" width="{X1 - X0}" height="{BMY - SURF}" style="fill:var(--dk4);fill-opacity:.22"/>', unless=O('lich'))
 add(f'<rect x="{X0}" y="{BMY}" width="{X1 - X0}" height="{DERM - BMY}" style="fill:var(--dk1);fill-opacity:.14"/>')
 add(f'<path d="M{X0} {BMY} H{X1}" style="stroke:var(--dk11);stroke-width:4"/>')
-add(f'<path d="M{X0} {SURF} H{X1}" style="stroke:var(--ink-3);stroke-width:3"/>', unless=O('pap', 'nod', 'plq', 'ves', 'bul', 'pus', 'whl', 'ero', 'ulc', 'lich'))
+add(f'<path d="M{X0} {SURF} H{X1}" style="stroke:var(--ink-3);stroke-width:3"/>', unless=O('pap', 'nod', 'plq', 'ves', 'bul', 'pus', 'whl', 'ero', 'ulc', 'exc', 'lich'))
 text('Epidermis', X0 - 16, 686, 'nf-l2', 'end')
 text('Dermis', X0 - 16, 850, 'nf-l2', 'end')
 text('basement membrane', X1, BMY + 26, 'nf-l2', 'end')
@@ -83,6 +83,9 @@ add(f'<path d="M{X0} {SURF} H{CX - 300} V{SURF + 44} H{CX + 300} V{SURF} H{X1}" 
 add(f'<rect x="{CX - 300}" y="{SURF}" width="600" height="44" style="fill:var(--surface)"/>', when=O('ero'))
 add(f'<path d="M{X0} {SURF} H{CX - 300} L{CX - 200} {BMY + 140} H{CX + 200} L{CX + 300} {SURF} H{X1}" style="fill:none;stroke:var(--ink-3);stroke-width:3"/>', when=O('ulc'))
 add(f'<path d="M{CX - 300} {SURF} L{CX - 200} {BMY + 140} H{CX + 200} L{CX + 300} {SURF} Z" style="fill:var(--surface)"/>', when=O('ulc'))
+# excoriation: a narrow, raw linear break in the epidermis (a deep scratch)
+add(f'<path d="M{X0} {SURF} H{CX - 40} L{CX - 8} {BMY - 14} H{CX + 8} L{CX + 40} {SURF} H{X1}" style="fill:none;stroke:var(--ink-3);stroke-width:3"/>', when=O('exc'))
+add(f'<path d="M{CX - 40} {SURF} L{CX - 8} {BMY - 14} H{CX + 8} L{CX + 40} {SURF} Z" style="fill:var(--bad);fill-opacity:.35"/>', when=O('exc'))
 add(f'<rect x="{X0}" y="{SURF - 40}" width="{X1 - X0}" height="{BMY - SURF + 40}" style="fill:var(--dk4);fill-opacity:.32"/>', when=O('lich'))
 for i in range(14):
     x = X0 + 80 + i * 130
@@ -93,7 +96,7 @@ W = dict(
   mac=('Macule', 'flat color change, ≤ 1 cm', 'freckle · solar lentigo'),
   pat=('Patch', 'flat color change, > 1 cm', 'vitiligo · port-wine stain'),
   pap=('Papule', 'elevated and solid, ≤ 1 cm', 'acne · molluscum'),
-  nod=('Nodule', 'elevated and solid, > 1 cm', 'neurofibroma'),
+  nod=('Nodule', 'elevated and solid, > 1 cm', 'pearly nodule of basal cell carcinoma'),
   plq=('Plaque', 'elevated and flat-topped, usually > 1 cm', 'psoriasis'),
   ves=('Vesicle', 'fluid-filled blister, ≤ 1 cm', 'varicella · zoster · herpes simplex'),
   bul=('Bulla', 'fluid-filled blister, > 1 cm', 'bullous pemphigoid · pemphigus · burns'),
@@ -103,6 +106,7 @@ W = dict(
   crs=('Crust', 'dried exudate on the surface', 'honey-colored in impetigo'),
   ero=('Erosion', 'epidermis lost — basement membrane not exposed', 'partial or full loss of epidermis'),
   ulc=('Ulcer', 'tissue lost through the basement membrane into dermis or deeper', 'arterial and decubitus ulcers'),
+  exc=('Excoriation', 'raw linear break in the epidermis — a deep scratch', 'often self-inflicted · scratching'),
   lich=('Lichenification', 'thick, rough skin with exaggerated markings', 'lichen simplex chronicus'),
 )
 for k, (a, b, c) in W.items():
@@ -132,8 +136,9 @@ notes = {
   'les:mac': 'Macule: a flat, circumscribed color change up to 1 cm — a freckle or solar lentigo.',
   'les:pat': 'Patch: the same flat color change, larger than 1 cm — vitiligo, a port-wine stain.',
   'les:pap': 'Papule: an elevated, solid lesion up to 1 cm — acne, molluscum.',
-  'les:nod': 'Nodule: an elevated, solid lesion larger than 1 cm — a neurofibroma.',
-  'les:plq': 'Plaque: elevated and flat-topped, usually larger than 1 cm, often from coalescing papules — psoriasis.',
+  'les:nod': 'Nodule: an elevated, solid lesion larger than 1 cm — the waxy, pearly nodule of basal cell carcinoma.',
+  'les:plq': 'Plaque: elevated and flat-topped, usually larger than 1 cm, often from coalescing papules — psoriasis. '
+             '(First Aid simply calls it a papule larger than 1 cm.)',
   'les:ves': 'Vesicle: a fluid-filled blister up to 1 cm — varicella, zoster, herpes simplex.',
   'les:bul': 'Bulla: a fluid-filled blister larger than 1 cm — bullous pemphigoid, pemphigus, burns.',
   'les:pus': 'Pustule: a pus-filled blister — acne, folliculitis, pustular psoriasis.',
@@ -144,6 +149,8 @@ notes = {
   'les:ero': 'Erosion: loss of epidermis without exposing the basement membrane.',
   'les:ulc': 'Ulcer: tissue loss that exposes the basement membrane and dermis — even muscle, bone or tendon — as in arterial and '
              'decubitus ulcers.',
+  'les:exc': 'Excoriation: a traumatic, raw linear break in the epidermis — a deep scratch, often self-inflicted. Repeated '
+             'scratching and rubbing lead to lichenification.',
   'les:lich': 'Lichenification: thickened, rough skin with exaggerated markings from repeated rubbing or scratching — lichen simplex '
               'chronicus.',
 }
@@ -154,17 +161,17 @@ dyn = dict(
     ['mac', 'Macule', 'lesprim'], ['pat', 'Patch', 'lesprim'], ['pap', 'Papule', 'lesprim'], ['nod', 'Nodule', 'lesprim'],
     ['plq', 'Plaque', 'lesprim'], ['ves', 'Vesicle', 'lesprim'], ['bul', 'Bulla', 'lesprim'], ['pus', 'Pustule', 'lesprim'],
     ['whl', 'Wheal', 'lesprim'], ['scl', 'Scale', 'lessec'], ['crs', 'Crust', 'lessec'], ['ero', 'Erosion', 'lessec'],
-    ['ulc', 'Ulcer', 'lessec'], ['lich', 'Lichenification', 'lessec']])],
+    ['ulc', 'Ulcer', 'lessec'], ['exc', 'Excoriation', 'lessec'], ['lich', 'Lichenification', 'lessec']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 481, 483, 487')
+  src='First Aid pp. 481, 483, 487, 494 · Robbins ch 25 · Bootcamp Dermatology')
 
 MAP = dict(
   id='lesionsim', title='Skin Lesions Drawn to Scale', topic='msk', after='skinbasics',
   sub='Pick a lesion word and see it drawn in profile against a 1 cm ruler — macule to nodule, vesicle to wheal, scale to '
       'ulcer — with the classic examples; the readouts ask raised, over 1 cm, fluid-filled, below the basement membrane',
   w=3500, h=1560,
-  fa='481, 483, 487',
+  fa='481, 483, 487, 494',
   src=[full('Robbins', 25), full('Pawlina', 15)],
   lanes=[('lsPrim', 'Primary lesions', 'glycolysis'), ('lsSec', 'Surface changes', 'tca'), ('lsSkin', 'The skin', 'gluconeo')],
   nodes=[
@@ -175,7 +182,7 @@ MAP = dict(
     ('ls5', 'Psoriasis', 330, 1470, 'lsPrim', 'plaque with scale', ['psoriasis']),
     ('ls6', 'Impetigo · cellulitis', 760, 1470, 'lsSec', 'honey crust', ['skininfect'])],
   panels=[
-    (2420, PANY, 1000, 'Small word · large word (First Aid p. 483)', [
+    (2420, PANY, 1000, 'Small word · large word (First Aid p. 483 · Robbins ch 25)', [
       ('Flat', 'macule · patch'),
       ('Raised, solid', 'papule · nodule (plaque: flat-topped)'),
       ('Fluid', 'vesicle · bulla'),

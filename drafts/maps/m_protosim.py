@@ -50,21 +50,26 @@ text('skin', 1320, 820, 'nf-l2', 'middle')
 add('<path d="M560 880 H900" style="stroke:var(--nf-blood);stroke-width:40;opacity:.15;stroke-linecap:round"/>'); text('blood · red cells', 560, 850, 'nf-l2')
 add('<circle cx="1000" cy="1090" r="30" style="fill:var(--dk9);fill-opacity:.15;stroke:var(--dk9);stroke-width:3"/>'); text('genital tract', 1050, 1100, 'nf-l2')
 # entries
-EN = dict(naeg=('warm fresh water, swimming', 330), tryp=('blood and lymph', 520), bab=('Ixodes tick bite', 700),
+EN = dict(naeg=('warm fresh water, swimming', 330), tryp=('tsetse fly · painful bite', 520), bab=('Ixodes tick bite', 700),
           chag=('kissing bug feces → bite or eye', 470), leish=('sandfly → promastigotes', 760), trich=('sexual contact only', 1090))
 for k, (s, y) in EN.items(): text(s, 300, y, 'nf-l1 dyn-tag', when=D(k))
 # lesions
 def blob(k, when, r=26):
     x, y = T[k]; add(f'<circle cx="{x}" cy="{y}" r="{r}" style="fill:var(--bad);fill-opacity:.5;stroke:var(--bad);stroke-width:3"/>', when=when, unless=['treat'])
 blob('brain', D('naeg', 'tryp'), 60); blob('node', D('tryp')); blob('eye', D('chag'))
-blob('heart', D('chag'), 50); blob('liver', D('leish'), 70); blob('spleen', D('leish'), 56); blob('gen', D('trich'))
+blob('heart', D('chag'), 50); blob('liver', D('leish'), 70); blob('gen', D('trich'))
+x, y = T['spleen']; add(f'<circle cx="{x}" cy="{y}" r="56" style="fill:var(--bad);fill-opacity:.5;stroke:var(--bad);stroke-width:3"/>', when=D('leish'), unless=['treat', 'asplen'])
+# asplenia: the spleen is crossed out and drawn as gone
+add('<circle cx="1100" cy="790" r="44" style="fill:var(--surface);stroke:var(--ink-3);stroke-width:3;stroke-dasharray:8 6"/>'
+    '<path d="M1072 762 L1128 818 M1128 762 L1072 818" class="nf-x"/>', when=['asplen'])
+text('removed', 1160, 822, 'nf-l2', when=['asplen'])
 add('<path d="M1000 520 V720" style="stroke:var(--bad);stroke-width:40;opacity:.35"/>', when=D('chag'), unless=['treat'])
 add('<path d="M900 900 C900 1010 1100 1010 1100 900 V860" style="fill:none;stroke:var(--bad);stroke-width:44;opacity:.35"/>', when=D('chag'), unless=['treat'])
 blob('skin', D('leish'), 30)
 for x in (640, 720, 800):
     add(f'<circle cx="{x}" cy="880" r="18" style="fill:var(--nf-blood);fill-opacity:.4;stroke:var(--bad);stroke-width:3"/>', when=D('bab'), unless=['treat'])
     add(f'<path d="M{x - 6} 874 h12 M{x - 6} 886 h12" style="stroke:var(--ink);stroke-width:3"/>', when=D('bab'), unless=['treat'])
-TAG = dict(naeg='rapidly fatal meningoencephalitis days later · motile amoebas in CSF', tryp='antigenic variation → waves of fever · nodes, then somnolence, coma',
+TAG = dict(naeg='rapidly fatal meningoencephalitis (< 1 week) · amoebas in CSF', tryp='antigenic variation → waves of fever · nodes, then somnolence, coma',
            bab='ring forms and Maltese crosses · hemolysis', chag='Romaña sign · later dilated cardiomyopathy, megaesophagus, megacolon',
            leish='amastigotes in macrophages · kala-azar: fever, hepatosplenomegaly, pancytopenia · or skin ulcers',
            trich='frothy green discharge, strawberry cervix, pH > 4.5 — no cyst form')
@@ -104,14 +109,15 @@ readouts = [
   dict(l='Hemolysis', mods=[dict(when=D('bab'), d=1)]),
   dict(l='Hepatosplenomegaly', mods=[dict(when=D('leish'), d=1)]),
   dict(l='Heart & gut dilation', mods=[dict(when=D('chag'), d=1)]),
-  dict(l='Fever', mods=[dict(when=D('tryp', 'bab', 'leish'), d=1)]),
+  dict(l='Fever', mods=[dict(when=D('naeg', 'tryp', 'bab', 'leish'), d=1)]),
 ]
 
 notes = {
   '': 'Pick a protozoan to follow it from its way in to the organ it damages; then treat it.',
   'dx:naeg': 'Naegleria fowleri: enters the nose while swimming in warm fresh water and follows the olfactory nerve through the '
-             'cribriform plate to the brain — rapidly fatal meningoencephalitis; motile amoebas in CSF. Amphotericin B.',
-  'dx:tryp': 'T brucei (African sleeping sickness): trypanosomes multiply in blood and lymph, then invade the CNS; antigenic '
+             'cribriform plate to the brain — rapidly fatal meningoencephalitis (under a week); amoebas in CSF. Amphotericin B '
+             '(a few survivors).',
+  'dx:tryp': 'T brucei (African sleeping sickness): a painful tsetse fly bite; trypanosomes multiply in blood and lymph, then invade the CNS; antigenic '
              'variation of the surface glycoprotein gives waves of parasitemia and fever. Nodes, then somnolence and coma. '
              'Suramin for blood-borne disease, melarsoprol for CNS.',
   'dx:bab': 'Babesia: Ixodes ticks put it into red cells → hemolysis; ring forms and Maltese cross tetrads. Severe without a '
@@ -119,6 +125,10 @@ notes = {
   'dx:chag': 'T cruzi (Chagas): the kissing bug defecates near its bite; parasites enter the wound or eye (Romaña sign). They '
              'destroy cardiac muscle and gut autonomic ganglia — dilated cardiomyopathy, megaesophagus, megacolon years later. '
              'Benznidazole or nifurtimox.',
+  'asplen': 'No spleen: infected red cells are not cleared, so babesiosis is severe (First Aid); with Babesia on, the '
+            'healthy red cells in the blood vanish.',
+  'treat': 'Drug given: the moving parasites stop and the chosen parasite\'s First Aid drug appears under its target '
+           '(schematic — the drawing does not show how much organ damage reverses).',
   'dx:leish': 'Leishmania: sandflies inject promastigotes that become amastigotes in macrophages of skin (ulcers) or '
               'reticuloendothelial organs (kala-azar: fever, hepatosplenomegaly, pancytopenia). Amphotericin B, stibogluconate.',
   'dx:trich': 'Trichomonas: flagellated, no cyst form, so it cannot survive outside the body — sexual spread only. Frothy green '
@@ -134,7 +144,7 @@ dyn = dict(
             dict(id='treat', label='Treat', type='toggle', on='Drug given', off='Give the drug', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 8')
+  src='First Aid pp. 153–155, 178 · Robbins ch 8 · Katzung ch 52 · Bootcamp Microbiology (systemic protozoa)')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -143,8 +153,8 @@ MAP = dict(
   sub='Follow Naegleria up the olfactory nerve, trypanosomes through blood to brain, Babesia into red cells, T cruzi to heart and '
       'gut, Leishmania into macrophages and Trichomonas — then treat each',
   w=3600, h=1900,
-  fa='153, 154, 155',
-  src=['Robbins ch 8 — Infectious diseases', 'Katzung ch 52 — Antiprotozoal Drugs'],
+  fa='153, 154, 155, 178',
+  src=[full('Robbins', 8), full('Katzung', 52)],
   lanes=[('ptBlood', 'Blood & tissue', 'tca'), ('ptOther', 'CNS & genital', 'glycolysis')],
   nodes=[
     ('pt1', 'Naegleria fowleri', 330, 1700, 'ptOther', 'nose → brain', ['naegleria'], 'hub'),
@@ -154,7 +164,7 @@ MAP = dict(
     ('pt5', 'Leishmaniasis', 2080, 1700, 'ptBlood', 'macrophages', ['leish']),
     ('pt6', 'Trichomoniasis', 2520, 1700, 'ptOther', 'sexual · no cyst', ['trichomonas'])],
   panels=[
-    (2500, PANY, 1000, 'Drug for each (Katzung ch 52)', [
+    (2500, PANY, 1000, 'Drug for each (First Aid pp. 153–155)', [
       ('Naegleria', 'amphotericin B'), ('T brucei', 'suramin · melarsoprol (CNS)'), ('Babesia', 'atovaquone + azithromycin'),
       ('T cruzi', 'benznidazole, nifurtimox'), ('Leishmania', 'amphotericin B, stibogluconate'), ('Trichomonas', 'metronidazole')])],
   dyn=dyn)

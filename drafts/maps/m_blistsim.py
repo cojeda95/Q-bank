@@ -94,7 +94,7 @@ for x in range(460, 1260, 140):
         add(f'<circle cx="{x + dx}" cy="{1170 + dy}" r="6" style="fill:var(--ok)"/>', when=O('dh'))
 IF = dict(pv='reticular, net-like IgG around each keratinocyte', bp='linear IgG and C3 along the dermal-epidermal junction',
           dh='granular IgA at the tips of the dermal papillae', ssss='toxin, not antibody — blisters often culture-negative',
-          ten='drug reaction (or Mycoplasma, HSV) — no antibody pattern')
+          ten='usually a drug reaction — T-cell injury, no antibody deposits')
 for k, t in IF.items():
     text(t, 1330, 1176, 'nf-l1', when=O(k))
 
@@ -116,8 +116,8 @@ flows = [
 ]
 
 sites = [
-  dict(x=CX + 500, y=455, n=[0, -1], w=20, t='md', l='', aria='Desmosomes — desmoglein', c='pemphigus', ions=[]),
-  dict(x=CX + 500, y=600, n=[0, 1], w=10, t='wall', l='', aria='Hemidesmosomes', c='pemphigoid', ions=[]),
+  dict(x=CX + 500, y=455, n=[0, -1], w=20, t='md', l='', aria='Desmosomes — desmoglein', c='pemphigus', ions=[], block=O('pv')),
+  dict(x=CX + 500, y=600, n=[0, 1], w=10, t='wall', l='', aria='Hemidesmosomes', c='pemphigoid', ions=[], block=O('bp')),
 ]
 
 # ════════ notes ════════
@@ -125,14 +125,14 @@ notes = {
   '': 'Blisters are named by the level of the split. Desmosomes hold keratinocytes to each other; hemidesmosomes anchor the basale '
       'to the basement membrane. In the readouts ↑ means present and ↓ absent.',
   'dz:ssss': 'Staphylococcal scalded skin syndrome: exfoliative toxin cleaves desmoglein 1 in the stratum granulosum, so only the '
-             'upper epidermis peels and it heals completely. Nikolsky positive, mucosa spared.',
-  'dz:pv': 'Pemphigus vulgaris: IgG against desmogleins (type II hypersensitivity) breaks desmosomes in the spinosum — acantholysis, '
+             'upper epidermis peels and it heals completely. Nikolsky positive, mucosa spared. Newborns, children, adults with renal insufficiency.',
+  'dz:pv': 'Pemphigus vulgaris: IgG against desmoglein 3 (± 1) (type II hypersensitivity) breaks desmosomes in the spinosum — acantholysis, '
            'flaccid bullae, oral involvement, Nikolsky positive, net-like IgG.',
   'dz:bp': 'Bullous pemphigoid: IgG against hemidesmosomes lifts the whole epidermis — tense blisters full of eosinophils, mucosa '
            'spared, Nikolsky negative, linear IgG and C3. Less severe than pemphigus.',
   'dz:dh': 'Dermatitis herpetiformis: granular IgA at the tips of the dermal papillae — intensely itchy vesicles on the elbows, '
-           'knees and buttocks; the skin sign of celiac disease (anti-tTG).',
-  'dz:ten': 'SJS and TEN: keratinocytes die along the dermal-epidermal junction, with fever, mucosal involvement and a positive '
+           'knees and buttocks; the skin sign of celiac disease (anti-tTG). Dapsone and a gluten-free diet.',
+  'dz:ten': 'SJS and TEN: usually a drug reaction; keratinocytes die along the dermal-epidermal junction, with fever, mucosal involvement and a positive '
             'Nikolsky sign — SJS under 10% of body surface, TEN over 30%. Sulfa, β-lactams, phenytoin.',
 }
 

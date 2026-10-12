@@ -112,13 +112,24 @@ for k, t in TOX.items(): text(('' if k in ('mtx', 'fu', 'hu') else 'toxicity: ')
 add(f'<rect x="{DX0}" y="1070" width="800" height="300" rx="24" class="dyn-soft"/>')
 text('DNA repair', DX0 + 20, 1100, 'nf-l1')
 REP = (('xp', 'nucleotide excision — UV pyrimidine dimers'), ('lynch', 'mismatch repair — replication errors'),
-       ('brca', 'homologous recombination — double-strand breaks (S, G2)'), ('fanc', 'interstrand cross-link repair'),
+       ('brca', 'homologous recombination — double-strand breaks (sister template)'), ('fanc', 'interstrand cross-link repair'),
        ('at', 'ATM — senses double-strand breaks, halts the cycle'))
 for i, (k, lab) in enumerate(REP):
     y = 1150 + i * 46
     add(f'<circle cx="{DX0 + 40}" cy="{y - 6}" r="9" style="fill:var(--ok)"/>', unless=R(k))
     add(X(DX0 + 40, y - 6, 11), when=R(k))
     text(lab, DX0 + 70, y, 'nf-l2')
+# the lesion each repair defect leaves unrepaired — drawn at x 1610–1660, clear of the drug lesions (1760–2350);
+# its caption sits above the strip (right-aligned), the drug captions below it
+add(f'<rect x="1604" y="{DY + 4}" width="52" height="16" rx="6" style="fill:var(--bad);opacity:.85"/>', when=R('xp'))
+add(f'<path d="M1650 {DY - 4} V{DY + 24} M1650 {DY + 36} V{DY + 64}" style="stroke:var(--bad);stroke-width:7"/>', when=R('lynch'))
+add(f'<path d="M1630 {DY - 6} V{DY + 66}" style="stroke:var(--bad);stroke-width:10"/>', when=R('fanc'))
+for yy in (DY - 10, DY + 50):
+    add(f'<rect x="1616" y="{yy}" width="28" height="20" style="fill:var(--surface)"/>', when=R('brca', 'at'))
+REPLES = dict(xp='unrepaired: UV pyrimidine (thymine) dimer', lynch='unrepaired: base mismatch → microsatellite instability',
+              brca='double-strand break → error-prone end joining', fanc='unrepaired: interstrand cross-link',
+              at='double-strand break not sensed — cycle not halted')
+for k, t in REPLES.items(): text(t, DX1, DY - 30, 'nf-l1 dyn-tag', 'end', when=R(k))
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
@@ -133,18 +144,20 @@ flows = [
   phase_flow('S', stop=S_DRUGS, low=ANY + SG2),
   phase_flow('G2', stop=S_DRUGS + SG2, low=ANY + G2M),
   phase_flow('M', stop=S_DRUGS + SG2 + G2M + M_DRUGS, low=ANY),
-  dict(d=f'M1950 770 V{DY + 66}', len=230, speed=70, r=8, base=dict(nt=3), mods=[m(D('mtx', 'fu', 'hu'), set=dict(nt=0))]),
+  dict(d=f'M1815 770 V{DY + 66}', len=230, speed=70, r=8, base=dict(nt=3), mods=[m(D('mtx', 'fu', 'hu'), set=dict(nt=0))]),
   dict(d=f'M{DX0} {DY + 30} H{DX1}', len=800, speed=120, r=8, base=dict(pol=1), mods=[m(D('cyta'), set=dict(pol=0))]),
 ]
 sites = [dict(x=CX, y=CY - RR, n=[0, -1], w=10, t='rec', l='', aria='Cell cycle', c='cytarabine', ions=[]),
          dict(x=DX1 - 30, y=1100, n=[0, 1], w=10, t='rec', l='', aria='Homologous recombination', c='brca', ions=[])]
 
 readouts = [
-  dict(l='Cells completing mitosis', mods=[dict(when=ALL, d=-1), dict(when=R('at'), d=1)]),
+  dict(l='Cells completing mitosis', mods=[dict(when=ALL, d=-1)]),
   dict(l='DNA damage', mods=[dict(when=D('alk', 'plat', 'anthra', 'bleo', 'dact', 'topo1', 'topo2', 'cyta') + R('xp', 'lynch', 'brca', 'fanc', 'at'), d=1)]),
   dict(l='dNTP supply', mods=[dict(when=D('mtx', 'fu', 'hu'), d=-1)]),
   dict(l='Mutations · cancer risk', mods=[dict(when=R('xp', 'lynch', 'brca', 'fanc', 'at'), d=1)]),
   dict(l='Microsatellite instability', mods=[dict(when=R('lynch'), d=1), dict(when=R('xp', 'brca'), d=0)]),
+  dict(l='Marrow suppression', mods=[dict(when=D('mtx', 'fu', 'hu', 'cyta', 'topo1', 'topo2', 'anthra', 'dact', 'alk', 'taxane') + R('fanc'), d=1),
+                                    dict(when=D('bleo'), d=0)]),
 ]
 
 notes = {
@@ -154,11 +167,11 @@ notes = {
   'rx:fu': '5-FU: bioactivated to 5-FdUMP, which inhibits thymidylate synthase — no dTMP. S phase. Leucovorin enhances it.',
   'rx:hu': 'Hydroxyurea: blocks ribonucleotide reductase — no deoxyribonucleotides. S phase. Raises HbF in sickle cell disease.',
   'rx:cyta': 'Cytarabine: pyrimidine nucleoside analog incorporated into DNA — terminates the chain and inhibits DNA polymerase. S phase. AML.',
-  'rx:topo1': 'Irinotecan, topotecan: inhibit topoisomerase I, which nicks one strand — strand breaks; arrest in S and G2.',
-  'rx:topo2': 'Etoposide, teniposide: inhibit topoisomerase II, which cuts both strands — strand breaks; arrest in S and G2.',
-  'rx:anthra': 'Doxorubicin, daunorubicin: intercalate, make iron-dependent free radicals and poison topoisomerase II. Considered G2/M. '
+  'rx:topo1': 'Irinotecan, topotecan: inhibit topoisomerase I, which nicks one strand — strand breaks; arrest in S and G2 (First Aid; Katzung puts the camptothecins at G2–M).',
+  'rx:topo2': 'Etoposide, teniposide: inhibit topoisomerase II, which cuts both strands — strand breaks; arrest in S and G2 (First Aid; Katzung puts etoposide at G1–S).',
+  'rx:anthra': 'Doxorubicin, daunorubicin: intercalate, make iron-dependent free radicals and poison topoisomerase II. G2/M per First Aid (Katzung calls them cell-cycle nonspecific). '
                'Dose-dependent dilated cardiomyopathy — dexrazoxane.',
-  'rx:bleo': 'Bleomycin: binds DNA and iron, radicals break the strands. G2/M. Pulmonary fibrosis.',
+  'rx:bleo': 'Bleomycin: binds DNA and iron, radicals break the strands. Cells pile up in G2. Pulmonary fibrosis; spares the marrow.',
   'rx:dact': 'Dactinomycin: intercalates and blocks RNA polymerase. Cell-cycle nonspecific. Wilms, Ewing, rhabdomyosarcoma.',
   'rx:alk': 'Cyclophosphamide, ifosfamide (and nitrosoureas): need hepatic P-450 activation, then cross-link DNA at guanine N-7. '
             'Cell-cycle nonspecific. Acrolein → hemorrhagic cystitis (mesna). Nitrosoureas cross the BBB.',
@@ -167,10 +180,10 @@ notes = {
   'rx:vinca': 'Vincristine, vinblastine: bind β-tubulin and block polymerization — no spindle. M phase. Vincristine: neuropathy; '
               'vinblastine: marrow.',
   'rx:taxane': 'Paclitaxel, docetaxel: hyperstabilize microtubules — the spindle can’t disassemble. M phase.',
-  'rp:xp': 'Xeroderma pigmentosum: no nucleotide excision repair, so UV pyrimidine dimers accumulate — severe sunburn, skin cancers young.',
+  'rp:xp': 'Xeroderma pigmentosum: no nucleotide excision repair, so UV pyrimidine dimers accumulate — sun hypersensitivity, dry skin and a greatly raised skin-cancer risk.',
   'rp:lynch': 'Lynch syndrome: no mismatch repair (MSH2, MLH1, MSH6, PMS2) — microsatellite instability; colorectal (proximal), '
               'endometrial, ovarian cancer.',
-  'rp:brca': 'BRCA1/2: no homologous recombination (S and G2), so double-strand breaks go to error-prone end joining — breast, ovarian, '
+  'rp:brca': 'BRCA1/2: no homologous recombination (error-free, copies the sister chromatid), so double-strand breaks go to error-prone end joining — breast, ovarian, '
              'prostate, pancreatic cancer.',
   'rp:fanc': 'Fanconi anemia: interstrand cross-links can’t be resolved — marrow failure, short stature, thumb and radial defects, AML.',
   'rp:at': 'Ataxia-telangiectasia: ATM doesn’t sense double-strand breaks, so the cycle isn’t halted — cerebellar ataxia, '
@@ -191,14 +204,14 @@ dyn = dict(
               ['fanc', 'Fanconi anemia', 'fanconi'], ['at', 'Ataxia-telangiectasia', 'ataxia']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 444–447 · Katzung ch 54 · Marks ch 12')
+  src='First Aid pp. 37, 443–447 · Katzung ch 54 · Marks ch 12')
 
 MAP = dict(
   id='chemosim', title='Chemo & DNA Repair in Motion', topic='heme', after='chemo',
   sub='Cells go round the cycle; give a drug and watch them pile up in its phase, see the lesion it leaves in DNA and its signature '
       'toxicity — then break a repair pathway: xeroderma pigmentosum, Lynch, BRCA, Fanconi, ataxia-telangiectasia',
   w=3600, h=1900,
-  fa='37, 115, 190, 395, 427, 444, 445, 447',
+  fa='37, 115, 220, 395, 427, 443, 444, 445, 447',
   src=['Katzung ch 54 — Cancer Chemotherapy', 'Robbins ch 12 — The heart', 'Marks ch 12 — Synthesis of DNA',
        'Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout',
        'Katzung ch 5 — Pharmacogenomics', 'Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors',
@@ -216,7 +229,7 @@ MAP = dict(
     ('cx8', 'BRCA · Fanconi', 1200, 1760, 'cxRep', 'breaks · cross-links', ['brca', 'fanconi']),
     ('cx9', 'Ataxia-telangiectasia', 1640, 1760, 'cxRep', 'ATM', ['ataxia'])],
   panels=[
-    (2500, PANY, 1000, 'Phase (First Aid pp. 444–447)', [
+    (2500, PANY, 1000, 'Phase (First Aid pp. 443–445)', [
       ('S', 'methotrexate, 5-FU, hydroxyurea, cytarabine'),
       ('S and G2', 'topoisomerase I and II inhibitors'),
       ('G2/M', 'bleomycin, anthracyclines'),

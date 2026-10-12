@@ -41,8 +41,8 @@ text('Gallbladder', 1070, 300, 'nf-l1')
 shapes.append(dict(tube='M840 340 C760 430 660 540 598 742', w=20, color='--dk5'))
 text('Common bile duct', 760, 520, 'nf-l2')
 # duodenum
-shapes.append(dict(tube='M520 230 V1330', w=110, color='--dk3'))
-text('Duodenum', 520, 210, 'nf-l1', 'middle')
+shapes.append(dict(tube='M520 255 V1330', w=110, color='--dk3'))
+text('Duodenum', 520, 240, 'nf-l1', 'middle')
 # gland outline
 add('<path d="M640 600 C760 540 1000 560 1240 590 C1500 620 1800 600 2080 640 C2230 660 2250 860 2090 900 '
     'C1800 960 1500 930 1240 950 C1000 970 760 980 640 900 C590 860 590 640 640 600 Z" class="dyn-soft"/>')
@@ -82,7 +82,7 @@ for x, y in [(980, 760), (1330, 760), (1630, 760), (1030, 900), (1630, 640), (13
 add('<path d="M640 600 C760 540 1000 560 1240 590 C1500 620 1800 600 2080 640 C2230 660 2250 860 2090 900 '
     'C1800 960 1500 930 1240 950 C1000 970 760 980 640 900 C590 860 590 640 640 600 Z" '
     'style="fill:var(--ink-3);fill-opacity:.12;stroke:none"/>', when=O('chr'))
-text('fibrosis and calcifications replace acini and islets', 1430, 1000, 'nf-l1 dyn-tag', 'middle', when=O('chr'))
+text('fibrosis and calcifications replace the acini · islets lost late', 1430, 1000, 'nf-l1 dyn-tag', 'middle', when=O('chr'))
 
 # the blood: triglycerides or calcium high
 shapes.append(dict(vessel='M680 1230 H2240', w=50, color='--dk1'))
@@ -116,7 +116,7 @@ sites = [
 
 # ════════ readouts ════════
 readouts = [
-  dict(l='Lipase', mods=[dict(when=ACUTE, d=1)]),
+  dict(l='Lipase · amylase', mods=[dict(when=ACUTE, d=1)]),
   dict(l='Serum Ca²⁺', mods=[dict(when=O('stone', 'etoh', 'tg'), d=-1), dict(when=O('ca'), d=1)]),
   dict(l='ALP · direct bilirubin', mods=[dict(when=O('stone'), d=1)]),
   dict(l='Triglycerides', mods=[dict(when=O('tg'), d=1)]),
@@ -129,14 +129,15 @@ notes = {
   '': 'Normal: acinar cells send zymogens (trypsinogen and the rest) down the duct; enterokinase on the duodenal brush border '
       'makes trypsin, which then activates the others. Pancreatitis is that activation happening inside the gland.',
   'cause:stone': 'A gallstone at the ampulla is one of the two commonest causes. Bile and pancreatic juice back up, enzymes activate '
-                 'inside the gland, and the stone in the duct raises ALP and direct bilirubin. Treat with cholecystectomy.',
+                 'inside the gland, and the stone in the duct raises ALP and direct bilirubin. Symptomatic stones → cholecystectomy.',
   'cause:etoh': 'Alcohol is the other common cause of acute pancreatitis — epigastric pain to the back, nausea and vomiting, with '
                 'lipase over 3× normal. Repeated attacks lead to chronic pancreatitis.',
   'cause:tg': 'Triglycerides over 1000 mg/dL can cause acute pancreatitis — the H of I GET SMASHED (hypercalcemia or '
               'hypertriglyceridemia).',
   'cause:ca': 'Hypercalcemia is on the I GET SMASHED list of causes, beside hypertriglyceridemia.',
-  'cause:chr': 'Chronic pancreatitis: fibrosis and calcifications replace acini and islets. Steatorrhea and diabetes follow once '
-               'function falls below about 10%; lipase may be normal, fecal elastase is low.',
+  'cause:chr': 'Chronic pancreatitis (alcohol; genetic — CF, SPINK1): fibrosis and calcifications replace the acini, islets spared '
+               'until late. Below about 10% function come steatorrhea, fat-soluble vitamin loss and diabetes; lipase may be normal, '
+               'fecal elastase is low. A risk for pancreatic cancer.',
 }
 
 dyn = dict(
@@ -148,14 +149,14 @@ dyn = dict(
     ['ca', 'Hypercalcemia', 'acutepanc'], ['chr', 'Chronic pancreatitis', 'chronicpanc']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 92, 380, 388, 403–404 · Robbins ch 19')
+  src='First Aid pp. 92, 205, 380, 388, 403–405 · Robbins ch 19')
 
 MAP = dict(
   id='pancsim', title='Pancreatitis in Motion', topic='gi', after='liver',
   sub='Zymogens travel down the duct and switch on only in the duodenum — pick a cause and watch them activate inside the '
       'gland, calcium soaps form and a stone stop the flow; chronic disease leaves fibrosis and calcifications. Tap a structure for its card',
   w=3500, h=1720,
-  fa='92, 205, 380, 388, 403–404',
+  fa='92, 205, 380, 388, 403–405',
   src=[full('Robbins', 19), full('Robbins', 18), full('Costanzo', 8), full('Guyton', 65)],
   lanes=[('pnPhys', 'Normal secretion', 'glycolysis'), ('pnAcute', 'Acute', 'tca'), ('pnChronic', 'Chronic', 'gluconeo')],
   nodes=[
