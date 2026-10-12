@@ -114,7 +114,7 @@ notes = {
             'hepatosplenomegaly and a cherry-red spot; foam cells.',
   'lsd:gau': 'Gaucher (β-glucocerebrosidase), the commonest: engorged macrophages infiltrate marrow, liver and spleen — '
              'hepatosplenomegaly, pancytopenia, bone crises. Enzyme replacement.',
-  'lsd:fab': 'Fabry (α-galactosidase A, X-linked): ceramide trihexoside builds up in vascular endothelium — episodic painful '
+  'lsd:fab': 'Fabry (α-galactosidase A, X-linked): ceramide trihexoside (globotriaosylceramide) builds up in vascular endothelium — episodic painful '
              'neuropathy of the hands and feet, angiokeratomas, hypohidrosis, corneal clouding; later renal failure and heart disease.',
   'lsd:kra': 'Krabbe (galactocerebrosidase): psychosine kills oligodendrocytes — central and peripheral demyelination, optic '
              'atrophy, globoid cells. No cherry-red spot.',

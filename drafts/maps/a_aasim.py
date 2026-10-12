@@ -48,7 +48,7 @@ YA = 420
 P = dict(phe=(380, YA), tyr=(820, YA), hga=(1260, YA), faa=(1700, YA), fum=(2120, YA), mel=(820, 250), cat=(820, 590))
 node(*P['phe'], 'Phenylalanine'); node(*P['tyr'], 'Tyrosine'); node(*P['hga'], 'Homogentisate')
 node(*P['faa'], 'Fumarylacetoacetate'); node(*P['fum'], 'Fumarate + acetoacetate'); node(*P['mel'], 'Melanin')
-node(*P['cat'], 'Dopamine · NE · Epi')
+node(*P['cat'], 'DOPA → DA → NE → Epi')
 for (a, b, lab, lx, ly) in (('phe', 'tyr', 'PAH · BH4', 600, YA - 16), ('tyr', 'hga', '', 0, 0), ('hga', 'faa', 'HGD', 1480, YA - 16),
                             ('faa', 'fum', 'FAH', 1910, YA - 16)):
     add(f'<path d="M{P[a][0] + BW // 2} {YA} H{P[b][0] - BW // 2}" class="dyn-line"/>')
@@ -82,7 +82,7 @@ outcome(1700, YB + 120, 'acidosis + ketosis + ↑ NH₃', O('pa', 'mma'))
 YC = 1240
 R = dict(met=(380, YC), hcy=(820, YC), cth=(1260, YC), cys=(1700, YC))
 node(*R['met'], 'Methionine'); node(*R['hcy'], 'Homocysteine'); node(*R['cth'], 'Cystathionine'); node(*R['cys'], 'Cysteine')
-add(f'<path d="M{380 + BW // 2} {YC} H{820 - BW // 2}" class="dyn-line"/>')
+add(f'<path d="M{380 + BW // 2} {YC} H{820 - BW // 2}" class="dyn-line"/>'); text('SAM → SAH', 600, YC - 16, 'nf-l2', 'middle')
 add(f'<path d="M{820 + BW // 2} {YC} H{1260 - BW // 2}" class="dyn-line"/>'); text('CBS · B6', 1040, YC - 16, 'nf-l2', 'middle')
 add(f'<path d="M{1260 + BW // 2} {YC} H{1700 - BW // 2}" class="dyn-line"/>')
 add(f'<path d="M820 {YC + BH // 2} C820 {YC + 140} 380 {YC + 140} 380 {YC + BH // 2}" class="dyn-line"/>')

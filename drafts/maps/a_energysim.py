@@ -41,15 +41,21 @@ text('glycolysis in the cytosol, then PDH, the TCA cycle and the electron transp
 # ════════ cytosol: glycolysis ════════
 box(160, 210, 900, 1220)
 text('Cytosol', 190, 250, 'nf-l1')
-GL = [('Glucose', 300), ('Glucose-6-P', 420), ('Fructose-1,6-BP', 540), ('Glyceraldehyde-3-P', 660), ('PEP', 780), ('Pyruvate', 920)]
+# every glycolytic intermediate, as on Core Carbon (DHAP off to the side)
+GL = [('Glucose', 290), ('Glucose-6-P', 360), ('Fructose-6-P', 430), ('Fructose-1,6-BP', 500), ('Glyceraldehyde-3-P', 570),
+      ('1,3-BPG', 640), ('3-Phosphoglycerate', 710), ('2-Phosphoglycerate', 780), ('PEP', 850), ('Pyruvate', 920)]
 for lab, y in GL:
-    add(f'<rect x="420" y="{y - 24}" width="300" height="48" rx="24" class="dyn-soft"/>')
+    add(f'<rect x="420" y="{y - 22}" width="300" height="44" rx="22" class="dyn-soft"/>')
     text(lab, 570, y + 6, 'nf-l1', 'middle')
+add('<rect x="230" y="548" width="150" height="44" rx="22" class="dyn-soft"/>')
+text('DHAP', 305, 576, 'nf-l1', 'middle')
+add('<path d="M380 570 H420" class="dyn-line"/>')
+for y in (675, 885): text('ATP', 410, y + 6, 'nf-l2', 'end')     # the two substrate-level steps
 add('<rect x="200" y="1076" width="200" height="48" rx="24" class="dyn-soft"/>')
 text('Lactate', 300, 1100, 'nf-l1', 'middle')
 text('LDH', 400, 1030, 'nf-l2')
 add('<path d="M480 945 L330 1074" class="dyn-line"/>')
-text('ATP made here (no O₂ needed)', 620, 860, 'nf-l2')
+text('glycolysis needs no O₂', 190, 1000, 'nf-l2')
 
 # ════════ mitochondrion ════════
 add('<rect x="940" y="210" width="1400" height="1010" rx="120" style="fill:var(--dk3);fill-opacity:.06;stroke:var(--dk3);stroke-width:6"/>')
@@ -83,7 +89,7 @@ text('ADP → ATP', 1880, CX['V'] + 50, 'nf-l2', 'end')
 
 # ✕ marks and tags for each block
 def X(cx, cy, s=22): return f'<path d="M{cx - s} {cy - s} L{cx + s} {cy + s} M{cx + s} {cy - s} L{cx - s} {cy + s}" class="nf-x"/>'
-add(X(570, 850), when=O('pk'))   # on the PEP → pyruvate step
+add(X(570, 885, 12), when=O('pk'))   # on the PEP → pyruvate step
 text('pyruvate kinase deficiency — red cells run out of ATP', 600, 1180, 'nf-l1 dyn-tag', 'middle', when=O('pk'))
 add(X(850, 920), when=O(*PDHB))
 TAG = dict(pdh='PDH deficiency — pyruvate can’t enter: lactate and alanine pile up',
@@ -103,8 +109,8 @@ add(X(*TA(225), 18), when=O('fluoro'))           # aconitase: citrate → isocit
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
 flows = [
-  dict(d='M570 324 V756', len=432, speed=110, r=7, base=dict(glc=6)),
-  dict(d='M570 804 V896', len=92, speed=80, r=7, base=dict(glc=2), mods=[m(O('pk'), set=dict(glc=0))]),
+  dict(d='M570 312 V828', len=516, speed=110, r=7, base=dict(glc=6)),
+  dict(d='M570 872 V898', len=26, speed=80, r=7, base=dict(glc=2), mods=[m(O('pk'), set=dict(glc=0))]),
   dict(d='M480 945 L330 1074', len=200, speed=70, r=7, base=dict(lac=1), mods=[m(O(*DOWN), set=dict(lac=6))]),
   dict(d='M720 920 H980', len=260, speed=110, r=7, base=dict(glc=3), mods=[m(O(*PDHB), set=dict(glc=0)), m(O(*ETC, 'fluoro'), set=dict(glc=1))]),
   dict(d=f'M{TX - TR} {TY} A{TR} {TR} 0 1 1 {TX + TR} {TY} A{TR} {TR} 0 1 1 {TX - TR} {TY}', len=round(2 * math.pi * TR), speed=120, r=7,

@@ -29,8 +29,9 @@ def box(x0, y0, x1, y1):
 X = lambda *k: [f'x:{x}' for x in k]
 PANY = 1180
 GX = 700
-STEPS = [('glucose', 300), ('glucose-6-P', 420), ('fructose-6-P', 540), ('fructose-1,6-BP', 660), ('1,3-BPG', 780),
-         ('2-phosphoglycerate', 900), ('PEP', 1020), ('pyruvate', 1140)]
+# every glycolytic intermediate, as on Core Carbon (DHAP off to the side)
+STEPS = [('glucose', 300), ('glucose-6-P', 393), ('fructose-6-P', 486), ('fructose-1,6-BP', 579), ('glyceraldehyde-3-P', 672),
+         ('1,3-BPG', 765), ('3-phosphoglycerate', 858), ('2-phosphoglycerate', 951), ('PEP', 1044), ('pyruvate', 1140)]
 Y = {l: y for l, y in STEPS}
 TX, TY, TR = 1500, 1000, 220
 
@@ -41,15 +42,20 @@ for l, y in STEPS:
     text(l, GX, y + 6, 'nf-l1', 'middle')
 for (a, ya), (b, yb) in zip(STEPS, STEPS[1:]):
     add(f'<path d="M{GX} {ya + 26} V{yb - 26}" style="stroke:var(--ink-3);stroke-width:4"/>')
-text('hexokinase', GX - 140, 366, 'nf-l2', 'end'); text('PFK-1', GX - 140, 606, 'nf-l2', 'end'); text('enolase', GX - 140, 966, 'nf-l2', 'end')
+mid = lambda a, b: (Y[a] + Y[b]) / 2 + 6
+text('hexokinase', GX - 140, mid('glucose', 'glucose-6-P'), 'nf-l2', 'end'); text('PFK-1', GX - 140, mid('fructose-6-P', 'fructose-1,6-BP'), 'nf-l2', 'end')
+text('enolase', GX - 140, mid('2-phosphoglycerate', 'PEP'), 'nf-l2', 'end')
+add(f'<rect x="{GX + 200}" y="{Y["glyceraldehyde-3-P"] - 26}" width="130" height="52" rx="20" style="fill:var(--surface);stroke:var(--line-2);stroke-width:3"/>')
+text('DHAP', GX + 265, Y['glyceraldehyde-3-P'] + 6, 'nf-l1', 'middle')
+add(f'<path d="M{GX + 120} {Y["glyceraldehyde-3-P"]} H{GX + 200}" style="stroke:var(--ink-3);stroke-width:4"/>')
 # F-2,6-BP side branch
 add(f'<path d="M{GX + 120} {Y["fructose-6-P"]} H{GX + 300}" style="stroke:var(--ink-3);stroke-width:4;stroke-dasharray:10 8"/>')
 text('PFK-2 / FBPase-2', GX + 210, Y['fructose-6-P'] - 14, 'nf-l2', 'middle')
 add(f'<circle cx="{GX + 380}" cy="{Y["fructose-6-P"]}" r="70" style="fill:var(--dk4);fill-opacity:.35;stroke:var(--dk4);stroke-width:4"/>', when=['hor:fed'])
 add(f'<circle cx="{GX + 380}" cy="{Y["fructose-6-P"]}" r="30" style="fill:var(--dk4);fill-opacity:.2;stroke:var(--dk4);stroke-width:3"/>', when=['hor:fast'])
 text('F-2,6-BP', GX + 380, Y['fructose-6-P'] + 100, 'nf-l1', 'middle')
-add(f'<path d="M{GX + 330} {Y["fructose-6-P"] + 50} Q{GX + 250} 620 {GX + 130} 610" style="fill:none;stroke:var(--ok);stroke-width:6"/>', when=['hor:fed'])
-text('+ PFK-1, − FBPase-1', GX + 160, 700, 'nf-l2', when=['hor:fed'])
+add(f'<path d="M{GX + 330} {Y["fructose-6-P"] + 50} Q{GX + 250} 560 {GX + 130} 540" style="fill:none;stroke:var(--ok);stroke-width:6"/>', when=['hor:fed'])
+text('+ PFK-1, − FBPase-1', GX + 140, 620, 'nf-l2', when=['hor:fed'])
 # 2,3-BPG branch
 add(f'<path d="M{GX - 120} {Y["1,3-BPG"]} H{GX - 330}" style="stroke:var(--ink-3);stroke-width:4;stroke-dasharray:10 8"/>')
 add(f'<rect x="{GX - 520}" y="{Y["1,3-BPG"] - 26}" width="190" height="52" rx="20" style="fill:var(--surface);stroke:var(--nf-blood);stroke-width:3"/>')
@@ -76,11 +82,11 @@ text('SDH = complex II', TX + 150, TY + 300, 'nf-l2', 'middle')
 mx, my = P['malate']
 add(f'<circle cx="{mx:.0f}" cy="{my:.0f}" r="34" style="fill:var(--dk10);fill-opacity:.4"/>', when=X('etoh'))   # NADH pushes OAA → malate
 # hits
-add(f'<path d="M{GX - 30} 340 l60 40 m0 -40 l-60 40" style="stroke:var(--bad);stroke-width:10"/>', when=X('hk'))
-add(f'<path d="M{GX - 30} 1060 l60 40 m0 -40 l-60 40" style="stroke:var(--bad);stroke-width:10"/>', when=X('pk'))
+add(f'<path d="M{GX - 20} {mid("glucose", "glucose-6-P") - 26} l40 40 m0 -40 l-40 40" style="stroke:var(--bad);stroke-width:10"/>', when=X('hk'))
+add(f'<path d="M{GX - 20} {mid("PEP", "pyruvate") - 26} l40 40 m0 -40 l-40 40" style="stroke:var(--bad);stroke-width:10"/>', when=X('pk'))
 add(f'<rect x="{GX - 540}" y="{Y["1,3-BPG"] - 46}" width="230" height="92" rx="30" class="dyn-hl" style="fill:none"/>', when=X('pk'))
 text('2,3-BPG ↑ 2–3× → right shift', GX - 425, Y['1,3-BPG'] + 76, 'nf-l2', 'middle', when=X('pk'))
-text('pyruvate kinase', GX - 140, 1086, 'nf-l2', 'end')
+text('pyruvate kinase', GX - 140, mid('PEP', 'pyruvate'), 'nf-l2', 'end')
 # fasting: PEPCK carries oxaloacetate back to PEP (the bypass of pyruvate kinase)
 PEPCK = f'M{TX - TR} {TY} C{TX - TR - 30} 1070 1000 1060 {GX + 120} {Y["PEP"] + 10}'
 add(f'<path d="{PEPCK}" style="fill:none;stroke:var(--dk4);stroke-width:4;stroke-dasharray:10 8"/>', when=['hor:fast'])

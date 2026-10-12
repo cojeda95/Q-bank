@@ -63,7 +63,7 @@ text('Mitochondrion', 2200, 560, 'nf-l1', 'end')
 add('<circle cx="1650" cy="860" r="140" style="fill:none;stroke:var(--dk1);stroke-width:6;opacity:.6"/>')
 text('β-oxidation spiral', 1650, 856, 'nf-l1', 'middle'); text('acyl-CoA dehydrogenases', 1650, 880, 'nf-l2', 'middle')
 node(1650, 1100, 'Acetyl-CoA'); node(2020, 1100, 'Ketone bodies', w=200); node(2020, 720, 'FADH₂ · NADH → ATP', w=260)
-text('(liver)', 2020, 1150, 'nf-l2', 'middle')
+text('(liver, via HMG-CoA)', 2020, 1150, 'nf-l2', 'middle'); text('acetoacetate · β-hydroxybutyrate', 2020, 1176, 'nf-l2', 'middle')
 
 # ════════ what goes wrong ════════
 add(X(1400, 580), when=O('cpt2'))
