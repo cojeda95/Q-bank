@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 321 pan/zoom maps with 2171 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 339 pan/zoom maps with 2171 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="321 interactive maps. 2171 lesions pinned to the step they break.">
+<meta property="og:description" content="339 interactive maps. 2171 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -1976,6 +1976,54 @@ const PATHS = {
   bcLeuk:{n:"Leukemias",v:"--p-glycolysis"},
   bcNHL:{n:"Non-Hodgkin lymphomas",v:"--p-tca"},
   bcHod:{n:"Hodgkin & CNS",v:"--p-gluconeo"},
+  cxS:{n:"S-phase drugs",v:"--p-glycolysis"},
+  cxDam:{n:"DNA-damaging drugs",v:"--p-tca"},
+  cxM:{n:"M-phase drugs",v:"--p-ppp"},
+  cxRep:{n:"Repair defects",v:"--p-gluconeo"},
+  lfBili:{n:"Bilirubin",v:"--p-glycolysis"},
+  lfHep:{n:"Hepatocellular",v:"--p-tca"},
+  lfChol:{n:"Cholestatic",v:"--p-gluconeo"},
+  mkRec:{n:"Receptors",v:"--p-glycolysis"},
+  mkRas:{n:"RAS & below",v:"--p-tca"},
+  mkNuc:{n:"Nucleus",v:"--p-gluconeo"},
+  myAcute:{n:"Acute & dysplastic",v:"--p-tca"},
+  myMpn:{n:"Myeloproliferative & histiocytic",v:"--p-glycolysis"},
+  ntIslet:{n:"Islet tumors",v:"--p-tca"},
+  ntGut:{n:"Gut & syndrome",v:"--p-glycolysis"},
+  pnPhys:{n:"Normal secretion",v:"--p-glycolysis"},
+  pnAcute:{n:"Acute",v:"--p-tca"},
+  pnChronic:{n:"Chronic",v:"--p-gluconeo"},
+  plNorm:{n:"Primary hemostasis",v:"--p-glycolysis"},
+  plDz:{n:"Platelet disorders",v:"--p-tca"},
+  plRx:{n:"Antiplatelet & heparin",v:"--p-gluconeo"},
+  ttFol:{n:"Follicular cell",v:"--p-tca"},
+  ttC:{n:"C cell",v:"--p-glycolysis"},
+  avHerp:{n:"Herpesviruses",v:"--p-glycolysis"},
+  avHep:{n:"Hepatitis B and C",v:"--p-tca"},
+  avFlu:{n:"Influenza",v:"--p-gluconeo"},
+  blLayer:{n:"Skin layers",v:"--p-glycolysis"},
+  blAb:{n:"Antibody blisters",v:"--p-tca"},
+  blOther:{n:"Toxin & drug",v:"--p-gluconeo"},
+  bgPos:{n:"Gram-positive",v:"--p-glycolysis"},
+  bgNeg:{n:"Gram-negative",v:"--p-tca"},
+  bgLab:{n:"The tests",v:"--p-gluconeo"},
+  gxMov:{n:"Between cells",v:"--p-glycolysis"},
+  gxIn:{n:"Within a cell",v:"--p-tca"},
+  lsPrim:{n:"Primary lesions",v:"--p-glycolysis"},
+  lsSec:{n:"Surface changes",v:"--p-tca"},
+  lsSkin:{n:"The skin",v:"--p-gluconeo"},
+  ngResp:{n:"Respiratory & glands",v:"--p-tca"},
+  ngSys:{n:"Nerve & blood",v:"--p-glycolysis"},
+  paProt:{n:"Protozoa",v:"--p-glycolysis"},
+  paNem:{n:"Nematodes",v:"--p-tca"},
+  paFlat:{n:"Tapeworms & flukes",v:"--p-gluconeo"},
+  ptBlood:{n:"Blood & tissue",v:"--p-tca"},
+  ptOther:{n:"CNS & genital",v:"--p-glycolysis"},
+  txAdp:{n:"ADP-ribosylating toxins",v:"--p-glycolysis"},
+  txNerve:{n:"Nerve toxins",v:"--p-tca"},
+  txOther:{n:"Membranes, rRNA, superantigens",v:"--p-gluconeo"},
+  zoVec:{n:"Vectors & animals",v:"--p-tca"},
+  zoVen:{n:"Bites & venom",v:"--p-glycolysis"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -40735,7 +40783,505 @@ MAPS.bcellsim = {
  edges:[]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["oral","Oral Cavity & Salivary Glands"],["skinbasics","Skin Basics — Layers, Lesions & Terms"],["gidrugs","GI Motility, Laxative & Antiemetic Drugs"],["cardproc","Cardiac Anatomy, Catheters & Vascular Access"],["transfuse","Blood Groups & Transfusion"],["nmjflow","Neuromuscular Junction in Motion"],["synflow","Monoamine Synapse in Motion"],["apflow","Action Potential in Motion"],["bgflow","Basal Ganglia in Motion"],["cordsim","Spinal Cord Lesion Simulator"],["stemsim","Brainstem Lesion Simulator"],["visfield","Visual Pathway Lesion Simulator"],["cardap","Cardiac Action Potential in Motion"],["coagflow","Coagulation Cascade in Motion"],["alvflow","Alveolus in Motion"],["asthflow","Asthma Airway in Motion"],["axisflow","HPA Axis in Motion"],["betaflow","β Cell in Motion"],["follflow","Thyroid Follicle in Motion"],["cochflow","Cochlea in Motion"],["gutabs","Gut Absorption in Motion"],["boneflow","Bone Remodeling in Motion"],["goutflow","Uric Acid & Gout in Motion"],["rajoint","Rheumatoid Joint in Motion"],["vsmotion","Viscerosomatic Reflex in Motion"],["lymphflow","Lymphatic Pump in Motion"],["biliflow","Bilirubin in Motion"],["ironflow","Iron in Motion"],["abflow","Acid–Base in Motion"],["glomsim","Glomerular Disease Locator"],["abxsim","Antibiotic Targets in Motion"],["misim","MI Locator"],["pvflow","Pressure–Volume Loop in Motion"],["edemaflow","Capillary & Edema in Motion"],["hivflow","HIV Life Cycle in Motion"],["eyesim","Pupil & Eye Movement Simulator"],["plexsim","Brachial Plexus Lesion Simulator"],["mensflow","Menstrual Cycle in Motion"],["baroflow","Autonomic Drugs & Baroreflex in Motion"],["shocksim","Shock Simulator"],["ecgsim","Conduction & ECG Simulator"],["cahflow","Steroid Synthesis & CAH in Motion"],["lipoflow","Lipoprotein Transport in Motion"],["hemeflow","Heme Synthesis & Porphyrias in Motion"],["nucflow","Nucleotide Synthesis & Drug Sites in Motion"],["acidflow","Parietal Cell in Motion"],["legsim","Lower Limb Nerve Lesion Simulator"],["abtime","Acid–Base Compensation Timeline"],["aasim","Amino Acid Disorders in Motion"],["bvitsim","B Vitamins & Zinc in Motion"],["colsim","Collagen Assembly in Motion"],["energysim","Energy Metabolism in Motion"],["faosim","Fatty Acid Oxidation in Motion"],["glyxsim","Glycolysis Odds & Ends in Motion"],["gsdsim","Glycogen Storage Diseases in Motion"],["labsim","Lab Techniques in Motion"],["lsdsim","Lysosomal Storage in Motion"],["pedsim","Pedigree Simulator"],["rtasim","Renal Tubular Acidosis Simulator"],["sugarsim","Fructose & Galactose in Motion"],["ureasim","Urea Cycle in Motion"],["cbsim","Cerebellar Lesions in Motion"],["papezsim","The Papez Circuit in Motion"],["rxsim","Psych Drugs at the Receptors"],["sleepsim","Sleep Stages in Motion"],["stimsim","Stimulants & Addiction in Motion"],["aortasim","The Aorta in Motion"],["archsim","Pharyngeal Arches in Motion"],["carditsim","Heart Infection & Inflammation in Motion"],["cyansim","Cyanotic Heart Disease in Motion"],["embsim","Embryo & Gut-Tube Defects in Motion"],["fetalsim","Fetal Circulation in Motion"],["gonadsim","Gonadal Tumors in Motion"],["htnsim","Hypertension in Motion"],["lyteecg","Electrolytes & the ECG"],["murmursim","Murmurs & Maneuvers in Motion"],["placsim","Bleeding in Pregnancy in Motion"],["pregsim","Pregnancy Hormones in Motion"],["prossim","The Prostate in Motion"],["scrotsim","The Scrotum in Motion"],["sexsim","Sex Differentiation in Motion"],["aqsim","Aqueous Humor & Retina in Motion"],["vestsim","Vertigo in Motion"],["voxsim","Larynx & Voice in Motion"],["bleedsim","Head Bleeds in Motion"],["btsim","Brain Tumors in Motion"],["csfsim","CSF Flow in Motion"],["demsim","Dementias Over Time"],["hasim","Headaches in Motion"],["pthsim","Calcium & PTH Lab Simulator"],["spreadsim","Seizure Spread in Motion"],["szsim","Antiseizure Drugs in Motion"],["testsim","Diagnostic Test Simulator"],["antidsim","Poison & Antidote in Motion"],["bowelsim","Bowel Blockages in Motion"],["esosim","Swallowing in Motion"],["laxsim","Laxatives in Motion"],["pksim","Pharmacokinetics & Dose–Response Simulator"],["portsim","Liver Blood Flow in Motion"],["complsim","Complement in Motion"],["hypsim","Hypersensitivity Types in Motion"],["idsim","Immunodeficiency Simulator"],["tcellsim","T-Cell Activation in Motion"],["tfsim","Blood Transfusion in Motion"],["vaxsim","Vaccines in Motion"],["altsim","Climbing to Altitude in Motion"],["alvdzsim","Alveoli in Trouble in Motion"],["hypoxsim","Hypoxemia Simulator — A–a Gradient & 100% O₂"],["lcsim","Lung Cancer in Motion"],["odcsim","The O₂ Curve in Motion"],["pftsim","PFTs & Flow–Volume Loops"],["pnasim","Pneumonia in Motion"],["bonesim","Bones & Kids by Age in Motion"],["cervsim","The Cervical Spine in Motion"],["footsim","The Foot in Motion"],["fxsim","Growth Plates & Arm Injuries in Motion"],["healsim","Inflammation & Wound Healing in Motion"],["injsim","Cell Injury & Death Simulator"],["shsim","The Shoulder in Motion"],["sxedema","Edema"],["sxfever","Fever & Hyperthermia"],["sxgibleed","GI Bleeding"],["sxjoint","Joint Pain"],["sxrash","Fever & Rash"],["sxsyncope","Syncope"],["sxweight","Weight Loss"],["anemiasim","Anemia Work-Up"],["bcellsim","B Cells & Lymphomas in Motion"],["index","Index"]];
+MAPS.chemosim = {
+ t:"Chemo & DNA Repair in Motion", sub:"Cells go round the cycle; give a drug and watch them pile up in its phase, see the lesion it leaves in DNA and its signature toxicity — then break a repair pathway: xeroderma pigmentosum, Lynch, BRCA, Fanconi, ataxia-telangiectasia",
+ w:3600, h:1900,
+ fa:"37, 115, 220, 395, 427, 443, 444, 445, 447",
+ src:["Katzung ch 54 — Cancer Chemotherapy", "Robbins ch 12 — The heart", "Marks ch 12 — Synthesis of DNA", "Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout", "Katzung ch 5 — Pharmacogenomics", "Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors", "Robbins ch 14 — Red blood cell and bleeding disorders", "Robbins ch 7 — Neoplasia", "Robbins ch 25 — The skin", "Robbins ch 17 — The gastrointestinal tract", "Robbins ch 23 — The breast", "Robbins ch 6 — Diseases of the immune system"],
+ art:"kit",
+ dyn:{"lazy":"dd69a14bd0","switches":[{"id":"rx","label":"Drug","type":"one","options":[["mtx","Methotrexate","mtx"],["fu","5-Fluorouracil","fluorouracil"],["hu","Hydroxyurea","hydroxyurea"],["cyta","Cytarabine","cytarabine"],["topo1","Irinotecan (topo I)","topo1"],["topo2","Etoposide (topo II)","topo2"],["anthra","Doxorubicin","anthracycline"],["bleo","Bleomycin","bleomycin"],["dact","Dactinomycin","dactinomycin"],["alk","Cyclophosphamide","cyclophos"],["plat","Cisplatin","platinum"],["vinca","Vincristine","vinca"],["taxane","Paclitaxel","taxane"]]},{"id":"rp","label":"Repair defect","type":"one","options":[["xp","Xeroderma pigmentosum","xp"],["lynch","Lynch syndrome","lynch"],["brca","BRCA1/2","brca"],["fanc","Fanconi anemia","fanconi"],["at","Ataxia-telangiectasia","ataxia"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:120,t:"Phase (First Aid pp. 443–445)",rows:[
+   ["S","methotrexate, 5-FU, hydroxyurea, cytarabine"],
+   ["S and G2","topoisomerase I and II inhibitors"],
+   ["G2/M","bleomycin, anthracyclines"],
+   ["M","vinca alkaloids, taxanes"],
+   ["Any phase","alkylators, platinum, dactinomycin"]]}],
+ nodes:[
+  {id:"cx1",l:"Cytarabine",x:330,y:1620,p:"cxS",k:"hub",s:"chain termination",m:["cytarabine"]},
+  {id:"cx2",l:"Topoisomerase inhibitors",x:760,y:1620,p:"cxDam",s:"S and G2",m:["topo1","topo2"]},
+  {id:"cx3",l:"Anthracyclines · bleomycin",x:1200,y:1620,p:"cxDam",s:"G2/M · heart, lung",m:["anthracycline","bleomycin"]},
+  {id:"cx4",l:"Alkylators · platinum",x:1640,y:1620,p:"cxDam",s:"cross-links",m:["cyclophos","nitrosourea","busulfan","procarbazine","platinum"]},
+  {id:"cx5",l:"Dactinomycin",x:2080,y:1620,p:"cxDam",s:"blocks RNA polymerase",m:["dactinomycin"]},
+  {id:"cx6",l:"Vincas · taxanes",x:330,y:1760,p:"cxM",s:"assembly vs disassembly",m:["vinca","taxane"]},
+  {id:"cx7",l:"XP · Lynch",x:760,y:1760,p:"cxRep",s:"NER · mismatch",m:["xp","lynch"]},
+  {id:"cx8",l:"BRCA · Fanconi",x:1200,y:1760,p:"cxRep",s:"breaks · cross-links",m:["brca","fanconi"]},
+  {id:"cx9",l:"Ataxia-telangiectasia",x:1640,y:1760,p:"cxRep",s:"ATM",m:["ataxia"]}],
+ edges:[]
+};
+
+MAPS.lftsim = {
+ t:"Liver Tests Decoder", sub:"Bilirubin alone (Gilbert, Crigler-Najjar, hemolysis, Dubin-Johnson), a hepatocellular pattern or a cholestatic one — pick an answer and a dot follows the pattern down the tree while the readouts show ALT/AST, the AST:ALT ratio, ALP, GGT and both bilirubin fractions",
+ w:3500, h:1900,
+ fa:"73, 170–172, 222, 397–403, 425, 427, 495, 588",
+ src:["Robbins ch 18 — Liver and gallbladder", "Robbins ch 14 — Red blood cell and bleeding disorders", "Marks ch 33 — Metabolism of Ethanol", "Katzung ch 49 — Antiviral Agents"],
+ art:"kit",
+ dyn:{"lazy":"43a4bf5d4f","switches":[{"id":"dx","label":"The answer","type":"one","options":[["gil","Gilbert syndrome","bilirubin"],["cn","Crigler-Najjar","bilirubin"],["hemol","Hemolysis","hemolysislabs"],["dj","Dubin-Johnson","bilirubin"],["apap","Acetaminophen toxicity","acetaminophen"],["viral","Acute viral hepatitis","hav"],["alc","Alcoholic hepatitis","ald"],["masld","MASLD","masld"],["aih","Autoimmune hepatitis","aih"],["stone","Choledocholithiasis","gallstones"],["pbc","Primary biliary cholangitis","pbc"],["psc","Primary sclerosing cholangitis","psc"],["bone","Bone (ALP alone)","lfts"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:700,w:1000,h:182,kw:282,t:"The pattern (First Aid p. 397)",rows:[
+   ["ALT > AST","most liver disease"],
+   ["AST > ALT, over 2 : 1","alcoholic liver disease"],
+   ["Over 1000","acetaminophen · ischemia · acute viral or autoimmune"],
+   ["ALP + GGT up","cholestasis or infiltration"],
+   ["ALP up, GGT normal","bone"],
+   ["↓ albumin · ↑ PT · ↓ platelets","advanced disease"]]}],
+ nodes:[
+  {id:"lf1",l:"Liver enzymes",x:330,y:1688,p:"lfHep",k:"hub",s:"reading the pattern",m:["lfts"]},
+  {id:"lf2",l:"Jaundice",x:740,y:1688,p:"lfBili",s:"which fraction?",m:["jaundice","bilirubin"]},
+  {id:"lf3",l:"Hemolysis",x:1120,y:1688,p:"lfBili",s:"prehepatic",m:["hemolysislabs"]},
+  {id:"lf4",l:"Acetaminophen",x:1500,y:1688,p:"lfHep",s:"thousands",m:["acetaminophen"]},
+  {id:"lf5",l:"Viral hepatitis",x:1900,y:1688,p:"lfHep",s:"HAV · HBV",m:["hav","hbv"]},
+  {id:"lf6",l:"Alcohol · MASLD",x:330,y:1818,p:"lfHep",s:"the ratio",m:["ald","masld"]},
+  {id:"lf7",l:"Autoimmune hepatitis",x:760,y:1818,p:"lfHep",s:"anti-smooth muscle",m:["aih"]},
+  {id:"lf8",l:"Gallstones",x:1180,y:1818,p:"lfChol",s:"CBD stone",m:["gallstones"]},
+  {id:"lf9",l:"PBC · PSC",x:1580,y:1818,p:"lfChol",s:"AMA · p-ANCA",m:["pbc","psc"]}],
+ edges:[]
+};
+
+MAPS.mapksim = {
+ t:"Growth Signals in Motion", sub:"Run the EGFR/HER2 → RAS → BRAF → MEK → ERK → MYC pathway, switch on a driver (EGFR, HER2, KRAS, NF1, BRAF, MYC) and see which targeted drug can still stop it — and why cetuximab fails with KRAS",
+ w:3600, h:1900,
+ fa:"220, 443, 446, 447, 539",
+ src:["Katzung ch 54 — Cancer Chemotherapy", "Katzung ch 55 — Immunopharmacology", "Robbins ch 7 — Neoplasia", "Robbins ch 23 — The breast", "Marks ch 17 — The Molecular Biology of Cancer", "Robbins ch 27 — Peripheral nerves and skeletal muscles", "Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus"],
+ art:"kit",
+ dyn:{"lazy":"4bfe90db19","switches":[{"id":"mut","label":"Driver","type":"one","options":[["egfrm","EGFR mutation","egfr"],["her2","HER2 amplification","her2"],["kras","KRAS mutation","kras"],["nf1","NF1 loss","nf1"],["braf","BRAF V600E","braf"],["myc","MYC activation","mycamp"]]},{"id":"rx","label":"Drug","type":"one","options":[["tki","Erlotinib / osimertinib","egfr"],["mab","Cetuximab","egfr"],["trast","Trastuzumab","her2"],["braf","Vemurafenib + trametinib","braf"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:187,t:"Genotype before you treat",rows:[
+   ["EGFR-mutant lung","EGFR kinase inhibitor"],
+   ["RAS wild-type colon","cetuximab, panitumumab"],
+   ["KRAS-mutant colon","anti-EGFR antibody won’t work"],
+   ["HER2 3+ / FISH","trastuzumab"],
+   ["BRAF V600E","BRAF + MEK inhibitors"]]}],
+ nodes:[
+  {id:"mk1",l:"EGFR inhibitors",x:330,y:1700,p:"mkRec",k:"hub",s:"kinase vs antibody",m:["egfr"]},
+  {id:"mk2",l:"HER2 · trastuzumab",x:760,y:1700,p:"mkRec",s:"cardiotoxic",m:["her2"]},
+  {id:"mk3",l:"RAS mutations",x:1200,y:1700,p:"mkRas",s:"stuck on",m:["kras"]},
+  {id:"mk4",l:"Neurofibromatosis 1",x:1640,y:1700,p:"mkRas",s:"lost brake",m:["nf1"]},
+  {id:"mk5",l:"BRAF · MEK inhibitors",x:2080,y:1700,p:"mkRas",s:"V600E",m:["braf"]},
+  {id:"mk6",l:"MYC",x:330,y:1820,p:"mkNuc",s:"Burkitt · neuroblastoma",m:["mycamp"]}],
+ edges:[]
+};
+
+MAPS.myelsim = {
+ t:"Myeloid Neoplasms in Motion", sub:"Watch one marrow stem cell feed red cells, granulocytes and platelets into the blood — then block it (AML, APL, MDS), flood it (CML, polycythemia vera, thrombocythemia), scar it (myelofibrosis) and give each disease its drug",
+ w:3600, h:1900,
+ fa:"436, 437, 438, 439, 440, 447",
+ src:["Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus", "Katzung ch 54 — Cancer Chemotherapy"],
+ art:"kit",
+ dyn:{"lazy":"4fa76f7722","switches":[{"id":"dx","label":"Disease","type":"one","options":[["aml","AML","aml"],["apl","APL t(15;17)","apl"],["mds","MDS","mds"],["cml","CML t(9;22)","cml"],["blast","CML blast crisis","cml"],["pv","Polycythemia vera","jak2"],["et","Essential thrombocythemia","jak2"],["mf","Myelofibrosis","jak2"],["lch","Langerhans cell histiocytosis","lch"]]},{"id":"drug","label":"Treat","type":"toggle","on":"Drug given","off":"Give the drug","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:170,t:"Marker → disease (First Aid pp. 437–439)",rows:[
+   ["t(15;17) PML-RARα","APL"],
+   ["t(9;22) BCR-ABL","CML"],
+   ["JAK2 V617F","PV (> 95%); ET, myelofibrosis (30–50%)"],
+   ["Blasts ≥ 20%","AML (< 20%: MDS)"],
+   ["CD1a, S-100","LCH"]]}],
+ nodes:[
+  {id:"my1",l:"AML",x:330,y:1660,p:"myAcute",k:"hub",s:"≥ 20% blasts · Auer rods",m:["aml"]},
+  {id:"my2",l:"APL",x:760,y:1660,p:"myAcute",s:"t(15;17) · DIC · ATRA",m:["apl"]},
+  {id:"my3",l:"Myelodysplastic syndromes",x:1200,y:1660,p:"myAcute",s:"< 20% blasts",m:["mds"]},
+  {id:"my4",l:"CML & BCR-ABL inhibitors",x:1640,y:1660,p:"myMpn",s:"t(9;22) · imatinib",m:["cml"]},
+  {id:"my5",l:"JAK2 V617F neoplasms",x:2080,y:1660,p:"myMpn",s:"PV · ET · myelofibrosis",m:["jak2"]},
+  {id:"my6",l:"Langerhans cell histiocytosis",x:2520,y:1660,p:"myMpn",s:"Birbeck granules",m:["lch"]}],
+ edges:[]
+};
+
+MAPS.netsim = {
+ t:"Pancreatic Endocrine Tumors in Motion", sub:"Grow an insulinoma, glucagonoma, somatostatinoma, VIPoma or gastrinoma and watch its one hormone flood the liver, skin, gut, stomach and blood glucose — then show MEN1 and give octreotide",
+ w:3600, h:1900,
+ fa:"337, 338, 356, 357, 378",
+ src:["Robbins ch 24 — The endocrine system", "Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases", "Katzung ch 11 — Antihypertensive Agents", "Costanzo ch 8 — Gastrointestinal physiology", "Robbins ch 17 — The gastrointestinal tract"],
+ art:"kit",
+ dyn:{"lazy":"2d0f9fa1d0","switches":[{"id":"dx","label":"Tumor","type":"one","options":[["ins","Insulinoma","insulinoma"],["gluc","Glucagonoma","glucagonoma"],["som","Somatostatinoma","somatostatinoma"],["vip","VIPoma","vipoma"],["zes","Gastrinoma (ZES)","zes"]]},{"id":"men","label":"Syndrome","type":"toggle","on":"MEN1 shown","off":"Show MEN1","def":false},{"id":"oct","label":"Drug","type":"toggle","on":"Octreotide given","off":"Octreotide","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:153,t:"Tumor → hormone → clue (Robbins ch 24)",rows:[
+   ["Insulinoma","insulin — hypoglycemia, C-peptide ↑"],
+   ["Glucagonoma","glucagon — migratory erythema"],
+   ["Somatostatinoma","somatostatin — gallstones, steatorrhea"],
+   ["VIPoma","VIP — WDHA"],
+   ["Gastrinoma","gastrin — ulcers"]]}],
+ nodes:[
+  {id:"nt1",l:"Insulinoma",x:330,y:1720,p:"ntIslet",k:"hub",s:"C-peptide ↑",m:["insulinoma"]},
+  {id:"nt2",l:"Glucagonoma",x:760,y:1720,p:"ntIslet",s:"6 D’s",m:["glucagonoma"]},
+  {id:"nt3",l:"Somatostatinoma",x:1200,y:1720,p:"ntIslet",s:"brake stuck on",m:["somatostatinoma"]},
+  {id:"nt4",l:"VIPoma",x:1640,y:1720,p:"ntIslet",s:"WDHA",m:["vipoma"]},
+  {id:"nt5",l:"Zollinger-Ellison",x:2080,y:1720,p:"ntGut",s:"gastrin · secretin",m:["zes"]},
+  {id:"nt6",l:"Multiple endocrine neoplasia",x:2520,y:1720,p:"ntGut",s:"MEN1 3 Ps",m:["men"]}],
+ edges:[]
+};
+
+MAPS.pancsim = {
+ t:"Pancreatitis in Motion", sub:"Zymogens travel down the duct and switch on only in the duodenum — pick a cause and watch them activate inside the gland, calcium soaps form and a stone stop the flow; chronic disease leaves fibrosis and calcifications. Tap a structure for its card",
+ w:3500, h:1720,
+ fa:"92, 205, 380, 388, 403–405",
+ src:["Robbins ch 19 — The pancreas", "Robbins ch 18 — Liver and gallbladder", "Costanzo ch 8 — Gastrointestinal physiology", "Guyton ch 65 — Secretory Functions of the Alimentary Tract"],
+ art:"kit",
+ dyn:{"lazy":"8cf0c2e220","switches":[{"id":"cause","label":"Cause","type":"one","options":[["stone","Gallstone","gallstones"],["etoh","Alcohol","acutepanc"],["tg","Hypertriglyceridemia","hypertg"],["ca","Hypercalcemia","acutepanc"],["chr","Chronic pancreatitis","chronicpanc"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:660,w:1000,h:138,kw:120,t:"Causes — I GET SMASHED (First Aid p. 404)",rows:[
+   ["I · G · E","idiopathic · gallstones · ethanol"],
+   ["T · S · M","trauma · steroids · mumps"],
+   ["A · S · H","autoimmune · scorpion sting · hypercalcemia or TG > 1000"],
+   ["E · D","ERCP · drugs (sulfa, NRTIs, protease inhibitors)"]]},
+  {x:2420,y:860,w:1000,h:138,kw:127,t:"Complications (First Aid p. 404)",rows:[
+   ["Pseudocyst","granulation tissue, no epithelium"],
+   ["Systemic","ARDS · shock · renal failure"],
+   ["Local","necrosis · abscess · hemorrhage"],
+   ["Hypocalcemia","calcium soaps"]]}],
+ nodes:[
+  {id:"pn1",l:"Pancreatic secretions",x:330,y:1460,p:"pnPhys",k:"hub",s:"zymogens · bicarbonate",m:["pancsec","cck"]},
+  {id:"pn2",l:"Acute pancreatitis",x:780,y:1460,p:"pnAcute",s:"I GET SMASHED",m:["acutepanc"]},
+  {id:"pn3",l:"Gallstones",x:1200,y:1460,p:"pnAcute",s:"the ampulla",m:["gallstones"]},
+  {id:"pn4",l:"Hypertriglyceridemia",x:1620,y:1460,p:"pnAcute",s:"over 1000 mg/dL",m:["hypertg"]},
+  {id:"pn5",l:"Chronic pancreatitis",x:330,y:1590,p:"pnChronic",s:"calcifications",m:["chronicpanc"]},
+  {id:"pn6",l:"Pancreatic insufficiency",x:780,y:1590,p:"pnChronic",s:"steatorrhea",m:["pancins"]},
+  {id:"pn7",l:"Pancreatic cancer",x:1200,y:1590,p:"pnChronic",s:"a late risk",m:["pancca"]}],
+ edges:[]
+};
+
+MAPS.pltsim = {
+ t:"Platelets in Motion", sub:"Watch platelets stick to exposed collagen through vWF and GpIb, amplify with ADP and TXA₂ and link through GpIIb/IIIa — then break each step: ITP, TTP/HUS, DIC, von Willebrand, Bernard-Soulier, Glanzmann, uremia, aspirin, clopidogrel, abciximab and HIT",
+ w:3600, h:1900,
+ fa:"254, 319, 417, 432, 433, 437, 440, 441, 442, 496, 621, 693",
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock", "Marks ch 43 — Blood Plasma Proteins, Coagulation, and Fibrinolysis", "Katzung ch 34 — Drugs Used in Disorders of Coagulation", "Robbins ch 14 — Red blood cell and bleeding disorders", "Robbins ch 20 — The kidney", "Katzung ch 37 — Hypothalamic & Pituitary Hormones", "Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout"],
+ art:"kit",
+ dyn:{"lazy":"0c480ce5c6","switches":[{"id":"dz","label":"Disorder · drug","type":"one","options":[["itp","ITP","itp"],["ttp","TTP / HUS","ttp"],["dic","DIC","dic"],["vwd","von Willebrand disease","vwd"],["bss","Bernard-Soulier","bernardsoulier"],["glanz","Glanzmann thrombasthenia","glanzmann"],["uremia","Uremia","uremia"],["aspirin","Aspirin","aspirin"],["p2y12","Clopidogrel (P2Y12)","p2y12"],["gp2b3a","Abciximab (GpIIb/IIIa)","gp2b3a"],["hit","Heparin-induced thrombocytopenia","heparin"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1150,w:1000,h:138,kw:120,t:"Schistocytes? Check the PT and PTT (First Aid p. 432)",rows:[
+   ["TTP / HUS","normal PT and PTT — platelet consumption"],
+   ["DIC","prolonged PT and PTT, ↓ fibrinogen, ↑ D-dimer"],
+   ["ITP","no schistocytes — isolated low platelets"],
+   ["Ristocetin","fails in vWD and Bernard-Soulier, normal in Glanzmann"]]}],
+ nodes:[
+  {id:"pl1",l:"Endothelium & collagen",x:330,y:1620,p:"plNorm",k:"hub",s:"injury starts it",m:["endothreg"]},
+  {id:"pl2",l:"ITP",x:760,y:1620,p:"plDz",s:"isolated low count",m:["itp"]},
+  {id:"pl3",l:"TTP · HUS",x:1200,y:1620,p:"plDz",s:"schistocytes, normal PT/PTT",m:["ttp"]},
+  {id:"pl4",l:"DIC",x:1640,y:1620,p:"plDz",s:"clots and bleeds",m:["dic"]},
+  {id:"pl5",l:"von Willebrand disease",x:2080,y:1620,p:"plDz",s:"adhesion fails",m:["vwd"]},
+  {id:"pl6",l:"Bernard-Soulier · Glanzmann",x:330,y:1760,p:"plDz",s:"GpIb vs GpIIb/IIIa",m:["bernardsoulier","glanzmann"]},
+  {id:"pl7",l:"Uremic bleeding",x:760,y:1760,p:"plDz",s:"normal count",m:["uremia"]},
+  {id:"pl8",l:"Aspirin · P2Y12 inhibitors",x:1200,y:1760,p:"plRx",s:"TXA₂ vs ADP",m:["aspirin","p2y12"]},
+  {id:"pl9",l:"GpIIb/IIIa inhibitors",x:1640,y:1760,p:"plRx",s:"drug Glanzmann",m:["gp2b3a"]},
+  {id:"pl10",l:"Heparin · HIT",x:2080,y:1760,p:"plRx",s:"day 5–10 drop",m:["heparin"]}],
+ edges:[]
+};
+
+MAPS.thytsim = {
+ t:"Thyroid Tumors in Motion", sub:"Grow a follicular adenoma or carcinoma, a papillary, anaplastic or medullary cancer, and watch each leave the thyroid its own way — blood, lymph, straight through the neck, or calcitonin — then see what a needle can tell",
+ w:3600, h:1900,
+ fa:"347, 356",
+ src:["Robbins ch 24 — The endocrine system"],
+ art:"kit",
+ dyn:{"lazy":"570959f9d6","switches":[{"id":"dx","label":"Tumor","type":"one","options":[["aden","Follicular adenoma","follneo"],["fca","Follicular carcinoma","follneo"],["pap","Papillary carcinoma","papca"],["ana","Anaplastic carcinoma","anapca"],["med","Medullary carcinoma","medullary"]]},{"id":"fna","label":"Test","type":"toggle","on":"Needle aspirate","off":"Do an FNA","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:120,t:"How each spreads (Robbins ch 24)",rows:[
+   ["Papillary","lymph → cervical nodes"],
+   ["Follicular","blood → bone, lung, liver, brain"],
+   ["Anaplastic","direct into neck"],
+   ["Medullary","calcitonin, amyloid"]]}],
+ nodes:[
+  {id:"tt1",l:"Papillary thyroid carcinoma",x:330,y:1720,p:"ttFol",k:"hub",s:"lymph · psammoma",m:["papca"]},
+  {id:"tt2",l:"Follicular adenoma & carcinoma",x:760,y:1720,p:"ttFol",s:"capsule · blood",m:["follneo"]},
+  {id:"tt3",l:"Anaplastic thyroid carcinoma",x:1200,y:1720,p:"ttFol",s:"local invasion",m:["anapca"]},
+  {id:"tt4",l:"Medullary thyroid carcinoma",x:1640,y:1720,p:"ttC",s:"calcitonin · RET",m:["medullary"]}],
+ edges:[]
+};
+
+MAPS.avsim = {
+ t:"Antiviral Targets in Motion", sub:"Herpes, hepatitis C, hepatitis B and influenza replicating side by side — give acyclovir, ganciclovir, foscarnet, cidofovir, a -previr, -asvir or -buvir, tenofovir, oseltamivir or baloxavir and see which step stops, and why kinase mutants resist",
+ w:3600, h:1900,
+ fa:"162, 166, 170, 171, 173, 180, 196, 197, 199",
+ src:["Katzung ch 49 — Antiviral Agents", "Katzung ch 51 — Clinical Use of Antimicrobial Agents", "Robbins ch 8 — Infectious diseases", "Robbins ch 18 — Liver and gallbladder", "Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
+ art:"kit",
+ dyn:{"lazy":"166f10e5cb","switches":[{"id":"hv","label":"Herpesvirus","type":"steps","options":[["hsv","HSV · VZV"],["cmv","CMV"]]},{"id":"tk","label":"Resistance","type":"toggle","on":"Kinase-mutant virus","off":"Wild-type virus","def":false},{"id":"rx","label":"Drug","type":"one","options":[["acv","Acyclovir","acyclovir"],["gcv","Ganciclovir","ganciclovir"],["fos","Foscarnet","foscarnet"],["cdv","Cidofovir","foscarnet"],["previr","Glecaprevir (NS3/4A)","ns3"],["asvir","Velpatasvir (NS5A)","ns5a"],["buvir","Sofosbuvir (NS5B)","sofosbuvir"],["tdf","Tenofovir · entecavir (HBV)","hbvdrugs"],["osel","Oseltamivir","nai"],["balox","Baloxavir","baloxavir"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:239,t:"Target → drug (First Aid pp. 196–199)",rows:[
+   ["Viral kinase first","acyclovir (TK), ganciclovir (UL97)"],
+   ["Polymerase, no kinase","foscarnet, cidofovir"],
+   ["HCV","NS3/4A -previr · NS5A -asvir · NS5B -buvir"],
+   ["HBV reverse transcriptase","tenofovir, entecavir"],
+   ["Influenza","neuraminidase: oseltamivir · PA: baloxavir"]]}],
+ nodes:[
+  {id:"av1",l:"Acyclovir family",x:330,y:1620,p:"avHerp",k:"hub",s:"viral TK first",m:["acyclovir"]},
+  {id:"av2",l:"Ganciclovir · CMV",x:760,y:1620,p:"avHerp",s:"UL97 · marrow",m:["ganciclovir","cmv"]},
+  {id:"av3",l:"Foscarnet · cidofovir",x:1200,y:1620,p:"avHerp",s:"no viral kinase",m:["foscarnet"]},
+  {id:"av4",l:"Antiviral resistance",x:1640,y:1620,p:"avHerp",s:"kinase mutants",m:["avresist"]},
+  {id:"av5",l:"Hepatitis C drugs",x:330,y:1760,p:"avHep",s:"-previr · -asvir · -buvir",m:["hcv","ns3","ns5a","sofosbuvir"]},
+  {id:"av6",l:"Hepatitis B drugs",x:760,y:1760,p:"avHep",s:"cccDNA stays",m:["hbvdrugs"]},
+  {id:"av7",l:"Influenza drugs",x:1200,y:1760,p:"avFlu",s:"neuraminidase · PA",m:["nai","baloxavir"]}],
+ edges:[]
+};
+
+MAPS.blistsim = {
+ t:"Blisters — Where the Skin Splits", sub:"Pick a blistering disease and see the split drawn at its level — granulosum, spinosum, below the basale, the papillary tips or the whole epidermis — with its immunofluorescence pattern, Nikolsky sign and mucosal involvement",
+ w:3500, h:1700,
+ fa:"110, 251, 388, 481, 487, 489–490",
+ src:["Robbins ch 25 — The skin", "Robbins ch 8 — Infectious diseases", "Robbins ch 6 — Diseases of the immune system", "Pawlina ch 15 — Integumentary System"],
+ art:"kit",
+ dyn:{"lazy":"21c03eeb16","switches":[{"id":"dz","label":"Disease","type":"one","options":[["ssss","Staphylococcal scalded skin","ssss"],["pv","Pemphigus vulgaris","pemphigus"],["bp","Bullous pemphigoid","pemphigoid"],["dh","Dermatitis herpetiformis","dh"],["ten","SJS · TEN","sjs"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:700,w:1000,h:182,kw:179,t:"Pemphigus vs pemphigoid (First Aid p. 489)",rows:[
+   ["Target","desmosomes · hemidesmosomes"],
+   ["Split","intraepidermal · subepidermal"],
+   ["Blister","flaccid · tense"],
+   ["Oral mucosa","involved · spared"],
+   ["Nikolsky","positive · negative"],
+   ["Immunofluorescence","net-like · linear"]]}],
+ nodes:[
+  {id:"bl1",l:"Epidermal layers",x:330,y:1470,p:"blLayer",k:"hub",s:"basale to corneum",m:["skinlayers","dermmicro"]},
+  {id:"bl2",l:"Pemphigus vulgaris",x:760,y:1470,p:"blAb",s:"desmoglein",m:["pemphigus"]},
+  {id:"bl3",l:"Bullous pemphigoid",x:1180,y:1470,p:"blAb",s:"hemidesmosome",m:["pemphigoid"]},
+  {id:"bl4",l:"Dermatitis herpetiformis",x:1600,y:1470,p:"blAb",s:"IgA · celiac",m:["dh","celiac"]},
+  {id:"bl5",l:"Type II hypersensitivity",x:2020,y:1470,p:"blAb",s:"antibody to tissue",m:["hs2"]},
+  {id:"bl6",l:"Scalded skin syndrome",x:330,y:1600,p:"blOther",s:"exfoliative toxin",m:["ssss"]},
+  {id:"bl7",l:"EM · SJS · TEN",x:760,y:1600,p:"blOther",s:"drugs",m:["sjs"]}],
+ edges:[]
+};
+
+MAPS.bugid = {
+ t:"Name the Bug", sub:"Gram stain and shape, then catalase, coagulase, novobiocin, hemolysis, optochin, bacitracin, salt, sugars, lactose, oxidase and H₂S — pick an organism and a dot runs the bench tests down the tree; the readouts give each result",
+ w:3500, h:1960,
+ fa:"123, 125–126, 132–135, 139–143, 179, 181",
+ src:["Robbins ch 8 — Infectious diseases", "Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics", "Katzung ch 51 — Clinical Use of Antimicrobial Agents"],
+ art:"kit",
+ dyn:{"lazy":"7a7fed4bba","switches":[{"id":"bug","label":"The organism","type":"one","options":[["sau","S aureus","saureus"],["sep","S epidermidis","sepi"],["ssa","S saprophyticus","ssapro"],["spn","S pneumoniae","spneumo"],["vir","Viridans strep","viridans"],["gas","Group A strep","gas"],["gbs","Group B strep","gbsstrep"],["ent","Enterococcus","enterococcus"],["sbo","S gallolyticus","sbovis"],["nme","N meningitidis","meningococcus"],["ngo","N gonorrhoeae","gonococcus"],["eco","E coli","ecoli"],["pse","Pseudomonas","pseudomonas"],["sal","Salmonella","salmonella"],["shi","Shigella","shigella"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:760,w:1000,h:204,kw:120,t:"The tests (First Aid pp. 132–135, 142)",rows:[
+   ["Catalase","bubbles in H₂O₂ — staph +, strep −"],
+   ["Coagulase","clots plasma — S aureus"],
+   ["Optochin","S pneumoniae sensitive"],
+   ["Bacitracin","group A sensitive, group B resistant"],
+   ["Novobiocin","S saprophyticus resistant"],
+   ["6.5% NaCl","Enterococcus grows"],
+   ["MacConkey","lactose fermenters turn pink"]]}],
+ nodes:[
+  {id:"bg1",l:"Gram stain",x:330,y:1690,p:"bgLab",k:"hub",s:"wall decides the color",m:["gramstain"]},
+  {id:"bg2",l:"Gram-positive cocci",x:760,y:1690,p:"bgLab",s:"catalase → coagulase",m:["gpid","catalasepos"]},
+  {id:"bg3",l:"Gram-negative ID",x:1180,y:1690,p:"bgLab",s:"shape → lactose → oxidase",m:["gnid"]},
+  {id:"bg4",l:"Staphylococci",x:1600,y:1690,p:"bgPos",s:"clusters",m:["saureus","sepi","ssapro"]},
+  {id:"bg5",l:"Streptococci",x:2020,y:1690,p:"bgPos",s:"pairs and chains",m:["spneumo","viridans","gas","gbsstrep"]},
+  {id:"bg6",l:"Enterococcus · S bovis",x:330,y:1820,p:"bgPos",s:"group D",m:["enterococcus","sbovis"]},
+  {id:"bg7",l:"Neisseria",x:760,y:1820,p:"bgNeg",s:"diplococci",m:["meningococcus","gonococcus"]},
+  {id:"bg8",l:"Lactose fermenters",x:1180,y:1820,p:"bgNeg",s:"pink on MacConkey",m:["ecoli","klebsiella"]},
+  {id:"bg9",l:"Nonfermenters",x:1600,y:1820,p:"bgNeg",s:"oxidase · H₂S",m:["pseudomonas","salmonella","shigella"]}],
+ edges:[]
+};
+
+MAPS.gxsim = {
+ t:"Bacterial Gene Transfer in Motion", sub:"Watch DNA move between bacteria — transformation of naked DNA, conjugation across a pilus (F⁺ and Hfr), generalized and specialized transduction by phage, and a transposon jumping onto a plasmid — and see which one DNase blocks",
+ w:3600, h:1900,
+ fa:"128, 129",
+ src:["Robbins ch 8 — Infectious diseases", "Marks ch 16 — Use of Recombinant DNA Techniques in Medicine", "Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics", "Marks ch 14 — Translation: Synthesis of Proteins", "Marks ch 12 — Synthesis of DNA"],
+ art:"kit",
+ dyn:{"lazy":"6692696e70","switches":[{"id":"gx","label":"Route","type":"one","options":[["tf","Transformation","transform"],["f","Conjugation F⁺ × F⁻","conjugation"],["hfr","Conjugation Hfr","conjugation"],["gen","Generalized transduction","transduction"],["spec","Specialized transduction","transduction"],["tn","Transposon","transposon"]]},{"id":"dnase","label":"Test","type":"toggle","on":"DNase added","off":"Add DNase","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:239,t:"Which route? (First Aid p. 128)",rows:[
+   ["Free DNA, DNase-sensitive","transformation"],
+   ["Cell contact, pilus","conjugation"],
+   ["Phage, any gene","generalized transduction"],
+   ["Phage, neighboring genes","specialized transduction"],
+   ["Within one cell","transposon"]]}],
+ nodes:[
+  {id:"gx1",l:"Transformation",x:330,y:1660,p:"gxMov",k:"hub",s:"naked DNA · SHiN",m:["transform"]},
+  {id:"gx2",l:"Conjugation",x:760,y:1660,p:"gxMov",s:"F plasmid · Hfr",m:["conjugation"]},
+  {id:"gx3",l:"Transduction",x:1200,y:1660,p:"gxMov",s:"generalized vs specialized",m:["transduction"]},
+  {id:"gx4",l:"Transposons",x:1640,y:1660,p:"gxIn",s:"jumping genes · vanA",m:["transposon"]}],
+ edges:[]
+};
+
+MAPS.lesionsim = {
+ t:"Skin Lesions Drawn to Scale", sub:"Pick a lesion word and see it drawn in profile against a 1 cm ruler — macule to nodule, vesicle to wheal, scale to ulcer — with the classic examples; the readouts ask raised, over 1 cm, fluid-filled, below the basement membrane",
+ w:3500, h:1560,
+ fa:"481, 483, 487, 494",
+ src:["Robbins ch 25 — The skin", "Pawlina ch 15 — Integumentary System"],
+ art:"kit",
+ dyn:{"lazy":"1f55c2a75b","switches":[{"id":"les","label":"Lesion word","type":"one","options":[["mac","Macule","lesprim"],["pat","Patch","lesprim"],["pap","Papule","lesprim"],["nod","Nodule","lesprim"],["plq","Plaque","lesprim"],["ves","Vesicle","lesprim"],["bul","Bulla","lesprim"],["pus","Pustule","lesprim"],["whl","Wheal","lesprim"],["scl","Scale","lessec"],["crs","Crust","lessec"],["ero","Erosion","lessec"],["ulc","Ulcer","lessec"],["exc","Excoriation","lessec"],["lich","Lichenification","lessec"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:700,w:1000,h:160,kw:136,t:"Small word · large word (First Aid p. 483 · Robbins ch 25)",rows:[
+   ["Flat","macule · patch"],
+   ["Raised, solid","papule · nodule (plaque: flat-topped)"],
+   ["Fluid","vesicle · bulla"],
+   ["Pus","pustule"],
+   ["Transient","wheal"]]}],
+ nodes:[
+  {id:"ls1",l:"Lesion morphology",x:330,y:1340,p:"lsPrim",k:"hub",s:"flat · raised · fluid",m:["lesprim"]},
+  {id:"ls2",l:"Surface changes",x:760,y:1340,p:"lsSec",s:"scale · crust · ulcer",m:["lessec"]},
+  {id:"ls3",l:"Epidermal layers",x:1180,y:1340,p:"lsSkin",s:"basale to corneum",m:["skinlayers"]},
+  {id:"ls4",l:"Microscopic terms",x:1600,y:1340,p:"lsSkin",s:"hyperkeratosis …",m:["dermmicro"]},
+  {id:"ls5",l:"Psoriasis",x:330,y:1470,p:"lsPrim",s:"plaque with scale",m:["psoriasis"]},
+  {id:"ls6",l:"Impetigo · cellulitis",x:760,y:1470,p:"lsSec",s:"honey crust",m:["skininfect"]}],
+ edges:[]
+};
+
+MAPS.negsim = {
+ t:"Negative-Strand Viruses in Motion", sub:"Follow rabies up a nerve to the brain, RSV into the small airways, parainfluenza to the larynx, mumps to the parotids and testes and Ebola into leaking vessels — and give prophylaxis",
+ w:3600, h:1900,
+ fa:"163, 164, 166, 167, 169",
+ src:["Robbins ch 8 — Infectious diseases", "Robbins ch 28 — The central nervous system", "Katzung ch 49 — Antiviral Agents"],
+ art:"kit",
+ dyn:{"lazy":"19793ac162","switches":[{"id":"dx","label":"Virus","type":"one","options":[["rabies","Rabies","rabies"],["rsv","RSV","rsv"],["croup","Parainfluenza (croup)","parainfl"],["mumps","Mumps","mumps"],["measles","Measles","measles"],["ebola","Ebola / Marburg","ebola"]]},{"id":"pep","label":"Prevent","type":"toggle","on":"Prophylaxis given","off":"Give prophylaxis","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:153,t:"Prevention (First Aid pp. 166–169)",rows:[
+   ["Rabies","immune globulin + killed vaccine"],
+   ["RSV","palivizumab (premature)"],
+   ["Mumps · measles","MMR"],
+   ["Ebola","isolation, vaccinate contacts"]]}],
+ nodes:[
+  {id:"ng1",l:"Rabies",x:330,y:1700,p:"ngSys",k:"hub",s:"retrograde · nicotinic AChR",m:["rabies"]},
+  {id:"ng2",l:"RSV",x:760,y:1700,p:"ngResp",s:"syncytia · palivizumab",m:["rsv"]},
+  {id:"ng3",l:"Croup",x:1200,y:1700,p:"ngResp",s:"steeple sign",m:["parainfl"]},
+  {id:"ng4",l:"Mumps",x:1640,y:1700,p:"ngResp",s:"POM-Poms",m:["mumps"]},
+  {id:"ng5",l:"Ebola & Marburg",x:2080,y:1700,p:"ngSys",s:"hemorrhage · DIC",m:["ebola"]},
+  {id:"ng6",l:"Measles",x:1640,y:1800,p:"ngResp",s:"Koplik spots · SSPE",m:["measles"]}],
+ edges:[]
+};
+
+MAPS.parasim = {
+ t:"Parasite Life Cycles in Motion", sub:"Follow each parasite in — by mosquito, mouth or skin — along its route through lungs, gut, liver, blood, muscle, brain or bladder, with what it damages and the drug: malaria, hookworm, Strongyloides, Ascaris, pinworm, Giardia, Entamoeba, Cryptosporidium, Toxoplasma, Trichinella, the tapeworms and Schistosoma",
+ w:3600, h:1900,
+ fa:"152, 153, 154, 155, 156, 157",
+ src:["Robbins ch 8 — Infectious diseases", "Katzung ch 46 — Sulfonamides, Trimethoprim, & Quinolones", "Katzung ch 52 — Antiprotozoal Drugs", "Katzung ch 53 — Pharmacology of the Antihelminthic Drugs"],
+ art:"kit",
+ dyn:{"lazy":"b09873276f","switches":[{"id":"p","label":"Parasite","type":"one","options":[["falc","P. falciparum","malaria"],["vivax","P. vivax / ovale","malaria"],["hook","Hookworm","hookworm"],["strong","Strongyloides","strongyloides"],["asc","Ascaris","ascaris"],["pin","Pinworm","pinworm"],["giar","Giardia","giardia"],["ent","Entamoeba","entamoeba"],["cryp","Cryptosporidium","cryptosporidium"],["toxo","Toxoplasma","toxo"],["trich","Trichinella","trichinella"],["taen","Taenia — tapeworm","taenia"],["cyst","Taenia — cysticercosis","taenia"],["diph","Diphyllobothrium","diphyllo"],["echi","Echinococcus","echino"],["schm","Schistosoma mansoni","schisto"],["schh","Schistosoma haematobium","schisto"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:182,kw:187,t:"The way in (First Aid pp. 152–157)",rows:[
+   ["Mosquito","malaria"],
+   ["Through the skin","hookworm, Strongyloides, Schistosoma"],
+   ["Water","Giardia, Entamoeba, Cryptosporidium"],
+   ["Undercooked pork","Trichinella, Taenia tapeworm"],
+   ["Eggs (fecal-oral)","Ascaris, pinworm, cysticercosis, Echinococcus"],
+   ["Raw freshwater fish","Diphyllobothrium"]]}],
+ nodes:[
+  {id:"pa1",l:"Malaria",x:330,y:1660,p:"paProt",k:"hub",s:"liver → red cells",m:["malaria"]},
+  {id:"pa2",l:"Giardia · Cryptosporidium",x:760,y:1660,p:"paProt",s:"water, small bowel",m:["giardia","cryptosporidium"]},
+  {id:"pa3",l:"Entamoeba",x:1200,y:1660,p:"paProt",s:"colon → liver",m:["entamoeba"]},
+  {id:"pa4",l:"Toxoplasma",x:1640,y:1660,p:"paProt",s:"brain in AIDS",m:["toxo"]},
+  {id:"pa5",l:"Hookworm · Strongyloides",x:2080,y:1660,p:"paNem",s:"through the feet",m:["hookworm","strongyloides"]},
+  {id:"pa6",l:"Ascaris · pinworm",x:330,y:1790,p:"paNem",s:"lungs · perianal",m:["ascaris","pinworm"]},
+  {id:"pa7",l:"Trichinella",x:760,y:1790,p:"paNem",s:"muscle cysts",m:["trichinella"]},
+  {id:"pa8",l:"Taenia",x:1200,y:1790,p:"paFlat",s:"tapeworm vs cysts",m:["taenia"]},
+  {id:"pa9",l:"Schistosoma",x:1640,y:1790,p:"paFlat",s:"liver vs bladder",m:["schisto"]},
+  {id:"pa10",l:"Fish & dog tapeworms",x:2080,y:1790,p:"paFlat",s:"B12 · hydatid cysts",m:["diphyllo","echino"]}],
+ edges:[]
+};
+
+MAPS.protosim = {
+ t:"Protozoa in Motion", sub:"Follow Naegleria up the olfactory nerve, trypanosomes through blood to brain, Babesia into red cells, T cruzi to heart and gut, Leishmania into macrophages and Trichomonas — then treat each",
+ w:3600, h:1900,
+ fa:"153, 154, 155, 178",
+ src:["Robbins ch 8 — Infectious diseases", "Katzung ch 52 — Antiprotozoal Drugs"],
+ art:"kit",
+ dyn:{"lazy":"9aab79f79a","switches":[{"id":"dx","label":"Parasite","type":"one","options":[["naeg","Naegleria","naegleria"],["tryp","T brucei","trypbrucei"],["bab","Babesia","babesia"],["chag","T cruzi (Chagas)","chagas"],["leish","Leishmania","leish"],["trich","Trichomonas","trichomonas"]]},{"id":"asplen","label":"Host","type":"toggle","on":"Asplenic","off":"Remove the spleen","def":false},{"id":"treat","label":"Treat","type":"toggle","on":"Drug given","off":"Give the drug","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:182,kw:120,t:"Drug for each (First Aid pp. 153–155)",rows:[
+   ["Naegleria","amphotericin B"],
+   ["T brucei","suramin · melarsoprol (CNS)"],
+   ["Babesia","atovaquone + azithromycin"],
+   ["T cruzi","benznidazole, nifurtimox"],
+   ["Leishmania","amphotericin B, stibogluconate"],
+   ["Trichomonas","metronidazole"]]}],
+ nodes:[
+  {id:"pt1",l:"Naegleria fowleri",x:330,y:1700,p:"ptOther",k:"hub",s:"nose → brain",m:["naegleria"]},
+  {id:"pt2",l:"African sleeping sickness",x:760,y:1700,p:"ptBlood",s:"waves of fever",m:["trypbrucei"]},
+  {id:"pt3",l:"Babesiosis",x:1200,y:1700,p:"ptBlood",s:"red cells · asplenia",m:["babesia"]},
+  {id:"pt4",l:"Chagas disease",x:1640,y:1700,p:"ptBlood",s:"heart · megacolon",m:["chagas"]},
+  {id:"pt5",l:"Leishmaniasis",x:2080,y:1700,p:"ptBlood",s:"macrophages",m:["leish"]},
+  {id:"pt6",l:"Trichomoniasis",x:2520,y:1700,p:"ptOther",s:"sexual · no cyst",m:["trichomonas"]}],
+ edges:[]
+};
+
+MAPS.toxinsim = {
+ t:"Bacterial Toxins in Motion", sub:"Send a toxin into its target and watch what breaks: cholera, E. coli LT and ST, pertussis, diphtheria, Pseudomonas exotoxin A, C. perfringens α-toxin, botulinum, tetanus and a superantigen",
+ w:3600, h:1900,
+ fa:"130, 131, 136, 137, 141, 143, 144, 175, 432",
+ src:["Robbins ch 8 — Infectious diseases", "Robbins ch 6 — Diseases of the immune system", "Katzung ch 44 — Tetracyclines, Macrolides, Clindamycin, Chloramphenicol, Streptogramins, Oxazolidinones, & Pleuromutilins", "Marks ch 14 — Translation: Synthesis of Proteins", "Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics", "Katzung ch 51 — Clinical Use of Antimicrobial Agents", "Robbins ch 17 — The gastrointestinal tract", "Marks ch 10 — Cell Structure and Signaling by Chemical Messengers", "Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System", "Pawlina ch 2 — Cell Cytoplasm", "Robbins ch 27 — Peripheral nerves and skeletal muscles", "Katzung ch 27 — Skeletal Muscle Relaxants"],
+ art:"kit",
+ dyn:{"lazy":"55c8aa29b7","switches":[{"id":"tx","label":"Toxin","type":"one","options":[["cholera","Cholera toxin","vibrio"],["lt","E. coli heat-labile (LT)","etectox"],["st","E. coli heat-stable (ST)","etectox"],["pert","Pertussis toxin","pertussis"],["diph","Diphtheria toxin","diphtheria"],["pseudo","Pseudomonas exotoxin A","pseudomonas"],["shiga","Shiga toxin","shigella"],["perf","C. perfringens α-toxin","cperfringens"],["botu","Botulinum toxin","botulinum"],["tet","Tetanus toxin","tetanus"],["super","Superantigen (TSST-1)","superag"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:182,kw:187,t:"Same trick, different target (First Aid pp. 130–131)",rows:[
+   ["ADP-ribosylate Gs","cholera, E. coli LT — ↑ cAMP"],
+   ["ADP-ribosylate Gi","pertussis — ↑ cAMP"],
+   ["ADP-ribosylate EF-2","diphtheria, Pseudomonas exotoxin A"],
+   ["Cut 60S rRNA","Shiga toxin — dysentery, HUS"],
+   ["Cleave SNAREs","botulinum (ACh) · tetanus (GABA, glycine)"],
+   ["Botulism vs tetanus","flaccid vs spastic"]]}],
+ nodes:[
+  {id:"tx1",l:"Cholera",x:330,y:1620,p:"txAdp",k:"hub",s:"Gs locked on",m:["vibrio"]},
+  {id:"tx2",l:"E. coli LT · ST",x:760,y:1620,p:"txAdp",s:"cAMP vs cGMP",m:["etectox"]},
+  {id:"tx3",l:"Pertussis",x:1200,y:1620,p:"txAdp",s:"Gi disabled",m:["pertussis"]},
+  {id:"tx4",l:"Diphtheria · exotoxin A",x:1640,y:1620,p:"txAdp",s:"EF-2",m:["diphtheria","pseudomonas"]},
+  {id:"tx5",l:"Botulinum toxin",x:330,y:1760,p:"txNerve",s:"flaccid",m:["botulinum"]},
+  {id:"tx6",l:"Tetanus toxin",x:760,y:1760,p:"txNerve",s:"spastic",m:["tetanus"]},
+  {id:"tx7",l:"C. perfringens",x:1200,y:1760,p:"txOther",s:"lecithinase",m:["cperfringens"]},
+  {id:"tx8",l:"Superantigens",x:1640,y:1760,p:"txOther",s:"TSST-1 · scarlet fever",m:["superag"]},
+  {id:"tx9",l:"Shiga toxin",x:2080,y:1620,p:"txOther",s:"60S rRNA · HUS",m:["shigella","ttp"]}],
+ edges:[]
+};
+
+MAPS.zoosim = {
+ t:"Zoonoses & Bites in Motion", sub:"Follow plague, typhus, relapsing fever, brucellosis, leptospirosis, Q fever, animal bites, snakes, black widow and scorpion from the animal to the organ — then treat",
+ w:3600, h:2000,
+ fa:"123, 125, 139, 144, 145, 147, 148, 320, 404, 433, 701",
+ src:["Robbins ch 8 — Infectious diseases", "Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products", "Katzung ch 45 — Aminoglycosides & Spectinomycin", "Katzung ch 6 — Introduction to Autonomic Pharmacology"],
+ art:"kit",
+ dyn:{"lazy":"0897e5bfcd","switches":[{"id":"dx","label":"Exposure","type":"one","options":[["plague","Plague","plague"],["endty","Endemic typhus","typhus"],["epity","Epidemic typhus","typhus"],["relap","Relapsing fever","relapsing"],["bruc","Brucellosis","brucella"],["lepto","Leptospirosis","lepto"],["qfev","Q fever","qfever"],["bite","Dog or cat bite","animalbite"],["pit","Pit viper","snakebite"],["coral","Coral snake","snakebite"],["widow","Black widow","venom"],["scorp","Scorpion","venom"]]},{"id":"rx","label":"Treat","type":"toggle","on":"Treatment given","off":"Give the treatment","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:162,t:"Reservoir → disease (First Aid p 147)",rows:[
+   ["Flea","plague, endemic typhus"],
+   ["Body louse","epidemic typhus, relapsing fever"],
+   ["Dairy, livestock","brucellosis, Q fever"],
+   ["Water with urine","leptospirosis"],
+   ["Dog, cat","Pasteurella, Bartonella"]]}],
+ nodes:[
+  {id:"zo1",l:"Plague",x:330,y:1720,p:"zoVec",k:"hub",s:"flea · buboes",m:["plague"]},
+  {id:"zo2",l:"Typhus",x:760,y:1720,p:"zoVec",s:"flea · louse",m:["typhus"]},
+  {id:"zo3",l:"Relapsing fever",x:1200,y:1720,p:"zoVec",s:"louse · antigens",m:["relapsing"]},
+  {id:"zo4",l:"Brucellosis",x:1640,y:1720,p:"zoVec",s:"dairy",m:["brucella"]},
+  {id:"zo5",l:"Leptospirosis",x:2080,y:1720,p:"zoVec",s:"water · Weil",m:["lepto"]},
+  {id:"zo6",l:"Q fever",x:2520,y:1720,p:"zoVec",s:"no vector · no rash",m:["qfever"]},
+  {id:"zo7",l:"Dog & cat bites",x:330,y:1850,p:"zoVen",s:"Pasteurella",m:["animalbite"]},
+  {id:"zo8",l:"Snake envenomation",x:760,y:1850,p:"zoVen",s:"DIC · antivenom",m:["snakebite"]},
+  {id:"zo9",l:"Black widow & scorpion",x:1200,y:1850,p:"zoVen",s:"latrotoxin · pancreatitis",m:["venom"]}],
+ edges:[]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["oral","Oral Cavity & Salivary Glands"],["skinbasics","Skin Basics — Layers, Lesions & Terms"],["gidrugs","GI Motility, Laxative & Antiemetic Drugs"],["cardproc","Cardiac Anatomy, Catheters & Vascular Access"],["transfuse","Blood Groups & Transfusion"],["nmjflow","Neuromuscular Junction in Motion"],["synflow","Monoamine Synapse in Motion"],["apflow","Action Potential in Motion"],["bgflow","Basal Ganglia in Motion"],["cordsim","Spinal Cord Lesion Simulator"],["stemsim","Brainstem Lesion Simulator"],["visfield","Visual Pathway Lesion Simulator"],["cardap","Cardiac Action Potential in Motion"],["coagflow","Coagulation Cascade in Motion"],["alvflow","Alveolus in Motion"],["asthflow","Asthma Airway in Motion"],["axisflow","HPA Axis in Motion"],["betaflow","β Cell in Motion"],["follflow","Thyroid Follicle in Motion"],["cochflow","Cochlea in Motion"],["gutabs","Gut Absorption in Motion"],["boneflow","Bone Remodeling in Motion"],["goutflow","Uric Acid & Gout in Motion"],["rajoint","Rheumatoid Joint in Motion"],["vsmotion","Viscerosomatic Reflex in Motion"],["lymphflow","Lymphatic Pump in Motion"],["biliflow","Bilirubin in Motion"],["ironflow","Iron in Motion"],["abflow","Acid–Base in Motion"],["glomsim","Glomerular Disease Locator"],["abxsim","Antibiotic Targets in Motion"],["misim","MI Locator"],["pvflow","Pressure–Volume Loop in Motion"],["edemaflow","Capillary & Edema in Motion"],["hivflow","HIV Life Cycle in Motion"],["eyesim","Pupil & Eye Movement Simulator"],["plexsim","Brachial Plexus Lesion Simulator"],["mensflow","Menstrual Cycle in Motion"],["baroflow","Autonomic Drugs & Baroreflex in Motion"],["shocksim","Shock Simulator"],["ecgsim","Conduction & ECG Simulator"],["cahflow","Steroid Synthesis & CAH in Motion"],["lipoflow","Lipoprotein Transport in Motion"],["hemeflow","Heme Synthesis & Porphyrias in Motion"],["nucflow","Nucleotide Synthesis & Drug Sites in Motion"],["acidflow","Parietal Cell in Motion"],["legsim","Lower Limb Nerve Lesion Simulator"],["abtime","Acid–Base Compensation Timeline"],["aasim","Amino Acid Disorders in Motion"],["bvitsim","B Vitamins & Zinc in Motion"],["colsim","Collagen Assembly in Motion"],["energysim","Energy Metabolism in Motion"],["faosim","Fatty Acid Oxidation in Motion"],["glyxsim","Glycolysis Odds & Ends in Motion"],["gsdsim","Glycogen Storage Diseases in Motion"],["labsim","Lab Techniques in Motion"],["lsdsim","Lysosomal Storage in Motion"],["pedsim","Pedigree Simulator"],["rtasim","Renal Tubular Acidosis Simulator"],["sugarsim","Fructose & Galactose in Motion"],["ureasim","Urea Cycle in Motion"],["cbsim","Cerebellar Lesions in Motion"],["papezsim","The Papez Circuit in Motion"],["rxsim","Psych Drugs at the Receptors"],["sleepsim","Sleep Stages in Motion"],["stimsim","Stimulants & Addiction in Motion"],["aortasim","The Aorta in Motion"],["archsim","Pharyngeal Arches in Motion"],["carditsim","Heart Infection & Inflammation in Motion"],["cyansim","Cyanotic Heart Disease in Motion"],["embsim","Embryo & Gut-Tube Defects in Motion"],["fetalsim","Fetal Circulation in Motion"],["gonadsim","Gonadal Tumors in Motion"],["htnsim","Hypertension in Motion"],["lyteecg","Electrolytes & the ECG"],["murmursim","Murmurs & Maneuvers in Motion"],["placsim","Bleeding in Pregnancy in Motion"],["pregsim","Pregnancy Hormones in Motion"],["prossim","The Prostate in Motion"],["scrotsim","The Scrotum in Motion"],["sexsim","Sex Differentiation in Motion"],["aqsim","Aqueous Humor & Retina in Motion"],["vestsim","Vertigo in Motion"],["voxsim","Larynx & Voice in Motion"],["bleedsim","Head Bleeds in Motion"],["btsim","Brain Tumors in Motion"],["csfsim","CSF Flow in Motion"],["demsim","Dementias Over Time"],["hasim","Headaches in Motion"],["pthsim","Calcium & PTH Lab Simulator"],["spreadsim","Seizure Spread in Motion"],["szsim","Antiseizure Drugs in Motion"],["testsim","Diagnostic Test Simulator"],["antidsim","Poison & Antidote in Motion"],["bowelsim","Bowel Blockages in Motion"],["esosim","Swallowing in Motion"],["laxsim","Laxatives in Motion"],["pksim","Pharmacokinetics & Dose–Response Simulator"],["portsim","Liver Blood Flow in Motion"],["complsim","Complement in Motion"],["hypsim","Hypersensitivity Types in Motion"],["idsim","Immunodeficiency Simulator"],["tcellsim","T-Cell Activation in Motion"],["tfsim","Blood Transfusion in Motion"],["vaxsim","Vaccines in Motion"],["altsim","Climbing to Altitude in Motion"],["alvdzsim","Alveoli in Trouble in Motion"],["hypoxsim","Hypoxemia Simulator — A–a Gradient & 100% O₂"],["lcsim","Lung Cancer in Motion"],["odcsim","The O₂ Curve in Motion"],["pftsim","PFTs & Flow–Volume Loops"],["pnasim","Pneumonia in Motion"],["bonesim","Bones & Kids by Age in Motion"],["cervsim","The Cervical Spine in Motion"],["footsim","The Foot in Motion"],["fxsim","Growth Plates & Arm Injuries in Motion"],["healsim","Inflammation & Wound Healing in Motion"],["injsim","Cell Injury & Death Simulator"],["shsim","The Shoulder in Motion"],["sxedema","Edema"],["sxfever","Fever & Hyperthermia"],["sxgibleed","GI Bleeding"],["sxjoint","Joint Pain"],["sxrash","Fever & Rash"],["sxsyncope","Syncope"],["sxweight","Weight Loss"],["anemiasim","Anemia Work-Up"],["bcellsim","B Cells & Lymphomas in Motion"],["chemosim","Chemo & DNA Repair in Motion"],["lftsim","Liver Tests Decoder"],["mapksim","Growth Signals in Motion"],["myelsim","Myeloid Neoplasms in Motion"],["netsim","Pancreatic Endocrine Tumors in Motion"],["pancsim","Pancreatitis in Motion"],["pltsim","Platelets in Motion"],["thytsim","Thyroid Tumors in Motion"],["avsim","Antiviral Targets in Motion"],["blistsim","Blisters — Where the Skin Splits"],["bugid","Name the Bug"],["gxsim","Bacterial Gene Transfer in Motion"],["lesionsim","Skin Lesions Drawn to Scale"],["negsim","Negative-Strand Viruses in Motion"],["parasim","Parasite Life Cycles in Motion"],["protosim","Protozoa in Motion"],["toxinsim","Bacterial Toxins in Motion"],["zoosim","Zoonoses & Bites in Motion"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -40744,17 +41290,17 @@ const TOPICS = [
   ["cardio","Cardiac",["cardiac","cardcycle","pvflow","valves","carditsim","murmursim","ihd","misim","cardproc","chd","cyansim","fetalsim","vasc","aortasim","vascshock","shocksim","htnrx","htnsim","rhythm","cardap","ecgsim","lyteecg"]],
   ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","odcsim","alvflow","highalt","altsim","hypoxia","hypoxsim","lungdz","alvdzsim","pftsim","asthflow","pleural","lungcancer","lcsim","respinf","pnasim","respdrug"]],
   ["renal","Renal",["nephron","nephflow","fluids","edemaflow","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","histoembryo","glom","glomsim","renvasc","raasrx","buffers","acidbase","abflow","abtime","rtasim","akickd","endocrine"]],
-  ["gi","GI",["gut","gihorm","acidflow","gidrugs","laxsim","liver","portsim","biliflow","gitract","bowelsim","esosim","gutabs","oral","abdanat"]],
-  ["heme","Heme/Onc",["rbc","anemiasim","ironflow","hemeflow","hemostasis","coagflow","transfuse","tfsim","hemeonc","bcellsim","carcino","chemo","tumgut","tumgu","tumcns","btsim","softtissue","tumark"]],
+  ["gi","GI",["gut","gihorm","acidflow","gidrugs","laxsim","liver","portsim","lftsim","pancsim","biliflow","gitract","bowelsim","esosim","gutabs","oral","abdanat"]],
+  ["heme","Heme/Onc",["rbc","anemiasim","ironflow","hemeflow","hemostasis","coagflow","pltsim","transfuse","tfsim","hemeonc","bcellsim","myelsim","carcino","mapksim","chemo","chemosim","tumgut","tumgu","tumcns","btsim","softtissue","tumark"]],
   ["immuno","Immunology",["immune","tcellsim","innate","complsim","lymphdev","hypimm","hypsim","idsim","cytokine","eicosanoid","transplant","mabs","vaccines","vaxsim"]],
-  ["endo","Endocrine",["axes","axisflow","pitgh","thyroid","follflow","adrenal","cahflow","hormones","pthsim","gcpharm","rclass","pancreas","betaflow","fuelstate"]],
+  ["endo","Endocrine",["axes","axisflow","pitgh","thyroid","thytsim","follflow","adrenal","cahflow","hormones","pthsim","gcpharm","rclass","pancreas","netsim","betaflow","fuelstate"]],
   ["devrepro","Repro & Development",["sexdev","sexsim","androgen","repro","mensflow","placenta","pregsim","obgyn","placsim","malerepro","gonadsim","scrotsim","prosobs","prossim","embryo","archsim","embsim"]],
   ["neuro","Neuro",["neurotx","synapse","nmjflow","ans","baroflow","membrane","apflow","ionchan","spine","cordsim","brainstem","stemsim","chemvisc","motorctl","cerebellum","cbsim","gaze","weakness","stroke","brainvessels","brainreg","cortex","demsim","meninges","csfsim","basal","bgflow","neuroer","bleedsim","seizhead","hasim","spreadsim","szsim"]],
   ["behav","Psych & Behavior",["limbmem","papezsim","psychmse","dsmdx","psychdx","anxtx","psychtx","synflow","psyrxprin","rxsim","psychsom","somatcare","substance","stimsim","sleepdev","sleepsim","neurodev"]],
   ["eent","EENT",["eyecn","eyesim","aqsim","anteye","vision","visfield","ent","hearing","cochflow","vestsim","larynx","voxsim"]],
-  ["msk","Musculoskeletal",["muscle","bone","bonesim","boneflow","bonehisto","arthritis","raarth","rajoint","crystals","goutflow","derm","skinbasics","plexus","plexsim","legsim","orthoinj","sportsortho","fxsim","legfx","footleg","footsim","orthowork","neckpain","cervsim","shoulder","shsim","ptrehab","integrative"]],
+  ["msk","Musculoskeletal",["muscle","bone","bonesim","boneflow","bonehisto","arthritis","raarth","rajoint","crystals","goutflow","derm","blistsim","skinbasics","lesionsim","plexus","plexsim","legsim","orthoinj","sportsortho","fxsim","legfx","footleg","footsim","orthowork","neckpain","cervsim","shoulder","shsim","ptrehab","integrative"]],
   ["omm","OMM",["vsomatic","vsmotion","lymphflow","neiomm","chapman","omt","lbp","agingomt","chestomt","ommmech","janda","cranial","jones"]],
-  ["id","Infectious",["microlab","abx","abxsim","antiviral","hivflow","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
+  ["id","Infectious",["microlab","bugid","gxsim","abx","abxsim","antiviral","avsim","hivflow","antipara","gpos","gneg","toxins","toxinsim","virus","negsim","fungpar","parasim","protosim","cnsinf","infsite","zoonoses","zoosim"]],
   ["pharm","Pharm",["pkpd","pksim","cyp","adr","aging","tox","antidsim","environ","anesth","pain"]],
   ["stats","Biostats & Ethics",["biostats","testsim","ethics"]],
   ["sx","Symptoms",["sxchest","sxsyncope","sxdyspnea","sxedema","sxjaundice","sxabdpain","sxgibleed","sxdiarrhea","sxurine","sxams","sxfever","sxjoint","sxrash","sxweight"]],
@@ -44405,9 +44951,9 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   misim:"2026-10-09",pvflow:"2026-10-09",edemaflow:"2026-10-09",hivflow:"2026-10-09",eyesim:"2026-10-09",plexsim:"2026-10-09",mensflow:"2026-10-09",
   baroflow:"2026-10-10",shocksim:"2026-10-10",ecgsim:"2026-10-10",cahflow:"2026-10-10",lipoflow:"2026-10-10",hemeflow:"2026-10-10",nucflow:"2026-10-10",acidflow:"2026-10-10",legsim:"2026-10-10",
   abtime:"2026-10-10",
-  aasim:"2026-10-12",bvitsim:"2026-10-12",colsim:"2026-10-12",energysim:"2026-10-12",faosim:"2026-10-12",glyxsim:"2026-10-12",gsdsim:"2026-10-12",labsim:"2026-10-12",lsdsim:"2026-10-12",pedsim:"2026-10-12",rtasim:"2026-10-12",sugarsim:"2026-10-12",ureasim:"2026-10-12",cbsim:"2026-10-12",papezsim:"2026-10-12",rxsim:"2026-10-12",sleepsim:"2026-10-12",stimsim:"2026-10-12",aortasim:"2026-10-12",archsim:"2026-10-12",carditsim:"2026-10-12",cyansim:"2026-10-12",embsim:"2026-10-12",fetalsim:"2026-10-12",gonadsim:"2026-10-12",htnsim:"2026-10-12",lyteecg:"2026-10-12",murmursim:"2026-10-12",placsim:"2026-10-12",pregsim:"2026-10-12",prossim:"2026-10-12",scrotsim:"2026-10-12",sexsim:"2026-10-12",aqsim:"2026-10-12",vestsim:"2026-10-12",voxsim:"2026-10-12",bleedsim:"2026-10-12",btsim:"2026-10-12",csfsim:"2026-10-12",demsim:"2026-10-12",hasim:"2026-10-12",pthsim:"2026-10-12",spreadsim:"2026-10-12",szsim:"2026-10-12",testsim:"2026-10-12",antidsim:"2026-10-12",bowelsim:"2026-10-12",esosim:"2026-10-12",laxsim:"2026-10-12",pksim:"2026-10-12",portsim:"2026-10-12",complsim:"2026-10-12",hypsim:"2026-10-12",idsim:"2026-10-12",tcellsim:"2026-10-12",tfsim:"2026-10-12",vaxsim:"2026-10-12",altsim:"2026-10-12",alvdzsim:"2026-10-12",hypoxsim:"2026-10-12",lcsim:"2026-10-12",odcsim:"2026-10-12",pftsim:"2026-10-12",pnasim:"2026-10-12",bonesim:"2026-10-12",cervsim:"2026-10-12",footsim:"2026-10-12",fxsim:"2026-10-12",healsim:"2026-10-12",injsim:"2026-10-12",shsim:"2026-10-12",sxedema:"2026-10-12",sxfever:"2026-10-12",sxgibleed:"2026-10-12",sxjoint:"2026-10-12",sxrash:"2026-10-12",sxsyncope:"2026-10-12",sxweight:"2026-10-12",anemiasim:"2026-10-12",bcellsim:"2026-10-12"};
+  aasim:"2026-10-12",bvitsim:"2026-10-12",colsim:"2026-10-12",energysim:"2026-10-12",faosim:"2026-10-12",glyxsim:"2026-10-12",gsdsim:"2026-10-12",labsim:"2026-10-12",lsdsim:"2026-10-12",pedsim:"2026-10-12",rtasim:"2026-10-12",sugarsim:"2026-10-12",ureasim:"2026-10-12",cbsim:"2026-10-12",papezsim:"2026-10-12",rxsim:"2026-10-12",sleepsim:"2026-10-12",stimsim:"2026-10-12",aortasim:"2026-10-12",archsim:"2026-10-12",carditsim:"2026-10-12",cyansim:"2026-10-12",embsim:"2026-10-12",fetalsim:"2026-10-12",gonadsim:"2026-10-12",htnsim:"2026-10-12",lyteecg:"2026-10-12",murmursim:"2026-10-12",placsim:"2026-10-12",pregsim:"2026-10-12",prossim:"2026-10-12",scrotsim:"2026-10-12",sexsim:"2026-10-12",aqsim:"2026-10-12",vestsim:"2026-10-12",voxsim:"2026-10-12",bleedsim:"2026-10-12",btsim:"2026-10-12",csfsim:"2026-10-12",demsim:"2026-10-12",hasim:"2026-10-12",pthsim:"2026-10-12",spreadsim:"2026-10-12",szsim:"2026-10-12",testsim:"2026-10-12",antidsim:"2026-10-12",bowelsim:"2026-10-12",esosim:"2026-10-12",laxsim:"2026-10-12",pksim:"2026-10-12",portsim:"2026-10-12",complsim:"2026-10-12",hypsim:"2026-10-12",idsim:"2026-10-12",tcellsim:"2026-10-12",tfsim:"2026-10-12",vaxsim:"2026-10-12",altsim:"2026-10-12",alvdzsim:"2026-10-12",hypoxsim:"2026-10-12",lcsim:"2026-10-12",odcsim:"2026-10-12",pftsim:"2026-10-12",pnasim:"2026-10-12",bonesim:"2026-10-12",cervsim:"2026-10-12",footsim:"2026-10-12",fxsim:"2026-10-12",healsim:"2026-10-12",injsim:"2026-10-12",shsim:"2026-10-12",sxedema:"2026-10-12",sxfever:"2026-10-12",sxgibleed:"2026-10-12",sxjoint:"2026-10-12",sxrash:"2026-10-12",sxsyncope:"2026-10-12",sxweight:"2026-10-12",anemiasim:"2026-10-12",bcellsim:"2026-10-12",chemosim:"2026-10-12",lftsim:"2026-10-12",mapksim:"2026-10-12",myelsim:"2026-10-12",netsim:"2026-10-12",pancsim:"2026-10-12",pltsim:"2026-10-12",thytsim:"2026-10-12",avsim:"2026-10-12",blistsim:"2026-10-12",bugid:"2026-10-12",gxsim:"2026-10-12",lesionsim:"2026-10-12",negsim:"2026-10-12",parasim:"2026-10-12",protosim:"2026-10-12",toxinsim:"2026-10-12",zoosim:"2026-10-12"};
 const WHATSNEW=[
-  ["2026-10-12","80 new moving maps — <b>Amino Acid Disorders in Motion</b>, <b>B Vitamins &amp; Zinc in Motion</b>, <b>Collagen Assembly in Motion</b>, <b>Energy Metabolism in Motion</b>, <b>Fatty Acid Oxidation in Motion</b>, <b>Glycolysis Odds &amp; Ends in Motion</b>, <b>Glycogen Storage Diseases in Motion</b>, <b>Lab Techniques in Motion</b>, <b>Lysosomal Storage in Motion</b>, <b>Pedigree Simulator</b>, <b>Renal Tubular Acidosis Simulator</b>, <b>Fructose &amp; Galactose in Motion</b>, <b>Urea Cycle in Motion</b>, <b>Cerebellar Lesions in Motion</b>, <b>The Papez Circuit in Motion</b>, <b>Psych Drugs at the Receptors</b>, <b>Sleep Stages in Motion</b>, <b>Stimulants &amp; Addiction in Motion</b>, <b>The Aorta in Motion</b>, <b>Pharyngeal Arches in Motion</b>, <b>Heart Infection &amp; Inflammation in Motion</b>, <b>Cyanotic Heart Disease in Motion</b>, <b>Embryo &amp; Gut-Tube Defects in Motion</b>, <b>Fetal Circulation in Motion</b>, <b>Gonadal Tumors in Motion</b>, <b>Hypertension in Motion</b>, <b>Electrolytes &amp; the ECG</b>, <b>Murmurs &amp; Maneuvers in Motion</b>, <b>Bleeding in Pregnancy in Motion</b>, <b>Pregnancy Hormones in Motion</b>, <b>The Prostate in Motion</b>, <b>The Scrotum in Motion</b>, <b>Sex Differentiation in Motion</b>, <b>Aqueous Humor &amp; Retina in Motion</b>, <b>Vertigo in Motion</b>, <b>Larynx &amp; Voice in Motion</b>, <b>Head Bleeds in Motion</b>, <b>Brain Tumors in Motion</b>, <b>CSF Flow in Motion</b>, <b>Dementias Over Time</b>, <b>Headaches in Motion</b>, <b>Calcium &amp; PTH Lab Simulator</b>, <b>Seizure Spread in Motion</b>, <b>Antiseizure Drugs in Motion</b>, <b>Diagnostic Test Simulator</b>, <b>Poison &amp; Antidote in Motion</b>, <b>Bowel Blockages in Motion</b>, <b>Swallowing in Motion</b>, <b>Laxatives in Motion</b>, <b>Pharmacokinetics &amp; Dose–Response Simulator</b>, <b>Liver Blood Flow in Motion</b>, <b>Complement in Motion</b>, <b>Hypersensitivity Types in Motion</b>, <b>Immunodeficiency Simulator</b>, <b>T-Cell Activation in Motion</b>, <b>Blood Transfusion in Motion</b>, <b>Vaccines in Motion</b>, <b>Climbing to Altitude in Motion</b>, <b>Alveoli in Trouble in Motion</b>, <b>Hypoxemia Simulator — A–a Gradient &amp; 100% O₂</b>, <b>Lung Cancer in Motion</b>, <b>The O₂ Curve in Motion</b>, <b>PFTs &amp; Flow–Volume Loops</b>, <b>Pneumonia in Motion</b>, <b>Bones &amp; Kids by Age in Motion</b>, <b>The Cervical Spine in Motion</b>, <b>The Foot in Motion</b>, <b>Growth Plates &amp; Arm Injuries in Motion</b>, <b>Inflammation &amp; Wound Healing in Motion</b>, <b>Cell Injury &amp; Death Simulator</b>, <b>The Shoulder in Motion</b>, <b>Edema</b>, <b>Fever &amp; Hyperthermia</b>, <b>GI Bleeding</b>, <b>Joint Pain</b>, <b>Fever &amp; Rash</b>, <b>Syncope</b>, <b>Weight Loss</b>, <b>Anemia Work-Up</b>, <b>B Cells &amp; Lymphomas in Motion</b>."],
+  ["2026-10-12","98 new moving maps — <b>Amino Acid Disorders in Motion</b>, <b>B Vitamins &amp; Zinc in Motion</b>, <b>Collagen Assembly in Motion</b>, <b>Energy Metabolism in Motion</b>, <b>Fatty Acid Oxidation in Motion</b>, <b>Glycolysis Odds &amp; Ends in Motion</b>, <b>Glycogen Storage Diseases in Motion</b>, <b>Lab Techniques in Motion</b>, <b>Lysosomal Storage in Motion</b>, <b>Pedigree Simulator</b>, <b>Renal Tubular Acidosis Simulator</b>, <b>Fructose &amp; Galactose in Motion</b>, <b>Urea Cycle in Motion</b>, <b>Cerebellar Lesions in Motion</b>, <b>The Papez Circuit in Motion</b>, <b>Psych Drugs at the Receptors</b>, <b>Sleep Stages in Motion</b>, <b>Stimulants &amp; Addiction in Motion</b>, <b>The Aorta in Motion</b>, <b>Pharyngeal Arches in Motion</b>, <b>Heart Infection &amp; Inflammation in Motion</b>, <b>Cyanotic Heart Disease in Motion</b>, <b>Embryo &amp; Gut-Tube Defects in Motion</b>, <b>Fetal Circulation in Motion</b>, <b>Gonadal Tumors in Motion</b>, <b>Hypertension in Motion</b>, <b>Electrolytes &amp; the ECG</b>, <b>Murmurs &amp; Maneuvers in Motion</b>, <b>Bleeding in Pregnancy in Motion</b>, <b>Pregnancy Hormones in Motion</b>, <b>The Prostate in Motion</b>, <b>The Scrotum in Motion</b>, <b>Sex Differentiation in Motion</b>, <b>Aqueous Humor &amp; Retina in Motion</b>, <b>Vertigo in Motion</b>, <b>Larynx &amp; Voice in Motion</b>, <b>Head Bleeds in Motion</b>, <b>Brain Tumors in Motion</b>, <b>CSF Flow in Motion</b>, <b>Dementias Over Time</b>, <b>Headaches in Motion</b>, <b>Calcium &amp; PTH Lab Simulator</b>, <b>Seizure Spread in Motion</b>, <b>Antiseizure Drugs in Motion</b>, <b>Diagnostic Test Simulator</b>, <b>Poison &amp; Antidote in Motion</b>, <b>Bowel Blockages in Motion</b>, <b>Swallowing in Motion</b>, <b>Laxatives in Motion</b>, <b>Pharmacokinetics &amp; Dose–Response Simulator</b>, <b>Liver Blood Flow in Motion</b>, <b>Complement in Motion</b>, <b>Hypersensitivity Types in Motion</b>, <b>Immunodeficiency Simulator</b>, <b>T-Cell Activation in Motion</b>, <b>Blood Transfusion in Motion</b>, <b>Vaccines in Motion</b>, <b>Climbing to Altitude in Motion</b>, <b>Alveoli in Trouble in Motion</b>, <b>Hypoxemia Simulator — A–a Gradient &amp; 100% O₂</b>, <b>Lung Cancer in Motion</b>, <b>The O₂ Curve in Motion</b>, <b>PFTs &amp; Flow–Volume Loops</b>, <b>Pneumonia in Motion</b>, <b>Bones &amp; Kids by Age in Motion</b>, <b>The Cervical Spine in Motion</b>, <b>The Foot in Motion</b>, <b>Growth Plates &amp; Arm Injuries in Motion</b>, <b>Inflammation &amp; Wound Healing in Motion</b>, <b>Cell Injury &amp; Death Simulator</b>, <b>The Shoulder in Motion</b>, <b>Edema</b>, <b>Fever &amp; Hyperthermia</b>, <b>GI Bleeding</b>, <b>Joint Pain</b>, <b>Fever &amp; Rash</b>, <b>Syncope</b>, <b>Weight Loss</b>, <b>Anemia Work-Up</b>, <b>B Cells &amp; Lymphomas in Motion</b>, <b>Chemo &amp; DNA Repair in Motion</b>, <b>Liver Tests Decoder</b>, <b>Growth Signals in Motion</b>, <b>Myeloid Neoplasms in Motion</b>, <b>Pancreatic Endocrine Tumors in Motion</b>, <b>Pancreatitis in Motion</b>, <b>Platelets in Motion</b>, <b>Thyroid Tumors in Motion</b>, <b>Antiviral Targets in Motion</b>, <b>Blisters — Where the Skin Splits</b>, <b>Name the Bug</b>, <b>Bacterial Gene Transfer in Motion</b>, <b>Skin Lesions Drawn to Scale</b>, <b>Negative-Strand Viruses in Motion</b>, <b>Parasite Life Cycles in Motion</b>, <b>Protozoa in Motion</b>, <b>Bacterial Toxins in Motion</b>, <b>Zoonoses &amp; Bites in Motion</b>."],
   ["2026-10-10","New moving map — <b>Acid–Base Compensation Timeline</b> (Renal): buffers in seconds, the lungs in hours, the kidneys over days — and how far each disorder is expected to compensate."],
   ["2026-10-10","Moving maps: options you name wrong come back first, <b>Predict the arrows</b> keeps a score too, and both scores now sync with your PIN. Keys: <b>t</b> Tour, <b>n</b> Name it, <b>p</b> Predict, <b>c</b> Compare. The hub home has a <b>Moving-map mix</b> tile with your score."],
   ["2026-10-10","Moving maps: the mix can stay in one system (<b>Only Cardiac</b>), a Tour can <b>▶ Play</b> by itself, <b>Copy link</b> shares the exact state you’re on, Compare can <b>Pin B instead</b> to chain comparisons, and the Index lists your weakest maps for Name it. Block pages show your Name-it score on each moving map."],
