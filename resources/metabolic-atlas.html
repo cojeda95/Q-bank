@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 301 pan/zoom maps with 2171 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 321 pan/zoom maps with 2171 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="301 interactive maps. 2171 lesions pinned to the step they break.">
+<meta property="og:description" content="321 interactive maps. 2171 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -1922,6 +1922,60 @@ const PATHS = {
   adDust:{n:"Dust & vessels",v:"--p-glycolysis"},
   hxGas:{n:"Gas exchange",v:"--p-glycolysis"},
   hxDz:{n:"Causes",v:"--p-tca"},
+  lcNsc:{n:"Non-small cell",v:"--p-tca"},
+  lcNe:{n:"Neuroendocrine",v:"--p-glycolysis"},
+  lcSys:{n:"Spread & therapy",v:"--p-gluconeo"},
+  hbNorm:{n:"Oxygen transport",v:"--p-glycolysis"},
+  hbPois:{n:"Poisons",v:"--p-tca"},
+  hbType:{n:"Hemoglobin types & disease",v:"--p-gluconeo"},
+  pfObs:{n:"Obstructive",v:"--p-glycolysis"},
+  pfRes:{n:"Restrictive",v:"--p-tca"},
+  pfPhys:{n:"Mechanics",v:"--p-gluconeo"},
+  pnDef:{n:"Defenses",v:"--p-glycolysis"},
+  pnDz:{n:"Pneumonia",v:"--p-tca"},
+  boTum:{n:"Bone tumors",v:"--p-glycolysis"},
+  boHip:{n:"Pediatric hip & knee",v:"--p-tca"},
+  boFx:{n:"Pediatric fractures",v:"--p-gluconeo"},
+  csDeg:{n:"Degeneration",v:"--p-tca"},
+  csNrv:{n:"Root & cord",v:"--p-glycolysis"},
+  ftHeel:{n:"Heel",v:"--p-tca"},
+  ftFore:{n:"Forefoot & toes",v:"--p-glycolysis"},
+  fxPed:{n:"Growth plate",v:"--p-tca"},
+  fxArm:{n:"Upper limb",v:"--p-glycolysis"},
+  hlInf:{n:"Inflammation",v:"--p-glycolysis"},
+  hlRep:{n:"Repair",v:"--p-tca"},
+  ijCell:{n:"The cell",v:"--p-glycolysis"},
+  ijDeath:{n:"Death",v:"--p-tca"},
+  ijEx:{n:"Examples",v:"--p-gluconeo"},
+  shCuff:{n:"Rotator cuff",v:"--p-tca"},
+  shJoint:{n:"Joint",v:"--p-glycolysis"},
+  xeLocal:{n:"Localized",v:"--p-glycolysis"},
+  xeForce:{n:"Starling forces",v:"--p-tca"},
+  xeCause:{n:"Generalized causes",v:"--p-gluconeo"},
+  xfFever:{n:"Fever",v:"--p-glycolysis"},
+  xfDrug:{n:"Drug & toxin syndromes",v:"--p-tca"},
+  xfHeat:{n:"Heat & hormones",v:"--p-gluconeo"},
+  xgUp:{n:"Upper GI",v:"--p-glycolysis"},
+  xgLow:{n:"Lower GI",v:"--p-tca"},
+  xgWork:{n:"Work-up",v:"--p-gluconeo"},
+  xjMono:{n:"One hot joint",v:"--p-glycolysis"},
+  xjPoly:{n:"Many joints",v:"--p-tca"},
+  xjB27:{n:"HLA-B27 & lupus",v:"--p-gluconeo"},
+  xrVir:{n:"Viral exanthems",v:"--p-glycolysis"},
+  xrBact:{n:"Bacteria & ticks",v:"--p-tca"},
+  xrImm:{n:"Immune & drug",v:"--p-gluconeo"},
+  syRefl:{n:"Reflex & orthostatic",v:"--p-glycolysis"},
+  syCard:{n:"Cardiac",v:"--p-tca"},
+  syMimic:{n:"Mimics",v:"--p-gluconeo"},
+  xwHorm:{n:"Hormones",v:"--p-glycolysis"},
+  xwInf:{n:"Infection & cancer",v:"--p-tca"},
+  xwGut:{n:"Gut & mind",v:"--p-gluconeo"},
+  anMicro:{n:"Microcytic",v:"--p-glycolysis"},
+  anNormo:{n:"Normocytic",v:"--p-tca"},
+  anMacro:{n:"Macrocytic",v:"--p-gluconeo"},
+  bcLeuk:{n:"Leukemias",v:"--p-glycolysis"},
+  bcNHL:{n:"Non-Hodgkin lymphomas",v:"--p-tca"},
+  bcHod:{n:"Hodgkin & CNS",v:"--p-gluconeo"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -40140,29 +40194,570 @@ MAPS.hypoxsim = {
  edges:[]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["oral","Oral Cavity & Salivary Glands"],["skinbasics","Skin Basics — Layers, Lesions & Terms"],["gidrugs","GI Motility, Laxative & Antiemetic Drugs"],["cardproc","Cardiac Anatomy, Catheters & Vascular Access"],["transfuse","Blood Groups & Transfusion"],["nmjflow","Neuromuscular Junction in Motion"],["synflow","Monoamine Synapse in Motion"],["apflow","Action Potential in Motion"],["bgflow","Basal Ganglia in Motion"],["cordsim","Spinal Cord Lesion Simulator"],["stemsim","Brainstem Lesion Simulator"],["visfield","Visual Pathway Lesion Simulator"],["cardap","Cardiac Action Potential in Motion"],["coagflow","Coagulation Cascade in Motion"],["alvflow","Alveolus in Motion"],["asthflow","Asthma Airway in Motion"],["axisflow","HPA Axis in Motion"],["betaflow","β Cell in Motion"],["follflow","Thyroid Follicle in Motion"],["cochflow","Cochlea in Motion"],["gutabs","Gut Absorption in Motion"],["boneflow","Bone Remodeling in Motion"],["goutflow","Uric Acid & Gout in Motion"],["rajoint","Rheumatoid Joint in Motion"],["vsmotion","Viscerosomatic Reflex in Motion"],["lymphflow","Lymphatic Pump in Motion"],["biliflow","Bilirubin in Motion"],["ironflow","Iron in Motion"],["abflow","Acid–Base in Motion"],["glomsim","Glomerular Disease Locator"],["abxsim","Antibiotic Targets in Motion"],["misim","MI Locator"],["pvflow","Pressure–Volume Loop in Motion"],["edemaflow","Capillary & Edema in Motion"],["hivflow","HIV Life Cycle in Motion"],["eyesim","Pupil & Eye Movement Simulator"],["plexsim","Brachial Plexus Lesion Simulator"],["mensflow","Menstrual Cycle in Motion"],["baroflow","Autonomic Drugs & Baroreflex in Motion"],["shocksim","Shock Simulator"],["ecgsim","Conduction & ECG Simulator"],["cahflow","Steroid Synthesis & CAH in Motion"],["lipoflow","Lipoprotein Transport in Motion"],["hemeflow","Heme Synthesis & Porphyrias in Motion"],["nucflow","Nucleotide Synthesis & Drug Sites in Motion"],["acidflow","Parietal Cell in Motion"],["legsim","Lower Limb Nerve Lesion Simulator"],["abtime","Acid–Base Compensation Timeline"],["aasim","Amino Acid Disorders in Motion"],["bvitsim","B Vitamins & Zinc in Motion"],["colsim","Collagen Assembly in Motion"],["energysim","Energy Metabolism in Motion"],["faosim","Fatty Acid Oxidation in Motion"],["glyxsim","Glycolysis Odds & Ends in Motion"],["gsdsim","Glycogen Storage Diseases in Motion"],["labsim","Lab Techniques in Motion"],["lsdsim","Lysosomal Storage in Motion"],["pedsim","Pedigree Simulator"],["rtasim","Renal Tubular Acidosis Simulator"],["sugarsim","Fructose & Galactose in Motion"],["ureasim","Urea Cycle in Motion"],["cbsim","Cerebellar Lesions in Motion"],["papezsim","The Papez Circuit in Motion"],["rxsim","Psych Drugs at the Receptors"],["sleepsim","Sleep Stages in Motion"],["stimsim","Stimulants & Addiction in Motion"],["aortasim","The Aorta in Motion"],["archsim","Pharyngeal Arches in Motion"],["carditsim","Heart Infection & Inflammation in Motion"],["cyansim","Cyanotic Heart Disease in Motion"],["embsim","Embryo & Gut-Tube Defects in Motion"],["fetalsim","Fetal Circulation in Motion"],["gonadsim","Gonadal Tumors in Motion"],["htnsim","Hypertension in Motion"],["lyteecg","Electrolytes & the ECG"],["murmursim","Murmurs & Maneuvers in Motion"],["placsim","Bleeding in Pregnancy in Motion"],["pregsim","Pregnancy Hormones in Motion"],["prossim","The Prostate in Motion"],["scrotsim","The Scrotum in Motion"],["sexsim","Sex Differentiation in Motion"],["aqsim","Aqueous Humor & Retina in Motion"],["vestsim","Vertigo in Motion"],["voxsim","Larynx & Voice in Motion"],["bleedsim","Head Bleeds in Motion"],["btsim","Brain Tumors in Motion"],["csfsim","CSF Flow in Motion"],["demsim","Dementias Over Time"],["hasim","Headaches in Motion"],["pthsim","Calcium & PTH Lab Simulator"],["spreadsim","Seizure Spread in Motion"],["szsim","Antiseizure Drugs in Motion"],["testsim","Diagnostic Test Simulator"],["antidsim","Poison & Antidote in Motion"],["bowelsim","Bowel Blockages in Motion"],["esosim","Swallowing in Motion"],["laxsim","Laxatives in Motion"],["pksim","Pharmacokinetics & Dose–Response Simulator"],["portsim","Liver Blood Flow in Motion"],["complsim","Complement in Motion"],["hypsim","Hypersensitivity Types in Motion"],["idsim","Immunodeficiency Simulator"],["tcellsim","T-Cell Activation in Motion"],["tfsim","Blood Transfusion in Motion"],["vaxsim","Vaccines in Motion"],["altsim","Climbing to Altitude in Motion"],["alvdzsim","Alveoli in Trouble in Motion"],["hypoxsim","Hypoxemia Simulator — A–a Gradient & 100% O₂"],["index","Index"]];
+MAPS.lcsim = {
+ t:"Lung Cancer in Motion", sub:"Grow each lung cancer where it lives — peripheral adenocarcinoma and large cell, central squamous and small cell, a bronchial carcinoid, a Pancoast tumor — and watch ACTH, ADH, PTHrP and hCG reach their targets",
+ w:3600, h:1900,
+ fa:"224, 352, 447, 703, 704",
+ src:["Robbins ch 15 — The lung", "Katzung ch 54 — Cancer Chemotherapy"],
+ art:"kit",
+ dyn:{"lazy":"fcf90823cc","switches":[{"id":"dx","label":"Tumor","type":"one","options":[["adeno","Adenocarcinoma","lcadeno"],["scc","Squamous cell","lcscc"],["sclc","Small cell","lcsclc"],["large","Large cell","lclarge"],["carcinoid","Carcinoid","lccarcinoid"],["pancoast","Pancoast tumor","lclocal"],["svc","SVC syndrome","lclocal"]]},{"id":"tki","label":"Drug","type":"toggle","on":"Kinase inhibitor given","off":"Kinase inhibitor (adeno)","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:205,t:"Hormone → syndrome (Robbins ch 15)",rows:[
+   ["ADH","SIADH, hyponatremia"],
+   ["ACTH","Cushing syndrome"],
+   ["PTHrP","hypercalcemia"],
+   ["hCG","gynecomastia"],
+   ["Serotonin, bradykinin","carcinoid syndrome"]]}],
+ nodes:[
+  {id:"lc1",l:"Adenocarcinoma",x:330,y:1700,p:"lcNsc",k:"hub",s:"peripheral · drivers",m:["lcadeno"]},
+  {id:"lc2",l:"Squamous cell carcinoma",x:760,y:1700,p:"lcNsc",s:"central · PTHrP",m:["lcscc"]},
+  {id:"lc3",l:"Large cell carcinoma",x:1200,y:1700,p:"lcNsc",s:"peripheral · hCG",m:["lclarge"]},
+  {id:"lc4",l:"Small cell carcinoma",x:1640,y:1700,p:"lcNe",s:"ACTH · ADH",m:["lcsclc"]},
+  {id:"lc5",l:"Bronchial carcinoid",x:2080,y:1700,p:"lcNe",s:"polyp · low grade",m:["lccarcinoid"]},
+  {id:"lc6",l:"Local spread",x:2520,y:1700,p:"lcSys",s:"Pancoast · SVC",m:["lclocal"]},
+  {id:"lc7",l:"Paraneoplastic syndromes",x:2960,y:1700,p:"lcSys",s:"hormones · antibodies",m:["lcparaneo"]},
+  {id:"lc8",l:"Targeted therapy",x:330,y:1840,p:"lcSys",s:"EGFR · ALK",m:["lctarget"]}],
+ edges:[]
+};
+
+MAPS.odcsim = {
+ t:"The O₂ Curve in Motion", sub:"Ride the hemoglobin dissociation curve from lungs to tissues and see how much O₂ is unloaded — shift it right with exercise, acid, fever and altitude, left with cold and fetal hemoglobin, and compare CO, methemoglobin, anemia, cyanide and sickle cell",
+ w:3600, h:1900,
+ fa:"410, 416, 425, 428, 687, 688, 689, 691",
+ src:["Costanzo ch 5 — Respiratory physiology", "Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids", "Robbins ch 14 — Red blood cell and bleeding disorders", "Marks ch 6 — Amino Acids in Proteins", "Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors", "Costanzo ch 7 — Acid-base physiology", "Guyton ch 45 — Physiology of Deep-Sea Diving and Other Hyperbaric Conditions", "Katzung ch 58 — Management of the Poisoned Patient", "Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes"],
+ art:"kit",
+ dyn:{"lazy":"d7396f0938","switches":[{"id":"sh","label":"Shift · poison · disease","type":"one","options":[["exer","Exercise","odc"],["acid","↑ CO₂ / ↓ pH (Bohr)","odc"],["fever","↑ Temperature","odc"],["alt","High altitude (↑ 2,3-BPG)","altitude"],["cold","↓ Temperature","odc"],["hbf","Fetal hemoglobin","hbtypes"],["myo","Myoglobin","odc"],["co","Carbon monoxide","cohb"],["metb","Methemoglobinemia","methb"],["anemia","Anemia","odc"],["poly","Polycythemia","odc"],["cn","Cyanide","cyanide"],["sickle","Sickle cell","sickle"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:273,t:"Which way does it shift? (First Aid p. 687)",rows:[
+   ["Right (↑ P50, ↑ unloading)","exercise, ↓ pH, ↑ CO₂, ↑ temp, ↑ 2,3-BPG"],
+   ["Left (↓ P50)","↓ temp, fetal Hb, CO, methemoglobin"],
+   ["↓ SaO₂ + content, normal PaO₂","CO, methemoglobin"],
+   ["↓ content only","anemia"],
+   ["All normal","cyanide"]]}],
+ nodes:[
+  {id:"hb1",l:"O₂ content & the curve",x:330,y:1620,p:"hbNorm",k:"hub",s:"left is lower (P50)",m:["odc"]},
+  {id:"hb2",l:"High altitude",x:760,y:1620,p:"hbNorm",s:"↑ 2,3-BPG, ↑ EPO",m:["altitude"]},
+  {id:"hb3",l:"Hemoglobin as a buffer",x:1200,y:1620,p:"hbNorm",s:"deoxyHb buffers better",m:["intrabuffer"]},
+  {id:"hb4",l:"CO poisoning",x:1640,y:1620,p:"hbPois",s:"pulse oximeter lies",m:["cohb"]},
+  {id:"hb5",l:"Methemoglobinemia",x:2080,y:1620,p:"hbPois",s:"chocolate-brown blood",m:["methb"]},
+  {id:"hb6",l:"Cyanide",x:330,y:1760,p:"hbPois",s:"complex IV",m:["cyanide"]},
+  {id:"hb7",l:"Hyperbaric oxygen",x:760,y:1760,p:"hbPois",s:"dissolved O₂ soars",m:["hbo"]},
+  {id:"hb8",l:"Hemoglobin types · HbF",x:1200,y:1760,p:"hbType",s:"α₂γ₂ left-shifted",m:["hbtypes"]},
+  {id:"hb9",l:"Sickle cell disease",x:1640,y:1760,p:"hbType",s:"Glu6Val",m:["sickle"]}],
+ edges:[]
+};
+
+MAPS.pftsim = {
+ t:"PFTs & Flow–Volume Loops", sub:"A flow–volume loop and the lung volumes for obstructive disease (COPD, asthma) and restrictive disease inside the lung (interstitial lung disease) or outside it (muscle weakness, obesity), against normal — with FEV₁, FEV₁/FVC, TLC, RV and DLCO. Tap the loop or the bars for their cards",
+ w:3500, h:2100,
+ fa:"682–683, 692–694",
+ src:["Costanzo ch 5 — Respiratory physiology"],
+ art:"kit",
+ dyn:{"lazy":"7af065ecef","switches":[{"id":"pf","label":"Pick a pattern","type":"one","options":[["copd","Emphysema / COPD","copd"],["asthma","Asthma","asthma"],["ild","Interstitial lung disease","ild"],["nm","Neuromuscular weakness","pfts"],["obese","Severe obesity","pfts"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:760,w:1000,h:160,kw:248,t:"The patterns (First Aid pp. 692, 694)",rows:[
+   ["Normal","FEV₁ and FVC over 80% predicted · FEV₁/FVC over 70%"],
+   ["Obstructive","FEV₁/FVC < 70% · RV, FRC, TLC ↑ · loop shifted left, scooped"],
+   ["Restrictive","RV, FRC, TLC ↓ · FEV₁/FVC normal or ↑ · loop shifted right"],
+   ["Intrinsic restriction","interstitial disease · DLCO ↓ · A–a ↑"],
+   ["Extrapulmonary restriction","muscle weakness, chest wall · DLCO and A–a normal"]]}],
+ nodes:[
+  {id:"pf1",l:"Obstructive vs restrictive",x:380,y:1300,p:"pfPhys",s:"FEV₁/FVC · TLC · DLCO",m:["pfts"]},
+  {id:"pf2",l:"Lung volumes",x:820,y:1300,p:"pfPhys",s:"four volumes, four capacities",m:["lungvol","lungthorax"]},
+  {id:"pf3",l:"Compliance",x:1260,y:1300,p:"pfPhys",s:"emphysema ↑ · fibrosis ↓",m:["compliance"]},
+  {id:"pf4",l:"COPD & asthma",x:1700,y:1300,p:"pfObs",s:"air trapping",m:["copd","asthma"]},
+  {id:"pf5",l:"Interstitial lung disease",x:380,y:1440,p:"pfRes",s:"stiff lung · ↓ DLCO",m:["ild"]},
+  {id:"pf6",l:"Muscle weakness",x:820,y:1440,p:"pfRes",s:"normal DLCO",m:["mg","sleepapnea"]}],
+ edges:[]
+};
+
+MAPS.pnasim = {
+ t:"Pneumonia in Motion", sub:"Watch the mucociliary escalator and macrophages clear the lung, break each defense, and step a lobe through congestion, red and gray hepatization and resolution — plus mycoplasma and a right-sided aspiration abscess",
+ w:3600, h:1900,
+ fa:"125, 134, 148, 188, 680, 702",
+ src:["Robbins ch 15 — The lung"],
+ art:"kit",
+ dyn:{"lazy":"581aa39eff","switches":[{"id":"st","label":"Lobar stage","type":"steps","auto":3,"options":[["cong","Congestion"],["red","Red hepatization"],["gray","Gray hepatization"],["res","Resolution"]]},{"id":"dx","label":"Defense fails","type":"one","options":[["asp","No cough reflex (aspiration)","lungdefense"],["cilia","Cilia damaged","lungdefense"],["macro","Macrophages impaired","lungdefense"],["retain","Retained secretions","lungdefense"],["myco","Mycoplasma attachment","mycolab"],["abscess","Aspiration abscess","lungabscess"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:120,t:"Lobar pneumonia by day (First Aid p. 702)",rows:[
+   ["Days 1–2","congestion"],
+   ["Days 3–4","red hepatization"],
+   ["Days 5–7","gray hepatization"],
+   ["Day 8+","resolution"]]}],
+ nodes:[
+  {id:"pn1",l:"Lung host defenses",x:330,y:1660,p:"pnDef",k:"hub",s:"escalator · macrophages",m:["lungdefense"]},
+  {id:"pn2",l:"Pneumococcal carriage",x:760,y:1660,p:"pnDef",s:"20% of adults",m:["pneumocarriage"]},
+  {id:"pn3",l:"Lobar pneumonia stages",x:1200,y:1660,p:"pnDz",s:"red → gray hepatization",m:["lobarstages"]},
+  {id:"pn4",l:"Lung abscess",x:1640,y:1660,p:"pnDz",s:"right, single, anaerobes",m:["lungabscess"]},
+  {id:"pn5",l:"Mycoplasma",x:2080,y:1660,p:"pnDz",s:"no wall · P1",m:["mycolab"]}],
+ edges:[]
+};
+
+MAPS.bonesim = {
+ t:"Bones & Kids by Age in Motion", sub:"Run the ages from newborn to older adult and see what lights up — then place each bone tumor on the long bone (metaphysis, diaphysis, epiphysis) and watch the child’s hip, elbow and forearm: DDH, Perthes, SCFE, Osgood-Schlatter, nursemaid’s elbow, greenstick, torus and bowing fractures",
+ w:3600, h:1900,
+ fa:"466, 467, 470, 471",
+ src:["Robbins ch 26 — Bones, joints, and soft tissue tumors", "Bootcamp.com MSK — Primary bone tumors", "Moore ch 7 — Lower Limb", "Langman ch 12 — Limbs", "OCOM Ortho — SDL 9 reading: Pediatric orthopedic surgery (Current Diagnosis & Treatment in Orthopedics 6e ch 12)", "Moore ch 3 — Upper Limb", "Moore ch 1 — Overview and Basic Concepts", "OCOM Ortho — SDL 9 reading: Fracture management (Practical Office Orthopedics ch 8)", "Bootcamp.com MSK — Childhood musculoskeletal pathology"],
+ art:"kit",
+ dyn:{"lazy":"68c14bc02f","switches":[{"id":"age","label":"Age","type":"steps","auto":4,"options":[["new","Newborn"],["u5","Under 5"],["s57","5–7"],["ado","Adolescent"],["ya","Young adult"],["old","Older adult"]]},{"id":"dx","label":"Tumor or condition","type":"one","options":[["osteo","Osteosarcoma","osteosarcoma"],["ewing","Ewing sarcoma","ewing"],["gct","Giant cell tumor","gct"],["ochon","Osteochondroma","osteochondroma"],["ooid","Osteoid osteoma","osteoidosteoma"],["chondro","Chondrosarcoma","chondrosarcoma"],["ench","Enchondroma","enchondroma"],["ddh","DDH","ddh"],["lcp","Legg-Calvé-Perthes","lcp"],["scfe","SCFE","scfe"],["osgood","Osgood-Schlatter","osgood"],["nurse","Nursemaid’s elbow","nursemaid"],["green","Greenstick fracture","pedsfx"],["torus","Torus fracture","pedsfx"],["bow","Bowing fracture","bowingfx"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:316,t:"Location on the long bone (First Aid pp. 470–471; Bootcamp)",rows:[
+   ["Epiphysis","giant cell tumor (plates closed)"],
+   ["Metaphysis","osteosarcoma, osteochondroma"],
+   ["Diaphysis","Ewing sarcoma"],
+   ["Medulla, hands and feet","enchondroma"],
+   ["Medulla, pelvis and proximal femur","chondrosarcoma (over 50)"]]}],
+ nodes:[
+  {id:"bo1",l:"Osteosarcoma",x:330,y:1660,p:"boTum",k:"hub",s:"metaphysis · knee",m:["osteosarcoma"]},
+  {id:"bo2",l:"Ewing sarcoma",x:760,y:1660,p:"boTum",s:"diaphysis · t(11;22)",m:["ewing"]},
+  {id:"bo3",l:"Giant cell · osteochondroma",x:1200,y:1660,p:"boTum",s:"epiphysis · stalk",m:["gct","osteochondroma"]},
+  {id:"bo4",l:"Osteoid osteoma",x:1640,y:1660,p:"boTum",s:"NSAID-relieved",m:["osteoidosteoma"]},
+  {id:"bo5",l:"Chondrosarcoma · enchondroma",x:2080,y:1660,p:"boTum",s:"cartilage",m:["chondrosarcoma","enchondroma"]},
+  {id:"bo6",l:"DDH · Perthes · SCFE",x:330,y:1790,p:"boHip",s:"by age",m:["ddh","lcp","scfe"]},
+  {id:"bo7",l:"Osgood-Schlatter",x:760,y:1790,p:"boHip",s:"tibial tuberosity",m:["osgood"]},
+  {id:"bo8",l:"Nursemaid’s elbow",x:1200,y:1790,p:"boFx",s:"under 5",m:["nursemaid"]},
+  {id:"bo9",l:"Greenstick · torus · bowing",x:1640,y:1790,p:"boFx",s:"bends, buckles",m:["pedsfx","bowingfx"]}],
+ edges:[]
+};
+
+MAPS.cervsim = {
+ t:"The Cervical Spine in Motion", sub:"Wear down a cervical vertebra, then narrow a foramen to pinch C5, C6, C7 or C8, or narrow the canal to squeeze the cord — and run Spurling, Lhermitte and Hoffman",
+ w:3600, h:1900,
+ fa:"521, 523",
+ src:["OCOM Ortho — SDL 19 lecture: Neck and back pain and injury", "OCOM Ortho — SDL 19 reading: Neck and back pain (Tintinalli’s Emergency Medicine 9e ch 279)", "Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement", "Bootcamp.com Neurology — Spinal cord syndromes"],
+ art:"kit",
+ dyn:{"lazy":"e2a23c3311","switches":[{"id":"dz","label":"Narrowing","type":"one","options":[["spond","Spondylosis only","cervspond"],["foram","Foraminal stenosis → root","cervradic"],["central","Central stenosis → cord","cervmyel"],["hyper","Hyperextension injury","centralcord"]]},{"id":"rt","label":"Root (foraminal)","type":"steps","options":[["c5","C5"],["c6","C6"],["c7","C7"],["c8","C8"]]},{"id":"test","label":"Bedside sign","type":"toggle","on":"Sign tested","off":"Test the sign","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:120,t:"Which root? (course lecture)",rows:[
+   ["C5","lateral arm · biceps"],
+   ["C6","thumb · biceps, brachioradialis"],
+   ["C7","middle finger · triceps"],
+   ["C8","little finger · no reflex"]]}],
+ nodes:[
+  {id:"cs1",l:"Cervical spondylosis",x:300,y:1720,p:"csDeg",k:"hub",s:"films ≠ symptoms",m:["cervspond"]},
+  {id:"cs2",l:"Cervical radiculopathy",x:750,y:1720,p:"csNrv",s:"one root · Spurling",m:["cervradic"]},
+  {id:"cs3",l:"Cervical myelopathy",x:1200,y:1720,p:"csNrv",s:"UMN · Lhermitte · Hoffman",m:["cervmyel"]},
+  {id:"cs4",l:"Central cord syndrome",x:1650,y:1720,p:"csNrv",s:"arms > legs",m:["centralcord"]}],
+ edges:[]
+};
+
+MAPS.footsim = {
+ t:"The Foot in Motion", sub:"Roll body weight from heel to metatarsal heads, then add plantar fasciitis, heel bursitis, Sever disease, Morton neuroma, a bunion, hammer or claw toes or metatarsus adductus",
+ w:3600, h:1900,
+ fa:"465, 491, 538, 545",
+ src:["OCOM Ortho — SDL 7 lecture: Foot and ankle pain and injury", "OCOM Ortho — SDL 7 reading: Practical Office Orthopedics ch 5, The foot and ankle", "Moore ch 7 — Lower Limb", "Bootcamp.com MSK — Foot & ankle", "OCOM Ortho — SDL 9 reading: Pediatric orthopedic surgery (Current Diagnosis & Treatment in Orthopedics 6e ch 12)"],
+ art:"kit",
+ dyn:{"lazy":"e32cbc379e","switches":[{"id":"st","label":"Step","type":"steps","auto":3,"options":[["heel","Heel strike"],["mid","Midfoot"],["push","Push-off"]]},{"id":"dx","label":"Problem","type":"one","options":[["pf","Plantar fasciitis","plantarfasc"],["bursa","Retrocalcaneal bursitis","heelpain"],["sever","Sever disease","heelpain"],["morton","Morton neuroma","morton"],["bunion","Bunion","bunions"],["ham","Hammer toe","clawtoe"],["claw","Claw toe","clawtoe"],["ma","Metatarsus adductus","metadduct"]]},{"id":"morning","label":"When","type":"toggle","on":"First step of the morning","off":"First morning step","def":false}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:116,kw:120,t:"Toe deformities (OCOM SDL 7 reading · Moore ch 7)",rows:[
+   ["Claw toe","MTP ext · PIP flex · DIP flex"],
+   ["Hammer toe","MTP ext · PIP flex · DIP ext"],
+   ["Bunion","phalanx lateral · 1st MT medial"]]}],
+ nodes:[
+  {id:"ft1",l:"Plantar fasciitis",x:330,y:1700,p:"ftHeel",k:"hub",s:"first morning step",m:["plantarfasc"]},
+  {id:"ft2",l:"Heel bursitis & Sever",x:760,y:1700,p:"ftHeel",s:"posterior heel",m:["heelpain"]},
+  {id:"ft3",l:"Morton neuroma",x:1200,y:1700,p:"ftFore",s:"3rd web space",m:["morton"]},
+  {id:"ft4",l:"Bunions, hammertoes & corns",x:1640,y:1700,p:"ftFore",s:"medial MTP",m:["bunions"]},
+  {id:"ft5",l:"Claw vs hammer toe",x:2080,y:1700,p:"ftFore",s:"MTP · PIP · DIP",m:["clawtoe"]},
+  {id:"ft6",l:"Metatarsus adductus",x:2520,y:1700,p:"ftFore",s:"self-correcting",m:["metadduct"]}],
+ edges:[]
+};
+
+MAPS.fxsim = {
+ t:"Growth Plates & Arm Injuries in Motion", sub:"Draw Salter-Harris I–V through a child’s growth plate, then break and dislocate the arm — clavicle, shoulder, humerus, elbow, Colles, Monteggia, Galeazzi — and see which nerve sits next to each",
+ w:3600, h:1900,
+ fa:"450, 463, 467",
+ src:["Moore ch 3 — Upper Limb", "Pawlina ch 8 — Bone", "OCOM Ortho — SDL 9 reading: Pediatric orthopedic surgery (Current Diagnosis & Treatment in Orthopedics 6e ch 12)", "Bootcamp.com MSK — Childhood musculoskeletal pathology"],
+ art:"kit",
+ dyn:{"lazy":"7ff18afa97","switches":[{"id":"sh","label":"Salter-Harris","type":"one","options":[["1","Type I","salterharris"],["2","Type II","salterharris"],["3","Type III","salterharris"],["4","Type IV","salterharris"],["5","Type V","salterharris"]]},{"id":"inj","label":"Arm injury","type":"one","options":[["clav","Clavicle fracture","clavfx"],["antdis","Anterior shoulder dislocation","shoulderdisloc"],["shaft","Midshaft humerus fracture","radialnerve"],["supra","Supracondylar fracture","elbowinj"],["postdis","Posterior elbow dislocation","elbowinj"],["medepi","Medial epicondyle avulsion","elbowinj"],["colles","Colles","forearmfx"],["monteggia","Monteggia","forearmfx"],["galeazzi","Galeazzi","forearmfx"],["ll","Little League shoulder","littleleague"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:170,t:"Bone → nerve (Moore ch 3 · First Aid p. 450)",rows:[
+   ["Surgical neck","axillary"],
+   ["Radial groove","radial"],
+   ["Distal humerus","median"],
+   ["Medial epicondyle","ulnar"]]}],
+ nodes:[
+  {id:"fx1",l:"Salter-Harris fractures",x:330,y:1700,p:"fxPed",k:"hub",s:"types I–V",m:["salterharris"]},
+  {id:"fx2",l:"Little League shoulder",x:760,y:1700,p:"fxPed",s:"proximal humeral physis",m:["littleleague"]},
+  {id:"fx3",l:"Clavicle fracture",x:1200,y:1700,p:"fxArm",s:"middle third",m:["clavfx"]},
+  {id:"fx4",l:"Shoulder dislocation",x:1640,y:1700,p:"fxArm",s:"anterior · axillary n.",m:["shoulderdisloc"]},
+  {id:"fx5",l:"Elbow fractures",x:2080,y:1700,p:"fxArm",s:"median · ulnar",m:["elbowinj"]},
+  {id:"fx6",l:"Forearm & wrist fractures",x:2520,y:1700,p:"fxArm",s:"Colles · Monteggia",m:["forearmfx"]},
+  {id:"fx7",l:"Radial nerve injury",x:2960,y:1700,p:"fxArm",s:"midshaft · wrist drop",m:["radialnerve"]}],
+ edges:[]
+};
+
+MAPS.healsim = {
+ t:"Inflammation & Wound Healing in Motion", sub:"Neutrophils leaving a venule in four steps, then a skin wound through the inflammatory, proliferative and remodeling phases — collagen type III to type I, strength returning to ~70–80% by 3 months. Add a deficiency, LAD, a hypertrophic scar, a keloid or steroids. Tap the vessel or the wound for its card",
+ w:3500, h:2100,
+ fa:"48, 67, 69, 115, 210–214, 340",
+ src:["Robbins ch 3 — Inflammation and repair", "Robbins ch 9 — Environmental and nutritional diseases"],
+ art:"kit",
+ dyn:{"lazy":"32aa5c4514","switches":[{"id":"t","label":"Time since the wound","type":"steps","auto":5,"options":[["min","Minutes — acute inflammation"],["inflam","Up to 3 days — inflammatory"],["prolif","Day 3 to weeks — proliferative"],["remod","1 week to 6+ months — remodeling"]]},{"id":"dx","label":"Add a problem","type":"one","options":[["vitc","Vitamin C deficiency","scurvy"],["cu","Copper deficiency","woundheal"],["zn","Zinc deficiency","zinc"],["gc","Glucocorticoid excess","cortisolact"],["lad","Leukocyte adhesion deficiency","lad1"],["hyper","Hypertrophic scar","woundheal"],["keloid","Keloid","woundheal"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:860,w:1000,h:160,kw:136,t:"The phases (First Aid p. 212)",rows:[
+   ["Inflammatory","up to 3 days · platelets, neutrophils, macrophages"],
+   ["Proliferative","day 3 to weeks · granulation tissue, type III collagen · vit C, copper"],
+   ["Steroids","↓ fibroblast activity, ↓ collagen — poor healing (p. 340)"],
+   ["Remodeling","1 week to 6+ months · type III → type I · zinc collagenases"],
+   ["Strength","~70–80% by 3 months"]]},
+  {x:2420,y:1060,w:1000,h:116,kw:127,t:"Scars (First Aid p. 214)",rows:[
+   ["Hypertrophic","↑ type III · parallel · within the wound · seldom recurs"],
+   ["Keloid","↑↑ types I and III · disorganized · beyond the wound · recurs"],
+   ["Driver","excess TGF-β"]]}],
+ nodes:[
+  {id:"hl1",l:"Acute inflammation",x:380,y:1300,p:"hlInf",s:"extravasation in four steps",m:["acuteinflam"]},
+  {id:"hl2",l:"Leukocyte adhesion deficiency",x:820,y:1300,p:"hlInf",s:"no CD18",m:["lad1"]},
+  {id:"hl3",l:"Wound healing & scars",x:1260,y:1300,p:"hlRep",s:"three phases · keloids",m:["woundheal"]},
+  {id:"hl4",l:"Collagen types",x:1700,y:1300,p:"hlRep",s:"III early, I later",m:["collagentypes"]},
+  {id:"hl5",l:"Labile, stable, permanent",x:380,y:1440,p:"hlRep",s:"who can regenerate",m:["celltypes"]},
+  {id:"hl6",l:"What slows healing",x:820,y:1440,p:"hlRep",s:"vit C · zinc · cortisol",m:["scurvy","zinc","cortisolact"]}],
+ edges:[]
+};
+
+MAPS.injsim = {
+ t:"Cell Injury & Death Simulator", sub:"A cell taken from reversible to irreversible injury, or through apoptosis, beside a tissue patch for each necrosis pattern — coagulative, liquefactive, caseous, fat, fibrinoid and gangrenous. Tap the cell, the pump or the tissue for its card",
+ w:3500, h:2100,
+ fa:"202–206",
+ src:["Robbins ch 2 — Cell injury, cell death, and adaptations"],
+ art:"kit",
+ dyn:{"lazy":"3c1fb62455","switches":[{"id":"inj","label":"Pick a stage or a necrosis pattern","type":"one","options":[["rev","Reversible injury","cellinjury"],["irrev","Irreversible injury","cellinjury"],["apop","Apoptosis","apoptosis"],["coag","Coagulative necrosis","necrosis"],["liq","Liquefactive necrosis","necrosis"],["cas","Caseous necrosis","tb"],["fat","Fat necrosis","acutepanc"],["fibr","Fibrinoid necrosis","pan"],["gang","Gangrenous necrosis","necrosis"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:800,w:1000,h:138,kw:187,t:"Necrosis vs apoptosis (First Aid pp. 204–205)",rows:[
+   ["Necrosis","exogenous injury · membrane breaks · contents leak · inflammation"],
+   ["Apoptosis","ATP-dependent · caspases · membrane intact · little inflammation"],
+   ["Apoptosis histology","eosinophilic cytoplasm · pyknosis · karyorrhexis · DNA laddering"],
+   ["Bcl-2","blocks apoptosis — overexpressed in follicular lymphoma, t(14;18)"]]},
+  {x:2420,y:1010,w:1000,h:116,kw:127,t:"Reversible vs irreversible (First Aid p. 203)",rows:[
+   ["Reversible","swelling · blebs · ribosomes detach · chromatin clumps · myelin figures"],
+   ["Irreversible","membrane breaks · Ca²⁺ in · mitochondria and lysosomes fail"],
+   ["Nucleus","pyknosis → karyorrhexis → karyolysis"]]}],
+ nodes:[
+  {id:"ij1",l:"Adaptations",x:380,y:1300,p:"ijCell",s:"hypertrophy → dysplasia",m:["celladapt","epimeta"]},
+  {id:"ij2",l:"Reversible vs irreversible",x:820,y:1300,p:"ijCell",s:"swelling vs membrane breaks",m:["cellinjury","freeradical"]},
+  {id:"ij3",l:"Apoptosis",x:1260,y:1300,p:"ijDeath",s:"caspases · Bcl-2 · Fas",m:["apoptosis","p53"]},
+  {id:"ij4",l:"Necrosis patterns",x:1700,y:1300,p:"ijDeath",s:"six kinds",m:["necrosis","ischemiavuln"]},
+  {id:"ij5",l:"Infarcts",x:380,y:1440,p:"ijEx",s:"heart · kidney · brain",m:["mi","atn","mitimeline"]},
+  {id:"ij6",l:"Caseous & fat",x:820,y:1440,p:"ijEx",s:"TB · pancreatitis",m:["tb","acutepanc"]},
+  {id:"ij7",l:"Fibrinoid",x:1260,y:1440,p:"ijEx",s:"vasculitis · malignant HTN",m:["pan","malignephro"]}],
+ edges:[]
+};
+
+MAPS.shsim = {
+ t:"The Shoulder in Motion", sub:"Lift the arm through abduction and watch supraspinatus, deltoid, trapezius and serratus take over — then add impingement, a cuff tear, frozen shoulder or arthritis",
+ w:3600, h:1900,
+ fa:"451",
+ src:["OCOM Ortho — SDL 13 lecture: Shoulder pain and injury"],
+ art:"kit",
+ dyn:{"lazy":"4389a71dd9","switches":[{"id":"ab","label":"Abduction","type":"steps","auto":3,"options":[["a0","0°"],["a15","15°"],["a60","60°"],["a90","90°"],["a150","150°"]]},{"id":"dx","label":"Problem","type":"one","options":[["impinge","Impingement","impinge"],["tear","Cuff tear","rctear"],["frozen","Frozen shoulder","frozen"],["ghoa","Glenohumeral OA","shoa"],["acoa","AC joint OA","shoa"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:138,kw:120,t:"Who abducts (SALT)",rows:[
+   ["0–15°","supraspinatus — suprascapular n."],
+   ["15–90°","deltoid — axillary n."],
+   ["Above 90°","trapezius — accessory n."],
+   ["Above 90°","serratus anterior — long thoracic n."]]}],
+ nodes:[
+  {id:"sh1",l:"Rotator cuff injury",x:330,y:1700,p:"shCuff",k:"hub",s:"SItS · SALT",m:["rotatorcuff"]},
+  {id:"sh2",l:"Impingement",x:760,y:1700,p:"shCuff",s:"subacromial",m:["impinge"]},
+  {id:"sh3",l:"Cuff tendinosis & tears",x:1200,y:1700,p:"shCuff",s:"drop arm",m:["rctear"]},
+  {id:"sh4",l:"Adhesive capsulitis",x:1640,y:1700,p:"shJoint",s:"global stiffness",m:["frozen"]},
+  {id:"sh5",l:"Shoulder osteoarthritis",x:2080,y:1700,p:"shJoint",s:"GH vs AC",m:["shoa"]}],
+ edges:[]
+};
+
+MAPS.sxedema = {
+ t:"Edema", sub:"One leg or everywhere, then which Starling force moved — pick an answer and a dot follows the clues down the tree, while the readouts show capillary pressure, plasma and interstitial oncotic pressure and permeability. Tap a card pin for the details",
+ w:3500, h:1540,
+ fa:"69, 156, 299, 301, 316, 321, 323, 372, 396, 397, 486, 613, 655",
+ src:["Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock", "Guyton ch 16 — The Microcirculation and Lymphatic System: Capillary Fluid Exchange, Interstitial Fluid, and Lymph Flow", "Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema", "Costanzo ch 4 — Cardiovascular physiology", "Katzung ch 11 — Antihypertensive Agents", "Robbins ch 20 — The kidney", "Robbins ch 18 — Liver and gallbladder", "Robbins ch 9 — Environmental and nutritional diseases"],
+ art:"kit",
+ dyn:{"lazy":"4be36951cd","switches":[{"id":"dx","label":"The answer","type":"one","options":[["dvt","Deep venous thrombosis","dvt"],["lymph","Lymphedema","lymphedema"],["hf","Heart failure","hf"],["ccb","Dihydropyridine CCB","ccbs"],["neph","Nephrotic syndrome","nephrotic"],["cirr","Cirrhosis","cirrhosis"],["kwash","Kwashiorkor","kwashiorkor"],["leak","Leaky capillaries (burns, sepsis)","capfluid"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:660,w:1000,h:138,kw:120,t:"One force per cause (First Aid p. 301)",rows:[
+   ["↑ Pc","heart failure"],
+   ["↓ πc","nephrotic syndrome · liver failure · protein malnutrition"],
+   ["↑ Kf","toxins · infections · burns"],
+   ["↑ πi","lymphatic blockage"]]}],
+ nodes:[
+  {id:"ed1",l:"Starling forces",x:330,y:1290,p:"xeForce",k:"hub",s:"two push out, two pull in",m:["capfluid","edemasafe"]},
+  {id:"ed2",l:"Deep venous thrombosis",x:780,y:1290,p:"xeLocal",s:"Virchow triad",m:["dvt"]},
+  {id:"ed3",l:"Lymphedema",x:1200,y:1290,p:"xeLocal",s:"πi ↑",m:["lymphedema"]},
+  {id:"ed4",l:"Heart failure",x:1600,y:1290,p:"xeCause",s:"Pc ↑",m:["hf"]},
+  {id:"ed5",l:"Dihydropyridine CCBs",x:2010,y:1290,p:"xeCause",s:"a drug cause",m:["ccbs"]},
+  {id:"ed6",l:"Nephrotic syndrome",x:330,y:1420,p:"xeCause",s:"albumin lost",m:["nephrotic"]},
+  {id:"ed7",l:"Cirrhosis",x:780,y:1420,p:"xeCause",s:"albumin not made",m:["cirrhosis"]},
+  {id:"ed8",l:"Kwashiorkor",x:1200,y:1420,p:"xeCause",s:"albumin not eaten",m:["kwashiorkor"]}],
+ edges:[]
+};
+
+MAPS.sxfever = {
+ t:"Fever & Hyperthermia", sub:"A reset thermostat or heat that can’t be shed — pick an answer and a dot follows the clues down the tree to the drug syndromes, toxidromes, heat stroke and thyroid storm, while the readouts show set point, CK, sweating, pupils and reflexes",
+ w:3500, h:1540,
+ fa:"106, 209, 225, 239–241, 243, 346, 433, 530, 566, 587, 589",
+ src:["Guyton ch 74 — Body Temperature Regulation and Fever", "Katzung ch 58 — Management of the Poisoned Patient", "Katzung ch 29 — Antipsychotic Agents & Lithium", "Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids", "Katzung ch 25 — General Anesthetics", "Katzung ch 8 — Cholinoceptor-Blocking Drugs", "Katzung ch 32 — Drugs of Abuse", "Robbins ch 9 — Environmental and nutritional diseases"],
+ art:"kit",
+ dyn:{"lazy":"6940a21cf3","switches":[{"id":"dx","label":"The answer","type":"one","options":[["fever","Fever (set point reset)","acutephase"],["nms","Neuroleptic malignant syndrome","nms"],["ss","Serotonin syndrome","serotoninsyndrome"],["mh","Malignant hyperthermia","mhyper"],["ach","Anticholinergic toxicity","antimusc"],["symp","Sympathomimetic toxicity","cocaine"],["heat","Heat stroke","heatstroke"],["storm","Thyroid storm","hyperthyroid"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:660,w:1000,h:182,kw:239,t:"Telling them apart (First Aid pp. 240, 587 · Katzung Table 16–4)",rows:[
+   ["Lead-pipe rigidity, CK ↑↑","neuroleptic malignant syndrome"],
+   ["Clonus, hyperreflexia","serotonin syndrome — hours"],
+   ["Hot and DRY skin","anticholinergic"],
+   ["Hot and SWEATY skin","sympathomimetic"],
+   ["In the operating room","malignant hyperthermia"],
+   ["Onset","MH minutes · SS hours · NMS 1–3 days"]]}],
+ nodes:[
+  {id:"xf1",l:"Acute-phase response",x:330,y:1290,p:"xfFever",k:"hub",s:"IL-1 · IL-6 · TNF-α",m:["acutephase","sepsistnf"]},
+  {id:"xf2",l:"Neuroleptic malignant syndrome",x:800,y:1290,p:"xfDrug",s:"antipsychotics",m:["nms"]},
+  {id:"xf3",l:"Serotonin syndrome",x:1260,y:1290,p:"xfDrug",s:"clonus",m:["serotoninsyndrome"]},
+  {id:"xf4",l:"Malignant hyperthermia",x:1660,y:1290,p:"xfDrug",s:"RYR1",m:["mhyper"]},
+  {id:"xf5",l:"Toxidromes",x:2020,y:1290,p:"xfDrug",s:"wet or dry?",m:["toxidromes","antimusc","cocaine"]},
+  {id:"xf6",l:"Heat illness",x:330,y:1420,p:"xfHeat",s:"cramps → stroke",m:["heatstroke","heatillness"]},
+  {id:"xf7",l:"Thyroid storm",x:800,y:1420,p:"xfHeat",s:"thyrotoxic, under stress",m:["hyperthyroid"]}],
+ edges:[]
+};
+
+MAPS.sxgibleed = {
+ t:"GI Bleeding", sub:"Above or below the ligament of Treitz, then the clue that names the source — a dot follows the case down the tree while the readouts show BUN:Cr, hemoglobin, platelets, PT and ferritin",
+ w:3500, h:1640,
+ fa:"244, 372–373, 384, 386–387, 389–391, 393, 395–397, 407, 423–424",
+ src:["Robbins ch 17 — The gastrointestinal tract", "Robbins ch 18 — Liver and gallbladder", "Costanzo ch 8 — Gastrointestinal physiology", "Robbins ch 14 — Red blood cell and bleeding disorders", "Moore ch 6 — Pelvis and Perineum", "Bootcamp.com Gastroenterology — Acute Upper and Lower GI Bleeding"],
+ art:"kit",
+ dyn:{"lazy":"50f7466cb9","switches":[{"id":"dx","label":"The answer","type":"one","options":[["pud","Peptic ulcer","pud"],["var","Esophageal varices","cirrhosis"],["mw","Mallory-Weiss tear","mallorywb"],["div","Diverticulosis","diverticular"],["angio","Angiodysplasia","angiodysplasia"],["meck","Meckel diverticulum","meckel"],["hem","Internal hemorrhoids","hemorrhoids"],["crc","Colorectal cancer","crc"],["uc","Ulcerative colitis","crohn"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:660,w:1000,h:138,kw:136,t:"Upper vs lower (First Aid p. 387)",rows:[
+   ["Upper","hematemesis, melena · BUN:Cr > 20"],
+   ["Lower","hematochezia"],
+   ["Upper sources","ulcer · varices · Mallory-Weiss · gastritis"],
+   ["Lower sources","diverticula · angiodysplasia · IBD · cancer · Meckel"]]}],
+ nodes:[
+  {id:"xg1",l:"Upper vs lower bleeding",x:330,y:1386,p:"xgWork",k:"hub",s:"ligament of Treitz",m:["gibleed"]},
+  {id:"xg2",l:"Peptic ulcer · gastritis",x:780,y:1386,p:"xgUp",s:"H pylori · NSAIDs",m:["pud","gastritis"]},
+  {id:"xg3",l:"Varices",x:1200,y:1386,p:"xgUp",s:"portal hypertension",m:["cirrhosis"]},
+  {id:"xg4",l:"Mallory-Weiss",x:1600,y:1386,p:"xgUp",s:"after vomiting",m:["mallorywb"]},
+  {id:"xg5",l:"Diverticulosis",x:2000,y:1386,p:"xgLow",s:"painless, older",m:["diverticular"]},
+  {id:"xg6",l:"Angiodysplasia · Meckel",x:330,y:1516,p:"xgLow",s:"painless",m:["angiodysplasia","meckel"]},
+  {id:"xg7",l:"Hemorrhoids",x:780,y:1516,p:"xgLow",s:"pectinate line",m:["hemorrhoids"]},
+  {id:"xg8",l:"Colorectal cancer",x:1200,y:1516,p:"xgLow",s:"iron deficiency",m:["crc","ida"]},
+  {id:"xg9",l:"IBD",x:1600,y:1516,p:"xgLow",s:"bloody diarrhea",m:["crohn"]}],
+ edges:[]
+};
+
+MAPS.sxjoint = {
+ t:"Joint Pain", sub:"One hot joint or many — tap it for pus or crystals, or read the pattern; a dot follows the case down the tree while the readouts show the synovial fluid WBC, ESR/CRP, RF and anti-CCP, HLA-B27, ANA and urate",
+ w:3500, h:1640,
+ fa:"113, 472–476",
+ src:["Robbins ch 26 — Bones, joints, and soft tissue tumors", "Robbins ch 6 — Diseases of the immune system", "Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout", "Bootcamp.com MSK — Arthritis and Spondyloarthritis"],
+ art:"kit",
+ dyn:{"lazy":"2f9dbccc75","switches":[{"id":"dx","label":"The answer","type":"one","options":[["sep","Septic arthritis","septicarth"],["gout","Gout","goutclin"],["cppd","Pseudogout (CPPD)","cppd"],["ra","Rheumatoid arthritis","ra"],["oa","Osteoarthritis","oa"],["as","Ankylosing spondylitis","ankspond"],["psa","Psoriatic arthritis","psa"],["rea","Reactive arthritis","reactive"],["sle","Lupus","sle"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:660,w:1000,h:116,kw:196,t:"Synovial fluid WBC (First Aid pp. 472–474 · Bootcamp MSK)",rows:[
+   ["Osteoarthritis","under 2,000/mm³ — noninflammatory"],
+   ["Rheumatoid arthritis","about 5,000–50,000/mm³"],
+   ["Septic arthritis","over 50,000/mm³ — purulent"]]}],
+ nodes:[
+  {id:"xj1",l:"Septic arthritis",x:330,y:1386,p:"xjMono",k:"hub",s:"aspirate · drain · antibiotics",m:["septicarth","synfluid"]},
+  {id:"xj2",l:"Gout",x:760,y:1386,p:"xjMono",s:"needles, negative",m:["goutclin"]},
+  {id:"xj3",l:"Pseudogout",x:1160,y:1386,p:"xjMono",s:"rhomboids, positive",m:["cppd"]},
+  {id:"xj4",l:"Rheumatoid arthritis",x:1580,y:1386,p:"xjPoly",s:"symmetric · spares DIP",m:["ra"]},
+  {id:"xj5",l:"Osteoarthritis",x:2000,y:1386,p:"xjPoly",s:"wear and tear",m:["oa"]},
+  {id:"xj6",l:"Ankylosing spondylitis",x:330,y:1516,p:"xjB27",s:"back · eyes · aorta",m:["ankspond"]},
+  {id:"xj7",l:"Psoriatic · reactive",x:780,y:1516,p:"xjB27",s:"seronegative",m:["psa","reactive"]},
+  {id:"xj8",l:"Lupus",x:1180,y:1516,p:"xjB27",s:"RASH OR PAIN",m:["sle"]}],
+ edges:[]
+};
+
+MAPS.sxrash = {
+ t:"Fever & Rash", sub:"Sort a febrile rash by what the spots look like — vesicles, red macules, a red tongue, palms and soles, petechiae, targets — and a dot follows the clues down the tree, while the readouts show platelets, ESR/CRP, ASO and RPR",
+ w:3500, h:1880,
+ fa:"134, 140, 144–146, 148, 161–163, 166–167, 177, 251, 432–433, 478, 490",
+ src:["Robbins ch 8 — Infectious diseases", "Robbins ch 10 — Diseases of infancy and childhood", "Robbins ch 11 — Blood vessels", "Robbins ch 25 — The skin", "Katzung ch 51 — Clinical Use of Antimicrobial Agents", "Katzung ch 44 — Tetracyclines, Macrolides, Clindamycin, Chloramphenicol, Streptogramins, Oxazolidinones, & Pleuromutilins", "Bootcamp.com Microbiology — Rickettsia", "Bootcamp.com MSK — Kawasaki Disease"],
+ art:"kit",
+ dyn:{"lazy":"d3888ae637","switches":[{"id":"dx","label":"The answer","type":"one","options":[["vzv","Chickenpox","hsvvzv"],["hfm","Hand-foot-mouth","childrashes"],["meas","Measles","measles"],["rub","Rubella","rubella"],["ros","Roseola","roseola"],["fifth","Fifth disease (B19)","parvo"],["scar","Scarlet fever","gas"],["kawa","Kawasaki disease","kawasaki"],["rmsf","Rocky Mountain spotted fever","rmsf"],["syph","Secondary syphilis","syphilis"],["mening","Meningococcemia","meningococcus"],["sjs","EM · SJS · TEN","sjs"],["lyme","Lyme disease","lyme"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:660,w:1000,h:138,kw:265,t:"Palms and soles (First Aid pp. 148, 478)",rows:[
+   ["Rocky Mountain spotted fever","wrists and ankles first"],
+   ["Secondary syphilis","with condylomata lata"],
+   ["Hand-foot-mouth disease","vesicles + oral ulcers"],
+   ["Kawasaki disease","red, swollen hands and feet"]]}],
+ nodes:[
+  {id:"xr1",l:"Red rashes of childhood",x:330,y:1722,p:"xrVir",k:"hub",s:"agent → pattern",m:["childrashes","parvo"]},
+  {id:"xr2",l:"Measles · rubella",x:760,y:1722,p:"xrVir",s:"head → down",m:["measles","rubella"]},
+  {id:"xr3",l:"Roseola · VZV",x:1160,y:1722,p:"xrVir",s:"trunk first",m:["roseola","hsvvzv"]},
+  {id:"xr4",l:"Scarlet fever",x:1560,y:1722,p:"xrBact",s:"S pyogenes",m:["gas"]},
+  {id:"xr5",l:"Meningococcemia",x:1960,y:1722,p:"xrBact",s:"petechiae · DIC",m:["meningococcus","dic"]},
+  {id:"xr6",l:"RMSF · Lyme",x:330,y:1852,p:"xrBact",s:"ticks",m:["rmsf","lyme"]},
+  {id:"xr7",l:"Syphilis",x:760,y:1852,p:"xrBact",s:"palms and soles",m:["syphilis"]},
+  {id:"xr8",l:"Kawasaki disease",x:1160,y:1852,p:"xrImm",s:"CRASH and burn",m:["kawasaki"]},
+  {id:"xr9",l:"EM · SJS · TEN",x:1560,y:1852,p:"xrImm",s:"targets · mucosa",m:["sjs"]}],
+ edges:[]
+};
+
+MAPS.sxsyncope = {
+ t:"Syncope", sub:"Sort a faint as reflex, orthostatic or cardiac — pick an answer and a dot follows the clues down the tree, while the readouts show the blood pressure, heart rate, QT and murmur that go with it. Tap a card pin for the details",
+ w:3500, h:1830,
+ fa:"241, 243, 295–296, 299, 308, 311–313, 315, 317–318, 350, 531",
+ src:["Robbins ch 12 — The heart", "Costanzo ch 4 — Cardiovascular physiology", "Guyton ch 18 — Nervous Regulation of the Circulation and Rapid Control of Arterial Pressure", "Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects", "Guyton ch 13 — Cardiac Arrhythmias and Their Electrocardiographic Interpretation", "Katzung ch 10 — Adrenoceptor Antagonist Drugs", "Katzung ch 14 — Agents Used in Cardiac Arrhythmias", "Guyton ch 24 — Circulatory Shock and Its Treatment", "Katzung ch 8 — Cholinoceptor-Blocking Drugs", "Robbins ch 28 — The central nervous system", "Fundamental Neuroscience ch 29 — Visceral Motor Pathways"],
+ art:"kit",
+ dyn:{"lazy":"2d6022eaa0","switches":[{"id":"dx","label":"The answer","type":"one","options":[["vaso","Vasovagal","syncope"],["situ","Situational","syncope"],["carot","Carotid sinus hypersensitivity","baroreflex"],["hypov","Orthostatic — volume loss","hypovshock"],["drug","Orthostatic — α₁ blocker","alpha1drugs"],["auto","Orthostatic — autonomic failure","alpha1drugs"],["as","Aortic stenosis","aortstenosis"],["hcm","Hypertrophic cardiomyopathy","hcm"],["avb","Complete heart block","avblock"],["lqt","Long QT → torsades","longqt"],["sz","Seizure (a mimic)","gtc"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:660,w:1000,h:138,kw:162,t:"Three kinds (First Aid p. 318)",rows:[
+   ["Reflex","vasovagal · situational · carotid sinus"],
+   ["Orthostatic","hypovolemia · drugs · autonomic failure"],
+   ["Cardiac","arrhythmia · structural disease (AS, HCM)"],
+   ["Orthostatic test","SBP ↓ ≥ 20 or DBP ↓ ≥ 10 within 3 min"]]}],
+ nodes:[
+  {id:"sy1",l:"Syncope",x:330,y:1578,p:"syRefl",k:"hub",s:"reflex · orthostatic · cardiac",m:["syncope"]},
+  {id:"sy2",l:"Baroreceptor reflex",x:760,y:1578,p:"syRefl",s:"the reflex behind it",m:["baroreflex"]},
+  {id:"sy3",l:"α₁ drugs",x:1160,y:1578,p:"syRefl",s:"first-dose hypotension",m:["alpha1drugs"]},
+  {id:"sy4",l:"Hypovolemia",x:1520,y:1578,p:"syRefl",s:"low preload",m:["hypovshock"]},
+  {id:"sy5",l:"Aortic stenosis · HCM",x:1920,y:1578,p:"syCard",s:"syncope on exertion",m:["aortstenosis","hcm"]},
+  {id:"sy6",l:"AV block · sick sinus",x:330,y:1708,p:"syCard",s:"too slow",m:["avblock","sicksinus"]},
+  {id:"sy7",l:"Torsades · VT · Brugada",x:760,y:1708,p:"syCard",s:"too fast",m:["longqt","vtach","brugada"]},
+  {id:"sy8",l:"Seizure",x:1160,y:1708,p:"syMimic",s:"the mimic",m:["gtc"]}],
+ edges:[]
+};
+
+MAPS.sxweight = {
+ t:"Weight Loss", sub:"Appetite up or down, then the clue that splits each branch — a dot follows the case down the tree to thyroid, diabetes, TB, lymphoma, cachexia, the adrenals, the gut or the mind, while the readouts show TSH, glucose, Na⁺ and K⁺",
+ w:3500, h:1640,
+ fa:"106, 138, 173, 344, 346, 350–351, 353, 388, 434, 490, 578, 584",
+ src:["Robbins ch 24 — The endocrine system", "Robbins ch 8 — Infectious diseases", "Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus", "Robbins ch 7 — Neoplasia", "Robbins ch 17 — The gastrointestinal tract", "Kaplan & Sadock ch 7 — Depressive Disorders", "Kaplan & Sadock ch 13 — Feeding and Eating Disorders", "Costanzo ch 9 — Endocrine physiology", "Robbins ch 3 — Inflammation and repair", "Robbins ch 9 — Environmental and nutritional diseases"],
+ art:"kit",
+ dyn:{"lazy":"1f5a88a8c2","switches":[{"id":"dx","label":"The answer","type":"one","options":[["hyper","Hyperthyroidism","hyperthyroid"],["t1dm","Type 1 diabetes","t1dm"],["tb","Tuberculosis","tb"],["hodg","Hodgkin lymphoma","hodgkin"],["cach","Cachexia (cancer, AIDS)","cachexia"],["addi","Primary adrenal insufficiency","addison"],["celi","Celiac disease","celiac"],["mdd","Major depression","mdd"],["anor","Anorexia nervosa","anorexia"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:660,w:1000,h:138,kw:256,t:"One clue each (cards)",rows:[
+   ["Appetite up","hyperthyroidism · type 1 diabetes"],
+   ["Night sweats","tuberculosis · Hodgkin lymphoma"],
+   ["Salt craving, dark knuckles","primary adrenal insufficiency"],
+   ["Itchy vesicles on extensors","celiac disease (dermatitis herpetiformis)"]]}],
+ nodes:[
+  {id:"xw1",l:"Hyperthyroidism",x:330,y:1386,p:"xwHorm",k:"hub",s:"good appetite",m:["hyperthyroid"]},
+  {id:"xw2",l:"Type 1 diabetes",x:760,y:1386,p:"xwHorm",s:"polyuria · polydipsia",m:["t1dm"]},
+  {id:"xw3",l:"Adrenal insufficiency",x:1180,y:1386,p:"xwHorm",s:"Na⁺ ↓ · K⁺ ↑",m:["addison"]},
+  {id:"xw4",l:"Tuberculosis",x:1600,y:1386,p:"xwInf",s:"night sweats",m:["tb"]},
+  {id:"xw5",l:"Hodgkin · HIV",x:2000,y:1386,p:"xwInf",s:"B symptoms",m:["hodgkin","hiv"]},
+  {id:"xw6",l:"Cachexia",x:330,y:1516,p:"xwInf",s:"TNF-α",m:["cachexia"]},
+  {id:"xw7",l:"Celiac · malabsorption",x:760,y:1516,p:"xwGut",s:"diarrhea",m:["celiac","malabs"]},
+  {id:"xw8",l:"Depression",x:1180,y:1516,p:"xwGut",s:"SIG E CAPS",m:["mdd"]},
+  {id:"xw9",l:"Anorexia nervosa",x:1600,y:1516,p:"xwGut",s:"BMI < 18.5",m:["anorexia"]}],
+ edges:[]
+};
+
+MAPS.anemiasim = {
+ t:"Anemia Work-Up", sub:"MCV first, then iron studies, the reticulocyte index or methylmalonic acid — pick an answer and a dot follows the algorithm down the tree while the readouts show the MCV, reticulocytes, ferritin, TIBC, LDH and MMA that go with it",
+ w:3500, h:1830,
+ fa:"67, 77, 96, 209, 402, 413, 420, 422–430, 607",
+ src:["Robbins ch 14 — Red blood cell and bleeding disorders", "Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors", "Marks ch 42 — The Biochemistry of Erythrocytes and Other Blood Cells", "Robbins ch 9 — Environmental and nutritional diseases"],
+ art:"kit",
+ dyn:{"lazy":"9703eed093","switches":[{"id":"dx","label":"The answer","type":"one","options":[["ida","Iron deficiency","ida"],["acd","Anemia of chronic disease","acd"],["thal","β-Thalassemia minor","betathal"],["lead","Lead poisoning","lead"],["sidero","Sideroblastic anemia","sidero"],["aplastic","Aplastic anemia","aplastic"],["ckd","Chronic kidney disease","ckdanemia"],["hs","Hereditary spherocytosis","hs"],["g6pd","G6PD deficiency","g6pd"],["aiha","Warm AIHA","warmaiha"],["b12","B12 deficiency","b12def"],["fol","Folate deficiency","b9def"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:700,w:1000,h:160,kw:170,t:"Iron studies (First Aid pp. 423–425)",rows:[
+   ["Iron deficiency","iron ↓ · TIBC ↑ · ferritin ↓ · saturation ↓↓"],
+   ["Chronic disease","iron ↓ · TIBC ↓ · ferritin ↑"],
+   ["Sideroblastic","iron ↑ · TIBC normal/↓ · ferritin ↑"],
+   ["Thalassemia trait","normal"],
+   ["Hemochromatosis","iron ↑ · TIBC ↓ · ferritin ↑ · saturation ↑↑"]]}],
+ nodes:[
+  {id:"an1",l:"Classifying anemia",x:330,y:1576,p:"anNormo",k:"hub",s:"MCV · reticulocytes",m:["anemiaapproach","reticindex"]},
+  {id:"an2",l:"Iron studies",x:760,y:1576,p:"anMicro",s:"ferritin first",m:["ironstudies","ida","acd"]},
+  {id:"an3",l:"Thalassemias",x:1180,y:1576,p:"anMicro",s:"globin chains",m:["betathal","alphathal"]},
+  {id:"an4",l:"Lead · sideroblastic",x:1600,y:1576,p:"anMicro",s:"heme synthesis",m:["lead","sidero"]},
+  {id:"an5",l:"Underproduction",x:2000,y:1576,p:"anNormo",s:"index < 2",m:["aplastic","ckdanemia"]},
+  {id:"an6",l:"Hemolysis",x:330,y:1706,p:"anNormo",s:"index > 3",m:["hemolysislabs","hs","g6pd","warmaiha"]},
+  {id:"an7",l:"B12 · folate",x:780,y:1706,p:"anMacro",s:"megaloblastic",m:["b12def","b9def"]}],
+ edges:[]
+};
+
+MAPS.bcellsim = {
+ t:"B Cells & Lymphomas in Motion", sub:"Follow a B cell from marrow to blood to the follicle’s mantle, germinal center and marginal zone, then light up where each leukemia or lymphoma comes from — ALL, CLL, hairy cell, mantle, follicular, Burkitt, DLBCL, MALT, Hodgkin and CNS lymphoma",
+ w:3600, h:1900,
+ fa:"107, 173, 220, 222–223, 429, 434–435, 437, 440, 444, 446–447",
+ src:["Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus", "Katzung ch 54 — Cancer Chemotherapy", "Katzung ch 55 — Immunopharmacology", "Robbins ch 7 — Neoplasia", "Robbins ch 28 — The central nervous system", "Robbins ch 6 — Diseases of the immune system", "Robbins ch 17 — The gastrointestinal tract"],
+ art:"kit",
+ dyn:{"lazy":"aa3946744c","switches":[{"id":"ly","label":"Lymphoid neoplasm","type":"one","options":[["all","ALL","alleuk"],["cll","CLL / SLL","cll"],["hairy","Hairy cell","hairycell"],["mantle","Mantle cell","mantle"],["foll","Follicular","follicular"],["burk","Burkitt","burkitt"],["dlbcl","DLBCL","dlbcl"],["malt","Marginal zone (MALT)","malt"],["hodg","Hodgkin","hodgkin"],["pcnsl","Primary CNS lymphoma","pcnsl"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2500,y:1180,w:1000,h:160,kw:120,t:"Translocations (First Aid pp. 435, 437)",rows:[
+   ["t(14;18)","follicular — BCL-2"],
+   ["t(11;14)","mantle cell — cyclin D1"],
+   ["t(8;14)","Burkitt — c-MYC"],
+   ["t(11;18)","marginal zone"],
+   ["t(9;22)","ALL — worse prognosis"]]}],
+ nodes:[
+  {id:"bc1",l:"ALL",x:330,y:1660,p:"bcLeuk",k:"hub",s:"TdT ⊕",m:["alleuk"]},
+  {id:"bc2",l:"CLL",x:760,y:1660,p:"bcLeuk",s:"smudge cells",m:["cll"]},
+  {id:"bc3",l:"Hairy cell leukemia",x:1200,y:1660,p:"bcLeuk",s:"BRAF · dry tap",m:["hairycell"]},
+  {id:"bc4",l:"Mantle cell",x:1640,y:1660,p:"bcNHL",s:"cyclin D1",m:["mantle"]},
+  {id:"bc5",l:"Follicular",x:2080,y:1660,p:"bcNHL",s:"BCL-2",m:["follicular"]},
+  {id:"bc6",l:"Burkitt",x:330,y:1790,p:"bcNHL",s:"c-MYC · starry sky",m:["burkitt"]},
+  {id:"bc7",l:"DLBCL",x:760,y:1790,p:"bcNHL",s:"most common",m:["dlbcl"]},
+  {id:"bc8",l:"Marginal zone · MALT",x:1200,y:1790,p:"bcNHL",s:"H. pylori",m:["malt"]},
+  {id:"bc9",l:"Hodgkin · CNS lymphoma",x:1640,y:1790,p:"bcHod",s:"Reed-Sternberg · EBV",m:["hodgkin","pcnsl"]}],
+ edges:[]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["oral","Oral Cavity & Salivary Glands"],["skinbasics","Skin Basics — Layers, Lesions & Terms"],["gidrugs","GI Motility, Laxative & Antiemetic Drugs"],["cardproc","Cardiac Anatomy, Catheters & Vascular Access"],["transfuse","Blood Groups & Transfusion"],["nmjflow","Neuromuscular Junction in Motion"],["synflow","Monoamine Synapse in Motion"],["apflow","Action Potential in Motion"],["bgflow","Basal Ganglia in Motion"],["cordsim","Spinal Cord Lesion Simulator"],["stemsim","Brainstem Lesion Simulator"],["visfield","Visual Pathway Lesion Simulator"],["cardap","Cardiac Action Potential in Motion"],["coagflow","Coagulation Cascade in Motion"],["alvflow","Alveolus in Motion"],["asthflow","Asthma Airway in Motion"],["axisflow","HPA Axis in Motion"],["betaflow","β Cell in Motion"],["follflow","Thyroid Follicle in Motion"],["cochflow","Cochlea in Motion"],["gutabs","Gut Absorption in Motion"],["boneflow","Bone Remodeling in Motion"],["goutflow","Uric Acid & Gout in Motion"],["rajoint","Rheumatoid Joint in Motion"],["vsmotion","Viscerosomatic Reflex in Motion"],["lymphflow","Lymphatic Pump in Motion"],["biliflow","Bilirubin in Motion"],["ironflow","Iron in Motion"],["abflow","Acid–Base in Motion"],["glomsim","Glomerular Disease Locator"],["abxsim","Antibiotic Targets in Motion"],["misim","MI Locator"],["pvflow","Pressure–Volume Loop in Motion"],["edemaflow","Capillary & Edema in Motion"],["hivflow","HIV Life Cycle in Motion"],["eyesim","Pupil & Eye Movement Simulator"],["plexsim","Brachial Plexus Lesion Simulator"],["mensflow","Menstrual Cycle in Motion"],["baroflow","Autonomic Drugs & Baroreflex in Motion"],["shocksim","Shock Simulator"],["ecgsim","Conduction & ECG Simulator"],["cahflow","Steroid Synthesis & CAH in Motion"],["lipoflow","Lipoprotein Transport in Motion"],["hemeflow","Heme Synthesis & Porphyrias in Motion"],["nucflow","Nucleotide Synthesis & Drug Sites in Motion"],["acidflow","Parietal Cell in Motion"],["legsim","Lower Limb Nerve Lesion Simulator"],["abtime","Acid–Base Compensation Timeline"],["aasim","Amino Acid Disorders in Motion"],["bvitsim","B Vitamins & Zinc in Motion"],["colsim","Collagen Assembly in Motion"],["energysim","Energy Metabolism in Motion"],["faosim","Fatty Acid Oxidation in Motion"],["glyxsim","Glycolysis Odds & Ends in Motion"],["gsdsim","Glycogen Storage Diseases in Motion"],["labsim","Lab Techniques in Motion"],["lsdsim","Lysosomal Storage in Motion"],["pedsim","Pedigree Simulator"],["rtasim","Renal Tubular Acidosis Simulator"],["sugarsim","Fructose & Galactose in Motion"],["ureasim","Urea Cycle in Motion"],["cbsim","Cerebellar Lesions in Motion"],["papezsim","The Papez Circuit in Motion"],["rxsim","Psych Drugs at the Receptors"],["sleepsim","Sleep Stages in Motion"],["stimsim","Stimulants & Addiction in Motion"],["aortasim","The Aorta in Motion"],["archsim","Pharyngeal Arches in Motion"],["carditsim","Heart Infection & Inflammation in Motion"],["cyansim","Cyanotic Heart Disease in Motion"],["embsim","Embryo & Gut-Tube Defects in Motion"],["fetalsim","Fetal Circulation in Motion"],["gonadsim","Gonadal Tumors in Motion"],["htnsim","Hypertension in Motion"],["lyteecg","Electrolytes & the ECG"],["murmursim","Murmurs & Maneuvers in Motion"],["placsim","Bleeding in Pregnancy in Motion"],["pregsim","Pregnancy Hormones in Motion"],["prossim","The Prostate in Motion"],["scrotsim","The Scrotum in Motion"],["sexsim","Sex Differentiation in Motion"],["aqsim","Aqueous Humor & Retina in Motion"],["vestsim","Vertigo in Motion"],["voxsim","Larynx & Voice in Motion"],["bleedsim","Head Bleeds in Motion"],["btsim","Brain Tumors in Motion"],["csfsim","CSF Flow in Motion"],["demsim","Dementias Over Time"],["hasim","Headaches in Motion"],["pthsim","Calcium & PTH Lab Simulator"],["spreadsim","Seizure Spread in Motion"],["szsim","Antiseizure Drugs in Motion"],["testsim","Diagnostic Test Simulator"],["antidsim","Poison & Antidote in Motion"],["bowelsim","Bowel Blockages in Motion"],["esosim","Swallowing in Motion"],["laxsim","Laxatives in Motion"],["pksim","Pharmacokinetics & Dose–Response Simulator"],["portsim","Liver Blood Flow in Motion"],["complsim","Complement in Motion"],["hypsim","Hypersensitivity Types in Motion"],["idsim","Immunodeficiency Simulator"],["tcellsim","T-Cell Activation in Motion"],["tfsim","Blood Transfusion in Motion"],["vaxsim","Vaccines in Motion"],["altsim","Climbing to Altitude in Motion"],["alvdzsim","Alveoli in Trouble in Motion"],["hypoxsim","Hypoxemia Simulator — A–a Gradient & 100% O₂"],["lcsim","Lung Cancer in Motion"],["odcsim","The O₂ Curve in Motion"],["pftsim","PFTs & Flow–Volume Loops"],["pnasim","Pneumonia in Motion"],["bonesim","Bones & Kids by Age in Motion"],["cervsim","The Cervical Spine in Motion"],["footsim","The Foot in Motion"],["fxsim","Growth Plates & Arm Injuries in Motion"],["healsim","Inflammation & Wound Healing in Motion"],["injsim","Cell Injury & Death Simulator"],["shsim","The Shoulder in Motion"],["sxedema","Edema"],["sxfever","Fever & Hyperthermia"],["sxgibleed","GI Bleeding"],["sxjoint","Joint Pain"],["sxrash","Fever & Rash"],["sxsyncope","Syncope"],["sxweight","Weight Loss"],["anemiasim","Anemia Work-Up"],["bcellsim","B Cells & Lymphomas in Motion"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
   ["bio","Biochemistry",["core","energysim","glyxsim","gsdsim","sugarsim","lipid","faosim","lipoflow","steroid","lysosome","lsdsim","nitrogen","aasim","ureasim","iemlab","nucleo","nucflow","collagen","colsim","ctdis","vitamins","bvitsim","cellcycle","cellbio","tissues","molbio","labsim","signal","genetics","pedsim"]],
-  ["path","Pathology",["genpath","neoplasia","thromboemb"]],
+  ["path","Pathology",["genpath","healsim","injsim","neoplasia","thromboemb"]],
   ["cardio","Cardiac",["cardiac","cardcycle","pvflow","valves","carditsim","murmursim","ihd","misim","cardproc","chd","cyansim","fetalsim","vasc","aortasim","vascshock","shocksim","htnrx","htnsim","rhythm","cardap","ecgsim","lyteecg"]],
-  ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","alvflow","highalt","altsim","hypoxia","hypoxsim","lungdz","alvdzsim","asthflow","pleural","lungcancer","respinf","respdrug"]],
+  ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","odcsim","alvflow","highalt","altsim","hypoxia","hypoxsim","lungdz","alvdzsim","pftsim","asthflow","pleural","lungcancer","lcsim","respinf","pnasim","respdrug"]],
   ["renal","Renal",["nephron","nephflow","fluids","edemaflow","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","histoembryo","glom","glomsim","renvasc","raasrx","buffers","acidbase","abflow","abtime","rtasim","akickd","endocrine"]],
   ["gi","GI",["gut","gihorm","acidflow","gidrugs","laxsim","liver","portsim","biliflow","gitract","bowelsim","esosim","gutabs","oral","abdanat"]],
-  ["heme","Heme/Onc",["rbc","ironflow","hemeflow","hemostasis","coagflow","transfuse","tfsim","hemeonc","carcino","chemo","tumgut","tumgu","tumcns","btsim","softtissue","tumark"]],
+  ["heme","Heme/Onc",["rbc","anemiasim","ironflow","hemeflow","hemostasis","coagflow","transfuse","tfsim","hemeonc","bcellsim","carcino","chemo","tumgut","tumgu","tumcns","btsim","softtissue","tumark"]],
   ["immuno","Immunology",["immune","tcellsim","innate","complsim","lymphdev","hypimm","hypsim","idsim","cytokine","eicosanoid","transplant","mabs","vaccines","vaxsim"]],
   ["endo","Endocrine",["axes","axisflow","pitgh","thyroid","follflow","adrenal","cahflow","hormones","pthsim","gcpharm","rclass","pancreas","betaflow","fuelstate"]],
   ["devrepro","Repro & Development",["sexdev","sexsim","androgen","repro","mensflow","placenta","pregsim","obgyn","placsim","malerepro","gonadsim","scrotsim","prosobs","prossim","embryo","archsim","embsim"]],
   ["neuro","Neuro",["neurotx","synapse","nmjflow","ans","baroflow","membrane","apflow","ionchan","spine","cordsim","brainstem","stemsim","chemvisc","motorctl","cerebellum","cbsim","gaze","weakness","stroke","brainvessels","brainreg","cortex","demsim","meninges","csfsim","basal","bgflow","neuroer","bleedsim","seizhead","hasim","spreadsim","szsim"]],
   ["behav","Psych & Behavior",["limbmem","papezsim","psychmse","dsmdx","psychdx","anxtx","psychtx","synflow","psyrxprin","rxsim","psychsom","somatcare","substance","stimsim","sleepdev","sleepsim","neurodev"]],
   ["eent","EENT",["eyecn","eyesim","aqsim","anteye","vision","visfield","ent","hearing","cochflow","vestsim","larynx","voxsim"]],
-  ["msk","Musculoskeletal",["muscle","bone","boneflow","bonehisto","arthritis","raarth","rajoint","crystals","goutflow","derm","skinbasics","plexus","plexsim","legsim","orthoinj","sportsortho","legfx","footleg","orthowork","neckpain","shoulder","ptrehab","integrative"]],
+  ["msk","Musculoskeletal",["muscle","bone","bonesim","boneflow","bonehisto","arthritis","raarth","rajoint","crystals","goutflow","derm","skinbasics","plexus","plexsim","legsim","orthoinj","sportsortho","fxsim","legfx","footleg","footsim","orthowork","neckpain","cervsim","shoulder","shsim","ptrehab","integrative"]],
   ["omm","OMM",["vsomatic","vsmotion","lymphflow","neiomm","chapman","omt","lbp","agingomt","chestomt","ommmech","janda","cranial","jones"]],
   ["id","Infectious",["microlab","abx","abxsim","antiviral","hivflow","antipara","gpos","gneg","toxins","virus","fungpar","cnsinf","infsite","zoonoses"]],
   ["pharm","Pharm",["pkpd","pksim","cyp","adr","aging","tox","antidsim","environ","anesth","pain"]],
   ["stats","Biostats & Ethics",["biostats","testsim","ethics"]],
-  ["sx","Symptoms",["sxchest","sxdyspnea","sxjaundice","sxabdpain","sxdiarrhea","sxurine","sxams"]],
+  ["sx","Symptoms",["sxchest","sxsyncope","sxdyspnea","sxedema","sxjaundice","sxabdpain","sxgibleed","sxdiarrhea","sxurine","sxams","sxfever","sxjoint","sxrash","sxweight"]],
   ["idx","Index",["index"]]];
 
 
@@ -43810,9 +44405,9 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   misim:"2026-10-09",pvflow:"2026-10-09",edemaflow:"2026-10-09",hivflow:"2026-10-09",eyesim:"2026-10-09",plexsim:"2026-10-09",mensflow:"2026-10-09",
   baroflow:"2026-10-10",shocksim:"2026-10-10",ecgsim:"2026-10-10",cahflow:"2026-10-10",lipoflow:"2026-10-10",hemeflow:"2026-10-10",nucflow:"2026-10-10",acidflow:"2026-10-10",legsim:"2026-10-10",
   abtime:"2026-10-10",
-  aasim:"2026-10-12",bvitsim:"2026-10-12",colsim:"2026-10-12",energysim:"2026-10-12",faosim:"2026-10-12",glyxsim:"2026-10-12",gsdsim:"2026-10-12",labsim:"2026-10-12",lsdsim:"2026-10-12",pedsim:"2026-10-12",rtasim:"2026-10-12",sugarsim:"2026-10-12",ureasim:"2026-10-12",cbsim:"2026-10-12",papezsim:"2026-10-12",rxsim:"2026-10-12",sleepsim:"2026-10-12",stimsim:"2026-10-12",aortasim:"2026-10-12",archsim:"2026-10-12",carditsim:"2026-10-12",cyansim:"2026-10-12",embsim:"2026-10-12",fetalsim:"2026-10-12",gonadsim:"2026-10-12",htnsim:"2026-10-12",lyteecg:"2026-10-12",murmursim:"2026-10-12",placsim:"2026-10-12",pregsim:"2026-10-12",prossim:"2026-10-12",scrotsim:"2026-10-12",sexsim:"2026-10-12",aqsim:"2026-10-12",vestsim:"2026-10-12",voxsim:"2026-10-12",bleedsim:"2026-10-12",btsim:"2026-10-12",csfsim:"2026-10-12",demsim:"2026-10-12",hasim:"2026-10-12",pthsim:"2026-10-12",spreadsim:"2026-10-12",szsim:"2026-10-12",testsim:"2026-10-12",antidsim:"2026-10-12",bowelsim:"2026-10-12",esosim:"2026-10-12",laxsim:"2026-10-12",pksim:"2026-10-12",portsim:"2026-10-12",complsim:"2026-10-12",hypsim:"2026-10-12",idsim:"2026-10-12",tcellsim:"2026-10-12",tfsim:"2026-10-12",vaxsim:"2026-10-12",altsim:"2026-10-12",alvdzsim:"2026-10-12",hypoxsim:"2026-10-12"};
+  aasim:"2026-10-12",bvitsim:"2026-10-12",colsim:"2026-10-12",energysim:"2026-10-12",faosim:"2026-10-12",glyxsim:"2026-10-12",gsdsim:"2026-10-12",labsim:"2026-10-12",lsdsim:"2026-10-12",pedsim:"2026-10-12",rtasim:"2026-10-12",sugarsim:"2026-10-12",ureasim:"2026-10-12",cbsim:"2026-10-12",papezsim:"2026-10-12",rxsim:"2026-10-12",sleepsim:"2026-10-12",stimsim:"2026-10-12",aortasim:"2026-10-12",archsim:"2026-10-12",carditsim:"2026-10-12",cyansim:"2026-10-12",embsim:"2026-10-12",fetalsim:"2026-10-12",gonadsim:"2026-10-12",htnsim:"2026-10-12",lyteecg:"2026-10-12",murmursim:"2026-10-12",placsim:"2026-10-12",pregsim:"2026-10-12",prossim:"2026-10-12",scrotsim:"2026-10-12",sexsim:"2026-10-12",aqsim:"2026-10-12",vestsim:"2026-10-12",voxsim:"2026-10-12",bleedsim:"2026-10-12",btsim:"2026-10-12",csfsim:"2026-10-12",demsim:"2026-10-12",hasim:"2026-10-12",pthsim:"2026-10-12",spreadsim:"2026-10-12",szsim:"2026-10-12",testsim:"2026-10-12",antidsim:"2026-10-12",bowelsim:"2026-10-12",esosim:"2026-10-12",laxsim:"2026-10-12",pksim:"2026-10-12",portsim:"2026-10-12",complsim:"2026-10-12",hypsim:"2026-10-12",idsim:"2026-10-12",tcellsim:"2026-10-12",tfsim:"2026-10-12",vaxsim:"2026-10-12",altsim:"2026-10-12",alvdzsim:"2026-10-12",hypoxsim:"2026-10-12",lcsim:"2026-10-12",odcsim:"2026-10-12",pftsim:"2026-10-12",pnasim:"2026-10-12",bonesim:"2026-10-12",cervsim:"2026-10-12",footsim:"2026-10-12",fxsim:"2026-10-12",healsim:"2026-10-12",injsim:"2026-10-12",shsim:"2026-10-12",sxedema:"2026-10-12",sxfever:"2026-10-12",sxgibleed:"2026-10-12",sxjoint:"2026-10-12",sxrash:"2026-10-12",sxsyncope:"2026-10-12",sxweight:"2026-10-12",anemiasim:"2026-10-12",bcellsim:"2026-10-12"};
 const WHATSNEW=[
-  ["2026-10-12","60 new moving maps — <b>Amino Acid Disorders in Motion</b>, <b>B Vitamins &amp; Zinc in Motion</b>, <b>Collagen Assembly in Motion</b>, <b>Energy Metabolism in Motion</b>, <b>Fatty Acid Oxidation in Motion</b>, <b>Glycolysis Odds &amp; Ends in Motion</b>, <b>Glycogen Storage Diseases in Motion</b>, <b>Lab Techniques in Motion</b>, <b>Lysosomal Storage in Motion</b>, <b>Pedigree Simulator</b>, <b>Renal Tubular Acidosis Simulator</b>, <b>Fructose &amp; Galactose in Motion</b>, <b>Urea Cycle in Motion</b>, <b>Cerebellar Lesions in Motion</b>, <b>The Papez Circuit in Motion</b>, <b>Psych Drugs at the Receptors</b>, <b>Sleep Stages in Motion</b>, <b>Stimulants &amp; Addiction in Motion</b>, <b>The Aorta in Motion</b>, <b>Pharyngeal Arches in Motion</b>, <b>Heart Infection &amp; Inflammation in Motion</b>, <b>Cyanotic Heart Disease in Motion</b>, <b>Embryo &amp; Gut-Tube Defects in Motion</b>, <b>Fetal Circulation in Motion</b>, <b>Gonadal Tumors in Motion</b>, <b>Hypertension in Motion</b>, <b>Electrolytes &amp; the ECG</b>, <b>Murmurs &amp; Maneuvers in Motion</b>, <b>Bleeding in Pregnancy in Motion</b>, <b>Pregnancy Hormones in Motion</b>, <b>The Prostate in Motion</b>, <b>The Scrotum in Motion</b>, <b>Sex Differentiation in Motion</b>, <b>Aqueous Humor &amp; Retina in Motion</b>, <b>Vertigo in Motion</b>, <b>Larynx &amp; Voice in Motion</b>, <b>Head Bleeds in Motion</b>, <b>Brain Tumors in Motion</b>, <b>CSF Flow in Motion</b>, <b>Dementias Over Time</b>, <b>Headaches in Motion</b>, <b>Calcium &amp; PTH Lab Simulator</b>, <b>Seizure Spread in Motion</b>, <b>Antiseizure Drugs in Motion</b>, <b>Diagnostic Test Simulator</b>, <b>Poison &amp; Antidote in Motion</b>, <b>Bowel Blockages in Motion</b>, <b>Swallowing in Motion</b>, <b>Laxatives in Motion</b>, <b>Pharmacokinetics &amp; Dose–Response Simulator</b>, <b>Liver Blood Flow in Motion</b>, <b>Complement in Motion</b>, <b>Hypersensitivity Types in Motion</b>, <b>Immunodeficiency Simulator</b>, <b>T-Cell Activation in Motion</b>, <b>Blood Transfusion in Motion</b>, <b>Vaccines in Motion</b>, <b>Climbing to Altitude in Motion</b>, <b>Alveoli in Trouble in Motion</b>, <b>Hypoxemia Simulator — A–a Gradient &amp; 100% O₂</b>."],
+  ["2026-10-12","80 new moving maps — <b>Amino Acid Disorders in Motion</b>, <b>B Vitamins &amp; Zinc in Motion</b>, <b>Collagen Assembly in Motion</b>, <b>Energy Metabolism in Motion</b>, <b>Fatty Acid Oxidation in Motion</b>, <b>Glycolysis Odds &amp; Ends in Motion</b>, <b>Glycogen Storage Diseases in Motion</b>, <b>Lab Techniques in Motion</b>, <b>Lysosomal Storage in Motion</b>, <b>Pedigree Simulator</b>, <b>Renal Tubular Acidosis Simulator</b>, <b>Fructose &amp; Galactose in Motion</b>, <b>Urea Cycle in Motion</b>, <b>Cerebellar Lesions in Motion</b>, <b>The Papez Circuit in Motion</b>, <b>Psych Drugs at the Receptors</b>, <b>Sleep Stages in Motion</b>, <b>Stimulants &amp; Addiction in Motion</b>, <b>The Aorta in Motion</b>, <b>Pharyngeal Arches in Motion</b>, <b>Heart Infection &amp; Inflammation in Motion</b>, <b>Cyanotic Heart Disease in Motion</b>, <b>Embryo &amp; Gut-Tube Defects in Motion</b>, <b>Fetal Circulation in Motion</b>, <b>Gonadal Tumors in Motion</b>, <b>Hypertension in Motion</b>, <b>Electrolytes &amp; the ECG</b>, <b>Murmurs &amp; Maneuvers in Motion</b>, <b>Bleeding in Pregnancy in Motion</b>, <b>Pregnancy Hormones in Motion</b>, <b>The Prostate in Motion</b>, <b>The Scrotum in Motion</b>, <b>Sex Differentiation in Motion</b>, <b>Aqueous Humor &amp; Retina in Motion</b>, <b>Vertigo in Motion</b>, <b>Larynx &amp; Voice in Motion</b>, <b>Head Bleeds in Motion</b>, <b>Brain Tumors in Motion</b>, <b>CSF Flow in Motion</b>, <b>Dementias Over Time</b>, <b>Headaches in Motion</b>, <b>Calcium &amp; PTH Lab Simulator</b>, <b>Seizure Spread in Motion</b>, <b>Antiseizure Drugs in Motion</b>, <b>Diagnostic Test Simulator</b>, <b>Poison &amp; Antidote in Motion</b>, <b>Bowel Blockages in Motion</b>, <b>Swallowing in Motion</b>, <b>Laxatives in Motion</b>, <b>Pharmacokinetics &amp; Dose–Response Simulator</b>, <b>Liver Blood Flow in Motion</b>, <b>Complement in Motion</b>, <b>Hypersensitivity Types in Motion</b>, <b>Immunodeficiency Simulator</b>, <b>T-Cell Activation in Motion</b>, <b>Blood Transfusion in Motion</b>, <b>Vaccines in Motion</b>, <b>Climbing to Altitude in Motion</b>, <b>Alveoli in Trouble in Motion</b>, <b>Hypoxemia Simulator — A–a Gradient &amp; 100% O₂</b>, <b>Lung Cancer in Motion</b>, <b>The O₂ Curve in Motion</b>, <b>PFTs &amp; Flow–Volume Loops</b>, <b>Pneumonia in Motion</b>, <b>Bones &amp; Kids by Age in Motion</b>, <b>The Cervical Spine in Motion</b>, <b>The Foot in Motion</b>, <b>Growth Plates &amp; Arm Injuries in Motion</b>, <b>Inflammation &amp; Wound Healing in Motion</b>, <b>Cell Injury &amp; Death Simulator</b>, <b>The Shoulder in Motion</b>, <b>Edema</b>, <b>Fever &amp; Hyperthermia</b>, <b>GI Bleeding</b>, <b>Joint Pain</b>, <b>Fever &amp; Rash</b>, <b>Syncope</b>, <b>Weight Loss</b>, <b>Anemia Work-Up</b>, <b>B Cells &amp; Lymphomas in Motion</b>."],
   ["2026-10-10","New moving map — <b>Acid–Base Compensation Timeline</b> (Renal): buffers in seconds, the lungs in hours, the kidneys over days — and how far each disorder is expected to compensate."],
   ["2026-10-10","Moving maps: options you name wrong come back first, <b>Predict the arrows</b> keeps a score too, and both scores now sync with your PIN. Keys: <b>t</b> Tour, <b>n</b> Name it, <b>p</b> Predict, <b>c</b> Compare. The hub home has a <b>Moving-map mix</b> tile with your score."],
   ["2026-10-10","Moving maps: the mix can stay in one system (<b>Only Cardiac</b>), a Tour can <b>▶ Play</b> by itself, <b>Copy link</b> shares the exact state you’re on, Compare can <b>Pin B instead</b> to chain comparisons, and the Index lists your weakest maps for Name it. Block pages show your Name-it score on each moving map."],
