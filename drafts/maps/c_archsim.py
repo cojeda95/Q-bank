@@ -34,7 +34,7 @@ text('schematic: one stack from the 1st arch (top) to the 4th/6th (bottom)', 180
 
 # ════════ the stack ════════
 AX0, AX1, AY0, AH, GAP = 560, 1160, 330, 120, 50
-ARCH = [('1st arch — CN V3', 'chew: muscles of mastication, malleus, incus', '--dk1'),
+ARCH = [('1st arch — CN V3', 'chew: mastication muscles, maxilla, zygoma, mandible, malleus, incus', '--dk1'),
         ('2nd arch — CN VII', 'smile: facial expression, stapes, styloid', '--dk2'),
         ('3rd arch — CN IX', 'swallow: stylopharyngeus, greater hyoid horn', '--dk3'),
         ('4th & 6th arches — CN X', 'speak: constrictors, larynx muscles, cartilages', '--dk4')]
@@ -77,7 +77,9 @@ text('ear', FX - 270, FY + 20, 'nf-l2', 'end')
 add(f'<path d="M{FX - 150} {FY + 120} Q{FX} {FY + 300} {FX + 150} {FY + 120}" style="fill:none;stroke:var(--ink-2);stroke-width:6"/>', unless=O('treacher', 'pierre'))
 add(f'<path d="M{FX - 110} {FY + 140} Q{FX} {FY + 230} {FX + 110} {FY + 140}" style="fill:none;stroke:var(--bad);stroke-width:6"/>', when=O('treacher', 'pierre'))
 text('small mandible', FX + 230, FY + 200, 'nf-l1 dyn-tag', 'start', when=O('treacher', 'pierre'))
-text('zygoma small · hearing loss', FX + 230, FY - 20, 'nf-l1 dyn-tag', 'start', when=O('treacher'))
+text('zygoma small', FX + 230, FY - 20, 'nf-l1 dyn-tag', 'start', when=O('treacher'))
+text('outer/middle ear defects → conductive hearing loss', FX - 270, FY + 80, 'nf-l1 dyn-tag', 'end', when=O('treacher'))
+add(f'<path d="M{FX - 210} {FY - 20} q-40 30 0 70" style="fill:none;stroke:var(--bad);stroke-width:7;stroke-dasharray:8 6"/>', when=O('treacher'))
 add(f'<path d="M{FX - 60} {FY + 110} Q{FX} {FY + 140} {FX + 60} {FY + 110}" style="fill:none;stroke:var(--ink-2);stroke-width:4"/>')
 add(f'<path d="M{FX - 20} {FY + 60} V{FY + 118}" style="stroke:var(--bad);stroke-width:6"/>', when=O('lip'))
 text('maxillary + medial nasal processes don’t fuse', FX + 230, FY + 90, 'nf-l1 dyn-tag', 'start', when=O('lip'))
@@ -113,6 +115,7 @@ sites = [dict(x=AX1 + 20, y=PY3 - 40, n=[1, 0], w=10, t='rec', l='', aria='Phary
 
 readouts = [
   dict(l='T cells', mods=[dict(when=O('digeorge'), d=-1)]),
+  dict(l='PTH', mods=[dict(when=O('digeorge'), d=-1)]),
   dict(l='Serum Ca²⁺', mods=[dict(when=O('digeorge'), d=-1)]),
   dict(l='Hearing', mods=[dict(when=O('treacher'), d=-1)]),
   dict(l='Airway trouble', mods=[dict(when=O('treacher', 'pierre'), d=1)]),
@@ -121,12 +124,13 @@ readouts = [
 
 notes = {
   '': 'Clefts (ectoderm) outside, arches (mesoderm + neural crest) in the middle, pouches (endoderm) inside — CAP. Arches: chew, '
-      'smile, swallow, speak. Pouches, bottom to top: the ear, the tonsils, then the thymus and inferior parathyroids (3rd) and the '
-      'superior parathyroids (4th). Only the 1st cleft persists, as the external auditory meatus.',
-  'dx:digeorge': 'DiGeorge (22q11.2 microdeletion): the 3rd and 4th pouches fail — no thymus (T-cell defect, recurrent viral and fungal '
-                 'infection) and no parathyroids (neonatal tetany) — plus conotruncal heart defects from neural crest. CATCH-22.',
-  'dx:treacher': 'Treacher Collins: a neural crest disorder that under-builds the 1st-arch face — zygomatic and mandibular hypoplasia, '
-                 'hearing loss, airway compromise.',
+      'smile, swallow, speak. Pouches: ear (1st), tonsil (2nd), thymus + inferior parathyroids (3rd), superior parathyroids + C cells '
+      '(4th) — 3rd-pouch parathyroids end up below the 4th’s. Only the 1st cleft persists, as the external auditory meatus.',
+  'dx:digeorge': 'DiGeorge (22q11.2 microdeletion): the 3rd and 4th pouches fail — thymic aplasia (T-cell defect, recurrent viral and '
+                 'fungal infection, no thymic shadow) and parathyroid aplasia (↓ PTH, ↓ Ca²⁺, tetany) — plus conotruncal heart defects '
+                 'from neural crest, cleft palate and abnormal facies. CATCH-22.',
+  'dx:treacher': 'Treacher Collins (autosomal dominant): a neural crest disorder that under-builds the 1st-arch face — zygomatic and '
+                 'mandibular hypoplasia, conductive hearing loss (outer and middle ear defects), airway compromise.',
   'dx:pierre': 'Pierre Robin sequence: micrognathia → the tongue falls back (glossoptosis) → cleft palate and airway obstruction; '
                'feeding difficulty.',
   'dx:lip': 'Cleft lip: the intermaxillary segment (fused medial nasal processes) fails to fuse with the maxillary process — the '
@@ -167,7 +171,7 @@ MAP = dict(
     ('ar6', 'Neck cysts', 1200, 1760, 'arFace', 'midline vs lateral', ['neckcysts'])],
   panels=[
     (2500, PANY, 1000, 'Arch → nerve → what it builds (First Aid p. 637)', [
-      ('1st', 'CN V3 — mastication, malleus, incus'),
+      ('1st', 'CN V3 — mastication, maxilla/zygoma, mandible, malleus, incus'),
       ('2nd', 'CN VII — facial expression, stapes, styloid'),
       ('3rd', 'CN IX — stylopharyngeus, greater hyoid horn'),
       ('4th & 6th', 'CN X — constrictors, larynx muscles, cartilages')])],

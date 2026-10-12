@@ -1,10 +1,10 @@
 # Glycolysis Odds & Ends in Motion (dynamic map, kit data) — drafted on the drafts branch, off the Mac.
 # Glycolysis down the middle (glucose → pyruvate), lactate on the left, pyruvate carboxylase to oxaloacetate and the TCA cycle on
 # the right, with 2,3-BPG and the F-2,6-BP side branch. A `hor` stepper flips fed (insulin: PFK-2 on, F-2,6-BP up, glycolysis) and
-# fasting (glucagon: FBPase-2 on, F-2,6-BP down, gluconeogenesis). An `x` switch adds one odd hit: red-cell hexokinase
-# deficiency, a fluoride tube (enolase), pyruvate carboxylase or biotin deficiency, ethanol's NADH excess, an IDH mutation
-# (2-hydroxyglutarate) or an SDH mutation (succinate → HIF). Schematic. 6 readouts. Facts from the pinned cards; FA pages in `fa`.
-# No new cards.
+# fasting (glucagon: FBPase-2 on, F-2,6-BP down, PEPCK carries OAA back to PEP, gluconeogenesis). An `x` switch adds one odd hit:
+# red-cell hexokinase or pyruvate kinase deficiency, pyruvate carboxylase or biotin deficiency, ethanol's NADH excess, an IDH
+# mutation (2-hydroxyglutarate) or an SDH mutation (succinate → HIF). Schematic. 6 readouts. Fact-checked m47 (FA, Marks, Robbins);
+# the fluoride/enolase option was replaced by pyruvate kinase deficiency (no corpus source for fluoride). No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -73,9 +73,14 @@ text('IDH', P['isocitrate'][0] + 60, (P['isocitrate'][1] + P['α-ketoglutarate']
 text('SDH = complex II', TX - 50, TY + 300, 'nf-l2', 'middle')
 # hits
 add(f'<path d="M{GX - 30} 340 l60 40 m0 -40 l-60 40" style="stroke:var(--bad);stroke-width:10"/>', when=X('hk'))
-add(f'<path d="M{GX - 30} 940 l60 40 m0 -40 l-60 40" style="stroke:var(--bad);stroke-width:10"/>', when=X('fl'))
-add(f'<rect x="{GX + 170}" y="860" width="120" height="200" rx="40" style="fill:var(--dk9);fill-opacity:.2;stroke:var(--dk9);stroke-width:4"/>', when=X('fl'))
-text('NaF tube', GX + 230, 1090, 'nf-l2', 'middle', when=X('fl'))
+add(f'<path d="M{GX - 30} 1060 l60 40 m0 -40 l-60 40" style="stroke:var(--bad);stroke-width:10"/>', when=X('pk'))
+add(f'<rect x="{GX - 540}" y="{Y["1,3-BPG"] - 46}" width="230" height="92" rx="30" class="dyn-hl" style="fill:none"/>', when=X('pk'))
+text('2,3-BPG ↑ 2–3× → right shift', GX - 425, Y['1,3-BPG'] + 76, 'nf-l2', 'middle', when=X('pk'))
+text('pyruvate kinase', GX - 140, 1086, 'nf-l2', 'end')
+# fasting: PEPCK carries oxaloacetate back to PEP (the bypass of pyruvate kinase)
+PEPCK = f'M{TX - TR} {TY} C{TX - TR - 30} 1070 1000 1060 {GX + 120} {Y["PEP"] + 10}'
+add(f'<path d="{PEPCK}" style="fill:none;stroke:var(--dk4);stroke-width:4;stroke-dasharray:10 8"/>', when=['hor:fast'])
+text('PEPCK (OAA → PEP)', 1060, 1038, 'nf-l2', 'middle', when=['hor:fast'])
 add(f'<path d="M{GX + 270} {Y["pyruvate"] - 30} l60 60 m0 -60 l-60 60" style="stroke:var(--bad);stroke-width:10"/>', when=X('pc'))
 add(f'<rect x="{GX - 560}" y="1300" width="260" height="70" rx="24" style="fill:var(--dk10);fill-opacity:.2;stroke:var(--dk10);stroke-width:3"/>', when=X('etoh'))
 text('ethanol → acetaldehyde → acetate', GX - 430, 1342, 'nf-l2', 'middle', when=X('etoh'))
@@ -91,21 +96,22 @@ HTAG = dict(fed='fed — insulin → phosphatase → PFK-2 on → F-2,6-BP up �
             fast='fasting — glucagon → cAMP → PKA → FBPase-2 on → F-2,6-BP down → gluconeogenesis')
 for k, s in HTAG.items(): text(s, 1100, 1480, 'nf-l1 dyn-tag', 'middle', when=[f'hor:{k}'])
 XTAG = dict(hk='hexokinase deficiency (RBC) — everything downstream falls, 2,3-BPG too: hemolysis with a left-shifted O₂ curve',
-            fl='fluoride — locks enolase with its Mg²⁺: the tube’s cells stop eating the glucose (slowly — citrate is faster)',
+            pk='pyruvate kinase deficiency (RBC) — ↓ ATP, rigid RBCs, hemolysis; intermediates back up, 2,3-BPG ↑: right-shifted O₂ curve',
             pc='pyruvate carboxylase or biotin deficiency — no oxaloacetate: lactic acidosis, hypoglycemia (raw egg whites: avidin)',
             etoh='ethanol — NADH excess turns pyruvate → lactate, OAA → malate: fasting hypoglycemia, lactic acidosis, gout, fatty liver',
-            idh='IDH1/2 mutant — α-KG → 2-hydroxyglutarate blocks demethylases: glioma (better prognosis), AML, cholangiocarcinoma',
-            sdh='SDH mutant — succinate inhibits prolyl hydroxylase, HIF-1α survives: pseudohypoxia, paraganglioma, pheochromocytoma')
+            idh='IDH1/2 mutant — α-KG → 2-hydroxyglutarate blocks TET2: glioma (better prognosis), AML, cholangiocarcinoma',
+            sdh='SDH mutant — succinate blocks HIF’s proline hydroxylation, HIF stays on: familial paraganglioma, pheochromocytoma')
 for k, s in XTAG.items(): text(s, 1100, 1520, 'nf-l1', 'middle', when=X(k))
 
 # ════════ motion ════════
-GLY_ON = 'hor:fed&!x:hk&!x:fl'
+GLY_ON = 'hor:fed&!x:hk&!x:pk'
 flows = [dict(d=f'M{GX - 50} 300 V{Y["pyruvate"]}', len=840, speed=130, r=8, base=dict(c=4), when=[GLY_ON]),
-         dict(d=f'M{GX - 50} {Y["glucose-6-P"]} V880', len=460, speed=90, r=8, base=dict(c=2), when=['hor:fed&x:fl']),
-         dict(d=f'M{GX + 50} {Y["pyruvate"]} V320', len=820, speed=110, r=8, base=dict(c=3), when=['hor:fast&!x:pc&!x:etoh']),
+         dict(d=f'M{GX - 50} 300 V{Y["PEP"]}', len=720, speed=90, r=8, base=dict(c=2), when=['hor:fed&x:pk']),
+         dict(d=f'{PEPCK} L{GX + 50} {Y["PEP"] + 10} V320', len=1480, speed=130, r=8, base=dict(c=3), when=['hor:fast&!x:pc&!x:etoh']),
          dict(d=f'M{GX + 120} {Y["pyruvate"] + 10} H{TX - TR - 10}', len=560, speed=110, r=8, base=dict(c=3), when=['!x:pc']),
          dict(d=f'M{GX - 120} {Y["pyruvate"] + 10} H{GX - 330}', len=210, speed=90, r=8, base=dict(c=3), when=X('pc', 'etoh')),
-         dict(d=f'M{GX - 120} {Y["1,3-BPG"] + 10} H{GX - 330}', len=210, speed=80, r=7, base=dict(c=2), when=['!x:hk']),
+         dict(d=f'M{GX - 120} {Y["1,3-BPG"] + 10} H{GX - 330}', len=210, speed=80, r=7, base=dict(c=2), when=['!x:hk'],
+              mods=[dict(when=X('pk'), set=dict(c=5))]),
          dict(d=f'M{TX - TR} {TY} A{TR} {TR} 0 1 1 {TX + TR} {TY} A{TR} {TR} 0 1 1 {TX - TR} {TY}', len=1380, speed=120, r=7, base=dict(c=3),
               when=['!x:sdh']),
          dict(d=f'M{ax:.0f} {ay:.0f} H{ax + 170:.0f}', len=170, speed=60, r=8, base=dict(onc=3), when=X('idh')),
@@ -113,7 +119,7 @@ flows = [dict(d=f'M{GX - 50} 300 V{Y["pyruvate"]}', len=840, speed=130, r=8, bas
          dict(d=f'M{GX - 430} 1300 C{GX - 430} 1240 {GX - 425} 1200 {GX - 425} {Y["pyruvate"] + 26}', len=160, speed=60, r=7,
               base=dict(nadh=3), when=X('etoh'))]
 sites = [dict(x=GX - 330, y=330, n=[-1, -1], w=10, t='rec', l='', aria='Hexokinase deficiency', c='hkdef', ions=[]),
-         dict(x=GX + 330, y=960, n=[1, 1], w=10, t='rec', l='', aria='Fluoride — enolase inhibitor', c='fluoride', ions=[]),
+         dict(x=GX + 330, y=1080, n=[1, 1], w=10, t='rec', l='', aria='Pyruvate kinase deficiency', c='pkdef', ions=[]),
          dict(x=GX + 500, y=Y['fructose-6-P'] - 60, n=[1, -1], w=10, t='rec', l='', aria='Fructose-2,6-bisphosphate', c='f26bp', ions=[]),
          dict(x=GX + 420, y=Y['pyruvate'] + 60, n=[1, 1], w=10, t='rec', l='', aria='Pyruvate carboxylase deficiency', c='pyrcarb', ions=[]),
          dict(x=GX - 600, y=1240, n=[-1, 1], w=10, t='rec', l='', aria='Ethanol metabolism', c='ethanol', ions=[]),
@@ -121,11 +127,11 @@ sites = [dict(x=GX - 330, y=330, n=[-1, -1], w=10, t='rec', l='', aria='Hexokina
          dict(x=TX - 60, y=TY + 330, n=[-1, 1], w=10, t='rec', l='', aria='SDH mutation', c='sdhmut', ions=[])]
 
 readouts = [
-  dict(l='Glycolysis', mods=[dict(when=[GLY_ON], d=1), dict(when=['hor:fast', 'x:hk', 'x:fl'], d=-1)]),
+  dict(l='Glycolysis', mods=[dict(when=[GLY_ON], d=1), dict(when=['hor:fast', 'x:hk', 'x:pk'], d=-1)]),
   dict(l='Gluconeogenesis', mods=[dict(when=['hor:fast&!x:pc&!x:etoh'], d=1), dict(when=['hor:fed', 'x:pc', 'x:etoh'], d=-1)]),
   dict(l='Blood glucose', mods=[dict(when=['x:pc', 'x:etoh&hor:fast'], d=-1)]),
   dict(l='Lactate', mods=[dict(when=X('pc', 'etoh'), d=1)]),
-  dict(l='2,3-BPG', mods=[dict(when=X('hk'), d=-1)]),
+  dict(l='2,3-BPG', mods=[dict(when=X('hk'), d=-1), dict(when=X('pk'), d=1)]),
   dict(l='Oncometabolite', mods=[dict(when=X('idh', 'sdh'), d=1)]),
 ]
 
@@ -134,20 +140,22 @@ notes = {
       'and the TCA cycle. F-2,6-BP is not an intermediate: made from F-6-P, it only switches PFK-1 on and FBPase-1 off.',
   'hor:fed': 'Fed: insulin activates a phosphatase; the bifunctional enzyme is dephosphorylated, PFK-2 is active, F-2,6-BP rises, PFK-1 '
              'runs and FBPase-1 is held off — no futile cycle. PFK-1 is also inhibited by ATP and citrate, activated by AMP.',
-  'hor:fast': 'Fasting: glucagon → cAMP → PKA phosphorylates the enzyme; FBPase-2 is active, F-2,6-BP falls and gluconeogenesis runs.',
-  'x:hk': 'Hexokinase deficiency (autosomal recessive): a block at the first step lowers every downstream intermediate including 2,3-BPG — '
-          'chronic nonspherocytic hemolysis with a left-shifted O₂ curve, the mirror image of pyruvate kinase deficiency.',
-  'x:fl': 'Fluoride binds enolase with its two Mg²⁺ and phosphate, so 2-PG cannot become PEP. Sodium fluoride tubes keep the sample’s '
-          'cells from burning its glucose, but slowly; uninhibited blood reads falsely low.',
-  'x:pc': 'Pyruvate carboxylase (biotin, ATP) makes oxaloacetate. Without it: lactic acidosis, hypoglycemia, developmental delay, seizures. '
-          'Biotin serves every carboxylase; deficiency (raw egg whites, long antibiotics) gives dermatitis, enteritis, alopecia.',
+  'hor:fast': 'Fasting: glucagon → cAMP → PKA phosphorylates the enzyme; FBPase-2 is active, F-2,6-BP falls and gluconeogenesis runs — '
+              'pyruvate carboxylase makes OAA and PEPCK turns it back into PEP, bypassing pyruvate kinase.',
+  'x:hk': 'Hexokinase deficiency (red cell): a glycolytic-enzyme hemolytic anemia. A block at the first step lowers the intermediates below it, '
+          '2,3-BPG included, so the O₂ curve shifts left — the mirror image of pyruvate kinase deficiency (inferred from Marks ch 42).',
+  'x:pk': 'Pyruvate kinase deficiency: red-cell ATP falls (by up to half), ion pumps fail, rigid cells hemolyze (burr cells; hemolytic anemia '
+          'in a newborn). PEP → pyruvate is blocked, so 2,3-BPG rises 2–3× and the O₂ curve shifts right — the anemia is better tolerated.',
+  'x:pc': 'Pyruvate carboxylase (biotin, ATP) makes oxaloacetate. Deficiency: lactic acidemia and delayed development (Leigh-type), and '
+          'gluconeogenesis fails → hypoglycemia. Biotin serves every carboxylase; deficiency (raw egg whites, long antibiotics) gives '
+          'dermatitis, enteritis, alopecia.',
   'x:etoh': 'Alcohol and aldehyde dehydrogenases both make NADH. Excess NADH drives pyruvate → lactate and OAA → malate, starving '
-            'gluconeogenesis: fasting hypoglycemia in a binge drinker, lactic acidosis (lactate competes with urate → gout), ketoacidosis, '
-            'steatosis. Dextrose with thiamine first.',
-  'x:idh': 'Neomorphic IDH1/IDH2: α-ketoglutarate → 2-hydroxyglutarate, which inhibits DNA and histone demethylases → hypermethylation and '
-           'blocked differentiation. Low-grade glioma and secondary GBM (better prognosis), AML, cholangiocarcinoma. IDH1 R132H stain.',
-  'x:sdh': 'SDH (also complex II, the only TCA enzyme in the inner membrane): succinate accumulates, inhibits prolyl hydroxylase, HIF-1α '
-           'escapes → VEGF, vascular tumors. Familial paraganglioma/pheochromocytoma (SDHB, SDHD), renal cell carcinoma.',
+            'gluconeogenesis: fasting hypoglycemia in a binge drinker, lactic acidosis (lactate cuts urate excretion → gout), ketoacidosis, '
+            'steatosis. Give thiamine before dextrose.',
+  'x:idh': 'Neomorphic IDH1/IDH2: α-ketoglutarate → 2-hydroxyglutarate, which inhibits α-KG–dependent enzymes such as TET2 → abnormal DNA '
+           'methylation. IDH-mutant glioma (better prognosis than glioblastoma; IDH1 R132H stain), AML, cholangiocarcinoma, enchondroma.',
+  'x:sdh': 'SDH (also complex II of the ETC): succinate accumulates and blocks the proline hydroxylation that tags HIF for destruction, '
+           'so HIF stays active → hypoxia genes on. Germline SDHB/SDHD: familial paraganglioma/pheochromocytoma; also renal cell carcinoma.',
 }
 
 dyn = dict(
@@ -155,32 +163,35 @@ dyn = dict(
   groups=[['mov', 'Carbon flow'], ['bad', 'Oncometabolite · NADH']],
   switches=[dict(id='hor', label='State', type='steps', options=[['fed', 'Fed (insulin)', 'f26bp'], ['fast', 'Fasting (glucagon)', 'f26bp']]),
             dict(id='x', label='Odd hit', type='one', options=[
-              ['hk', 'Hexokinase deficiency', 'hkdef'], ['fl', 'Fluoride tube', 'fluoride'], ['pc', 'Pyruvate carboxylase / biotin', 'pyrcarb'],
+              ['hk', 'Hexokinase deficiency', 'hkdef'], ['pk', 'Pyruvate kinase deficiency', 'pkdef'], ['pc', 'Pyruvate carboxylase / biotin', 'pyrcarb'],
               ['etoh', 'Ethanol', 'ethanol'], ['idh', 'IDH mutation', 'idhmut'], ['sdh', 'SDH mutation', 'sdhmut']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Marks ch 22, 28, 33, 34 · Robbins ch 7')
+  src='First Aid pp. 64–66, 70, 74–76, 428 · Marks ch 22–23, 25, 28, 33–34, 42 · Robbins ch 7, 14, 24, 28')
 
 MAP = dict(
   id='glyxsim', title='Glycolysis Odds & Ends in Motion', topic='bio', after='core',
-  sub='Flip F-2,6-BP between fed and fasting, then hit glycolysis with hexokinase deficiency, a fluoride tube, a missing pyruvate carboxylase, '
+  sub='Flip F-2,6-BP between fed and fasting, then hit glycolysis with hexokinase or pyruvate kinase deficiency, a missing pyruvate carboxylase, '
       'ethanol’s NADH, or an IDH or SDH mutation',
   w=3600, h=1900,
-  fa='66, 70, 74, 75',
+  fa='64, 66, 70, 74, 75, 76, 428',
   src=['Marks ch 22 — Generation of Adenosine Triphosphate from Glucose, Fructose, and Galactose: Glycolysis',
        'Marks ch 28 — Gluconeogenesis and Maintenance of Blood Glucose Levels', 'Marks ch 33 — Metabolism of Ethanol',
-       'Marks ch 34 — Integration of Carbohydrate and Lipid Metabolism', 'Robbins ch 7 — Neoplasia'],
+       'Marks ch 34 — Integration of Carbohydrate and Lipid Metabolism', 'Robbins ch 7 — Neoplasia',
+       'Marks ch 23 — Tricarboxylic Acid Cycle', 'Marks ch 25 — Oxygen Toxicity and Free-Radical Injury',
+       'Marks ch 42 — The Biochemistry of Erythrocytes and Other Blood Cells', 'Robbins ch 14 — Red blood cell and bleeding disorders',
+       'Robbins ch 24 — The endocrine system', 'Robbins ch 28 — The central nervous system'],
   lanes=[('gxGly', 'Glycolysis & its switch', 'glycolysis'), ('gxNeo', 'Gluconeogenesis & TCA', 'tca')],
   nodes=[
     ('gx1', 'Hexokinase deficiency', 240, 1720, 'gxGly', 'RBC · ↓2,3-BPG', ['hkdef']),
-    ('gx2', 'Fluoride (enolase)', 560, 1720, 'gxGly', 'glucose tube', ['fluoride']),
+    ('gx2', 'Pyruvate kinase deficiency', 560, 1720, 'gxGly', 'RBC · ↑2,3-BPG', ['pkdef']),
     ('gx3', 'F-2,6-BP switch', 880, 1720, 'gxGly', 'insulin vs glucagon', ['f26bp'], 'hub'),
     ('gx4', 'Pyruvate carboxylase', 1200, 1720, 'gxNeo', 'biotin', ['pyrcarb']),
     ('gx5', 'Ethanol & NADH', 1520, 1720, 'gxNeo', 'lactate · hypoglycemia', ['ethanol']),
     ('gx6', 'IDH mutation', 1840, 1720, 'gxNeo', '2-hydroxyglutarate', ['idhmut']),
     ('gx7', 'SDH mutation', 2160, 1720, 'gxNeo', 'succinate → HIF', ['sdhmut'])],
   panels=[
-    (2500, PANY, 1000, 'Odd hits (Marks)', [
-      ('Hexokinase', 'hemolysis, left shift'), ('Enolase', 'fluoride'), ('Pyruvate carboxylase', 'biotin, lactate'),
+    (2500, PANY, 1000, 'Odd hits (Marks · First Aid)', [
+      ('Hexokinase', 'hemolysis, left shift'), ('Pyruvate kinase', 'hemolysis, right shift'), ('Pyruvate carboxylase', 'biotin, lactate'),
       ('Ethanol', 'NADH → hypoglycemia'), ('IDH / SDH', '2-HG / succinate')])],
   dyn=dyn)

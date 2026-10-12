@@ -3,7 +3,7 @@
 # elongate), Southern / Northern / Western blots (gel → membrane → probe; DNA, RNA or protein), ELISA (antigen or antibody →
 # enzyme-linked antibody → color), flow cytometry (fluorescent tags, cells read one at a time), karyotype (colchicine arrests
 # mitosis), FISH (one locus lights — or does not, in a microdeletion) and CRISPR/Cas9 (guide RNA → cut → NHEJ knock-out or
-# HDR knock-in). Drawings are schematic. 2 readouts. Facts from the pinned cards; FA pages in `fa`. No new cards.
+# HDR knock-in). Drawings are schematic. 2 readouts. Fact-checked m47 against FA pp. 50–53. No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -35,11 +35,11 @@ text('pick a technique, then step through it · drawings schematic', 180, 176, '
 add('<rect x="300" y="260" width="1700" height="1060" rx="40" class="dyn-soft"/>')
 STEP = dict(pcr=('denature — heat separates the strands', 'anneal — cool; primers bind', 'elongate — heat-stable polymerase adds dNTPs'),
             blot=('gel electrophoresis separates by size', 'transfer to a membrane', 'probe finds the target'),
-            elisa=('antigen (direct) or antibody (indirect) on the well', 'enzyme-linked antibody binds', 'substrate → color'),
+            elisa=('the patient’s antigen (direct) or antibody (indirect) is captured', 'enzyme-linked antibody binds', 'substrate → color'),
             flow=('tag cells with fluorescent antibodies', 'cells pass the laser one at a time', 'each cell’s markers are counted'),
             karyo=('culture the cells', 'colchicine disrupts the spindle — arrested in mitosis', 'stain and order the chromosomes'),
             fish=('fluorescent probe for one locus', 'probe hybridizes', 'microdeletion: one copy lights, the other does not'),
-            crispr=('guide RNA leads Cas9 to its target', 'Cas9 cuts both strands', 'NHEJ → knock-out · donor DNA + HDR → knock-in'))
+            crispr=('guide RNA leads Cas9 to its target', 'Cas9 cuts — here a double-strand break', 'NHEJ → knock-out · donor DNA + HDR → knock-in'))
 for k, (a, b, c) in STEP.items():
     ts = T(*BLOT) if k == 'blot' else T(k)
     for p, s in (('s1', a), ('s2', b), ('s3', c)):
@@ -70,7 +70,7 @@ for i, x in enumerate((1310, 1430, 1550, 1670)):
             add(f'<rect x="{x - 40}" y="{y}" width="80" height="16" rx="4" style="fill:var(--ink-3);opacity:.5"/>', when=[f'tech:{t}&ph:{p}' for t in BLOT for p in ('s2', 's3')])
 add('<rect x="1270" y="796" width="100" height="24" rx="6" style="fill:var(--bad)"/>', when=[f'tech:{t}&ph:s3' for t in BLOT])
 PR = dict(south='Southern — DNA, labeled DNA probe · e.g. CGG repeats in FMR1 (fragile X)', north='Northern — RNA · mRNA level, size, splicing errors',
-          west='Western — protein, labeled antibody · confirms what ELISA screens')
+          west='Western — protein, labeled antibody · more specific than ELISA')
 for k, s in PR.items(): text(s, 1150, 1180, 'nf-l1', 'middle', when=T(k))
 
 # ════════ ELISA ════════
@@ -114,6 +114,10 @@ flows = [
   dict(d='M1500 300 C1450 500 1350 700 1320 800', len=560, speed=90, r=9, base=dict(probe=3), when=[f'tech:{t}&ph:s3' for t in BLOT]),
   dict(d='M500 700 H1700', len=1200, speed=160, r=12, base=dict(cell=5), when=T('flow')),
   dict(d='M1100 400 V560', len=160, speed=60, r=9, base=dict(probe=3), when=TP('crispr', 's1')),
+  # m47: ELISA — enzyme-linked antibodies settle onto the captured target; FISH — probes find their locus
+  dict(d='M1100 420 V740', len=320, speed=70, r=9, base=dict(probe=3), when=TP('elisa', 's2')),
+  dict(d='M1100 400 C1000 450 930 540 900 600', len=280, speed=70, r=9, base=dict(probe=2), when=TP('fish', 's1', 's2')),
+  dict(d='M1100 400 C1200 450 1270 540 1300 600', len=280, speed=70, r=9, base=dict(probe=2), when=TP('fish', 's1', 's2')),
 ]
 sites = [dict(x=480, y=490, n=[-1, 0], w=10, t='rec', l='', aria='PCR', c='pcr', ions=[]),
          dict(x=480, y=750, n=[-1, 0], w=10, t='rec', l='', aria='Blots', c='blots', ions=[]),
@@ -122,7 +126,7 @@ sites = [dict(x=480, y=490, n=[-1, 0], w=10, t='rec', l='', aria='PCR', c='pcr',
 
 readouts = [
   dict(l='Amplifies the target', mods=[dict(when=T('pcr'), d=1)]),
-  dict(l='Specificity', mods=[dict(when=T('west'), d=1), dict(when=T('elisa'), d=-1)]),
+  dict(l='Specificity (ELISA vs Western)', mods=[dict(when=T('west'), d=1), dict(when=T('elisa'), d=-1)]),
 ]
 
 notes = {
@@ -131,17 +135,18 @@ notes = {
               'heat-stable DNA polymerase adds dNTPs (elongate) — repeat. Neonatal HIV, herpes encephalitis.',
   'tech:south': 'Southern blot: gel, membrane, labeled DNA probe — sizes a sequence (CGG repeats in FMR1). SNoW DRoP.',
   'tech:north': 'Northern blot: RNA — mRNA level and size; splicing errors.',
-  'tech:west': 'Western blot: protein, found with a labeled antibody — confirms what ELISA screens.',
-  'tech:elisa': 'ELISA: antigen (direct) or antibody (indirect) detected with an enzyme-linked antibody — sensitive, less specific '
-                'than Western; HIV screening.',
+  'tech:west': 'Western blot: proteins separated on a gel, moved to a membrane and found with a labeled antibody — identifies the protein '
+               'and its quantity; more specific than ELISA.',
+  'tech:elisa': 'ELISA: a patient’s antigen (direct) or antibody (indirect) is detected with an enzyme-linked antibody; substrate gives '
+                'the signal. Can be highly sensitive and specific, but less specific than Western blot; HIV screening.',
   'tech:flow': 'Flow cytometry: fluorescent antibodies, cells read one at a time — leukemia immunophenotype, PNH, fetal red cells '
                'in maternal blood, CD4 count.',
   'tech:karyo': 'Karyotype: colchicine disrupts the spindle and arrests cultured cells in mitosis; stained chromosomes are '
                 'ordered — trisomies, sex-chromosome disorders.',
   'tech:fish': 'FISH: a fluorescent probe lights one locus — in a microdeletion one copy fluoresces and the other does not; also '
                'translocations, duplications.',
-  'tech:crispr': 'CRISPR/Cas9: a guide RNA takes Cas9 to the target and it cuts; NHEJ knocks a gene out, donor DNA with HDR '
-                 'knocks a sequence in. (Cloning makes insulin, growth hormone in bacteria.)',
+  'tech:crispr': 'CRISPR/Cas9: a guide RNA takes Cas9 to the target and it makes a single- or double-strand break; NHEJ knocks a gene '
+                 'out, donor DNA with HDR knocks a sequence in — e.g. replacing the sickle cell allele.',
 }
 
 dyn = dict(
@@ -154,7 +159,7 @@ dyn = dict(
             dict(id='ph', label='Step', type='steps', auto=3, options=[['s1', 'Step 1'], ['s2', 'Step 2'], ['s3', 'Step 3']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Marks ch 16')
+  src='First Aid pp. 50–53 · Marks ch 16')
 
 MAP = dict(
   id='labsim', title='Lab Techniques in Motion', topic='bio', after='molbio',
@@ -169,6 +174,6 @@ MAP = dict(
     ('lb3', 'ELISA & flow cytometry', 1200, 1700, 'lbProt', 'screen · cell by cell', ['elisaflow']),
     ('lb4', 'Karyotype, FISH & CRISPR', 1640, 1700, 'lbNuc', 'chromosome · locus · cut', ['cytogen'])],
   panels=[
-    (2500, PANY, 1000, 'SNoW DRoP (Marks ch 16)', [
+    (2500, PANY, 1000, 'SNoW DRoP (First Aid p. 51)', [
       ('Southern', 'DNA'), ('Northern', 'RNA'), ('Western', 'protein')])],
   dyn=dyn)

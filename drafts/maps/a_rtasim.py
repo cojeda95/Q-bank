@@ -6,7 +6,7 @@
 # urinary anion gap. One `one` switch picks a type (1, 2, 4), diarrhea, or a cause (amphotericin B, acetazolamide,
 # Fanconi syndrome, spironolactone). No new cards: every fact here is one the pinned cards already carry
 # (rta, drta, uag, nagma, newhco3, hco3reabs, acetazolamide, fanconisyn — fact-checked against the corpus), with the
-# First Aid pages they cite. Lines that rest on memory rather than those cards are marked UNVERIFIED.
+# First Aid pages they cite; checked against FA 2025 (type 4 urine pH is "variable" there).
 # Sources: First Aid 2025 pp. 604, 610–611, 617 · Costanzo ch 7 · Guyton ch 31 · Katzung ch 15 · Robbins ch 20.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
@@ -109,9 +109,7 @@ dot(7.1, PY, hollow=True, when=Z('p2', 'fan', 'acz'))
 text('at first: HCO₃⁻ spills, urine alkaline', px(7.1), PY + 60, TAG, 'middle', when=Z('p2', 'fan', 'acz'))
 dot(5.0, PY, when=Z('p2', 'fan'))
 text('below 5.5 once serum HCO₃⁻ is under the threshold', px(5.0) - 40, PY + 86, TAG, 'start', when=Z('p2', 'fan'))
-# UNVERIFIED: type 4 urine pH < 5.5 — First Aid p. 611 table, from memory; the pinned rta card does not state it
-dot(5.0, PY, when=T4)
-text('below 5.5', px(5.0), PY + 60, TAG, 'middle', when=T4)
+text('type 4: variable (First Aid 2025)', PX0, PY + 60, TAG, 'start', when=T4)
 text('urine pH can run above 5.3 here — the anion gap tells it apart', PX0, PY + 60, TAG, 'start', when=Z('dia'))
 # urinary anion gap scale
 UY, U0 = 1150, 1780
@@ -207,18 +205,17 @@ notes = {
   'rt:p2': 'Type 2 (proximal) RTA: the proximal tubule cannot reabsorb HCO₃⁻, so it spills into the urine and serum HCO₃⁻ falls. '
            'Once serum HCO₃⁻ is below the threshold, urine pH drops under 5.5. K⁺ falls; with Fanconi syndrome comes '
            'hypophosphatemic rickets.',
-  # UNVERIFIED: "urine pH < 5.5" for type 4 (First Aid p. 611, from memory — the pinned cards do not state it)
   'rt:h4': 'Type 4 (hyperkalemic) RTA: too little aldosterone, or a kidney that resists it. Principal cells secrete less K⁺, and '
-           'the high K⁺ slows NH₃ synthesis in the proximal tubule, so less NH₄⁺ is excreted (positive urinary anion gap) while '
-           'urine pH stays below 5.5. The only RTA with high K⁺.',
+           'the high K⁺ slows NH₃ synthesis in the proximal tubule, so less NH₄⁺ is excreted (positive urinary anion gap); '
+           'First Aid gives the urine pH as variable. The only RTA with high K⁺.',
   'rt:dia': 'Diarrhea: the gut, not the kidney, loses HCO₃⁻ (and K⁺) — also a normal anion gap acidosis. The healthy kidney '
             'answers by excreting more NH₄⁺, so the urinary anion gap is negative; urine pH can still run above 5.3, so the '
             'gap, not the pH, separates it from distal RTA.',
   'rt:amph': 'Amphotericin B is a classic cause of type 1 (distal) RTA: the α-intercalated cells fail to acidify the urine — '
              'urine pH above 5.5, little NH₄⁺, low K⁺.',
   'rt:acz': 'Acetazolamide blocks carbonic anhydrase, so filtered HCO₃⁻ is not reclaimed in the proximal tubule — a proximal '
-            '(type 2) RTA with alkaline urine and low K⁺. The effect is self-limiting: once serum HCO₃⁻ falls, there is little '
-            'left to block. Calcium phosphate stones can form in the alkaline urine.',
+            '(type 2) RTA with alkaline urine and low K⁺. The HCO₃⁻ diuresis is self-limited (once serum HCO₃⁻ falls, less is '
+            'filtered), but the acidosis lasts as long as the drug. Calcium phosphate stones can form in the alkaline urine.',
   'rt:fan': 'Fanconi syndrome: the whole proximal tubule fails — HCO₃⁻ (a type 2 RTA) plus glucose, amino acids, phosphate and '
             'uric acid are lost. Glucosuria with a normal serum glucose is the giveaway; low phosphate causes rickets in children. '
             'Causes include Wilson disease, multiple myeloma, lead, tenofovir and expired tetracycline.',
@@ -237,7 +234,7 @@ dyn = dict(
                           ['spiro', 'Spironolactone', 'mras']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 604, 610–611, 617 · Costanzo ch 7 · Guyton ch 31 · Katzung ch 15')
+  src='First Aid pp. 194, 250, 604, 610–611, 617, 626 · Costanzo ch 7–8 · Guyton ch 31 · Katzung ch 15 · Batlle 1988')
 
 MAP = dict(
   id='rtasim', title='Renal Tubular Acidosis Simulator', topic='renal', after='abtime',
@@ -245,7 +242,7 @@ MAP = dict(
       'α-intercalated cell cannot secrete H⁺ (type 1), or too little aldosterone holds K⁺ in and slows NH₄⁺ (type 4). Pick a type or '
       'a cause to see what fails, the urine pH, the urinary anion gap and the K⁺. Tap a transporter for its card',
   w=3500, h=2100,
-  fa='604, 610–611, 617', src=[CZ7, GY31, KZ15, RB20],
+  fa='194, 250, 604, 610–611, 617, 626', src=[CZ7, full('Costanzo', 8), GY31, KZ15, RB20],
   lanes=[('rsProx', 'Proximal tubule', 'glycolysis'), ('rsDist', 'Collecting duct', 'gluconeo'), ('rsDx', 'Labs & causes', 'tca'),
          ('rsGut', 'Gut loss', 'sugars')],
   nodes=[
@@ -262,14 +259,14 @@ MAP = dict(
     (2420, 900, 1000, 'The three RTAs (First Aid p. 611)', [
       ('Type 1 · distal', 'α-intercalated cells can’t secrete H⁺ · urine pH > 5.5 · K⁺ ↓ · CaPO₄ stones'),
       ('Type 2 · proximal', 'HCO₃⁻ not reabsorbed · urine pH < 5.5 once HCO₃⁻ is low · K⁺ ↓'),
-      ('Type 4 · hyperkalemic', 'aldosterone low or resisted · K⁺ ↑ → less NH₄⁺ · urine pH < 5.5'),   # UNVERIFIED: urine pH for type 4
+      ('Type 4 · hyperkalemic', 'aldosterone low or resisted · K⁺ ↑ → less NH₄⁺ · urine pH variable'),
       ('All three', 'normal anion gap (hyperchloremic) metabolic acidosis')]),
     (2420, 1140, 1000, 'Causes (First Aid p. 611)', [
       ('Type 1', 'amphotericin B · analgesic nephropathy · urinary obstruction · SLE'),
       ('Type 2', 'Fanconi syndrome · multiple myeloma · carbonic anhydrase inhibitors'),
       ('Type 4, low aldosterone', 'diabetic hyporeninism · ACE inhibitors, ARBs · NSAIDs · heparin · cyclosporine · adrenal insufficiency'),
       ('Type 4, resistance', 'K⁺-sparing diuretics · obstructive nephropathy · TMP-SMX')]),
-    (2420, 1380, 1000, 'Urinary anion gap (Costanzo ch 7; Batlle 1988)', [
+    (2420, 1380, 1000, 'Urinary anion gap (Batlle 1988, N Engl J Med)', [
       ('Formula', 'urine Na⁺ + K⁺ − Cl⁻ — a rough index of NH₄⁺'),
       ('Negative', 'plenty of NH₄⁺: the kidney is responding — diarrhea'),
       ('Positive', 'little NH₄⁺: distal acidification fails — type 1 or type 4 RTA')])],

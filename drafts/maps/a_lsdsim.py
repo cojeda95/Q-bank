@@ -47,7 +47,7 @@ add('<path d="M330 640 L570 680 M570 640 L330 680" class="nf-x"/>', when=O('icel
 LX, LY, LR = 1100, 700, 250
 add(f'<circle cx="{LX}" cy="{LY}" r="{LR}" style="fill:var(--dk11);fill-opacity:.10;stroke:var(--dk11);stroke-width:6"/>', unless=O(*ALL, 'icell'))
 add(f'<circle cx="{LX}" cy="{LY}" r="{LR + 40}" style="fill:var(--dk5);fill-opacity:.30;stroke:var(--bad);stroke-width:6"/>', when=O(*ALL, 'icell'))
-text('Lysosome', LX, LY - LR - 18, 'nf-l1', 'middle', unless=O(*ALL, 'icell'))
+text('Lysosome', LX, LY - LR - 44, 'nf-l1', 'middle', unless=O(*ALL, 'icell'))
 text('Lysosome — packed with undigested substrate', LX, LY - LR - 58, 'nf-l1 dyn-tag', 'middle', when=O(*ALL, 'icell'))
 # substrate entering from outside (endocytosis)
 text('substrates arrive from outside', 1460, 1150, 'nf-l2', 'middle')
@@ -60,9 +60,9 @@ C = dict(
   tay=('Tay-Sachs — β-hexosaminidase A', 'stores GM2 ganglioside · autosomal recessive', 'neurodegeneration, cherry-red macula, hyperacusis', 'NO hepatosplenomegaly'),
   np=('Niemann-Pick A/B — sphingomyelinase', 'stores sphingomyelin · autosomal recessive', 'type A: neurodegeneration + hepatosplenomegaly', 'cherry-red spot · foam cells'),
   gau=('Gaucher — β-glucocerebrosidase', 'stores glucocerebroside in macrophages · the commonest', 'hepatosplenomegaly, pancytopenia, bone crises (AVN)', '“crumpled tissue paper” Gaucher cells'),
-  fab=('Fabry — α-galactosidase A', 'stores ceramide trihexoside · X-linked recessive', 'burning hands and feet, angiokeratomas, hypohidrosis', 'later renal failure and heart disease'),
+  fab=('Fabry — α-galactosidase A', 'stores ceramide trihexoside · X-linked recessive', 'painful hands and feet, angiokeratomas, hypohidrosis', 'later renal failure and heart disease'),
   kra=('Krabbe — galactocerebrosidase', 'galactocerebroside and psychosine kill oligodendrocytes', 'optic atrophy, peripheral neuropathy, regression', 'globoid cells in white matter'),
-  mld=('Metachromatic leukodystrophy — arylsulfatase A', 'stores sulfatides · central AND peripheral demyelination', 'dementia, spasticity, areflexia, ataxia', 'slowed nerve conduction'),
+  mld=('Metachromatic leukodystrophy — arylsulfatase A', 'stores sulfatides · central AND peripheral demyelination', 'ataxia, dementia, regression around age 2', 'metachromatic sulfatide in nerves and urine'),
   hur=('Hurler (MPS I) — α-L-iduronidase', 'stores heparan and dermatan sulfate · autosomal recessive', 'corneal clouding, coarse facies, hepatosplenomegaly', 'urinary GAGs ↑ · dysostosis multiplex'),
   hun=('Hunter (MPS II) — iduronate-2-sulfatase', 'same GAGs · X-linked recessive · milder', 'NO corneal clouding · aggressive behavior', 'urinary GAGs ↑'),
   icell=('I-cell disease — GlcNAc-1-phosphotransferase', 'no mannose-6-phosphate tag: enzymes go to the blood', 'coarse facies, gingival hyperplasia, claw hand', 'plasma lysosomal enzymes ↑ · normal urine GAGs'),
@@ -97,9 +97,9 @@ for i, (k, lab, card) in enumerate(ENZ):
                       block=O(k, 'icell')))
 
 readouts = [
-  dict(l='Hepatosplenomegaly', mods=[dict(when=O('np', 'gau', 'hur', 'hun'), d=1), dict(when=O('tay'), d=-1)]),
-  dict(l='Cherry-red spot', mods=[dict(when=O('tay', 'np'), d=1), dict(when=O('gau', 'kra'), d=-1)]),
-  dict(l='Corneal clouding', mods=[dict(when=O('hur', 'icell'), d=1), dict(when=O('hun'), d=-1)]),
+  dict(l='Hepatosplenomegaly', mods=[dict(when=O('np', 'gau', 'hur', 'hun', 'icell'), d=1), dict(when=O('tay', 'kra', 'mld'), d=-1)]),
+  dict(l='Cherry-red spot', mods=[dict(when=O('tay', 'np'), d=1), dict(when=O('gau', 'kra', 'mld', 'hur'), d=-1)]),
+  dict(l='Corneal clouding', mods=[dict(when=O('hur', 'icell', 'fab'), d=1), dict(when=O('hun'), d=-1)]),
   dict(l='Peripheral neuropathy', mods=[dict(when=O('fab', 'kra', 'mld'), d=1)]),
   dict(l='Urinary GAGs', mods=[dict(when=O('hur', 'hun'), d=1), dict(when=O('icell'), d=0)]),
   dict(l='Plasma lysosomal enzymes', mods=[dict(when=O('icell'), d=1)]),
@@ -114,12 +114,12 @@ notes = {
             'hepatosplenomegaly and a cherry-red spot; foam cells.',
   'lsd:gau': 'Gaucher (β-glucocerebrosidase), the commonest: engorged macrophages infiltrate marrow, liver and spleen — '
              'hepatosplenomegaly, pancytopenia, bone crises. Enzyme replacement.',
-  'lsd:fab': 'Fabry (α-galactosidase A, X-linked): ceramide trihexoside builds up in vascular endothelium — burning hands and feet, '
-             'angiokeratomas, hypohidrosis, then renal failure and heart disease.',
+  'lsd:fab': 'Fabry (α-galactosidase A, X-linked): ceramide trihexoside builds up in vascular endothelium — episodic painful '
+             'neuropathy of the hands and feet, angiokeratomas, hypohidrosis, corneal clouding; later renal failure and heart disease.',
   'lsd:kra': 'Krabbe (galactocerebrosidase): psychosine kills oligodendrocytes — central and peripheral demyelination, optic '
              'atrophy, globoid cells. No cherry-red spot.',
-  'lsd:mld': 'Metachromatic leukodystrophy (arylsulfatase A): sulfatides destabilize myelin both centrally and peripherally — '
-             'dementia and spasticity with areflexia and slowed conduction.',
+  'lsd:mld': 'Metachromatic leukodystrophy (arylsulfatase A): sulfatides are toxic to myelin both centrally and peripherally — '
+             'ataxia and dementia in a toddler; metachromatic sulfatide shows in nerves and urine. No organomegaly.',
   'lsd:hur': 'Hurler (MPS I, α-L-iduronidase): heparan and dermatan sulfate pile up — corneal clouding, coarse facies, '
              'hepatosplenomegaly, airway obstruction; urinary GAGs rise.',
   'lsd:hun': 'Hunter (MPS II, iduronate-2-sulfatase, X-linked): the same GAGs, a milder picture in boys — and the cornea is spared. '
@@ -136,7 +136,7 @@ dyn = dict(
     ['hun', 'Hunter (MPS II)', 'hunter'], ['icell', 'I-cell disease', 'icell']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 45, 86 · Robbins ch 5')
+  src='First Aid pp. 45, 86 · Robbins ch 5, 28 · Marks ch 27 · Bootcamp Biochemistry')
 
 MAP = dict(
   id='lsdsim', title='Lysosomal Storage in Motion', topic='bio', after='lysosome',
@@ -144,7 +144,7 @@ MAP = dict(
       'the tag (I-cell) and watch the enzymes leave for the blood; the readouts ask about organs, cherry-red spot, cornea and nerves',
   w=3500, h=1520,
   fa='45, 86',
-  src=[full('Robbins', 5), full('Robbins', 28), full('Marks', 47), full('Pawlina', 2)],
+  src=[full('Robbins', 5), full('Robbins', 28), full('Marks', 27), full('Marks', 47), full('Pawlina', 2)],
   lanes=[('lsSphingo', 'Sphingolipidoses', 'glycolysis'), ('lsMps', 'Mucopolysaccharidoses', 'tca'), ('lsTraffic', 'Trafficking', 'gluconeo')],
   nodes=[
     ('lq1', 'Tay-Sachs · GM1', 330, 1300, 'lsSphingo', 'cherry-red, no HSM', ['taysachs', 'gm1'], 'hub'),

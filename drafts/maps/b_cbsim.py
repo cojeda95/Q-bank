@@ -96,18 +96,20 @@ flows = [dict(d=OUT, len=900, speed=140, r=8, base=dict(sig=3), when=['!les:rh&!
          dict(d=DOWN, len=1200, speed=140, r=8, base=dict(sig=3), when=['!les:rh&!les:mb']),
          dict(d=f'M{CX + 40} 1460 C{CX + 400} 1500 {BX - 400} 900 {BX + 100} 560', len=1300, speed=160, r=7, base=dict(sig=2), when=['!les:rh&!les:mb']),
          dict(d=OUT, len=900, speed=60, r=8, base=dict(bad=2), when=LS('rh')),
+         # left midbrain lesion: the crossed output reaches the lesion and goes no further
+         dict(d=f'M{CX + 150} {CY + 40} C{CX + 120} 960 {CX + 60} 880 {CX} 820 L{CX - 100} 680', len=560, speed=60, r=8, base=dict(bad=2), when=LS('mb')),
          dict(d=f'M{CX} {CY} C{CX - 60} 1000 {CX - 120} 980 {CX - 140} 940', len=200, speed=80, r=7, base=dict(sig=2), when=['!les:mid']),
          dict(d=f'M{CX} {CY} C{CX + 60} 1000 {CX + 120} 980 {CX + 140} 940', len=200, speed=80, r=7, base=dict(sig=2), when=['!les:mid']),
-         dict(d=f'M{CX + 40} 1460 C{CX + 30} 1300 {CX + 20} 1200 {CX + 20} 1150', len=320, speed=120, r=7, base=dict(prop=3), when=['!les:dc'])]
+         dict(d=f'M{CX + 40} 1460 V1320', len=140, speed=60, r=7, base=dict(prop=2), when=['!les:dc'])]
 sites = [dict(x=CX + 430, y=CY + 40, n=[1, 1], w=10, t='rec', l='', aria='The ipsilateral rule', c='cbipsi', ions=[]),
          dict(x=BX + 300, y=1200, n=[1, 1], w=10, t='rec', l='', aria='Cerebellar vs sensory ataxia', c='cbataxia', ions=[]),
          dict(x=CX - 420, y=CY + 120, n=[-1, 1], w=10, t='rec', l='', aria='Causes of cerebellar ataxia', c='cbcauses', ions=[])]
 
 readouts = [
-  dict(l='Right limb coordination', mods=[dict(when=LS('rh', 'mb'), d=-1)]),
-  dict(l='Left limb coordination', mods=[]),
+  dict(l='Right limb coordination', mods=[dict(when=LS('rh', 'mb'), d=-1), dict(when=LS('mid'), d=0)]),
+  dict(l='Left limb coordination', mods=[dict(when=LS('rh', 'mb', 'mid'), d=0)]),
   dict(l='Trunk & gait', mods=[dict(when=['les:mid', 'les:dc&eyes'], d=-1)]),
-  dict(l='Position sense', mods=[dict(when=LS('dc'), d=-1)]),
+  dict(l='Position sense', mods=[dict(when=LS('dc'), d=-1), dict(when=LS('rh', 'mid', 'mb'), d=0)]),
   dict(l='Nystagmus', mods=[dict(when=LS('mid', 'rh'), d=1)]),
 ]
 
@@ -124,7 +126,7 @@ notes = {
   'les:mb': 'Past the decussation the fibers already serve the other side, so a midbrain lesion there gives cerebellar signs opposite the lesion.',
   'les:dc': 'Sensory ataxia: dorsal columns or nerves (B12, vitamin E or copper deficiency, tabes dorsalis) — lost position and vibration '
             'sense. Friedreich ataxia mixes both: gait ataxia from childhood, lost position sense, low reflexes with an extensor plantar, '
-            'cardiomyopathy. Spinocerebellar ataxias are dominant CAG-repeat diseases.',
+            'cardiomyopathy. Spinocerebellar ataxias are dominant; many are CAG repeats.',
   'eyes': 'Romberg: feet together, eyes closed. Steady with eyes open but falling once they close means vision was replacing lost position '
           'sense. A midline cerebellar patient is unsteady with the eyes open as well.',
 }
@@ -156,7 +158,7 @@ MAP = dict(
     ('cb2', 'Cerebellar vs sensory ataxia', 950, 1720, 'cbDz', 'Romberg', ['cbataxia']),
     ('cb3', 'Causes of cerebellar ataxia', 1500, 1720, 'cbDz', 'alcohol · tumors · SCA', ['cbcauses'])],
   panels=[
-    (2500, PANY, 1000, 'Where is the lesion? (Fundamental Neuroscience ch 27)', [
+    (2500, PANY, 1000, 'Where is the lesion? (Fundamental Neuroscience ch 27, 33)', [
       ('Hemisphere', 'same-side limbs'), ('Vermis', 'trunk, both sides'), ('Past the SCP crossing', 'opposite side'),
       ('Falls only eyes closed', 'dorsal columns')])],
   dyn=dyn)

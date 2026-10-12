@@ -48,7 +48,7 @@ YA = 420
 P = dict(phe=(380, YA), tyr=(820, YA), hga=(1260, YA), faa=(1700, YA), fum=(2120, YA), mel=(820, 250), cat=(820, 590))
 node(*P['phe'], 'Phenylalanine'); node(*P['tyr'], 'Tyrosine'); node(*P['hga'], 'Homogentisate')
 node(*P['faa'], 'Fumarylacetoacetate'); node(*P['fum'], 'Fumarate + acetoacetate'); node(*P['mel'], 'Melanin')
-node(*P['cat'], 'Dopamine · NE · thyroxine')
+node(*P['cat'], 'Dopamine · NE · Epi')
 for (a, b, lab, lx, ly) in (('phe', 'tyr', 'PAH · BH4', 600, YA - 16), ('tyr', 'hga', '', 0, 0), ('hga', 'faa', 'HGD', 1480, YA - 16),
                             ('faa', 'fum', 'FAH', 1910, YA - 16)):
     add(f'<path d="M{P[a][0] + BW // 2} {YA} H{P[b][0] - BW // 2}" class="dyn-line"/>')
@@ -131,7 +131,8 @@ flows = [
   seg(f'M1375 {YC} H1585', 3, stop=O('cbs')),
   seg(f'M820 {YC + 30} C820 {YC + 140} 380 {YC + 140} 380 {YC + 30}', 3, stop=O('ms')),
   seg(f'M820 {YC + 30} C900 {YC + 100} 1100 {YC + 110} 1110 {YC + 110}', 4, when=O('cbs', 'ms'), k='bad'),
-  seg('M1970 1215 H2400', 3, k='aa'),
+  dict(d='M1970 1215 H2400', len=430, speed=70, r=8, base={'aa': 3},
+       mods=[m(O('hartnup', 'cyst'), add={'bad': 4})]),   # unabsorbed amino acids run on into the urine
 ]
 sites = [
   dict(x=2050, y=1250, n=[0, 1], w=8, t='co', l='neutral AA', s='Trp', c='hartnup', ions=[['aa', 'out', 1]], block=O('hartnup'),
@@ -143,7 +144,7 @@ sites = [
 
 readouts = [
   dict(l='Phenylalanine', mods=[dict(when=O('pku', 'bh4'), d=1)]),
-  dict(l='Tyrosine', mods=[dict(when=O('pku'), d=-1)]),
+  dict(l='Tyrosine', mods=[dict(when=O('pku', 'bh4'), d=-1)]),
   dict(l='Leu · Ile · Val', mods=[dict(when=O('msud'), d=1)]),
   dict(l='Anion-gap acidosis · NH₃', mods=[dict(when=O('pa', 'mma'), d=1)]),
   dict(l='Homocysteine', mods=[dict(when=O('cbs', 'ms'), d=1)]),
@@ -158,10 +159,10 @@ notes = {
   'dx:bh4': 'BH4 (cofactor) deficiency: phenylalanine hydroxylase fails as in PKU, and so do tyrosine and tryptophan hydroxylases — '
             'adding a catecholamine and serotonin deficit. BH4 supplementation.',
   'dx:alb': 'Albinism: melanocytes are present but tyrosinase can’t turn tyrosine into melanin — pale skin and hair, more skin cancer.',
-  'dx:alk': 'Alkaptonuria: homogentisate dioxygenase is missing; homogentisic acid polymerizes to a blue-black pigment that binds '
-            'collagen (ochronosis) — urine that blackens in air, arthralgias. Usually benign. Nitisinone.',
+  'dx:alk': 'Alkaptonuria: homogentisate oxidase is missing; homogentisic acid builds up and oxidizes to a blue-black pigment in '
+            'connective tissue and cartilage (ochronosis) — urine that blackens in air, arthralgias. Usually benign. Nitisinone.',
   'dx:tyr1': 'Tyrosinemia type I: fumarylacetoacetate hydrolase, the last step, is missing — fumarylacetoacetate accumulates and the '
-             'liver fails; chronic cirrhosis, hepatocellular carcinoma, renal Fanconi. Nitisinone.',
+             'liver fails (acute form: death in the first year); a cause of renal Fanconi syndrome. Nitisinone.',
   'dx:msud': 'Maple syrup urine disease: the branched-chain α-ketoacids can’t be decarboxylated (BCKDH, a thiamine enzyme) — ↑ Leu, Ile, '
              'Val; sweet urine, vomiting, neurologic decline. Restrict BCAAs; thiamine.',
   'dx:pa': 'Propionic acidemia (propionyl-CoA carboxylase, biotin): organic acids build up and inhibit gluconeogenesis and the urea '
@@ -186,17 +187,17 @@ dyn = dict(
     ['hartnup', 'Hartnup disease', 'hartnup'], ['cyst', 'Cystinuria', 'cystinuria']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 64–66, 81–83, 88 · Marks ch 37')
+  src='First Aid pp. 64–66, 81–83, 88, 617 · Marks ch 37–38 · Robbins ch 2')
 
 MAP = dict(
   id='aasim', title='Amino Acid Disorders in Motion', topic='bio', after='nitrogen',
   sub='Run phenylalanine, the branched-chain amino acids and methionine down their pathways, then block one enzyme or transporter — '
       'PKU, BH4, albinism, alkaptonuria, tyrosinemia, MSUD, propionic and methylmalonic acidemia, homocystinuria, Hartnup, cystinuria',
   w=3600, h=1900,
-  fa='59, 64, 65, 66, 81, 82, 83, 88, 115, 425, 484, 604, 617',
+  fa='58, 64, 65, 66, 81, 82, 83, 88, 484, 604, 617',
   src=['Marks ch 37 — Synthesis and Degradation of Amino Acids', 'Robbins ch 5 — Genetic disorders', 'Pawlina ch 15 — Integumentary System',
        'Marks ch 46 — Metabolism of the Nervous System', 'Marks ch 23 — Tricarboxylic Acid Cycle', 'Marks ch 8 — Enzymes as Catalysts',
-       'Robbins ch 18 — Liver and gallbladder', 'Marks ch 30 — Oxidation of Fatty Acids and Ketone Bodies',
+       'Robbins ch 18 — Liver and gallbladder', full('Robbins', 2), full('Marks', 38), 'Marks ch 30 — Oxidation of Fatty Acids and Ketone Bodies',
        'Marks ch 35 — Protein Digestion and Amino Acid Absorption', 'Costanzo ch 8 — Gastrointestinal physiology', 'Robbins ch 20 — The kidney'],
   lanes=[('aaArom', 'Phenylalanine & tyrosine', 'glycolysis'), ('aaBc', 'Branched-chain & propionyl', 'tca'), ('aaSul', 'Sulfur & transport', 'gluconeo')],
   nodes=[
@@ -209,7 +210,7 @@ MAP = dict(
     ('aa7', 'Homocystinuria', 760, 1760, 'aaSul', 'lens down and in', ['homocyst']),
     ('aa8', 'Hartnup · cystinuria', 1200, 1760, 'aaSul', 'transport defects', ['hartnup', 'cystinuria'])],
   panels=[
-    (2500, PANY, 1000, 'Cofactors to remember', [
+    (2500, PANY, 1000, 'Cofactors to remember (First Aid pp. 64–66, 81–83)', [
       ('BH4', 'Phe, Tyr and Trp hydroxylases'),
       ('B1 (thiamine)', 'BCKDH — also PDH and α-KGDH'),
       ('Biotin', 'propionyl-CoA carboxylase'),

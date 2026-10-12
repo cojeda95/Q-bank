@@ -3,7 +3,7 @@
 # glycogen down to G6P and releases glucose through glucose-6-phosphatase; exercise (muscle) burns glycogen through
 # glycolysis to lactate. A `steps` switch alternates fasting / exercise; a `one` switch blocks one enzyme — von Gierke,
 # Pompe, Cori, Andersen, McArdle, Hers, Tarui — with an ✕ on it and the flows and drawing changing. 6 readouts. Facts
-# from the pinned cards (vongierke, pompe, cori, andersen, mcardle, hers, tarui); FA pp. 84–85. No new cards.
+# from FA pp. 76, 84–85, Marks ch 26 (GSD table) and Robbins ch 5; fact-checked m47. No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -60,7 +60,7 @@ add(granule(470, 470, long=True), when=O('and'))
 text('glycogen', 470, 640, 'nf-l2', 'middle')
 add('<circle cx="470" cy="470" r="150" style="fill:var(--dk5);fill-opacity:.12;stroke:var(--dk5);stroke-width:3;stroke-dasharray:8 6"/>', when=O('cori', 'vg', 'hers'))
 text('limit dextrin — stuck at the branches', 470, 290, 'nf-l1 dyn-tag', 'middle', when=O('cori'))
-text('long unbranched chains — fibrosis, infantile cirrhosis', 470, 290, 'nf-l1 dyn-tag', 'middle', when=O('and'))
+text('long outer branches — foreign-body reaction, cirrhosis', 470, 290, 'nf-l1 dyn-tag', 'middle', when=O('and'))
 node('Glucose-6-P', 470, 800)
 node('Glucose → blood', 470, 1040, 260)
 node('Lactate · urate · TG', 900, 900, 260)
@@ -80,14 +80,17 @@ node('Glucose-6-P', 1580, 800)
 node('Fructose-1,6-BP', 1580, 930, 260)
 node('Pyruvate → lactate', 1580, 1060, 280)
 add('<path d="M1580 640 V776 M1580 824 V906 M1580 954 V1036" class="dyn-line"/>')
-# UNVERIFIED: muscle lacking glucose-6-phosphatase is standard teaching; the vongierke card lists liver, kidney and gut only
+# muscle lacks glucose-6-phosphatase: First Aid p. 76
 text('no glucose-6-phosphatase — muscle can’t release glucose', 1900, 800, 'nf-l2', 'middle')
 add('<circle cx="2080" cy="440" r="80" style="fill:var(--dk11);fill-opacity:.12;stroke:var(--dk11);stroke-width:3"/>', unless=O('pompe'))
 add('<circle cx="2080" cy="440" r="120" style="fill:var(--dk5);fill-opacity:.35;stroke:var(--bad);stroke-width:4"/>', when=O('pompe'))
 text('lysosome', 2080, 446, 'nf-l2', 'middle')
 add(X(1670, 700), when=O('mca')); add(X(1680, 870), when=O('tar')); add(X(2160, 360), when=O('pompe'))
 text('lysosomes fill with glycogen — heart, muscle, liver', 1580, 300, 'nf-l1 dyn-tag', 'middle', when=O('pompe'))
-text('cramps and myoglobinuria with exercise', 1580, 300, 'nf-l1 dyn-tag', 'middle', when=O('mca', 'tar'))
+text('cramps and myoglobinuria with exercise', 1580, 300, 'nf-l1 dyn-tag', 'middle', when=O('mca'))
+text('McArdle-like cramps + hemolysis (PFK-1 in red cells too)', 1580, 300, 'nf-l1 dyn-tag', 'middle', when=O('tar'))
+add('<circle cx="1580" cy="470" r="150" style="fill:var(--dk5);fill-opacity:.12;stroke:var(--dk5);stroke-width:3;stroke-dasharray:8 6"/>', when=O('mca', 'tar'))
+text('glycogen piles up', 1418, 476, 'nf-l1', 'end', when=O('mca', 'tar'))
 
 # blood
 shapes.append(dict(vessel='M200 1180 H2300', w=50, color='--dk1'))
@@ -111,16 +114,16 @@ sites = [
 ]
 
 readouts = [
-  dict(l='Fasting glucose', mods=[dict(when=O('vg', 'cori', 'hers'), d=-1), dict(when=O('pompe', 'mca'), d=0)]),
+  dict(l='Fasting glucose', mods=[dict(when=O('vg', 'cori', 'hers'), d=-1), dict(when=O('mca'), d=0)]),
   dict(l='Lactate (at rest)', mods=[dict(when=O('vg'), d=1), dict(when=O('cori'), d=0)]),
-  dict(l='Uric acid · triglycerides', mods=[dict(when=O('vg'), d=1), dict(when=O('cori'), d=0)]),
+  dict(l='Uric acid · triglycerides', mods=[dict(when=O('vg'), d=1)]),
   dict(l='Liver size', mods=[dict(when=O('vg', 'cori', 'hers', 'and', 'pompe'), d=1)]),
   dict(l='Lactate rise with exercise', mods=[dict(when=O('mca', 'tar'), d=-1)]),
   dict(l='CK', mods=[dict(when=O('mca'), d=1)]),
 ]
 
 notes = {
-  '': 'Liver glycogen keeps the blood glucose up during fasting — it alone has glucose-6-phosphatase. Muscle glycogen fuels the '
+  '': 'Liver glycogen keeps the blood glucose up during fasting — the liver has glucose-6-phosphatase, muscle lacks it. Muscle glycogen fuels the '
       'muscle itself through glycolysis. Each storage disease blocks one enzyme in one of these tissues.',
   'st:fast': 'Fasting: liver phosphorylase and the debranching enzyme break glycogen to G6P, and glucose-6-phosphatase releases free '
              'glucose into the blood.',
@@ -128,18 +131,17 @@ notes = {
            'early anaerobic burst.',
   'gsd:vg': 'von Gierke (GSD I, glucose-6-phosphatase): glucose can’t leave the liver, so severe fasting hypoglycemia, with G6P '
             'shunted to lactate, urate and triglycerides; huge liver and kidneys. Frequent cornstarch; avoid fructose and galactose.',
-  'gsd:pompe': 'Pompe (GSD II, lysosomal acid α-1,4-glucosidase): glycogen fills lysosomes of heart, muscle and liver — infantile '
-               'hypertrophic cardiomyopathy, floppy baby, macroglossia. Blood glucose is normal. Enzyme replacement.',
-  'gsd:cori': 'Cori (GSD III, debranching enzyme): phosphorylase stops near the branches and limit dextrin accumulates — fasting '
-              'hypoglycemia and hepatomegaly, but normal lactate and urate because gluconeogenesis works.',
-  'gsd:and': 'Andersen (GSD IV, branching enzyme): long unbranched chains are poorly soluble and provoke fibrosis — infantile '
-             'cirrhosis, failure to thrive, early death.',
-  'gsd:mca': 'McArdle (GSD V, myophosphorylase): muscle can’t use its glycogen — cramps and myoglobinuria with brief intense '
-             'exercise, a second wind, flat venous lactate with a normal ammonia rise. Blood glucose normal.',
-  'gsd:hers': 'Hers (GSD VI, liver phosphorylase): glycogenolysis fails but gluconeogenesis compensates — hepatomegaly with mild '
-              'hypoglycemia, the mildest hepatic GSD.',
-  'gsd:tar': 'Tarui (GSD VII, muscle PFK-1): glycolysis is blocked at its committed step in muscle and red cells — McArdle-like '
-             'exercise intolerance plus hemolytic anemia.',
+  'gsd:pompe': 'Pompe (GSD II, lysosomal acid α-1,4-glucosidase): glycogen fills lysosomes in every organ — massive cardiomegaly, '
+               'hypotonia, enlarged tongue, mild hepatomegaly; the infantile form dies of cardiorespiratory failure by 2 years. Enzyme replacement.',
+  'gsd:cori': 'Cori (GSD III, debranching enzyme): phosphorylase stops near the branches and limit dextrin accumulates — like von Gierke '
+              'but milder: fasting hypoglycemia and hepatomegaly with normal blood lactate, because gluconeogenesis is intact.',
+  'gsd:and': 'Andersen (GSD IV, branching enzyme): glycogen with long outer branches acts like a foreign body in the liver — '
+             'hepatosplenomegaly, failure to thrive, infantile cirrhosis, early death; hypoglycemia comes late.',
+  'gsd:mca': 'McArdle (GSD V, myophosphorylase): glycogen piles up in muscle that can’t use it — cramps and myoglobinuria with strenuous '
+             'exercise, a second wind, flat venous lactate with a normal ammonia rise, CK up. Blood glucose normal.',
+  'gsd:hers': 'Hers (GSD VI, liver phosphorylase): liver glycogenolysis fails — hepatomegaly with mild hypoglycemia and a good prognosis.',
+  'gsd:tar': 'Tarui (GSD VII, muscle PFK-1): glycolysis is blocked at its rate-limiting step in muscle and red cells — McArdle-like '
+             'cramps with no lactate rise, plus hemolytic anemia.',
 }
 
 dyn = dict(
@@ -151,14 +153,14 @@ dyn = dict(
     ['tar', 'Tarui — muscle PFK-1', 'tarui']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 84–85 · Marks ch 26')
+  src='First Aid pp. 76, 84–85 · Marks ch 26 · Robbins ch 5')
 
 MAP = dict(
   id='gsdsim', title='Glycogen Storage Diseases in Motion', topic='bio', after='core',
   sub='Liver releases glucose while fasting, muscle burns its own glycogen while exercising — block glucose-6-phosphatase, acid '
       'maltase, debranching or branching enzyme, myophosphorylase, liver phosphorylase or PFK and watch what stalls and what piles up',
   w=3500, h=1480,
-  fa='84–85',
+  fa='76, 84–85',
   src=[full('Marks', 26), full('Robbins', 5), full('Robbins', 27)],
   lanes=[('gsLiver', 'Liver GSDs', 'glycolysis'), ('gsMuscle', 'Muscle GSDs', 'tca'), ('gsLyso', 'Lysosomal', 'gluconeo')],
   nodes=[
@@ -170,10 +172,10 @@ MAP = dict(
     ('gs6', 'Tarui (VII)', 700, 1410, 'gsMuscle', 'muscle PFK-1', ['tarui']),
     ('gs7', 'Pompe (II)', 1060, 1410, 'gsLyso', 'acid maltase', ['pompe'])],
   panels=[
-    (2420, PANY, 1000, 'Telling them apart (First Aid pp. 84–85)', [
+    (2420, PANY, 1000, 'Telling them apart (First Aid pp. 84–85 · Marks ch 26)', [
       ('Hypoglycemia + ↑ lactate', 'von Gierke'),
       ('Hypoglycemia, normal lactate', 'Cori'),
-      ('Cardiomyopathy, normal glucose', 'Pompe'),
+      ('Cardiomegaly, hypotonia, big tongue', 'Pompe'),
       ('Cramps, flat lactate curve', 'McArdle'),
       ('McArdle + hemolysis', 'Tarui'),
       ('Infantile cirrhosis', 'Andersen')])],

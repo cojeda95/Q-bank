@@ -52,7 +52,7 @@ add(X(650, YF), when=O('essf')); add(X(1150, YF), when=O('hfi'))
 pile(400, YF - 40, O('essf')); pile(900, YF - 40, O('hfi'))
 outcome(400, YF + 120, 'fructose in the urine — benign', O('essf'))
 outcome(900, YF + 120, 'Pi trapped → ATP ↓ → hypoglycemia', O('hfi'), 380)
-text('at weaning: fruit, juice, honey, sucrose', 900, YF + 175, 'nf-l1 dyn-tag', 'middle', when=O('hfi'))
+text('after fruit, juice, honey or sucrose', 900, YF + 175, 'nf-l1 dyn-tag', 'middle', when=O('hfi'))
 
 # galactose
 YG = 760
@@ -76,7 +76,7 @@ link(400, 900, YP, 'aldose reductase · NADPH'); link(900, 1400, YP, 'sorbitol d
 add(f'<rect x="1700" y="{YP - 60}" width="520" height="120" rx="24" class="dyn-soft"/>')
 text('Schwann cells · lens · retina · kidney', 1960, YP - 10, 'nf-l1', 'middle')
 text('little or no sorbitol dehydrogenase', 1960, YP + 20, 'nf-l2', 'middle')
-add(X(1150, YP), when=O('dm'))
+text('too little of it in lens · nerve · retina · kidney', 1150, YP + 44, 'nf-l2 dyn-tag', 'middle', when=O('dm'))
 pile(900, YP - 40, O('dm'))
 outcome(900, YP + 120, 'osmotic damage: neuropathy, cataracts, retinopathy', O('dm'), 500)
 
@@ -94,7 +94,7 @@ flows = [
   fl(520, 780, YG, 3), fl(1020, 1280, YG, 3, stop=O('galk')), fl(1520, 1780, YG, 3, stop=O('galk', 'galt')),
   dict(d=f'M900 {YG + 30} V{YG + 170}', len=140, speed=60, r=8, base=dict(s=1), mods=[m(O('galt', 'galk'), set=dict(s=5))]),
   dict(d=f'M780 {YG + 200} H640', len=140, speed=50, r=8, base=dict(bad=3), when=O('galt', 'galk')),
-  fl(520, 780, YP, 1, boost=O('dm')), fl(1020, 1280, YP, 1, stop=O('dm')),
+  fl(520, 780, YP, 1, boost=O('dm')), fl(1020, 1280, YP, 1),
 ]
 sites = [dict(x=1210, y=YF, n=[0, 1], w=10, t='rec', l='', aria='Aldolase B', c='hfi', ions=[]),
          dict(x=1710, y=YG, n=[0, 1], w=10, t='rec', l='', aria='GALT', c='galactosemia', ions=[]),
@@ -103,7 +103,7 @@ sites = [dict(x=1210, y=YF, n=[0, 1], w=10, t='rec', l='', aria='Aldolase B', c=
 readouts = [
   dict(l='Blood glucose', mods=[dict(when=O('hfi'), d=-1), dict(when=O('dm'), d=1)]),
   dict(l='Urine reducing substances', mods=[dict(when=O('hfi', 'essf', 'galt', 'galk'), d=1)]),
-  dict(l='Blood phosphate', mods=[dict(when=O('hfi'), d=-1)]),
+  dict(l='Free phosphate (liver)', mods=[dict(when=O('hfi'), d=-1)]),
   dict(l='Uric acid', mods=[dict(when=O('hfi'), d=1)]),
   dict(l='Liver injury', mods=[dict(when=O('hfi', 'galt'), d=1), dict(when=O('galk', 'essf'), d=0)]),
   dict(l='Cataracts', mods=[dict(when=O('galt', 'galk', 'dm'), d=1)]),
@@ -113,12 +113,12 @@ notes = {
   '': 'Fructose is trapped by fructokinase and split by aldolase B; galactose by galactokinase and GALT; glucose can be reduced to '
       'sorbitol by aldose reductase. Which enzyme is missing decides whether the trapped sugar is harmless or toxic.',
   'dx:hfi': 'Hereditary fructose intolerance (aldolase B): fructokinase still makes fructose-1-P, which can’t be split. F1P sequesters '
-            'phosphate, ATP falls, glycogenolysis and gluconeogenesis stop — vomiting and hypoglycemia at weaning; ↓ phosphate, ↑ uric '
-            'acid, liver failure, Fanconi. Remove fructose, sucrose and sorbitol.',
-  'dx:essf': 'Essential fructosuria (fructokinase): fructose is never phosphorylated, nothing toxic builds up — it simply spills into '
-             'the urine. Benign.',
-  'dx:galt': 'Classic galactosemia (GALT): galactose-1-P is toxic to liver and kidney, and spare galactose becomes galactitol in the lens '
-             '— vomiting, jaundice, hepatomegaly, infantile cataracts, E. coli sepsis in a newborn on milk. Exclude lactose.',
+            'phosphate, ATP falls, glycogenolysis and gluconeogenesis stop — vomiting and hypoglycemia once fruit or sucrose is eaten; '
+            'AMP is broken down to uric acid; liver and kidney failure if intake continues. Remove fructose, sucrose and sorbitol.',
+  'dx:essf': 'Essential fructosuria (fructokinase): the liver can’t trap fructose; hexokinase in other tissues takes a little, slowly, '
+             'and the rest spills into the urine. Nothing toxic builds up — benign.',
+  'dx:galt': 'Classic galactosemia (GALT): galactose-1-P and its metabolites build up in liver, kidney and brain, and spare galactose '
+             'becomes galactitol in the lens — vomiting, jaundice, hepatomegaly, infantile cataracts, E. coli sepsis in a newborn on milk. Exclude lactose.',
   'dx:galk': 'Galactokinase deficiency: galactose piles up and becomes galactitol, but with no galactose-1-P there is no liver or kidney '
              'injury — infantile cataracts only.',
   'dx:dm': 'Hyperglycemia (diabetes): aldose reductase turns glucose into sorbitol, using NADPH. Schwann cells, lens, retina and kidney '
@@ -133,7 +133,7 @@ dyn = dict(
     ['dm', 'Hyperglycemia (polyol pathway)', 'polyol']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 78–79 · Marks ch 22')
+  src='First Aid pp. 78–79, 709 · Marks ch 22 · Robbins ch 10')
 
 MAP = dict(
   id='sugarsim', title='Fructose & Galactose in Motion', topic='bio', after='core',
@@ -151,7 +151,7 @@ MAP = dict(
     ('sg4', 'Galactokinase deficiency', 1640, 1620, 'sgGal', 'cataracts only', ['galactokinase']),
     ('sg5', 'Polyol pathway', 2080, 1620, 'sgPol', 'sorbitol trapped', ['polyol'])],
   panels=[
-    (2500, PANY, 1000, 'Kinase vs the next enzyme (First Aid p. 78)', [
+    (2500, PANY, 1000, 'Kinase vs the next enzyme (First Aid p. 78 · Robbins ch 10)', [
       ('Fructokinase', 'essential fructosuria — benign'),
       ('Aldolase B', 'hereditary fructose intolerance — toxic'),
       ('Galactokinase', 'cataracts only'),

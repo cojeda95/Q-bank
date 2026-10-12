@@ -47,9 +47,9 @@ P = dict(nh3=(470, 360), cp=(470, 620), orn=(800, 950), cit=(1350, 450), asa=(19
 node('NH₃ + CO₂', *P['nh3']); node('Carbamoyl phosphate', *P['cp'], w=320); node('Ornithine', *P['orn'])
 node('Citrulline', *P['cit']); node('Argininosuccinate', *P['asa'], w=320); node('Arginine', *P['arg']); node('Urea → kidney', *P['urea'], w=300)
 node('Ornithine', *P['orn2'])
-# UNVERIFIED: aspartate entering at ASS and fumarate leaving at ASL are standard teaching, not on the pinned cards
+# aspartate in at ASS, fumarate out at ASL (recycled via malate → OAA → aspartate): FA p 80 diagram, Marks ch 36
 text('+ aspartate', 1650, 420, 'nf-l2', 'middle')
-text('fumarate → TCA', 2300, 640, 'nf-l2', 'end')
+text('fumarate → malate', 2300, 640, 'nf-l2', 'end')
 EDGES = ['M470 386 V594', 'M600 640 C760 700 820 800 800 924', 'M630 610 C900 520 1100 450 1210 450', 'M1490 450 H1790',
          'M1980 476 L2040 734', 'M2050 786 V1014', 'M1900 1040 C1700 1040 1500 990 1480 950', 'M1210 950 H930']
 for d in EDGES:
@@ -68,6 +68,9 @@ text('carbamoyl phosphate spills into the pyrimidine pathway', 1350, 260, 'nf-l2
 add(X(1500, 300, 16), when=O('oro'))
 text('UMP synthase blocked: orotic acid → UMP fails', 1350, 260, 'nf-l1 dyn-tag', 'middle', when=O('oro'))
 text('N-acetylglutamate switches CPS-1 on', 520, 500, 'nf-l2')
+# the substrate that piles up before each distal block (Marks ch 36, review Q1)
+for k, (x, y, w) in dict(ass=(1350, 450, 280), asl=(1950, 450, 320), arg=(2050, 760, 280)).items():
+    add(f'<rect x="{x - w // 2 - 12}" y="{y - 38}" width="{w + 24}" height="76" rx="38" class="dyn-hl"/>', when=O(k))
 
 # ════════ gut → liver → brain ════════
 text('Where the ammonia goes when it isn’t made into urea', 180, 1220, 'dyn-big')
@@ -107,8 +110,9 @@ sites = [
 readouts = [
   dict(l='Ammonia', mods=[dict(when=O(*UC, 'hep'), d=1), dict(when=O('oro'), d=0)]),
   dict(l='BUN', mods=[dict(when=O(*UC), d=-1)]),
-  dict(l='Orotic acid', mods=[dict(when=O('otc', 'oro'), d=1)]),
-  dict(l='Citrulline', mods=[dict(when=O('ass'), d=1)]),
+  dict(l='Orotic acid', mods=[dict(when=O('otc', 'oro'), d=1), dict(when=O('cps'), d=-1)]),
+  dict(l='Citrulline', mods=[dict(when=O('ass', 'asl'), d=1), dict(when=O('cps', 'otc'), d=-1)]),
+  dict(l='Arginine', mods=[dict(when=O('cps', 'otc', 'ass', 'asl'), d=-1), dict(when=O('arg'), d=1)]),
   dict(l='MCV (megaloblastic)', mods=[dict(when=O('oro'), d=1), dict(when=O('otc'), d=0)]),
 ]
 
@@ -116,14 +120,14 @@ notes = {
   '': 'Amino-acid nitrogen leaves the body as urea. NH₃ and CO₂ become carbamoyl phosphate in the mitochondrion (CPS-1, which needs '
       'N-acetylglutamate); OTC adds ornithine to make citrulline; the cytosol finishes the cycle and arginase releases urea.',
   'def:cps': 'CPS-1 or N-acetylglutamate synthase deficiency: carbamoyl phosphate is never made — neonatal hyperammonemic coma like '
-             'OTC deficiency, but orotic acid is normal or low.',
+             'OTC deficiency, but citrulline is low and orotic acid is low, not raised.',
   'def:otc': 'OTC deficiency, the commonest urea cycle disorder (X-linked): carbamoyl phosphate spills into the pyrimidine pathway, so '
              'orotic acid rises with ammonia — but no megaloblastic anemia. Limit protein; benzoate or phenylbutyrate.',
-  'def:ass': 'Argininosuccinate synthetase deficiency (citrullinemia): hyperammonemia with very high citrulline — each distal block '
-             'piles up its own substrate.',
-  'def:asl': 'Argininosuccinate lyase deficiency (argininosuccinic aciduria): argininosuccinate accumulates, ammonia rises. Arginine '
+  'def:ass': 'Argininosuccinate synthetase deficiency (citrullinemia): hyperammonemia with very high citrulline and low arginine — each '
+             'distal block piles up its own substrate.',
+  'def:asl': 'Argininosuccinate lyase deficiency (argininosuccinic aciduria): argininosuccinate accumulates, citrulline rises less. Arginine '
              'supplements help when the block comes after argininosuccinate synthesis.',
-  'def:arg': 'Arginase deficiency: the last step fails, so arginine accumulates and urea isn’t released.',
+  'def:arg': 'Arginase deficiency: the last step fails, so arginine accumulates and urea isn’t released — the mildest hyperammonemia of the five.',
   'def:hep': 'Hepatic encephalopathy: portosystemic shunting and failing hepatocytes let gut ammonia reach the brain — asterixis, '
              'confusion, coma. Lactulose traps NH₄⁺ in the colon; rifaximin kills ammonia-making bacteria.',
   'def:oro': 'Hereditary orotic aciduria (UMP synthase) — the look-alike: orotic acid rises but ammonia is normal, and the missing '
@@ -139,7 +143,7 @@ dyn = dict(
     ['hep', 'Hepatic encephalopathy', 'hepenceph'], ['oro', 'Orotic aciduria (the look-alike)', 'oroticaciduria']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 80–81, 399, 426 · Marks ch 36')
+  src='First Aid pp. 80–81, 399, 408, 426 · Marks ch 36')
 
 MAP = dict(
   id='ureasim', title='Urea Cycle in Motion', topic='bio', after='nitrogen',
@@ -152,14 +156,14 @@ MAP = dict(
   nodes=[
     ('ur1', 'Hyperammonemia', 330, 1640, 'urBrain', 'astrocyte glutamine', ['ammonia'], 'hub'),
     ('ur2', 'OTC deficiency', 760, 1640, 'urDef', 'orotic acid ↑', ['otc']),
-    ('ur3', 'CPS-1 / NAGS deficiency', 1180, 1640, 'urDef', 'orotic acid normal', ['cps1']),
+    ('ur3', 'CPS-1 / NAGS deficiency', 1180, 1640, 'urDef', 'orotic acid not raised', ['cps1']),
     ('ur4', 'Distal blocks', 1600, 1640, 'urDef', 'citrulline · ASA · arginine', ['ureaother']),
     ('ur5', 'Orotic aciduria', 2000, 1640, 'urDef', 'no hyperammonemia', ['oroticaciduria']),
     ('ur6', 'Hepatic encephalopathy', 330, 1760, 'urBrain', 'lactulose · rifaximin', ['hepenceph', 'osmolax'])],
   panels=[
-    (2420, PANY, 1000, 'Telling them apart (First Aid pp. 80–81, 426)', [
+    (2420, PANY, 1000, 'Telling them apart (First Aid pp. 80–81, 426 · Marks ch 36)', [
       ('OTC deficiency', 'ammonia ↑ · orotic acid ↑ · no anemia'),
-      ('CPS-1 deficiency', 'ammonia ↑ · orotic acid normal'),
+      ('CPS-1 deficiency', 'ammonia ↑ · orotic acid normal or low'),
       ('Orotic aciduria', 'orotic acid ↑ · ammonia normal · megaloblastic'),
       ('Citrullinemia', 'ammonia ↑ · citrulline ↑↑')])],
   dyn=dyn)

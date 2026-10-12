@@ -105,16 +105,19 @@ sites = [dict(x=1240, y=520, n=[0, -1], w=10, t='rec', l='', aria='Papez circuit
 
 readouts = [
   dict(l='New declarative memories', mods=[dict(when=CUT, d=-1)]),
-  dict(l='Old memories', mods=[dict(when=D('kors'), d=-1)]),
+  dict(l='Old memories', mods=[dict(when=D('kors'), d=-1), dict(when=D('hippo'), d=0)]),
+  dict(l='Short-term recall', mods=[dict(when=D('hippo', 'ca1'), d=0)]),
   dict(l='Fear response', mods=[dict(when=D('kb'), d=-1)]),
   dict(l='Impulse control', mods=[dict(when=D('acc'), d=-1)]),
+  dict(l='Rage / anger', mods=[dict(when=D('sep'), d=1), dict(when=D('kb'), d=-1)]),
 ]
 
 notes = {
   '': 'Papez circuit: subiculum → postcommissural fornix → medial mammillary nucleus → mammillothalamic tract → anterior thalamic '
       'nucleus → cingulate gyrus → cingulum → entorhinal cortex → hippocampus. Consolidating short-term into long-term '
       'declarative memory is the hippocampal formation’s job; break any link and new memory formation suffers.',
-  'dx:kors': 'Korsakoff: thiamine deficiency destroys especially the mammillary bodies and anterior thalamus — anterograde more '
+  'dx:kors': 'Korsakoff: thiamine deficiency destroys especially the mammillary bodies and anterior thalamus (FA p 64 also names the '
+             'dorsomedial thalamus) — anterograde more '
              'than retrograde amnesia, disorientation, confabulation. Wernicke (acute, reversible): ophthalmoplegia, ataxia, '
              'confusion — thiamine before glucose.',
   'dx:mtt': 'A cut mammillothalamic tract breaks the loop — new memory formation suffers.',
@@ -122,7 +125,7 @@ notes = {
   'dx:hippo': 'Bilateral hippocampal removal: old memories and short-term recall survive, but no new declarative memory lasts '
               'beyond a few minutes — anterograde amnesia. Procedural memory (cerebellum, basal ganglia, motor cortex) is spared.',
   'dx:ca1': 'CA1 — the Sommer sector — is the most anoxia-vulnerable part of the hippocampus (cardiac arrest, near drowning, '
-            'severe hypoglycemia).',
+            'severe hypoglycemia). Short-term memory survives, but new facts are not kept long enough to become long-term.',
   'dx:cing': 'Bilateral anterior cingulate lesions blunt emotional responses and can cause akinetic mutism — immobile, mute, '
              'unresponsive but not in coma.',
   'dx:kb': 'Klüver-Bucy: bilateral temporal lesions abolish the amygdalae — placidity, hyperorality, hyperphagia, hypersexuality, '
@@ -141,7 +144,7 @@ dyn = dict(
               ['kb', 'Klüver-Bucy', 'kluverbucy'], ['acc', 'Nucleus accumbens', 'accumbens'], ['sep', 'Septal nuclei', 'septal']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Fundamental Neuroscience ch 31')
+  src='First Aid pp. 64, 509, 524, 575 · Fundamental Neuroscience ch 31 · Guyton ch 58–59')
 
 MAP = dict(
   id='papezsim', title='The Papez Circuit in Motion', topic='behav', after='limbmem',

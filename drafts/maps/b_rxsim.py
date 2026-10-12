@@ -2,9 +2,9 @@
 # A drug in the middle sends particles to every receptor it blocks: D₂ in the four dopamine pathways (the target
 # and three side-effect pathways), 5-HT₂A, histamine H₁, muscarinic, α₁, cardiac Na⁺ channels and the NE/5-HT
 # reuptake transporters. One `one` switch picks the drug (haloperidol, chlorpromazine, clozapine, olanzapine,
-# risperidone, aripiprazole, amitriptyline); each blocked box lights up with its consequence. Receptor lists are only
-# those the pinned cards state (antipsychotics, dapathways, eps, tca, h1blockers); drug-specific toxicities are
-# drawn as tags, not receptors. 6 readouts. FA pages in `fa`. No new cards.
+# risperidone, aripiprazole, amitriptyline); each blocked box lights up with its consequence. Receptor lists from the
+# pinned cards, FA p 591 (low-potency typicals = anti-H₁/α₁/muscarinic), Katzung ch 29 (atypicals' α, M, H₁ blockade;
+# aripiprazole 5-HT₂A) and Kaplan & Sadock ch 21; drug-specific toxicities are drawn as tags, not receptors. 6 readouts. FA pages in `fa`. No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -37,17 +37,18 @@ text('Psych drugs at the receptors — the target and the side effects', 180, 15
 text('every antipsychotic blocks D₂ in all four dopamine pathways; only one of them is the point', 180, 176, 'dyn-cap')
 
 # boxes: (key, x, y, w, title, role, blocked consequence, which drugs block it)
-# UNVERIFIED: chlorpromazine's sedation, anticholinergic effects and orthostasis are drawn at H₁, muscarinic and α₁ receptors — the card names the effects, not the receptors
+# chlorpromazine at H₁/muscarinic/α₁: FA p 591 (low-potency → antihistaminic, anti-α₁, antimuscarinic); clozapine/olanzapine M and
+# clozapine/risperidone α blockade: Katzung ch 29 table; olanzapine α₁, H₁ and clozapine α, sedation: Kaplan & Sadock ch 21
 D2 = ['halo', 'chlor', 'cloz', 'olan', 'risp']
 BOX = [
   ('ml', 200, 230, 'D₂ · mesolimbic', 'VTA → nucleus accumbens', 'positive symptoms fall — the therapeutic effect', D2),
   ('mc', 740, 230, 'D₂ · mesocortical', 'VTA → prefrontal cortex', 'negative symptoms — little help', D2),
   ('ns', 1280, 230, 'D₂ · nigrostriatal', 'substantia nigra → striatum', 'extrapyramidal symptoms', D2),
-  ('ti', 1820, 230, 'D₂ · tuberoinfundibular', 'dopamine inhibits prolactin', 'hyperprolactinemia: galactorrhea, amenorrhea', D2),
-  ('s2', 200, 940, '5-HT₂A', 'atypicals block it too', 'lets dopamine back into the striatum — less EPS', ['cloz', 'olan', 'risp']),
-  ('h1', 560, 940, 'Histamine H₁', '', 'sedation, weight gain', ['chlor', 'tca']),
-  ('mu', 920, 940, 'Muscarinic', '', 'anticholinergic: confusion, retention', ['chlor', 'tca']),
-  ('a1', 1280, 940, 'α₁', '', 'orthostatic hypotension', ['chlor', 'tca']),
+  ('ti', 1820, 230, 'D₂ · tuberoinfundibular', 'dopamine inhibits prolactin', 'hyperprolactinemia — most with typicals, risperidone', D2),
+  ('s2', 200, 940, '5-HT₂A', 'atypicals block it too', 'lets dopamine back into the striatum — less EPS', ['cloz', 'olan', 'risp', 'arip']),
+  ('h1', 560, 940, 'Histamine H₁', '', 'sedation, weight gain', ['chlor', 'tca', 'cloz', 'olan']),
+  ('mu', 920, 940, 'Muscarinic', '', 'anticholinergic: confusion, retention', ['chlor', 'tca', 'cloz', 'olan']),
+  ('a1', 1280, 940, 'α₁', '', 'orthostatic hypotension', ['chlor', 'tca', 'cloz', 'olan', 'risp']),
   ('na', 1640, 940, 'Cardiac Na⁺ channel', '', 'wide QRS — arrhythmia in overdose', ['tca']),
   ('rt', 2000, 940, 'NE and 5-HT reuptake', 'NET · SERT', 'antidepressant effect', ['tca']),
 ]
@@ -101,9 +102,9 @@ sites = [
 
 readouts = [
   dict(l='Positive symptoms', mods=[dict(when=O(*APS), d=-1)]),
-  dict(l='EPS risk', mods=[dict(when=O('halo', 'arip'), d=1)]),
-  dict(l='Prolactin', mods=[dict(when=O('halo', 'chlor', 'risp'), d=1)]),
-  dict(l='Sedation · anticholinergic', mods=[dict(when=O('chlor', 'tca'), d=1)]),
+  dict(l='EPS risk', mods=[dict(when=O('halo'), d=1)]),
+  dict(l='Prolactin', mods=[dict(when=O('halo', 'chlor', 'risp'), d=1), dict(when=O('olan', 'arip'), d=0)]),
+  dict(l='Sedation · anticholinergic', mods=[dict(when=O('chlor', 'tca', 'cloz', 'olan'), d=1)]),
   dict(l='Weight · glucose', mods=[dict(when=O('olan', 'cloz', 'tca'), d=1)]),
   dict(l='QRS in overdose', mods=[dict(when=O('tca'), d=1)]),
 ]
@@ -111,16 +112,17 @@ readouts = [
 notes = {
   '': 'Antipsychotics block D₂ in all four dopamine pathways at once: mesolimbic blockade treats positive symptoms, and each of the '
       'other three explains a side effect. Off-target blockade of H₁, muscarinic and α₁ receptors explains the rest.',
-  'rx:halo': 'Haloperidol, a high-potency typical, does little besides block D₂ — so it has the most extrapyramidal effects (and '
-             'NMS), plus hyperprolactinemia from the tuberoinfundibular pathway.',
+  'rx:halo': 'Haloperidol, a high-potency typical, acts mainly at D₂ (minimal muscarinic block, little sedation) — so it has the most '
+             'extrapyramidal effects (and NMS), plus hyperprolactinemia from the tuberoinfundibular pathway.',
   'rx:chlor': 'Chlorpromazine, a low-potency typical: weaker at D₂ but sedating, anticholinergic and hypotensive — the H₁, muscarinic '
               'and α₁ pattern — with corneal deposits.',
   'rx:cloz': 'Clozapine, for treatment-resistant schizophrenia and suicidality: atypical (5-HT₂A as well as D₂), with agranulocytosis '
-             '(frequent ANC checks), seizures, myocarditis and weight gain.',
+             '(frequent ANC checks), seizures, myocarditis and weight gain. It also blocks muscarinic, α₁ and H₁ receptors, yet causes almost no EPS.',
   'rx:olan': 'Olanzapine, an atypical: 5-HT₂A blockade cuts EPS, but with clozapine it causes the most weight gain, hyperglycemia and '
-             'dyslipidemia — monitor weight, glucose and lipids.',
-  'rx:risp': 'Risperidone, an atypical best known for hyperprolactinemia — galactorrhea, amenorrhea, gynecomastia.',
-  'rx:arip': 'Aripiprazole is a D₂ partial agonist rather than a blocker — and can cause severe akathisia.',
+             'dyslipidemia — monitor weight, glucose and lipids. It also blocks muscarinic, H₁ and α₁ receptors; prolactin barely rises.',
+  'rx:risp': 'Risperidone, an atypical best known for hyperprolactinemia — galactorrhea, amenorrhea, gynecomastia. Some α₁ block too.',
+  'rx:arip': 'Aripiprazole is a D₂ partial agonist rather than a blocker, and blocks 5-HT₂A: very low EPS and no prolactin rise '
+             '(Katzung), though it can cause severe akathisia.',
   'rx:tca': 'Amitriptyline blocks NE and 5-HT reuptake (the antidepressant effect) but also H₁, muscarinic and α₁ receptors and '
             'cardiac Na⁺ channels — sedation, anticholinergic effects, orthostasis, and a wide QRS in overdose.',
 }
@@ -133,7 +135,7 @@ dyn = dict(
     ['tca', 'Amitriptyline (TCA)', 'tca']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 509, 577, 587, 591, 593 · Katzung ch 29, 30')
+  src='First Aid pp. 509, 577, 587, 591, 593 · Katzung ch 29, 30 · Kaplan & Sadock ch 21')
 
 MAP = dict(
   id='rxsim', title='Psych Drugs at the Receptors', topic='behav', after='psyrxprin',
@@ -151,7 +153,7 @@ MAP = dict(
     ('rx5', 'Tricyclics', 2000, 1340, 'rcDrug', 'five targets', ['tca']),
     ('rx6', 'Anticholinergic · α₁ · H₁', 330, 1470, 'rcOff', 'the off-target effects', ['antimusc', 'alpha1drugs', 'h1blockers'])],
   panels=[
-    (2420, PANY, 1000, 'Pathway → effect (First Aid p. 591)', [
+    (2420, PANY, 1000, 'Pathway → effect (First Aid pp. 509, 591)', [
       ('Mesolimbic', 'positive symptoms — the target'),
       ('Mesocortical', 'negative symptoms — little effect'),
       ('Nigrostriatal', 'extrapyramidal symptoms'),

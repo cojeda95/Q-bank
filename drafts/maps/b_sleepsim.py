@@ -86,11 +86,11 @@ def gram(seq):
 # five cycles: N3 early, REM growing toward morning
 NORMAL = [(0, 'W'), (0.25, 'N1'), (0.4, 'N2'), (0.7, 'N3'), (1.2, 'N2'), (1.35, 'R'), (1.5, 'N2'), (1.9, 'N3'), (2.3, 'N2'), (2.75, 'R'), (3.0, 'N2'),
           (3.6, 'N3'), (3.8, 'N2'), (4.4, 'R'), (4.8, 'N2'), (5.7, 'R'), (6.2, 'N2'), (6.9, 'R'), (7.6, 'W'), (8, 'W')]
-DEP = [(0, 'W'), (0.3, 'N1'), (0.45, 'N2'), (0.8, 'R'), (1.3, 'N2'), (1.9, 'N3'), (2.1, 'N2'), (2.6, 'R'), (3.2, 'N2'), (4.0, 'R'), (4.7, 'N2'), (5.2, 'R'),
+DEP = [(0, 'W'), (0.3, 'N1'), (0.45, 'N2'), (0.8, 'R'), (1.3, 'N2'), (1.9, 'N3'), (2.1, 'N2'), (2.6, 'R'), (3.0, 'N2'), (3.4, 'W'), (3.6, 'N2'), (4.0, 'R'), (4.7, 'N2'), (5.2, 'R'),
        (6.0, 'W'), (8, 'W')]
 NARC = [(0, 'W'), (0.1, 'R'), (0.5, 'N2'), (0.8, 'N3'), (1.2, 'N2'), (1.5, 'R'), (1.9, 'W'), (2.1, 'N2'), (2.8, 'R'), (3.2, 'N2'), (3.9, 'W'), (4.1, 'R'),
         (4.6, 'N2'), (5.4, 'R'), (6.0, 'W'), (6.3, 'N2'), (7.0, 'R'), (7.6, 'W'), (8, 'W')]
-ALC = [(0, 'W'), (0.2, 'N1'), (0.3, 'N2'), (1.6, 'N2'), (1.8, 'N3'), (2.0, 'N2'), (4.0, 'N2'), (4.3, 'R'), (4.5, 'N2'), (6.0, 'N2'), (6.3, 'R'), (6.6, 'N1'),
+ALC = [(0, 'W'), (0.1, 'N1'), (0.15, 'N2'), (1.6, 'N2'), (1.8, 'N3'), (2.0, 'N2'), (4.0, 'N2'), (4.3, 'R'), (4.5, 'N2'), (5.0, 'W'), (5.2, 'N2'), (6.0, 'N2'), (6.3, 'R'), (6.6, 'N1'),
        (7.0, 'W'), (8, 'W')]
 AGE = [(0, 'W'), (0.8, 'N1'), (1.0, 'N2'), (1.5, 'N3'), (1.7, 'N2'), (2.2, 'R'), (2.4, 'N2'), (3.2, 'W'), (3.4, 'N2'), (4.2, 'R'), (4.5, 'N2'), (5.6, 'R'),
        (5.9, 'W'), (8, 'W')]
@@ -101,9 +101,9 @@ for k, seq in GR.items():
     cond = W(k) if k != 'nl' else ['!who:*']
     add(f'<path d="{d}" style="fill:none;stroke:var(--dk11);stroke-width:5;stroke-linejoin:round"/>', when=cond)
     flows.append(dict(d=d, len=ln, speed=160, r=10, base=dict(you=1), when=cond))
-TAG = dict(dep='REM comes early (short REM latency), less N3, more REM, early-morning waking',
+TAG = dict(dep='REM comes early (short REM latency), less N3, more REM, wakings in the night and early in the morning',
            narc='REM within minutes of falling asleep — sleep-onset REM; sleep and REM intrude into the day',
-           alc='less N3 and less REM', age='longer to fall asleep, less N3 and REM, early waking')
+           alc='falls asleep fast, but less N3 and REM (more N2) and wakings later in the night', age='longer to fall asleep, less N3 and REM, early waking')
 for k, t in TAG.items():
     text(t, 190, 1290, 'nf-l1 dyn-tag', when=W(k))
 text('normal: N3 early in the night, REM periods lengthening toward morning', 190, 1290, 'nf-l1', unless=['who:*'])
@@ -115,7 +115,8 @@ readouts = [
   dict(l='REM latency', mods=[dict(when=W('dep', 'narc'), d=-1)]),
   dict(l='N3 (slow-wave sleep)', mods=[dict(when=W('dep', 'alc', 'age'), d=-1)]),
   dict(l='REM sleep', mods=[dict(when=W('dep'), d=1), dict(when=W('alc', 'age'), d=-1)]),
-  dict(l='Time to fall asleep', mods=[dict(when=W('age'), d=1), dict(when=W('narc'), d=-1)]),
+  dict(l='Time to fall asleep', mods=[dict(when=W('age'), d=1), dict(when=W('narc', 'alc'), d=-1)]),
+  dict(l='Night awakenings', mods=[dict(when=W('dep', 'alc'), d=1)]),
 ]
 
 notes = {
@@ -129,10 +130,12 @@ notes = {
             'memory.',
   'stg:rem': 'REM, about 25%: a beta-like EEG with atonia of everything but the diaphragm and eye muscles; dreams and nightmares '
              '(remembered), penile and clitoral tumescence.',
-  'who:dep': 'Depression: REM comes early (short REM latency), N3 falls, REM rises, and the patient wakes early in the morning.',
-  'who:narc': 'Narcolepsy: orexin (hypocretin) neurons are lost, so the patient falls straight into REM — very short REM latency, '
-              'cataplexy, hypnagogic hallucinations, sleep paralysis.',
-  'who:alc': 'Alcohol, benzodiazepines and barbiturates reduce N3 and REM.',
+  'who:dep': 'Depression: REM comes early (short REM latency), N3 falls, REM rises, and the patient wakes repeatedly at night and '
+             'early in the morning (terminal insomnia).',
+  'who:narc': 'Narcolepsy: orexin (hypocretin) from the lateral hypothalamus is deficient, so the patient falls asleep within minutes '
+              'and straight into REM — very short REM latency, cataplexy, hypnagogic hallucinations, sleep paralysis.',
+  'who:alc': 'Alcohol, benzodiazepines and barbiturates shorten the time to fall asleep but reduce N3 and REM (N2 grows). '
+             'Alcohol also fragments the second half of the night with awakenings.',
   'who:age': 'Aging: less N3 and REM, a longer time to fall asleep, and early waking.',
 }
 
@@ -144,15 +147,15 @@ dyn = dict(
                                                                       ['alc', 'Alcohol · benzodiazepines', 'sleepstages'], ['age', 'Aging', 'sleepstages']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 507, 578, 585 · Kaplan & Sadock ch 15')
+  src='First Aid pp. 507, 562, 585 · Kaplan & Sadock ch 4, 7, 15 · Katzung ch 22 · Costanzo ch 3')
 
 MAP = dict(
   id='sleepsim', title='Sleep Stages in Motion', topic='behav', after='sleepdev',
   sub='Step through the EEG of each sleep stage and what happens in it, then watch a night’s hypnogram — and how depression, '
-      'narcolepsy, alcohol and aging reshape it. The readouts give REM latency, slow-wave sleep, REM and time to fall asleep',
+      'narcolepsy, alcohol and aging reshape it. The readouts give REM latency, slow-wave sleep, REM, time to fall asleep and night awakenings',
   w=3500, h=1640,
   fa='507–508, 562, 578, 585, 697',
-  src=[full('Kaplan & Sadock', 15), full('Kaplan & Sadock', 7)],
+  src=[full('Kaplan & Sadock', 15), full('Kaplan & Sadock', 7), full('Kaplan & Sadock', 4), full('Katzung', 22), full('Costanzo', 3)],
   lanes=[('slStage', 'Sleep stages', 'glycolysis'), ('slDz', 'Sleep disorders', 'tca'), ('slShift', 'What shifts the night', 'gluconeo')],
   nodes=[
     ('sl1', 'Sleep stages & EEG waves', 330, 1420, 'slStage', 'BATS Drink Blood', ['sleepstages'], 'hub'),

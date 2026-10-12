@@ -29,7 +29,7 @@ def box(x0, y0, x1, y1):
 D = lambda *k: [f'dx:{x}' for x in k]
 PANY = 1180
 def X(cx, cy, s=16): return f'<path d="M{cx - s} {cy - s} L{cx + s} {cy + s} M{cx + s} {cy - s} L{cx - s} {cy + s}" class="nf-x"/>'
-STEPS = [(420, 'α-chains', 'Gly-X-Y repeat'), (860, 'Hydroxylation', 'prolyl · lysyl hydroxylase'), (1300, 'Triple helix', 'procollagen'),
+STEPS = [(420, 'α-chains', 'Gly-X-Y repeat'), (860, 'Hydroxylation', 'prolyl · lysyl hydroxylase'), (1300, 'Triple helix', 'glycosylation · procollagen'),
          (1740, 'Propeptides cut', 'N- and C-peptidases'), (2180, 'Cross-linked fibril', 'lysyl oxidase')]
 Y = 480
 BLOCK = dict(scurvy=1, kypho=1, oi=2, arthro=3, derma=3, menkes=4)
@@ -41,6 +41,11 @@ for i, (x, lab, sub) in enumerate(STEPS):
     if i: add(f'<path d="M{STEPS[i - 1][0] + 170} {Y} H{x - 170}" class="dyn-line"/>')
 text('needs vitamin C (ascorbate) + Fe²⁺', 860, Y + 100, 'nf-l2', 'middle')
 text('needs copper', 2180, Y + 100, 'nf-l2', 'middle')
+# where it happens (FA p 48, Pawlina ch 6): chains to procollagen inside the fibroblast (RER, Golgi); exocytosis; then outside
+add(f'<path d="M1520 {Y - 100} V{Y + 170}" class="dyn-dash"/>')
+text('exocytosis', 1520, Y - 116, 'nf-l2', 'middle')
+text('◀ inside the fibroblast (RER, Golgi)', 1500, Y + 160, 'nf-l2', 'end')
+text('outside the cell ▶', 1540, Y + 160, 'nf-l2')
 for k, i in BLOCK.items():
     x = STEPS[i][0]
     add(X(x - 150, Y - 80), when=D(k))
@@ -56,13 +61,16 @@ add('<path d="M1180 760 h-50 M1420 760 h50" style="stroke:var(--bad);stroke-widt
 text('propeptides left on', 1300, 700, 'nf-l1 dyn-tag', 'middle', when=D('arthro', 'derma'))
 for i in range(4):
     add(f'<rect x="{1960 + (i % 2) * 120}" y="{720 + i * 22}" width="220" height="14" rx="6" style="fill:var(--dk2);opacity:.6"/>')
+    add(f'<rect x="{1960 + (i % 2) * 120}" y="{720 + i * 22}" width="220" height="14" rx="6" style="fill:none;stroke:var(--bad);stroke-width:4"/>',
+        when=D('vasc', 'classic'))   # the abnormal chain (type III / type V) is built into the fibril
 for x in (2040, 2120, 2200):
     add(f'<path d="M{x} 720 V800" style="stroke:var(--dk4);stroke-width:4"/>', unless=D('menkes', 'kypho'))
 text('cross-links', 2180, 840, 'nf-l2', 'middle')
+text('abnormal collagen in the fibril', 2180, 700, 'nf-l1 dyn-tag', 'middle', when=D('vasc', 'classic'))
 TAG = dict(scurvy='no hydroxyproline — the helix can’t hydrogen-bond, collagen degrades', oi='glycine substitution — chains can’t pack; one bad chain poisons the trimer',
            kypho='PLOD1: no hydroxylysine → no cross-links', arthro='COL1A1/2 chains resist cleavage — dominant',
            derma='procollagen N-peptidase (ADAMTS2) missing — recessive', menkes='ATP7A: copper can’t reach lysyl oxidase',
-           vasc='type III collagen (COL3A1) — arteries, bowel, gravid uterus rupture', classic='type V collagen (COL5A1/2) — fragile, scarring skin')
+           vasc='type III collagen (COL3A1) — arteries, bowel, gravid uterus rupture', classic='type V collagen (COL5A1/2) — fragile, stretchy skin, loose joints')
 for k, t in TAG.items(): text(t, 1300, 300, 'nf-l1 dyn-tag', 'middle', when=D(k))
 # collagen types panel
 TY = dict(t1=('Type I — 90%', 'bone, skin, tendon, dentin, fascia, cornea, late wound repair · OI'),
@@ -100,19 +108,21 @@ readouts = [
 notes = {
   '': 'Collagen chains carry a Gly-X-Y repeat; prolyl and lysyl hydroxylase (vitamin C, Fe²⁺) add hydroxyl groups; three chains pack into '
       'a triple helix (procollagen); specific peptidases cut off the N- and C-terminal propeptides; lysyl oxidase (copper) cross-links the '
-      'molecules. EDS subtypes, OI, scurvy and Menkes each break a different step.',
-  'dx:scurvy': 'Scurvy: ascorbate keeps the hydroxylases’ iron reduced; without hydroxyproline the helix can’t hydrogen-bond and degrades — '
-               'swollen gums, bruising, perifollicular hemorrhage, corkscrew hairs, poor wound healing; normal platelets and coags.',
+      'molecules. The helix forms inside the fibroblast; cleavage and cross-linking happen after exocytosis. EDS subtypes, OI, scurvy '
+      'and Menkes each break a different step.',
+  'dx:scurvy': 'Scurvy: the hydroxylases need ascorbate (and iron); without hydroxyproline the helix can’t hydrogen-bond and degrades — '
+               'swollen gums, bruising, perifollicular hemorrhage, corkscrew hairs, poor wound healing; the bleeding is from weak vessels.',
   'dx:oi': 'Osteogenesis imperfecta: a glycine substitution in COL1A1/COL1A2 stops the chains packing — dominant negative. Fractures with '
            'minimal trauma, blue sclerae, hearing loss, dentinogenesis imperfecta. Bisphosphonates.',
   'dx:kypho': 'Kyphoscoliotic EDS: PLOD1 lysyl hydroxylase deficiency — no hydroxylysine, no cross-links; scoliosis, ocular fragility. Recessive.',
   'dx:arthro': 'Arthrochalasia EDS: COL1A1/2 chains resist propeptide cleavage — dominant.',
   'dx:derma': 'Dermatosparaxis EDS: procollagen N-peptidase (ADAMTS2) deficiency — recessive enzyme defect.',
   'dx:menkes': 'Menkes disease: ATP7A copper transport fails, so lysyl oxidase can’t cross-link — kinky hair, hypotonia, developmental '
-               'delay, cerebral aneurysms; ↓ serum copper.',
+               'delay, cerebral aneurysms. X-linked recessive.',
   'dx:vasc': 'Vascular EDS: abnormal type III collagen (COL3A1) — spontaneous rupture of arteries, colon, gravid uterus; skin usually not '
              'hyperextensible.',
-  'dx:classic': 'Classic EDS: type V collagen (COL5A1/2) — marked skin fragility and scarring. Hypermobile EDS is the commonest, gene unknown.',
+  'dx:classic': 'Classic EDS: type V collagen (COL5A1/2) — hyperextensible, fragile skin and hypermobile joints. Hypermobile EDS is the '
+                'commonest type; its gene is unknown.',
 }
 
 dyn = dict(
@@ -125,7 +135,7 @@ dyn = dict(
               ['t1', 'Type I', 'collagentypes'], ['t2', 'Type II', 'collagentypes'], ['t3', 'Type III', 'collagentypes'], ['t4', 'Type IV', 'collagentypes']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 48–49, 67, 212 · Robbins ch 5 · Pawlina ch 6')
+  src='First Aid pp. 48–49, 67, 212 · Robbins ch 5, 9, 26 · Marks ch 37, 47 · Pawlina ch 6')
 
 MAP = dict(
   id='colsim', title='Collagen Assembly in Motion', topic='bio', after='collagen',
@@ -133,7 +143,8 @@ MAP = dict(
       'each step: scurvy, osteogenesis imperfecta, the EDS subtypes and Menkes; then see where types I–IV live',
   w=3600, h=1900,
   fa='48, 49, 67, 212',
-  src=['Pawlina ch 6 — Connective Tissue', 'Robbins ch 5 — Genetic disorders'],
+  src=['Pawlina ch 6 — Connective Tissue', 'Robbins ch 5 — Genetic disorders', full('Robbins', 9), full('Robbins', 26), full('Marks', 37),
+       full('Marks', 47)],
   lanes=[('coStep', 'Synthesis defects', 'glycolysis'), ('coEds', 'Ehlers-Danlos', 'tca'), ('coType', 'Types', 'gluconeo')],
   nodes=[
     ('co1', 'Collagen types', 330, 1660, 'coType', 'I bone · II cartilage · III vessels · IV BM', ['collagentypes'], 'hub'),
@@ -146,7 +157,7 @@ MAP = dict(
     ('co8', 'Vascular · classic EDS', 1200, 1790, 'coEds', 'type III · type V', ['edsvasc', 'edsclassic']),
     ('co9', 'Hypermobile EDS', 1640, 1790, 'coEds', 'commonest, gene unknown', ['edshyper'])],
   panels=[
-    (2500, PANY, 1000, 'Step → disease', [
+    (2500, PANY, 1000, 'Step → disease (First Aid pp. 48–49 · Robbins ch 5)', [
       ('Hydroxylation (vit C, Fe²⁺)', 'scurvy · kyphoscoliotic EDS'), ('Triple helix (glycine)', 'osteogenesis imperfecta'),
       ('Propeptide cleavage', 'arthrochalasia, dermatosparaxis EDS'), ('Cross-linking (Cu)', 'Menkes'), ('Which collagen', 'vascular (III), classic (V)')])],
   dyn=dyn)

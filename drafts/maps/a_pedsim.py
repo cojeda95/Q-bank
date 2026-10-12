@@ -3,7 +3,7 @@
 # switch picks the inheritance pattern — autosomal dominant, autosomal recessive, X-linked recessive, X-linked dominant,
 # mitochondrial — and the family fills in to match; a second `steps` switch (auto) reveals the generations one at a time
 # while the mutant allele travels down the lines from the parent who passes it. 3 readouts. Facts from the pinned cards;
-# FA pages in `fa`. The family itself is an illustration — one possible family for each pattern. No new cards.
+# FA pp. 57–60. The family itself is an illustration — one possible family for each pattern. No new cards.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -40,13 +40,13 @@ P = {'I1': (760, 'I', 'm'), 'I2': (1060, 'I', 'f'),
      'III4': (1260, 'III', 'm'), 'III5': (1460, 'III', 'f'), 'III6': (1660, 'III', 'f')}
 ST = dict(   # A affected, C carrier, N normal
   ad=dict(I1='A', II1='A', II2='A', III1='A', III2='A'),
-  ar=dict(I1='C', I2='C', II1='A', II2='C', H2='C', III1='A', III2='C'),
+  ar=dict(I1='C', I2='C', II1='A', II2='A', II3='C', III1='C', III2='C', III3='C'),
   xlr=dict(I2='C', II1='A', II2='C', III1='A', III2='C'),
   xld=dict(I1='A', II2='A', III1='A', III2='A'),
   mito=dict(I2='A', II1='A', II2='A', II3='A', III1='A', III2='A', III3='A'))
 PASS = dict(  # parent → child edges the mutant allele travels
   ad=[('I1', 'II1'), ('I1', 'II2'), ('II2', 'III1'), ('II2', 'III2')],
-  ar=[('I1', 'II1'), ('I2', 'II1'), ('I1', 'II2'), ('II2', 'III1'), ('H2', 'III1'), ('H2', 'III2')],
+  ar=[('I1', 'II1'), ('I2', 'II1'), ('I1', 'II2'), ('I2', 'II2'), ('I2', 'II3'), ('II2', 'III1'), ('II2', 'III2'), ('II2', 'III3')],
   xlr=[('I2', 'II1'), ('I2', 'II2'), ('II2', 'III1'), ('II2', 'III2')],
   xld=[('I1', 'II2'), ('II2', 'III1'), ('II2', 'III2')],
   mito=[('I2', 'II1'), ('I2', 'II2'), ('I2', 'II3'), ('II2', 'III1'), ('II2', 'III2'), ('II2', 'III3')])
@@ -119,7 +119,7 @@ notes = {
   'mode:ad': 'Autosomal dominant: one mutant allele is enough — often structural genes, pleiotropic and variably expressive. Vertical '
              'transmission in both sexes; male-to-male transmission rules out X-linkage.',
   'mode:ar': 'Autosomal recessive: both alleles lost — usually enzyme deficiencies, severe, in childhood. Horizontal: affected siblings of '
-             'unaffected carrier parents; consanguinity raises the risk.',
+             'unaffected carrier parents; consanguinity raises the risk. An affected parent and a non-carrier have only carrier children.',
   'mode:xlr': 'X-linked recessive: males with one mutant X are affected; it skips generations through carrier females. Females are '
               'affected only if homozygous, 45,X, or with skewed lyonization.',
   'mode:xld': 'X-linked dominant: one mutant X causes disease in either sex. Affected father → all daughters, no sons; affected mother → '
@@ -145,7 +145,7 @@ MAP = dict(
   sub='One family, five inheritance patterns: pick autosomal dominant, autosomal recessive, X-linked recessive, X-linked dominant or '
       'mitochondrial and watch the generations fill in as the mutant allele passes down',
   w=3600, h=1900,
-  fa='55, 57, 58, 59, 60',
+  fa='57, 58, 59, 60',
   src=['Robbins ch 5 — Genetic disorders', 'Marks ch 18 — An Introduction to Human Genetics',
        'Marks ch 24 — Oxidative Phosphorylation and Mitochondrial Function'],
   lanes=[('pdAuto', 'Autosomal', 'glycolysis'), ('pdX', 'X-linked', 'tca'), ('pdMito', 'Mitochondrial', 'gluconeo')],

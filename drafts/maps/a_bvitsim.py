@@ -62,6 +62,7 @@ add('<rect x="40" y="440" width="140" height="60" rx="16" style="fill:var(--dk3)
 add('<path d="M180 470 C210 520 200 560 180 590" style="fill:none;stroke:var(--dk3);stroke-width:5;stroke-dasharray:8 6"/>'); text('B6 needed', 210, 540, 'nf-l2')
 add('<path d="M110 440 V420" style="stroke:var(--bad);stroke-width:5"/>', when=C('carcinoid')); text('→ serotonin', 120, 410, 'nf-l2', when=C('carcinoid'))
 add('<rect x="40" y="440" width="140" height="60" rx="16" style="fill:none;stroke:var(--bad);stroke-width:4"/>', when=C('hartnup'))
+add('<path d="M176 558 L204 586 M204 558 L176 586" class="nf-x"/>', when=C('inh'))   # isoniazid: no B6 for the step
 # body
 BX, BY = 1700, 820
 add(f'<circle cx="{BX}" cy="{BY - 360}" r="90" style="fill:var(--dk2);fill-opacity:.06;stroke:var(--dk2);stroke-width:4"/>')
@@ -71,7 +72,7 @@ SPOT = dict(b2=[(BX - 20, BY - 330), (BX + 30, BY - 380)], b3=[(BX, BY - 250), (
 for k, pts in SPOT.items():
     for x, y in pts:
         add(f'<circle cx="{x}" cy="{y}" r="30" style="fill:var(--bad);fill-opacity:.4"/>', when=LOST[k])
-for k, s in SIGN.items(): text(s, BX, BY + 470, 'nf-l1 dyn-tag', 'middle', when=LOST[k])
+for i, (k, s) in enumerate(SIGN.items()): text(s, BX, BY + 470 + 20 * i, 'nf-l1 dyn-tag', 'middle', when=LOST[k])   # a deficiency and a cause can both be on: one line each
 CT = dict(corn='untreated corn diet', hartnup='Hartnup disease — tryptophan not absorbed', carcinoid='malignant carcinoid — tryptophan diverted to serotonin',
           inh='isoniazid — depletes B6', egg='raw egg whites — avidin binds biotin', abx='prolonged antibiotics')
 for k, s in CT.items(): text('cause: ' + s, 1150, 1520, 'nf-l1', 'middle', when=C(k))
@@ -91,15 +92,15 @@ sites = [dict(x=VIT['b2'][0] - 140, y=VIT['b2'][1], n=[-1, 0], w=10, t='rec', l=
          dict(x=VIT['zn'][0] - 140, y=VIT['zn'][1], n=[-1, 0], w=10, t='rec', l='', aria='Zinc', c='zinc', ions=[])]
 
 readouts = [
-  dict(l='TCA cycle flux', mods=[dict(when=LOST['b2'] + LOST['b5'], d=-1)]),
+  dict(l='TCA cycle flux', mods=[dict(when=LOST['b2'] + LOST['b3'] + LOST['b5'], d=-1)]),
   dict(l='Gluconeogenesis', mods=[dict(when=LOST['b7'], d=-1)]),
-  dict(l='Skin & hair', mods=[dict(when=LOST['b3'] + LOST['b5'] + LOST['b7'] + LOST['zn'], d=-1)]),
+  dict(l='Skin & hair', mods=[dict(when=LOST['b2'] + LOST['b3'] + LOST['b5'] + LOST['b7'] + LOST['zn'], d=-1)]),
   dict(l='Wound healing · immunity', mods=[dict(when=LOST['zn'], d=-1)]),
 ]
 
 notes = {
-  '': 'Each water-soluble vitamin becomes a coenzyme for a set of enzymes; zinc holds hundreds of enzymes and transcription '
-      'factors together. Remove one to see what stalls and what shows.',
+  '': 'Each water-soluble vitamin becomes a coenzyme for a set of enzymes; zinc is needed by 100+ enzymes and forms the '
+      'zinc fingers of transcription factors. Remove one to see what stalls and what shows.',
   'def:b2': 'Riboflavin → FAD and FMN for succinate dehydrogenase, acyl-CoA dehydrogenase, glutathione reductase. Deficiency: '
             'cheilosis, corneal vascularization (the 2 C’s), magenta tongue.',
   'def:b3': 'Niacin → NAD⁺ and NADP⁺; also made from tryptophan with B6. Pellagra: diarrhea, dermatitis (Casal necklace), dementia; '
@@ -108,10 +109,10 @@ notes = {
             'enteritis, alopecia, adrenal insufficiency, burning feet.',
   'def:b7': 'Biotin carries CO₂ for every carboxylase — gluconeogenesis, fatty-acid synthesis and odd-chain catabolism stall: '
             'dermatitis, alopecia, enteritis.',
-  'def:zn': 'Zinc: fast-turnover tissues fail first — periorificial and acral rash, hair loss, diarrhea (acrodermatitis '
-            'enteropathica), poor healing, low immunity, hypogonadism, dysgeusia, anosmia.',
-  'cause:corn': 'An untreated corn diet causes pellagra.', 'cause:hartnup': 'Hartnup disease: tryptophan is not absorbed → pellagra.',
-  'cause:carcinoid': 'Malignant carcinoid diverts tryptophan to serotonin → pellagra.', 'cause:inh': 'Isoniazid depletes B6, so tryptophan cannot become niacin.',
+  'def:zn': 'Zinc: periorificial and acral rash, hair loss, diarrhea (acrodermatitis enteropathica — congenital zinc '
+            'malabsorption); poor wound healing, low immunity, male hypogonadism, dysgeusia, anosmia.',
+  'cause:corn': 'An untreated corn diet causes pellagra (common in resource-limited areas).', 'cause:hartnup': 'Hartnup disease: tryptophan is not absorbed → pellagra.',
+  'cause:carcinoid': 'Malignant carcinoid diverts tryptophan to serotonin → pellagra.', 'cause:inh': 'Isoniazid depletes B6, so tryptophan cannot become niacin (✕ on the B6 step) → pellagra.',
   'cause:egg': 'Raw egg whites: avidin binds biotin.', 'cause:abx': 'Prolonged antibiotic use causes biotin deficiency.',
 }
 
@@ -126,15 +127,16 @@ dyn = dict(
               ['inh', 'Isoniazid (B3)', 'b3def'], ['egg', 'Raw egg whites (B7)', 'b7def'], ['abx', 'Antibiotics (B7)', 'b7def']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Marks ch 23')
+  src='First Aid pp. 63–66, 69 · Marks ch 23, 25, 28, 30 · Guyton ch 72 · Robbins ch 9')
 
 MAP = dict(
   id='bvitsim', title='B Vitamins & Zinc in Motion', topic='bio', after='vitamins',
   sub='Watch riboflavin, niacin, pantothenate, biotin and zinc become the coenzymes that run their enzymes — then take one away and '
       'see the enzymes stall and the deficiency show',
   w=3600, h=1900,
-  fa='65, 66, 69',
-  src=['Marks ch 23 — Tricarboxylic Acid Cycle', 'Robbins ch 9 — Environmental and nutritional diseases'],
+  fa='63, 65, 66, 69',
+  src=['Marks ch 23 — Tricarboxylic Acid Cycle', 'Robbins ch 9 — Environmental and nutritional diseases', full('Marks', 25), full('Marks', 28),
+       full('Marks', 30), full('Marks', 31), full('Guyton', 72)],
   lanes=[('bvB', 'B vitamins', 'tca'), ('bvMin', 'Mineral', 'glycolysis')],
   nodes=[
     ('bv1', 'Riboflavin (B2)', 330, 1720, 'bvB', 'FAD · 2 C’s', ['b2def'], 'hub'),
@@ -143,6 +145,6 @@ MAP = dict(
     ('bv4', 'Biotin (B7)', 1640, 1720, 'bvB', 'carboxylases · avidin', ['b7def']),
     ('bv5', 'Zinc deficiency', 2080, 1720, 'bvMin', 'acrodermatitis', ['zinc'])],
   panels=[
-    (2500, PANY, 1000, 'Coenzyme for each (Marks)', [
+    (2500, PANY, 1000, 'Coenzyme for each (First Aid pp. 63–66, 69)', [
       ('B2', 'FAD, FMN'), ('B3', 'NAD⁺, NADP⁺'), ('B5', 'CoA'), ('B7', 'carboxylases'), ('Zinc', 'zinc fingers, metalloenzymes')])],
   dyn=dyn)

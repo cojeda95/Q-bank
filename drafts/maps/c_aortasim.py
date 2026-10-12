@@ -69,6 +69,9 @@ text('subclavian stenosis before the vertebral', 1150, 230, 'nf-l1 dyn-tag', 'mi
 add(X(1000, 1570, 14) + X(1100, 1570, 14), when=O('pad'))
 text('claudication · Leriche: buttock pain, impotence', 1180, 1540, 'nf-l1 dyn-tag', when=O('pad'))
 text('crystals shower downstream: blue toes, AKI — pulses intact', 1180, 1540, 'nf-l1 dyn-tag', when=O('chol'))
+add('<path d="M1012 448 l22 14 l-14 10 l26 16" style="fill:none;stroke:var(--bad);stroke-width:7;stroke-linecap:round"/>' + '<ellipse cx="1040" cy="470" rx="44" ry="40" style="fill:var(--nf-blood);fill-opacity:.3;stroke:var(--bad);stroke-width:4;stroke-dasharray:8 6"/>', when=O('trauma'))
+text('traumatic rupture at the isthmus', 1110, 600, 'nf-l1 dyn-tag', when=O('trauma'))
+text('deceleration injury · widened mediastinum', 1110, 624, 'nf-l2', when=O('trauma'))
 
 # ════════ the artery wall, close up ════════
 IX0, IX1, IY = 1550, 2380, 560
@@ -115,9 +118,10 @@ sites = [dict(x=1050, y=1200, n=[1, 0], w=10, t='rec', l='', aria='Abdominal aor
 readouts = [
   dict(l='Arm BP difference', mods=[dict(when=O('dissa', 'steal'), d=1)]),
   dict(l='Brain flow', mods=[dict(when=O('steal'), d=-1)]),
-  dict(l='Leg flow', mods=[dict(when=O('pad'), d=-1), dict(when=O('chol'), d=0)]),
+  dict(l='Leg pulses', mods=[dict(when=O('pad'), d=-1), dict(when=O('chol'), d=0)]),
   dict(l='Kidney function', mods=[dict(when=O('chol'), d=-1)]),
   dict(l='Aortic regurgitation', mods=[dict(when=O('taa', 'dissa'), d=1)]),
+  dict(l='Mediastinum on x-ray (width)', mods=[dict(when=O('dissa', 'dissb', 'trauma'), d=1)]),
 ]
 
 notes = {
@@ -128,16 +132,19 @@ notes = {
   'pl:fibrous': 'Smooth muscle migrates in (PDGF, FGF), proliferates and lays down matrix — a fibrous plaque.',
   'pl:complex': 'Complicated atheroma: calcification (calcium content tracks complication risk), rupture and thrombosis.',
   'dx:aaa': 'Abdominal aortic aneurysm: transmural inflammation and matrix breakdown, usually infrarenal where the vasa vasorum is '
-            'sparse — older male smoker, pulsatile mass; rupture: pulsatile mass + abdominal/back pain + hypotension. No abdominal OMT.',
+            'sparse — older male smoker, pulsatile mass; rupture: pulsatile mass + abdominal/back pain + hypotension. A ruptured or '
+            'dissecting AAA is an absolute contraindication to abdominal or lumbar OMT.',
   'dx:taa': 'Thoracic aortic aneurysm: cystic medial degeneration (hypertension, bicuspid valve, Marfan) or tertiary syphilis '
             '(vasa vasorum endarteritis) — root dilation causes aortic regurgitation.',
   'dx:dissa': 'Dissection, Stanford A: an intimal tear lets blood into the media and track along a false lumen through the ascending '
               'aorta — tearing chest pain to the back, unequal arm pressures, widened mediastinum; acute AR or tamponade. Surgery.',
   'dx:dissb': 'Dissection, Stanford B: descending aorta only, below the left subclavian — β-blockers, then vasodilators.',
+  'dx:trauma': 'Traumatic aortic rupture: a deceleration injury (car crash, major fall) tears the aorta most often at the isthmus — '
+               'the proximal descending aorta just past the left subclavian origin. The x-ray may show a widened mediastinum.',
   'dx:steal': 'Subclavian steal: the subclavian is narrowed before the vertebral, so the exercising arm pulls blood backward down the '
               'vertebral artery from the brain — arm pain, dizziness, vertigo, >15 mm Hg arm BP difference.',
   'dx:pad': 'Peripheral artery disease: atherosclerotic narrowing limits leg flow — claudication relieved by rest; Leriche (aortoiliac): '
-            'buttock pain, impotence, weak femoral pulses. Cilostazol.',
+            'buttock/thigh claudication, impotence, weak femoral pulses. Cilostazol (PDE-3 inhibitor).',
   'dx:chol': 'Cholesterol emboli: after angiography or a graft, crystals shower from aortic plaque into small arteries — livedo, blue '
              'toes, AKI, stroke, gut ischemia — with palpable pulses.',
   'dx:monck': 'Mönckeberg medial calcific sclerosis: the media of muscular arteries calcifies but the lumen stays open — usually '
@@ -151,18 +158,18 @@ dyn = dict(
               ['dys', 'Endothelial dysfunction'], ['streak', 'Fatty streak'], ['fibrous', 'Fibrous plaque'], ['complex', 'Complicated']]),
             dict(id='dx', label='Aorta and branches', type='one', options=[
               ['aaa', 'Abdominal aneurysm', 'aaa'], ['taa', 'Thoracic aneurysm', 'taa'], ['dissa', 'Dissection — Stanford A', 'dissection'],
-              ['dissb', 'Dissection — Stanford B', 'dissection'], ['steal', 'Subclavian steal', 'subclavsteal'],
+              ['dissb', 'Dissection — Stanford B', 'dissection'], ['trauma', 'Traumatic rupture'], ['steal', 'Subclavian steal', 'subclavsteal'],
               ['pad', 'Peripheral artery disease', 'pad'], ['chol', 'Cholesterol emboli', 'cholemb'], ['monck', 'Mönckeberg', 'monckeberg']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 305–307 · Robbins ch 11')
+  src='First Aid pp. 305–307, 442 · Robbins ch 11 · Bootcamp Cardiology · OCOM OMM')
 
 MAP = dict(
   id='aortasim', title='The Aorta in Motion', topic='cardio', after='vasc',
   sub='Blood down the aorta and its branches, a plaque building step by step, and what goes wrong — abdominal and thoracic aneurysms, '
-      'dissection A and B, subclavian steal, peripheral artery disease, cholesterol emboli and Mönckeberg',
+      'dissection A and B, traumatic rupture, subclavian steal, peripheral artery disease, cholesterol emboli and Mönckeberg',
   w=3600, h=1900,
-  fa='305, 306, 307',
+  fa='305, 306, 307, 442',
   src=['Robbins ch 11 — Blood vessels', 'Moore ch 5 — Abdomen', 'OCOM OMM — OMS2 written midterm study guide',
        'OCOM OMM — Week 4 lab rubric: visceral manipulation', 'Robbins ch 12 — The heart',
        'Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes', 'Robbins ch 20 — The kidney',
@@ -178,7 +185,7 @@ MAP = dict(
     ('ao7', 'Peripheral artery disease', 1940, 1620, 'aoFlow', 'claudication', ['pad']),
     ('ao8', 'Cholesterol emboli', 2380, 1620, 'aoFlow', 'blue toes, AKI', ['cholemb'])],
   panels=[
-    (2500, PANY, 1000, 'Three kinds of arteriosclerosis (First Aid p. 305)', [
+    (2500, PANY, 1000, 'Three kinds of arteriosclerosis (First Aid pp. 305–306 · Robbins ch 11)', [
       ('Atherosclerosis', 'intima — elastic + large/medium arteries'),
       ('Mönckeberg', 'media calcified, lumen open'),
       ('Arteriolosclerosis', 'hyaline (HTN, DM) · hyperplastic (onion-skin)')])],

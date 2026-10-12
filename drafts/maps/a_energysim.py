@@ -49,7 +49,7 @@ add('<rect x="200" y="1076" width="200" height="48" rx="24" class="dyn-soft"/>')
 text('Lactate', 300, 1100, 'nf-l1', 'middle')
 text('LDH', 400, 1030, 'nf-l2')
 add('<path d="M480 945 L330 1074" class="dyn-line"/>')
-text('ATP made here (no O₂ needed)', 600, 860, 'nf-l2')
+text('ATP made here (no O₂ needed)', 620, 860, 'nf-l2')
 
 # ════════ mitochondrion ════════
 add('<rect x="940" y="210" width="1400" height="1010" rx="120" style="fill:var(--dk3);fill-opacity:.06;stroke:var(--dk3);stroke-width:6"/>')
@@ -70,7 +70,7 @@ for ang, lab in ((200, 'Citrate'), (250, 'Isocitrate'), (320, 'α-Ketoglutarate'
     add(f'<circle cx="{round(x)}" cy="{round(y)}" r="10" style="fill:var(--dk2)"/>')
     dx = -16 if 90 < ang < 270 else 16
     text(lab, round(x + dx), round(y - 14), 'nf-l2', 'end' if dx < 0 else 'start')
-add(f'<path d="M1210 900 Q1260 820 {TX - TR + 10} {TY + 60}" class="dyn-line"/>')
+add(f'<path d="M1210 900 Q1250 800 {TX - TR + 2} {TY}" class="dyn-line"/>')
 # ETC labels on the membrane
 CX = dict(I=360, III=560, IV=760, V=1000)
 for k, y in CX.items():
@@ -80,13 +80,13 @@ text('ADP → ATP', 1880, CX['V'] + 50, 'nf-l2', 'end')
 
 # ✕ marks and tags for each block
 def X(cx, cy, s=22): return f'<path d="M{cx - s} {cy - s} L{cx + s} {cy + s} M{cx + s} {cy - s} L{cx - s} {cy + s}" class="nf-x"/>'
-add(X(840, 850), when=O('pk'))
+add(X(570, 850), when=O('pk'))   # on the PEP → pyruvate step
 text('pyruvate kinase deficiency — red cells run out of ATP', 600, 1180, 'nf-l1 dyn-tag', 'middle', when=O('pk'))
 add(X(850, 920), when=O(*PDHB))
 TAG = dict(pdh='PDH deficiency — pyruvate can’t enter: lactate and alanine pile up',
            thia='no thiamine (TPP) — PDH and α-KG dehydrogenase stall',
            ars='arsenic binds lipoic acid — PDH and α-KG dehydrogenase stall',
-           fluoro='fluoroacetate → fluorocitrate blocks aconitase — citrate piles up',
+           fluoro='fluoroacetate → fluorocitrate jams aconitase — citrate piles up',
            rot='rotenone blocks complex I', anti='antimycin blocks complex III',
            cn='cyanide blocks complex IV — O₂ present but unusable', co='CO blocks complex IV and grabs hemoglobin',
            oligo='oligomycin blocks ATP synthase', unc='uncoupler: H⁺ leaks back without ATP synthase — energy leaves as heat')
@@ -130,7 +130,7 @@ sites = [
 readouts = [
   dict(l='Lactate', mods=[dict(when=O(*DOWN), d=1)]),
   dict(l='O₂ consumption', mods=[dict(when=O(*ETC), d=-1), dict(when=O('unc'), d=1)]),
-  dict(l='ATP', mods=[dict(when=O('pk', 'ars', *ETC, 'unc'), d=-1)]),
+  dict(l='ATP', mods=[dict(when=O('pk', 'thia', 'ars', *ETC, 'unc'), d=-1)]),
   dict(l='Venous O₂ saturation', mods=[dict(when=O('cn'), d=1)]),
   dict(l='Body temperature', mods=[dict(when=O('unc'), d=1)]),
   dict(l='Citrate', mods=[dict(when=O('fluoro'), d=1)]),
@@ -145,10 +145,10 @@ notes = {
              'impairment with an anion-gap lactic acidosis. Ketogenic diet; thiamine, lipoic acid.',
   'blk:thia': 'Thiamine (TPP) is the cofactor for PDH and α-ketoglutarate dehydrogenase (and transketolase). Brain and heart fail '
               'first — Wernicke, beriberi; pyruvate and lactate rise. Give thiamine before glucose.',
-  'blk:ars': 'Arsenite binds lipoic acid and stalls PDH and α-ketoglutarate dehydrogenase; arsenate also robs the GAPDH step of its '
-             'ATP. Garlic breath, rice-water diarrhea; lactate and pyruvate rise. Dimercaprol or succimer.',
-  'blk:fluoro': 'Fluoroacetate is made into fluorocitrate, which blocks aconitase — the cycle stops one step past citrate. Citrate '
-                'piles up (chelating calcium), with lactic acidosis, seizures and arrhythmias.',
+  'blk:ars': 'Arsenite binds lipoic acid and stalls PDH and α-ketoglutarate dehydrogenase; arsenate mimics phosphate and robs '
+             'substrate-level phosphorylation of its ATP. Garlic breath, vomiting, diarrhea, QT prolongation. Dimercaprol or succimer.',
+  'blk:fluoro': 'Fluoroacetate (a rodenticide) is made into fluorocitrate, whose metabolite jams aconitase — the cycle stops one step '
+                'past citrate. Citrate piles up and chelates calcium; lactic acidosis, seizures, arrhythmias. Supportive care only.',
   'blk:rot': 'Rotenone blocks complex I: no electron flow, no proton pumping, no ATP; O₂ use falls and cells fall back on '
              'anaerobic glycolysis — lactic acidosis.',
   'blk:anti': 'Antimycin blocks complex III — the same picture: the gradient collapses, ATP synthesis stops, O₂ consumption falls, '
@@ -174,14 +174,14 @@ dyn = dict(
     ['oligo', 'Oligomycin (ATP synthase)', 'etcinhib'], ['unc', 'Uncoupler (2,4-DNP)', 'uncoupler']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 64, 74–76, 428, 689 · Marks ch 22–24 · Katzung ch 58')
+  src='First Aid pp. 64, 74–76, 247, 428, 689 · Marks ch 22–24 · Katzung ch 57–58 · fluoroacetate: Proudfoot, Toxicol Rev 2006')
 
 MAP = dict(
   id='energysim', title='Energy Metabolism in Motion', topic='bio', after='core',
   sub='Glucose to pyruvate, through PDH and the TCA cycle to the electron transport chain — drop a poison or deficiency on its step '
       'and watch the flow stop, lactate rise, protons stall or leak, and O₂ use, ATP and temperature move. Tap a complex for its card',
   w=3500, h=1560,
-  fa='55, 64, 73–76, 247, 428, 689',
+  fa='55, 60, 64, 73–76, 247, 428, 689',
   src=[full('Marks', 22), full('Marks', 23), full('Marks', 24), full('Katzung', 58), full('Katzung', 57), full('Robbins', 14)],
   lanes=[('enGly', 'Glycolysis', 'glycolysis'), ('enTca', 'PDH & TCA', 'tca'), ('enEtc', 'Electron transport', 'ppp')],
   nodes=[
@@ -195,7 +195,7 @@ MAP = dict(
     ('en8', 'Uncouplers', 1160, 1470, 'enEtc', 'heat, not ATP', ['uncoupler']),
     ('en9', 'Mitochondrial myopathies', 1580, 1470, 'enEtc', 'MELAS · MERRF', ['mito'])],
   panels=[
-    (2420, PANY, 1000, 'ETC inhibitors (First Aid p. 76)', [
+    (2420, PANY, 1000, 'ETC inhibitors (Marks Table 24.1 · First Aid pp. 76, 689)', [
       ('Complex I', 'rotenone, amytal'),
       ('Complex III', 'antimycin'),
       ('Complex IV', 'cyanide, carbon monoxide'),
