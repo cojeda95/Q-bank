@@ -31,7 +31,7 @@ PANY = 1180
 CX, CY = 900, 760
 
 text('The prostate — zones, growth, cancer and semen', 180, 150, 'dyn-big')
-text('section, front at the top, rectum below · zone shapes schematic', 180, 176, 'dyn-cap')
+text('section, front at the top, rectum below · seminal vesicles lie behind (and above) the gland · schematic', 180, 176, 'dyn-cap')
 
 # ════════ prostate ════════
 add(f'<ellipse cx="{CX}" cy="{CY}" rx="340" ry="280" style="fill:var(--dk9);fill-opacity:.08;stroke:var(--dk9);stroke-width:5"/>')
@@ -45,7 +45,7 @@ add(f'<path d="M{CX - 60} {CY + 40} C{CX - 30} {CY + 120} {CX + 30} {CY + 120} {
 text('central zone', CX + 80, CY + 100, 'nf-l2')
 add(f'<circle cx="{CX}" cy="{CY - 40}" r="26" style="fill:var(--surface);stroke:var(--nf-h2o);stroke-width:6"/>', unless=D('bph'))
 add(f'<ellipse cx="{CX}" cy="{CY - 40}" rx="10" ry="26" style="fill:var(--surface);stroke:var(--bad);stroke-width:6"/>', when=D('bph'))
-text('urethra', CX + 40, CY - 30, 'nf-l2')
+text('urethra', CX + 40, CY - 30, 'nf-l2'); text('urine from the bladder ↓', CX + 20, 380, 'nf-l2')
 add(f'<rect x="{CX - 380}" y="{CY + 320}" width="760" height="70" rx="30" style="fill:var(--dk6);fill-opacity:.15;stroke:var(--dk6);stroke-width:3"/>'); text('rectum', CX, CY + 365, 'nf-l1', 'middle')
 add(f'<circle cx="{CX + 160}" cy="{CY + 170}" r="50" style="fill:var(--bad);fill-opacity:.45;stroke:var(--bad);stroke-width:4"/>', when=D('ca'))
 add(f'<circle cx="{CX + 160}" cy="{CY + 170}" r="30" style="fill:var(--dk7);fill-opacity:.45"/>', when=D('pin'))
@@ -53,9 +53,9 @@ text('hard nodule felt on rectal exam', CX + 160, CY + 450, 'nf-l1 dyn-tag', 'mi
 add(f'<path d="M{CX + 160} {CY + 230} V{CY + 310}" style="stroke:var(--accent);stroke-width:8"/>', when=D('ca')); text('finger', CX + 180, CY + 300, 'nf-l2', when=D('ca'))
 # seminal vesicles + ejaculatory ducts
 for s in (-1, 1):
-    add(f'<ellipse cx="{CX + s * 420}" cy="{CY - 280}" rx="110" ry="50" style="fill:var(--dk10);fill-opacity:.15;stroke:var(--dk10);stroke-width:3"/>')
-    add(f'<path d="M{CX + s * 330} {CY - 260} C{CX + s * 200} {CY - 200} {CX + s * 60} {CY - 100} {CX + s * 10} {CY - 40}" style="fill:none;stroke:var(--dk10);stroke-width:6;opacity:.6"/>')
-text('seminal vesicle', CX - 420, CY - 350, 'nf-l2', 'middle'); text('ejaculatory duct', CX + 360, CY - 180, 'nf-l2')
+    add(f'<ellipse cx="{CX + s * 480}" cy="{CY + 180}" rx="110" ry="50" style="fill:var(--dk10);fill-opacity:.15;stroke:var(--dk10);stroke-width:3"/>')
+    add(f'<path d="M{CX + s * 380} {CY + 160} C{CX + s * 300} {CY + 60} {CX + s * 80} {CY + 60} {CX + s * 12} {CY - 14}" style="fill:none;stroke:var(--dk10);stroke-width:6;opacity:.6"/>')
+text('seminal vesicle', CX - 480, CY + 270, 'nf-l2', 'middle'); text('ejaculatory duct → through the central zone', CX - 480, CY + 104, 'nf-l2', 'middle')
 # spine
 add('<rect x="1500" y="360" width="140" height="760" rx="30" style="fill:var(--dk6);fill-opacity:.1;stroke:var(--dk6);stroke-width:3"/>'); text('lumbar spine', 1570, 340, 'nf-l1', 'middle')
 for y in (520, 700, 880):
@@ -84,25 +84,25 @@ for i in range(4):
 add(f'<rect x="{GX + 60}" y="{GY + 60}" width="240" height="180" rx="10" style="fill:var(--bad);fill-opacity:.4"/>', when=['gl:g55'])
 for i in range(3):
     add(f'<path d="M{GX + 330 + i * 70} {GY + 100} a30 30 0 1 0 1 0" style="fill:none;stroke:var(--dk4);stroke-width:5"/>', when=['gl:g34'])
-GL = dict(g33='3 + 3 = 6 → grade group 1', g34='3 + 4 = 7 → grade group 2', g45='4 + 5 = 9 — advanced, less curable', g55='5 + 5 = 10 → grade group 5 · sheets and cords')
+GL = dict(g33='3 + 3 = 6 → grade group 1', g34='3 + 4 = 7 → grade group 2', g45='4 + 5 = 9 → grade group 5 · advanced, less curable', g55='5 + 5 = 10 → grade group 5 · sheets and cords')
 for k, s in GL.items(): text(s, GX + 280, GY + 290, 'nf-l1', 'middle', when=[f'gl:{k}'])
 
-TAG = dict(bph='BPH — transition zone around the urethra: obstruction; not premalignant · up to 90% by 80',
+TAG = dict(bph='BPH — transition-zone nodules squeeze the urethra to a vertical slit · not premalignant · PSA ↑',
            pin='HGPIN — atypical cells, prominent nucleoli, basal layer still there; peripheral zone',
            ca='adenocarcinoma — peripheral zone, androgen-dependent · PSA ↑ (free fraction ↓) · Batson plexus → spine')
 for k, s in TAG.items(): text(s, CX, 1300, 'nf-l1 dyn-tag', 'middle', when=D(k))
-text('α₁-blocker relaxes smooth muscle — urine flows', CX, 1340, 'nf-l1', 'middle', when=['dx:bph&alpha'])
-text('finasteride blocks stromal 5α-reductase — gland shrinks; PSA halves (double it)', CX, 1380, 'nf-l1', 'middle', when=['dx:bph&fin'])
+text('α₁-blocker (tamsulosin, terazosin) relaxes prostate smooth muscle — urine flows', CX, 1340, 'nf-l1', 'middle', when=['alpha'])
+text('finasteride blocks stromal 5α-reductase: DHT ↓ — gland shrinks; PSA halves (double it)', CX, 1380, 'nf-l1', 'middle', when=['fin'])
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
 flows = [
-  dict(d=f'M{CX} 360 V{CY - 40} C{CX} {CY + 200} {CX} {CY + 260} {CX + 20} 1200', len=900, speed=120, r=9, base=dict(urine=4),
+  dict(d=f'M{CX} 360 V{CY - 40}', len=360, speed=120, r=9, base=dict(urine=4),
        mods=[m(D('bph'), set=dict(urine=2), speed=0.25), m(['dx:bph&alpha'], speed=3)]),
   dict(d=f'M{CX - 150} {CY + 20} C{CX - 100} {CY - 20} {CX - 60} {CY - 40} {CX - 30} {CY - 40}', len=140, speed=60, r=8, base=dict(dht=3),
-       mods=[m(D('bph'), set=dict(dht=5)), m(['dx:bph&fin'], set=dict(dht=0))]),
-  dict(d=f'M{CX + 330} {CY - 260} C{CX + 200} {CY - 200} {CX + 60} {CY - 100} {CX + 10} {CY - 40}', len=420, speed=90, r=8, base=dict(semen=3)),
-  dict(d=f'M{CX - 330} {CY - 260} C{CX - 200} {CY - 200} {CX - 60} {CY - 100} {CX - 10} {CY - 40}', len=420, speed=90, r=8, base=dict(semen=3)),
+       mods=[m(D('bph'), set=dict(dht=5)), m(['fin'], set=dict(dht=0))]),
+  dict(d=f'M{CX + 380} {CY + 160} C{CX + 300} {CY + 60} {CX + 80} {CY + 60} {CX + 12} {CY - 14}', len=430, speed=90, r=8, base=dict(semen=3)),
+  dict(d=f'M{CX - 380} {CY + 160} C{CX - 300} {CY + 60} {CX - 80} {CY + 60} {CX - 12} {CY - 14}', len=430, speed=90, r=8, base=dict(semen=3)),
   dict(d=f'M{CX + 160} {CY + 170} C{CX + 400} {CY + 100} 1400 800 1540 700', len=700, speed=110, r=10, base=dict(met=3), when=D('ca')),
 ]
 sites = [dict(x=CX - 360, y=CY - 40, n=[-1, 0], w=10, t='rec', l='', aria='Prostate zones', c='prozones', ions=[]),
@@ -110,21 +110,22 @@ sites = [dict(x=CX - 360, y=CY - 40, n=[-1, 0], w=10, t='rec', l='', aria='Prost
          dict(x=IX + 560, y=IY + 190, n=[1, 0], w=10, t='rec', l='', aria='HGPIN', c='hgpin', ions=[]),
          dict(x=GX + 560, y=GY + 150, n=[1, 0], w=10, t='rec', l='', aria='Gleason', c='gleason', ions=[]),
          dict(x=CX + 260, y=CY + 210, n=[1, 1], w=10, t='rec', l='', aria='Prostate cancer', c='prostateca', ions=[]),
-         dict(x=CX + 530, y=CY - 280, n=[1, 0], w=10, t='rec', l='', aria='Semen', c='semen', ions=[])]
+         dict(x=CX + 590, y=CY + 180, n=[1, 0], w=10, t='rec', l='', aria='Semen', c='semen', ions=[])]
 
 readouts = [
   dict(l='Urine flow', mods=[dict(when=D('bph'), d=-1), dict(when=['dx:bph&alpha'], d=1)]),
   dict(l='Gland size', mods=[dict(when=D('bph'), d=1), dict(when=['dx:bph&fin'], d=-1)]),
-  dict(l='PSA', mods=[dict(when=D('ca'), d=1), dict(when=['dx:bph&fin'], d=-1)]),
+  dict(l='PSA', mods=[dict(when=D('ca', 'bph'), d=1), dict(when=['dx:bph&fin'], d=-2)]),
+  dict(l='Free PSA fraction', mods=[dict(when=D('bph'), d=1), dict(when=D('ca'), d=-1)]),
   dict(l='Alkaline phosphatase', mods=[dict(when=D('ca'), d=1)]),
 ]
 
 notes = {
   '': 'Transition zone around the urethra → BPH (obstructs); peripheral zone at the back → cancer (palpable). Glands have a basal '
       'layer under secretory cells. Semen: ~60% seminal vesicle (fructose), ~30% prostate (alkaline, PSA), ~10% vas deferens.',
-  'dx:bph': 'BPH: stromal type 2 5α-reductase makes DHT, which drives stroma and epithelium; the transition zone squeezes the '
-            'urethra. Not premalignant. α₁-blockers relax smooth muscle; finasteride/dutasteride shrink the gland (halve PSA, '
-            '↓ libido, teratogenic to male fetuses).',
+  'dx:bph': 'BPH: stromal type 2 5α-reductase makes DHT, which drives stroma and epithelium; transition-zone nodules squeeze '
+            'the urethra. Not premalignant; total PSA ↑ (free fraction ↑). α₁-blockers relax smooth muscle; finasteride/'
+            'dutasteride shrink the gland (halve PSA, ↓ libido, teratogenic to male fetuses).',
   'dx:pin': 'High-grade PIN: architecturally benign branching acini with atypical cells and prominent nucleoli, still with a basal '
             'layer — a peripheral-zone precursor; present in ~80% of cancer prostates.',
   'dx:ca': 'Prostate adenocarcinoma: peripheral zone, androgen-dependent; small crowded single-layered glands, no basal cells, '
@@ -132,7 +133,11 @@ notes = {
            'Grade and stage predict outcome.',
   'gl:g33': 'Gleason adds the primary and secondary patterns (2–10): 3 + 3 = 6 → grade group 1.',
   'gl:g34': '3 + 4 = 7 → grade group 2 (4 + 3 would be group 3).',
-  'gl:g45': '8–10 tend to be advanced and less curable.',
+  'gl:g45': '4 + 5 = 9 → grade group 5; scores of 8–10 tend to be advanced and less curable.',
+  'alpha': 'α₁-blockers (terazosin, tamsulosin) relax prostatic and bladder-neck smooth muscle — the stream improves, the gland '
+           'does not shrink.',
+  'fin': 'Finasteride blocks type 2 5α-reductase in the stroma: DHT falls, the gland shrinks moderately and PSA halves — double '
+         'a measured PSA when screening.',
   'gl:g55': 'Pattern 5: cords, sheets, solid nests infiltrating stroma — up to group 5.',
 }
 
@@ -147,7 +152,7 @@ dyn = dict(
             dict(id='fin', label='Drug', type='toggle', on='Finasteride given', off='Finasteride', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 21')
+  src='First Aid pp. 644, 672–673 · Robbins ch 21 · Katzung ch 40 · Guyton ch 81')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -156,9 +161,8 @@ MAP = dict(
   sub='See BPH squeeze the urethra from the transition zone and cancer grow in the peripheral zone, lose the basal layer and seed '
       'the spine — then grade it with Gleason and treat BPH with an α₁-blocker or finasteride',
   w=3600, h=1900,
-  fa='646, 647, 672, 673',
-  src=['Robbins ch 21 — The lower urinary tract and male genital system', 'Katzung ch 40 — The Gonadal Hormones & Inhibitors',
-       'Guyton ch 81 — Reproductive and Hormonal Functions of the Male (and Function of the Pineal Gland)'],
+  fa='644, 672, 673',
+  src=[full('Robbins', 21), full('Katzung', 40), full('Guyton', 81)],
   lanes=[('prNl', 'Normal', 'glycolysis'), ('prDz', 'Disease', 'tca')],
   nodes=[
     ('pr1', 'Prostate zones', 330, 1700, 'prNl', 'transition vs peripheral', ['prozones'], 'hub'),

@@ -61,6 +61,8 @@ def veg(x, y, r, col, when):
 veg(1240, 860, 46, '--bad', D('acute')); veg(1240, 860, 20, '--bad', D('subacute')); veg(960, 860, 34, '--bad', D('ivdu'))
 veg(1240, 860, 22, '--ink-3', D('nbte'))
 add('<path d="M1180 860 H1300" style="stroke:var(--dk4);stroke-width:22"/>', when=D('rhd'))
+add('<rect x="1104" y="702" width="292" height="170" rx="36" class="dyn-dash" style="fill:none"/>', when=D('rhd'))   # dilated LA
+add('<circle cx="1350" cy="752" r="14" style="fill:var(--ink-2);opacity:.8"/>', when=D('rhd'))   # mural thrombus
 add('<circle cx="1220" cy="770" r="40" style="fill:var(--dk5);fill-opacity:.7;stroke:var(--ink-2);stroke-width:3"/>', when=D('myxoma'))
 add('<circle cx="1240" cy="845" r="22" style="fill:var(--dk5);fill-opacity:.4"/>', when=D('myxoma'))
 for x, y in ((1150, 950), (1300, 980), (900, 960)):
@@ -69,7 +71,7 @@ TAG = dict(acute='S aureus — large destructive vegetation on a normal valve, r
            subacute='viridans strep — small vegetation on an abnormal valve, after dental work',
            ivdu='injection drug use — tricuspid vegetation, septic emboli to the lungs',
            rf='anti-M-protein antibodies cross-react: J♥NES — mitral > aortic, regurgitant early',
-           rhd='years later — the valve becomes stenotic', nbte='sterile platelet thrombi — cancer (pancreas) or SLE (Libman-Sacks) · cultures negative',
+           rhd='years later — fish-mouth mitral stenosis · the left atrium dilates, mural thrombus', nbte='sterile platelet thrombi — cancer (pancreas) or SLE (Libman-Sacks) · cultures negative',
            myo='lymphocytes and necrosis in the muscle — arrhythmia, heart block, dilated cardiomyopathy',
            myxoma='left atrial myxoma — ball-valves the mitral valve: syncope, tumor plop, emboli, IL-6 fever')
 for k, s in TAG.items(): text(s, 1100, 1300, 'nf-l1 dyn-tag', 'middle', when=D(k))
@@ -111,16 +113,18 @@ notes = {
       'emboli — to the body from the left heart, to the lungs from the right. Pick a lesion.',
   'dx:acute': 'Acute endocarditis: S aureus — large destructive vegetations on previously normal valves, rapid onset; mitral > '
               'aortic. Septic emboli, petechiae, splinter hemorrhages, Janeway lesions; immune: Osler nodes, Roth spots, GN. '
-              'Blood cultures × several, echo, IV antibiotics.',
+              'Several blood cultures + echo; long (≥ 6 wk) antibiotics and/or valve replacement.',
   'dx:subacute': 'Subacute endocarditis: viridans streptococci — smaller vegetations on abnormal valves, after dental procedures. '
                  'Prosthetic valve → S epidermidis; GI/GU → Enterococcus; colon cancer → S gallolyticus.',
-  'dx:ivdu': 'Injection drug use: tricuspid endocarditis — septic emboli go to the lungs.',
+  'dx:ivdu': 'Injection drug use: tricuspid endocarditis (S aureus, Pseudomonas, Candida) — right-sided, so the septic emboli go '
+            'to the lungs, not the body.',
   'dx:rf': 'Acute rheumatic fever: after group A strep pharyngitis, antibodies to M protein cross-react (type II) — J♥NES: '
            'migratory polyarthritis, pancarditis, nodules, erythema marginatum, Sydenham chorea. Mitral > aortic >> tricuspid; '
            'regurgitant early. Aschoff bodies, Anitschkow cells; ↑ ASO, anti-DNase B. Penicillin.',
-  'dx:rhd': 'Chronic rheumatic heart disease: years later the valves become stenotic.',
+  'dx:rhd': 'Chronic rheumatic heart disease: years later the mitral leaflets thicken and the commissures fuse — "fish-mouth" '
+           'mitral stenosis. The left atrium dilates and may hold mural thrombi that embolize.',
   'dx:nbte': 'NBTE: a hypercoagulable state lays sterile platelet thrombi on the mitral or aortic valve; loosely attached, they '
-             'embolize (stroke, limb ischemia). Advanced cancer (pancreatic) or SLE (Libman-Sacks). Cultures negative.',
+             'embolize (infarcts in the brain, heart). Advanced cancer (pancreatic) or SLE (Libman-Sacks). Cultures negative.',
   'dx:myo': 'Myocarditis: lymphocytic infiltrate with focal necrosis (viral — coxsackie B, adenovirus, parvovirus B19…; also '
             'T cruzi, Borrelia, diphtheria, doxorubicin, cocaine, Kawasaki, SLE). Under-40 sudden death, tachycardia out of '
             'proportion to fever; ↑ troponin.',
@@ -139,7 +143,7 @@ dyn = dict(
               ['myo', 'Myocarditis', 'myocarditis'], ['myxoma', 'Atrial myxoma', 'myxoma']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 12')
+  src='First Aid pp. 318–320 · Robbins ch 12')
 
 MAP = dict(
   id='carditsim', title='Heart Infection & Inflammation in Motion', topic='cardio', after='valves',
@@ -158,5 +162,6 @@ MAP = dict(
   panels=[
     (2500, PANY, 1000, 'Vegetation by cause (Robbins ch 12)', [
       ('S aureus', 'large, normal valve, acute'), ('Viridans strep', 'small, abnormal valve'), ('IV drug use', 'tricuspid'),
-      ('NBTE', 'sterile, embolize easily'), ('Rheumatic', 'mitral > aortic')])],
+      ('NBTE', 'small, sterile, loosely attached'), ('Libman-Sacks (SLE)', 'small, either side of the leaflet'),
+      ('Rheumatic fever', 'small, warty, along the line of closure')])],
   dyn=dyn)

@@ -43,17 +43,18 @@ text('anterior chamber', 490, 660, 'nf-l2', 'middle')
 add('<path d="M620 320 L700 560 M620 1000 L700 760" style="stroke:var(--dk5);stroke-width:18;stroke-linecap:round"/>', unless=D('acg') + R('mydr'))
 add('<path d="M620 340 L640 560 M620 980 L640 760" style="stroke:var(--dk5);stroke-width:28;stroke-linecap:round"/>', when=D('acg') + R('mydr'))
 text('iris', 720, 520, 'nf-l2')
+text('uveoscleral route ~10%', 885, 420, 'nf-l2')
 add('<ellipse cx="830" cy="660" rx="90" ry="200" style="fill:var(--surface);stroke:var(--ink-3);stroke-width:4"/>', unless=D('cat'))
 add('<ellipse cx="830" cy="660" rx="90" ry="200" style="fill:var(--ink-3);fill-opacity:.55;stroke:var(--ink-3);stroke-width:4"/>', when=D('cat'))
 text('lens', 830, 666, 'nf-l1', 'middle')
 for y0, y1 in ((300, 440), (880, 1020)):
     add(f'<rect x="740" y="{y0}" width="80" height="{y1 - y0}" rx="20" style="fill:var(--dk7);fill-opacity:.25;stroke:var(--dk7);stroke-width:3"/>')
 text('ciliary body', 780, 280, 'nf-l2', 'middle')
-add('<circle cx="610" cy="300" r="18" style="fill:var(--dk3);fill-opacity:.4;stroke:var(--dk3);stroke-width:3"/>'); text('canal of Schlemm', 560, 250, 'nf-l2', 'middle')
+add('<circle cx="610" cy="300" r="18" style="fill:var(--dk3);fill-opacity:.4;stroke:var(--dk3);stroke-width:3"/>'); text('canal of Schlemm', 560, 215, 'nf-l2', 'middle')
 add('<path d="M592 312 L640 330" style="stroke:var(--ink-2);stroke-width:6;stroke-dasharray:4 4"/>'); text('trabecular meshwork · angle', 380, 360, 'nf-l2')
 add(X(625, 320, 12), when=D('acg') + R('mydr'))
 text('angle closed — iris blocks the meshwork', 560, 1080, 'nf-l1 dyn-tag', 'middle', when=D('acg'))
-text('mydriatic in a narrow angle: closes it — contraindicated', 560, 1080, 'nf-l1 dyn-tag', 'middle', when=R('mydr'))
+text('mydriatic in a narrow angle: closes it — contraindicated', 560, 1120, 'nf-l1 dyn-tag', 'middle', when=R('mydr'))
 text('open angle, meshwork resists outflow', 560, 1080, 'nf-l1 dyn-tag', 'middle', when=D('oag'))
 for (x, y) in ((470, 940), (500, 950), (530, 955)):
     add(f'<circle cx="{x}" cy="{y}" r="12" style="fill:var(--dk10);opacity:.8"/>', when=D('uve'))
@@ -65,8 +66,8 @@ add('<path d="M900 300 C1500 120 2200 300 2250 660 C2200 1020 1500 1200 900 1020
     '<path d="M1600 210 C1900 330 2050 500 2080 640" style="fill:none;stroke:var(--dk1);stroke-width:10;stroke-dasharray:14 6"/>', when=D('det'))
 text('retina', 1580, 180, 'nf-l1', 'middle')
 add('<circle cx="2210" cy="660" r="44" style="fill:var(--surface);stroke:var(--dk4);stroke-width:5"/>'); text('optic disc', 2210, 740, 'nf-l2', 'middle')
-add('<circle cx="2210" cy="660" r="44" style="fill:none;stroke:var(--bad);stroke-width:5;stroke-dasharray:6 6"/>', when=HIGH)
-text('disc cupping — optic nerve fibers die', 2210, 780, 'nf-l1 dyn-tag', 'middle', when=HIGH)
+add('<circle cx="2210" cy="660" r="44" style="fill:none;stroke:var(--bad);stroke-width:5;stroke-dasharray:6 6"/>', when=D('oag'))
+text('disc cupping — optic nerve fibers die', 2210, 780, 'nf-l1 dyn-tag', 'middle', when=D('oag'))
 add('<circle cx="1980" cy="660" r="40" style="fill:var(--dk4);fill-opacity:.3"/>'); text('macula · fovea', 1980, 730, 'nf-l2', 'middle')
 add('<circle cx="1980" cy="660" r="40" style="fill:var(--bad);fill-opacity:.5"/>', when=D('crao'))
 text('cherry-red spot in a pale retina', 1980, 590, 'nf-l1 dyn-tag', 'middle', when=D('crao'))
@@ -93,7 +94,9 @@ def m(when, **kw): return dict(when=when, **kw)
 flows = [
   dict(d='M760 440 C720 520 700 580 690 620', len=200, speed=50, r=8, base=dict(aq=3), mods=[m(LESS, set=dict(aq=1))]),
   dict(d='M690 640 C600 640 520 520 600 330', len=420, speed=70, r=8, base=dict(aq=3), mods=[m(D('acg') + R('mydr'), set=dict(aq=0)), m(D('oag'), set=dict(aq=1)), m(MORE, set=dict(aq=5))]),
-  dict(d='M600 330 C560 260 520 240 470 240', len=150, speed=50, r=8, base=dict(aq=2), mods=[m(D('acg') + R('mydr'), set=dict(aq=0)), m(R('lat'), set=dict(aq=4))]),
+  dict(d='M600 330 C560 260 520 240 470 240', len=150, speed=50, r=8, base=dict(aq=2), mods=[m(D('acg') + R('mydr'), set=dict(aq=0)), m(R('pilo'), set=dict(aq=4))]),
+  # uveoscleral route (~10%): from the angle through the ciliary body — latanoprost opens it (FA p. 550, 568)
+  dict(d='M630 350 C690 370 740 385 780 390 L870 400', len=260, speed=40, r=7, base=dict(aq=1), mods=[m(D('acg') + R('mydr'), set=dict(aq=0)), m(R('lat'), set=dict(aq=4))]),
   dict(d=VES, len=1000, speed=170, r=8, base=dict(bl=3), mods=[m(D('crao'), set=dict(bl=0))]),
   dict(d='M1300 920 C1700 900 2000 760 2210 680', len=1000, speed=170, r=8, base=dict(bl=3), mods=[m(D('crvo'), speed=0.25, set=dict(bl=6))]),
 ]
@@ -107,6 +110,7 @@ readouts = [
   dict(l='Aqueous production', mods=[dict(when=LESS, d=-1)]),
   dict(l='Aqueous outflow', mods=[dict(when=D('acg', 'oag') + R('mydr'), d=-1), dict(when=MORE, d=1)]),
   dict(l='Central vision', mods=[dict(when=D('dry', 'wet', 'crao', 'cat'), d=-1), dict(when=D('rp', 'oag'), d=0)]),
+  dict(l='Pupil size', mods=[dict(when=D('acg') + R('mydr'), d=1), dict(when=R('pilo'), d=-1), dict(when=R('tim', 'acz'), d=0)]),
   dict(l='Peripheral vision', mods=[dict(when=D('oag', 'rp'), d=-1), dict(when=D('dry', 'wet'), d=0)]),
 ]
 
@@ -137,7 +141,8 @@ notes = {
   'rx:acz': 'Acetazolamide, dorzolamide (carbonic anhydrase inhibitors): less aqueous made.',
   'rx:lat': 'Latanoprost (PGF₂α analogue): more uveoscleral outflow — darkens the iris, lengthens the lashes.',
   'rx:pilo': 'Pilocarpine, carbachol (M₃): ciliary muscle contraction opens the trabecular meshwork — used in acute angle closure.',
-  'rx:mydr': 'Epinephrine and other mydriatics are contraindicated in closed-angle glaucoma.',
+  'rx:mydr': 'In a narrow angle, the dilated iris can block the outflow angle — so epinephrine and other mydriatics are contraindicated '
+             'in closed-angle glaucoma.',
 }
 
 dyn = dict(
@@ -152,7 +157,7 @@ dyn = dict(
               ['lat', 'Latanoprost', 'glaucomadrugs'], ['pilo', 'Pilocarpine', 'glaucomadrugs'], ['mydr', 'Mydriatic (epinephrine)', 'glaucomadrugs']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 549–553, 557 · Robbins ch 29 · Katzung ch 7, 10')
+  src='First Aid pp. 549–553, 557, 568 · Robbins ch 29 · Katzung ch 7, 10 · Pawlina ch 24 · Guyton ch 50')
 
 MAP = dict(
   id='aqsim', title='Aqueous Humor & Retina in Motion', topic='eent', after='eyesim',
@@ -177,7 +182,7 @@ MAP = dict(
     ('aq7', 'Retinal vessel occlusion', 1200, 1790, 'aqRet', 'cherry-red spot', ['retinalocc']),
     ('aq8', 'Detachment · RP · ROP', 1640, 1790, 'aqRet', 'curtain · spicules', ['retinaldetach', 'retinitispig', 'rop'])],
   panels=[
-    (2500, PANY, 1000, 'Glaucoma drugs (First Aid p. 551)', [
+    (2500, PANY, 1000, 'Glaucoma drugs (First Aid pp. 550–551, 568)', [
       ('Less aqueous made', 'timolol, brimonidine, acetazolamide'),
       ('More outflow', 'latanoprost (uveoscleral), pilocarpine (trabecular)'),
       ('Acute angle closure', 'β-blocker, α₂, pilocarpine, acetazolamide, mannitol'),

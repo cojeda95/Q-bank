@@ -43,13 +43,13 @@ cy = lambda v: round(CY1 - (CY1 - CY0) * v)
 add(f'<path d="M{CX0} {CY0 - 10} V{CY1} H{CX1}" class="dyn-line"/>')
 for w in range(0, 41, 4):
     text(str(w), wx(w), CY1 + 30, 'nf-l2', 'middle')
-text('weeks', CX1, CY1 + 56, 'nf-l2', 'end')
+text('weeks of gestation (from the last menstrual period)', CX1, CY1 + 56, 'nf-l2', 'end')
 def curve(f, w0=0, w1=40):
     return 'M' + ' L'.join(f'{wx(w / 4)} {cy(f(w / 4))}' for w in range(int(w0 * 4), int(w1 * 4) + 1))
 import math
 def hcg(w, k=1.0, late=0.28):
-    if w < 1.5: return 0
-    if w <= 9: return k * (0.95 * ((w - 1.5) / 7.5) ** 1.6)
+    if w < 2.5: return 0
+    if w <= 9: return k * (0.95 * ((w - 2.5) / 6.5) ** 1.6)
     if w <= 18: return k * (0.95 - (0.95 - late) * (w - 9) / 9)
     return k * late
 prog = lambda w: 0.1 + 0.75 * (w / 40) ** 1.3
@@ -61,18 +61,20 @@ add(f'<path d="{curve(lambda w: min(1.0, hcg(w, 1.25, 0.36)))}" style="fill:none
 add(f'<path d="{curve(lambda w: hcg(w, 0.7, 0.18))}" style="fill:none;stroke:var(--bad);stroke-width:5;stroke-dasharray:12 6"/>', when=D('t18'))
 add(f'<path d="{curve(lambda w: hcg(w))}" style="fill:none;stroke:var(--dk9);stroke-width:3;opacity:.4"/>', when=D('mole', 'ect', 'twin', 't21', 't18'))
 add(f'<path d="{curve(prog, 2, 40)}" style="fill:none;stroke:var(--dk3);stroke-width:5"/>', unless=D('ect', 'mole'))
+add(f'<path d="{curve(prog, 2, 40)}" style="fill:none;stroke:var(--dk3);stroke-width:3;opacity:.3"/>', when=D('ect', 'mole'))
 add(f'<path d="{curve(estr, 2, 40)}" style="fill:none;stroke:var(--dk8);stroke-width:5"/>', unless=D('t21', 't18', 'ect', 'mole'))
+add(f'<path d="{curve(estr, 2, 40)}" style="fill:none;stroke:var(--dk8);stroke-width:3;opacity:.3"/>', when=D('t21', 't18', 'ect', 'mole'))
 add(f'<path d="{curve(lambda w: estr(w, 0.6), 2, 40)}" style="fill:none;stroke:var(--bad);stroke-width:5;stroke-dasharray:4 6"/>', when=D('t21', 't18'))
-text('hCG', wx(9), cy(0.95) - 14, 'nf-l1', 'middle')
+text('hCG', wx(6) - 18, cy(hcg(6)) - 4, 'nf-l1', 'end')
 text('progesterone', wx(36), cy(prog(36)) - 16, 'nf-l1', 'middle', unless=D('ect', 'mole'))
 text('estriol', wx(38), cy(estr(38)) + 34, 'nf-l1', 'middle', unless=D('ect', 'mole'))
 DXT = dict(ect='ectopic: hCG rises less than expected — no intrauterine pregnancy', mole='mole: hCG very high, uterus larger than dates',
-           twin='twins: hCG higher', t21='trisomy 21: hCG ↑, estriol ↓', t18='trisomy 18: hCG ↓, estriol ↓')
+           twin='twins: hCG higher', t21='trisomy 21: hCG ↑, inhibin A ↑, estriol ↓, AFP ↓', t18='trisomy 18: hCG ↓, estriol ↓, AFP ↓')
 for k, t in DXT.items():
-    text(t, 1240, 236, 'nf-l1 dyn-tag', 'middle', when=D(k))
+    text(t, 1240, 228, 'nf-l1 dyn-tag', 'middle', when=D(k))   # the week cursors start at y 250, below it
 # the cursor
 for k, w in (('imp', 3), ('peak', 9), ('shift', 16), ('term', 40)):
-    add(f'<path d="M{wx(w)} {CY0 - 20} V{CY1}" style="stroke:var(--accent);stroke-width:4;stroke-dasharray:8 6"/>', when=S(k))
+    add(f'<path d="M{wx(w)} {CY0 - 10} V{CY1}" style="stroke:var(--accent);stroke-width:4;stroke-dasharray:8 6"/>', when=S(k))
 
 # ════════ who makes what ════════
 box(160, 800, 2340, 1380)
@@ -112,6 +114,8 @@ readouts = [
   dict(l='hCG for dates', mods=[dict(when=D('mole', 'twin', 't21'), d=1), dict(when=D('ect', 't18'), d=-1)]),
   dict(l='Estriol', mods=[dict(when=D('t21', 't18'), d=-1)]),
   dict(l='Uterus size for dates', mods=[dict(when=D('mole'), d=1)]),
+  dict(l='AFP (quad screen)', mods=[dict(when=D('t21', 't18'), d=-1)]),
+  dict(l='Inhibin A', mods=[dict(when=D('t21'), d=1)]),
 ]
 
 notes = {
@@ -130,8 +134,9 @@ notes = {
   'dx:mole': 'Hydatidiform mole: very high hCG — uterus larger than dates, hyperemesis, early preeclampsia, hyperthyroidism (hCG '
              'resembles TSH), theca-lutein cysts; snowstorm on ultrasound.',
   'dx:twin': 'Multifetal gestation raises hCG.',
-  'dx:t21': 'Down syndrome (trisomy 21) on second-trimester screening: hCG high, estriol low.',
-  'dx:t18': 'Edwards syndrome (trisomy 18): hCG and estriol both low.',
+  'dx:t21': 'Down syndrome (trisomy 21) on the second-trimester quad screen: hCG and inhibin A high, estriol and AFP low '
+            '(“hi up”).',
+  'dx:t18': 'Edwards syndrome (trisomy 18): every screening marker falls — hCG, estriol and AFP low; inhibin A normal or low.',
 }
 
 dyn = dict(
@@ -142,7 +147,7 @@ dyn = dict(
                                                                 ['twin', 'Twins', 'hcghpl'], ['t21', 'Trisomy 21', 'fpunit'], ['t18', 'Trisomy 18', 'hcghpl']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 648, 651–653, 658–659 · Costanzo ch 10 · Guyton ch 83')
+  src='First Aid pp. 61, 648, 651–653, 658–659 · Costanzo ch 10 · Guyton ch 83')
 
 MAP = dict(
   id='pregsim', title='Pregnancy Hormones in Motion', topic='devrepro', after='placenta',
@@ -161,7 +166,7 @@ MAP = dict(
     ('pg6', 'Molar pregnancy', 800, 1610, 'pzDz', 'hCG very high', ['gtd']),
     ('pg7', 'Lactation', 1280, 1610, 'pzAfter', 'prolactin · oxytocin', ['lactphys', 'posteriorpit'])],
   panels=[
-    (2420, PANY, 1000, 'hCG (First Aid p. 652)', [
+    (2420, PANY, 1000, 'hCG (First Aid pp. 61, 652)', [
       ('↑ hCG', 'multiple gestation, mole, choriocarcinoma, Down syndrome'),
       ('↓ hCG', 'ectopic or failing pregnancy, Edwards, Patau'),
       ('Peak', 'late first trimester, about weeks 8–10'),

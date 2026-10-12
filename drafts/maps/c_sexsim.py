@@ -61,11 +61,12 @@ text('adrenal — 21-hydroxylase blocked', 430, 900, 'nf-l1', 'middle', when=O('
 text('precursors shunted to androgens', 430, 926, 'nf-l2', 'middle', when=O('cah'))
 
 # ════════ 2 · ducts ════════
-# UNVERIFIED: the Wolffian duct is drawn regressed in androgen insensitivity (no androgen action); the ais card doesn't state it
+# Wolffian duct drawn regressed in androgen insensitivity: Costanzo ch 10 — in AIS "the wolffian and müllerian ducts regress"
 add('<path d="M800 420 C900 420 1000 560 1120 560 C1240 560 1300 620 1420 620" style="fill:none;stroke:var(--dk1);stroke-width:12;stroke-linecap:round"/>', when=O('xy', 'srd', 'pmds', 'kline'))
 add('<path d="M800 420 C900 420 1000 560 1120 560 C1240 560 1300 620 1420 620" style="fill:none;stroke:var(--line-2);stroke-width:6;stroke-dasharray:6 10"/>', unless=O('xy', 'srd', 'pmds', 'kline'))
 text('Wolffian (mesonephric) duct', 800, 400, 'nf-l1')
 text('→ epididymis, vas deferens, seminal vesicles', 1000, 650, 'nf-l2', when=O('xy', 'srd', 'pmds', 'kline'))
+text('regresses too — testosterone made, but no receptor to act on', 1000, 650, 'nf-l1 dyn-tag', when=O('ais'))
 MUL = O('xx', 'swyer', 'pmds', 'cah', 'turner')
 add('<path d="M800 820 C900 820 1000 940 1120 940 C1240 940 1300 1000 1420 1000" style="fill:none;stroke:var(--dk8);stroke-width:12;stroke-linecap:round"/>', when=MUL)
 add('<path d="M800 820 C900 820 1000 940 1120 940 C1240 940 1300 1000 1420 1000" style="fill:none;stroke:var(--line-2);stroke-width:6;stroke-dasharray:6 10"/>', unless=MUL)
@@ -105,11 +106,11 @@ sites = [dict(x=1760, y=760, n=[0, -1], w=40, t='rec', l='', aria='Androgen rece
          dict(x=1700, y=455, n=[-1, 0], w=40, t='md', l='', aria='5α-reductase', c='reductase5a', ions=[])]
 
 readouts = [
-  dict(l='Androgens', mods=[dict(when=O('ais', 'cah'), d=1), dict(when=O('kline'), d=-1), dict(when=O('pmds'), d=0)]),
+  dict(l='Androgens', mods=[dict(when=O('ais', 'cah'), d=1), dict(when=O('kline', 'swyer'), d=-1), dict(when=O('pmds', 'srd'), d=0)]),
   dict(l='DHT', mods=[dict(when=O('srd'), d=-1)]),
   dict(l='LH', mods=[dict(when=O('ais', 'swyer', 'turner', 'kline'), d=1)]),
   dict(l='FSH', mods=[dict(when=O('swyer', 'turner', 'kline'), d=1)]),
-  dict(l='Estradiol', mods=[dict(when=O('ais', 'kline'), d=1), dict(when=O('swyer', 'turner'), d=-1)]),
+  dict(l='Estradiol', mods=[dict(when=O('ais', 'kline'), d=1), dict(when=O('swyer', 'turner'), d=-1), dict(when=O('srd'), d=0)]),
 ]
 
 notes = {
@@ -123,9 +124,9 @@ notes = {
   'dx:swyer': 'Swyer syndrome (46,XY, SRY fails): only a streak gonad, which makes neither AMH nor testosterone — so a uterus and '
               'female genitalia; primary amenorrhea with high FSH and LH at puberty.',
   'dx:ais': 'Androgen insensitivity (46,XY, X-linked receptor defect): testes make AMH (no uterus) and plenty of testosterone that '
-            'can’t act — female external genitalia, breasts from aromatization, scant hair; testosterone, estrogen and LH high.',
+            'can’t act — the Wolffian duct regresses too, female external genitalia, breasts from aromatization, scant hair; testosterone, estrogen and LH high.',
   'dx:srd': '5α-reductase deficiency (46,XY): testosterone keeps the internal male structures, but without DHT the external '
-            'genitalia are ambiguous until puberty masculinizes them. High testosterone-to-DHT ratio.',
+            'genitalia are ambiguous until puberty masculinizes them. Testosterone and estrogen normal, DHT low — a high testosterone-to-DHT ratio.',
   'dx:pmds': 'Persistent Müllerian duct syndrome (46,XY): AMH or its receptor fails, so a fully virilized boy also has a uterus and '
              'tubes — often found at hernia or cryptorchidism surgery.',
   'dx:cah': '21-hydroxylase deficiency in a 46,XX fetus: precursors are shunted to adrenal androgens, which virilize the external '
@@ -144,15 +145,15 @@ dyn = dict(
     ['cah', '21-hydroxylase CAH (46,XX)', 'cah21'], ['turner', 'Turner (45,X)', 'turner'], ['kline', 'Klinefelter (47,XXY)', 'klinefelter']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 339, 639–640, 653, 655–656 · Langman ch 16')
+  src='First Aid pp. 339, 639–640, 653, 655–656 · Langman ch 16 · Costanzo ch 10 · Robbins ch 5')
 
 MAP = dict(
   id='sexsim', title='Sex Differentiation in Motion', topic='devrepro', after='sexdev',
   sub='SRY makes the gonad, AMH and testosterone sort the ducts, DHT shapes the external genitalia — pick a case (Swyer, androgen '
       'insensitivity, 5α-reductase, PMDS, CAH, Turner, Klinefelter) and watch which signal is missing and what develops',
   w=3500, h=1480,
-  fa='339, 353, 639–640, 653, 655–656',
-  src=[full('Langman', 16), full('Pawlina', 22)],
+  fa='339, 639–640, 653, 655–656',
+  src=[full('Langman', 16), full('Pawlina', 22), full('Costanzo', 10), full('Robbins', 5)],
   lanes=[('sxGonad', 'Gonad & karyotype', 'glycolysis'), ('sxHorm', 'Hormone signals', 'tca'), ('sxDuct', 'Ducts', 'gluconeo')],
   nodes=[
     ('sx1', 'How sex differentiation runs', 330, 1270, 'sxHorm', 'SRY → AMH + T → DHT', ['sexdevreg'], 'hub'),

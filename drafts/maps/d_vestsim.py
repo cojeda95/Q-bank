@@ -31,7 +31,7 @@ PANY = 1180
 def X(cx, cy, s=18): return f'<path d="M{cx - s} {cy - s} L{cx + s} {cy + s} M{cx + s} {cy - s} L{cx - s} {cy + s}" class="nf-x"/>'
 M = lambda x: 2500 - x          # the right ear mirrors the left around the midline (x 1250)
 FAST_L = O('turnl', 'warm')
-FAST_R = O('cold', 'neur', 'lab', 'schwan')   # UNVERIFIED: direction for a one-sided loss — derived (see notes)
+FAST_R = O('cold', 'neur', 'lab', 'schwan')   # one-sided loss read as a head turn away from the lesion; fast phase = direction of the turn (Fund. Neurosci. ch 22)
 VERT = O('aica', 'pica')
 NYS = FAST_L + FAST_R + VERT
 
@@ -130,7 +130,7 @@ sites = [
 ]
 
 readouts = [
-  dict(l='Vertigo', mods=[dict(when=O('bppv', 'meniere', 'neur', 'lab', 'aica'), d=1)]),
+  dict(l='Vertigo', mods=[dict(when=O('bppv', 'meniere', 'neur', 'lab', 'aica', 'pica'), d=1)]),
   dict(l='Left hearing', mods=[dict(when=O('meniere', 'lab', 'schwan', 'aica'), d=-1), dict(when=O('bppv', 'neur', 'bell'), d=0)]),
   dict(l='Left vestibular nerve firing', mods=[dict(when=FAST_L, d=1), dict(when=LOW_L, d=-1)]),
   dict(l='Left facial movement', mods=[dict(when=O('bell', 'aica'), d=-1), dict(when=O('meniere', 'neur', 'bppv'), d=0)]),
@@ -158,9 +158,9 @@ notes = {
   'dx:aica': 'AICA stroke (lateral pons): the facial nucleus (whole-face LMN weakness, specific to AICA), vestibular and cochlear nuclei, '
              'and through the labyrinthine artery the inner ear — deafness, vertigo, nystagmus — plus crossed pain loss, Horner, ataxia.',
   'dx:pica': 'PICA or vertebral stroke (lateral medulla, Wallenberg): nucleus ambiguus (hoarseness, dysphagia), spinal trigeminal '
-             'nucleus, spinothalamic tract, sympathetics, vestibular nuclei and inferior cerebellar peduncle.',
+             'nucleus, spinothalamic tract, sympathetics, vestibular nuclei (vertigo, nystagmus, vomiting) and inferior cerebellar peduncle.',
   'dx:bell': 'Bell palsy: the facial nerve itself (LMN), so the whole left face is weak, forehead included; hyperacusis and lost taste '
-             'on the front of the tongue. A stroke (UMN) would spare the forehead. Hearing and balance are untouched.',
+             'on the front of the tongue. A stroke (UMN) would spare the forehead. Balance and hearing acuity are normal.',
 }
 
 dyn = dict(
@@ -205,7 +205,7 @@ MAP = dict(
     ('vs9', 'AICA · PICA strokes', 2080, 1760, 'vbCen', 'face vs hoarseness', ['aicastroke', 'wallenberg']),
     ('vs10', 'Bell palsy', 2080, 1620, 'vbCen', 'forehead involved', ['bell'])],
   panels=[
-    (2500, PANY, 1000, 'Peripheral vs central nystagmus (First Aid p. 548)', [
+    (2500, PANY, 1000, 'Peripheral vs central nystagmus (First Aid p. 548 · Fund. Neurosci. ch 22)', [
       ('Inner ear', 'horizontal-torsional, one direction'),
       ('', 'suppressed by visual fixation'),
       ('Brainstem · cerebellum', 'any direction, even purely vertical'),

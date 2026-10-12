@@ -70,8 +70,7 @@ text('aqueduct', 880, 700, 'nf-l2', 'end')
 add('<path d="M925 735 L1000 790 L935 830 Z" style="fill:var(--nf-h2o);fill-opacity:.45;stroke:var(--nf-h2o);stroke-width:3"/>', unless=O(*FOURTH_BIG))
 add('<path d="M900 715 L1060 800 L910 880 Z" style="fill:var(--nf-h2o);fill-opacity:.5;stroke:var(--bad);stroke-width:4"/>', when=O(*FOURTH_BIG))
 text('fourth', 1010, 760, 'nf-l2')
-# the only exits: Magendie (midline, one) and Luschka (lateral, paired) — drawn schematically
-# UNVERIFIED: midline/lateral is from the neuro question explanations (SDL 08), not the csfflow card, which names only the foramina
+# the only exits: Magendie (medial, one) and Luschka (lateral, paired) — FA p. 515; Fundamental Neuroscience ch 6
 add('<path d="M942 822 L962 892" style="fill:none;stroke:var(--nf-h2o);stroke-width:10;stroke-linecap:round"/>')
 add('<path d="M996 786 L1072 768 M996 792 L1072 812" style="fill:none;stroke:var(--nf-h2o);stroke-width:8;stroke-linecap:round"/>')
 text('Magendie — midline', 930, 905, 'nf-l2', 'end')
@@ -84,7 +83,7 @@ add('<circle cx="900" cy="400" r="34" style="fill:var(--dk5);fill-opacity:.4;str
 # block marks
 add(X(800, 490), when=O('monro')); text('colloid cyst at the foramen of Monro', 560, 300, 'nf-l1 dyn-tag', 'middle', when=O('monro'))
 add(X(898, 686), when=O('aque')); text('aqueductal stenosis', 600, 720, 'nf-l1 dyn-tag', 'end', when=O('aque'))
-add(X(955, 862, 14) + X(1060, 772, 12) + X(1060, 810, 12), when=O('dw')); text('fourth-ventricle outlet — Dandy-Walker cyst', 1280, 960, 'nf-l1 dyn-tag', 'middle', when=O('dw'))
+add(X(955, 862, 14) + X(1060, 772, 12) + X(1060, 810, 12), when=O('dw')); text('Dandy-Walker — no vermis, cystic 4th ventricle', 1280, 960, 'nf-l1 dyn-tag', 'middle', when=O('dw'))
 text('brain atrophy — ventricles fill the space', BX, BY + 300, 'nf-l1 dyn-tag', 'middle', when=O('exvac'))
 text('ventricles normal — pressure high', BX, BY + 300, 'nf-l1 dyn-tag', 'middle', when=O('iih'))
 text('too much CSF made', 960, 320, 'nf-l1 dyn-tag', 'middle', when=O('cpp'))
@@ -124,7 +123,7 @@ CL = dict(
   iih=('Idiopathic intracranial hypertension', 'normal ventricles, high opening pressure, papilledema, CN VI'),
   cpp=('Choroid plexus papilloma', 'too much CSF → raised pressure; mostly children, 4th ventricle'),
   syr=('Chiari I with syringomyelia', 'cape-like loss of pain and temperature; anterior horn signs later'),
-  conus=('Conus medullaris syndrome', 'symmetric leg weakness with UMN signs (cauda equina card)'),
+  conus=('Conus medullaris syndrome', 'saddle anesthesia, bladder and bowel, symmetric UMN leg weakness'),
   cauda=('Cauda equina syndrome', 'saddle anesthesia, bladder and bowel, asymmetric LMN weakness, absent ankle jerks'),
 )
 for k, (a, b) in CL.items():
@@ -160,7 +159,8 @@ readouts = [
   dict(l='Lateral ventricle size', mods=[dict(when=O(*LAT_BIG), d=1), dict(when=O('iih'), d=0)]),
   dict(l='Papilledema', mods=[dict(when=O('comm', 'iih'), d=1)]),
   dict(l='Leg reflexes', mods=[dict(when=O('cauda'), d=-1), dict(when=O('conus'), d=1)]),
-  dict(l='Saddle anesthesia · bladder', mods=[dict(when=O('cauda'), d=1)]),
+  dict(l='Saddle anesthesia · bladder', mods=[dict(when=O('cauda', 'conus'), d=1)]),
+  dict(l='Arm pain & temperature', mods=[dict(when=O('syr'), d=-1)]),
 ]
 
 notes = {
@@ -171,7 +171,7 @@ notes = {
   'blk:aque': 'Aqueductal stenosis: the lateral and third ventricles dilate behind the block while the fourth ventricle stays small — '
               'noncommunicating hydrocephalus.',
   'blk:dw': 'Dandy-Walker malformation: the vermis is absent and the fourth ventricle is a large cyst filling the posterior fossa, '
-            'with hydrocephalus and often spina bifida.',
+            'with noncommunicating hydrocephalus; associated with spina bifida.',
   'blk:comm': 'Communicating hydrocephalus: the ventricles all connect, but scarred arachnoid granulations (after meningitis) can’t '
               'absorb CSF — every ventricle dilates, with raised ICP, papilledema and herniation risk.',
   'blk:nph': 'Normal pressure hydrocephalus: pressure rises only episodically, but the enlarged ventricles stretch the corona radiata — '
@@ -179,14 +179,14 @@ notes = {
   'blk:exvac': 'Ex vacuo ventriculomegaly mimics hydrocephalus: brain atrophy (Alzheimer, HIV, FTD, Huntington) leaves big ventricles '
                'with normal pressure and no triad.',
   'blk:iih': 'Idiopathic intracranial hypertension: raised ICP with normal imaging — headache, pulsatile tinnitus, CN VI palsy, '
-             'papilledema; a lumbar puncture shows a high opening pressure and relieves the headache.',
+             'papilledema; a lumbar puncture shows a high opening pressure and relieves the headache for a while.',
   'blk:cpp': 'Choroid plexus papilloma: overproduction of CSF raises the pressure; mostly children under 10, half or more in the '
              'fourth ventricle; resect.',
   'blk:syr': 'Chiari I: cerebellar tonsils below the foramen magnum, often with a syrinx (C2–T9) that cuts the crossing spinothalamic '
              'fibers — cape-like loss of pain and temperature with touch spared.',
-  'blk:conus': 'The cord ends at the conus medullaris (L1–L2). Conus medullaris syndrome gives symmetric leg weakness with upper motor '
-               'neuron signs (the contrast drawn on the cauda equina card).',
-  'blk:cauda': 'Cauda equina syndrome: a central disc, tumor or abscess compresses the free roots below L1–L2 — saddle anesthesia, '
+  'blk:conus': 'The cord ends at the conus medullaris (L1–L2). Compressing it gives saddle anesthesia and bladder and bowel loss, '
+               'like cauda equina, but with symmetric leg weakness and upper motor neuron signs.',
+  'blk:cauda': 'Cauda equina syndrome: a central disc or tumor compresses the free roots below L1–L2 — saddle anesthesia, '
                'bladder and bowel loss, asymmetric flaccid weakness, absent ankle jerks. Emergency MRI and decompression.',
 }
 
@@ -199,7 +199,7 @@ dyn = dict(
     ['syr', 'Chiari I + syringomyelia', 'syringomyelia'], ['conus', 'Conus medullaris syndrome', 'caudaequina'], ['cauda', 'Cauda equina syndrome', 'caudaequina']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 501–502, 515, 520, 536 · Fundamental Neuroscience ch 6–7')
+  src='First Aid pp. 501–502, 515, 520, 536 · Fundamental Neuroscience ch 6–7 · OCOM OMM SDL 1 · Foundations ch 93')
 
 MAP = dict(
   id='csfsim', title='CSF Flow in Motion', topic='neuro', after='meninges',
@@ -208,7 +208,8 @@ MAP = dict(
       'pseudotumor, syrinx, conus medullaris and cauda equina',
   w=3500, h=2160,
   fa='501–502, 506, 515, 520, 536',
-  src=[full('Fundamental Neuroscience', 6), full('Fundamental Neuroscience', 7), full('Fundamental Neuroscience', 9), full('Robbins', 28), full('Moore', 2)],
+  src=[full('Fundamental Neuroscience', 6), full('Fundamental Neuroscience', 7), full('Fundamental Neuroscience', 9), full('Robbins', 28), full('Moore', 2),
+       'OCOM OMM — SDL 1 lecture: Low Back Pain I', 'Foundations of Osteopathic Medicine ch 93 — Osteopathic Considerations in the Patient With Low Back Pain'],   # cauda equina: red flags, Achilles reflex, emergency MRI + decompression
   lanes=[('cfFlow', 'CSF flow', 'glycolysis'), ('cfHydro', 'Hydrocephalus & pressure', 'tca'), ('cfCanal', 'Spinal canal', 'gluconeo')],
   nodes=[
     ('cf1', 'CSF production & flow', 330, 1990, 'cfFlow', 'plexus → sinus', ['csfflow', 'ventwalls'], 'hub'),
@@ -219,7 +220,7 @@ MAP = dict(
     ('cf6', 'Cauda equina · conus', 760, 2110, 'cfCanal', 'below L1–L2', ['caudaequina']),
     ('cf7', 'Lumbar puncture', 1160, 2110, 'cfCanal', 'L3–L4 or L4–L5', ['lpcsf', 'ntd'])],
   panels=[
-    (2420, PANY, 1000, 'Which ventricles dilate (First Aid p. 536)', [
+    (2420, PANY, 1000, 'Which ventricles dilate (FA p. 536 · Fund. Neurosci. ch 6)', [
       ('Foramen of Monro', 'lateral only'),
       ('Aqueduct', 'lateral + third'),
       ('Fourth-ventricle outlets', 'all four'),

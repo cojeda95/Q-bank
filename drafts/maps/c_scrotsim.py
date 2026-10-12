@@ -61,7 +61,7 @@ for i in range(5):
     add(f'<path d="M{1060 + i * 18} 1220 c-14 -30 14 -50 0 -80 c-14 -30 14 -50 0 -80" style="fill:none;stroke:var(--nf-h2o);stroke-width:7"/>', when=D('varic'))
     add(f'<path d="M{720 + i * 18} 1220 c-14 -30 14 -50 0 -80 c-14 -30 14 -50 0 -80" style="fill:none;stroke:var(--nf-h2o);stroke-width:7"/>', when=D('rvaric'))
 add(f'<rect x="{IVC - 30}" y="500" width="60" height="44" rx="10" style="fill:var(--bad);opacity:.7"/>', when=D('rvaric'))
-text('tumor in the renal vein / IVC (renal cell carcinoma)', IVC - 50, 590, 'nf-l1 dyn-tag', 'end', when=D('rvaric'))
+text('tumor in the renal vein / IVC (renal cell carcinoma)', IVC - 50, 700, 'nf-l1 dyn-tag', 'end', when=D('rvaric'))
 text('bag of worms — worse standing and with Valsalva', 1250, 1120, 'nf-l1 dyn-tag', when=D('varic'))
 text('right-sided — look for IVC obstruction', 600, 1120, 'nf-l1 dyn-tag', 'end', when=D('rvaric'))
 
@@ -90,6 +90,10 @@ text('epididymis tender behind the testis', CX, 1360, 'nf-l1 dyn-tag', 'middle',
 # bedside tests
 add(f'<circle cx="{CX}" cy="{CY}" r="300" style="fill:var(--accent);fill-opacity:.25"/>', when=['light&dx:hydro'])
 add(f'<circle cx="{CX + 190}" cy="{CY - 250}" r="80" style="fill:var(--accent);fill-opacity:.35"/>', when=['light&dx:sperm'])
+add(f'<path d="M{CX - 400} {CY - 30} L{CX - 300} {CY - 50} M{CX - 400} {CY} H{CX - 300} M{CX - 400} {CY + 30} L{CX - 300} {CY + 50}" style="stroke:var(--accent);stroke-width:6;stroke-linecap:round"/>', when=['light'])
+text('light', CX - 410, CY + 6, 'nf-l1', 'end', when=['light'])
+add(f'<path d="M{CX + 330} {CY + 290} V{CY + 160}" class="dyn-line" style="stroke:var(--accent);stroke-width:4" marker-end="url(#ah-scMass)"/>', when=['lift'])
+text('lifted', CX + 350, CY + 240, 'nf-l1', 'start', when=['lift'])
 text('lights up — transilluminates', CX, 1400, 'nf-l1', 'middle', when=['light&dx:hydro', 'light&dx:sperm'])
 text('does not transilluminate', CX, 1400, 'nf-l1', 'middle', when=['light&dx:tumor', 'light&dx:varic', 'light&dx:rvaric'])
 text('Prehn negative — lifting does not ease the pain', CX, 1440, 'nf-l1', 'middle', when=['lift&dx:torsion'])
@@ -104,7 +108,7 @@ flows = [
   dict(d=f'M1100 1240 C1150 1000 1200 700 1200 480 H{IVC}', len=1150, speed=100, r=8, base=dict(ven=4), unless=D('crypt'),
        mods=[m(D('varic'), set=dict(ven=8), speed=0.2)]),
   dict(d=f'M{IVC} 1000 V300', len=700, speed=120, r=9, base=dict(ven=4), mods=[m(D('rvaric'), speed=0.2)]),
-  dict(d=f'M{CX + 60} 420 V{CY - 160}', len=380, speed=90, r=8, base=dict(art=2), mods=[m(D('torsion'), set=dict(art=0))]),
+  dict(d=f'M{CX + 60} 420 V{CY - 160}', len=380, speed=90, r=8, base=dict(art=2), mods=[m(D('torsion'), set=dict(art=1), speed=0.25)]),   # arteries stay patent; the outflow is blocked (Robbins ch 21)
 ]
 sites = [dict(x=CX + 60, y=500, n=[-1, 0], w=10, t='rec', l='', aria='Testicular torsion', c='torsion', ions=[]),
          dict(x=CX + 230, y=CY + 100, n=[1, 0], w=10, t='rec', l='', aria='Epididymitis', c='epididymitis', ions=[]),
@@ -118,14 +122,14 @@ readouts = [
   dict(l='Cremasteric reflex', mods=[dict(when=D('torsion'), d=-1)]),
   dict(l='Transilluminates', mods=[dict(when=D('hydro', 'sperm'), d=1), dict(when=D('tumor', 'varic', 'rvaric'), d=-1)]),
   dict(l='Testis temperature', mods=[dict(when=D('varic', 'rvaric', 'crypt'), d=1)]),
-  dict(l='Spermatogenesis', mods=[dict(when=D('varic', 'crypt'), d=-1)]),
+  dict(l='Spermatogenesis', mods=[dict(when=D('varic', 'rvaric', 'crypt'), d=-1)]),
 ]
 
 notes = {
   '': 'Each testis gets a testicular artery from the aorta. The right gonadal vein drains straight into the IVC; the left one meets '
       'the left renal vein at a right angle, so left-sided pressure is higher. Pick a problem, then lift the scrotum or shine a light.',
-  'dx:torsion': 'Torsion: poorly fixed to the tunica vaginalis (bell clapper), the testis lies horizontally and twists — veins block '
-                'first, then the artery. Boys 12–18, sudden pain, high-riding testis, no cremasteric reflex, Prehn negative. '
+  'dx:torsion': 'Torsion: poorly fixed to the tunica vaginalis (bell clapper), the testis lies horizontally and twists — the veins '
+                'close while the thick-walled arteries stay open: engorgement, then hemorrhagic infarction. Boys 12–18, sudden pain, high-riding testis, no cremasteric reflex, Prehn negative. '
                 'Detorsion and orchiopexy of both sides within 6 hours.',
   'dx:epi': 'Epididymitis: bacteria ascend from the urethra — Chlamydia and gonorrhea in young men, E coli and Pseudomonas in older '
             'men. Tender posterior testis; Prehn positive. Mumps can cause orchitis.',
@@ -155,7 +159,7 @@ dyn = dict(
             dict(id='light', label='Test', type='toggle', on='Light on', off='Shine a light', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 21')
+  src='First Aid pp. 669–671 · Robbins ch 21 · Moore ch 5')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -165,7 +169,7 @@ MAP = dict(
       'fill the tunica, leave a testis undescended or grow a tumor — and run the Prehn and transillumination tests',
   w=3600, h=1900,
   fa='669, 670, 671',
-  src=['Robbins ch 21 — The lower urinary tract and male genital system', 'Moore ch 5 — Abdomen'],
+  src=[full('Robbins', 21), full('Moore', 5)],
   lanes=[('scAcute', 'Acute scrotum', 'tca'), ('scMass', 'Scrotal masses', 'glycolysis')],
   nodes=[
     ('sc1', 'Testicular torsion', 330, 1660, 'scAcute', 'Prehn −, no cremasteric', ['torsion'], 'hub'),
@@ -175,7 +179,7 @@ MAP = dict(
     ('sc5', 'Cryptorchidism', 2080, 1660, 'scMass', 'heat · tumor risk', ['cryptorchid']),
     ('sc6', 'Germ cell tumors', 2520, 1660, 'scMass', 'firm · no light', ['testisgct'])],
   panels=[
-    (2500, PANY, 1000, 'Bedside tests (Robbins ch 21)', [
+    (2500, PANY, 1000, 'Bedside tests (First Aid pp. 669–671)', [
       ('Prehn −', 'torsion'), ('Prehn +', 'epididymitis'), ('Lights up', 'hydrocele, spermatocele'),
       ('No light', 'tumor, varicocele')])],
   dyn=dyn)

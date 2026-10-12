@@ -46,6 +46,7 @@ X0, X1, TY = 320, 2300, 330
 add(f'<path d="M{X0} {TY} H{X1}" style="stroke:var(--ink-3);stroke-width:6"/>')
 add(f'<rect x="{X0 + 2 * 330}" y="{TY - 40}" width="{3 * 330}" height="80" rx="20" style="fill:var(--bad);fill-opacity:.08"/>')
 text('weeks 3–8: organogenesis — teratogens do the most damage', X0 + 2 * 330 + 495, TY - 54, 'nf-l2', 'middle')
+add(f'<rect x="{X0 + 2 * 330}" y="{TY - 40}" width="{3 * 330}" height="80" rx="20" class="dyn-hl" style="fill:none"/>', when=['tg:*'])   # a teratogen on: the sensitive window lights up
 for i, (k, lab, sub) in enumerate(WEEKS):
     x = X0 + 160 + i * 330
     add(f'<circle cx="{x}" cy="{TY}" r="18" style="fill:var(--surface);stroke:var(--ink-2);stroke-width:4"/>')
@@ -58,11 +59,12 @@ for k, t in EXP.items(): text(t, 1310, 494, 'nf-l2', 'middle', when=[f'wk:{k}&tg
 
 # ════════ fetus and fluid cycle ════════
 add('<ellipse cx="1050" cy="1050" rx="560" ry="380" style="fill:var(--nf-h2o);fill-opacity:.12;stroke:var(--nf-h2o);stroke-width:4"/>')
-text('amniotic fluid', 620, 760, 'nf-l1')
-add('<ellipse cx="1050" cy="1050" rx="560" ry="380" style="fill:var(--nf-h2o);fill-opacity:.25"/>', when=D('tef', 'annular'))
-text('polyhydramnios', 1050, 1460, 'nf-l1 dyn-tag', 'middle', when=D('tef', 'annular'))
-add('<ellipse cx="1050" cy="1050" rx="560" ry="380" style="fill:var(--surface);fill-opacity:.7"/>', when=D('potter', 'puv'))
+text('amniotic fluid', 540, 730, 'nf-l1')
+add('<ellipse cx="1050" cy="1050" rx="560" ry="380" style="fill:var(--nf-h2o);fill-opacity:.25"/>', when=D('tef', 'duod'))
+text('polyhydramnios — swallowed fluid can’t pass on', 1050, 1460, 'nf-l1 dyn-tag', 'middle', when=D('tef', 'duod'))
+add('<ellipse cx="1050" cy="1050" rx="560" ry="380" style="fill:var(--surface);fill-opacity:.7"/>', when=D('potter', 'puv') + T('ace'))   # low fluid, under the organs
 text('oligohydramnios — the fetus is compressed, lungs can’t grow', 1050, 1460, 'nf-l1 dyn-tag', 'middle', when=D('potter', 'puv'))
+text('ACE inhibitor: fetal renal failure → oligohydramnios', 1050, 1500, 'nf-l1 dyn-tag', 'middle', when=T('ace'), unless=D('potter', 'puv'))   # offset below the defect captions
 box(900, 760, 1200, 830, 'Mouth · esophagus')
 box(900, 870, 1200, 940, 'Stomach'); box(900, 980, 1200, 1050, 'Duodenum'); box(900, 1090, 1200, 1160, 'Bowel')
 box(1300, 870, 1520, 940, 'Lungs')
@@ -70,9 +72,9 @@ box(620, 1090, 820, 1160, 'Kidneys'); box(620, 1220, 820, 1290, 'Bladder · uret
 add('<rect x="1240" y="1060" width="60" height="60" rx="10" style="fill:var(--ink-3)"/>'); text('umbilicus', 1320, 1096, 'nf-l2')
 # defects
 add(X(1050, 850, 12), when=D('tef'))
-add('<path d="M1200 800 C1260 820 1280 860 1300 880" style="fill:none;stroke:var(--bad);stroke-width:6"/>', when=D('tef'))
+add('<path d="M1300 895 C1260 870 1230 868 1200 880" style="fill:none;stroke:var(--bad);stroke-width:6"/>', when=D('tef'))   # trachea → distal esophagus / stomach
 text('esophageal atresia + distal fistula from the trachea', 1700, 800, 'nf-l1 dyn-tag', 'middle', when=D('tef'))
-add(X(1050, 1015), when=D('duod'))
+add(X(1050, 1066, 13), when=D('duod'))   # at the duodenum's outlet, clear of its label
 text('duodenal atresia: failed recanalization — double bubble, Down syndrome', 1700, 800, 'nf-l1 dyn-tag', 'middle', when=D('duod'))
 add('<ellipse cx="1050" cy="1015" rx="170" ry="48" style="fill:none;stroke:var(--dk5);stroke-width:12"/>', when=D('annular'))
 text('annular pancreas: ventral bud rings the 2nd part of the duodenum', 1700, 800, 'nf-l1 dyn-tag', 'middle', when=D('annular'))
@@ -90,19 +92,18 @@ TG = dict(valp='valproate, carbamazepine, phenytoin: neural tube, cardiac defect
           thal='thalidomide: phocomelia', li='lithium: Ebstein anomaly', warf='warfarin: stippled epiphyses, nasal hypoplasia — use heparin',
           ace='ACE inhibitors: renal failure, oligohydramnios, hypocalvaria', alc='alcohol: smooth philtrum, thin lip, small palpebral fissures, microcephaly')
 for k, t in TG.items(): text(t, 1310, 560, 'nf-l1', 'middle', when=T(k))
-add('<ellipse cx="1050" cy="1050" rx="560" ry="380" style="fill:var(--surface);fill-opacity:.6"/>', when=T('ace'))
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
 CYCLE_URINE = D('potter', 'puv') + T('ace')
-CYCLE_SWALLOW = D('tef', 'annular')
+CYCLE_SWALLOW = D('tef', 'duod')
 flows = [
   dict(d='M720 1160 V1220', len=60, speed=30, r=8, base=dict(w=2), mods=[m(D('potter'), set=dict(w=0))]),
   dict(d='M720 1290 C700 1360 600 1300 560 1100 C540 900 700 760 900 790', len=900, speed=140, r=9, base=dict(w=4), mods=[m(CYCLE_URINE, set=dict(w=0))]),
   dict(d='M1050 830 V870', len=40, speed=25, r=8, base=dict(w=2), mods=[m(D('tef'), set=dict(w=0))]),
   dict(d='M1050 940 V980', len=40, speed=25, r=8, base=dict(w=2), mods=[m(D('tef'), set=dict(w=0))]),
-  dict(d='M1050 1050 V1090', len=40, speed=25, r=8, base=dict(w=2), mods=[m(D('tef', 'duod', 'annular'), set=dict(w=0))]),
-  dict(d='M1200 1125 C1300 1100 1360 1000 1400 940', len=260, speed=80, r=8, base=dict(w=2), mods=[m(CYCLE_URINE, set=dict(w=0))]),
+  dict(d='M1050 1050 V1090', len=40, speed=25, r=8, base=dict(w=2), mods=[m(D('tef', 'duod'), set=dict(w=0)), m(D('annular'), set=dict(w=1))]),
+  dict(d='M1560 1180 C1580 1080 1500 1000 1440 940', len=280, speed=80, r=8, base=dict(w=2), mods=[m(CYCLE_URINE, set=dict(w=0))]),
   dict(d=f'M{X0 + 160} {TY} H{X1 - 160}', len=1650, speed=300, r=10, base=dict(t=1)),
 ]
 sites = [dict(x=1050, y=760, n=[0, -1], w=10, t='rec', l='', aria='Tracheoesophageal fistula', c='tef', ions=[]),
@@ -112,7 +113,7 @@ sites = [dict(x=1050, y=760, n=[0, -1], w=10, t='rec', l='', aria='Tracheoesopha
 
 readouts = [
   dict(l='Amniotic fluid', mods=[dict(when=CYCLE_SWALLOW, d=1), dict(when=CYCLE_URINE, d=-1)]),
-  dict(l='Lung growth', mods=[dict(when=D('potter', 'puv'), d=-1)]),
+  dict(l='Lung growth', mods=[dict(when=D('potter', 'puv') + T('ace'), d=-1)]),
   dict(l='Vomiting after the first feeds', mods=[dict(when=D('tef', 'duod', 'annular'), d=1)]),
   dict(l='Maternal serum AFP', mods=[dict(when=D('gastro', 'omph'), d=1)]),
 ]
@@ -129,9 +130,10 @@ notes = {
   'wk:fet': 'Fetal period: after week 8 exposures mainly affect growth and function.',
   'dx:tef': 'Esophageal atresia with distal TEF (commonest): the fetus can’t swallow → polyhydramnios; the newborn drools, chokes and '
             'vomits with the first feed; an NG tube won’t pass; air-filled stomach.',
-  'dx:duod': 'Duodenal atresia: failed recanalization of the solid-cord stage — bilious vomiting, double bubble; Down syndrome.',
+  'dx:duod': 'Duodenal atresia: failed recanalization of the solid-cord stage — swallowed fluid can’t pass → polyhydramnios; bilious '
+            'vomiting in the first 1–2 days, double bubble; Down syndrome.',
   'dx:annular': 'Annular pancreas: the two halves of the ventral bud migrate opposite ways and ring the 2nd part of the duodenum — '
-                'polyhydramnios, vomiting; Down syndrome.',
+                'it may narrow it (vomiting), occasionally to complete obstruction; Down syndrome.',
   'dx:gastro': 'Gastroschisis: failed lateral fold closure beside the umbilicus (right), no covering sac; rarely chromosomal, good prognosis. ↑ AFP.',
   'dx:omph': 'Omphalocele: through the umbilical ring, covered by peritoneum and amnion — trisomies 13 and 18, Beckwith-Wiedemann, '
              'cardiac, GU and neural tube defects. ↑ AFP.',
@@ -139,9 +141,9 @@ notes = {
                'extremity defects, renal failure.',
   'dx:horse': 'Horseshoe kidney: fused lower poles caught under the inferior mesenteric artery during ascent — hydronephrosis, stones, '
               'infection; Turner, trisomies.',
-  'dx:puv': 'Posterior urethral valves: the commonest bladder outlet obstruction in male infants — bilateral hydronephrosis, thick '
-            'bladder, oligohydramnios.',
-  'tg:ace': 'ACE inhibitors in pregnancy: fetal renal failure, oligohydramnios, hypocalvaria.',
+  'dx:puv': 'Posterior urethral valves: a membrane remnant in the posterior urethra of boys blocks the bladder outlet — bilateral '
+            'hydronephrosis, thick bladder wall, oligohydramnios → Potter sequence when severe.',
+  'tg:ace': 'ACE inhibitors in pregnancy: fetal renal failure → oligohydramnios (a cause of Potter sequence), hypocalvaria.',
 }
 
 dyn = dict(
@@ -156,21 +158,22 @@ dyn = dict(
               ['li', 'Lithium', 'teratogens'], ['warf', 'Warfarin', 'teratogens'], ['ace', 'ACE inhibitors', 'teratogens'], ['alc', 'Alcohol', 'fas']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 365–367, 596–597, 630–635 · Langman ch 5–9, 15–16')
+  src='First Aid pp. 365–367, 596–597, 630–635 · Langman ch 5–9, 15–16, 22 (AFP) · Bootcamp nephrology (valves)')
 
 MAP = dict(
   id='embsim', title='Embryo & Gut-Tube Defects in Motion', topic='devrepro', after='embryo',
   sub='Step through weeks 1–8 and see how a teratogen acts at each stage, then watch the fetus cycle amniotic fluid and break it — '
       'TEF, duodenal atresia, annular pancreas, gastroschisis, omphalocele, Potter, horseshoe kidney, posterior urethral valves',
   w=3600, h=1900,
-  fa='365, 366, 367, 501, 596, 597, 630, 631, 632, 633, 635',
+  fa='365, 366, 367, 501, 596, 597, 630, 631, 632, 633, 634, 635',
   src=['Langman ch 5 — Third Week of Development: Trilaminar Germ Disc', 'Langman ch 6 — Third to Eighth Weeks: The Embryonic Period',
        'Langman ch 9 — Birth Defects and Prenatal Diagnosis', 'Langman ch 18 — Central Nervous System',
        'Katzung ch 59 — Special Aspects of Perinatal & Pediatric Pharmacology', 'Robbins ch 10 — Diseases of infancy and childhood',
        'Fundamental Neuroscience ch 5 — Development of the Nervous System', 'Langman ch 8 — Third Month to Birth: The Fetus and Placenta',
        'Robbins ch 22 — The female genital tract', 'Robbins ch 17 — The gastrointestinal tract', 'Langman ch 14 — Respiratory System',
        'Langman ch 15 — Digestive System', 'Langman ch 7 — The Gut Tube and the Body Cavities', 'Langman ch 16 — Urogenital System',
-       'Moore ch 5 — Abdomen', 'Robbins ch 20 — The kidney', 'Robbins ch 19 — The pancreas', 'Bootcamp.com Gastroenterology — Embryology'],
+       'Moore ch 5 — Abdomen', 'Robbins ch 20 — The kidney', 'Robbins ch 19 — The pancreas', 'Bootcamp.com Gastroenterology — Embryology',
+       'Langman ch 22 — Answers to Problems', 'Bootcamp.com Nephrology — Anatomy & Embryology'],
   lanes=[('ebWk', 'Weeks 1–8', 'glycolysis'), ('ebGut', 'Gut & wall', 'tca'), ('ebUro', 'Kidney & urinary', 'gluconeo')],
   nodes=[
     ('eb1', 'Weeks 1–8', 330, 1660, 'ebWk', 'organogenesis', ['earlydev'], 'hub'),
@@ -184,7 +187,7 @@ MAP = dict(
     ('eb9', 'Horseshoe · valves', 1640, 1790, 'ebUro', 'IMA · male outlet', ['horseshoe'])],
   panels=[
     (2500, PANY, 1000, 'Amniotic fluid tells you which side broke', [
-      ('Polyhydramnios', 'can’t swallow — TEF, annular pancreas'),
+      ('Polyhydramnios', 'can’t swallow it on — esophageal or duodenal atresia'),
       ('Oligohydramnios', 'no urine — renal agenesis, valves, ACE inhibitors'),
       ('↑ Maternal AFP', 'gastroschisis, omphalocele')])],
   dyn=dyn)

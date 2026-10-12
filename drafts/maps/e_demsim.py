@@ -60,7 +60,7 @@ def shade(k, op, when):
 def hip(op, when): add(f'<ellipse cx="940" cy="860" rx="70" ry="28" style="fill:var(--bad);fill-opacity:{op}"/>', when=when)
 hip(.4, DY('alz', 'e')); hip(.6, DY('alz', 'm', 'l'))
 for k in ('temp', 'par'): shade(k, .3, DY('alz', 'm')); shade(k, .5, DY('alz', 'l'))
-for k in ('front', 'occ'): shade(k, .4, DY('alz', 'l'))
+shade('front', .4, DY('alz', 'l'))   # Robbins: atrophy most marked frontal, temporal, parietal
 shade('front', .35, DY('ftd', 'e')); shade('front', .55, DY('ftd', 'm', 'l')); shade('temp', .35, DY('ftd', 'm')); shade('temp', .55, DY('ftd', 'l'))
 for op, y in ((.3, 'e'), (.5, 'm'), (.7, 'l')):
     add(f'<rect x="1040" y="930" width="90" height="120" rx="30" style="fill:var(--bad);fill-opacity:{op}"/>', when=DY('psp', y))
@@ -80,7 +80,7 @@ for i, (x, y) in enumerate(SP_):
         add(f'<circle cx="{x + dx_}" cy="{y}" r="11" style="fill:var(--surface);stroke:var(--ink-2);stroke-width:2"/>', when=DY('cjd', *ys))
 TAG = dict(alz='short-term memory first — plaques and tangles spread out from the hippocampus',
            ftd='personality, behavior or language before memory — Pick bodies or TDP-43',
-           psp='parkinsonism + early vertical gaze palsy + cognitive decline', lewy='α-synuclein in the cortex from the start — visual hallucinations, fluctuations',
+           psp='parkinsonism + vertical gaze palsy + cognitive decline', lewy='α-synuclein in the cortex from the start — visual hallucinations, fluctuations',
            vasc='stepwise decline — each infarct adds a step; memory late', cjd='rapid: weeks to months — startle myoclonus, ataxia, fatal',
            nph='wobbly, wacky and wet — ventricles out of proportion to the sulci')
 for k, s in TAG.items(): text(s, 950, 1340, 'nf-l1 dyn-tag', 'middle', when=D(k))
@@ -109,31 +109,32 @@ sites = [dict(x=900, y=820, n=[-1, -1], w=10, t='rec', l='', aria='Alzheimer dis
          dict(x=450, y=820, n=[-1, 0], w=10, t='rec', l='', aria='Reversible causes', c='dementiarev', ions=[])]
 
 readouts = [
-  dict(l='Memory', mods=[dict(when=D('alz', 'cjd', 'lewy'), d=-1), dict(when=['dx:nph&!shunt'], d=-1), dict(when=DY('vasc', 'l') + DY('ftd', 'l'), d=-1)]),
+  dict(l='Memory', mods=[dict(when=D('alz', 'cjd') + DY('lewy', 'm', 'l'), d=-1), dict(when=['dx:nph&!shunt'], d=-1), dict(when=DY('vasc', 'l') + DY('ftd', 'l'), d=-1)]),
   dict(l='Behavior & language', mods=[dict(when=D('ftd'), d=-1), dict(when=DY('alz', 'l'), d=-1)]),
   dict(l='Movement & gait', mods=[dict(when=D('psp', 'lewy', 'cjd'), d=-1), dict(when=['dx:nph&!shunt'], d=-1)]),
+  dict(l='Visual hallucinations', mods=[dict(when=D('lewy'), d=1)]),
 ]
 
 notes = {
   '': 'Dementia is a decline in memory or executive function with a clear sensorium — unlike delirium. Pick a disease and step '
       'through time; rule out the reversible causes first.',
-  'dx:alz': 'Alzheimer: β-amyloid plaques and tau tangles spread out from the entorhinal cortex and hippocampus; nucleus basalis '
-            'cholinergic neurons go early, so cortical ACh falls. Memory first, then language, visuospatial, executive; '
-            'personality late. APP (chr 21, Down), presenilins, APOE ε4. Donepezil, rivastigmine, galantamine; memantine.',
-  'dx:ftd': 'Frontotemporal: frontal and temporal neurons go first — disinhibition, apathy, hyperorality, compulsions, or primary '
-            'progressive aphasia — before memory. Pick bodies or TDP-43.',
-  'dx:psp': 'PSP: tau in the midbrain and basal ganglia — parkinsonism with an early vertical gaze palsy and cognitive decline; '
-            'hummingbird sign. Supportive.',
+  'dx:alz': 'Alzheimer: tau tangles start in the entorhinal cortex and hippocampus, then spread through the frontal, temporal '
+            'and parietal neocortex; cholinergic neurons of the nucleus basalis degenerate, so cortical ACh falls. Recent memory '
+            'goes first. APP (chr 21, Down), presenilins, APOE ε4. Donepezil, rivastigmine, galantamine; memantine.',
+  'dx:ftd': 'Frontotemporal: frontal and temporal neurons go first — disinhibition, apathy, hyperorality, stereotypies, or primary '
+            'progressive aphasia — before memory; global dementia later. Pick bodies or TDP-43.',
+  'dx:psp': 'PSP: a tauopathy, heaviest in the brainstem and deep gray matter — parkinsonism, vertical gaze palsy, falls and '
+            'cognitive decline; hummingbird sign on midbrain MRI. Often fatal within 5–7 years.',
   'dx:lewy': 'Lewy body dementia: α-synuclein Lewy bodies in the cortex from the start — visual hallucinations, fluctuating '
-             'cognition, REM sleep behavior disorder, parkinsonism within a year of the dementia. Severe antipsychotic '
+             'cognition, REM sleep behavior disorder, parkinsonism — cognitive and motor onset within a year. Severe antipsychotic '
              'sensitivity; cholinesterase inhibitors.',
   'dx:vasc': 'Vascular dementia (2nd most common): infarcts and small-vessel ischemia — stepwise decline, focal signs, memory late. '
              'Control vascular risk factors.',
   'dx:cjd': 'CJD: PrPsc refolds PrPc into β-pleated sheets — spongiform cortex without inflammation; rapidly progressive dementia '
             'over weeks to months with startle myoclonus and ataxia. Periodic sharp waves on EEG, CSF 14-3-3. Fatal.',
-  'dx:nph': 'Normal pressure hydrocephalus: the ventricles enlarge and stretch corona radiata fibers to the legs and bladder — gait '
-            'apraxia, cognitive dysfunction, incontinence. Reversible.',
-  'shunt': 'Lumbar puncture drainage, then a ventriculoperitoneal shunt, for NPH.',
+  'dx:nph': 'Normal pressure hydrocephalus: the ventricles enlarge and distort the corona radiata fibers — gait '
+            'apraxia, cognitive dysfunction, incontinence. A reversible dementia.',
+  'shunt': 'NPH is treated by draining CSF — lumbar puncture or a shunt; the symptoms can improve.',
 }
 
 dyn = dict(
@@ -145,7 +146,7 @@ dyn = dict(
             dict(id='shunt', label='Treat', type='toggle', on='Shunted', off='Shunt (NPH)', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 28')
+  src='First Aid pp. 174, 534–536 · Robbins ch 28 · Kaplan & Sadock ch 3, 21')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -155,7 +156,7 @@ MAP = dict(
       'vascular, PSP, rapid CJD — and shunt the reversible one, NPH',
   w=3600, h=1900,
   fa='174, 534, 535, 536',
-  src=['Robbins ch 28 — The central nervous system', 'Kaplan & Sadock ch 3 — Neurocognitive Disorders'],
+  src=[full('Robbins', 28), full('Kaplan & Sadock', 3), full('Kaplan & Sadock', 21), full('Fundamental Neuroscience', 6)],   # ch 21: cholinesterase inhibitors in Lewy body disease
   lanes=[('dmNeuro', 'Neurodegenerative', 'tca'), ('dmOther', 'Vascular, prion, reversible', 'glycolysis')],
   nodes=[
     ('dm1', 'Alzheimer disease', 330, 1700, 'dmNeuro', 'hippocampus first', ['alzheimer'], 'hub'),
@@ -167,7 +168,7 @@ MAP = dict(
     ('dm7', 'Normal pressure hydrocephalus', 2960, 1700, 'dmOther', 'wet, wobbly, wacky', ['nph']),
     ('dm8', 'Reversible causes', 330, 1840, 'dmOther', 'TSH · B12 · RPR', ['dementiarev'])],
   panels=[
-    (2500, PANY, 1000, 'What goes first (Robbins ch 28)', [
+    (2500, PANY, 1000, 'What goes first (FA pp. 534–535 · Robbins ch 28)', [
       ('Alzheimer', 'short-term memory'), ('Frontotemporal', 'behavior or language'), ('Lewy body', 'hallucinations, fluctuation'),
       ('Vascular', 'stepwise; memory late'), ('CJD', 'rapid, myoclonus'), ('NPH', 'triad: gait, cognition, incontinence')])],
   dyn=dyn)

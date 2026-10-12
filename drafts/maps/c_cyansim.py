@@ -63,8 +63,10 @@ add(f'<path d="{TRUNK} M1080 520 C1060 470 1020 430 1000 400 M1080 520 H1700 V13
 add('<path d="M905 760 C915 700 925 650 935 610" style="stroke:var(--bad);stroke-width:12"/>', when=D('tof'))
 text('pulmonary stenosis', 860, 640, 'nf-l2', 'end', when=D('tof'))
 text('overriding aorta', 1260, 640, 'nf-l2', when=D('tof'))
-add('<path d="M1000 470 C1100 480 1200 500 1300 530" style="stroke:var(--accent);stroke-width:12;opacity:.7"/>', when=['dx:tga&pda'])
-text('PDA (alprostadil)', 1150, 460, 'nf-l2', 'middle', when=['dx:tga&pda'])
+add('<rect x="826" y="886" width="248" height="158" rx="26" style="fill:none;stroke:var(--bad);stroke-width:14;opacity:.55"/>', when=D('tof'))   # RVH
+text('RV hypertrophy — boot-shaped heart', 950, 1080, 'nf-l1 dyn-tag', 'middle', when=D('tof'))
+add('<path d="M1310 515 Q1250 455 1188 452" style="fill:none;stroke:var(--accent);stroke-width:12;opacity:.7"/>', when=['dx:tga&pda'])   # aorta ↔ pulmonary trunk
+text('PDA (alprostadil)', 1330, 470, 'nf-l2', 'start', when=['dx:tga&pda'])
 text('aorta from RV, pulmonary trunk from LV — two parallel circuits', 1100, 1620, 'nf-l1 dyn-tag', 'middle', when=D('tga'))
 text('one trunk over a VSD carries mixed blood to lungs and body', 1100, 1620, 'nf-l1 dyn-tag', 'middle', when=D('truncus'))
 text('pulmonary veins drain to the right heart — only an ASD reaches the left', 1100, 1620, 'nf-l1 dyn-tag', 'middle', when=D('tapvr'))
@@ -108,7 +110,7 @@ flows = [
   # d-TGA
   fl(TGA_AO, 4, 'blue', when=D('tga'), mods=[dict(when=['dx:tga&pda'], set=dict(blue=3))]),
   fl(TGA_PA, 3, 'red', when=D('tga')),
-  fl('M1000 470 C1100 480 1200 500 1300 530', 2, 'mix', when=['dx:tga&pda']),
+  dict(d='M1310 515 Q1250 455 1188 452', len=150, speed=60, r=10, base=dict(mix=2), when=['dx:tga&pda']),
 ]
 sites = [dict(x=1080, y=500, n=[0, -1], w=10, t='rec', l='', aria='Truncus arteriosus', c='truncus', ions=[]),
          dict(x=800, y=860, n=[-1, 0], w=10, t='rec', l='', aria='Tricuspid atresia', c='triatresia', ions=[]),
@@ -121,6 +123,7 @@ readouts = [
   dict(l='Systemic O₂ saturation', mods=[dict(when=D('truncus', 'tria', 'tapvr', 'tof', 'tga'), d=-1)]),
   dict(l='Pulmonary blood flow', mods=[dict(when=D('tof'), d=-1)]),
   dict(l='Right-heart failure', mods=[dict(when=D('ebstein'), d=1)]),
+  dict(l='RV muscle mass', mods=[dict(when=D('tof', 'tga'), d=1), dict(when=D('tria'), d=-1)]),
 ]
 
 notes = {
@@ -130,15 +133,15 @@ notes = {
                 'mixed blood to body and lungs. Early cyanosis; DiGeorge (22q11).',
   'dx:tria': 'Tricuspid atresia: no tricuspid valve, hypoplastic RV — blood crosses an ASD to the left heart and reaches the lungs '
              'through a VSD or PDA. ECG: tall P waves, left axis deviation.',
-  'dx:tapvr': 'TAPVR: all pulmonary veins drain to systemic veins (SVC, coronary sinus); oxygenated blood reaches the left heart '
-              'only through an ASD (sometimes a PDA).',
+  'dx:tapvr': 'TAPVR: the pulmonary veins drain into the right-heart circulation (SVC, coronary sinus…); oxygenated blood reaches '
+              'the left heart only through an ASD (sometimes a PDA).',
   'dx:ebstein': 'Ebstein anomaly: tricuspid leaflets attach low in the RV, so part of the RV acts as atrium and the valve leaks — '
                 'tricuspid regurgitation, right heart failure, accessory pathways (WPW). Prenatal lithium.',
   'dx:tof': 'Tetralogy of Fallot: anterosuperior displacement of the infundibular septum → pulmonary stenosis, RVH, overriding '
             'aorta, VSD. The stenosis decides the right-to-left shunt. Tet spells; boot-shaped heart.',
   'dx:tga': 'd-TGA: the aorticopulmonary septum fails to spiral — aorta from the RV, pulmonary trunk from the LV, two parallel '
-            'circuits. Profound cyanosis in the first days; egg on a string; maternal diabetes. Life depends on mixing (VSD, PDA, '
-            'PFO).',
+            'circuits. Cyanosis from birth; egg on a string; maternal diabetes. Life depends on mixing (VSD, PDA, PFO); the RV, now '
+            'the systemic pump, hypertrophies.',
   'squat': 'Squatting (or knee-to-chest in a tet spell) raises systemic vascular resistance and reduces right-to-left shunting.',
   'pda': 'Alprostadil keeps the PDA open for mixing; balloon atrial septostomy in the first days of life.',
 }
@@ -153,7 +156,7 @@ dyn = dict(
             dict(id='pda', label='Drug', type='toggle', on='PDA kept open', off='Alprostadil (TGA)', def_=False)],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 12')
+  src='First Aid pp. 285, 302, 304 · Robbins ch 12 · Bootcamp cardiology (knee-to-chest)')
 for s in dyn['switches']:
     if 'def_' in s: s['def'] = s.pop('def_')
 
@@ -162,8 +165,8 @@ MAP = dict(
   sub='Watch blue and red blood keep apart in a normal heart, then rebuild it as truncus, tricuspid atresia, TAPVR, Ebstein, '
       'tetralogy or d-TGA — squat a tet spell and open a PDA',
   w=3600, h=1900,
-  fa='285, 302',
-  src=['Robbins ch 12 — The heart', 'Langman ch 13 — Cardiovascular System'],
+  fa='285, 302, 304',
+  src=['Robbins ch 12 — The heart', 'Langman ch 13 — Cardiovascular System', 'Bootcamp.com Cardiology — Cyanotic Congenital Heart Defects'],
   lanes=[('cyR2L', 'Right-to-left & mixing', 'tca'), ('cyValve', 'Valve', 'glycolysis')],
   nodes=[
     ('cy1', 'Tetralogy of Fallot', 330, 1780, 'cyR2L', 'PROVe · squat', ['tof'], 'hub'),
@@ -173,6 +176,6 @@ MAP = dict(
     ('cy5', 'TAPVR', 2080, 1780, 'cyR2L', 'veins to right heart', ['tapvr']),
     ('cy6', 'Ebstein anomaly', 2520, 1780, 'cyValve', 'lithium · WPW', ['ebstein'])],
   panels=[
-    (2500, PANY, 1000, 'Mixing each lesion needs (Robbins ch 12)', [
+    (2500, PANY, 1000, 'Mixing each lesion needs (First Aid p 302)', [
       ('Truncus', 'VSD'), ('Tricuspid atresia', 'ASD + VSD or PDA'), ('TAPVR', 'ASD (± PDA)'), ('d-TGA', 'VSD, PDA or PFO')])],
   dyn=dyn)

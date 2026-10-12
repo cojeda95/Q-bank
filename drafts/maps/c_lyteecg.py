@@ -6,13 +6,15 @@
 # β₂-agonist, bicarbonate), remove (loop diuretic, binder, dialysis).
 # No new cards: the facts restate the pinned cards (ecglytes, hyperk, hypok, kinsulin, khandling, hypopara,
 # hyperpara1, mgpo4 — fact-checked against the corpus) with the First Aid pages they cite. Waveforms are drawn
-# schematically (not to a real mV scale). Anything resting on memory is marked UNVERIFIED.
-# Sources: First Aid 2025 pp. 298, 348–349, 608–609 · Costanzo ch 6 · Katzung ch 14–15 · Guyton ch 80.
+# schematically (not to a real mV scale).
+# Sources: First Aid 2025 pp. 298, 348–349, 361, 608–609 · Costanzo ch 6 · Katzung ch 14–15 · Guyton ch 9, 80 · Kaplan ch 1 ·
+# Bootcamp Nephrology (electrolytes).
 import sys, math
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
 
 CZ6, KZ14, KZ15, GY80 = full('Costanzo', 6), full('Katzung', 14), full('Katzung', 15), full('Guyton', 80)
+GY9 = full('Guyton', 9)
 
 shapes = []
 def add(svg, when=None, unless=None):
@@ -36,6 +38,7 @@ R = lambda *k: ['rx:' + x for x in k]
 HK = L('hk1', 'hk2', 'hk3')
 SHIFT, REMOVE = R('ins', 'b2', 'bic'), R('loop', 'binder', 'dial')
 LYTES = L('lok', 'hk1', 'hk2', 'hk3', 'hica', 'loca', 'lomg')
+withHK = lambda rs: [f'{r}&{h}' for r in rs for h in HK]   # a treatment acting on a high K⁺
 
 # ════════ 1. the ECG strip ════════
 box(160, 130, 2340, 760)
@@ -135,9 +138,9 @@ text('inside: K⁺ about 150 mEq/L', 560, 1110, 'nf-l1', 'middle')
 text('blood: K⁺ about 4.5 mEq/L', 980, 1290, 'nf-l1', 'middle')
 text('K⁺ high outside — the membrane is less negative, Na⁺ channels inactivate', 180, 1400, TAG, when=HK)
 text('K⁺ low outside — weakness, cramps, ileus', 180, 1400, TAG, when=L('lok'))
-text('the heart is protected — the K⁺ is unchanged', 180, 1430, TAG, when=R('cag'))
-text('K⁺ moved into cells — still in the body', 180, 1430, TAG, when=SHIFT)
-text('K⁺ removed from the body', 180, 1430, TAG, when=REMOVE)
+text('the heart is steadied — shifting or removing K⁺ comes next', 180, 1430, TAG, when=withHK(R('cag')))
+text('K⁺ moved into cells — still in the body', 180, 1430, TAG, when=withHK(SHIFT))
+text('K⁺ removed from the body', 180, 1430, TAG, when=withHK(REMOVE))
 
 # ════════ 3. where K⁺ leaves the body ════════
 box(1220, 800, 2340, 1460)
@@ -152,7 +155,6 @@ for x, lab, key, how in ROUTES:
     add(f'<rect x="{x - 110}" y="1180" width="220" height="80" rx="18" class="dyn-hl" style="fill:none"/>', when=R(key))
     text(lab, x, 1216, 'nf-l1', 'middle')
     text(how, x, 1240, 'nf-l2', 'middle')
-# UNVERIFIED: that patiromer works in the gut (binds K⁺ there) — the hyperk card only names "binders (patiromer)"
 text('pick a High K⁺ change, then a treatment', 1240, 1330, 'dyn-cap', unless=['rx:*'])
 
 # ════════ 4. what the patient shows ════════
@@ -170,10 +172,10 @@ text('rule out pseudohyperkalemia (a hemolyzed sample) first', 180, 1600, 'nf-l2
 def m(when, **kw): return dict(when=when, **kw)
 flows = [
   # K⁺ in the blood outside the cell
-  dict(d='M300 1340 Q560 1400 840 1340', len=600, speed=90, r=6, base=dict(k=3), mods=[m(HK, set=dict(k=7)), m(L('lok'), set=dict(k=1)),
+  dict(d='M300 1340 Q560 1400 840 1340', len=600, speed=90, r=6, base=dict(k=3), mods=[m(HK, set=dict(k=7)), m(L('lok', 'lomg'), set=dict(k=1)),
        m(SHIFT + REMOVE, set=dict(k=3))]),
   # K⁺ along the vessel, then out by the chosen route
-  dict(d='M1270 960 H2290', len=1020, speed=120, r=6, base=dict(k=3), mods=[m(HK, set=dict(k=7)), m(L('lok'), set=dict(k=1)),
+  dict(d='M1270 960 H2290', len=1020, speed=120, r=6, base=dict(k=3), mods=[m(HK, set=dict(k=7)), m(L('lok', 'lomg'), set=dict(k=1)),
        m(REMOVE, set=dict(k=3))]),
   dict(d='M1450 990 V1170', len=180, speed=80, r=6, base=dict(), mods=[m(R('loop'), set=dict(k=4))]),
   dict(d='M1780 990 V1170', len=180, speed=80, r=6, base=dict(), mods=[m(R('binder'), set=dict(k=4))]),
@@ -183,7 +185,7 @@ flows = [
 # ════════ 6. sites ════════
 sites = [
   dict(x=560, y=941, n=[0, 1], w=20, t='pump', l='Na⁺/K⁺-ATPase', s='3 Na⁺ out · 2 K⁺ in', reach=40, cross=True,
-       ions=[['k', 'out', 2], ['na', 'in', 1]], c='kinsulin', boost=R('ins', 'b2'), lx=560, ly=1000, la='middle'),
+       ions=[['k', 'out', 2], ['na', 'in', 3]], c='kinsulin', boost=R('ins', 'b2'), lx=560, ly=1000, la='middle'),
   dict(x=860, y=1130, n=[-1, 0], w=20, t='ch', l='K⁺ channel', s='K⁺ leaks out', reach=40, cross=True,
        ions=[['k', 'in', 1]], c='khandling', lx=760, ly=1190, la='end'),
   dict(x=330, y=1030, n=[1, 1], w=20, t='rec', l='Calcium gluconate', s='steadies the heart first', ions=[],
@@ -192,13 +194,12 @@ sites = [
 
 # ════════ 7. readouts ════════
 readouts = [
-  dict(l='Serum K⁺', mods=[m(L('lok'), d=-1), m(HK, d=1)]),
+  dict(l='Serum K⁺', mods=[m(L('lok', 'lomg'), d=-1), m(HK, d=1)]),
   dict(l='T wave', mods=[m(L('lok'), d=-1), m(L('hk1', 'hk2'), d=1)]),
   dict(l='QRS width', mods=[m(L('hk2', 'hk3'), d=1)]),
   dict(l='QT interval', mods=[m(L('hica'), d=-1), m(L('loca'), d=1)]),
   dict(l='Serum Ca²⁺', mods=[m(L('hica'), d=1), m(L('loca', 'lomg'), d=-1)]),
-  # UNVERIFIED: calcium gluconate leaves K⁺ unchanged (↔) — inferred from the hyperk card's order (stabilize, then shift, then remove)
-  dict(l='K⁺ after the drug', mods=[m(R('cag'), d=0), m(SHIFT + REMOVE, d=-1)]),
+  dict(l='K⁺ after the drug', mods=[m(withHK(SHIFT + REMOVE), d=-1)]),
 ]
 
 # ════════ 8. notes ════════
@@ -220,15 +221,15 @@ notes = {
              'accidental parathyroid removal during thyroidectomy.',
   'ly:lomg': 'Low Mg²⁺: torsades de pointes, often with low K⁺ and low Ca²⁺ — magnesium is needed for PTH release and for the '
              'kidney to hold K⁺. Torsades → give IV magnesium.',
-  # UNVERIFIED: "it does not move K⁺" — see the readout note above
-  'rx:cag': 'IV calcium gluconate comes first in hyperkalemia: it stabilizes the heart. It does not move K⁺ — that still has '
-            'to be shifted into cells or removed.',
+  'rx:cag': 'IV calcium gluconate comes first in hyperkalemia: it stabilizes the heart. It is not a K⁺-lowering step — the shift '
+            'and removal steps that follow are what bring K⁺ down.',
   'rx:ins': 'Insulin, given with glucose, stimulates the Na⁺/K⁺-ATPase and moves K⁺ into cells — fast, but the K⁺ stays in '
             'the body.',
   'rx:b2': 'A β₂-agonist also drives K⁺ into cells through the Na⁺/K⁺-ATPase — a shift, not a removal.',
   'rx:bic': 'Bicarbonate shifts K⁺ into cells — alkalosis moves K⁺ in, as acidosis moves it out.',
   'rx:loop': 'A loop diuretic removes K⁺ in the urine — total body K⁺ falls.',
-  'rx:binder': 'A binder such as patiromer removes K⁺ from the body.',
+  'rx:binder': 'A cation-exchange binder such as patiromer takes up K⁺ in the colon in exchange for other cations; the K⁺ leaves '
+               'in the stool. Too much → hypokalemia.',
   'rx:dial': 'Dialysis removes K⁺ from the blood — the route when the kidneys have failed.',
   'rx:*&!ly:hk1&!ly:hk2&!ly:hk3': 'These treatments are for high K⁺ — pick a High K⁺ change to see them act.',
 }
@@ -246,14 +247,14 @@ dyn = dict(
                           ['dial', 'Dialysis', 'hyperk']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 298, 348–349, 608–609 · Costanzo ch 6 · Katzung ch 14–15 · Guyton ch 80')
+  src='First Aid pp. 298, 348–349, 361, 608–609 · Costanzo ch 6 · Katzung ch 14–15 · Guyton ch 9, 80 · Kaplan & Sadock ch 1 · Bootcamp Nephrology')
 
 MAP = dict(
   id='lyteecg', title='Electrolytes & the ECG', topic='cardio', after='ecgsim',
   sub='A lead II strip redrawn for low K⁺, high K⁺ as it worsens (peaked T → wide QRS → sine wave), high and low Ca²⁺ and low '
       'Mg²⁺ — then treat high K⁺ in order: stabilize, shift into cells, remove. Tap the pump or a channel for its card',
   w=3500, h=2100,
-  fa='298, 348–349, 608–609', src=[CZ6, KZ14, KZ15, GY80],
+  fa='298, 348–349, 361, 608–609', src=[CZ6, KZ14, KZ15, GY80, GY9, full('Kaplan & Sadock', 1)],
   lanes=[('leK', 'Potassium', 'glycolysis'), ('leCa', 'Calcium & magnesium', 'tca'), ('leRx', 'Treating high K⁺', 'gluconeo')],
   nodes=[
     ('le1', 'Electrolytes on the ECG', 380, 1800, 'leK', 'peaked T · U wave · QT', ['ecglytes']),
@@ -264,13 +265,13 @@ MAP = dict(
     ('le6', 'Magnesium', 820, 1940, 'leCa', 'torsades', ['mgpo4', 'longqt']),
     ('le7', 'Removing K⁺', 1260, 1940, 'leRx', 'urine · gut · dialysis', ['loopdiuretics', 'ksparing'])],
   panels=[
-    (2420, 860, 1000, 'Electrolytes on the ECG (First Aid pp. 298, 609)', [
+    (2420, 860, 1000, 'Electrolytes on the ECG (First Aid p. 609; Guyton ch 80; Kaplan & Sadock ch 1)', [
       ('Low K⁺', 'flattened T waves, ST depression, prominent U waves'),
       ('High K⁺', 'peaked T waves → wide QRS, P waves lost → sine wave'),
       ('High Ca²⁺', 'short QT interval'),
       ('Low Ca²⁺', 'long QT interval · tetany, Chvostek and Trousseau signs'),
       ('Low Mg²⁺', 'torsades de pointes · often with low K⁺ and Ca²⁺')]),
-    (2420, 1100, 1000, 'Treating high K⁺ (First Aid p. 609; Katzung ch 15)', [
+    (2420, 1100, 1000, 'Treating high K⁺ (Bootcamp Nephrology; First Aid pp. 361, 608)', [
       ('1 · Stabilize', 'IV calcium gluconate — the heart first'),
       ('2 · Shift in', 'insulin + glucose · β₂-agonist · bicarbonate'),
       ('3 · Remove', 'loop diuretics · binders (patiromer) · dialysis'),

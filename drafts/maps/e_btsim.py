@@ -92,15 +92,16 @@ TAG = dict(gbm='butterfly across the corpus callosum — pseudopalisading necros
            pineal='compresses the aqueduct and dorsal midbrain — Parinaud syndrome',
            cranio='suprasellar — bitemporal hemianopia, growth failure, DI')
 for k, s in TAG.items(): text(s, 1000, 1360, 'nf-l1 dyn-tag', 'middle', when=T(k))
-text('noncommunicating hydrocephalus — ventricles dilate', 1000, 1400, 'nf-l1', 'middle', when=T('medullo', 'ependy', 'pineal'))
+text('noncommunicating hydrocephalus — ventricles dilate', 1000, 1400, 'nf-l1', 'middle', when=T(*BLOCK))
 # age highlights
 for x, y in ((1540, 1100), (1390, 1070), (1300, 1060), (890, 930)):
     add(f'<circle cx="{x}" cy="{y}" r="100" style="fill:none;stroke:var(--accent);stroke-width:5;stroke-dasharray:10 8"/>', when=G('ch'))
-for x, y in ((980, 520), (440, 620), (890, 930)):
+for x, y in ((980, 520), (440, 620), (890, 930), (1000, 290), (1010, 1110), (1540, 1100)):
     add(f'<circle cx="{x}" cy="{y}" r="110" style="fill:none;stroke:var(--accent);stroke-width:5;stroke-dasharray:10 8"/>', when=G('ad'))
 text('children: pilocytic (commonest primary), medulloblastoma (commonest malignant), ependymoma, craniopharyngioma',
      1000, 1320, 'nf-l1', 'middle', when=G('ch'))
-text('adults: glioblastoma, oligodendroglioma · craniopharyngioma again at 65+', 1000, 1320, 'nf-l1', 'middle', when=G('ad'))
+text('adults: glioblastoma, oligodendroglioma, meningioma, schwannoma, hemangioblastoma · craniopharyngioma again at 65+',
+     1000, 1320, 'nf-l1', 'middle', when=G('ad'))
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
@@ -139,7 +140,7 @@ notes = {
   'tu:astro': 'Astrocytoma, IDH-mutant: diffusely infiltrating glioma — IDH1/2 + TP53 + ATRX. CNS WHO grade 2–4; even grade 4 '
               'does far better than IDH-wildtype glioblastoma. CDKN2A deletion makes it grade 4.',
   'tu:oligo': 'Oligodendroglioma: rare, slow-growing, frontal, often calcified. Fried-egg cells, chicken-wire capillaries; '
-              'IDH-mutant with 1p/19q codeletion; chemosensitive (PCV).',
+              'IDH-mutant with 1p/19q codeletion; the best prognosis of the diffuse gliomas.',
   'tu:mening': 'Meningioma: arachnoid cap cells; extra-axial, dural-based with a dural tail; pushes rather than invades. Whorls, '
                'psammoma bodies.',
   'tu:schwan': 'Vestibular schwannoma: Schwann cells on CN VIII at the cerebellopontine angle — unilateral sensorineural hearing '
@@ -158,8 +159,8 @@ notes = {
                'calcified, cystic "machinery oil". Ages 5–15 and 65+.',
   'ag:ch': 'Children (card wording): pilocytic astrocytoma is the commonest primary brain tumor, medulloblastoma the commonest '
            'malignant one, ependymoma in the 4th ventricle, craniopharyngioma the commonest supratentorial tumor.',
-  'ag:ad': 'Adults (card wording): glioblastoma is the common, highly malignant primary; oligodendroglioma in adults; '
-           'craniopharyngioma has a second peak at 65 or older.',
+  'ag:ad': 'Adults (FA’s adult table): glioblastoma is the common, highly malignant primary; also oligodendroglioma, '
+           'meningioma, vestibular schwannoma and hemangioblastoma. Craniopharyngioma has a second peak at 65 or older.',
 }
 
 dyn = dict(
@@ -174,7 +175,7 @@ dyn = dict(
             dict(id='ag', label='Age', type='one', options=[['ch', 'Children', 'pilocytic'], ['ad', 'Adults', 'gbm']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 28')
+  src='First Aid pp. 539, 540, 542 · Robbins ch 28 (gliomas), ch 24 (craniopharyngioma)')
 
 MAP = dict(
   id='btsim', title='Brain Tumors in Motion', topic='heme', after='tumcns',
@@ -182,7 +183,7 @@ MAP = dict(
       'block CSF dilate the ventricles, and see which belong to children and which to adults',
   w=3600, h=1900,
   fa='539, 540, 542',
-  src=['Robbins ch 28 — The central nervous system'],
+  src=[full('Robbins', 28), full('Robbins', 24)],
   lanes=[('btSup', 'Supratentorial & dura', 'glycolysis'), ('btPf', 'Posterior fossa & midline', 'tca')],
   nodes=[
     ('bt1', 'Glioblastoma', 330, 1600, 'btSup', 'butterfly · EGFR', ['gbm'], 'hub'),

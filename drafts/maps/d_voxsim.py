@@ -32,7 +32,7 @@ PANY = 1180
 GX, AY, PY = 900, 420, 1080          # anterior commissure (top) · arytenoids (bottom)
 
 text('Larynx & voice — which muscle opens, closes and tenses the folds, and which nerve runs it', 180, 150, 'dyn-big')
-text('glottis seen from above: front (thyroid cartilage) at the top, arytenoids at the bottom · schematic', 180, 176, 'dyn-cap')
+text('glottis from above: front (thyroid cartilage) at the top, arytenoids at the bottom, patient’s right on screen left · schematic', 180, 176, 'dyn-cap')
 add(f'<path d="M{GX - 300} {AY + 40} Q{GX} {AY - 160} {GX + 300} {AY + 40}" style="fill:none;stroke:var(--dk5);stroke-width:14;opacity:.5"/>')
 text('thyroid cartilage', GX, AY - 110, 'nf-l2', 'middle')
 add(f'<ellipse cx="{GX}" cy="{PY + 120}" rx="330" ry="70" style="fill:var(--dk5);fill-opacity:.08;stroke:var(--dk5);stroke-width:6"/>')
@@ -56,7 +56,7 @@ add(f'<path d="M{GX + 60} {PY} l30 50" style="stroke:var(--bad);stroke-width:40;
 text('arytenoids', GX, PY + 90, 'nf-l2', 'middle')
 # Valsalva / swallow: inlet closed by the epiglottis
 add(f'<path d="M{GX - 260} {AY + 120} Q{GX} {AY + 40} {GX + 260} {AY + 120}" style="fill:none;stroke:var(--dk11);stroke-width:18;opacity:.7"/>', when=A('va'))
-text('inlet closed · epiglottis (elastic cartilage) down', GX, AY + 20, 'nf-l1', 'middle', when=A('va'))
+text('in swallowing the inlet closes too · epiglottis = elastic cartilage', GX + 90, AY + 240, 'nf-l1', None, when=A('va'))
 # lesions on the folds
 for s in (-1, 1):
     add(f'<circle cx="{GX + s * 22}" cy="{AY + 220}" r="16" style="fill:var(--bad);opacity:.8"/>', when=L('nod'))
@@ -85,17 +85,17 @@ for i, (l, y) in enumerate((('sinuses · nose', 400), ('mouth · pharynx', 620),
     text(l, RX + 110, y + 6, 'nf-l1', 'middle')
 text('resonators', RX + 110, 300, 'nf-l1', 'middle'); text('lips · tongue · soft palate articulate', RX + 110, 1000, 'nf-l2', 'middle')
 
-TAG = dict(br='breathe — posterior cricoarytenoids (the only abductors) swing the arytenoids apart',
+TAG = dict(br='deep breath in — posterior cricoarytenoids (the only abductors) swing the arytenoids apart',
            ph='phonate — lateral cricoarytenoids + arytenoids bring the folds together; air sets them vibrating',
            wh='whisper — folds meet in front but the arytenoids stay apart: air rushes through, no tone',
-           va='strain or swallow — stronger adduction seals the glottis (Valsalva) and the inlet closes',
+           va='strain or swallow — stronger adduction seals the glottis (Valsalva); in swallowing the inlet closes',
            hi='high pitch — cricothyroid (external branch of superior laryngeal n.) stretches and tenses the folds')
 for k, s in TAG.items(): text(s, 1100, 1480, 'nf-l1 dyn-tag', 'middle', when=A(k))
-LTAG = dict(rln='left recurrent laryngeal palsy — fold stuck near midline: hoarse (thyroidectomy, Pancoast, lung cancer, big left atrium)',
-            ext='external branch injury (superior thyroid pedicle tied) — cricothyroid lost: no high notes, loss of vocal tenor',
+LTAG = dict(rln='left recurrent laryngeal palsy — left fold motionless, can’t meet the other: hoarse (thyroidectomy, Pancoast, lung cancer, big left atrium)',
+            ext='external branch injury (superior thyroid pedicle tied) — cricothyroid lost: monotonous voice, loss of vocal tenor',
             nod='vocal fold nodules — bilateral, from voice strain and smoking: hoarse; cancer risk almost nil',
-            pol='vocal fold polyp — unilateral: hoarse; voice rest or excision',
-            pap='laryngeal papillomas — HPV-6/11, picked up at birth: glottic → hoarse, supraglottic → dysphagia')
+            pol='vocal fold polyp — unilateral, same causes as nodules: hoarse',
+            pap='laryngeal papillomas — HPV-6/11, possibly picked up at birth: glottic → hoarse, supraglottic → dysphagia')
 for k, s in LTAG.items(): text(s, 1100, 1520, 'nf-l1', 'middle', when=L(k))
 
 # ════════ motion ════════
@@ -118,31 +118,35 @@ sites = [dict(x=GX - 260, y=PY - 40, n=[-1, 1], w=10, t='rec', l='', aria='Laryn
          dict(x=GX + 160, y=AY + 120, n=[1, -1], w=10, t='rec', l='', aria='Laryngeal papillomas', c='laryngealpap', ions=[])]
 
 readouts = [
-  dict(l='Glottic opening', mods=[dict(when=A('br'), d=1), dict(when=A('va'), d=-1), dict(when=['act:br&lx:rln'], d=-1)]),
-  dict(l='Voice (tone)', mods=[dict(when=A('wh'), d=-1), dict(when=['act:ph&!lx:*', 'act:hi&!lx:*'], d=1),
+  dict(l='Glottic opening', mods=[dict(when=['act:br&!lx:rln'], d=1), dict(when=A('va'), d=-1)]),
+  dict(l='Voice (tone)', mods=[dict(when=A('wh'), d=-1), dict(when=['act:ph&!lx:*', 'act:hi&!lx:*', 'act:ph&lx:ext', 'act:hi&lx:ext'], d=1),
                                dict(when=['act:ph&lx:rln', 'act:ph&lx:nod', 'act:ph&lx:pol', 'act:ph&lx:pap',
-                                          'act:hi&lx:rln', 'act:hi&lx:nod', 'act:hi&lx:pol', 'act:hi&lx:pap', 'act:hi&lx:ext'], d=-1)]),
-  dict(l='Pitch', mods=[dict(when=['act:hi&!lx:ext'], d=1), dict(when=['act:hi&lx:ext'], d=-1)]),
-  dict(l='Swallowing', mods=[dict(when=L('pap'), d=-1)]),
+                                          'act:hi&lx:rln', 'act:hi&lx:nod', 'act:hi&lx:pol', 'act:hi&lx:pap'], d=-1)]),
+  dict(l='Pitch', mods=[dict(when=['act:hi&!lx:ext'], d=1), dict(when=['act:hi&lx:ext'], d=0)]),
+  dict(l='Swallowing', mods=[dict(when=L('pap', 'rln'), d=-1)]),
 ]
 
 notes = {
   '': 'Posterior cricoarytenoids are the only muscles that open the glottis. Lateral cricoarytenoids and the arytenoid muscles close '
       'it; cricothyroid tenses the folds. Recurrent laryngeal n. (6th arch) runs every intrinsic muscle except cricothyroid, which '
       'gets the external branch of the superior laryngeal n. (4th arch). Both come from CN X.',
-  'act:br': 'Quiet breathing: posterior cricoarytenoids rotate the arytenoids outward and the glottis opens.',
+  'act:br': 'Deep inspiration: posterior cricoarytenoids rotate the arytenoids outward and the glottis opens wide. In quiet breathing the '
+            'muscles relax and the glottis is a narrow slit.',
   'act:ph': 'Phonation: the folds come together and air from the lungs vibrates them. The larynx makes the tone; lips, tongue and '
             'soft palate articulate it; mouth, nose, sinuses, pharynx and chest resonate it — block the nose and you hear the cold voice.',
-  'act:wh': 'Whispering: the folds touch in front but the arytenoids stay apart, so air passes without making a tone.',
+  'act:wh': 'Whispering: lateral cricoarytenoids bring the folds together in front, but the arytenoid muscles relax and the arytenoids stay '
+            'apart, so air passes between them without making a tone.',
   'act:va': 'Valsalva and swallowing: a stronger adduction seals the glottis, and in swallowing the laryngeal inlet closes too.',
   'act:hi': 'Pitch rises when cricothyroid tilts the thyroid cartilage and stretches the folds.',
-  'lx:rln': 'Recurrent laryngeal injury: hoarseness. Risks include thyroidectomy (near the inferior thyroid a.), Pancoast tumor, '
+  'lx:rln': 'Recurrent laryngeal injury: the paralyzed fold can’t move to meet the normal one — hoarseness, and dysphagia after a '
+            'thyroidectomy injury. Risks include thyroidectomy (near the inferior thyroid a.), Pancoast tumor, '
             'lung cancer and Ortner syndrome (a big left atrium in mitral stenosis). The left nerve loops under the aortic arch, the right '
             'under the subclavian.',
-  'lx:ext': 'External branch injury, usually when the superior thyroid pedicle is tied: cricothyroid is lost, so the voice loses its tenor.',
-  'lx:nod': 'Nodules are bilateral, in smokers and people who strain their voice: hoarseness, almost no cancer risk; voice rest or excision.',
-  'lx:pol': 'A polyp is usually unilateral, with the same causes and treatment as nodules.',
-  'lx:pap': 'Laryngeal papillomas: HPV-6/11, often acquired by children during delivery. On or below the folds they cause hoarseness; '
+  'lx:ext': 'External branch injury, usually when the superior thyroid pedicle is tied: cricothyroid can’t vary the folds’ length and '
+            'tension, so the voice is monotonous and loses its tenor — noticed by singers and speakers. Pitch can’t rise.',
+  'lx:nod': 'Nodules are bilateral, in smokers and people who strain their voice (singer’s nodules): progressive hoarseness, almost no cancer risk.',
+  'lx:pol': 'A polyp is by convention unilateral, with the same causes and look as nodules — hoarseness, almost no cancer risk.',
+  'lx:pap': 'Laryngeal papillomas: HPV-6/11, in children possibly acquired during delivery. On or below the folds they cause hoarseness; '
             'above them, dysphagia.',
 }
 
@@ -150,14 +154,14 @@ dyn = dict(
   kinds=dict(air=['mov', '--nf-h2o'], tone=['mov', '--dk9'], sig=['mov', '--dk7']),
   groups=[['mov', 'Air · sound · nerve signal']],
   switches=[dict(id='act', label='Larynx is…', type='steps', options=[
-              ['br', 'Breathing', 'larynxmus'], ['ph', 'Speaking', 'vocalize'], ['wh', 'Whispering', 'larynxmus'],
+              ['br', 'Deep breath in', 'larynxmus'], ['ph', 'Speaking', 'vocalize'], ['wh', 'Whispering', 'larynxmus'],
               ['va', 'Straining · swallowing', 'larynxmus'], ['hi', 'Singing high', 'larynxmus']]),
             dict(id='lx', label='Lesion', type='one', options=[
               ['rln', 'Left recurrent laryngeal palsy', 'laryngealnerves'], ['ext', 'External branch injury', 'laryngealnerves'],
               ['nod', 'Vocal fold nodules', 'vcnodule'], ['pol', 'Vocal fold polyp', 'vcnodule'], ['pap', 'Laryngeal papillomas', 'laryngealpap']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Moore ch 8 · Guyton ch 38 · Robbins ch 16')
+  src='First Aid pp. 286, 288, 347, 638, 690, 703–704 · Moore ch 8 · Guyton ch 38 · Robbins ch 16')
 
 MAP = dict(
   id='voxsim', title='Larynx & Voice in Motion', topic='eent', after='larynx',

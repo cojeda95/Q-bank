@@ -37,9 +37,16 @@ text('side view of the uterus, cervix at the bottom, bladder in front (left) · 
 
 # ════════ uterus ════════
 add(f'<path d="M{UX - 380} {UY - 40} C{UX - 400} {UY - 460} {UX + 400} {UY - 460} {UX + 380} {UY - 40} C{UX + 360} {UY + 260} {UX + 120} {UY + 380} {UX + 60} {UY + 470} H{UX - 60} C{UX - 120} {UY + 380} {UX - 360} {UY + 260} {UX - 380} {UY - 40} Z" '
-    'style="fill:var(--dk10);fill-opacity:.08;stroke:var(--dk10);stroke-width:30;stroke-opacity:.35"/>', unless=D('pph'))
+    'style="fill:var(--dk10);fill-opacity:.08;stroke:var(--dk10);stroke-width:30;stroke-opacity:.35"/>', unless=['dx:pph&!rx:oxy'])
 add(f'<path d="M{UX - 420} {UY - 40} C{UX - 440} {UY - 500} {UX + 440} {UY - 500} {UX + 420} {UY - 40} C{UX + 400} {UY + 280} {UX + 120} {UY + 380} {UX + 60} {UY + 470} H{UX - 60} C{UX - 120} {UY + 380} {UX - 400} {UY + 280} {UX - 420} {UY - 40} Z" '
-    'style="fill:var(--dk10);fill-opacity:.08;stroke:var(--dk10);stroke-width:12;stroke-opacity:.35"/>', when=D('pph'))
+    'style="fill:var(--dk10);fill-opacity:.08;stroke:var(--dk10);stroke-width:12;stroke-opacity:.35"/>', when=['dx:pph&!rx:oxy'])
+text('boggy, atonic uterus', UX - 470, UY - 330, 'nf-l1 dyn-tag', 'end', when=['dx:pph&!rx:oxy'])
+text('contracted — spiral arteries clamped', UX - 470, UY - 330, 'nf-l1', 'end', when=['dx:pph&rx:oxy'])
+# preterm labor: contractions (arrows squeezing the wall) unless a tocolytic relaxes the uterus
+for x0, dx_ in ((UX - 540, 90), (UX + 540, -90)):
+    add(f'<path d="M{x0} {UY + 60} h{dx_}" class="dyn-line" style="stroke:var(--bad);stroke-width:4" marker-end="url(#ah-plPlac)"/>', when=['dx:ptl&!rx:toco'])
+text('contractions', UX + 560, UY + 66, 'nf-l1 dyn-tag', 'start', when=['dx:ptl&!rx:toco'])
+text('relaxed — contraction frequency ↓', UX + 560, UY + 66, 'nf-l1', 'start', when=['dx:ptl&rx:toco'])
 text('myometrium', UX + 420, UY - 300, 'nf-l2')
 add(f'<rect x="{UX - 60}" y="{UY + 470}" width="120" height="120" rx="20" style="fill:var(--dk9);fill-opacity:.15;stroke:var(--dk9);stroke-width:3"/>')
 text('cervix · internal os', UX + 80, UY + 520, 'nf-l2')
@@ -81,6 +88,10 @@ TAG = dict(previa='previa — over the internal os: painless third-trimester ble
            pph='postpartum hemorrhage — Tone (boggy uterus), Trauma, Tissue, Thrombin', ptl='preterm labor — buy time for steroids')
 for k, s in TAG.items(): text(s, UX, 1520, 'nf-l1 dyn-tag', 'middle', when=D(k))
 text('this drug is the card’s answer here', UX, 1560, 'nf-l1', 'middle', when=OK)
+RXT = dict(mg='magnesium sulfate — prevents and treats eclamptic seizures', oxy='oxytocin — contracts the uterus: labor, postpartum hemorrhage',
+           toco='tocolytic — relaxes the uterus: terbutaline, indomethacin, nifedipine',
+           htn='hydralazine · α-methyldopa · labetalol · nifedipine — never an ACE inhibitor')
+for k, s in RXT.items(): text(s, UX, 1600, 'nf-l2', 'middle', when=R(k))   # the drug's own line, below the problem's two lines
 text('accreta spectrum: placenta won’t separate — removal bleeds torrentially · hysterectomy', UX, 1560, 'nf-l2', 'middle', when=D('accreta', 'increta', 'percreta'))
 
 # ════════ motion ════════
@@ -103,8 +114,8 @@ sites = [dict(x=UX - 160, y=UY + 440, n=[-1, 1], w=10, t='rec', l='', aria='Plac
          dict(x=UX - 440, y=UY - 100, n=[-1, 0], w=10, t='rec', l='', aria='Labor drugs', c='labordrugs', ions=[])]
 
 readouts = [
-  dict(l='Painful bleeding', mods=[dict(when=D('abrupt', 'rupture'), d=1), dict(when=D('previa', 'vasa'), d=-1)]),
-  dict(l='Fetal heart rate', mods=[dict(when=D('vasa', 'rupture', 'abrupt'), d=-1)]),
+  dict(l='Pain with the bleeding', mods=[dict(when=D('abrupt', 'rupture'), d=1), dict(when=D('previa', 'vasa'), d=0)]),
+  dict(l='Fetal heart rate', mods=[dict(when=D('vasa', 'rupture'), d=-1)]),
   dict(l='Clotting factors (DIC)', mods=[dict(when=D('abrupt'), d=-1)]),
   dict(l='Maternal BP', mods=[dict(when=D('pe'), d=1), dict(when=['dx:pe&rx:htn'], d=-1)]),
   dict(l='Seizure risk', mods=[dict(when=D('pe'), d=1), dict(when=['dx:pe&rx:mg'], d=-1)]),
@@ -131,9 +142,11 @@ notes = {
             'Tissue (retained, accreta), Thrombin (DIC). Massage + oxytocin. Sheehan syndrome after severe loss.',
   'dx:ptl': 'Preterm labor: tocolytics (terbutaline, indomethacin, nifedipine) buy time for glucocorticoids or transfer.',
   'rx:mg': 'Magnesium sulfate prevents and treats eclamptic seizures.',
-  'rx:oxy': 'Oxytocin contracts the uterus — postpartum hemorrhage, induction.',
-  'rx:toco': 'Tocolytics — keep the baby in the TIN: Terbutaline, Indomethacin, Nifedipine.',
-  'rx:htn': 'Safe in pregnancy: hydralazine, α-methyldopa, labetalol, nifedipine. ACE inhibitors are contraindicated.',
+  'rx:oxy': 'Oxytocin contracts the uterus — postpartum hemorrhage, induction. Avoid it in abruption or fetal distress.',
+  'rx:toco': 'Tocolytics relax the uterus and cut contraction frequency — keep the baby in the TIN: Terbutaline (β₂), '
+             'Indomethacin (NSAID), Nifedipine (Ca²⁺ channel blocker).',
+  'rx:htn': 'Safe in pregnancy: hydralazine, α-methyldopa, labetalol, nifedipine. ACE inhibitors are contraindicated in the '
+            '2nd–3rd trimesters (fetal renal failure).',
 }
 
 dyn = dict(
@@ -148,7 +161,7 @@ dyn = dict(
               ['htn', 'Pregnancy-safe antihypertensive', 'gesthtn']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 22')
+  src='First Aid pp. 343, 657–660, 675 · Robbins ch 22 · Katzung ch 11, 37')
 
 MAP = dict(
   id='placsim', title='Bleeding in Pregnancy in Motion', topic='devrepro', after='obgyn',
@@ -156,7 +169,7 @@ MAP = dict(
       'magnesium, oxytocin, a tocolytic or a safe antihypertensive where each belongs',
   w=3600, h=1900,
   fa='343, 433, 657, 658, 660, 675',
-  src=['Robbins ch 22 — The female genital tract', 'Katzung ch 11 — Antihypertensive Agents'],
+  src=[full('Robbins', 22), full('Katzung', 11), full('Katzung', 37)],
   lanes=[('plPlac', 'Placenta', 'tca'), ('plMat', 'Mother & labor', 'glycolysis')],
   nodes=[
     ('pl1', 'Placenta previa & vasa previa', 330, 1760, 'plPlac', 'painless', ['previa'], 'hub'),
@@ -167,7 +180,7 @@ MAP = dict(
     ('pl6', 'Postpartum hemorrhage', 2520, 1760, 'plMat', '4 Ts', ['pph']),
     ('pl7', 'Drugs in labor', 2960, 1760, 'plMat', 'TIN · oxytocin · Mg', ['labordrugs'])],
   panels=[
-    (2500, PANY, 1000, 'Third-trimester bleeding (Robbins ch 22)', [
+    (2500, PANY, 1000, 'Third-trimester bleeding (First Aid pp. 657–658)', [
       ('Painless', 'placenta previa'), ('Painful + DIC', 'abruption'), ('At membrane rupture + bradycardia', 'vasa previa'),
       ('Scar + fetal parts palpable', 'uterine rupture')])],
   dyn=dyn)

@@ -99,7 +99,8 @@ text('berry aneurysm (circle of Willis) — blood in cisterns and sulci', CX, CY
 text('vasospasm 3–10 days later — nimodipine', CX, CY + 800, 'nf-l2', 'middle', when=DP('sah', 'late'))
 text('lucid interval — awake and talking', CX, CY + 760, 'nf-l1 dyn-tag', 'middle', when=DP('epi', 'lucid'))
 text('rapid decline — uncal herniation', CX, CY + 760, 'nf-l1 dyn-tag', 'middle', when=DP('epi', 'late'))
-text('slow venous ooze — days to weeks', CX, CY + 760, 'nf-l1 dyn-tag', 'middle', when=D('sub', 'subc'))
+text('venous bleed — symptoms usually within 48 h', CX, CY + 760, 'nf-l1 dyn-tag', 'middle', when=D('sub'))
+text('repeated small bleeds into the organizing clot', CX, CY + 760, 'nf-l1 dyn-tag', 'middle', when=D('subc'))
 
 # herniation arrows
 HX = dict(cing=f'M{CX - 140} {CY - 120} C{CX - 60} {CY - 40} {CX + 40} {CY - 40} {CX + 120} {CY - 80}',
@@ -109,6 +110,12 @@ HX = dict(cing=f'M{CX - 140} {CY - 120} C{CX - 60} {CY - 40} {CX + 40} {CY - 40}
 HT = dict(cing='subfalcine — ACA compressed → contralateral leg weak', uncal='uncal — ipsilateral blown pupil, contralateral hemiparesis',
           central='central — brainstem pulled down → Duret hemorrhages', tonsil='tonsillar — tonsils into the foramen magnum')
 for k, s in HT.items(): text(s, CX, CY + 840, 'nf-l1', 'middle', when=H(k))
+# what each route squeezes (Robbins ch 28; FA 543): cingulate under the falx, uncus on CN III, Duret bleeds, tonsils
+add(f'<ellipse cx="{CX - 30}" cy="{CY - 110}" rx="120" ry="40" class="dyn-hl" style="fill:none"/>', when=H('cing'))
+add(f'<circle cx="{CX - 150}" cy="{CY + 260}" r="52" class="dyn-hl" style="fill:none"/>', when=H('uncal'))
+for y_ in (CY + 290, CY + 340, CY + 390):
+    add(f'<ellipse cx="{CX}" cy="{y_}" rx="10" ry="18" style="fill:var(--bad)"/>', when=H('central'))
+add(f'<rect x="{CX - 140}" y="{CY + 490}" width="280" height="90" rx="40" class="dyn-hl" style="fill:none"/>', when=H('tonsil'))
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
@@ -129,10 +136,10 @@ LATE = DP('epi', 'late') + DP('sub', 'late') + DP('subc', 'late')
 readouts = [
   dict(l='Consciousness', mods=[dict(when=DP('epi', 'hit'), d=-1), dict(when=DP('epi', 'lucid'), d=0), dict(when=LATE, d=-1),
                                 dict(when=D('sah'), d=-1), dict(when=H('central', 'tonsil'), d=-1)]),
-  dict(l='Midline shift', mods=[dict(when=LATE, d=1)]),
+  dict(l='Midline shift', mods=[dict(when=LATE + H('cing'), d=1)]),
   dict(l='Same-side pupil size', mods=[dict(when=DP('epi', 'late') + H('uncal'), d=1)]),
   dict(l='Opposite-side strength', mods=[dict(when=DP('epi', 'late') + H('uncal', 'cing'), d=-1)]),
-  dict(l='Headache', mods=[dict(when=D('sah'), d=1), dict(when=D('sub', 'subc'), d=1)]),
+  dict(l='Headache', mods=[dict(when=D('sah', 'sub', 'subc', 'epi'), d=1)]),
 ]
 
 notes = {
@@ -140,11 +147,13 @@ notes = {
       'aneurysm blood floods the subarachnoid space. Then push the brain through a herniation route.',
   'dx:epi': 'Epidural: a pterion fracture tears the middle meningeal artery (branch of the maxillary). Arterial blood strips the '
             'dura from the skull; the dura is anchored at the sutures, so the clot is a lens that does not cross them. Brief '
-            'loss of consciousness → lucid interval → rapid decline. Emergency evacuation.',
-  'dx:sub': 'Acute subdural: torn bridging veins (cortex → dural sinuses), stretched by atrophy (age, alcohol); minor fall, '
-            'anticoagulants, shaken infants. Crescent that crosses sutures; bright on CT.',
-  'dx:subc': 'Chronic subdural: the same crescent, dark on CT; headache, confusion or fluctuating consciousness over days to weeks. '
-             'Reverse anticoagulation; burr hole or craniotomy if large.',
+            'loss of consciousness → lucid interval → rapid decline. Neurosurgical emergency: drain it.',
+  'dx:sub': 'Acute subdural: high-energy trauma tears bridging veins (cortex → dural sinuses); infants (shaken baby) have '
+            'thin-walled ones. Venous blood dissects along the dura in a crescent that crosses sutures; bright on CT. '
+            'Headache, confusion; usually within 48 h.',
+  'dx:subc': 'Chronic subdural: mild trauma in an atrophic brain (older age, chronic alcohol use) whose bridging veins are '
+             'stretched; repeated small bleeds into the organizing clot. Same crescent, dark on CT; headache, confusion, '
+             'slow decline. Treatment: remove the blood.',
   'dx:sah': 'Subarachnoid: a berry aneurysm (most often ACom) ruptures — thunderclap "worst headache of my life". CT: blood in '
             'cisterns and sulci; LP: bloody or xanthochromic CSF. Vasospasm or rebleeding 3–10 days later — nimodipine; '
             'hydrocephalus. PCom aneurysm → CN III palsy.',
@@ -167,7 +176,7 @@ dyn = dict(
               ['tonsil', 'Tonsillar', 'herniation']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 28')
+  src='First Aid pp. 528, 530, 543 · Robbins ch 28 · Fundamental Neuroscience ch 7')
 
 MAP = dict(
   id='bleedsim', title='Head Bleeds in Motion', topic='neuro', after='neuroer',
@@ -175,7 +184,7 @@ MAP = dict(
       'vasospasm — then push the brain under the falx, through the tentorium or into the foramen magnum',
   w=3600, h=1900,
   fa='528, 530, 543',
-  src=['Robbins ch 28 — The central nervous system', 'Moore ch 9 — Head'],
+  src=[full('Robbins', 28), full('Fundamental Neuroscience', 7), full('Moore', 9)],
   lanes=[('hbBleed', 'Bleeds', 'tca'), ('hbHern', 'Herniation', 'glycolysis')],
   nodes=[
     ('hb1', 'Epidural hematoma', 330, 1700, 'hbBleed', 'artery · lens · lucid', ['epidural'], 'hub'),

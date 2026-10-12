@@ -34,13 +34,13 @@ COMP = dict(epi=(OV[0], OV[1] - 210, 'surface epithelium', '--dk4'), ogerm=(OV[0
             ocord=(OV[0] + 120, OV[1] + 60, 'sex cord · stroma', '--dk10'),
             tgerm=(TE[0] - 90, TE[1] - 40, 'germ cells', '--dk9'), tcord=(TE[0] + 100, TE[1] + 90, 'Sertoli · Leydig', '--dk10'))
 WHERE = dict(serous='epi', mucinous='epi', teratoma='ogerm', dysg='ogerm', yolk='ogerm', gran='ocord', fibroma='ocord', sl='ocord',
-             semi='tgerm', chorio='tgerm', leydig='tcord')
+             semi='tgerm', embryo='tgerm', chorio='tgerm', leydig='tcord')
 MK = dict(ca125=(1700, 380, 'CA 125'), hcg=(1700, 500, 'hCG'), afp=(1700, 620, 'AFP'), ldh=(1700, 740, 'LDH'), inh=(1700, 860, 'inhibin'),
           estro=(2050, 380, 'estrogen'), andro=(2050, 500, 'androgens'), plap=(2050, 620, 'PLAP'))
 TG = dict(endo=(2050, 800, 'endometrium'), breast=(2050, 940, 'breast'), skin=(2050, 1080, 'skin · hair'), pleura=(1700, 1080, 'pleura · peritoneum'),
           thy=(1700, 1220, 'thyroid hormone'))
 SENDS = dict(serous=('ca125', 'pleura'), mucinous=('pleura',), teratoma=('thy',), dysg=('hcg', 'ldh'), yolk=('afp',), gran=('estro', 'inh', 'endo', 'breast'),
-             fibroma=('pleura',), sl=('andro', 'skin'), semi=('plap',), chorio=('hcg',), leydig=('andro', 'estro', 'breast'))
+             fibroma=('pleura',), sl=('andro', 'skin'), semi=('plap',), embryo=('hcg',), chorio=('hcg', 'breast', 'thy'), leydig=('andro', 'estro', 'breast'))
 
 text('Gonadal tumors — which cell they come from, and what they send out', 180, 150, 'dyn-big')
 text('ovary left, testis right · markers and hormones in the middle · targets on the right · schematic', 180, 176, 'dyn-cap')
@@ -67,7 +67,8 @@ TAG = dict(serous='serous carcinoma — tube-like epithelium, often bilateral, p
            dysg='dysgerminoma — the ovary’s seminoma: fried-egg cells · hCG, LDH', yolk='yolk sac tumor — Schiller-Duval bodies · AFP',
            gran='granulosa cell — estrogen: postmenopausal bleeding, endometrial hyperplasia · Call-Exner bodies, inhibin',
            fibroma='fibroma — Meigs: fibroma + ascites + pleural effusion', sl='Sertoli-Leydig — androgens: hirsutism, virilization',
-           semi='seminoma — fried-egg cells, PLAP, radiosensitive', chorio='choriocarcinoma — hCG → gynecomastia, hyperthyroid symptoms; to lung and brain',
+           semi='seminoma — fried-egg cells, PLAP, radiosensitive', embryo='embryonal carcinoma — painful, hemorrhagic; hCG (AFP only when mixed)',
+           chorio='choriocarcinoma — hCG → gynecomastia, hyperthyroid symptoms; to lung and brain',
            leydig='Leydig cell tumor — Reinke crystals; androgens or estrogens: precocious puberty, gynecomastia')
 for k, s in TAG.items(): text(s, 1150, 1480, 'nf-l1 dyn-tag', 'middle', when=D(k))
 
@@ -87,10 +88,11 @@ sites = [dict(x=OV[0] + 80, y=OV[1] - 260, n=[1, -1], w=10, t='rec', l='', aria=
          dict(x=TE[0] + 170, y=TE[1] + 190, n=[1, 1], w=10, t='rec', l='', aria='Leydig and Sertoli tumors', c='testisstromal', ions=[])]
 
 readouts = [
-  dict(l='hCG', mods=[dict(when=D('dysg', 'chorio'), d=1)]),
+  dict(l='hCG', mods=[dict(when=D('dysg', 'embryo', 'chorio'), d=1)]),
   dict(l='AFP', mods=[dict(when=D('yolk'), d=1)]),
   dict(l='Estrogen', mods=[dict(when=D('gran'), d=1)]),
   dict(l='Androgens', mods=[dict(when=D('sl'), d=1)]),
+  dict(l='PLAP', mods=[dict(when=D('semi'), d=1)]),
   dict(l='Fluid in pleura · peritoneum', mods=[dict(when=D('fibroma', 'mucinous', 'serous'), d=1)]),
 ]
 
@@ -110,6 +112,8 @@ notes = {
   'dx:fibroma': 'Fibroma: spindle fibroblasts; Meigs syndrome = fibroma + ascites + pleural effusion.',
   'dx:sl': 'Sertoli-Leydig cell tumor: androgens → hirsutism, virilization.',
   'dx:semi': 'Seminoma: commonest testicular germ cell tumor — painless, homogeneous; fried-egg cells; PLAP; radiosensitive.',
+  'dx:embryo': 'Embryonal carcinoma: a painful, hemorrhagic, necrotic mass; pure forms are rare, most are mixed. hCG rises '
+               '(AFP only when mixed); worse prognosis than seminoma.',
   'dx:chorio': 'Choriocarcinoma: syncytio- and cytotrophoblast; hCG → gynecomastia, hyperthyroid symptoms; spreads by blood to lung, brain.',
   'dx:leydig': 'Leydig cell tumor: golden-brown, Reinke crystals; androgens or estrogens → precocious puberty, gynecomastia. Over 60, '
                'the commonest testicular cancer is lymphoma.',
@@ -121,18 +125,18 @@ dyn = dict(
               ['serous', 'Serous (ovary)', 'ovepi'], ['mucinous', 'Mucinous (ovary)', 'ovepi'], ['teratoma', 'Mature teratoma', 'ovgerm'],
               ['dysg', 'Dysgerminoma', 'ovgerm'], ['yolk', 'Yolk sac tumor', 'ovgerm'], ['gran', 'Granulosa cell', 'ovstromal'],
               ['fibroma', 'Fibroma (Meigs)', 'ovstromal'], ['sl', 'Sertoli-Leydig', 'ovstromal'], ['semi', 'Seminoma', 'testisgct'],
-              ['chorio', 'Choriocarcinoma', 'testisgct'], ['leydig', 'Leydig cell tumor', 'testisstromal']])],
+              ['embryo', 'Embryonal carcinoma', 'testisgct'], ['chorio', 'Choriocarcinoma', 'testisgct'], ['leydig', 'Leydig cell tumor', 'testisstromal']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 22')
+  src='First Aid pp. 447, 664–665, 670–671 · Robbins ch 21–22 · Katzung ch 54')
 
 MAP = dict(
   id='gonadsim', title='Gonadal Tumors in Motion', topic='devrepro', after='malerepro',
   sub='Grow an ovarian or testicular tumor in the cell it comes from — epithelium, germ cell or sex cord-stroma — and follow its '
       'marker or hormone: CA 125, hCG, AFP, LDH, inhibin, estrogen, androgens',
   w=3600, h=1900,
-  fa='664, 665, 670, 671',
-  src=['Robbins ch 22 — The female genital tract', 'Robbins ch 21 — The lower urinary tract and male genital system'],
+  fa='447, 664, 665, 670, 671',
+  src=['Robbins ch 22 — The female genital tract', 'Robbins ch 21 — The lower urinary tract and male genital system', full('Katzung', 54)],
   lanes=[('gnOv', 'Ovary', 'tca'), ('gnTe', 'Testis', 'glycolysis')],
   nodes=[
     ('gn1', 'Epithelial ovarian tumors', 330, 1720, 'gnOv', 'serous · CA 125', ['ovepi'], 'hub'),
@@ -143,5 +147,5 @@ MAP = dict(
   panels=[
     (2500, PANY, 1000, 'Marker → tumor (Robbins ch 22)', [
       ('CA 125', 'epithelial (monitor)'), ('AFP', 'yolk sac'), ('hCG', 'choriocarcinoma, dysgerminoma'), ('LDH', 'dysgerminoma'),
-      ('Inhibin', 'granulosa cell'), ('PLAP', 'seminoma')])],
+      ('Inhibin', 'granulosa cell'), ('PLAP', 'seminoma'), ('hCG ± AFP', 'embryonal carcinoma (AFP if mixed)')])],
   dyn=dyn)

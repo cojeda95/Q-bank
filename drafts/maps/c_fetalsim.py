@@ -32,10 +32,12 @@ ST = 'st'
 S = lambda *k: [f'{ST}:{x}' for x in k]
 D = lambda *k: [f'dx:{x}' for x in k]
 PANY = 800
-FETAL = S('fetal')
-AFTER = ['st:birth&!dx:pphn', 'st:newborn&!dx:pphn']
-DA_OPEN = S('fetal', 'birth') + D('pda', 'pphn', 'pge1', 'dtga')
-FO_OPEN = S('fetal') + D('pphn', 'pfo', 'dtga')
+# every `dx` option is a newborn problem, so picking one shows the circulation after birth even on the Fetus step
+FETAL = ['st:fetal&!dx:*']
+AFTER = ['st:birth&!dx:pphn', 'st:newborn&!dx:pphn', 'dx:pda', 'dx:pfo', 'dx:indo', 'dx:pge1']   # pulmonary resistance has fallen
+AFTER_FLOW = AFTER + ['dx:dtga']   # flows only; d-TGA gets no transition arrows (no source)
+DA_OPEN = FETAL + ['st:birth&!dx:*'] + D('pda', 'pphn', 'pge1', 'dtga')
+FO_OPEN = FETAL + D('pphn', 'pfo', 'dtga')
 def X(cx, cy, s=18): return f'<path d="M{cx - s} {cy - s} L{cx + s} {cy + s} M{cx + s} {cy - s} L{cx - s} {cy + s}" class="nf-x"/>'
 def room(x0, y0, x1, y1, lab, cls='dyn-cell'):
     add(f'<rect x="{x0}" y="{y0}" width="{x1 - x0}" height="{y1 - y0}" rx="24" class="{cls}"/>')
@@ -71,7 +73,7 @@ V = dict(
   pa='M960 850 H760 V400 H1250',
   da='M1250 400 H1700',
   lungsbr='M760 470 H640',
-  pv='M470 330 V270 H1360 V560',
+  pv='M470 330 V312 H1360 V560',   # runs below the brain box, not through it
   ao='M1400 770 V360 C1400 300 1460 290 1520 290 C1640 290 1700 340 1700 400 V1230',
   head='M1450 330 V290',
   ua='M1700 1240 V1300 H1880 M1700 1300 V1440 H760',
@@ -83,7 +85,7 @@ add(f'<path d="{V["da"]}" style="fill:none;stroke:var(--dk11);stroke-width:10;op
 add(f'<path d="{V["da"]}" style="fill:none;stroke:var(--ink-3);stroke-width:4;stroke-dasharray:4 8"/>', unless=DA_OPEN)
 add(f'<path d="{V["da"]}" style="fill:none;stroke:var(--ink-3);stroke-width:4;stroke-dasharray:4 8"/>', when=D('indo'))
 text('ductus arteriosus', 1480, 360, 'nf-l1', 'middle', when=DA_OPEN, unless=D('indo'))
-text('ligamentum arteriosum', 1480, 360, 'nf-l2', 'middle', unless=DA_OPEN)
+text('ligamentum arteriosum', 1480, 360, 'nf-l2', 'middle', unless=DA_OPEN + D('indo'))   # indomethacin has its own caption here
 text('closing — indomethacin', 1480, 360, 'nf-l1 dyn-tag', 'middle', when=D('indo'))
 add(f'<path d="{V["fo"]}" style="fill:none;stroke:var(--nf-blood);stroke-width:12;opacity:.5"/>', when=FO_OPEN)
 add('<path d="M1200 600 V680" style="fill:none;stroke:var(--ink-3);stroke-width:6"/>', unless=FO_OPEN)
@@ -116,16 +118,16 @@ flows = [
   dict(d=V['ao'], len=1300, speed=140, r=7, base=dict(ox=6), mods=[m(D('pphn'), set=dict(ox=3))]),
   dict(d='M1450 330 V290', len=40, speed=40, r=6, base=dict(ox=1)),
   dict(d=V['svc'], len=270, speed=100, r=7, base=dict(dx=4)),
-  dict(d='M1000 1250 V720', len=530, speed=100, r=7, base=dict(), unless=FETAL, mods=[m(['!st:fetal'], set=dict(dx=4))]),
+  dict(d='M1000 1250 V720', len=530, speed=100, r=7, base=dict(dx=4), unless=FETAL),
   dict(d='M960 720 V850 H760 V400 H1250', len=1070, speed=130, r=7, base=dict(dx=5)),
   dict(d=V['da'], len=450, speed=110, r=7, base=dict(), when=DA_OPEN,
        mods=[m(FETALISH + D('pge1', 'dtga'), set=dict(dx=5)), m(D('indo'), set=dict(dx=0))]),
   dict(d='M1700 400 H1250', len=450, speed=110, r=7, base=dict(), when=D('pda'), mods=[m(D('pda'), set=dict(ox=5))]),
-  dict(d=V['lungsbr'], len=120, speed=60, r=7, base=dict(dx=1), mods=[m(AFTER, set=dict(dx=6))]),
-  dict(d=V['pv'], len=1300, speed=150, r=7, base=dict(ox=1), mods=[m(AFTER, set=dict(ox=7))]),
+  dict(d=V['lungsbr'], len=120, speed=60, r=7, base=dict(dx=1), mods=[m(AFTER_FLOW, set=dict(dx=6))]),
+  dict(d=V['pv'], len=1300, speed=150, r=7, base=dict(ox=1), mods=[m(AFTER_FLOW, set=dict(ox=7))]),
   dict(d='M1700 1240 V1440 H760', len=1150, speed=140, r=7, base=dict(), when=FETAL, mods=[m(FETAL, set=dict(dx=5))]),
   dict(d='M1700 1240 V1300 H1880', len=240, speed=80, r=7, base=dict(ox=3)),
-  dict(d='M760 1250 C840 1200 900 900 1120 660', len=700, speed=110, r=8, base=dict(), when=D('pfo'), mods=[m(D('pfo'), set=dict(clot=2))]),
+  dict(d='M760 1250 C840 1200 900 900 1120 660 H1360', len=940, speed=110, r=8, base=dict(), when=D('pfo'), mods=[m(D('pfo'), set=dict(clot=2))]),
 ]
 sites = [dict(x=1200, y=640, n=[0, 1], w=10, t='ch', l='', aria='Foramen ovale', c='asd', ions=[]),
          dict(x=1480, y=400, n=[0, -1], w=10, t='ch', l='', aria='Ductus arteriosus', c='pda', ions=[]),
@@ -142,7 +144,7 @@ readouts = [
 notes = {
   '': 'Three shunts route placental blood around the liver and lungs: the ductus venosus (umbilical vein → IVC), the foramen ovale '
       '(RA → LA → brain) and the ductus arteriosus (pulmonary artery → descending aorta), because fetal pulmonary resistance is high.',
-  'st:fetal': 'Fetus: the most oxygenated blood is in the umbilical vein; it bypasses the liver (ductus venosus), crosses the foramen '
+  'st:fetal&!dx:*': 'Fetus: the most oxygenated blood is in the umbilical vein; it bypasses the liver (ductus venosus), crosses the foramen '
               'ovale to the left heart and the brain. SVC blood goes RV → pulmonary artery → ductus arteriosus → descending aorta.',
   'st:birth': 'First breath: the lungs expand and pulmonary resistance falls, so pulmonary blood flow rises and more blood returns to '
               'the left atrium — LA pressure exceeds RA pressure and the foramen ovale flap closes.',
@@ -168,15 +170,15 @@ dyn = dict(
               ['dtga', 'D-transposition', 'dtga'], ['indo', 'Indomethacin', 'pda'], ['pge1', 'Alprostadil (PGE₁)', 'pda']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
-  src='First Aid pp. 287, 294, 302–304 · Langman ch 13')
+  src='First Aid pp. 284, 287, 294, 302–304 · Langman ch 13 · Robbins ch 12 · Bootcamp cardiology')
 
 MAP = dict(
   id='fetalsim', title='Fetal Circulation in Motion', topic='cardio', after='chd',
   sub='Follow placental blood through the ductus venosus, foramen ovale and ductus arteriosus, then take the first breath and watch '
       'the shunts close and become ligaments — and compare PDA, PPHN, a patent foramen ovale, transposition, indomethacin and alprostadil',
   w=3500, h=1820,
-  fa='285, 287, 294, 302–304',
-  src=[full('Langman', 13), full('Guyton', 23)],
+  fa='284, 285, 287, 294, 302–304',
+  src=[full('Langman', 13), full('Guyton', 23), full('Robbins', 12), 'Bootcamp.com Cardiology — Acyanotic Congenital Heart Defects'],
   lanes=[('ftNorm', 'Fetal circulation', 'glycolysis'), ('ftDz', 'Shunt problems', 'tca'), ('ftCyan', 'Cyanotic lesions', 'gluconeo')],
   nodes=[
     ('ft1', 'Fetal circulation', 330, 1620, 'ftNorm', 'three shunts', ['fetalcirc'], 'hub'),

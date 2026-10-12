@@ -65,22 +65,24 @@ for k, (x, y, l) in ORG.items():
     text(l, x + 64, y + 6, 'nf-l1')
 for k in ('brain', 'heart', 'kidney', 'eye'):
     x, y, _ = ORG[k]; add(f'<circle cx="{x}" cy="{y}" r="46" style="fill:var(--bad);fill-opacity:.15"/>', when=B('ess', 'urg'))
+text('pale = long-term risk: CAD, stroke, CKD, retinopathy · red = acute damage', 1300, 1430, 'dyn-cap', 'middle', when=B('ess', 'urg', 'emerg'))
 text('arterioles: hyaline (essential) · hyperplastic “onion skin” (severe) · fibrinoid necrosis (emergency)', 1300, 1380, 'nf-l2', 'middle')
 # renal arteries + adrenal
 RA = (900, 1150)
 add(f'<path d="M1000 {RA[1]} H{RA[0] - 120}" style="stroke:var(--nf-blood);stroke-width:14;opacity:.35"/>')
 add(f'<ellipse cx="{RA[0] - 190}" cy="{RA[1]}" rx="60" ry="90" style="fill:var(--dk10);fill-opacity:.15;stroke:var(--dk10);stroke-width:3"/>', unless=C('athero', 'fmd'))
 add(f'<ellipse cx="{RA[0] - 190}" cy="{RA[1]}" rx="44" ry="70" style="fill:var(--dk10);fill-opacity:.25;stroke:var(--bad);stroke-width:4"/>', when=C('athero', 'fmd'))
-text('kidney (JG cells)', RA[0] - 190, RA[1] + 120, 'nf-l2', 'middle')
+text('kidney (JG cells)', RA[0] - 190, RA[1] + 120, 'nf-l2', 'middle'); text('renal artery', RA[0] - 10, RA[1] - 30, 'nf-l2', 'middle')
+text('kidney smaller — atrophy behind the stenosis', RA[0] - 190, RA[1] + 150, 'nf-l2', 'middle', when=C('athero', 'fmd'))
 add(f'<path d="M{RA[0] - 30} {RA[1] - 14} v28" style="stroke:var(--bad);stroke-width:16"/>', when=C('athero'))
 for i in range(4):
     add(f'<circle cx="{RA[0] - 40 - i * 18}" cy="{RA[1]}" r="10" style="fill:none;stroke:var(--bad);stroke-width:4"/>', when=C('fmd'))
 add(f'<ellipse cx="{RA[0] - 190}" cy="{RA[1] - 130}" rx="40" ry="22" style="fill:var(--dk4);fill-opacity:.2;stroke:var(--dk4);stroke-width:3"/>', unless=C('conn'))
 add(f'<ellipse cx="{RA[0] - 190}" cy="{RA[1] - 130}" rx="60" ry="34" style="fill:var(--dk4);fill-opacity:.4;stroke:var(--bad);stroke-width:4"/>', when=C('conn'))
-text('adrenal', RA[0] - 270, RA[1] - 130, 'nf-l2', 'end')
+text('adrenal', RA[0] - 110, RA[1] - 124, 'nf-l2')
 CT = dict(athero='atherosclerotic stenosis — proximal third, older male smokers · renin ↑ aldosterone ↑',
           fmd='fibromuscular dysplasia — “string of beads”, distal two-thirds, young women · renin ↑ aldosterone ↑',
-          conn='Conn — aldosterone ↑, renin ↓ · hypokalemia, metabolic alkalosis, no edema')
+          conn='Conn — aldosterone ↑, renin ↓ · low or normal K⁺, metabolic alkalosis, no edema')
 for k, s in CT.items(): text(s, 900, 1500, 'nf-l1 dyn-tag', 'middle', when=C(k))
 
 # ════════ motion ════════
@@ -114,11 +116,12 @@ notes = {
   'bp:urg': 'Hypertensive urgency: ≥ 180 / ≥ 120 without acute end-organ damage.',
   'bp:emerg': 'Hypertensive emergency: ≥ 180 / ≥ 120 with acute end-organ damage — encephalopathy, stroke, retinal hemorrhages, '
               'papilledema, MI, heart failure, dissection, kidney injury, microangiopathic hemolysis; fibrinoid necrosis.',
-  'cause:athero': 'Renal artery stenosis (atherosclerotic): the kidney senses low perfusion and pours out renin — angiotensin II '
-                  'raises pressure and holds that kidney’s GFR (efferent constriction), so ACEi/ARB can crash it.',
+  'cause:athero': 'Renal artery stenosis — the commonest secondary cause in adults: the kidney senses low perfusion and pours out renin; '
+                  'angiotensin II raises pressure and props up GFR (efferent constriction). With bilateral stenosis, an ACEi or ARB '
+                  'makes creatinine jump.',
   'cause:fmd': 'Fibromuscular dysplasia: “string of beads”, distal two-thirds of the renal artery, young or middle-aged women.',
   'cause:conn': 'Conn syndrome: an adenoma or bilateral hyperplasia makes aldosterone on its own; volume expansion suppresses renin '
-                '— high aldosterone:renin ratio, hypokalemia, metabolic alkalosis, no edema (escape).',
+                '— high aldosterone:renin ratio, low (or normal) K⁺, metabolic alkalosis, no edema (aldosterone escape).',
 }
 
 dyn = dict(
@@ -130,15 +133,15 @@ dyn = dict(
               ['conn', 'Conn syndrome', 'conn']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='Robbins ch 11')
+  src='First Aid pp. 304, 306, 321, 354, 623 · Robbins ch 11, 24 · Katzung ch 11 · Costanzo ch 6')
 
 MAP = dict(
   id='htnsim', title='Hypertension in Motion', topic='cardio', after='htnrx',
   sub='Step blood pressure from white coat to essential to urgency to emergency and watch the end organs, then add a renal artery '
       'stenosis or Conn syndrome and read renin and aldosterone',
   w=3600, h=1900,
-  fa='304, 350, 354, 623',
-  src=['Robbins ch 11 — Blood vessels', 'Katzung ch 11 — Antihypertensive Agents'],
+  fa='304, 306, 321, 354, 623',
+  src=['Robbins ch 11 — Blood vessels', 'Katzung ch 11 — Antihypertensive Agents', full('Robbins', 24), full('Costanzo', 6)],
   lanes=[('htLevel', 'Levels', 'tca'), ('htCause', 'Secondary causes', 'glycolysis')],
   nodes=[
     ('ht1', 'Essential hypertension', 330, 1720, 'htLevel', '≥ 130/80 · 90%', ['htn'], 'hub'),

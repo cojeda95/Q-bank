@@ -84,45 +84,48 @@ def murmur(k, A, cx=700):
     if k == 'mvp': return f'M{cx + 20} {BY} L980 {BY - A} V{BY + A} Z'
     if k == 'ar': return f'M1020 {BY - A} L1400 {BY} L1020 {BY + A} Z'
     if k == 'ms': return f'M1180 {BY} L1300 {BY - A * 0.6} L1650 {BY - A} V{BY + A} L1300 {BY + A * 0.6} Z'
-# what each maneuver does to each murmur — from the maneuvers card and the lesion cards; blank = no source says
-# UNVERIFIED: the card's general rules ("most murmurs" softer/louder; expiration: left-sided louder) are applied to each lesion
-# that has no lesion-specific line (TR, MS, VSD for standing/squatting; MS, MVP for expiration)
+# what each maneuver does to each murmur — First Aid p. 295 (maneuver table) and the Bootcamp Cardiology valvular slides,
+# which give each lesion's own line (AS: ↑ preload, ↓ afterload, expiration · AR, MR: ↑ preload, ↑ afterload, expiration ·
+# MS: ↑ preload, expiration · MVP: ↓ preload, expiration, later click with ↑ afterload · TR: ↑ preload, ↑ afterload,
+# inspiration). Blank = no source gives a direction (VSD with preload; HCM with breathing).
 RULE = {
-  'stand': dict(hcm='up', as_='down', mr='down', ar='down', vsd='down', tr='down', ms='down'),
-  'squat': dict(hcm='down', as_='up', mr='up', ar='up', vsd='up', tr='up', ms='up'),
-  'leg':   dict(hcm='down', as_='up', mr='up', ar='up', vsd='up', tr='up', ms='up'),
-  'grip':  dict(mr='up', ar='up', vsd='up', as_='down', hcm='down'),
+  'stand': dict(hcm='up', mvp='up', as_='down', mr='down', ar='down', tr='down', ms='down'),
+  'squat': dict(hcm='down', mvp='down', as_='up', mr='up', ar='up', tr='up', ms='up'),
+  'leg':   dict(hcm='down', mvp='down', as_='up', mr='up', ar='up', tr='up', ms='up'),
+  'grip':  dict(mr='up', ar='up', vsd='up', tr='up', as_='down', hcm='down'),
   'insp':  dict(tr='up'),
-  'exp':   dict(as_='up', mr='up', mvp='up', ar='up', hcm='up', ms='up'),
+  'exp':   dict(as_='up', mr='up', mvp='up', ar='up', ms='up'),
 }
 KS = ['as', 'hcm', 'mr', 'tr', 'vsd', 'asd', 'mvp', 'ar', 'ms']
 def lvl(k, v): return RULE[v].get(k + '_' if k == 'as' else k, 'normal')
+CLICK = {'stand': 580, 'squat': 820, 'leg': 820, 'grip': 820}   # MVP: the click moves (earlier when the LV is smaller)
 for k in KS:
-    changed = {L: [f'mm:{k}&mv:{v}' for v in RULE if lvl(k, v) == L] for L in ('up', 'down')}
-    clicks = {'stand': 580, 'squat': 820, 'leg': 820} if k == 'mvp' else {}
-    for L in ('up', 'down'):
-        if changed[L]: add(f'<path d="{murmur(k, LEVEL[L])}" style="{ACC}"/>', when=changed[L])
-    plain = [f'mm:{k}'] ; moved = [f'mm:{k}&mv:{v}' for v in clicks]
-    add(f'<path d="{murmur(k, LEVEL["normal"])}" style="{ACC}"/>', when=plain, unless=changed['up'] + changed['down'] + moved)
-    for v, cx in clicks.items():
-        add(f'<path d="{murmur(k, LEVEL["normal"], cx)}" style="{ACC}"/>', when=[f'mm:{k}&mv:{v}'])
+    clicks = CLICK if k == 'mvp' else {}
+    drawn = []
+    for v in RULE:   # one drawing per maneuver that changes this murmur's size or (MVP) its start
+        L = lvl(k, v)
+        if L == 'normal' and v not in clicks: continue
+        add(f'<path d="{murmur(k, LEVEL[L], clicks.get(v, 700))}" style="{ACC}"/>', when=[f'mm:{k}&mv:{v}'])
+        drawn.append(f'mm:{k}&mv:{v}')
+    add(f'<path d="{murmur(k, LEVEL["normal"])}" style="{ACC}"/>', when=[f'mm:{k}'], unless=drawn or None)
 if True:
-    for v, cx in (('', 700), ('stand', 580), ('squat', 820), ('leg', 820)):
+    for v, cx in [('', 700)] + list(CLICK.items()):
         w = [f'mm:mvp&mv:{v}'] if v else ['mm:mvp']
-        u = None if v else [f'mm:mvp&mv:{q}' for q in ('stand', 'squat', 'leg')]
+        u = None if v else [f'mm:mvp&mv:{q}' for q in CLICK]
         add(f'<rect x="{cx - 4}" y="{BY - 50}" width="8" height="100" rx="3" style="fill:var(--bad)"/>', when=w, unless=u)
     text('click earlier', 580, BY - 110, 'nf-l1 dyn-tag', 'middle', when=['mm:mvp&mv:stand'])
-    text('click later', 820, BY - 110, 'nf-l1 dyn-tag', 'middle', when=['mm:mvp&mv:squat', 'mm:mvp&mv:leg'])
+    text('click later', 820, BY - 110, 'nf-l1 dyn-tag', 'middle', when=['mm:mvp&mv:squat', 'mm:mvp&mv:leg', 'mm:mvp&mv:grip'])
 add(f'<rect x="1095" y="{BY - 50}" width="8" height="100" rx="3" style="fill:var(--bad)"/>', when=MM('ms'))
 text('opening snap', 1100, BY - 110, 'nf-l1 dyn-tag', 'middle', when=MM('ms'))
 text('wide, fixed split S2', S2, BY - 110, 'nf-l1 dyn-tag', 'middle', when=MM('asd'))
 TAG = dict(stand='↓ preload: most murmurs softer — HCM louder, MVP click earlier',
            squat='↑ preload and ↑ afterload: most murmurs louder — HCM softer, MVP click later',
            leg='↑ preload: most murmurs louder — HCM softer, MVP click later',
-           grip='↑ afterload: MR, AR and VSD louder — AS and HCM softer',
-           insp='inspiration: right-sided murmurs louder', exp='expiration: left-sided murmurs louder')
+           grip='↑ afterload: MR, AR and VSD louder — AS and HCM softer, MVP click later',
+           insp='inspiration: right-sided murmurs louder', exp='expiration: most left-sided murmurs louder')
 for v, t in TAG.items(): text(t, 1100, BY + 180, 'nf-l1', 'middle', when=MV(v))
-text('dashed outline = where the murmur would be at rest', 1100, BY + 210, 'dyn-cap', 'middle', when=['mv:*'])
+text('dashed outline = where the murmur would be at rest', 1100, BY + 210, 'dyn-cap', 'middle',
+     when=[f'mm:{k}&mv:{v}' for k in KS for v in RULE if lvl(k, v) != 'normal' or (k == 'mvp' and v in CLICK)])
 for k in KS:
     if any(lvl(k, v) != 'normal' for v in RULE):
         add(f'<path d="{murmur(k, LEVEL["normal"])}" style="fill:none;stroke:var(--ink-3);stroke-width:2;stroke-dasharray:6 6"/>', when=[f'mm:{k}&mv:*'])
@@ -144,6 +147,7 @@ sites = [dict(x=605, y=460, n=[0, 1], w=10, t='rec', l='', aria='Auscultation ar
 def rd(k_up, k_dn): return [dict(when=k_up, d=1), dict(when=k_dn, d=-1)]
 readouts = [
   dict(l='Preload (venous return)', mods=rd(MV('squat', 'leg'), MV('stand'))),
+  dict(l='LV volume', mods=rd(MV('squat', 'leg', 'grip'), MV('stand'))),
   dict(l='Afterload', mods=[dict(when=MV('squat', 'grip'), d=1)]),
   dict(l='This murmur', mods=rd([f'mm:{k}&mv:{v}' for k in KS for v in RULE if lvl(k, v) == 'up'],
                                  [f'mm:{k}&mv:{v}' for k in KS for v in RULE if lvl(k, v) == 'down'])),
@@ -165,18 +169,19 @@ notes = {
             'Louder with handgrip.',
   'mm:asd': 'ASD: a systolic ejection murmur (extra flow across the pulmonic valve) with a wide, fixed split S2.',
   'mm:mvp': 'Mitral valve prolapse: the chordae snap tight as the floppy leaflets billow back — a midsystolic click, then a late '
-            'systolic murmur. A smaller LV (standing, Valsalva) lets them prolapse sooner, so the click comes earlier.',
+            'systolic murmur. A smaller LV (standing, Valsalva) lets them prolapse sooner: earlier click, louder murmur; '
+            'squatting or leg raise does the reverse, and handgrip delays the click.',
   'mm:ar': 'Aortic regurgitation: an early diastolic decrescendo blowing murmur at Erb point, with a wide pulse pressure and bounding '
            'pulses. Louder with handgrip.',
   'mm:ms': 'Mitral stenosis: an opening snap, then a delayed low-pitched mid-to-late diastolic rumble at the apex — the shorter the '
-           'S2-to-snap interval, the worse the stenosis. Almost always rheumatic.',
+           'S2-to-snap interval, the worse the stenosis. A late, highly specific sequela of rheumatic fever.',
   'mv:stand': 'Standing or Valsalva lowers preload: most murmurs get softer. The exceptions depend on a small LV: HCM gets louder and '
               'the MVP click comes earlier.',
   'mv:squat': 'Squatting raises preload and afterload: most murmurs get louder; HCM softer, the MVP click later.',
   'mv:leg': 'Passive leg raise raises preload: most murmurs get louder; HCM softer, the MVP click later.',
-  'mv:grip': 'Handgrip raises afterload: MR, AR and VSD get louder; AS and HCM softer.',
+  'mv:grip': 'Handgrip raises afterload: MR, AR and VSD get louder; AS and HCM softer; the MVP click comes later.',
   'mv:insp': 'Inspiration: right-sided murmurs (tricuspid regurgitation) get louder.',
-  'mv:exp': 'Expiration: left-sided murmurs get louder.',
+  'mv:exp': 'Expiration brings more blood back to the left heart: most left-sided murmurs (AS, MR, AR, MS, MVP) get louder.',
 }
 
 dyn = dict(
@@ -193,14 +198,14 @@ dyn = dict(
               ['insp', 'Inspiration', 'maneuvers'], ['exp', 'Expiration', 'maneuvers']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
-  src='First Aid pp. 292, 295–296 · Robbins ch 12 · Guyton ch 23')
+  src='First Aid pp. 292, 294–296 · Bootcamp Cardiology (valvular disease) · Robbins ch 12 · Guyton ch 23')
 
 MAP = dict(
   id='murmursim', title='Murmurs & Maneuvers in Motion', topic='cardio', after='valves',
   sub='Pick a murmur and see where it is heard, when in the cycle it falls and which way the blood leaks — then stand, squat, '
       'raise the legs, squeeze or breathe and watch it get louder or softer',
   w=3600, h=1900,
-  fa='292, 294, 295, 296, 298, 303, 315, 525',
+  fa='292, 294, 295, 296, 303, 315',
   src=['Robbins ch 12 — The heart', 'Guyton ch 23 — Heart Valves and Heart Sounds; Valvular and Congenital Heart Defects',
        'Costanzo ch 4 — Cardiovascular physiology', 'Moore ch 4 — Thorax', 'Bootcamp.com Cardiology — Cardiac Cycle',
        'Bootcamp.com Cardiology — Valvular Disease', 'Robbins ch 5 — Genetic disorders', 'Langman ch 13 — Cardiovascular System'],
