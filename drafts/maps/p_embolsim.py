@@ -29,9 +29,11 @@ def box(x0, y0, x1, y1):
 D = lambda *k: [f'dx:{x}' for x in k]
 PANY = 1180
 PX = dict(dvt='M560 1600 C700 1500 900 1350 1000 1200 V880', fat='M500 1380 C650 1330 850 1290 1000 1200 V880',
-          afe='M780 1280 C860 1260 940 1240 1000 1200 V880', air='M820 300 C900 400 980 600 1000 860')
+          afe='M780 1280 C860 1260 940 1240 1000 1200 V880', air='M830 310 C900 290 970 280 1000 300 V860')
 PA = 'M1000 880 V1040 C1060 900 1100 700 1100 600 C1080 540 1000 500 930 470'
 PV = 'M1270 470 C1250 600 1220 750 1200 880'
+PA2 = 'M1100 600 C1150 560 1220 500 1270 470'      # the pulmonary artery's branch to the other lung
+PV2 = 'M930 470 C980 560 1120 640 1200 840'
 BRAIN = 'M1200 880 V1020 C1300 950 1450 700 1500 500 C1520 400 1560 330 1600 300'
 SKIN = 'M1200 1020 C1400 950 1650 800 1900 720'
 KID = 'M1200 1020 C1350 1050 1550 1050 1700 1020'
@@ -49,6 +51,15 @@ add('<rect x="940" y="820" width="320" height="260" rx="40" style="fill:var(--nf
 add('<path d="M1100 820 V1080" style="stroke:var(--dk3);stroke-width:4"/>')
 text('RA / RV', 1020, 1110, 'nf-l2', 'middle'); text('LA / LV', 1180, 1110, 'nf-l2', 'middle')
 add('<path d="M1000 1200 V1080 M1000 820 V300" style="stroke:var(--nf-h2o);stroke-width:22;opacity:.25"/>')
+# every route is a drawn vessel: systemic veins and pulmonary arteries carry venous blood (blue), the rest arterial (red)
+VEN = 'fill:none;stroke:var(--nf-h2o);stroke-width:14;opacity:.3;stroke-linecap:round'
+ART = 'fill:none;stroke:var(--bad);stroke-width:12;opacity:.22;stroke-linecap:round'
+add(''.join(f'<path d="{d}" style="{VEN}"/>' for d in (PX['fat'], PX['afe'], PX['air'], PA, PA2)))
+add(''.join(f'<path d="{d}" style="{ART}"/>' for d in (PV, PV2, BRAIN, SKIN, KID, LEG)))
+text('pulmonary artery', 1060, 680, 'nf-l2', 'end'); text('pulmonary veins', 1250, 640, 'nf-l2')
+text('carotid', 1530, 560, 'nf-l2'); text('renal artery', 1450, 1080, 'nf-l2', 'middle'); text('femoral artery', 1420, 1340, 'nf-l2', 'end')
+text('subclavian vein', 905, 262, 'nf-l2', 'middle'); text('uterine veins', 890, 1225, 'nf-l2', 'middle'); text('femoral vein', 590, 1310, 'nf-l2', 'middle')
+text('bubbles form in the tissues themselves', 1900, 1590, 'nf-l2', 'middle', when=D('dcs'))
 text('IVC', 1020, 1180, 'nf-l2'); text('SVC', 1020, 760, 'nf-l2')
 add('<ellipse cx="1600" cy="300" rx="130" ry="90" style="fill:var(--dk2);fill-opacity:.1;stroke:var(--dk2);stroke-width:4"/>'); text('brain', 1600, 190, 'nf-l1', 'middle')
 add('<rect x="1880" y="660" width="120" height="120" rx="20" style="fill:var(--dk9);fill-opacity:.12;stroke:var(--dk9);stroke-width:3"/>'); text('skin', 1940, 820, 'nf-l2', 'middle')
@@ -75,6 +86,7 @@ text('paradoxical: a venous clot crosses into the left heart → brain', 1100, 1
 
 # ════════ motion ════════
 flows = [dict(d=PX[k], len=900, speed=120, r=11, base={k: 3}, when=D(k)) for k in ('dvt', 'fat', 'afe', 'air')]
+flows[3]['len'] = 760
 flows += [
   dict(d=PA, len=800, speed=120, r=11, base=dict(dvt=3), when=D('dvt')),
   dict(d=PA, len=800, speed=120, r=11, base=dict(fat=3), when=D('fat')),

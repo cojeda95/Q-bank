@@ -78,7 +78,16 @@ text('squatting ↑ SVR → less right-to-left shunt', 1100, 1660, 'nf-l1', 'mid
 # ════════ motion ════════
 VEN = 'M760 1460 C640 1300 620 820 820 760'
 TAPV = 'M1200 400 C1300 500 700 480 700 600 C700 680 760 720 820 740'
-PV = 'M1200 400 C1240 520 1240 620 1240 690'
+PV = 'M1340 400 C1365 500 1365 600 1340 690'   # enters the LA from the right, clear of the aorta
+# the return vessels, drawn so every particle rides a vessel: venae cavae (blue), pulmonary veins (red) or, in TAPVR, the
+# anomalous pulmonary veins to the right heart
+add(f'<path d="{VEN}" style="fill:none;stroke:var(--nf-h2o);stroke-width:26;opacity:.25;stroke-linecap:round"/>')
+text('venae cavae', 620, 1100, 'nf-l2', 'end')
+add(f'<path d="{PV}" style="fill:none;stroke:var(--nf-blood);stroke-width:20;opacity:.22;stroke-linecap:round"/>', unless=D('tapvr'))
+text('pulmonary veins', 1385, 620, 'nf-l2', unless=D('tapvr'))
+add(f'<path d="{TAPV}" style="fill:none;stroke:var(--nf-blood);stroke-width:20;opacity:.25;stroke-linecap:round"/>', when=D('tapvr'))
+text('pulmonary veins → right heart', 680, 640, 'nf-l2', 'end', when=D('tapvr'))
+text('aorta', 1720, 1000, 'nf-l2'); text('pulmonary artery', 930, 480, 'nf-l2', 'end', unless=D('truncus', 'tga'))
 def fl(d, n, k, when=None, unless=None, speed=110, mods=None):
     f = dict(d=d, len=900, speed=speed, r=10, base={k: n})
     if when: f['when'] = when

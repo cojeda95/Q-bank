@@ -96,8 +96,23 @@ add(''.join(f'<ellipse cx="{TX + 140 + i * 140}" cy="{TY + 160 + (i % 2) * 180}"
 # fibrinoid: a vessel with a bright wall
 add(f'<circle cx="{TX + TW // 2}" cy="{TY + TH // 2}" r="160" style="fill:none;stroke:var(--bad);stroke-width:40;stroke-opacity:.45"/>'
     f'<circle cx="{TX + TW // 2}" cy="{TY + TH // 2}" r="110" style="fill:var(--dk12);fill-opacity:.25"/>', when=I('fibr'))
-# gangrenous: dark distal tissue
-add(f'<path d="M{TX} {TY + 20} Q{TX + 300} {TY + 260} {TX + 520} {TY + TH} L{TX + TW} {TY + TH} L{TX + TW} {TY} Z" style="fill:var(--ink);fill-opacity:.55"/>', when=I('gang'))
+# gangrenous: a lower leg and foot whose distal part has died after chronic ischemia (Robbins ch 2, FA p. 205) — dry on the left,
+# wet (bacteria → liquefaction on top) on the right; the leg's artery narrows on the way down
+def foot(ox, wet):
+    g = (f'<path d="M{ox + 60} 300 V560 Q{ox + 40} 700 {ox + 110} 705 H{ox + 360} Q{ox + 395} 700 {ox + 390} 665 Q{ox + 385} 640 {ox + 350} 632 '
+         f'L{ox + 160} 560 V300 Z" style="fill:var(--surface);stroke:var(--ink-2);stroke-width:4"/>'
+         f'<path d="M{ox + 110} 300 V480" style="stroke:var(--bad);stroke-width:12;stroke-linecap:round;opacity:.7"/>'
+         f'<path d="M{ox + 110} 480 V560 Q{ox + 120} 620 {ox + 240} 650" style="fill:none;stroke:var(--bad);stroke-width:4;stroke-dasharray:10 8;opacity:.7"/>'
+         f'<path d="M{ox + 250} 594 L{ox + 350} 632 Q{ox + 385} 640 {ox + 390} 665 Q{ox + 395} 700 {ox + 360} 705 H{ox + 250} Z" '
+         f'style="fill:var(--ink);fill-opacity:.6;stroke:var(--ink-2);stroke-width:4"/>')
+    if wet:
+        g += ''.join(f'<ellipse cx="{ox + x}" cy="{y}" rx="16" ry="11" style="fill:var(--dk2);fill-opacity:.8"/>' for x, y in [(290, 640), (340, 680), (300, 690)])
+        g += ''.join(f'<circle cx="{ox + x}" cy="{y}" r="5" style="fill:var(--dk5)"/>' for x, y in [(270, 625), (320, 650), (360, 668), (275, 672), (350, 695), (315, 615)])
+    return g
+add(foot(1450, False) + foot(1860, True), when=I('gang'))
+text('artery narrows', 1450 + 175, 420, 'nf-l2', when=I('gang'))
+text('Dry: ischemia → coagulative', 1450 + 220, 755, 'nf-l2', 'middle', when=I('gang'))
+text('Wet: + bacteria → liquefactive', 1860 + 220, 755, 'nf-l2', 'middle', when=I('gang'))
 PAT = dict(
   coag=['Coagulative', 'ischemic infarcts in most tissues except the brain', 'proteins denatured — cell outlines stay, nuclei vanish, ↑ eosinophilia'],
   liq=['Liquefactive', 'bacterial abscesses and brain infarcts', 'neutrophil enzymes digest the tissue — later a cystic cavity'],

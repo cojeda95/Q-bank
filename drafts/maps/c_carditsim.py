@@ -49,6 +49,18 @@ for k, (x, y) in V.items():
     text(dict(tri='tricuspid', mit='mitral', aor='aortic', pul='pulmonic')[k], x, y + (30 if k in ('tri', 'mit') else -24), 'nf-l2', 'middle')
 add('<path d="M1240 720 V560 C1240 460 1500 460 1560 520 V1200" style="fill:none;stroke:var(--nf-blood);stroke-width:26;opacity:.2"/>'); text('aorta', 1580, 560, 'nf-l2')
 add('<path d="M960 720 C960 560 1000 440 1000 360" style="fill:none;stroke:var(--nf-h2o);stroke-width:22;opacity:.25"/>')
+add('<path d="M1150 360 C1150 500 1150 620 1160 720" style="fill:none;stroke:var(--nf-blood);stroke-width:18;opacity:.2"/>')   # pulmonary veins → LA
+text('pulm. artery', 950, 600, 'nf-l2', 'end'); text('pulm. veins', 1140, 600, 'nf-l2', 'end')
+# arteries from the aorta to each embolic target — the emboli ride these
+ARCH = 'M1240 860 V560 C1240 460 1500 460 1560 520'
+BR = dict(brain=' C1600 400 1700 300 1856 300', retina=' V560 C1650 540 1750 500 1856 500', kidney=' V760 H1856', fingers=' V1020 H1856')
+for k, b in BR.items():
+    st = b.replace(' V560', 'M1560 560').replace(' V760', 'M1560 760').replace(' V1020', 'M1560 1020')
+    if k == 'brain': st = 'M1560 520' + b
+    add(f'<path d="{st}" style="fill:none;stroke:var(--nf-blood);stroke-width:14;opacity:.2;stroke-linecap:round"/>')
+text('carotid', 1690, 330, 'nf-l2', 'end'); text('ophthalmic', 1740, 490, 'nf-l2', 'middle'); text('renal', 1700, 745, 'nf-l2', 'middle')
+text('to the hands', 1700, 1005, 'nf-l2', 'middle')
+text('anti-M-protein antibodies in the blood', 640, 560, 'nf-l2', 'middle', when=D('rf'))
 for k, (x, y) in TG.items():
     add(f'<circle cx="{x}" cy="{y}" r="44" style="fill:var(--dk10);fill-opacity:.15;stroke:var(--dk10);stroke-width:3"/>'); text(k, x + 60, y + 6, 'nf-l1')
 add('<circle cx="500" cy="340" r="54" style="fill:var(--dk9);fill-opacity:.15;stroke:var(--dk9);stroke-width:3"/>'); text('throat (GAS)', 500, 270, 'nf-l1', 'middle')
@@ -79,13 +91,11 @@ text('Janeway (painless) · Osler (painful) · Roth spots · glomerulonephritis'
 
 # ════════ motion ════════
 def to(src, tgt, k, when, n=3):
-    (x0, y0), (x1, y1) = src, TG[tgt]
-    return dict(d=f'M{x0} {y0} C{x0} {y0 - 300} 1560 {y0 - 360} 1560 {(y0 + y1) / 2:.0f} C1600 {y1} {x1 - 100} {y1} {x1 - 44} {y1}',
-                len=1200, speed=150, r=10, base={k: n}, when=when)
+    return dict(d=ARCH + BR[tgt], len=dict(brain=1000, retina=900, kidney=1000, fingers=1250)[tgt], speed=150, r=10, base={k: n}, when=when)
 EMB = D('acute', 'subacute', 'nbte', 'myxoma')
 flows = [
   dict(d='M960 860 V720 C960 560 1000 440 1000 360', len=520, speed=110, r=8, base=dict(blood=3)),
-  dict(d='M1200 360 C1220 500 1230 620 1240 720 V860', len=520, speed=110, r=8, base=dict(blood=3), mods=[dict(when=D('rhd', 'myxoma'), speed=0.3)]),
+  dict(d='M1150 360 C1150 500 1150 620 1160 720 C1170 780 1240 800 1240 860', len=520, speed=110, r=8, base=dict(blood=3), mods=[dict(when=D('rhd', 'myxoma'), speed=0.3)]),
   dict(d='M1300 880 V780', len=100, speed=60, r=8, base=dict(blood=2), when=D('acute', 'subacute', 'rf')),
   dict(d='M1020 880 V780', len=100, speed=60, r=8, base=dict(blood=2), when=D('ivdu')),
   dict(d='M960 860 V720 C960 560 1000 440 1000 360', len=520, speed=140, r=11, base=dict(emb=2), when=D('ivdu')),
