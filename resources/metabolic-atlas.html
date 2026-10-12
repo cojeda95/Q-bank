@@ -19952,7 +19952,7 @@ MAPS.nitrogen = {
   {id:"glutamate",l:"Glutamate",x:220,y:370,p:"aa",k:"hub"},
   {id:"alanineN",l:"Alanine",x:520,y:230,p:"aa",s:"from muscle · Cahill"},
   {id:"glutamineN",l:"Glutamine",x:520,y:370,p:"aa",s:"from tissues · astrocyte"},
-  {id:"nh4",l:"NH₄⁺ + CO₂",x:400,y:760,p:"urea",k:"hub"},
+  {id:"nh4",l:"NH₃ + CO₂",x:400,y:760,p:"urea",k:"hub"},
   {id:"carbp",l:"Carbamoyl phosphate",x:480,y:1010,p:"urea"},
   {id:"citrulline",l:"Citrulline",x:646,y:782,p:"urea"},
   {id:"argsucc",l:"Argininosuccinate",x:914,y:869,p:"urea"},
@@ -38497,7 +38497,7 @@ MAPS.hemeflow = {
  fa:"66, 171, 422, 424–425, 430, 561",
  src:["Marks ch 42 — The Biochemistry of Erythrocytes and Other Blood Cells", "Katzung ch 22 — Sedative-Hypnotic Drugs", "Katzung ch 57 — Heavy Metal Intoxication & Chelators", "Robbins ch 14 — Red blood cell and bleeding disorders", "Robbins ch 25 — The skin", "Bootcamp.com Biochemistry — Porphyrias"],
  art:"kit",
- dyn:{"lazy":"1f7a4ac0c2","switches":[{"id":"trig","label":"AIP trigger","type":"toggle","on":"Trigger: CYP450 inducer · alcohol · fasting","off":"Add a trigger","def":false},{"id":"hemin","label":"Treatment","type":"toggle","on":"Hemin + glucose given","off":"Give hemin + glucose","def":false},{"id":"dz","label":"Pick one disorder","type":"one","options":[["sidero","Sideroblastic anemia (ALAS · B6)","sidero"],["lead","Lead poisoning","lead"],["aip","Acute intermittent porphyria","aip"],["pct","Porphyria cutanea tarda","pct"],["ida","Iron deficiency","ida"]]}],"panel":{"x":2460,"y":110,"w":1000}},
+ dyn:{"lazy":"1e88c93568","switches":[{"id":"trig","label":"AIP trigger","type":"toggle","on":"Trigger: CYP450 inducer · alcohol · fasting","off":"Add a trigger","def":false},{"id":"hemin","label":"Treatment","type":"toggle","on":"Hemin + glucose given","off":"Give hemin + glucose","def":false},{"id":"dz","label":"Pick one disorder","type":"one","options":[["sidero","Sideroblastic anemia (ALAS · B6)","sidero"],["lead","Lead poisoning","lead"],["aip","Acute intermittent porphyria","aip"],["pct","Porphyria cutanea tarda","pct"],["ida","Iron deficiency","ida"]]}],"panel":{"x":2460,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38673,7 +38673,7 @@ MAPS.aasim = {
  fa:"58, 64, 65, 66, 81, 82, 83, 88, 484, 604, 617",
  src:["Marks ch 37 — Synthesis and Degradation of Amino Acids", "Robbins ch 5 — Genetic disorders", "Pawlina ch 15 — Integumentary System", "Marks ch 46 — Metabolism of the Nervous System", "Marks ch 23 — Tricarboxylic Acid Cycle", "Marks ch 8 — Enzymes as Catalysts", "Robbins ch 18 — Liver and gallbladder", "Robbins ch 2 — Cell injury, cell death, and adaptations", "Marks ch 38 — Tetrahydrofolate, Vitamin B12, and S-Adenosylmethionine", "Marks ch 30 — Oxidation of Fatty Acids and Ketone Bodies", "Marks ch 35 — Protein Digestion and Amino Acid Absorption", "Costanzo ch 8 — Gastrointestinal physiology", "Robbins ch 20 — The kidney"],
  art:"kit",
- dyn:{"lazy":"9a35a08fcc","switches":[{"id":"dx","label":"Block","type":"one","options":[["pku","PKU (phenylalanine hydroxylase)","pku"],["bh4","BH4 deficiency","pku"],["alb","Albinism (tyrosinase)","albinism"],["alk","Alkaptonuria","alkapton"],["tyr1","Tyrosinemia type I","tyrosinemia"],["msud","Maple syrup urine disease","msud"],["pa","Propionic acidemia","organicacid"],["mma","Methylmalonic acidemia","organicacid"],["cbs","Homocystinuria — CBS","homocyst"],["ms","Homocystinuria — remethylation","homocyst"],["hartnup","Hartnup disease","hartnup"],["cyst","Cystinuria","cystinuria"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"34dbeea6d4","switches":[{"id":"dx","label":"Block","type":"one","options":[["pku","PKU (phenylalanine hydroxylase)","pku"],["bh4","BH4 deficiency","pku"],["alb","Albinism (tyrosinase)","albinism"],["alk","Alkaptonuria","alkapton"],["tyr1","Tyrosinemia type I","tyrosinemia"],["msud","Maple syrup urine disease","msud"],["pa","Propionic acidemia","organicacid"],["mma","Methylmalonic acidemia","organicacid"],["cbs","Homocystinuria — CBS","homocyst"],["ms","Homocystinuria — remethylation","homocyst"],["hartnup","Hartnup disease","hartnup"],["cyst","Cystinuria","cystinuria"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38701,7 +38701,7 @@ MAPS.bvitsim = {
  fa:"63, 65, 66, 69",
  src:["Marks ch 23 — Tricarboxylic Acid Cycle", "Robbins ch 9 — Environmental and nutritional diseases", "Marks ch 25 — Oxygen Toxicity and Free-Radical Injury", "Marks ch 28 — Gluconeogenesis and Maintenance of Blood Glucose Levels", "Marks ch 30 — Oxidation of Fatty Acids and Ketone Bodies", "Marks ch 31 — Synthesis of Fatty Acids, Triacylglycerols, and the Major Membrane Lipids", "Guyton ch 72 — Dietary Balances; Regulation of Feeding; Obesity and Starvation; Vitamins and Minerals"],
  art:"kit",
- dyn:{"lazy":"84b0553148","switches":[{"id":"def","label":"Deficiency","type":"one","options":[["b2","B2 riboflavin","b2def"],["b3","B3 niacin","b3def"],["b5","B5 pantothenate","b5def"],["b7","B7 biotin","b7def"],["zn","Zinc","zinc"]]},{"id":"cause","label":"Cause","type":"one","options":[["corn","Corn diet (B3)","b3def"],["hartnup","Hartnup (B3)","b3def"],["carcinoid","Carcinoid (B3)","b3def"],["inh","Isoniazid (B3)","b3def"],["egg","Raw egg whites (B7)","b7def"],["abx","Antibiotics (B7)","b7def"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"df5b74f738","switches":[{"id":"def","label":"Deficiency","type":"one","options":[["b2","B2 riboflavin","b2def"],["b3","B3 niacin","b3def"],["b5","B5 pantothenate","b5def"],["b7","B7 biotin","b7def"],["zn","Zinc","zinc"]]},{"id":"cause","label":"Cause","type":"one","options":[["corn","Corn diet (B3)","b3def"],["hartnup","Hartnup (B3)","b3def"],["carcinoid","Carcinoid (B3)","b3def"],["inh","Isoniazid (B3)","b3def"],["egg","Raw egg whites (B7)","b7def"],["abx","Antibiotics (B7)","b7def"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38755,7 +38755,7 @@ MAPS.energysim = {
  fa:"55, 60, 64, 73–76, 247, 428, 689",
  src:["Marks ch 22 — Generation of Adenosine Triphosphate from Glucose, Fructose, and Galactose: Glycolysis", "Marks ch 23 — Tricarboxylic Acid Cycle", "Marks ch 24 — Oxidative Phosphorylation and Mitochondrial Function", "Katzung ch 58 — Management of the Poisoned Patient", "Katzung ch 57 — Heavy Metal Intoxication & Chelators", "Robbins ch 14 — Red blood cell and bleeding disorders"],
  art:"kit",
- dyn:{"lazy":"8ded038817","switches":[{"id":"blk","label":"Poison or deficiency","type":"one","options":[["pk","Pyruvate kinase deficiency","pkdef"],["pdh","PDH deficiency","pdhdef"],["thia","Thiamine deficiency","thiamine"],["ars","Arsenic","arsenic"],["fluoro","Fluoroacetate","fluoroacetate"],["rot","Rotenone (complex I)","etcinhib"],["anti","Antimycin (complex III)","etcinhib"],["cn","Cyanide (complex IV)","cyanide"],["co","Carbon monoxide","cohb"],["oligo","Oligomycin (ATP synthase)","etcinhib"],["unc","Uncoupler (2,4-DNP)","uncoupler"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"c321cd8700","switches":[{"id":"blk","label":"Poison or deficiency","type":"one","options":[["pk","Pyruvate kinase deficiency","pkdef"],["pdh","PDH deficiency","pdhdef"],["thia","Thiamine deficiency","thiamine"],["ars","Arsenic","arsenic"],["fluoro","Fluoroacetate","fluoroacetate"],["rot","Rotenone (complex I)","etcinhib"],["anti","Antimycin (complex III)","etcinhib"],["cn","Cyanide (complex IV)","cyanide"],["co","Carbon monoxide","cohb"],["oligo","Oligomycin (ATP synthase)","etcinhib"],["unc","Uncoupler (2,4-DNP)","uncoupler"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38784,7 +38784,7 @@ MAPS.faosim = {
  fa:"46, 71, 76, 87, 353",
  src:["Marks ch 30 — Oxidation of Fatty Acids and Ketone Bodies", "Robbins ch 27 — Peripheral nerves and skeletal muscles", "Pawlina ch 2 — Cell Cytoplasm", "Marks ch 46 — Metabolism of the Nervous System", "Marks ch 44 — Liver Metabolism", "Robbins ch 10 — Diseases of infancy and childhood", "Robbins ch 28 — The central nervous system", "Katzung ch 24 — Antiseizure Medications", "Kaplan & Sadock ch 21 — Psychopharmacology"],
  art:"kit",
- dyn:{"lazy":"e0de6bf593","switches":[{"id":"fast","label":"State","type":"toggle","on":"Fasting","off":"Fed","def":true},{"id":"dx","label":"What goes wrong","type":"one","options":[["carn","Carnitine deficiency","carndef"],["valp","Valproate","valproate"],["cpt2","CPT-II deficiency","cpt2"],["mcad","MCAD deficiency","mcad"],["refsum","Refsum disease","refsum"],["xald","X-linked ALD","xald"],["zell","Zellweger syndrome","zellweger"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"7a45cff6d4","switches":[{"id":"fast","label":"State","type":"toggle","on":"Fasting","off":"Fed","def":true},{"id":"dx","label":"What goes wrong","type":"one","options":[["carn","Carnitine deficiency","carndef"],["valp","Valproate","valproate"],["cpt2","CPT-II deficiency","cpt2"],["mcad","MCAD deficiency","mcad"],["refsum","Refsum disease","refsum"],["xald","X-linked ALD","xald"],["zell","Zellweger syndrome","zellweger"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38812,7 +38812,7 @@ MAPS.glyxsim = {
  fa:"64, 66, 70, 74, 75, 76, 428",
  src:["Marks ch 22 — Generation of Adenosine Triphosphate from Glucose, Fructose, and Galactose: Glycolysis", "Marks ch 28 — Gluconeogenesis and Maintenance of Blood Glucose Levels", "Marks ch 33 — Metabolism of Ethanol", "Marks ch 34 — Integration of Carbohydrate and Lipid Metabolism", "Robbins ch 7 — Neoplasia", "Marks ch 23 — Tricarboxylic Acid Cycle", "Marks ch 25 — Oxygen Toxicity and Free-Radical Injury", "Marks ch 42 — The Biochemistry of Erythrocytes and Other Blood Cells", "Robbins ch 14 — Red blood cell and bleeding disorders", "Robbins ch 24 — The endocrine system", "Robbins ch 28 — The central nervous system"],
  art:"kit",
- dyn:{"lazy":"3b96df2e09","switches":[{"id":"hor","label":"State","type":"steps","options":[["fed","Fed (insulin)","f26bp"],["fast","Fasting (glucagon)","f26bp"]]},{"id":"x","label":"Odd hit","type":"one","options":[["hk","Hexokinase deficiency","hkdef"],["pk","Pyruvate kinase deficiency","pkdef"],["pc","Pyruvate carboxylase / biotin","pyrcarb"],["etoh","Ethanol","ethanol"],["idh","IDH mutation","idhmut"],["sdh","SDH mutation","sdhmut"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"609f5098ca","switches":[{"id":"hor","label":"State","type":"steps","options":[["fed","Fed (insulin)","f26bp"],["fast","Fasting (glucagon)","f26bp"]]},{"id":"x","label":"Odd hit","type":"one","options":[["hk","Hexokinase deficiency","hkdef"],["pk","Pyruvate kinase deficiency","pkdef"],["pc","Pyruvate carboxylase / biotin","pyrcarb"],["etoh","Ethanol","ethanol"],["idh","IDH mutation","idhmut"],["sdh","SDH mutation","sdhmut"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38889,7 +38889,7 @@ MAPS.lsdsim = {
  fa:"45, 86",
  src:["Robbins ch 5 — Genetic disorders", "Robbins ch 28 — The central nervous system", "Marks ch 27 — Pentose Phosphate Pathway and the Synthesis of Glycosides, Lactose, Glycoproteins, and Glycolipids", "Marks ch 47 — The Extracellular Matrix and Connective Tissue", "Pawlina ch 2 — Cell Cytoplasm"],
  art:"kit",
- dyn:{"lazy":"7b1e7cd629","switches":[{"id":"lsd","label":"Missing enzyme","type":"one","options":[["tay","Tay-Sachs","taysachs"],["np","Niemann-Pick","niemannpick"],["gau","Gaucher","gaucher"],["fab","Fabry","fabry"],["kra","Krabbe","krabbe"],["mld","Metachromatic leukodystrophy","mld"],["hur","Hurler (MPS I)","hurler"],["hun","Hunter (MPS II)","hunter"],["icell","I-cell disease","icell"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"411fff2212","switches":[{"id":"lsd","label":"Missing enzyme","type":"one","options":[["tay","Tay-Sachs","taysachs"],["np","Niemann-Pick","niemannpick"],["gau","Gaucher","gaucher"],["fab","Fabry","fabry"],["kra","Krabbe","krabbe"],["mld","Metachromatic leukodystrophy","mld"],["hur","Hurler (MPS I)","hurler"],["hun","Hunter (MPS II)","hunter"],["icell","I-cell disease","icell"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
