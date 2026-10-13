@@ -17,6 +17,7 @@
  */
 
 const ANNOUNCEMENTS = [
+  { date: '10/12/26', text: 'Nephro: Added trial questions for all of exam 3, General: Added more dynamic maps and sub-categories for each core subject' },
   { date: '10/11/26', text: 'General: Added pause button for both timed and untimed exam simulations, Atlas: Added a mini GUI of variables when zooming into dynamic maps for easeier manipulation of conditions' }, 
   { date: '10/9/26', text: 'General: UX redesign, Lestion Atlas: Added dynamic maps with manipulative variables, Nephro: Added Moorjani split for exam 2' },
   { date: '10/7/26', text: 'Nephro: Revisited Exam 2-4 Q generation with some new changes, piloting new question format w/ arrows and a test batch of new Qs; Atlas: worked on new maps and added sources for each card against OCOM library, PubMed articles, and First Aid 2025' },
