@@ -62,11 +62,16 @@ add(f'<rect x="{CX - 104}" y="{YS[3] - 46}" width="208" height="92" rx="24" clas
 
 # ════════ one vertebra from above ════════
 VX, VY = 1300, 600
-VERT = f'<circle cx="{VX}" cy="{VY - 40}" r="80" style="fill:var(--dk10);fill-opacity:.15;stroke:var(--dk10);stroke-width:4"/><path d="M{VX} {VY + 40} V{VY + 150}" style="stroke:var(--ink-3);stroke-width:14;stroke-linecap:round"/>'
+VERT = (f'<circle cx="{VX}" cy="{VY - 40}" r="80" style="fill:var(--dk10);fill-opacity:.15;stroke:var(--dk10);stroke-width:4"/>'
+        f'<path d="M{VX - 60} {VY + 15} Q{VX} {VY + 60} {VX + 60} {VY + 15}" style="fill:none;stroke:var(--dk10);stroke-width:12;stroke-linecap:round"/>'   # pedicles → laminae ring the canal
+        f'<path d="M{VX - 70} {VY + 20} L{VX - 190} {VY + 55} M{VX + 70} {VY + 20} L{VX + 190} {VY + 55}" style="stroke:var(--dk10);stroke-width:16;stroke-linecap:round"/>'   # transverse processes
+        f'<path d="M{VX} {VY + 40} V{VY + 150}" style="stroke:var(--ink-3);stroke-width:14;stroke-linecap:round"/>')
 add(VERT, unless=F('t1', 't2'))
 add(f'<g transform="rotate(-18 {VX} {VY})">{VERT}</g>', when=F('t1'))
 add(f'<g transform="rotate(18 {VX} {VY})">{VERT}</g>', when=F('t2'))
 text('body (front)', VX, VY - 140, 'nf-l2', 'middle')
+text('transverse process', VX + 215, VY + 68, 'nf-l2'); text('spinous process', VX + 20, VY + 160, 'nf-l2')
+text('the TP on the side of rotation drops back — that is what you palpate', VX, VY + 340, 'nf-l2', 'middle', when=F('t1', 't2'))
 text('back', VX, VY + 190, 'nf-l2', 'middle')
 text('one vertebra from above', VX, VY + 240, 'nf-l1', 'middle')
 text('Type I: rotated toward the convex (left) side', VX, VY + 280, 'nf-l1 dyn-tag', 'middle', when=F('t1'))

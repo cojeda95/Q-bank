@@ -46,7 +46,17 @@ text('cord', VX, VY + 6, 'nf-l1', 'middle')
 for s in (-1, 1):
     add(f'<path d="M{VX + s * 100} {VY + 20} C{VX + s * 260} {VY + 60} {VX + s * 350} {VY + 160} {VX + s * 480} {VY + 200}" style="fill:none;stroke:var(--dk7);stroke-width:14;stroke-linecap:round"/>')
     add(f'<circle cx="{VX + s * 300}" cy="{VY + 110}" r="56" style="fill:none;stroke:var(--line-2);stroke-width:3;stroke-dasharray:8 6"/>')
+for s_ in (-1, 1):   # transverse processes: anterior + posterior tubercles with the foramen transversarium between them
+    add(f'<path d="M{VX + s_ * 215} {VY + 235} L{VX + s_ * 395} {VY + 290}" style="stroke:var(--dk5);stroke-width:26;stroke-linecap:round;opacity:.55"/>')
+    add(f'<circle cx="{VX + s_ * 300}" cy="{VY + 262}" r="17" style="fill:var(--surface);stroke:var(--nf-blood);stroke-width:4"/>')
+text('transverse process', VX - 410, VY + 330, 'nf-l2', 'end'); text('foramen transversarium — vertebral artery', VX + 410, VY + 330, 'nf-l2')
 text('foramen', VX + 370, VY + 60, 'nf-l2'); text('root', VX + 500, VY + 230, 'nf-l2')
+# the cord in side view, so the signal running head → legs has a track to run on (the axial view cannot show it)
+add('<rect x="170" y="300" width="60" height="1100" rx="30" class="dyn-soft"/>')
+add('<path d="M200 330 V1370" style="stroke:var(--dk7);stroke-width:10;stroke-linecap:round;opacity:.5"/>')
+text('brain', 200, 282, 'nf-l2', 'middle'); text('legs', 200, 1436, 'nf-l2', 'middle'); text('cord, side view', 200, 1462, 'dyn-cap', 'middle')
+add(f'<path d="M200 {VY} H{VX - 160}" style="stroke:var(--dk7);stroke-width:3;stroke-dasharray:8 8;opacity:.5"/>')   # the same level as the vertebra
+add(f'<path d="M172 {VY - 40} h56 v80 h-56 Z" style="fill:var(--bad);fill-opacity:.35"/>', when=Z('central', 'hyper'))   # the squeeze
 # spondylosis: osteophytes, thick ligamentum flavum, facets
 SP_ = ['dz:spond', 'dz:foram', 'dz:central', 'dz:hyper']
 for s in (-1, 1):
@@ -96,8 +106,8 @@ ROOT = f'M{VX + 100} {VY + 20} C{VX + 260} {VY + 60} {VX + 350} {VY + 160} {VX +
 flows = [sig(f'M{VX - 100} {VY + 20} C{VX - 260} {VY + 60} {VX - 350} {VY + 160} {VX - 480} {VY + 200}', 400, ['!dz:foram'], n=2),
          sig(ROOT, 1000, ['!dz:foram'], n=2),
          dict(sig(ROOT, 1000, Z('foram'), kind='pain', n=4, sp=90), mods=[dict(when=['test'], add=dict(pain=4), speed=1.6)]),   # Spurling reproduces the arm pain
-         sig(f'M{VX} {VY - 600} V{VY + 700}', 1300, ['!dz:central&!dz:hyper'], n=3),
-         dict(sig(f'M{VX} {VY - 600} V{VY + 700}', 1300, Z('central', 'hyper'), kind='pain', n=1, sp=50),
+         sig('M200 330 V1370', 1040, ['!dz:central&!dz:hyper'], n=3),
+         dict(sig('M200 330 V1370', 1040, Z('central', 'hyper'), kind='pain', n=1, sp=50),
               mods=[dict(when=['test'], add=dict(pain=5), speed=4)])]   # Lhermitte: a shock down the spine on neck flexion
 sites = [dict(x=VX - 260, y=VY + 260, n=[-1, 1], w=10, t='rec', l='', aria='Cervical spondylosis & stenosis', c='cervspond', ions=[]),
          dict(x=VX + 380, y=VY + 300, n=[1, 1], w=10, t='rec', l='', aria='Cervical radiculopathy', c='cervradic', ions=[]),
