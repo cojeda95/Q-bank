@@ -338,11 +338,15 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 /* ── detail drawer ──────────────────────────────────── */
 .drawer{position:absolute;top:0;right:0;bottom:0;width:404px;max-width:92%;background:var(--surface);
   border-left:1px solid var(--line);box-shadow:var(--shadow);overflow-y:auto;z-index:20;padding:0 0 36px}
-.dhead{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--line-2);padding:18px 20px 14px;z-index:2}
-.dhead.compact{padding:10px 20px 9px;box-shadow:0 6px 12px -10px rgba(0,0,0,.35)}
-.dhead.compact .dkind,.dhead.compact .dalias,.dhead.compact .dmeta,.dhead.compact .alsoon,.dhead.compact .revrow,.dhead.compact .dhead-more{display:none}
-.dhead.compact .dtitle{font-size:16px;padding-right:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dhead.compact .dacts{margin:-3px 30px 0 10px}.dhead.compact .dacts .dlink span{display:none}.dhead.compact .dacts .dlink{padding:0 7px}
+.dhead{position:relative;background:var(--surface);border-bottom:1px solid var(--line-2);padding:18px 20px 14px;z-index:2}
+/* the header scrolls away; a slim bar slides in over the top. Its slot is zero-height, so nothing in the page ever moves */
+.dmini{position:sticky;top:0;height:0;z-index:4}
+.dmini>div{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:8px;padding:9px 12px 9px 20px;background:var(--surface);
+  border-bottom:1px solid var(--line-2);box-shadow:0 6px 12px -10px rgba(0,0,0,.35);transform:translateY(-110%);transition:transform .16s ease;pointer-events:none}
+.dmini.show>div{transform:none;pointer-events:auto}
+.dmini b{flex:1;min-width:0;font:600 15px var(--font-dis);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.dmini button{width:30px;height:28px;border-radius:9px;display:grid;place-items:center;color:var(--ink-3);font-size:14px}
+.dmini button:hover{background:var(--surface-2);color:var(--ink)}
 .alsoon .pagehit.more{display:none}.alsoon.open .pagehit.more{display:inline-flex}
 .alsoon .alsomore{border-style:dashed;color:var(--ink-3)}
 .dclose{position:absolute;top:13px;right:13px;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:var(--ink-3);font-size:17px}
@@ -41895,7 +41899,7 @@ const TOPICS = [
    ENGINE
    ═══════════════════════════════════════════════════════════════ */
 const svg=document.getElementById('svg'), drawer=document.getElementById('drawer'),
-      _dfold=drawer&&drawer.addEventListener('scroll',()=>{ const h=drawer.querySelector('.dhead'); if(!h) return; const t=drawer.scrollTop; if(t>90) h.classList.add('compact'); else if(t<8) h.classList.remove('compact'); },{passive:true}),
+      _dmini=drawer&&drawer.addEventListener('scroll',dMini,{passive:true}),
       rail=document.getElementById('rail'), idxWrap=document.getElementById('indexwrap'),
       tabsEl=document.getElementById('tabs'), qInput=document.getElementById('q'),
       mapwrap=document.getElementById('mapwrap');
@@ -44363,6 +44367,19 @@ function reportUrl(id){
 let RECENT=(()=>{ try{ const a=JSON.parse(localStorage.getItem("mla-recent")||"[]"); return Array.isArray(a)?a.filter(x=>typeof x==="string"):[]; }catch(e){ return []; } })();
 function noteRecent(id){ RECENT=[id,...RECENT.filter(x=>x!==id)].slice(0,12); try{ localStorage.setItem("mla-recent",JSON.stringify(RECENT)); }catch(e){} }
 function recentIds(){ return RECENT.filter(id=>LES[id]); }
+function dMini(){
+  const h=drawer.querySelector('.dhead'); let m=drawer.querySelector(':scope > .dmini');
+  if(!h){ if(m) m.classList.remove('show'); return; }
+  if(!m){ m=document.createElement('div'); m.className='dmini'; m.innerHTML='<div><b title="Back to the top"></b><button data-p="dstar" aria-label="Star"></button><button data-p="dlink" aria-label="Copy link">⧉</button><button data-p="dclose" aria-label="Close">×</button></div>';
+    drawer.insertBefore(m,drawer.firstChild);
+    m.querySelector('b').onclick=()=>drawer.scrollTo({top:0,behavior:'smooth'});
+    m.querySelectorAll('button[data-p]').forEach(b=>b.onclick=()=>{ const o=document.getElementById(b.dataset.p); if(o) o.click(); setTimeout(dMini,0); }); }
+  const t=h.querySelector('.dtitle'), st=document.getElementById('dstar');
+  m.querySelector('b').textContent=t?t.textContent:'';
+  const sb=m.querySelector('[data-p="dstar"]'); sb.hidden=!st; if(st) sb.textContent=st.getAttribute('aria-pressed')==='true'?'★':'☆';
+  m.querySelector('[data-p="dlink"]').hidden=!document.getElementById('dlink');
+  m.classList.toggle('show', drawer.scrollTop > h.offsetTop + h.offsetHeight - 6);
+}
 function openLes(id,center,pick){
   const L=LES[id]; if(!L) return;
   noteRecent(id);
