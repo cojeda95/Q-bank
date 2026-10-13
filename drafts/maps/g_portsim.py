@@ -34,12 +34,19 @@ text('left: portal vein in, hepatic veins out · right: one lobule, triad to cen
 
 # ════════ portal system ════════
 LV = (700, 520)
-add(f'<path d="M{LV[0] - 260} {LV[1] - 60} C{LV[0] - 200} {LV[1] - 200} {LV[0] + 220} {LV[1] - 200} {LV[0] + 260} {LV[1] - 40} C{LV[0] + 200} {LV[1] + 120} {LV[0] - 200} {LV[1] + 140} {LV[0] - 260} {LV[1] - 60} Z" '
-    'style="fill:var(--dk6);fill-opacity:.1;stroke:var(--dk6);stroke-width:4"/>', unless=D('cirr', 'bc'))
-add(f'<path d="M{LV[0] - 260} {LV[1] - 60} C{LV[0] - 200} {LV[1] - 200} {LV[0] + 220} {LV[1] - 200} {LV[0] + 260} {LV[1] - 40} C{LV[0] + 200} {LV[1] + 120} {LV[0] - 200} {LV[1] + 140} {LV[0] - 260} {LV[1] - 60} Z" '
-    'style="fill:var(--dk6);fill-opacity:.2;stroke:var(--bad);stroke-width:5"/>', when=D('cirr'))
-add(f'<path d="M{LV[0] - 300} {LV[1] - 60} C{LV[0] - 240} {LV[1] - 240} {LV[0] + 260} {LV[1] - 240} {LV[0] + 300} {LV[1] - 40} C{LV[0] + 240} {LV[1] + 160} {LV[0] - 240} {LV[1] + 180} {LV[0] - 300} {LV[1] - 60} Z" '
-    'style="fill:var(--nf-blood);fill-opacity:.15;stroke:var(--bad);stroke-width:5"/>', when=D('bc'))
+# the liver from the front (patient's right on your left): domed right lobe, tapering left lobe, inferior border rising to the
+# left with the porta hepatis where the portal vein enters, falciform ligament between the lobes
+LIVER = 'M6 70 C2 44 10 18 30 10 C50 2 76 4 92 14 C98 18 99 26 94 30 C84 36 72 46 62 58 L58 62 C54 60 50 62 48 66 C42 80 30 94 18 92 C10 90 7 82 6 70 Z'
+FALC = 'M58 62 C56 40 56 20 58 6'
+def liver(x, y, w, h):
+    import re as _re
+    sc = lambda d: _re.sub(r'(-?\d+\.?\d*) (-?\d+\.?\d*)', lambda m: f'{x + float(m.group(1)) * w / 100:.0f} {y + float(m.group(2)) * h / 100:.0f}', d)
+    return sc(LIVER), sc(FALC)
+LD, LF = liver(440, 330, 520, 340)
+add(f'<path d="{LD}" style="fill:var(--dk6);fill-opacity:.1;stroke:var(--dk6);stroke-width:4"/><path d="{LF}" style="fill:none;stroke:var(--dk6);stroke-width:2;opacity:.5"/>', unless=D('cirr', 'bc'))
+add(f'<path d="{LD}" style="fill:var(--dk6);fill-opacity:.2;stroke:var(--bad);stroke-width:5"/><path d="{LF}" style="fill:none;stroke:var(--dk6);stroke-width:2;opacity:.5"/>', when=D('cirr'))
+BD, BF = liver(400, 300, 600, 400)   # Budd-Chiari: congested, enlarged
+add(f'<path d="{BD}" style="fill:var(--nf-blood);fill-opacity:.15;stroke:var(--bad);stroke-width:5"/><path d="{BF}" style="fill:none;stroke:var(--dk6);stroke-width:2;opacity:.5"/>', when=D('bc'))
 for x, y in ((620, 470), (720, 540), (800, 460), (660, 580)):
     add(f'<circle cx="{x}" cy="{y}" r="26" style="fill:none;stroke:var(--ink-3);stroke-width:5"/>', when=D('cirr'))
 text('liver', LV[0], LV[1] - 230, 'nf-l1', 'middle')

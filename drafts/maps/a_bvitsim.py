@@ -65,26 +65,38 @@ add('<rect x="40" y="440" width="140" height="60" rx="16" style="fill:none;strok
 add('<path d="M176 558 L204 586 M204 558 L176 586" class="nf-x"/>', when=C('inh'))   # isoniazid: no B6 for the step
 # body — each sign sits on a named site, and a site lights only for the deficiencies the cards give it
 BX, BY = 1700, 820
-add(f'<circle cx="{BX}" cy="{BY - 360}" r="90" style="fill:var(--dk2);fill-opacity:.06;stroke:var(--dk2);stroke-width:4"/>')
+HY = BY - 370   # head centre; the neck joins it to the torso
+add(f'<path d="M{BX - 30} {HY + 76} V{BY - 258} M{BX + 30} {HY + 76} V{BY - 258}" style="stroke:var(--dk2);stroke-width:4"/>')
+add(f'<ellipse cx="{BX}" cy="{HY}" rx="72" ry="84" style="fill:var(--dk2);fill-opacity:.06;stroke:var(--dk2);stroke-width:4"/>')
+FACE = 'fill:none;stroke:var(--dk2);stroke-width:3;stroke-linecap:round'
+add(f'<path d="M{BX - 44} {HY - 15} Q{BX - 30} {HY - 25} {BX - 16} {HY - 15} Q{BX - 30} {HY - 7} {BX - 44} {HY - 15} Z'
+    f' M{BX + 16} {HY - 15} Q{BX + 30} {HY - 25} {BX + 44} {HY - 15} Q{BX + 30} {HY - 7} {BX + 16} {HY - 15} Z" style="{FACE}"/>')   # eyes
+add(f'<circle cx="{BX - 30}" cy="{HY - 15}" r="4" style="fill:var(--dk2)"/><circle cx="{BX + 30}" cy="{HY - 15}" r="4" style="fill:var(--dk2)"/>')
+add(f'<path d="M{BX} {HY - 4} L{BX - 7} {HY + 18} H{BX + 4}" style="{FACE}"/>')   # nose
+add(f'<path d="M{BX - 24} {HY + 38} Q{BX} {HY + 54} {BX + 24} {HY + 38}" style="{FACE}"/>')   # mouth
+add(f'<path d="M{BX - 72} {HY - 14} q-14 12 0 28 M{BX + 72} {HY - 14} q14 12 0 28" style="{FACE}"/>')   # ears
+# kidneys, faint, so the adrenals have something to sit on (upper abdomen, back of the trunk)
+for s_ in (-1, 1):
+    add(f'<path d="M{BX + s_ * 70} {BY + 22} C{BX + s_ * 102} {BY + 22} {BX + s_ * 106} {BY + 112} {BX + s_ * 70} {BY + 112} C{BX + s_ * 54} {BY + 112} {BX + s_ * 52} {BY + 82} {BX + s_ * 60} {BY + 67} C{BX + s_ * 52} {BY + 52} {BX + s_ * 54} {BY + 22} {BX + s_ * 70} {BY + 22} Z" style="fill:var(--dk2);fill-opacity:.05;stroke:var(--dk2);stroke-width:2;opacity:.6"/>')
 add(f'<path d="M{BX - 140} {BY - 260} H{BX + 140} L{BX + 170} {BY + 300} H{BX - 170} Z" style="fill:var(--dk2);fill-opacity:.05;stroke:var(--dk2);stroke-width:4"/>')
 LIMB = 'fill:none;stroke:var(--dk2);stroke-width:28;stroke-linecap:round;opacity:.18'
 add(f'<path d="M{BX - 150} {BY - 230} L{BX - 250} {BY + 130} M{BX + 150} {BY - 230} L{BX + 250} {BY + 130}" style="{LIMB}"/>')   # arms
 add(f'<path d="M{BX - 90} {BY + 300} V{BY + 430} H{BX - 140} M{BX + 90} {BY + 300} V{BY + 430} H{BX + 140}" style="{LIMB}"/>')   # legs, feet
 # site: dots, label (x, y, anchor), deficiencies that show there
 SITE = dict(
-  hair=([(BX, BY - 438)], (BX + 70, BY - 444, 'start'), ['b5', 'b7', 'zn']),
-  brain=([(BX - 20, BY - 395)], (BX - 100, BY - 390, 'end'), ['b3']),
-  eyes=([(BX - 30, BY - 350), (BX + 30, BY - 350)], (BX + 100, BY - 344, 'start'), ['b2']),
-  mouth=([(BX, BY - 305)], (BX - 100, BY - 300, 'end'), ['b2', 'b3', 'zn']),
-  neck=([(BX, BY - 252)], (BX + 70, BY - 246, 'start'), ['b3']),
-  adrenals=([(BX - 50, BY - 70), (BX + 50, BY - 70)], (BX, BY - 110, 'middle'), ['b5']),
-  gut=([(BX, BY + 40)], (BX + 40, BY + 46, 'start'), ['b3', 'b5', 'b7', 'zn']),
+  hair=([(BX, HY - 76)], (BX + 70, HY - 80, 'start'), ['b5', 'b7', 'zn']),
+  brain=([(BX - 22, HY - 48)], (BX - 100, HY - 42, 'end'), ['b3']),
+  eyes=([(BX - 30, HY - 15), (BX + 30, HY - 15)], (BX + 100, HY - 9, 'start'), ['b2']),
+  mouth=([(BX, HY + 44)], (BX - 100, HY + 50, 'end'), ['b2', 'b3', 'zn']),
+  neck=([(BX, BY - 275)], (BX + 70, BY - 269, 'start'), ['b3']),
+  adrenals=([(BX - 70, BY + 14), (BX + 70, BY + 14)], (BX, BY - 26, 'middle'), ['b5']),
+  gut=([(BX, BY + 150)], (BX + 40, BY + 156, 'start'), ['b3', 'b5', 'b7', 'zn']),
   gonads=([(BX, BY + 250)], (BX + 40, BY + 256, 'start'), ['zn']),
   skin=([(BX + 225, BY + 40)], (BX + 270, BY + 46, 'start'), ['b3', 'b5', 'b7', 'zn']),
   wound=([(BX - 225, BY + 40)], (BX - 270, BY + 46, 'end'), ['zn']),
   feet=([(BX - 120, BY + 430), (BX + 120, BY + 430)], (BX + 170, BY + 436, 'start'), ['b5']))
 SNAME = dict(hair='hair — alopecia', brain='brain — dementia', eyes='eyes — cornea', mouth='mouth · tongue', neck='neck — Casal necklace',
-             adrenals='adrenals', gut='gut — diarrhea', gonads='gonads', skin='skin — dermatitis', wound='wound healing', feet='burning feet')
+             adrenals='adrenals (on the kidneys)', gut='gut — diarrhea', gonads='gonads', skin='skin — dermatitis', wound='wound healing', feet='burning feet')
 for k, (pts, (lx, ly, an), ds) in SITE.items():
     w = [c for d in ds for c in LOST[d]]
     for x, y in pts: add(f'<circle cx="{x}" cy="{y}" r="20" style="fill:var(--bad);fill-opacity:.5"/>', when=w)

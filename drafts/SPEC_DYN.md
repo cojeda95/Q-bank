@@ -80,6 +80,9 @@ Lane keys: short camelCase starting with your map's 2-letter code, unique.
   label (`["fuel", "--dk9", "NADH"]`): the panel lists one dot + name per colour under "Key", so no colour goes unexplained.
 - A long `one`/`steps` switch (10+ options) should carry `sections=[[label, [keys]], …]`: the panel then shows its chips under
   sub-headings (e.g. antibiotics by target). Keys stay the same, so links, notes and Name it are unaffected.
+- Organs (updated): outlines carry landmarks — heart with apex down-left and great vessels, lungs with cardiac notch and
+  fissures, liver with right/left lobes and falciform, kidney with hilum and ureter, spleen with a notched hilum; a figure that
+  shows symptom sites gets a face (eyes, nose, mouth) and a neck, and organs sit where they really are (adrenals on the kidneys).
 - Organs: never a bare circle or ellipse under an organ label — draw a silhouette (the Mac-side organs.py has outlines for
   kidney, brain, liver, lungs, heart, stomach, pancreas, spleen, bladder, adrenal, ovary, gallbladder, thyroid, testis, thymus,
   uterus, prostate) or use `<path>` with a recognisable outline.
