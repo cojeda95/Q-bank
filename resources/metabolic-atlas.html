@@ -593,6 +593,7 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 .nf-chip.dyn-g text{font-size:15px;font-weight:700}
 .nf-chip.dyn-chk.dis{opacity:.45}
 .nf-key text{font:500 12px var(--font-ui);fill:var(--ink-2)}
+.dyn-track{fill:none;stroke:var(--ink-3);stroke-width:3;stroke-dasharray:5 9;stroke-linecap:round;opacity:.35}
 .relrow{display:flex;flex-wrap:wrap;gap:6px}.relchip{font:600 12px var(--font-ui);border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:var(--surface);color:var(--ink-2);cursor:pointer;text-align:left}.relchip:hover{border-color:var(--ink)}
 .dyn-ok{font:700 15px var(--font-ui);fill:var(--ok)}
 .dyn-bad{font:700 15px var(--font-ui);fill:var(--bad)}
@@ -36968,7 +36969,7 @@ MAPS.nmjflow = {
  fa:"136, 235, 238–239, 459, 480, 566",
  src:["Katzung ch 6 — Introduction to Autonomic Pharmacology", "Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs", "Katzung ch 27 — Skeletal Muscle Relaxants", "Guyton ch 7 — Excitation of Skeletal Muscle: Neuromuscular Transmission and Excitation-Contraction Coupling", "Robbins ch 27 — Peripheral nerves and skeletal muscles", "Bootcamp.com Neurology — Diseases of the Neuromuscular Junction"],
  art:"kit",
- dyn:{"lazy":"99979685fa","switches":[{"id":"dz","label":"Disease or toxin — pick one","type":"one","options":[["mg","Myasthenia gravis","mg"],["lems","Lambert-Eaton","lems"],["bot","Botulinum toxin","botulinum"],["op","Organophosphate poisoning","organophosphate"]]},{"id":"rx","label":"Drug — pick one","type":"one","options":[["pyr","Pyridostigmine · neostigmine","achei"],["amif","Amifampridine","lems"],["roc","Rocuronium","nmb"],["sug","Rocuronium + sugammadex","nmb"],["sux","Succinylcholine","nmb"],["pam","Atropine + pralidoxime","organophosphate"],["hemi","Hemicholinium","nmjtrans"],["ves","Vesamicol","nmjtrans"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"f139688b58","switches":[{"id":"dz","label":"Disease or toxin — pick one","type":"one","options":[["mg","Myasthenia gravis","mg"],["lems","Lambert-Eaton","lems"],["bot","Botulinum toxin","botulinum"],["op","Organophosphate poisoning","organophosphate"]]},{"id":"rx","label":"Drug — pick one","type":"one","options":[["pyr","Pyridostigmine · neostigmine","achei"],["amif","Amifampridine","lems"],["roc","Rocuronium","nmb"],["sug","Rocuronium + sugammadex","nmb"],["sux","Succinylcholine","nmb"],["pam","Atropine + pralidoxime","organophosphate"],["hemi","Hemicholinium","nmjtrans"],["ves","Vesamicol","nmjtrans"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -37008,7 +37009,7 @@ MAPS.synflow = {
  fa:"237–238, 243, 563, 587–589, 591–594",
  src:["Katzung ch 6 — Introduction to Autonomic Pharmacology", "Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids", "Katzung ch 29 — Antipsychotic Agents & Lithium", "Katzung ch 30 — Antidepressant Agents", "Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System", "Kaplan & Sadock ch 21 — Psychopharmacology", "Bootcamp.com Psychiatry — Psychiatric Pharmacology"],
  art:"kit",
- dyn:{"lazy":"21dbea2063","switches":[{"id":"tyr","label":"tyramine meal","type":"toggle","on":"Tyramine-rich meal","off":"No tyramine meal","def":false},{"id":"ad","label":"Antidepressant — pick one","type":"one","options":[["ssri","SSRI","ssri"],["snri","SNRI","snri"],["tca","TCA","tca"],["maoi","MAO inhibitor","maoi"],["bup","Bupropion","atypicalad"],["mirt","Mirtazapine","atypicalad"],["traz","Trazodone","atypicalad"]]},{"id":"ox","label":"Other drug — pick one","type":"one","options":[["amph","Amphetamine","stimulants"],["coc","Cocaine","cocaine"],["res","Reserpine · tetrabenazine","adrdepletion"],["hal","Haloperidol (typical)","antipsychotics"],["atyp","Atypical antipsychotic","antipsychotics"],["clon","Clonidine (α₂ agonist)","alpha2drugs"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"071b428eb0","switches":[{"id":"tyr","label":"tyramine meal","type":"toggle","on":"Tyramine-rich meal","off":"No tyramine meal","def":false},{"id":"ad","label":"Antidepressant — pick one","type":"one","options":[["ssri","SSRI","ssri"],["snri","SNRI","snri"],["tca","TCA","tca"],["maoi","MAO inhibitor","maoi"],["bup","Bupropion","atypicalad"],["mirt","Mirtazapine","atypicalad"],["traz","Trazodone","atypicalad"]]},{"id":"ox","label":"Other drug — pick one","type":"one","options":[["amph","Amphetamine","stimulants"],["coc","Cocaine","cocaine"],["res","Reserpine · tetrabenazine","adrdepletion"],["hal","Haloperidol (typical)","antipsychotics"],["atyp","Atypical antipsychotic","antipsychotics"],["clon","Clonidine (α₂ agonist)","alpha2drugs"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -37103,7 +37104,7 @@ MAPS.bgflow = {
  fa:"240, 511, 533–534, 563–564, 591",
  src:["Fundamental Neuroscience ch 26 — The Basal Nuclei", "Guyton ch 57 — Cerebellum and Basal Ganglia Contributions to Overall Motor Control", "Katzung ch 28 — Pharmacologic Management of Parkinsonism & Other Movement Disorders", "Katzung ch 29 — Antipsychotic Agents & Lithium", "Bootcamp.com Neurology — Basal Ganglia"],
  art:"kit",
- dyn:{"lazy":"37deb85c2a","switches":[{"id":"dz","label":"Pick a disease, a lesion or a drug","type":"one","options":[["pd","Parkinson disease","parkinson"],["ldopa","PD + levodopa/carbidopa","parkinsondrugs"],["achb","PD + anticholinergic","parkinsondrugs"],["dbs","PD + deep brain stimulation","parkinson"],["d2","D₂ antagonist","eps"],["hd","Huntington disease","huntington"],["tbz","HD + tetrabenazine","huntington"],["hb","Hemiballismus (STN lesion)","hemiballismus"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"4e54d4233b","switches":[{"id":"dz","label":"Pick a disease, a lesion or a drug","type":"one","options":[["pd","Parkinson disease","parkinson"],["ldopa","PD + levodopa/carbidopa","parkinsondrugs"],["achb","PD + anticholinergic","parkinsondrugs"],["dbs","PD + deep brain stimulation","parkinson"],["d2","D₂ antagonist","eps"],["hd","Huntington disease","huntington"],["tbz","HD + tetrabenazine","huntington"],["hb","Hemiballismus (STN lesion)","hemiballismus"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
   {x:140,y:100,w:2200,h:240,l:"Cerebral cortex"},
   {x:140,y:400,w:2200,h:1200,l:"Basal ganglia & thalamus"},
@@ -37151,7 +37152,7 @@ MAPS.cordsim = {
  fa:"502, 521–523, 537, 543–545",
  src:["Fundamental Neuroscience ch 9 — The Spinal Cord", "Moore ch 2 — Back", "Robbins ch 28 — The central nervous system", "Bootcamp.com Neurology — Spinal cord syndromes", "Bootcamp.com Neurology — Invasive spinal cord disease"],
  art:"kit",
- dyn:{"lazy":"7f521c0542","switches":[{"id":"les","label":"Lesion — pick one","type":"one","options":[["bs","Brown-Séquard (left)","brownsequard"],["syr","Syringomyelia","syringomyelia"],["scd","B12 — combined degeneration","b12def"],["tabes","Tabes dorsalis","tabes"],["fa","Friedreich ataxia","friedreich"],["als","ALS","als"],["ahorn","Polio · SMA","polio"],["asa","Anterior spinal artery","asa"],["ms","MS plaque (left)","ms"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"a0a64699ea","switches":[{"id":"les","label":"Lesion — pick one","type":"one","options":[["bs","Brown-Séquard (left)","brownsequard"],["syr","Syringomyelia","syringomyelia"],["scd","B12 — combined degeneration","b12def"],["tabes","Tabes dorsalis","tabes"],["fa","Friedreich ataxia","friedreich"],["als","ALS","als"],["ahorn","Polio · SMA","polio"],["asa","Anterior spinal artery","asa"],["ms","MS plaque (left)","ms"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
   {x:140,y:2090,w:2200,h:180,l:"Cards for each lesion"}],
  panels:[
@@ -37421,7 +37422,7 @@ MAPS.asthflow = {
  fa:"237, 244, 414, 692–693, 704–705",
  src:["Katzung ch 20 — Drugs Used in Asthma & Chronic Obstructive Pulmonary Disease", "Katzung ch 10 — Adrenoceptor Antagonist Drugs", "Robbins ch 15 — The lung", "Robbins ch 6 — Diseases of the immune system", "Guyton ch 43 — Respiratory Insufficiency—Pathophysiology, Diagnosis, Oxygen Therapy", "Guyton ch 38 — Pulmonary Ventilation", "Bootcamp.com Pulmonology — Obstructive Lung Disease"],
  art:"kit",
- dyn:{"lazy":"87f74d140c","switches":[{"id":"ph","label":"Allergen exposure","type":"steps","options":[["rest","No allergen"],["early","Early phase — minutes","hs1"],["late","Late phase — 3–6 h"],["remodel","Years — remodeling"]]},{"id":"rx","label":"Add one drug — or a trigger","type":"one","options":[["beta2","β₂-agonist (SABA · LABA)","asthmadrugs"],["ics","Inhaled corticosteroid","asthmadrugs"],["ltra","Montelukast · zafirlukast","asthmadrugs"],["zil","Zileuton","asthmadrugs"],["musc","Ipratropium · tiotropium","asthmadrugs"],["theo","Theophylline","asthmadrugs"],["crom","Cromolyn","asthmadrugs"],["oma","Omalizumab","igedrugs"],["mepo","Mepolizumab","il5drugs"],["dupi","Dupilumab","il4drugs"],["bblock","Trigger: non-selective β-blocker"],["asp","Trigger: aspirin in AERD"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"8034f5dd1d","switches":[{"id":"ph","label":"Allergen exposure","type":"steps","options":[["rest","No allergen"],["early","Early phase — minutes","hs1"],["late","Late phase — 3–6 h"],["remodel","Years — remodeling"]]},{"id":"rx","label":"Add one drug — or a trigger","type":"one","options":[["beta2","β₂-agonist (SABA · LABA)","asthmadrugs"],["ics","Inhaled corticosteroid","asthmadrugs"],["ltra","Montelukast · zafirlukast","asthmadrugs"],["zil","Zileuton","asthmadrugs"],["musc","Ipratropium · tiotropium","asthmadrugs"],["theo","Theophylline","asthmadrugs"],["crom","Cromolyn","asthmadrugs"],["oma","Omalizumab","igedrugs"],["mepo","Mepolizumab","il5drugs"],["dupi","Dupilumab","il4drugs"],["bblock","Trigger: non-selective β-blocker"],["asp","Trigger: aspirin in AERD"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
   {x:140,y:100,w:820,h:770,l:"Bronchiole, cross-section"},
   {x:140,y:930,w:820,h:520,l:"Spirometry — forced expiration"},
@@ -37469,7 +37470,7 @@ MAPS.axisflow = {
  fa:"224, 331–332, 339–340, 352–353",
  src:["Costanzo ch 9 — Endocrine physiology", "Katzung ch 39 — Adrenocorticosteroids & Adrenocortical Antagonists", "Robbins ch 24 — The endocrine system", "Guyton ch 78 — Adrenocortical Hormones", "Bootcamp.com Endocrinology — Adrenal glands"],
  art:"kit",
- dyn:{"lazy":"da69f25cf4","switches":[{"id":"cond","label":"Condition — pick one","type":"one","options":[["cd","Cushing disease (pituitary)","cushing"],["ect","Ectopic ACTH (lung)","lcparaneo"],["adr","Adrenal adenoma / carcinoma","adrtumor"],["exo","Exogenous glucocorticoid","gcsupp"],["pai","Addison (primary)","addison"],["sai","Secondary (pituitary)","hypopit"],["tai","Tertiary (steroid stopped)","gcsupp"],["cah","21-Hydroxylase deficiency","cah21"]]},{"id":"test","label":"Test — pick one","type":"one","options":[["ldd","Low-dose dexamethasone"],["hdd","High-dose dexamethasone"],["crh","CRH stimulation"],["acth","Cosyntropin (ACTH) stimulation"]]}],"panel":{"x":2460,"y":110,"w":1000}},
+ dyn:{"lazy":"2df431185c","switches":[{"id":"cond","label":"Condition — pick one","type":"one","options":[["cd","Cushing disease (pituitary)","cushing"],["ect","Ectopic ACTH (lung)","lcparaneo"],["adr","Adrenal adenoma / carcinoma","adrtumor"],["exo","Exogenous glucocorticoid","gcsupp"],["pai","Addison (primary)","addison"],["sai","Secondary (pituitary)","hypopit"],["tai","Tertiary (steroid stopped)","gcsupp"],["cah","21-Hydroxylase deficiency","cah21"]]},{"id":"test","label":"Test — pick one","type":"one","options":[["ldd","Low-dose dexamethasone"],["hdd","High-dose dexamethasone"],["crh","CRH stimulation"],["acth","Cosyntropin (ACTH) stimulation"]]}],"panel":{"x":2460,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -37510,7 +37511,7 @@ MAPS.betaflow = {
  fa:"73, 338, 351, 357–359",
  src:["Costanzo ch 9 — Endocrine physiology", "Guyton ch 79 — Insulin, Glucagon, and Diabetes Mellitus", "Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs", "Katzung ch 11 — Antihypertensive Agents", "Robbins ch 24 — The endocrine system", "Bootcamp.com Endocrinology — Pancreas"],
  art:"kit",
- dyn:{"lazy":"918631dff6","switches":[{"id":"meal","label":"meal","type":"toggle","on":"After a meal — glucose high","off":"Fasting — glucose low","def":true},{"id":"rx","label":"Drug or disease — pick one","type":"one","options":[["su","Sulfonylurea / meglitinide","sulfonylureas"],["dz","Diazoxide","diazoxide"],["glp","GLP-1 agonist","glp1ra"],["dpp","DPP-4 inhibitor","dpp4i"],["t1","Type 1 diabetes","t1dm"],["ins","Insulinoma","insulinoma"],["mody","MODY 2 (glucokinase)","mody2"],["neo","Neonatal diabetes (K-ATP)"],["exo","Injected insulin","insulins"]]}],"panel":{"x":2460,"y":110,"w":1000}},
+ dyn:{"lazy":"a931f0125c","switches":[{"id":"meal","label":"meal","type":"toggle","on":"After a meal — glucose high","off":"Fasting — glucose low","def":true},{"id":"rx","label":"Drug or disease — pick one","type":"one","options":[["su","Sulfonylurea / meglitinide","sulfonylureas"],["dz","Diazoxide","diazoxide"],["glp","GLP-1 agonist","glp1ra"],["dpp","DPP-4 inhibitor","dpp4i"],["t1","Type 1 diabetes","t1dm"],["ins","Insulinoma","insulinoma"],["mody","MODY 2 (glucokinase)","mody2"],["neo","Neonatal diabetes (K-ATP)"],["exo","Injected insulin","insulins"]]}],"panel":{"x":2460,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -37545,7 +37546,7 @@ MAPS.follflow = {
  fa:"335, 344–346, 360",
  src:["Katzung ch 38 — Thyroid & Antithyroid Drugs", "Guyton ch 77 — Thyroid Metabolic Hormones", "Costanzo ch 9 — Endocrine physiology", "Robbins ch 24 — The endocrine system", "Bootcamp.com Endocrinology — Thyroid"],
  art:"kit",
- dyn:{"lazy":"b4e05b8638","switches":[{"id":"rx","label":"Disease or drug — pick one","type":"one","options":[["graves","Graves (TSI)","hyperthyroid"],["hashi","Hashimoto","hypothyroid"],["iodef","Iodine deficiency","goiter"],["dq","De Quervain thyroiditis","transthy"],["lt4","Too much levothyroxine"],["mmi","Methimazole","thyroiddrugs"],["ptu","PTU","thyroiddrugs"],["perc","Perchlorate / pertechnetate","nispendrin"],["iod","Excess iodide (Wolff-Chaikoff)","thyroidreg"]]}],"panel":{"x":2460,"y":110,"w":1000}},
+ dyn:{"lazy":"3d4c233ee2","switches":[{"id":"rx","label":"Disease or drug — pick one","type":"one","options":[["graves","Graves (TSI)","hyperthyroid"],["hashi","Hashimoto","hypothyroid"],["iodef","Iodine deficiency","goiter"],["dq","De Quervain thyroiditis","transthy"],["lt4","Too much levothyroxine"],["mmi","Methimazole","thyroiddrugs"],["ptu","PTU","thyroiddrugs"],["perc","Perchlorate / pertechnetate","nispendrin"],["iod","Excess iodide (Wolff-Chaikoff)","thyroidreg"]]}],"panel":{"x":2460,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -37581,7 +37582,7 @@ MAPS.cochflow = {
  fa:"186–187, 445, 540, 547–548, 626",
  src:["Costanzo ch 3 — Neurophysiology", "Guyton ch 53 — The Sense of Hearing", "Fundamental Neuroscience ch 21 — The Auditory System", "Fundamental Neuroscience ch 22 — The Vestibular System", "Katzung ch 15 — Diuretic Agents", "Katzung ch 45 — Aminoglycosides & Spectinomycin", "Pawlina ch 25 — Ear", "Bootcamp.com Neurology — Auditory"],
  art:"kit",
- dyn:{"lazy":"a83b5d5fa2","switches":[{"id":"tone","label":"Tone — base to apex","type":"steps","auto":3,"options":[["high","High pitch"],["mid","Middle pitch"],["low","Low pitch"]]},{"id":"dz","label":"Add one disorder","type":"one","options":[["cer","Cerumen impaction","cerumen"],["om","Otitis media","otitismedia"],["oto","Otosclerosis","otosclerosis"],["presby","Presbycusis","hearingloss"],["noise","Noise-induced loss","hearingloss"],["amg","Aminoglycoside","ototox"],["loop","Loop diuretic","ototox"],["vs","Vestibular schwannoma","schwannoma"],["men","Ménière disease","meniere"]]}],"panel":{"x":2520,"y":110,"w":1000}},
+ dyn:{"lazy":"927cbfdec5","switches":[{"id":"tone","label":"Tone — base to apex","type":"steps","auto":3,"options":[["high","High pitch"],["mid","Middle pitch"],["low","Low pitch"]]},{"id":"dz","label":"Add one disorder","type":"one","options":[["cer","Cerumen impaction","cerumen"],["om","Otitis media","otitismedia"],["oto","Otosclerosis","otosclerosis"],["presby","Presbycusis","hearingloss"],["noise","Noise-induced loss","hearingloss"],["amg","Aminoglycoside","ototox"],["loop","Loop diuretic","ototox"],["vs","Vestibular schwannoma","schwannoma"],["men","Ménière disease","meniere"]]}],"panel":{"x":2520,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -37618,7 +37619,7 @@ MAPS.gutabs = {
  fa:"66–67, 157, 324, 359, 378–379, 381–382, 388–389, 392–393, 404, 406–407, 424, 426",
  src:["Costanzo ch 8 — Gastrointestinal physiology", "Guyton ch 66 — Digestion and Absorption in the Gastrointestinal Tract", "Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors", "Katzung ch 35 — Agents Used in Dyslipidemia", "Katzung ch 41 — Pancreatic Hormones & Glucose-Lowering Drugs", "Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases", "Robbins ch 9 — Environmental and nutritional diseases", "Robbins ch 14 — Red blood cell and bleeding disorders", "Bootcamp.com Gastroenterology — Small intestine", "Bootcamp.com Gastroenterology — Stomach"],
  art:"kit",
- dyn:{"lazy":"ca2139616c","switches":[{"id":"drug","label":"Add one drug","type":"one","options":[["met","Metformin","metformin"],["ppi","Proton pump inhibitor","ppi"],["orl","Orlistat"],["bas","Bile acid resin","lipiddrugs"],["afol","Methotrexate · TMP · phenytoin","b9def"]]},{"id":"dz","label":"Or one disease or surgery","type":"one","options":[["pa","Pernicious anemia","b12def"],["gast","Gastrectomy · bypass","gastrectomy"],["celiac","Celiac disease","celiac"],["crohn","Crohn · ileal resection","crohn"],["panc","Pancreatic insufficiency","pancins"],["sibo","Bacterial overgrowth","sibo"],["dlat","Fish tapeworm","diphyllo"]]}],"panel":{"x":2520,"y":110,"w":1000}},
+ dyn:{"lazy":"ee43fdff96","switches":[{"id":"drug","label":"Add one drug","type":"one","options":[["met","Metformin","metformin"],["ppi","Proton pump inhibitor","ppi"],["orl","Orlistat"],["bas","Bile acid resin","lipiddrugs"],["afol","Methotrexate · TMP · phenytoin","b9def"]]},{"id":"dz","label":"Or one disease or surgery","type":"one","options":[["pa","Pernicious anemia","b12def"],["gast","Gastrectomy · bypass","gastrectomy"],["celiac","Celiac disease","celiac"],["crohn","Crohn · ileal resection","crohn"],["panc","Pancreatic insufficiency","pancins"],["sibo","Bacterial overgrowth","sibo"],["dlat","Fish tapeworm","diphyllo"]]}],"panel":{"x":2520,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -37667,7 +37668,7 @@ MAPS.boneflow = {
  fa:"336–337, 349, 462, 467–469, 496–497, 674",
  src:["Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis", "Robbins ch 26 — Bones, joints, and soft tissue tumors", "Guyton ch 80 — Parathyroid Hormone, Calcitonin, Calcium and Phosphate Metabolism, Vitamin D, Bone, and Teeth", "Pawlina ch 8 — Bone"],
  art:"kit",
- dyn:{"lazy":"33bb0d3a6a","switches":[{"id":"rx","label":"Pick a hormone, drug or disease","type":"one","options":[["ipth","Intermittent PTH (teriparatide)","pthaction"],["cpth","Continuous PTH (hyperparathyroidism)","hyperpara1"],["estr","Estrogen loss (menopause)","osteoporosis"],["bisph","Bisphosphonate","calciumdrugs"],["deno","Denosumab","calciumdrugs"],["romo","Romosozumab","calciumdrugs"],["ralox","Raloxifene","serm"],["calct","Calcitonin","calcitonin"],["gc","Glucocorticoids","gcmetab"],["opet","Osteopetrosis","osteopetrosis"],["paget","Paget disease","paget"],["omal","Osteomalacia (vitamin D deficiency)","vitddef"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"22f5d7ea20","switches":[{"id":"rx","label":"Pick a hormone, drug or disease","type":"one","options":[["ipth","Intermittent PTH (teriparatide)","pthaction"],["cpth","Continuous PTH (hyperparathyroidism)","hyperpara1"],["estr","Estrogen loss (menopause)","osteoporosis"],["bisph","Bisphosphonate","calciumdrugs"],["deno","Denosumab","calciumdrugs"],["romo","Romosozumab","calciumdrugs"],["ralox","Raloxifene","serm"],["calct","Calcitonin","calcitonin"],["gc","Glucocorticoids","gcmetab"],["opet","Osteopetrosis","osteopetrosis"],["paget","Paget disease","paget"],["omal","Osteomalacia (vitamin D deficiency)","vitddef"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -37704,7 +37705,7 @@ MAPS.goutflow = {
  fa:"35, 119, 210, 249, 440, 444, 447, 473, 497, 603",
  src:["Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout", "Katzung ch 15 — Diuretic Agents", "Robbins ch 26 — Bones, joints, and soft tissue tumors", "Costanzo ch 6 — Renal physiology", "Marks ch 39 — Purine and Pyrimidine Metabolism", "Bootcamp.com MSK — Pharmacology"],
  art:"kit",
- dyn:{"lazy":"f91021d1c0","switches":[{"id":"rx","label":"Pick a drug, a condition or a trigger","type":"one","options":[["allo","Allopurinol / febuxostat","gout"],["probe","Probenecid","gout"],["colch","Colchicine","goutflare"],["nsaid","NSAID / glucocorticoid","goutflare"],["peg","Pegloticase / rasburicase","gout"],["diur","Thiazide / loop diuretic","urateexc"],["asa","Low-dose aspirin"],["tls","Tumor lysis","tls"],["lesch","Lesch-Nyhan (no HGPRT)","leschnyhan"],["alc","Alcohol","urateexc"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"c8f7020aaa","switches":[{"id":"rx","label":"Pick a drug, a condition or a trigger","type":"one","options":[["allo","Allopurinol / febuxostat","gout"],["probe","Probenecid","gout"],["colch","Colchicine","goutflare"],["nsaid","NSAID / glucocorticoid","goutflare"],["peg","Pegloticase / rasburicase","gout"],["diur","Thiazide / loop diuretic","urateexc"],["asa","Low-dose aspirin"],["tls","Tumor lysis","tls"],["lesch","Lesch-Nyhan (no HGPRT)","leschnyhan"],["alc","Alcohol","urateexc"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -37740,7 +37741,7 @@ MAPS.rajoint = {
  fa:"106, 119, 209–210, 444, 472, 496, 498",
  src:["Katzung ch 36 — Nonsteroidal Anti-Inflammatory Drugs, Disease-Modifying Antirheumatic Drugs, Nonopioid Analgesics, & Drugs Used in Gout", "Robbins ch 26 — Bones, joints, and soft tissue tumors", "Bootcamp.com MSK — Rheumatologic diseases"],
  art:"kit",
- dyn:{"lazy":"ed76af6589","switches":[{"id":"rx","label":"Treat it — or compare osteoarthritis","type":"one","options":[["mtx","Methotrexate","mtx"],["tnfi","TNF-α inhibitor","tnfdrugs"],["ritux","Rituximab","rituximab"],["abat","Abatacept","ctla4ig"],["toci","Tocilizumab","il6drugs"],["jak","JAK inhibitor","jakinh"],["gc","Glucocorticoid"],["nsaid","NSAID (symptoms only)"],["oa","Compare: osteoarthritis","oa"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"3bc3d2d127","switches":[{"id":"rx","label":"Treat it — or compare osteoarthritis","type":"one","options":[["mtx","Methotrexate","mtx"],["tnfi","TNF-α inhibitor","tnfdrugs"],["ritux","Rituximab","rituximab"],["abat","Abatacept","ctla4ig"],["toci","Tocilizumab","il6drugs"],["jak","JAK inhibitor","jakinh"],["gc","Glucocorticoid"],["nsaid","NSAID (symptoms only)"],["oa","Compare: osteoarthritis","oa"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -37927,7 +37928,7 @@ MAPS.abflow = {
  fa:"351, 354, 608–611, 625, 686, 688",
  src:["Costanzo ch 7 — Acid-base physiology", "Guyton ch 31 — Acid–Base Regulation", "Guyton ch 42 — Regulation of Respiration", "Bootcamp.com Nephrology — Acid-base physiology", "Bootcamp.com Nephrology — Electrolytes"],
  art:"kit",
- dyn:{"lazy":"18389232e0","switches":[{"id":"comp","label":"Compensation","type":"toggle","on":"Compensated — lungs: minutes–hours · kidneys: days","off":"Before compensation"},{"id":"dz","label":"Pick one disorder","type":"one","options":[["dka","Diabetic ketoacidosis","dka"],["lactic","Lactic acidosis","agma"],["diarr","Diarrhea","nagma"],["rta1","Distal RTA (type 1)","drta"],["rta4","Hyperkalemic RTA (type 4)","rta"],["vomit","Vomiting","metalk"],["diur","Loop or thiazide diuretic","loopdiuretics"],["aldo","Hyperaldosteronism","conn"],["copd","COPD","copd"],["opioid","Opioid overdose","opioids"],["panic","Panic attack","panic"],["alt","High altitude","altitude"],["sal","Salicylate overdose","aspirin"]],"sections":[["metabolic acidosis",["dka","lactic","diarr","rta1","rta4","sal"]],["metabolic alkalosis",["vomit","diur","aldo"]],["respiratory",["copd","opioid","panic","alt"]]]}],"panel":{"x":2520,"y":110,"w":1000}},
+ dyn:{"lazy":"e3ec1ff91f","switches":[{"id":"comp","label":"Compensation","type":"toggle","on":"Compensated — lungs: minutes–hours · kidneys: days","off":"Before compensation"},{"id":"dz","label":"Pick one disorder","type":"one","options":[["dka","Diabetic ketoacidosis","dka"],["lactic","Lactic acidosis","agma"],["diarr","Diarrhea","nagma"],["rta1","Distal RTA (type 1)","drta"],["rta4","Hyperkalemic RTA (type 4)","rta"],["vomit","Vomiting","metalk"],["diur","Loop or thiazide diuretic","loopdiuretics"],["aldo","Hyperaldosteronism","conn"],["copd","COPD","copd"],["opioid","Opioid overdose","opioids"],["panic","Panic attack","panic"],["alt","High altitude","altitude"],["sal","Salicylate overdose","aspirin"]],"sections":[["metabolic acidosis",["dka","lactic","diarr","rta1","rta4","sal"]],["metabolic alkalosis",["vomit","diur","aldo"]],["respiratory",["copd","opioid","panic","alt"]]]}],"panel":{"x":2520,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38018,7 +38019,7 @@ MAPS.abxsim = {
  fa:"122, 133, 183–192",
  src:["Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics", "Katzung ch 44 — Tetracyclines, Macrolides, Clindamycin, Chloramphenicol, Streptogramins, Oxazolidinones, & Pleuromutilins", "Katzung ch 45 — Aminoglycosides & Spectinomycin", "Katzung ch 46 — Sulfonamides, Trimethoprim, & Quinolones", "Katzung ch 47 — Antimycobacterial Drugs", "Katzung ch 50 — Miscellaneous Antimicrobial Agents; Disinfectants, Antiseptics, & Sterilants", "Bootcamp.com Microbiology — Antibiotics"],
  art:"kit",
- dyn:{"lazy":"e5cd495d04","switches":[{"id":"rx","label":"Drug — pick one","type":"one","options":[["blact","β-lactams","penicillins"],["vanc","Vancomycin","vancomycin"],["amg","Aminoglycosides","aminoglycosides"],["tet","Tetracyclines","tetracyclines"],["macro","Macrolides","macrolides"],["clinda","Clindamycin","clindamycin"],["chlor","Chloramphenicol","chloramphenicol"],["lzd","Linezolid","linezolid"],["fq","Fluoroquinolones","fluoroquinolones"],["rif","Rifampin","rifamycins"],["sulfa","Sulfonamides","sulfonamides"],["tmp","Trimethoprim","sulfonamides"],["dapto","Daptomycin","membranedrugs"],["poly","Polymyxins","membranedrugs"],["metro","Metronidazole","metronidazole"],["inh","Isoniazid","tbdrugs"],["emb","Ethambutol","tbdrugs"]],"sections":[["cell wall",["blact","vanc"]],["ribosome",["amg","tet","macro","clinda","chlor","lzd"]],["DNA · RNA · folate",["fq","rif","sulfa","tmp","metro"]],["membrane",["dapto","poly"]],["TB",["inh","emb"]]]},{"id":"res","label":"Resistance — pick one","type":"one","options":[["blase","β-lactamase","abxresistance"],["pbp2a","PBP2a (MRSA)","saureus"],["dalac","D-Ala-D-Lac (VRE)","enterococcus"],["rmeth","23S methylation","abxresistance"],["efflux","Efflux pump","abxresistance"],["porin","Fewer porins","abxresistance"],["ame","Aminoglycoside-modifying enzyme","abxresistance"],["gyr","Gyrase mutation","fluoroquinolones"]]}],"panel":{"x":2440,"y":110,"w":1000}},
+ dyn:{"lazy":"7685874c47","switches":[{"id":"rx","label":"Drug — pick one","type":"one","options":[["blact","β-lactams","penicillins"],["vanc","Vancomycin","vancomycin"],["amg","Aminoglycosides","aminoglycosides"],["tet","Tetracyclines","tetracyclines"],["macro","Macrolides","macrolides"],["clinda","Clindamycin","clindamycin"],["chlor","Chloramphenicol","chloramphenicol"],["lzd","Linezolid","linezolid"],["fq","Fluoroquinolones","fluoroquinolones"],["rif","Rifampin","rifamycins"],["sulfa","Sulfonamides","sulfonamides"],["tmp","Trimethoprim","sulfonamides"],["dapto","Daptomycin","membranedrugs"],["poly","Polymyxins","membranedrugs"],["metro","Metronidazole","metronidazole"],["inh","Isoniazid","tbdrugs"],["emb","Ethambutol","tbdrugs"]],"sections":[["cell wall",["blact","vanc"]],["ribosome",["amg","tet","macro","clinda","chlor","lzd"]],["DNA · RNA · folate",["fq","rif","sulfa","tmp","metro"]],["membrane",["dapto","poly"]],["TB",["inh","emb"]]]},{"id":"res","label":"Resistance — pick one","type":"one","options":[["blase","β-lactamase","abxresistance"],["pbp2a","PBP2a (MRSA)","saureus"],["dalac","D-Ala-D-Lac (VRE)","enterococcus"],["rmeth","23S methylation","abxresistance"],["efflux","Efflux pump","abxresistance"],["porin","Fewer porins","abxresistance"],["ame","Aminoglycoside-modifying enzyme","abxresistance"],["gyr","Gyrase mutation","fluoroquinolones"]]}],"panel":{"x":2440,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38131,7 +38132,7 @@ MAPS.edemaflow = {
  fa:"69, 156, 210, 247, 301, 316–317, 323, 485–486, 613",
  src:["Guyton ch 16 — The Microcirculation and Lymphatic System: Capillary Fluid Exchange, Interstitial Fluid, and Lymph Flow", "Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema", "Costanzo ch 4 — Cardiovascular physiology", "Robbins ch 4 — Hemodynamic disorders, thromboembolic disease, and shock", "Robbins ch 3 — Inflammation and repair", "Bootcamp.com Nephrology — Fluid and filtration physiology", "Bootcamp.com Gastroenterology — Liver", "Bootcamp.com Microbiology — Nematodes (Wuchereria and Brugia)", "Bootcamp.com Microbiology — Bacterial toxins (endotoxin)"],
  art:"kit",
- dyn:{"lazy":"2418a2b1b3","switches":[{"id":"ed","label":"Pick a cause of edema","type":"one","options":[["hf","Heart failure","hf"],["dvt","Venous obstruction (DVT)","dvt"],["ccb","Arteriolar dilation (amlodipine)","ccbs"],["neph","Nephrotic syndrome","nephrotic"],["cirr","Cirrhosis","cirrhosis"],["kwash","Protein malnutrition","kwashiorkor"],["lymph","Lymphatic obstruction","lymphedema"],["inflam","Acute inflammation","acuteinflam"],["sepsis","Sepsis","sepsistnf"],["burn","Burns","burns"]]}],"panel":{"x":2460,"y":110,"w":1000}},
+ dyn:{"lazy":"2bb09d82f9","switches":[{"id":"ed","label":"Pick a cause of edema","type":"one","options":[["hf","Heart failure","hf"],["dvt","Venous obstruction (DVT)","dvt"],["ccb","Arteriolar dilation (amlodipine)","ccbs"],["neph","Nephrotic syndrome","nephrotic"],["cirr","Cirrhosis","cirrhosis"],["kwash","Protein malnutrition","kwashiorkor"],["lymph","Lymphatic obstruction","lymphedema"],["inflam","Acute inflammation","acuteinflam"],["sepsis","Sepsis","sepsistnf"],["burn","Burns","burns"]]}],"panel":{"x":2460,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38312,7 +38313,7 @@ MAPS.baroflow = {
  fa:"240–243, 299, 318",
  src:["Katzung ch 6 — Introduction to Autonomic Pharmacology", "Katzung ch 8 — Cholinoceptor-Blocking Drugs", "Katzung ch 9 — Adrenoceptor Agonists & Sympathomimetic Drugs", "Katzung ch 10 — Adrenoceptor Antagonist Drugs", "Guyton ch 18 — Nervous Regulation of the Circulation and Rapid Control of Arterial Pressure", "Guyton ch 24 — Circulatory Shock and Its Treatment"],
  art:"kit",
- dyn:{"lazy":"8cbd55750d","switches":[{"id":"drug","label":"Give a drug — or test the reflex","type":"one","options":[["stand","Stand up","syncope"],["bleed","Hemorrhage","hypovshock"],["csm","Carotid sinus massage","baroreflex"],["pe","Phenylephrine","alpha1drugs"],["ne","Norepinephrine","pressors"],["epilo","Epinephrine — low dose","epine"],["epihi","Epinephrine — high dose","epine"],["iso","Isoproterenol","pressors"],["atro","Atropine","antimusc"]]},{"id":"ab","label":"α-blocker","type":"toggle","on":"Phentolamine given first","off":"No α-blocker","def":false}],"panel":{"x":2460,"y":110,"w":1000}},
+ dyn:{"lazy":"776f55fafd","switches":[{"id":"drug","label":"Give a drug — or test the reflex","type":"one","options":[["stand","Stand up","syncope"],["bleed","Hemorrhage","hypovshock"],["csm","Carotid sinus massage","baroreflex"],["pe","Phenylephrine","alpha1drugs"],["ne","Norepinephrine","pressors"],["epilo","Epinephrine — low dose","epine"],["epihi","Epinephrine — high dose","epine"],["iso","Isoproterenol","pressors"],["atro","Atropine","antimusc"]]},{"id":"ab","label":"α-blocker","type":"toggle","on":"Phentolamine given first","off":"No α-blocker","def":false}],"panel":{"x":2460,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38467,7 +38468,7 @@ MAPS.lipoflow = {
  fa:"90–92, 249, 324–325",
  src:["Marks ch 29 — Digestion and Transport of Dietary Lipids", "Marks ch 32 — Cholesterol Absorption, Synthesis, Metabolism, and Fate", "Katzung ch 35 — Agents Used in Dyslipidemia", "Bootcamp.com Biochemistry — Lipid Metabolism"],
  art:"kit",
- dyn:{"lazy":"53d7f0bd90","switches":[{"id":"dz","label":"A dyslipidemia","type":"one","options":[["t1","Type I — LPL / apoC-II","hyperchylo"],["t2","Type IIa — LDL receptor","fh"],["t3","Type III — apoE","dysbeta"],["t4","Type IV — VLDL excess","hypertg"],["abeta","Abetalipoproteinemia","abeta"]]},{"id":"drug","label":"A lipid-lowering drug","type":"one","options":[["statin","Statin","statin"],["eze","Ezetimibe","lipiddrugs"],["pcsk","PCSK9 inhibitor","lipiddrugs"],["resin","Bile acid resin","lipiddrugs"],["fib","Fibrate","lipiddrugs"],["nia","Niacin","lipiddrugs"],["omega","Omega-3 fatty acids","lipiddrugs"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"9332592c29","switches":[{"id":"dz","label":"A dyslipidemia","type":"one","options":[["t1","Type I — LPL / apoC-II","hyperchylo"],["t2","Type IIa — LDL receptor","fh"],["t3","Type III — apoE","dysbeta"],["t4","Type IV — VLDL excess","hypertg"],["abeta","Abetalipoproteinemia","abeta"]]},{"id":"drug","label":"A lipid-lowering drug","type":"one","options":[["statin","Statin","statin"],["eze","Ezetimibe","lipiddrugs"],["pcsk","PCSK9 inhibitor","lipiddrugs"],["resin","Bile acid resin","lipiddrugs"],["fib","Fibrate","lipiddrugs"],["nia","Niacin","lipiddrugs"],["omega","Omega-3 fatty acids","lipiddrugs"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38574,7 +38575,7 @@ MAPS.acidflow = {
  fa:"357, 378–381, 386–387, 405–407",
  src:["Costanzo ch 8 — Gastrointestinal physiology", "Guyton ch 65 — Secretory Functions of the Alimentary Tract", "Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases", "Katzung ch 8 — Cholinoceptor-Blocking Drugs"],
  art:"kit",
- dyn:{"lazy":"e5b5a16e91","switches":[{"id":"drug","label":"Drug — pick one","type":"one","options":[["ppi","PPI (omeprazole)","ppi"],["h2","H₂ blocker (famotidine)","ppi"],["antimusc","Antimuscarinic (atropine)","antimusc"],["miso","Misoprostol","mucosal"],["octreo","Octreotide","sstgi"],["antacid","Antacid","mucosal"]]},{"id":"dz","label":"Disease — pick one","type":"one","options":[["zes","Zollinger–Ellison (gastrinoma)","zes"],["hp","H. pylori (antrum)","hpylori"],["aag","Autoimmune atrophic gastritis","gastritis"],["cushing","Brain injury (Cushing ulcer)","gastritis"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"fd705ebfcc","switches":[{"id":"drug","label":"Drug — pick one","type":"one","options":[["ppi","PPI (omeprazole)","ppi"],["h2","H₂ blocker (famotidine)","ppi"],["antimusc","Antimuscarinic (atropine)","antimusc"],["miso","Misoprostol","mucosal"],["octreo","Octreotide","sstgi"],["antacid","Antacid","mucosal"]]},{"id":"dz","label":"Disease — pick one","type":"one","options":[["zes","Zollinger–Ellison (gastrinoma)","zes"],["hp","H. pylori (antrum)","hpylori"],["aag","Autoimmune atrophic gastritis","gastritis"],["cushing","Brain injury (Cushing ulcer)","gastritis"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
   {x:140,y:1600,w:2200,h:260,l:"Cards for the parietal cell"}],
  panels:[
@@ -38761,7 +38762,7 @@ MAPS.energysim = {
  fa:"55, 60, 64, 73–76, 247, 428, 689",
  src:["Marks ch 22 — Generation of Adenosine Triphosphate from Glucose, Fructose, and Galactose: Glycolysis", "Marks ch 23 — Tricarboxylic Acid Cycle", "Marks ch 24 — Oxidative Phosphorylation and Mitochondrial Function", "Katzung ch 58 — Management of the Poisoned Patient", "Katzung ch 57 — Heavy Metal Intoxication & Chelators", "Robbins ch 14 — Red blood cell and bleeding disorders"],
  art:"kit",
- dyn:{"lazy":"9ed66702fe","switches":[{"id":"blk","label":"Poison or deficiency","type":"one","options":[["pk","Pyruvate kinase deficiency","pkdef"],["pdh","PDH deficiency","pdhdef"],["thia","Thiamine deficiency","thiamine"],["ars","Arsenic","arsenic"],["fluoro","Fluoroacetate","fluoroacetate"],["rot","Rotenone (complex I)","etcinhib"],["anti","Antimycin (complex III)","etcinhib"],["cn","Cyanide (complex IV)","cyanide"],["co","Carbon monoxide","cohb"],["oligo","Oligomycin (ATP synthase)","etcinhib"],["unc","Uncoupler (2,4-DNP)","uncoupler"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"7ec900d885","switches":[{"id":"blk","label":"Poison or deficiency","type":"one","options":[["pk","Pyruvate kinase deficiency","pkdef"],["pdh","PDH deficiency","pdhdef"],["thia","Thiamine deficiency","thiamine"],["ars","Arsenic","arsenic"],["fluoro","Fluoroacetate","fluoroacetate"],["rot","Rotenone (complex I)","etcinhib"],["anti","Antimycin (complex III)","etcinhib"],["cn","Cyanide (complex IV)","cyanide"],["co","Carbon monoxide","cohb"],["oligo","Oligomycin (ATP synthase)","etcinhib"],["unc","Uncoupler (2,4-DNP)","uncoupler"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38790,7 +38791,7 @@ MAPS.faosim = {
  fa:"46, 71, 76, 87, 353",
  src:["Marks ch 30 — Oxidation of Fatty Acids and Ketone Bodies", "Robbins ch 27 — Peripheral nerves and skeletal muscles", "Pawlina ch 2 — Cell Cytoplasm", "Marks ch 46 — Metabolism of the Nervous System", "Marks ch 44 — Liver Metabolism", "Robbins ch 10 — Diseases of infancy and childhood", "Robbins ch 28 — The central nervous system", "Katzung ch 24 — Antiseizure Medications", "Kaplan & Sadock ch 21 — Psychopharmacology"],
  art:"kit",
- dyn:{"lazy":"bfdd697a80","switches":[{"id":"fast","label":"State","type":"toggle","on":"Fasting","off":"Fed","def":true},{"id":"dx","label":"What goes wrong","type":"one","options":[["carn","Carnitine deficiency","carndef"],["valp","Valproate","valproate"],["cpt2","CPT-II deficiency","cpt2"],["mcad","MCAD deficiency","mcad"],["refsum","Refsum disease","refsum"],["xald","X-linked ALD","xald"],["zell","Zellweger syndrome","zellweger"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"6c2fdcbf9d","switches":[{"id":"fast","label":"State","type":"toggle","on":"Fasting","off":"Fed","def":true},{"id":"dx","label":"What goes wrong","type":"one","options":[["carn","Carnitine deficiency","carndef"],["valp","Valproate","valproate"],["cpt2","CPT-II deficiency","cpt2"],["mcad","MCAD deficiency","mcad"],["refsum","Refsum disease","refsum"],["xald","X-linked ALD","xald"],["zell","Zellweger syndrome","zellweger"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38845,7 +38846,7 @@ MAPS.gsdsim = {
  fa:"76, 84–85",
  src:["Marks ch 26 — Formation and Degradation of Glycogen", "Robbins ch 5 — Genetic disorders", "Robbins ch 27 — Peripheral nerves and skeletal muscles"],
  art:"kit",
- dyn:{"lazy":"e858e82401","switches":[{"id":"st","label":"The body is…","type":"steps","auto":4,"options":[["fast","Fasting (liver)"],["ex","Exercising (muscle)"]]},{"id":"gsd","label":"Missing enzyme","type":"one","options":[["vg","von Gierke — glucose-6-phosphatase","vongierke"],["pompe","Pompe — acid maltase","pompe"],["cori","Cori — debranching","cori"],["and","Andersen — branching","andersen"],["mca","McArdle — myophosphorylase","mcardle"],["hers","Hers — liver phosphorylase","hers"],["tar","Tarui — muscle PFK-1","tarui"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"7deb6895c9","switches":[{"id":"st","label":"The body is…","type":"steps","auto":4,"options":[["fast","Fasting (liver)"],["ex","Exercising (muscle)"]]},{"id":"gsd","label":"Missing enzyme","type":"one","options":[["vg","von Gierke — glucose-6-phosphatase","vongierke"],["pompe","Pompe — acid maltase","pompe"],["cori","Cori — debranching","cori"],["and","Andersen — branching","andersen"],["mca","McArdle — myophosphorylase","mcardle"],["hers","Hers — liver phosphorylase","hers"],["tar","Tarui — muscle PFK-1","tarui"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38895,7 +38896,7 @@ MAPS.lsdsim = {
  fa:"45, 86",
  src:["Robbins ch 5 — Genetic disorders", "Robbins ch 28 — The central nervous system", "Marks ch 27 — Pentose Phosphate Pathway and the Synthesis of Glycosides, Lactose, Glycoproteins, and Glycolipids", "Marks ch 47 — The Extracellular Matrix and Connective Tissue", "Pawlina ch 2 — Cell Cytoplasm"],
  art:"kit",
- dyn:{"lazy":"411fff2212","switches":[{"id":"lsd","label":"Missing enzyme","type":"one","options":[["tay","Tay-Sachs","taysachs"],["np","Niemann-Pick","niemannpick"],["gau","Gaucher","gaucher"],["fab","Fabry","fabry"],["kra","Krabbe","krabbe"],["mld","Metachromatic leukodystrophy","mld"],["hur","Hurler (MPS I)","hurler"],["hun","Hunter (MPS II)","hunter"],["icell","I-cell disease","icell"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"4f05131f72","switches":[{"id":"lsd","label":"Missing enzyme","type":"one","options":[["tay","Tay-Sachs","taysachs"],["np","Niemann-Pick","niemannpick"],["gau","Gaucher","gaucher"],["fab","Fabry","fabry"],["kra","Krabbe","krabbe"],["mld","Metachromatic leukodystrophy","mld"],["hur","Hurler (MPS I)","hurler"],["hun","Hunter (MPS II)","hunter"],["icell","I-cell disease","icell"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -38940,7 +38941,7 @@ MAPS.rtasim = {
  fa:"194, 250, 604, 610–611, 617, 626",
  src:["Costanzo ch 7 — Acid-base physiology", "Costanzo ch 8 — Gastrointestinal physiology", "Guyton ch 31 — Acid–Base Regulation", "Katzung ch 15 — Diuretic Agents", "Robbins ch 20 — The kidney"],
  art:"kit",
- dyn:{"lazy":"425271d2a5","switches":[{"id":"rt","label":"Pick a type, a cause, or diarrhea","type":"one","options":[["d1","Type 1 — distal","drta"],["p2","Type 2 — proximal","rta"],["h4","Type 4 — hyperkalemic","rta"],["dia","Diarrhea (gut loss)","diarrheaapproach"],["amph","Amphotericin B","amphotericin"],["acz","Acetazolamide","acetazolamide"],["fan","Fanconi syndrome","fanconisyn"],["spiro","Spironolactone","mras"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"f401c90ab5","switches":[{"id":"rt","label":"Pick a type, a cause, or diarrhea","type":"one","options":[["d1","Type 1 — distal","drta"],["p2","Type 2 — proximal","rta"],["h4","Type 4 — hyperkalemic","rta"],["dia","Diarrhea (gut loss)","diarrheaapproach"],["amph","Amphotericin B","amphotericin"],["acz","Acetazolamide","acetazolamide"],["fan","Fanconi syndrome","fanconisyn"],["spiro","Spironolactone","mras"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39001,7 +39002,7 @@ MAPS.ureasim = {
  fa:"80–81, 399, 408, 426",
  src:["Marks ch 36 — Fate of Amino Acid Nitrogen: Urea Cycle", "Marks ch 39 — Purine and Pyrimidine Metabolism", "Marks ch 44 — Liver Metabolism", "Robbins ch 18 — Liver and gallbladder"],
  art:"kit",
- dyn:{"lazy":"c519409ea0","switches":[{"id":"def","label":"Block or bypass","type":"one","options":[["cps","CPS-1 / NAGS deficiency","cps1"],["otc","OTC deficiency","otc"],["ass","Citrullinemia (ASS)","ureaother"],["asl","Argininosuccinic aciduria (ASL)","ureaother"],["arg","Arginase deficiency","ureaother"],["hep","Hepatic encephalopathy","hepenceph"],["oro","Orotic aciduria (the look-alike)","oroticaciduria"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"ce87b922af","switches":[{"id":"def","label":"Block or bypass","type":"one","options":[["cps","CPS-1 / NAGS deficiency","cps1"],["otc","OTC deficiency","otc"],["ass","Citrullinemia (ASS)","ureaother"],["asl","Argininosuccinic aciduria (ASL)","ureaother"],["arg","Arginase deficiency","ureaother"],["hep","Hepatic encephalopathy","hepenceph"],["oro","Orotic aciduria (the look-alike)","oroticaciduria"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39076,7 +39077,7 @@ MAPS.rxsim = {
  fa:"240, 243, 250, 509, 577, 587, 591, 593",
  src:["Katzung ch 29 — Antipsychotic Agents & Lithium", "Katzung ch 30 — Antidepressant Agents", "Kaplan & Sadock ch 21 — Psychopharmacology", "Kaplan & Sadock ch 5 — Schizophrenia Spectrum and Other Psychotic Disorders"],
  art:"kit",
- dyn:{"lazy":"20a40db697","switches":[{"id":"rx","label":"Drug","type":"one","options":[["halo","Haloperidol","antipsychotics"],["chlor","Chlorpromazine","antipsychotics"],["cloz","Clozapine","antipsychotics"],["olan","Olanzapine","antipsychotics"],["risp","Risperidone","antipsychotics"],["arip","Aripiprazole","antipsychotics"],["tca","Amitriptyline (TCA)","tca"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"b5fbd621fd","switches":[{"id":"rx","label":"Drug","type":"one","options":[["halo","Haloperidol","antipsychotics"],["chlor","Chlorpromazine","antipsychotics"],["cloz","Clozapine","antipsychotics"],["olan","Olanzapine","antipsychotics"],["risp","Risperidone","antipsychotics"],["arip","Aripiprazole","antipsychotics"],["tca","Amitriptyline (TCA)","tca"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39127,7 +39128,7 @@ MAPS.stimsim = {
  fa:"328, 585, 586, 587, 589, 594, 633",
  src:["Kaplan & Sadock ch 4 — Substance Use and Addictive Disorders", "Katzung ch 32 — Drugs of Abuse", "Katzung ch 21 — Introduction to the Pharmacology of CNS Drugs"],
  art:"kit",
- dyn:{"lazy":"4bf971fab1","switches":[{"id":"drug","label":"Drug","type":"one","options":[["nic","Nicotine","nicotine"],["caf","Caffeine","caffeine"],["mdma","MDMA","mdma"]]},{"id":"phase","label":"Phase","type":"steps","auto":3,"options":[["use","Using"],["wd","Withdrawal / after"]]},{"id":"rx","label":"Treat","type":"toggle","on":"Treatment given","off":"Give the treatment","def":false},{"id":"stage","label":"Stage of change","type":"one","options":[["pre","Precontemplation","stageschange"],["con","Contemplation","stageschange"],["prep","Preparation","stageschange"],["act","Action","stageschange"],["maint","Maintenance","stageschange"]]}],"panel":{"x":2136,"y":110,"w":1000}},
+ dyn:{"lazy":"bf27f3e3f4","switches":[{"id":"drug","label":"Drug","type":"one","options":[["nic","Nicotine","nicotine"],["caf","Caffeine","caffeine"],["mdma","MDMA","mdma"]]},{"id":"phase","label":"Phase","type":"steps","auto":3,"options":[["use","Using"],["wd","Withdrawal / after"]]},{"id":"rx","label":"Treat","type":"toggle","on":"Treatment given","off":"Give the treatment","def":false},{"id":"stage","label":"Stage of change","type":"one","options":[["pre","Precontemplation","stageschange"],["con","Contemplation","stageschange"],["prep","Preparation","stageschange"],["act","Action","stageschange"],["maint","Maintenance","stageschange"]]}],"panel":{"x":2136,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39358,7 +39359,7 @@ MAPS.lyteecg = {
  fa:"298, 348–349, 361, 608–609",
  src:["Costanzo ch 6 — Renal physiology", "Katzung ch 14 — Agents Used in Cardiac Arrhythmias", "Katzung ch 15 — Diuretic Agents", "Guyton ch 80 — Parathyroid Hormone, Calcitonin, Calcium and Phosphate Metabolism, Vitamin D, Bone, and Teeth", "Guyton ch 9 — Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves", "Kaplan & Sadock ch 1 — Examination and Diagnosis of the Psychiatric Patient"],
  art:"kit",
- dyn:{"lazy":"3d16fc60b1","switches":[{"id":"ly","label":"Pick an electrolyte change","type":"one","options":[["lok","Low K⁺","hypok"],["hk1","High K⁺ — early","hyperk"],["hk2","High K⁺ — worse","hyperk"],["hk3","High K⁺ — severe","hyperk"],["hica","High Ca²⁺","ecglytes"],["loca","Low Ca²⁺","hypopara"],["lomg","Low Mg²⁺","mgpo4"]]},{"id":"rx","label":"Treat high K⁺ — stabilize, shift, remove","type":"one","options":[["cag","IV calcium gluconate","hyperk"],["ins","Insulin + glucose","kinsulin"],["b2","β₂-agonist","kinsulin"],["bic","Bicarbonate","hyperk"],["loop","Loop diuretic","loopdiuretics"],["binder","Binder (patiromer)","hyperk"],["dial","Dialysis","hyperk"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"aa5a7c5610","switches":[{"id":"ly","label":"Pick an electrolyte change","type":"one","options":[["lok","Low K⁺","hypok"],["hk1","High K⁺ — early","hyperk"],["hk2","High K⁺ — worse","hyperk"],["hk3","High K⁺ — severe","hyperk"],["hica","High Ca²⁺","ecglytes"],["loca","Low Ca²⁺","hypopara"],["lomg","Low Mg²⁺","mgpo4"]]},{"id":"rx","label":"Treat high K⁺ — stabilize, shift, remove","type":"one","options":[["cag","IV calcium gluconate","hyperk"],["ins","Insulin + glucose","kinsulin"],["b2","β₂-agonist","kinsulin"],["bic","Bicarbonate","hyperk"],["loop","Loop diuretic","loopdiuretics"],["binder","Binder (patiromer)","hyperk"],["dial","Dialysis","hyperk"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39449,7 +39450,7 @@ MAPS.pregsim = {
  fa:"61, 648, 651–653, 658–659",
  src:["Costanzo ch 10 — Reproductive physiology", "Guyton ch 83 — Pregnancy and Lactation"],
  art:"kit",
- dyn:{"lazy":"f40c912694","switches":[{"id":"wk","label":"Stage","type":"steps","auto":4,"options":[["imp","Weeks 2–4 · implantation"],["peak","Weeks 8–10 · hCG peak"],["shift","Weeks 12–20 · placenta takes over"],["term","Delivery · lactation"]]},{"id":"dx","label":"Compare","type":"one","options":[["ect","Ectopic pregnancy","ectopic"],["mole","Hydatidiform mole","gtd"],["twin","Twins","hcghpl"],["t21","Trisomy 21","fpunit"],["t18","Trisomy 18","hcghpl"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"51b9443395","switches":[{"id":"wk","label":"Stage","type":"steps","auto":4,"options":[["imp","Weeks 2–4 · implantation"],["peak","Weeks 8–10 · hCG peak"],["shift","Weeks 12–20 · placenta takes over"],["term","Delivery · lactation"]]},{"id":"dx","label":"Compare","type":"one","options":[["ect","Ectopic pregnancy","ectopic"],["mole","Hydatidiform mole","gtd"],["twin","Twins","hcghpl"],["t21","Trisomy 21","fpunit"],["t18","Trisomy 18","hcghpl"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39524,7 +39525,7 @@ MAPS.sexsim = {
  fa:"339, 639–640, 653, 655–656",
  src:["Langman ch 16 — Urogenital System", "Pawlina ch 22 — Male Reproductive System", "Costanzo ch 10 — Reproductive physiology", "Robbins ch 5 — Genetic disorders"],
  art:"kit",
- dyn:{"lazy":"2221dcc8b5","switches":[{"id":"dx","label":"The case","type":"one","options":[["xy","Typical 46,XY","sexdevreg"],["xx","Typical 46,XX","sexdevreg"],["swyer","Swyer (46,XY, no SRY)","swyer"],["ais","Androgen insensitivity","ais"],["srd","5α-reductase deficiency","reductase5a"],["pmds","Persistent Müllerian duct","pmds"],["cah","21-hydroxylase CAH (46,XX)","cah21"],["turner","Turner (45,X)","turner"],["kline","Klinefelter (47,XXY)","klinefelter"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"648c90f128","switches":[{"id":"dx","label":"The case","type":"one","options":[["xy","Typical 46,XY","sexdevreg"],["xx","Typical 46,XX","sexdevreg"],["swyer","Swyer (46,XY, no SRY)","swyer"],["ais","Androgen insensitivity","ais"],["srd","5α-reductase deficiency","reductase5a"],["pmds","Persistent Müllerian duct","pmds"],["cah","21-hydroxylase CAH (46,XX)","cah21"],["turner","Turner (45,X)","turner"],["kline","Klinefelter (47,XXY)","klinefelter"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39549,7 +39550,7 @@ MAPS.aqsim = {
  fa:"475, 549, 550, 551, 552, 553, 557, 568",
  src:["Katzung ch 10 — Adrenoceptor Antagonist Drugs", "Pawlina ch 24 — Eye", "Robbins ch 29 — The eye", "Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs", "Katzung ch 18 — The Eicosanoids: Prostaglandins, Thromboxanes, Leukotrienes, & Related Compounds", "Guyton ch 50 — The Eye: I. Optics of Vision", "Robbins ch 5 — Genetic disorders", "Robbins ch 26 — Bones, joints, and soft tissue tumors", "Katzung ch 55 — Immunopharmacology", "Katzung ch 60 — Special Aspects of Geriatric Pharmacology", "Robbins ch 24 — The endocrine system", "Robbins ch 11 — Blood vessels", "Moore ch 9 — Head", "Robbins ch 10 — Diseases of infancy and childhood"],
  art:"kit",
- dyn:{"lazy":"62a8c8f353","switches":[{"id":"dx","label":"Disease","type":"one","options":[["oag","Open-angle glaucoma","glaucoma"],["acg","Acute angle closure","glaucoma"],["uve","Uveitis","uveitis"],["cat","Cataract","cataract"],["dry","Dry AMD","amd"],["wet","Wet AMD","amd"],["dr","Diabetic retinopathy","retinopathy"],["crao","Retinal artery occlusion","retinalocc"],["crvo","Retinal vein occlusion","retinalocc"],["det","Retinal detachment","retinaldetach"],["rp","Retinitis pigmentosa","retinitispig"],["rop","Retinopathy of prematurity","rop"]]},{"id":"rx","label":"Drug","type":"one","options":[["tim","Timolol","glaucomadrugs"],["brim","Brimonidine","glaucomadrugs"],["acz","Acetazolamide","glaucomadrugs"],["lat","Latanoprost","glaucomadrugs"],["pilo","Pilocarpine","glaucomadrugs"],["mydr","Mydriatic (epinephrine)","glaucomadrugs"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"c60e7237c9","switches":[{"id":"dx","label":"Disease","type":"one","options":[["oag","Open-angle glaucoma","glaucoma"],["acg","Acute angle closure","glaucoma"],["uve","Uveitis","uveitis"],["cat","Cataract","cataract"],["dry","Dry AMD","amd"],["wet","Wet AMD","amd"],["dr","Diabetic retinopathy","retinopathy"],["crao","Retinal artery occlusion","retinalocc"],["crvo","Retinal vein occlusion","retinalocc"],["det","Retinal detachment","retinaldetach"],["rp","Retinitis pigmentosa","retinitispig"],["rop","Retinopathy of prematurity","rop"]]},{"id":"rx","label":"Drug","type":"one","options":[["tim","Timolol","glaucomadrugs"],["brim","Brimonidine","glaucomadrugs"],["acz","Acetazolamide","glaucomadrugs"],["lat","Latanoprost","glaucomadrugs"],["pilo","Pilocarpine","glaucomadrugs"],["mydr","Mydriatic (epinephrine)","glaucomadrugs"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39576,7 +39577,7 @@ MAPS.vestsim = {
  fa:"166, 240, 506, 526, 527, 540, 546, 547, 548, 705",
  src:["Costanzo ch 3 — Neurophysiology", "Fundamental Neuroscience ch 22 — The Vestibular System", "Fundamental Neuroscience ch 28 — Visual Motor Systems", "Pawlina ch 25 — Ear", "Katzung ch 15 — Diuretic Agents", "Fundamental Neuroscience ch 21 — The Auditory System", "Robbins ch 27 — Peripheral nerves and skeletal muscles", "Robbins ch 28 — The central nervous system", "Fundamental Neuroscience ch 14 — A Synopsis of Cranial Nerves of the Brainstem", "Fundamental Neuroscience ch 10 — An Overview of the Brainstem", "Moore ch 9 — Head", "Robbins ch 8 — Infectious diseases", "Moore ch 10 — Cranial Nerves", "Guyton ch 53 — The Sense of Hearing", "Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases", "Katzung ch 16 — Histamine, Serotonin, Anti-Obesity Drugs, & the Ergot Alkaloids", "Katzung ch 8 — Cholinoceptor-Blocking Drugs", "Guyton ch 67 — Physiology of Gastrointestinal Disorders", "Bootcamp.com Pharmacology — Autonomic system", "Bootcamp.com Neurology — Vertigo"],
  art:"kit",
- dyn:{"lazy":"1d9d478535","switches":[{"id":"dx","label":"Test · what goes wrong (left side)","type":"one","options":[["turnl","Head turns left","vestibular"],["warm","Warm water, left ear","nystagmus"],["cold","Cold water, left ear","nystagmus"],["bppv","BPPV","bppv"],["meniere","Ménière disease","meniere"],["neur","Vestibular neuritis","vestneuritis"],["lab","Labyrinthitis","vestneuritis"],["schwan","Vestibular schwannoma","schwannoma"],["aica","AICA stroke","aicastroke"],["pica","PICA stroke (Wallenberg)","wallenberg"],["bell","Bell palsy","bell"]]}],"panel":{"x":2315,"y":110,"w":1000}},
+ dyn:{"lazy":"e988cf1135","switches":[{"id":"dx","label":"Test · what goes wrong (left side)","type":"one","options":[["turnl","Head turns left","vestibular"],["warm","Warm water, left ear","nystagmus"],["cold","Cold water, left ear","nystagmus"],["bppv","BPPV","bppv"],["meniere","Ménière disease","meniere"],["neur","Vestibular neuritis","vestneuritis"],["lab","Labyrinthitis","vestneuritis"],["schwan","Vestibular schwannoma","schwannoma"],["aica","AICA stroke","aicastroke"],["pica","PICA stroke (Wallenberg)","wallenberg"],["bell","Bell palsy","bell"]]}],"panel":{"x":2315,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39653,7 +39654,7 @@ MAPS.btsim = {
  fa:"539, 540, 542",
  src:["Robbins ch 28 — The central nervous system", "Robbins ch 24 — The endocrine system"],
  art:"kit",
- dyn:{"lazy":"43e0f3d0be","switches":[{"id":"tu","label":"Tumor","type":"one","options":[["gbm","Glioblastoma","gbm"],["astro","Astrocytoma, IDH-mutant","astroidh"],["oligo","Oligodendroglioma","oligo"],["mening","Meningioma","meningioma"],["schwan","Schwannoma","schwannoma"],["hemangio","Hemangioblastoma","hemangioblastoma"],["pilo","Pilocytic astrocytoma","pilocytic"],["medullo","Medulloblastoma","medullo"],["ependy","Ependymoma","ependymoma"],["pineal","Pineal tumor","pineal"],["cranio","Craniopharyngioma","craniopharyngioma"]]},{"id":"ag","label":"Age","type":"one","options":[["ch","Children","pilocytic"],["ad","Adults","gbm"]]}],"panel":{"x":1880,"y":110,"w":1000}},
+ dyn:{"lazy":"a3f80ddc1e","switches":[{"id":"tu","label":"Tumor","type":"one","options":[["gbm","Glioblastoma","gbm"],["astro","Astrocytoma, IDH-mutant","astroidh"],["oligo","Oligodendroglioma","oligo"],["mening","Meningioma","meningioma"],["schwan","Schwannoma","schwannoma"],["hemangio","Hemangioblastoma","hemangioblastoma"],["pilo","Pilocytic astrocytoma","pilocytic"],["medullo","Medulloblastoma","medullo"],["ependy","Ependymoma","ependymoma"],["pineal","Pineal tumor","pineal"],["cranio","Craniopharyngioma","craniopharyngioma"]]},{"id":"ag","label":"Age","type":"one","options":[["ch","Children","pilocytic"],["ad","Adults","gbm"]]}],"panel":{"x":1880,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39765,7 +39766,7 @@ MAPS.pthsim = {
  fa:"224, 336–337, 348–349, 361, 621–622, 695",
  src:["Costanzo ch 9 — Endocrine physiology", "Guyton ch 80 — Parathyroid Hormone, Calcitonin, Calcium and Phosphate Metabolism, Vitamin D, Bone, and Teeth", "Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis", "Robbins ch 24 — The endocrine system", "Robbins ch 20 — The kidney"],
  art:"kit",
- dyn:{"lazy":"b479250dc5","switches":[{"id":"dz","label":"Pick a disorder","type":"one","options":[["p1","Primary hyperparathyroidism","hyperpara1"],["p2","Secondary (kidney disease)","hyperpara2"],["p3","Tertiary","renalod"],["vd","Vitamin D deficiency","vitddef"],["hp","Hypoparathyroidism","hypopara"],["pha","Pseudohypoparathyroidism","pha"],["fhh","FHH","fhh"],["mal","Malignancy — PTHrP","hcmalig"],["sarc","Sarcoidosis","sarcoid"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"6f0366c9ae","switches":[{"id":"dz","label":"Pick a disorder","type":"one","options":[["p1","Primary hyperparathyroidism","hyperpara1"],["p2","Secondary (kidney disease)","hyperpara2"],["p3","Tertiary","renalod"],["vd","Vitamin D deficiency","vitddef"],["hp","Hypoparathyroidism","hypopara"],["pha","Pseudohypoparathyroidism","pha"],["fhh","FHH","fhh"],["mal","Malignancy — PTHrP","hcmalig"],["sarc","Sarcoidosis","sarcoid"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39888,7 +39889,7 @@ MAPS.antidsim = {
  fa:"70, 233, 239–240, 247, 326–327, 397, 430–431, 440–442, 495–496, 562, 567, 588, 593, 617, 688–689",
  src:["Katzung ch 58 — Management of the Poisoned Patient", "Katzung ch 57 — Heavy Metal Intoxication & Chelators", "Katzung ch 31 — Opioid Agonists & Antagonists", "Katzung ch 7 — Cholinoceptor-Activating & Cholinesterase-Inhibiting Drugs", "Katzung ch 8 — Cholinoceptor-Blocking Drugs", "Katzung ch 23 — The Alcohols", "Katzung ch 34 — Drugs Used in Disorders of Coagulation", "Marks ch 42 — The Biochemistry of Erythrocytes and Other Blood Cells"],
  art:"kit",
- dyn:{"lazy":"853f2c7731","switches":[{"id":"p","label":"Poison","type":"one","options":[["opi","Opioid","opioids"],["benzo","Benzodiazepine","benzos"],["op","Organophosphate","organophosphate"],["ach","Anticholinergic","antimusc"],["apap","Acetaminophen","acetaminophen"],["meth","Methanol · ethylene glycol","ethyleneglycol"],["dig","Digoxin","digoxin"],["cn","Cyanide","cyanide"],["hep","Heparin","anticoagrev"],["fe","Iron","ironrx"],["pb","Lead","chelators"],["war","Warfarin","anticoagrev"],["tca","Tricyclic overdose","tca"],["bb","β-blocker","glucagondrug"],["mhb","Methemoglobinemia","methb"],["co","Carbon monoxide","cohb"],["asa","Aspirin (salicylate)","aspirin"]],"sections":[["sedatives · analgesics",["opi","benzo","apap","asa","tca"]],["cardiac · anticoagulant",["dig","bb","hep","war"]],["cholinergic · alcohols",["op","ach","meth"]],["gases · blood",["cn","co","mhb"]],["metals",["fe","pb"]]]},{"id":"give","label":"Treatment","type":"toggle","on":"Antidote given","off":"Give the antidote","def":false}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"8e7755f845","switches":[{"id":"p","label":"Poison","type":"one","options":[["opi","Opioid","opioids"],["benzo","Benzodiazepine","benzos"],["op","Organophosphate","organophosphate"],["ach","Anticholinergic","antimusc"],["apap","Acetaminophen","acetaminophen"],["meth","Methanol · ethylene glycol","ethyleneglycol"],["dig","Digoxin","digoxin"],["cn","Cyanide","cyanide"],["hep","Heparin","anticoagrev"],["fe","Iron","ironrx"],["pb","Lead","chelators"],["war","Warfarin","anticoagrev"],["tca","Tricyclic overdose","tca"],["bb","β-blocker","glucagondrug"],["mhb","Methemoglobinemia","methb"],["co","Carbon monoxide","cohb"],["asa","Aspirin (salicylate)","aspirin"]],"sections":[["sedatives · analgesics",["opi","benzo","apap","asa","tca"]],["cardiac · anticoagulant",["dig","bb","hep","war"]],["cholinergic · alcohols",["op","ach","meth"]],["gases · blood",["cn","co","mhb"]],["metals",["fe","pb"]]]},{"id":"give","label":"Treatment","type":"toggle","on":"Antidote given","off":"Give the antidote","def":false}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39944,7 +39945,7 @@ MAPS.esosim = {
  fa:"377, 383, 384, 385, 391",
  src:["Robbins ch 17 — The gastrointestinal tract", "Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases", "Robbins ch 8 — Infectious diseases", "Moore ch 8 — Neck", "Bootcamp.com Gastroenterology — Esophagus", "Guyton ch 64 — Propulsion and Mixing of Food in the Alimentary Tract", "Costanzo ch 8 — Gastrointestinal physiology"],
  art:"kit",
- dyn:{"lazy":"d0841cb925","switches":[{"id":"liq","label":"Swallow","type":"toggle","on":"Liquids","off":"Solids","def":false},{"id":"dx","label":"What goes wrong","type":"one","options":[["ach","Achalasia","achalasia"],["des","Distal esophageal spasm","achalasia"],["scl","Scleroderma esophagus","achalasia"],["gerd","GERD","gerd"],["barrett","Barrett esophagus","barrett"],["ring","Schatzki ring","schatzki"],["strict","Stricture","esostricture"],["web","Plummer-Vinson web","esophagitis"],["zenker","Zenker diverticulum","zenker"],["mw","Mallory-Weiss tear","mallorywb"]]}],"panel":{"x":1487,"y":110,"w":1000}},
+ dyn:{"lazy":"2d693b80d5","switches":[{"id":"liq","label":"Swallow","type":"toggle","on":"Liquids","off":"Solids","def":false},{"id":"dx","label":"What goes wrong","type":"one","options":[["ach","Achalasia","achalasia"],["des","Distal esophageal spasm","achalasia"],["scl","Scleroderma esophagus","achalasia"],["gerd","GERD","gerd"],["barrett","Barrett esophagus","barrett"],["ring","Schatzki ring","schatzki"],["strict","Stricture","esostricture"],["web","Plummer-Vinson web","esophagitis"],["zenker","Zenker diverticulum","zenker"],["mw","Mallory-Weiss tear","mallorywb"]]}],"panel":{"x":1487,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39972,7 +39973,7 @@ MAPS.laxsim = {
  fa:"130, 399, 408, 567",
  src:["Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases", "Katzung ch 31 — Opioid Agonists & Antagonists"],
  art:"kit",
- dyn:{"lazy":"6fb2a9225b","switches":[{"id":"rx","label":"Laxative","type":"one","options":[["bulk","Bulk fiber","bulklax"],["docu","Docusate","bulklax"],["oil","Mineral oil","bulklax"],["osm","Osmotic (PEG, lactulose, Mg)","osmolax"],["stim","Stimulant (senna, bisacodyl)","stimlax"],["pru","Prucalopride (5-HT₄)","prokinetic"],["lubi","Lubiprostone","secretlax"],["lina","Linaclotide","secretlax"],["tena","Tenapanor","secretlax"],["pamora","Methylnaltrexone / naloxegol","pamora"]]},{"id":"opioid","label":"Patient","type":"toggle","on":"On opioids","off":"Start an opioid","def":false}],"panel":{"x":2216,"y":110,"w":1000}},
+ dyn:{"lazy":"accfe91dd9","switches":[{"id":"rx","label":"Laxative","type":"one","options":[["bulk","Bulk fiber","bulklax"],["docu","Docusate","bulklax"],["oil","Mineral oil","bulklax"],["osm","Osmotic (PEG, lactulose, Mg)","osmolax"],["stim","Stimulant (senna, bisacodyl)","stimlax"],["pru","Prucalopride (5-HT₄)","prokinetic"],["lubi","Lubiprostone","secretlax"],["lina","Linaclotide","secretlax"],["tena","Tenapanor","secretlax"],["pamora","Methylnaltrexone / naloxegol","pamora"]]},{"id":"opioid","label":"Patient","type":"toggle","on":"On opioids","off":"Start an opioid","def":false}],"panel":{"x":2216,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40055,7 +40056,7 @@ MAPS.complsim = {
  fa:"104, 105, 140, 427, 428, 476, 676",
  src:["Robbins ch 3 — Inflammation and repair", "Robbins ch 6 — Diseases of the immune system", "Robbins ch 14 — Red blood cell and bleeding disorders", "Katzung ch 55 — Immunopharmacology"],
  art:"kit",
- dyn:{"lazy":"b44aa99d3d","switches":[{"id":"def","label":"Break a piece","type":"one","options":[["early","Early components (C1q, C4, C2)","sle"],["c3","C3 deficiency","c3def"],["mac","C5–C9 deficiency","c5c9"],["ecu","Eculizumab (anti-C5)","c5drugs"],["hae","C1 esterase inhibitor — HAE","hae"],["pnh","No DAF/CD59 — PNH","pnh"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"5f550dcfc3","switches":[{"id":"def","label":"Break a piece","type":"one","options":[["early","Early components (C1q, C4, C2)","sle"],["c3","C3 deficiency","c3def"],["mac","C5–C9 deficiency","c5c9"],["ecu","Eculizumab (anti-C5)","c5drugs"],["hae","C1 esterase inhibitor — HAE","hae"],["pnh","No DAF/CD59 — PNH","pnh"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40082,7 +40083,7 @@ MAPS.hypsim = {
  fa:"110–112, 114, 476",
  src:["Robbins ch 6 — Diseases of the immune system"],
  art:"kit",
- dyn:{"lazy":"b4362a7870","switches":[{"id":"ex","label":"Pick an example","type":"one","options":[["anaph","Anaphylaxis","hs1"],["asthma","Allergic asthma","asthma"],["iga","Blood in IgA deficiency","igadef"],["aiha","Warm autoimmune hemolytic anemia","warmaiha"],["mg","Myasthenia gravis","mg"],["graves","Graves disease","hyperthyroid"],["goodp","Goodpasture syndrome","goodpasture"],["sle","SLE","sle"],["serum","Serum sickness","hs3"],["arthus","Arthus reaction","hs3"],["contact","Contact dermatitis","eczema"],["ppd","PPD skin test","tb"],["gvhd","Graft-versus-host disease","gvhd"]],"sections":[["type I",["anaph","asthma","iga"]],["type II",["aiha","mg","graves","goodp"]],["type III",["sle","serum","arthus"]],["type IV",["contact","ppd","gvhd"]]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"f1c88200b2","switches":[{"id":"ex","label":"Pick an example","type":"one","options":[["anaph","Anaphylaxis","hs1"],["asthma","Allergic asthma","asthma"],["iga","Blood in IgA deficiency","igadef"],["aiha","Warm autoimmune hemolytic anemia","warmaiha"],["mg","Myasthenia gravis","mg"],["graves","Graves disease","hyperthyroid"],["goodp","Goodpasture syndrome","goodpasture"],["sle","SLE","sle"],["serum","Serum sickness","hs3"],["arthus","Arthus reaction","hs3"],["contact","Contact dermatitis","eczema"],["ppd","PPD skin test","tb"],["gvhd","Graft-versus-host disease","gvhd"]],"sections":[["type I",["anaph","asthma","iga"]],["type II",["aiha","mg","graves","goodp"]],["type III",["sle","serum","arthus"]],["type IV",["contact","ppd","gvhd"]]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40113,7 +40114,7 @@ MAPS.idsim = {
  fa:"104–105, 114–116, 126",
  src:["Robbins ch 6 — Diseases of the immune system"],
  art:"kit",
- dyn:{"lazy":"08fae67a25","switches":[{"id":"id","label":"Pick an immunodeficiency","type":"one","options":[["xla","Bruton agammaglobulinemia","xla"],["cvid","CVID","cvid"],["igadef","Selective IgA deficiency","igadef"],["hyperigm","Hyper-IgM syndrome","hyperigm"],["digeorge","DiGeorge syndrome","digeorge"],["scid","SCID","scidx"],["wiskott","Wiskott-Aldrich","wiskott"],["job","Job syndrome (hyper-IgE)","jobsyn"],["lad","Leukocyte adhesion deficiency","lad1"],["chediak","Chédiak-Higashi","chediak"],["cgd","Chronic granulomatous disease","cgd"],["c5c9","Terminal complement (C5–C9)","c5c9"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"a179c90151","switches":[{"id":"id","label":"Pick an immunodeficiency","type":"one","options":[["xla","Bruton agammaglobulinemia","xla"],["cvid","CVID","cvid"],["igadef","Selective IgA deficiency","igadef"],["hyperigm","Hyper-IgM syndrome","hyperigm"],["digeorge","DiGeorge syndrome","digeorge"],["scid","SCID","scidx"],["wiskott","Wiskott-Aldrich","wiskott"],["job","Job syndrome (hyper-IgE)","jobsyn"],["lad","Leukocyte adhesion deficiency","lad1"],["chediak","Chédiak-Higashi","chediak"],["cgd","Chronic granulomatous disease","cgd"],["c5c9","Terminal complement (C5–C9)","c5c9"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40201,7 +40202,7 @@ MAPS.vaxsim = {
  fa:"103, 109, 114, 116, 125",
  src:["Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
  art:"kit",
- dyn:{"lazy":"6798130ecf","switches":[{"id":"vx","label":"Vaccine type","type":"one","options":[["live","Live attenuated","vxlive"],["killed","Inactivated","vxkilled"],["sub","Subunit / recombinant","vxsub"],["conj","Conjugate","vxconj"],["ps","Polysaccharide only","vxconj"],["toxoid","Toxoid","vxtoxoid"],["mrna","mRNA","vxmrna"]]}],"panel":{"x":2370,"y":110,"w":1000}},
+ dyn:{"lazy":"33822438bd","switches":[{"id":"vx","label":"Vaccine type","type":"one","options":[["live","Live attenuated","vxlive"],["killed","Inactivated","vxkilled"],["sub","Subunit / recombinant","vxsub"],["conj","Conjugate","vxconj"],["ps","Polysaccharide only","vxconj"],["toxoid","Toxoid","vxtoxoid"],["mrna","mRNA","vxmrna"]]}],"panel":{"x":2370,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40227,7 +40228,7 @@ MAPS.altsim = {
  fa:"299, 626, 688",
  src:["Guyton ch 44 — Aviation, High Altitude, and Space Physiology", "Guyton ch 42 — Regulation of Respiration"],
  art:"kit",
- dyn:{"lazy":"756370245f","switches":[{"id":"alt","label":"Altitude","type":"steps","auto":3,"options":[["sea","Sea level"],["k10","10,000 ft"],["k20","20,000 ft"],["acc","20,000 ft, acclimatized"]]},{"id":"dx","label":"Show","type":"one","options":[["ams","Acute mountain sickness","altillness"],["hace","HACE","altillness"],["hape","HAPE","altillness"],["cms","Chronic mountain sickness","altillness"],["native","High-altitude natives","altnatives"],["acz","Acetazolamide","acetazolamide"],["o2","Breathing O₂","alttable"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"37cb594a0c","switches":[{"id":"alt","label":"Altitude","type":"steps","auto":3,"options":[["sea","Sea level"],["k10","10,000 ft"],["k20","20,000 ft"],["acc","20,000 ft, acclimatized"]]},{"id":"dx","label":"Show","type":"one","options":[["ams","Acute mountain sickness","altillness"],["hace","HACE","altillness"],["hape","HAPE","altillness"],["cms","Chronic mountain sickness","altillness"],["native","High-altitude natives","altnatives"],["acz","Acetazolamide","acetazolamide"],["o2","Breathing O₂","alttable"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40251,7 +40252,7 @@ MAPS.alvdzsim = {
  fa:"679, 683, 696, 698, 706",
  src:["Robbins ch 15 — The lung", "Robbins ch 10 — Diseases of infancy and childhood"],
  art:"kit",
- dyn:{"lazy":"2e2832993e","switches":[{"id":"dx","label":"Disease","type":"one","options":[["nrds","Neonatal RDS","nrds"],["coal","Coal","pneumoconiosis"],["silica","Silica","pneumoconiosis"],["asbestos","Asbestos","pneumoconiosis"],["beryl","Beryllium","pneumoconiosis"],["pap","Alveolar proteinosis","pap"],["ph","Pulmonary hypertension","pulmhtn"]]},{"id":"beta","label":"Prevention","type":"toggle","on":"Betamethasone given","off":"Antenatal betamethasone","def":false}],"panel":{"x":1996,"y":110,"w":1000}},
+ dyn:{"lazy":"9802aa981a","switches":[{"id":"dx","label":"Disease","type":"one","options":[["nrds","Neonatal RDS","nrds"],["coal","Coal","pneumoconiosis"],["silica","Silica","pneumoconiosis"],["asbestos","Asbestos","pneumoconiosis"],["beryl","Beryllium","pneumoconiosis"],["pap","Alveolar proteinosis","pap"],["ph","Pulmonary hypertension","pulmhtn"]]},{"id":"beta","label":"Prevention","type":"toggle","on":"Betamethasone given","off":"Antenatal betamethasone","def":false}],"panel":{"x":1996,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40274,7 +40275,7 @@ MAPS.hypoxsim = {
  fa:"684–688",
  src:["Guyton ch 40 — Principles of Gas Exchange; Diffusion of Oxygen and Carbon Dioxide Through Respiratory Membranes", "Guyton ch 43 — Respiratory Insufficiency—Pathophysiology, Diagnosis, Oxygen Therapy", "Guyton ch 44 — Aviation, High Altitude, and Space Physiology"],
  art:"kit",
- dyn:{"lazy":"6ddcc2b997","switches":[{"id":"hx","label":"Pick a cause of hypoxemia","type":"one","options":[["alt","High altitude","altitude"],["hypov","Hypoventilation","respacid"],["vq","V/Q mismatch","vq"],["diff","Diffusion limitation","ild"],["shunt","Right-to-left shunt","vq"],["dead","Dead space (PE)","deadspace"]]},{"id":"o2","label":"100% O₂","type":"toggle","on":"Breathing 100% O₂","off":"Room air","def":false}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"25ab60dd6d","switches":[{"id":"hx","label":"Pick a cause of hypoxemia","type":"one","options":[["alt","High altitude","altitude"],["hypov","Hypoventilation","respacid"],["vq","V/Q mismatch","vq"],["diff","Diffusion limitation","ild"],["shunt","Right-to-left shunt","vq"],["dead","Dead space (PE)","deadspace"]]},{"id":"o2","label":"100% O₂","type":"toggle","on":"Breathing 100% O₂","off":"Room air","def":false}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40333,7 +40334,7 @@ MAPS.odcsim = {
  fa:"410, 416, 425, 428, 687, 688, 689, 691",
  src:["Costanzo ch 5 — Respiratory physiology", "Guyton ch 41 — Transport of Oxygen and Carbon Dioxide in Blood and Tissue Fluids", "Robbins ch 14 — Red blood cell and bleeding disorders", "Marks ch 6 — Amino Acids in Proteins", "Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors", "Costanzo ch 7 — Acid-base physiology", "Guyton ch 45 — Physiology of Deep-Sea Diving and Other Hyperbaric Conditions", "Katzung ch 58 — Management of the Poisoned Patient", "Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes"],
  art:"kit",
- dyn:{"lazy":"c22c0f5b2c","switches":[{"id":"sh","label":"Shift · poison · disease","type":"one","options":[["exer","Exercise","odc"],["acid","↑ CO₂ / ↓ pH (Bohr)","odc"],["fever","↑ Temperature","odc"],["alt","High altitude (↑ 2,3-BPG)","altitude"],["cold","↓ Temperature","odc"],["hbf","Fetal hemoglobin","hbtypes"],["myo","Myoglobin","odc"],["co","Carbon monoxide","cohb"],["metb","Methemoglobinemia","methb"],["anemia","Anemia","odc"],["poly","Polycythemia","odc"],["cn","Cyanide","cyanide"],["sickle","Sickle cell","sickle"]],"sections":[["right shift",["exer","acid","fever","alt"]],["left shift",["cold","hbf","myo","co","metb"]],["how much hemoglobin",["anemia","poly"]],["other",["cn","sickle"]]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"6c2c1aa18c","switches":[{"id":"sh","label":"Shift · poison · disease","type":"one","options":[["exer","Exercise","odc"],["acid","↑ CO₂ / ↓ pH (Bohr)","odc"],["fever","↑ Temperature","odc"],["alt","High altitude (↑ 2,3-BPG)","altitude"],["cold","↓ Temperature","odc"],["hbf","Fetal hemoglobin","hbtypes"],["myo","Myoglobin","odc"],["co","Carbon monoxide","cohb"],["metb","Methemoglobinemia","methb"],["anemia","Anemia","odc"],["poly","Polycythemia","odc"],["cn","Cyanide","cyanide"],["sickle","Sickle cell","sickle"]],"sections":[["right shift",["exer","acid","fever","alt"]],["left shift",["cold","hbf","myo","co","metb"]],["how much hemoglobin",["anemia","poly"]],["other",["cn","sickle"]]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40388,7 +40389,7 @@ MAPS.pnasim = {
  fa:"125, 134, 148, 188, 680, 702",
  src:["Robbins ch 15 — The lung"],
  art:"kit",
- dyn:{"lazy":"79b8c5e9d7","switches":[{"id":"st","label":"Lobar stage","type":"steps","auto":3,"options":[["cong","Congestion"],["red","Red hepatization"],["gray","Gray hepatization"],["res","Resolution"]]},{"id":"dx","label":"Defense fails","type":"one","options":[["asp","No cough reflex (aspiration)","lungdefense"],["cilia","Cilia damaged","lungdefense"],["macro","Macrophages impaired","lungdefense"],["retain","Retained secretions","lungdefense"],["myco","Mycoplasma attachment","mycolab"],["abscess","Aspiration abscess","lungabscess"]]}],"panel":{"x":2105,"y":110,"w":1000}},
+ dyn:{"lazy":"501155558c","switches":[{"id":"st","label":"Lobar stage","type":"steps","auto":3,"options":[["cong","Congestion"],["red","Red hepatization"],["gray","Gray hepatization"],["res","Resolution"]]},{"id":"dx","label":"Defense fails","type":"one","options":[["asp","No cough reflex (aspiration)","lungdefense"],["cilia","Cilia damaged","lungdefense"],["macro","Macrophages impaired","lungdefense"],["retain","Retained secretions","lungdefense"],["myco","Mycoplasma attachment","mycolab"],["abscess","Aspiration abscess","lungabscess"]]}],"panel":{"x":2105,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40412,7 +40413,7 @@ MAPS.bonesim = {
  fa:"466, 467, 470, 471",
  src:["Robbins ch 26 — Bones, joints, and soft tissue tumors", "Bootcamp.com MSK — Primary bone tumors", "Moore ch 7 — Lower Limb", "Langman ch 12 — Limbs", "OCOM Ortho — SDL 9 reading: Pediatric orthopedic surgery (Current Diagnosis & Treatment in Orthopedics 6e ch 12)", "Moore ch 3 — Upper Limb", "Moore ch 1 — Overview and Basic Concepts", "OCOM Ortho — SDL 9 reading: Fracture management (Practical Office Orthopedics ch 8)", "Bootcamp.com MSK — Childhood musculoskeletal pathology"],
  art:"kit",
- dyn:{"lazy":"1abeba936f","switches":[{"id":"age","label":"Age","type":"steps","auto":4,"options":[["new","Newborn"],["u5","Under 5"],["s57","5–7"],["ado","Adolescent"],["ya","Young adult"],["old","Older adult"]]},{"id":"dx","label":"Tumor or condition","type":"one","options":[["osteo","Osteosarcoma","osteosarcoma"],["ewing","Ewing sarcoma","ewing"],["gct","Giant cell tumor","gct"],["ochon","Osteochondroma","osteochondroma"],["ooid","Osteoid osteoma","osteoidosteoma"],["chondro","Chondrosarcoma","chondrosarcoma"],["ench","Enchondroma","enchondroma"],["ddh","DDH","ddh"],["lcp","Legg-Calvé-Perthes","lcp"],["scfe","SCFE","scfe"],["osgood","Osgood-Schlatter","osgood"],["nurse","Nursemaid’s elbow","nursemaid"],["green","Greenstick fracture","pedsfx"],["torus","Torus fracture","pedsfx"],["bow","Bowing fracture","bowingfx"]],"sections":[["bone tumors",["osteo","ewing","gct","ochon","ooid","chondro","ench"]],["the child’s hip",["ddh","lcp","scfe"]],["knee · elbow",["osgood","nurse"]],["children’s fractures",["green","torus","bow"]]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"bf5b7ea757","switches":[{"id":"age","label":"Age","type":"steps","auto":4,"options":[["new","Newborn"],["u5","Under 5"],["s57","5–7"],["ado","Adolescent"],["ya","Young adult"],["old","Older adult"]]},{"id":"dx","label":"Tumor or condition","type":"one","options":[["osteo","Osteosarcoma","osteosarcoma"],["ewing","Ewing sarcoma","ewing"],["gct","Giant cell tumor","gct"],["ochon","Osteochondroma","osteochondroma"],["ooid","Osteoid osteoma","osteoidosteoma"],["chondro","Chondrosarcoma","chondrosarcoma"],["ench","Enchondroma","enchondroma"],["ddh","DDH","ddh"],["lcp","Legg-Calvé-Perthes","lcp"],["scfe","SCFE","scfe"],["osgood","Osgood-Schlatter","osgood"],["nurse","Nursemaid’s elbow","nursemaid"],["green","Greenstick fracture","pedsfx"],["torus","Torus fracture","pedsfx"],["bow","Bowing fracture","bowingfx"]],"sections":[["bone tumors",["osteo","ewing","gct","ochon","ooid","chondro","ench"]],["the child’s hip",["ddh","lcp","scfe"]],["knee · elbow",["osgood","nurse"]],["children’s fractures",["green","torus","bow"]]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40441,7 +40442,7 @@ MAPS.cervsim = {
  fa:"521, 523",
  src:["OCOM Ortho — SDL 19 lecture: Neck and back pain and injury", "OCOM Ortho — SDL 19 reading: Neck and back pain (Tintinalli’s Emergency Medicine 9e ch 279)", "Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement", "Bootcamp.com Neurology — Spinal cord syndromes"],
  art:"kit",
- dyn:{"lazy":"158d20fd64","switches":[{"id":"dz","label":"Narrowing","type":"one","options":[["spond","Spondylosis only","cervspond"],["foram","Foraminal stenosis → root","cervradic"],["central","Central stenosis → cord","cervmyel"],["hyper","Hyperextension injury","centralcord"]]},{"id":"rt","label":"Root (foraminal)","type":"steps","options":[["c5","C5"],["c6","C6"],["c7","C7"],["c8","C8"]]},{"id":"test","label":"Bedside sign","type":"toggle","on":"Sign tested","off":"Test the sign","def":false}],"panel":{"x":1847,"y":110,"w":1000}},
+ dyn:{"lazy":"9493c09b7d","switches":[{"id":"dz","label":"Narrowing","type":"one","options":[["spond","Spondylosis only","cervspond"],["foram","Foraminal stenosis → root","cervradic"],["central","Central stenosis → cord","cervmyel"],["hyper","Hyperextension injury","centralcord"]]},{"id":"rt","label":"Root (foraminal)","type":"steps","options":[["c5","C5"],["c6","C6"],["c7","C7"],["c8","C8"]]},{"id":"test","label":"Bedside sign","type":"toggle","on":"Sign tested","off":"Test the sign","def":false}],"panel":{"x":1847,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40488,7 +40489,7 @@ MAPS.fxsim = {
  fa:"450, 463, 467",
  src:["Moore ch 3 — Upper Limb", "Pawlina ch 8 — Bone", "OCOM Ortho — SDL 9 reading: Pediatric orthopedic surgery (Current Diagnosis & Treatment in Orthopedics 6e ch 12)", "Bootcamp.com MSK — Childhood musculoskeletal pathology"],
  art:"kit",
- dyn:{"lazy":"4f8e59fe88","switches":[{"id":"sh","label":"Salter-Harris","type":"one","options":[["1","Type I","salterharris"],["2","Type II","salterharris"],["3","Type III","salterharris"],["4","Type IV","salterharris"],["5","Type V","salterharris"]]},{"id":"inj","label":"Arm injury","type":"one","options":[["clav","Clavicle fracture","clavfx"],["antdis","Anterior shoulder dislocation","shoulderdisloc"],["shaft","Midshaft humerus fracture","radialnerve"],["supra","Supracondylar fracture","elbowinj"],["postdis","Posterior elbow dislocation","elbowinj"],["medepi","Medial epicondyle avulsion","elbowinj"],["colles","Colles","forearmfx"],["monteggia","Monteggia","forearmfx"],["galeazzi","Galeazzi","forearmfx"],["ll","Little League shoulder","littleleague"]]}],"panel":{"x":2142,"y":110,"w":1000}},
+ dyn:{"lazy":"1038284757","switches":[{"id":"sh","label":"Salter-Harris","type":"one","options":[["1","Type I","salterharris"],["2","Type II","salterharris"],["3","Type III","salterharris"],["4","Type IV","salterharris"],["5","Type V","salterharris"]]},{"id":"inj","label":"Arm injury","type":"one","options":[["clav","Clavicle fracture","clavfx"],["antdis","Anterior shoulder dislocation","shoulderdisloc"],["shaft","Midshaft humerus fracture","radialnerve"],["supra","Supracondylar fracture","elbowinj"],["postdis","Posterior elbow dislocation","elbowinj"],["medepi","Medial epicondyle avulsion","elbowinj"],["colles","Colles","forearmfx"],["monteggia","Monteggia","forearmfx"],["galeazzi","Galeazzi","forearmfx"],["ll","Little League shoulder","littleleague"]]}],"panel":{"x":2142,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40514,7 +40515,7 @@ MAPS.healsim = {
  fa:"48, 67, 69, 115, 210–214, 340",
  src:["Robbins ch 3 — Inflammation and repair", "Robbins ch 9 — Environmental and nutritional diseases"],
  art:"kit",
- dyn:{"lazy":"32aa5c4514","switches":[{"id":"t","label":"Time since the wound","type":"steps","auto":5,"options":[["min","Minutes — acute inflammation"],["inflam","Up to 3 days — inflammatory"],["prolif","Day 3 to weeks — proliferative"],["remod","1 week to 6+ months — remodeling"]]},{"id":"dx","label":"Add a problem","type":"one","options":[["vitc","Vitamin C deficiency","scurvy"],["cu","Copper deficiency","woundheal"],["zn","Zinc deficiency","zinc"],["gc","Glucocorticoid excess","cortisolact"],["lad","Leukocyte adhesion deficiency","lad1"],["hyper","Hypertrophic scar","woundheal"],["keloid","Keloid","woundheal"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"5b48c43867","switches":[{"id":"t","label":"Time since the wound","type":"steps","auto":5,"options":[["min","Minutes — acute inflammation"],["inflam","Up to 3 days — inflammatory"],["prolif","Day 3 to weeks — proliferative"],["remod","1 week to 6+ months — remodeling"]]},{"id":"dx","label":"Add a problem","type":"one","options":[["vitc","Vitamin C deficiency","scurvy"],["cu","Copper deficiency","woundheal"],["zn","Zinc deficiency","zinc"],["gc","Glucocorticoid excess","cortisolact"],["lad","Leukocyte adhesion deficiency","lad1"],["hyper","Hypertrophic scar","woundheal"],["keloid","Keloid","woundheal"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40544,7 +40545,7 @@ MAPS.injsim = {
  fa:"202–206",
  src:["Robbins ch 2 — Cell injury, cell death, and adaptations"],
  art:"kit",
- dyn:{"lazy":"2b49fa2814","switches":[{"id":"inj","label":"Pick a stage or a necrosis pattern","type":"one","options":[["rev","Reversible injury","cellinjury"],["irrev","Irreversible injury","cellinjury"],["apop","Apoptosis","apoptosis"],["coag","Coagulative necrosis","necrosis"],["liq","Liquefactive necrosis","necrosis"],["cas","Caseous necrosis","tb"],["fat","Fat necrosis","acutepanc"],["fibr","Fibrinoid necrosis","pan"],["gang","Gangrenous necrosis","necrosis"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"bd0e797376","switches":[{"id":"inj","label":"Pick a stage or a necrosis pattern","type":"one","options":[["rev","Reversible injury","cellinjury"],["irrev","Irreversible injury","cellinjury"],["apop","Apoptosis","apoptosis"],["coag","Coagulative necrosis","necrosis"],["liq","Liquefactive necrosis","necrosis"],["cas","Caseous necrosis","tb"],["fat","Fat necrosis","acutepanc"],["fibr","Fibrinoid necrosis","pan"],["gang","Gangrenous necrosis","necrosis"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40905,7 +40906,7 @@ MAPS.mapksim = {
  fa:"220, 443, 446, 447, 539",
  src:["Katzung ch 54 — Cancer Chemotherapy", "Katzung ch 55 — Immunopharmacology", "Robbins ch 7 — Neoplasia", "Robbins ch 23 — The breast", "Marks ch 17 — The Molecular Biology of Cancer", "Robbins ch 27 — Peripheral nerves and skeletal muscles", "Robbins ch 13 — Diseases of white blood cells, lymph nodes, spleen, and thymus"],
  art:"kit",
- dyn:{"lazy":"91b02180cd","switches":[{"id":"mut","label":"Driver","type":"one","options":[["egfrm","EGFR mutation","egfr"],["her2","HER2 amplification","her2"],["kras","KRAS mutation","kras"],["nf1","NF1 loss","nf1"],["braf","BRAF V600E","braf"],["myc","MYC activation","mycamp"]]},{"id":"rx","label":"Drug","type":"one","options":[["tki","Erlotinib / osimertinib","egfr"],["mab","Cetuximab","egfr"],["trast","Trastuzumab","her2"],["braf","Vemurafenib + trametinib","braf"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"fc22489299","switches":[{"id":"mut","label":"Driver","type":"one","options":[["egfrm","EGFR mutation","egfr"],["her2","HER2 amplification","her2"],["kras","KRAS mutation","kras"],["nf1","NF1 loss","nf1"],["braf","BRAF V600E","braf"],["myc","MYC activation","mycamp"]]},{"id":"rx","label":"Drug","type":"one","options":[["tki","Erlotinib / osimertinib","egfr"],["mab","Cetuximab","egfr"],["trast","Trastuzumab","her2"],["braf","Vemurafenib + trametinib","braf"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40957,7 +40958,7 @@ MAPS.netsim = {
  fa:"337, 338, 356, 357, 378",
  src:["Robbins ch 24 — The endocrine system", "Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases", "Katzung ch 11 — Antihypertensive Agents", "Costanzo ch 8 — Gastrointestinal physiology", "Robbins ch 17 — The gastrointestinal tract"],
  art:"kit",
- dyn:{"lazy":"38d23d25ea","switches":[{"id":"dx","label":"Tumor","type":"one","options":[["ins","Insulinoma","insulinoma"],["gluc","Glucagonoma","glucagonoma"],["som","Somatostatinoma","somatostatinoma"],["vip","VIPoma","vipoma"],["zes","Gastrinoma (ZES)","zes"]]},{"id":"men","label":"Syndrome","type":"toggle","on":"MEN1 shown","off":"Show MEN1","def":false},{"id":"oct","label":"Drug","type":"toggle","on":"Octreotide given","off":"Octreotide","def":false}],"panel":{"x":2163,"y":110,"w":1000}},
+ dyn:{"lazy":"c54ea4e937","switches":[{"id":"dx","label":"Tumor","type":"one","options":[["ins","Insulinoma","insulinoma"],["gluc","Glucagonoma","glucagonoma"],["som","Somatostatinoma","somatostatinoma"],["vip","VIPoma","vipoma"],["zes","Gastrinoma (ZES)","zes"]]},{"id":"men","label":"Syndrome","type":"toggle","on":"MEN1 shown","off":"Show MEN1","def":false},{"id":"oct","label":"Drug","type":"toggle","on":"Octreotide given","off":"Octreotide","def":false}],"panel":{"x":2163,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -40983,7 +40984,7 @@ MAPS.pancsim = {
  fa:"92, 205, 380, 388, 403–405",
  src:["Robbins ch 19 — The pancreas", "Robbins ch 18 — Liver and gallbladder", "Costanzo ch 8 — Gastrointestinal physiology", "Guyton ch 65 — Secretory Functions of the Alimentary Tract"],
  art:"kit",
- dyn:{"lazy":"51304040d9","switches":[{"id":"cause","label":"Cause","type":"one","options":[["stone","Gallstone","gallstones"],["etoh","Alcohol","acutepanc"],["tg","Hypertriglyceridemia","hypertg"],["ca","Hypercalcemia","acutepanc"],["chr","Chronic pancreatitis","chronicpanc"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"80cdea12d9","switches":[{"id":"cause","label":"Cause","type":"one","options":[["stone","Gallstone","gallstones"],["etoh","Alcohol","acutepanc"],["tg","Hypertriglyceridemia","hypertg"],["ca","Hypercalcemia","acutepanc"],["chr","Chronic pancreatitis","chronicpanc"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41066,7 +41067,7 @@ MAPS.avsim = {
  fa:"162, 166, 170, 171, 173, 180, 196, 197, 199",
  src:["Katzung ch 49 — Antiviral Agents", "Katzung ch 51 — Clinical Use of Antimicrobial Agents", "Robbins ch 8 — Infectious diseases", "Robbins ch 18 — Liver and gallbladder", "Katzung Appendix 1 — Vaccines, Immune Globulins, & Other Complex Biologic Products"],
  art:"kit",
- dyn:{"lazy":"166f10e5cb","switches":[{"id":"hv","label":"Herpesvirus","type":"steps","options":[["hsv","HSV · VZV"],["cmv","CMV"]]},{"id":"tk","label":"Resistance","type":"toggle","on":"Kinase-mutant virus","off":"Wild-type virus","def":false},{"id":"rx","label":"Drug","type":"one","options":[["acv","Acyclovir","acyclovir"],["gcv","Ganciclovir","ganciclovir"],["fos","Foscarnet","foscarnet"],["cdv","Cidofovir","foscarnet"],["previr","Glecaprevir (NS3/4A)","ns3"],["asvir","Velpatasvir (NS5A)","ns5a"],["buvir","Sofosbuvir (NS5B)","sofosbuvir"],["tdf","Tenofovir · entecavir (HBV)","hbvdrugs"],["osel","Oseltamivir","nai"],["balox","Baloxavir","baloxavir"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"15a2aff544","switches":[{"id":"hv","label":"Herpesvirus","type":"steps","options":[["hsv","HSV · VZV"],["cmv","CMV"]]},{"id":"tk","label":"Resistance","type":"toggle","on":"Kinase-mutant virus","off":"Wild-type virus","def":false},{"id":"rx","label":"Drug","type":"one","options":[["acv","Acyclovir","acyclovir"],["gcv","Ganciclovir","ganciclovir"],["fos","Foscarnet","foscarnet"],["cdv","Cidofovir","foscarnet"],["previr","Glecaprevir (NS3/4A)","ns3"],["asvir","Velpatasvir (NS5A)","ns5a"],["buvir","Sofosbuvir (NS5B)","sofosbuvir"],["tdf","Tenofovir · entecavir (HBV)","hbvdrugs"],["osel","Oseltamivir","nai"],["balox","Baloxavir","baloxavir"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41152,7 +41153,7 @@ MAPS.gxsim = {
  fa:"128, 129",
  src:["Robbins ch 8 — Infectious diseases", "Marks ch 16 — Use of Recombinant DNA Techniques in Medicine", "Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics", "Marks ch 14 — Translation: Synthesis of Proteins", "Marks ch 12 — Synthesis of DNA"],
  art:"kit",
- dyn:{"lazy":"d31aa19c4f","switches":[{"id":"gx","label":"Route","type":"one","options":[["tf","Transformation","transform"],["f","Conjugation F⁺ × F⁻","conjugation"],["hfr","Conjugation Hfr","conjugation"],["gen","Generalized transduction","transduction"],["spec","Specialized transduction","transduction"],["tn","Transposon","transposon"]]},{"id":"dnase","label":"Test","type":"toggle","on":"DNase added","off":"Add DNase","def":false}],"panel":{"x":2120,"y":110,"w":1000}},
+ dyn:{"lazy":"63ede92931","switches":[{"id":"gx","label":"Route","type":"one","options":[["tf","Transformation","transform"],["f","Conjugation F⁺ × F⁻","conjugation"],["hfr","Conjugation Hfr","conjugation"],["gen","Generalized transduction","transduction"],["spec","Specialized transduction","transduction"],["tn","Transposon","transposon"]]},{"id":"dnase","label":"Test","type":"toggle","on":"DNase added","off":"Add DNase","def":false}],"panel":{"x":2120,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41285,7 +41286,7 @@ MAPS.toxinsim = {
  fa:"130, 131, 136, 137, 141, 143, 144, 175, 432",
  src:["Robbins ch 8 — Infectious diseases", "Robbins ch 6 — Diseases of the immune system", "Katzung ch 44 — Tetracyclines, Macrolides, Clindamycin, Chloramphenicol, Streptogramins, Oxazolidinones, & Pleuromutilins", "Marks ch 14 — Translation: Synthesis of Proteins", "Katzung ch 43 — Beta-Lactam & Other Cell Wall- & Membrane-Active Antibiotics", "Katzung ch 51 — Clinical Use of Antimicrobial Agents", "Robbins ch 17 — The gastrointestinal tract", "Marks ch 10 — Cell Structure and Signaling by Chemical Messengers", "Fundamental Neuroscience ch 4 — Chemical Signaling in the Nervous System", "Pawlina ch 2 — Cell Cytoplasm", "Robbins ch 27 — Peripheral nerves and skeletal muscles", "Katzung ch 27 — Skeletal Muscle Relaxants"],
  art:"kit",
- dyn:{"lazy":"b8679582c4","switches":[{"id":"tx","label":"Toxin","type":"one","options":[["cholera","Cholera toxin","vibrio"],["lt","E. coli heat-labile (LT)","etectox"],["st","E. coli heat-stable (ST)","etectox"],["pert","Pertussis toxin","pertussis"],["diph","Diphtheria toxin","diphtheria"],["pseudo","Pseudomonas exotoxin A","pseudomonas"],["shiga","Shiga toxin","shigella"],["perf","C. perfringens α-toxin","cperfringens"],["botu","Botulinum toxin","botulinum"],["tet","Tetanus toxin","tetanus"],["super","Superantigen (TSST-1)","superag"]]}],"panel":{"x":2270,"y":110,"w":1000}},
+ dyn:{"lazy":"fff9e942e0","switches":[{"id":"tx","label":"Toxin","type":"one","options":[["cholera","Cholera toxin","vibrio"],["lt","E. coli heat-labile (LT)","etectox"],["st","E. coli heat-stable (ST)","etectox"],["pert","Pertussis toxin","pertussis"],["diph","Diphtheria toxin","diphtheria"],["pseudo","Pseudomonas exotoxin A","pseudomonas"],["shiga","Shiga toxin","shigella"],["perf","C. perfringens α-toxin","cperfringens"],["botu","Botulinum toxin","botulinum"],["tet","Tetanus toxin","tetanus"],["super","Superantigen (TSST-1)","superag"]]}],"panel":{"x":2270,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41449,7 +41450,7 @@ MAPS.orbitsim = {
  fa:"518, 555, 557, 559",
  src:["Moore ch 9 — Head", "Robbins ch 29 — The eye"],
  art:"kit",
- dyn:{"lazy":"23f157a8e9","switches":[{"id":"orb","label":"Orbit","type":"one","options":[["blow","Blowout fracture","orbitwalls"],["sof","Superior orbital fissure lesion","orbitapex"],["apex","Orbital apex lesion","orbitapex"]]},{"id":"blk","label":"Tear duct","type":"toggle","on":"Duct blocked","off":"Block the duct","def":false},{"id":"eye","label":"Lid & cornea","type":"one","options":[["hord","Hordeolum (sty)","lidlumps"],["chal","Chalazion","lidlumps"],["seb","Sebaceous carcinoma","lidlumps"],["pter","Pterygium","pterygium"],["kc","Keratoconus","corneadz"],["fuchs","Fuchs dystrophy","corneadz"]]}],"panel":{"x":2396,"y":110,"w":1000}},
+ dyn:{"lazy":"83f16eb1bd","switches":[{"id":"orb","label":"Orbit","type":"one","options":[["blow","Blowout fracture","orbitwalls"],["sof","Superior orbital fissure lesion","orbitapex"],["apex","Orbital apex lesion","orbitapex"]]},{"id":"blk","label":"Tear duct","type":"toggle","on":"Duct blocked","off":"Block the duct","def":false},{"id":"eye","label":"Lid & cornea","type":"one","options":[["hord","Hordeolum (sty)","lidlumps"],["chal","Chalazion","lidlumps"],["seb","Sebaceous carcinoma","lidlumps"],["pter","Pterygium","pterygium"],["kc","Keratoconus","corneadz"],["fuchs","Fuchs dystrophy","corneadz"]]}],"panel":{"x":2396,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41474,7 +41475,7 @@ MAPS.painsim = {
  fa:"235, 477, 529, 560, 568, 593",
  src:["Fundamental Neuroscience ch 18 — The Somatosensory System II: Nociception, Thermal Sense, and Touch", "Katzung ch 30 — Antidepressant Agents", "Katzung ch 24 — Antiseizure Medications"],
  art:"kit",
- dyn:{"lazy":"d02eebe9dc","switches":[{"id":"dx","label":"Pain","type":"one","options":[["neuro","Peripheral neuropathic","neuropathicpain"],["thal","Thalamic pain","thalamicpain"],["phantom","Phantom limb","phantomlimb"],["fibro","Fibromyalgia","fibromyalgia"]]},{"id":"rx","label":"Treatment","type":"one","options":[["gaba","Gabapentinoid","neuropathicpain"],["tca","TCA","neuropathicpain"],["snri","SNRI","fibromyalgia"],["caps","Topical capsaicin","neuropathicpain"],["tens","TENS","estim"]]}],"panel":{"x":2116,"y":110,"w":1000}},
+ dyn:{"lazy":"7bc081d886","switches":[{"id":"dx","label":"Pain","type":"one","options":[["neuro","Peripheral neuropathic","neuropathicpain"],["thal","Thalamic pain","thalamicpain"],["phantom","Phantom limb","phantomlimb"],["fibro","Fibromyalgia","fibromyalgia"]]},{"id":"rx","label":"Treatment","type":"one","options":[["gaba","Gabapentinoid","neuropathicpain"],["tca","TCA","neuropathicpain"],["snri","SNRI","fibromyalgia"],["caps","Topical capsaicin","neuropathicpain"],["tens","TENS","estim"]]}],"panel":{"x":2116,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41555,7 +41556,7 @@ MAPS.cransim = {
  fa:"",
  src:["Atlas of Osteopathic Techniques ch 18 — Osteopathic Cranial Manipulative Medicine", "OCOM OMM — OMS2 written midterm study guide"],
  art:"kit",
- dyn:{"lazy":"32bf0a3a20","switches":[{"id":"ph","label":"Phase","type":"steps","auto":3,"options":[["flex","Flexion"],["ext","Extension"]]},{"id":"st","label":"Strain pattern","type":"one","options":[["tors","Torsion","sbstorsion"],["sbr","Side bending / rotation","sbssbr"],["comp","Compression","sbscompress"],["vsup","Superior vertical strain","sbsvertical"],["vinf","Inferior vertical strain","sbsvertical"],["lat","Lateral strain","sbslateral"]]},{"id":"tx","label":"Technique","type":"one","options":[["cv4","CV4","cv4"],["vs","V-spread","vspread"],["vsd","Venous sinus drainage","venoussinus"],["cond","Condylar decompression","condylar"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"4fc13a33bf","switches":[{"id":"ph","label":"Phase","type":"steps","auto":3,"options":[["flex","Flexion"],["ext","Extension"]]},{"id":"st","label":"Strain pattern","type":"one","options":[["tors","Torsion","sbstorsion"],["sbr","Side bending / rotation","sbssbr"],["comp","Compression","sbscompress"],["vsup","Superior vertical strain","sbsvertical"],["vinf","Inferior vertical strain","sbsvertical"],["lat","Lateral strain","sbslateral"]]},{"id":"tx","label":"Technique","type":"one","options":[["cv4","CV4","cv4"],["vs","V-spread","vspread"],["vsd","Venous sinus drainage","venoussinus"],["cond","Condylar decompression","condylar"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41584,7 +41585,7 @@ MAPS.frysim = {
  fa:"",
  src:["Foundations of Osteopathic Medicine ch 31 — Osteopathic Segmental Examination", "Atlas of Osteopathic Techniques ch 5 — Intersegmental Motion Testing", "OCOM OMM — OMS2 written midterm study guide", "OCOM OMM — Thoracic OMT review lab rubric", "Foundations of Osteopathic Medicine ch 43 — Clinical Assessment: Viscerosomatic, Somatosomatic, Somatovisceral Reflexes; Counterstrain Points, Myofascial Trigger Points, and Chapman Reflexes", "Foundations of Osteopathic Medicine ch 93 — Osteopathic Considerations in the Patient With Low Back Pain", "OCOM OMM — Pulmonology and rib OMT lab rubric", "OCOM OMM — Week 9 lab rubric: upper and lower crossed syndromes", "Atlas of Osteopathic Techniques ch 10 — Muscle Energy Techniques", "Foundations of Osteopathic Medicine (4e) ch 42 — Acute Low Back Pain", "OCOM OMM — Lab rubric: Still technique and FPR", "Foundations of Osteopathic Medicine ch 56 — Still Technique: A Facilitated Indirect Then Direct Method"],
  art:"kit",
- dyn:{"lazy":"0e987d0768","switches":[{"id":"fr","label":"Fryette","type":"one","options":[["t1","Type I — neutral group","fryette"],["t2","Type II — single segment","fryette"],["t3","Principle III","fryette"]]},{"id":"tx","label":"Technique","type":"one","options":[["cs","Counterstrain","counterstrain"],["met","Muscle energy","met"],["hvla","HVLA","hvla"],["mfr","Myofascial release","mfr"],["still","Still technique","stilltech"],["fpr","FPR","fpr"],["func","Functional","functech"]]}],"panel":{"x":2500,"y":110,"w":1000}},
+ dyn:{"lazy":"2994164177","switches":[{"id":"fr","label":"Fryette","type":"one","options":[["t1","Type I — neutral group","fryette"],["t2","Type II — single segment","fryette"],["t3","Principle III","fryette"]]},{"id":"tx","label":"Technique","type":"one","options":[["cs","Counterstrain","counterstrain"],["met","Muscle energy","met"],["hvla","HVLA","hvla"],["mfr","Myofascial release","mfr"],["still","Still technique","stilltech"],["fpr","FPR","fpr"],["func","Functional","functech"]]}],"panel":{"x":2500,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41635,7 +41636,7 @@ MAPS.neosim = {
  fa:"202, 215–220",
  src:["Robbins ch 7 — Neoplasia", "Robbins ch 2 — Cell injury, cell death, and adaptations", "Marks ch 17 — The Molecular Biology of Cancer"],
  art:"kit",
- dyn:{"lazy":"e1a1497366","switches":[{"id":"stage","label":"Stage","type":"steps","auto":4,"options":[["nl","Normal"],["meta","Metaplasia"],["dys","Dysplasia"],["cis","Carcinoma in situ"],["inv","Invasive carcinoma"],["met","Metastasis"]]},{"id":"gene","label":"Genetics","type":"one","options":[["onc","Oncogene — one hit","oncogenes"],["tsg","Tumor suppressor — two hits","tsgenes"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"179e90ceee","switches":[{"id":"stage","label":"Stage","type":"steps","auto":4,"options":[["nl","Normal"],["meta","Metaplasia"],["dys","Dysplasia"],["cis","Carcinoma in situ"],["inv","Invasive carcinoma"],["met","Metastasis"]]},{"id":"gene","label":"Genetics","type":"one","options":[["onc","Oncogene — one hit","oncogenes"],["tsg","Tumor suppressor — two hits","tsgenes"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41738,7 +41739,7 @@ MAPS.plsim = {
  fa:"698–699",
  src:["Robbins ch 15 — The lung", "Guyton ch 39 — Pulmonary Circulation, Pulmonary Edema, and Pleural Fluid"],
  art:"kit",
- dyn:{"lazy":"6cc7058165","switches":[{"id":"mech","label":"Mechanism","type":"one","options":[["hf","Heart failure","effmech"],["pna","Pneumonia (leaky)","effmech"],["ne","Nephrotic (low protein)","effmech"],["at","Atelectasis (suction)","effmech"],["ly","Lymph blocked","effmech"]]},{"id":"fl","label":"What fills it","type":"one","options":[["hy","Clear fluid","hydrothorax"],["he","Blood","hydrothorax"],["ch","Milky chyle","hydrothorax"],["em","Pus","pleuritis"],["mt","Tumor cells","effmech"]]}],"panel":{"x":2060,"y":110,"w":1000}},
+ dyn:{"lazy":"6769fd7bb2","switches":[{"id":"mech","label":"Mechanism","type":"one","options":[["hf","Heart failure","effmech"],["pna","Pneumonia (leaky)","effmech"],["ne","Nephrotic (low protein)","effmech"],["at","Atelectasis (suction)","effmech"],["ly","Lymph blocked","effmech"]]},{"id":"fl","label":"What fills it","type":"one","options":[["hy","Clear fluid","hydrothorax"],["he","Blood","hydrothorax"],["ch","Milky chyle","hydrothorax"],["em","Pus","pleuritis"],["mt","Tumor cells","effmech"]]}],"panel":{"x":2060,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41834,7 +41835,7 @@ MAPS.watersim = {
  fa:"237, 331, 332, 333, 341, 342, 360, 538, 587, 592, 608",
  src:["Guyton ch 76 — Pituitary Hormones and Their Control By the Hypothalamus", "Costanzo ch 9 — Endocrine physiology", "Costanzo ch 6 — Renal physiology", "Guyton ch 29 — Urine Concentration and Dilution; Regulation of Extracellular Fluid Osmolarity and Sodium Concentration", "Fundamental Neuroscience ch 3 — The Electrochemical Basis of Nerve Function", "Guyton ch 25 — Regulation of Body Fluid Compartments: Extracellular and Intracellular Fluids; Edema", "Kaplan & Sadock ch 21 — Psychopharmacology", "Katzung ch 29 — Antipsychotic Agents & Lithium", "Katzung ch 58 — Management of the Poisoned Patient", "Katzung ch 15 — Diuretic Agents"],
  art:"kit",
- dyn:{"lazy":"6ea7922ea7","switches":[{"id":"dx","label":"State · disorder · drug","type":"one","options":[["dry","Water deprivation","freewater"],["drink","Water load","freewater"],["siadh","SIADH","siadh"],["cdi","Central DI","di"],["ndi","Nephrogenic DI","di"],["poly","Primary polydipsia","polyuriadx"],["lith","Lithium","adhdrugs"],["desmo","Desmopressin","adhdrugs"],["vapt","Tolvaptan · conivaptan","adhdrugs"]]},{"id":"dd","label":"DI work-up","type":"toggle","on":"Desmopressin given","off":"Give desmopressin","def":false}],"panel":{"x":2131,"y":110,"w":1000}},
+ dyn:{"lazy":"669995b6d3","switches":[{"id":"dx","label":"State · disorder · drug","type":"one","options":[["dry","Water deprivation","freewater"],["drink","Water load","freewater"],["siadh","SIADH","siadh"],["cdi","Central DI","di"],["ndi","Nephrogenic DI","di"],["poly","Primary polydipsia","polyuriadx"],["lith","Lithium","adhdrugs"],["desmo","Desmopressin","adhdrugs"],["vapt","Tolvaptan · conivaptan","adhdrugs"]]},{"id":"dd","label":"DI work-up","type":"toggle","on":"Desmopressin given","off":"Give desmopressin","def":false}],"panel":{"x":2131,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -43401,10 +43402,11 @@ function kitArt(m){
       out.push(`<path d="${s.membrane}" class="dyn-mem" stroke-width="${w}"/><path d="${s.membrane}" class="dyn-mem-in" stroke-width="${Math.max(2,w-10)}"/>`); }
     else if(s.text!==undefined) out.push(`<text class="${s.cls||"nf-l2"}" x="${s.x}" y="${s.y}"${s.anchor?` text-anchor="${s.anchor}"`:""}>${esc(s.text)}</text>`);
   });
-  /* particles along paths */
+  /* particles along paths — a flow with `track` first gets a faint dotted guide, so the particle is never seen crossing nothing */
   (d.flows||[]).forEach(f=>{
     if(f.when&&!dynAny(st,f.when)) return;
     if(f.unless&&dynAny(st,f.unless)) return;
+    if(f.track) out.push(`<path d="${f.d}" class="dyn-track"/>`);
     const c=Object.assign({},f.base); let sp=f.speed||140;
     (f.mods||[]).forEach(md=>{ if(!dynAny(st,md.when)) return;
       Object.entries(md.add||{}).forEach(([k,n])=>{ c[k]=Math.max(0,(c[k]||0)+n); });
