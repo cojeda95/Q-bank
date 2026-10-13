@@ -339,6 +339,12 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 .drawer{position:absolute;top:0;right:0;bottom:0;width:404px;max-width:92%;background:var(--surface);
   border-left:1px solid var(--line);box-shadow:var(--shadow);overflow-y:auto;z-index:20;padding:0 0 36px}
 .dhead{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--line-2);padding:18px 20px 14px;z-index:2}
+.dhead.compact{padding:10px 20px 9px;box-shadow:0 6px 12px -10px rgba(0,0,0,.35)}
+.dhead.compact .dkind,.dhead.compact .dalias,.dhead.compact .dmeta,.dhead.compact .alsoon,.dhead.compact .revrow,.dhead.compact .dhead-more{display:none}
+.dhead.compact .dtitle{font-size:16px;padding-right:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dhead.compact .dacts{margin:-3px 30px 0 10px}.dhead.compact .dacts .dlink span{display:none}.dhead.compact .dacts .dlink{padding:0 7px}
+.alsoon .pagehit.more{display:none}.alsoon.open .pagehit.more{display:inline-flex}
+.alsoon .alsomore{border-style:dashed;color:var(--ink-3)}
 .dclose{position:absolute;top:13px;right:13px;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:var(--ink-3);font-size:17px}
 .dclose:hover{background:var(--surface-2);color:var(--ink)}
 .dkind{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:600;letter-spacing:.12em;
@@ -41889,6 +41895,7 @@ const TOPICS = [
    ENGINE
    ═══════════════════════════════════════════════════════════════ */
 const svg=document.getElementById('svg'), drawer=document.getElementById('drawer'),
+      _dfold=drawer&&drawer.addEventListener('scroll',()=>{ const h=drawer.querySelector('.dhead'); if(!h) return; const t=drawer.scrollTop; if(t>90) h.classList.add('compact'); else if(t<8) h.classList.remove('compact'); },{passive:true}),
       rail=document.getElementById('rail'), idxWrap=document.getElementById('indexwrap'),
       tabsEl=document.getElementById('tabs'), qInput=document.getElementById('q'),
       mapwrap=document.getElementById('mapwrap');
@@ -44384,7 +44391,7 @@ function openLes(id,center,pick){
        ${L.ref&&L.ref.length?`<span class="mtag fa" title="Checked against the PubMed-indexed articles listed at the bottom of this card">Literature ${L.ref.length===1?"ref":"refs"} ↓</span>`:""}
      </div>
      ${(()=>{ const others=[...new Set((LOC[id]||[]).map(l=>l.v))].filter(v=>v!==state.view);
-       return others.length?`<div class="pagehits alsoon"><span class="revnote">${state.view==="index"?"On":"Also on"}</span>${others.map(v=>`<button class="pagehit" data-also="${v}">${esc((VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1])}</button>`).join("")}</div>`:""; })()}
+       return others.length?`<div class="pagehits alsoon"><span class="revnote">${state.view==="index"?"On":"Also on"}</span>${others.map((v,i)=>`<button class="pagehit${i>=3?" more":""}" data-also="${v}">${esc((VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1])}</button>`).join("")}</div>`:""; })()}
      <div class="revrow"><button class="revbtn" id="drev" aria-pressed="${isRev(id)}" title="Saved on this device only">${isRev(id)?"✓ Reviewed":"Mark reviewed"}</button><button class="revbtn" id="dknow" aria-pressed="${isKnown(id)}" title="Leave this card out of every quiz and the due list">${isKnown(id)?"✓ I know this":"I know this"}</button><button class="revbtn" id="dcmp" title="Set this card beside another, line by line">Compare…</button>${clozeCount(id)>=2?'<button class="revbtn" id="dtest" title="Hide this card’s key terms and recall them">Test me</button>':""}${quizNote(id)}</div>
    </div>
    <div class="dbody">
@@ -44406,6 +44413,9 @@ function openLes(id,center,pick){
   document.getElementById("dlink").onclick=copyLink;
   document.getElementById("dcmp").onclick=()=>openComparePick(id);
   drawer.querySelectorAll("[data-also]").forEach(b=>b.onclick=()=>{ setView(b.dataset.also); openLes(id,true); });
+  { const ao=drawer.querySelector(".alsoon"), n=ao?ao.querySelectorAll(".pagehit.more").length:0;
+    if(n){ const t=document.createElement("button"); t.className="pagehit alsomore"; t.type="button"; t.textContent="+"+n+" more";
+      t.onclick=()=>{ const o=ao.classList.toggle("open"); t.textContent=o?"Show fewer":"+"+n+" more"; }; ao.appendChild(t); } }
   drawer.querySelectorAll("[data-plotgo]").forEach(b=>b.onclick=()=>{ const [v,i]=b.dataset.plotgo.split(":");
     if(matchMedia("(max-width: 760px)").matches) closeDrawer(); goPlot(v,+i); });
   drawer.querySelectorAll("[data-dyngo]").forEach(b=>b.onclick=()=>{ closeDrawer(); goSwitch(b.dataset.dyngo); });
