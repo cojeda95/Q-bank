@@ -111,7 +111,6 @@
 
   .today { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
   #tileNew { grid-column: 1 / -1; }
-  #tileNew .newlist { columns: 2 220px; column-gap: 28px; }
   .tile { background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--text); text-decoration: none; }
   a.tile:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
   .tile .big { font-family: var(--serif); font-size: 2.5rem; font-weight: 600; line-height: 1; color: var(--teal); }
@@ -126,9 +125,6 @@
   .g-glyph .ax { stroke: var(--text-faint); stroke-width: 1; fill: none; }
   .g-glyph .c1 { stroke: var(--navy); stroke-width: 2; fill: none; }
   .g-glyph .c2 { stroke: var(--teal); stroke-width: 2; fill: none; }
-  .newlist { margin: 0; padding-left: 18px; font-size: 0.85rem; line-height: 1.65; }
-  .newlist a { color: var(--text-strong); text-decoration: none; }
-  .newlist a:hover { color: var(--navy); text-decoration: underline; }
 
   .systems { display: grid; grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); gap: 10px; }
   .sys { --c: var(--navy); background: var(--card-bg); border: 1px solid var(--grey-border); border-left: 4px solid var(--c); border-radius: 12px; display: flex; flex-direction: column; }
@@ -304,8 +300,8 @@
           <div class="tile" id="tileNew" hidden>
             <span class="kicker">New in the atlas</span>
             <span class="t" id="newCount"></span>
-            <ul class="newlist" id="newList"></ul>
-            <span class="go-row"><a href="resources/metabolic-atlas.html#quiz/moving">Moving-map mix →</a></span>
+            <span class="d" id="newDesc"></span>
+            <span class="go-row"><a href="resources/metabolic-atlas.html#index">See them in the atlas →</a> <a href="resources/metabolic-atlas.html#quiz/moving">Moving-map mix →</a></span>
           </div>
         </div>
       </section>
@@ -448,8 +444,13 @@
     /* the newest maps: the atlas's latest batch */
     var latest = (H.latest || []).filter(function (v) { return H.maps[v]; });
     if (latest.length) {
-      document.getElementById('newCount').textContent = latest.length + (latest.length === 1 ? ' map' : ' maps');
-      document.getElementById('newList').innerHTML = latest.map(function (v) { return '<li><a href="' + ATLAS + '#' + v + '">' + esc(H.maps[v][0]) + '</a></li>'; }).join('');
+      /* a big batch reads as "100+ new maps", a small one by count; "today" while the batch's go-live date is today */
+      var n = latest.length, count = n >= 20 ? Math.floor(n / 10) * 10 + '+ new maps' : n + (n === 1 ? ' new map' : ' new maps');
+      var d = H.latestDate || '', today = new Date(), iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+      document.getElementById('newCount').textContent = count + (d ? (d === iso ? ' added today' : ' added ' + new Date(d + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })) : '');
+      /* no list — with a batch this size the atlas index (and each system's New pills) does the listing; name three to give the flavour */
+      var sample = latest.slice(0, 3).map(function (v) { return H.maps[v][0]; });
+      document.getElementById('newDesc').textContent = (sample.length ? sample.join(' · ') + (n > 3 ? ' and more' : '') + ' — ' : '') + 'each system\u2019s map row marks the ones you haven\u2019t opened yet.';
       document.getElementById('tileNew').hidden = false;
     }
 

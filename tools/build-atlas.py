@@ -540,6 +540,7 @@ paths = {k: (n, c) for k, n, c in re.findall(r'([A-Za-z0-9_]+):\{n:"([^"]*)",v:"
 nseg = art[art.index("const NEW_MAPS="):]
 new_lines = [l for l in nseg[:nseg.index("};")].split("\n") if re.search(r'[a-z0-9_]+:"\d{4}-\d\d-\d\d"', l)]
 latest = re.findall(r'([a-z0-9_]+):"\d{4}-\d\d-\d\d"', new_lines[-1]) if new_lines else []
+latest_date = (re.search(r'"(\d{4}-\d\d-\d\d)"', new_lines[-1]).group(1) if new_lines else "")   # the batch's go-live date, for the hub tile
 
 def num(s, k):
     m = re.search(r"\b" + k + r":(-?[\d.]+)", s)
@@ -607,7 +608,7 @@ for k, ms in (json.loads(am.group(1)).items() if am else []):
     if k not in ABBR_SKIP and len(k) >= 2 and ms:
         abbr[k] = ms
 home = {"stats": {"maps": len(home_maps), "cards": len(rows), "graphs": len(all_plots), "linked": nlinked}, "abbr": abbr,
-        "topics": topics, "maps": home_maps, "latest": [v for v in latest if v in home_maps],
+        "topics": topics, "maps": home_maps, "latest": [v for v in latest if v in home_maps], "latestDate": latest_date,
         "graphs": all_plots, "blocks": [list(b) for b in blocks], "sdls": sdl_list,
         "moves": [x[:4] for x in moves if x[1]],
         "dyn": sorted(keep)}   # the moving-map drawings (resources/dyn/), so the hub's "Save all" saves them too
