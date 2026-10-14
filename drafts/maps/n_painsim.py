@@ -62,9 +62,16 @@ text('primary somatosensory cortex', 1250, 240, 'nf-l1', 'middle')
 for x in (520, 640, 760):
     add(f'<rect x="{x - 10}" y="1260" width="20" height="30" rx="4" style="fill:var(--bad);opacity:.8"/>', when=D('neuro'))
 text('upregulated Na⁺ channels fire on their own', 640, 1330, 'nf-l1 dyn-tag', 'middle', when=D('neuro'))
-for x, y in ((1700, 500), (1900, 500), (1700, 900), (1900, 900)):
-    add(f'<circle cx="{x}" cy="{y}" r="60" style="fill:var(--bad);fill-opacity:.25;stroke:var(--bad);stroke-width:3"/>', when=D('fibro'))
-text('widespread pain in all four quadrants ≥ 3 months · ESR normal', 1800, 1020, 'nf-l1 dyn-tag', 'middle', when=D('fibro'))
+# fibromyalgia: a body seen from behind, cut into four quadrants, with pain in each
+FB = 'fill:var(--dk2);fill-opacity:.05;stroke:var(--dk2);stroke-width:4;stroke-linejoin:round'
+add(f'<circle cx="1800" cy="410" r="46" style="{FB}"/><path d="M1772 452 V476 M1828 452 V476" style="stroke:var(--dk2);stroke-width:4"/>'
+    f'<path d="M1680 482 C1740 470 1860 470 1920 482 L1905 880 H1695 Z" style="{FB}"/>'
+    '<path d="M1682 495 L1640 700 L1625 820 M1918 495 L1960 700 L1975 820 M1745 880 V1000 M1855 880 V1000" style="fill:none;stroke:var(--dk2);stroke-width:30;stroke-linecap:round;opacity:.16"/>'
+    '<path d="M1800 480 V880 M1690 680 H1910" style="stroke:var(--dk2);stroke-width:2;stroke-dasharray:8 8;opacity:.6"/>', when=D('fibro'))
+FIBRO_PTS = ((1745, 570), (1855, 570), (1748, 800), (1852, 800))   # upper back · lower back and hips, both sides
+for x, y in FIBRO_PTS:
+    add(f'<circle cx="{x}" cy="{y}" r="40" style="fill:var(--bad);fill-opacity:.3;stroke:var(--bad);stroke-width:3"/>', when=D('fibro'))
+text('widespread pain in all four quadrants ≥ 3 months · ESR normal', 1800, 1060, 'nf-l1 dyn-tag', 'middle', when=D('fibro'))
 TAG = dict(neuro='diabetic neuropathy, postherpetic neuralgia — burning, electric pain ordinary analgesics miss',
            thal='thalamic lesion — paresthesias, then allodynia, hyperalgesia, dysesthesia on the opposite side',
            phantom='burning, aching or shock-like pain in a limb that is gone — S1 reorganizes',
@@ -84,7 +91,7 @@ flows = [
   dict(d='M1200 620 C1300 500 1400 400 1450 330', len=360, speed=130, r=9, base=dict(pain=3), when=D('thal', 'phantom')),
   dict(d='M760 960 C800 1000 830 1030 850 1050', len=120, speed=80, r=8, base=dict(gate=3), when=R('tens')),
 ] + [dict(d=f'M{x} {y} C{(x + 1200) / 2:.0f} {y - 100} 1300 700 1260 320', len=900, speed=110, r=8, base=dict(pain=2), when=D('fibro'),
-          mods=[EASE]) for x, y in ((1700, 500), (1900, 900))]
+          mods=[EASE]) for x, y in (FIBRO_PTS[0], FIBRO_PTS[3])]
 sites = [dict(x=560, y=1200, n=[-1, -1], w=10, t='rec', l='', aria='Neuropathic pain', c='neuropathicpain', ions=[]),
          dict(x=1080, y=1110, n=[1, 0], w=10, t='rec', l='', aria='Spinothalamic tract', c='stttract', ions=[]),
          dict(x=1290, y=560, n=[1, -1], w=10, t='rec', l='', aria='Thalamic pain syndrome', c='thalamicpain', ions=[]),
