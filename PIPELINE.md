@@ -881,3 +881,14 @@ approved by the owner; Pathology and Biostats stay ungrouped), a **block** menu 
 from ATLAS_PRACTICE.maps), and the kind chips. **77 reference/moving pairs share one tab** with a ⇄ switch (Static ⇄ In motion),
 359 → 282 tabs. The open map is always shown: arriving at a map the filters would hide clears the filter that hides it; picking a
 filter that hides the open map opens the first map that passes. All of it is the m47 assemble patch "# 11" + groups.json.
+
+## m48e — organ-pass fix and a site-wide figure scan (2026-10-13)
+The organ pass (batches/m47/organs.py) now gives each circle/ellipse/rect to its NEAREST organ label (it used to take the biggest
+shape near a label, which turned Hypertension's kidney into an adrenal and its adrenal into a heart). A shape is left as drawn
+when it is about as close to two organs' labels (Sex Differentiation's gonad under both "testis" and "ovary"), when a closer label
+names something else (mumps parotids under "brain"), when several shapes would become one unpaired organ (two thyroid lobes →
+two thyroids), when it is a mark shown together with a larger outline of the same organ (emboli, crystals, corpus luteum), when
+it is a banner (aspect > 2.5) or a panel (rect > 450 px), and on maps that draw their own anatomy (zoosim). Labels whose second
+word is hormone/cartilage/valve… are not the organ. Scan (all 162 moving maps): no organ outline sits nearest another organ's
+label, no unpaired organ is drawn twice; a rendered check of every state's added shapes found one real stray — fibromyalgia's
+tender points with no body (painsim now draws a back view with the four quadrants).
