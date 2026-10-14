@@ -17,6 +17,7 @@
  */
 
 const ANNOUNCEMENTS = [
+  { date: '10/14/26', text: 'Research: added 10 questions per SDL for upcoming midterm, 50 in total' },
   { date: '10/12/26', text: 'Nephro: Added trial questions for all of exam 3, General: Added more dynamic maps and sub-categories for each core subject' },
   { date: '10/11/26', text: 'General: Added pause button for both timed and untimed exam simulations, Atlas: Added a mini GUI of variables when zooming into dynamic maps for easeier manipulation of conditions' }, 
   { date: '10/9/26', text: 'General: UX redesign, Lestion Atlas: Added dynamic maps with manipulative variables, Nephro: Added Moorjani split for exam 2' },
