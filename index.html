@@ -377,6 +377,10 @@
         <div class="block-title">OMM III Written Midterm</div>
         <div class="block-desc">22 SDLs &middot; 594 questions</div>
       </a>
+      <a class="block-card" href="research/index.html">
+        <div class="block-title">Research Midterm</div>
+        <div class="block-desc">5 SDLs &middot; 50 questions</div>
+      </a>
     </div>
   </section>
 
@@ -581,7 +585,7 @@
     /* a block named in the search ("nephro SDL 23", "psych 12", "pulm asthma") narrows the SDLs to that block */
     var ALIAS = { nephro: ['nephro', 'nephrology', 'renal', 'urology', 'uro'], psych: ['psych', 'psychiatry'], neuro: ['neuro', 'neurology'],
       endocrine: ['endo', 'endocrine', 'endocrinology'], eent: ['eent', 'ent'], pulm: ['pulm', 'pulmo', 'pulmonary', 'pulmonology'],
-      ortho: ['ortho', 'orthopedics', 'orthopaedics', 'orthopedic'], rheum: ['rheum', 'rheumatology'], omm: ['omm'] };
+      ortho: ['ortho', 'orthopedics', 'orthopaedics', 'orthopedic'], rheum: ['rheum', 'rheumatology'], omm: ['omm'], research: ['research', 'biostats', 'biostatistics'] };
     var BLOCKS = H.blocks.map(function (b, i) {
       var tile = document.querySelector('.block-card[href="' + b[0] + '/index.html"] .block-title');
       return { i: i, alias: ALIAS[b[0]] || [norm(b[1])], t: tile ? tile.textContent.trim() : b[1] + ' block', s: 'Open the block', h: b[0] + '/index.html' };
