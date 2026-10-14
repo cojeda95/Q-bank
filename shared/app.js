@@ -1,4 +1,10 @@
 'use strict';
+// Exam display name. A block can rename its exams with QUIZ_CONFIG.examNames, e.g.
+// { 1: 'Midterm' } (Research block); without it every exam reads "Exam N" as before.
+function examLabel(n) {
+  const names = (window.QUIZ_CONFIG && window.QUIZ_CONFIG.examNames) || {};
+  return names[Number(n)] || ('Exam ' + n);
+}
 /* Board-prep Question Bank — vanilla JS app, shared across all blocks. No frameworks, no build step. */
 
 /* ── Global state ─────────────────────────────────────────────────────── */
@@ -830,7 +836,7 @@ function rememberPlace(parts) {
     hash: window.location.hash, label, at: Date.now() })); } catch (e) {} };
   if (parts[0] === 'practice' && parts[1] && parts[2]) {
     const f = findSdl(parseInt(parts[1], 10)); if (f) save(f.sdl.title);
-  } else if (parts[0] === 'exam-sdls' && parts[1]) save('Exam ' + parts[1] + ' — SDL list');
+  } else if (parts[0] === 'exam-sdls' && parts[1]) save(examLabel(parts[1]) + ' — SDL list');
   else if (parts[0] === 'review') save('Review: missed & flagged');
   else if (parts[0] === 'flagged') save('Flagged questions');
   else if (parts[0] === 'toughest') save('Toughest questions');
@@ -1056,7 +1062,7 @@ function fillWeakSdlsHome() {
     return `<li class="amap-row">
       <a class="amap-name" href="#practice/${r.sdl.sdlNumber}">${escapeHtml(r.sdl.title)}</a>
       <span class="amap-acc ${p < 60 ? 'lo' : p < 80 ? 'mid' : 'hi'}" title="Your latest try on ${r.n} of its ${r.total} questions">${r.ok}/${r.n} · ${p}%</span>
-      <span class="amap-n">Exam ${r.examNumber}</span>
+      <span class="amap-n">${examLabel(r.examNumber)}</span>
       ${miss ? `<a class="amap-go amap-miss" href="#sdlmissed/${r.sdl.sdlNumber}" title="Run only the questions you missed on your latest try">Redo ${miss} missed</a>` : ''}
       ${ATLAS_URL ? `<a class="amap-go" href="#sdlcards/${r.sdl.sdlNumber}" title="The atlas cards this SDL’s questions link to">Atlas cards</a>` : ''}
       <a class="amap-go" href="#practice/${r.sdl.sdlNumber}">Practice</a></li>`;
@@ -1104,7 +1110,7 @@ function renderHome() {
     const when = examWhen(dates[`${blockDirName()}:${e.examNumber}`]);
     return `
       <button type="button" class="exam-card" data-exam="${e.examNumber}">
-        <span class="ex-top"><span class="exam-num">Exam ${e.examNumber}</span>${when ? `<span class="ex-when">${escapeHtml(when)}</span>` : ''}</span>
+        <span class="ex-top"><span class="exam-num">${examLabel(e.examNumber)}</span>${when ? `<span class="ex-when">${escapeHtml(when)}</span>` : ''}</span>
         <span class="exam-label">${e.sdls.length} SDLs · ${qCount ? `${qCount} questions` : 'questions coming soon'}</span>
         ${qCount && trialMeta ? `<span class="exam-label exam-trial">${trialMeta}</span>` : ''}
         ${qCount ? `<span class="ex-bar"><i style="width:${seenPct}%"></i></span>
@@ -1170,7 +1176,7 @@ function renderHome() {
         : '<b>Nothing answered yet</b> — pick an exam below, or search for an SDL.'}</span>
       <span class="bprog-act">${answered
         ? `${reviewCount ? '<a class="btn" href="#review">Review due</a>' : ''}<a class="btn${reviewCount ? ' secondary' : ''}" href="#analytics">Analytics</a>`
-        : firstExam ? `<a class="btn" href="#exam-sdls/${firstExam.examNumber}">Start Exam ${firstExam.examNumber}</a>` : ''}</span>
+        : firstExam ? `<a class="btn" href="#exam-sdls/${firstExam.examNumber}">Start ${examLabel(firstExam.examNumber)}</a>` : ''}</span>
     </div>`;
 
   const nSdl = DATA.exams.reduce((s, e) => s + e.sdls.length, 0);
@@ -1209,7 +1215,7 @@ function renderHome() {
               <span class="icon">&#127937;</span>
               <div>
                 <div class="sdl-title">Final Exam Simulation</div>
-                <div class="action-label">Cumulative — 50% Exam ${lastExamNumber()}, 50% pooled from every earlier exam block</div>
+                <div class="action-label">Cumulative — 50% ${examLabel(lastExamNumber())}, 50% pooled from every earlier exam block</div>
               </div>
             </div>
             ${finalPresetCardsHtml(`timed at 1.5 min each${settings.examInstantFeedback ? ' · 📝 Instant Feedback is ON' : ''}`)}` : ''}
@@ -1326,7 +1332,7 @@ function bindBlockSearch() {
         const sc = it.n.indexOf(qn) === 0 ? 3 : sp.indexOf(' ' + qn) >= 0 ? 2 : words.every(w => sp.indexOf(' ' + w) >= 0) ? 1 : 0;
         return [sc, it];
       }).filter(x => x[0]).sort((a, b) => b[0] - a[0] || a[1].s.sdlNumber - b[1].s.sdlNumber).map(x => x[1]);
-    const rows = hits.slice(0, 7).map((it, i) => `<a class="bsopt" role="option" id="bOpt${i}" href="#practice/${it.s.sdlNumber}"><b>${escapeHtml(it.s.title)}</b><span>Exam ${it.e} · ${it.s.questions.length} questions</span></a>`);
+    const rows = hits.slice(0, 7).map((it, i) => `<a class="bsopt" role="option" id="bOpt${i}" href="#practice/${it.s.sdlNumber}"><b>${escapeHtml(it.s.title)}</b><span>${examLabel(it.e)} · ${it.s.questions.length} questions</span></a>`);
     rows.push(`<a class="bsopt hub" role="option" id="bOpt${rows.length}" href="../index.html?q=${encodeURIComponent(q.value.trim())}"><b>Search the Lesion Atlas for “${escapeHtml(q.value.trim())}”</b><span>Maps, cards, graphs and every block’s SDLs</span></a>`);
     box.innerHTML = (hits.length ? '' : '<div class="bsnone">No SDL in this block matches.</div>') + rows.join('');
     box.hidden = false; q.setAttribute('aria-expanded', 'true');
@@ -1453,8 +1459,8 @@ function renderExamSdlList(examNumber) {
     <section class="page-head bleed" aria-labelledby="exTitle">
       <div class="ph-in">
         <div class="ph-main">
-          <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">All blocks</a><span aria-hidden="true">/</span><a href="#">${escapeHtml(blockShort())}</a><span aria-hidden="true">/</span><span>Exam ${examNumber}</span></nav>
-          <h1 id="exTitle">Exam ${examNumber}</h1>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">All blocks</a><span aria-hidden="true">/</span><a href="#">${escapeHtml(blockShort())}</a><span aria-hidden="true">/</span><span>${examLabel(examNumber)}</span></nav>
+          <h1 id="exTitle">${examLabel(examNumber)}</h1>
           <p class="ph-meta">${exam.sdls.length} SDLs · ${totalQ ? `${totalQ} questions` : 'questions coming soon'}${when ? ` · <span class="ph-when">${escapeHtml(when)}</span>` : ''}${settings.hyOnly ? ' · <strong>⚡ High-yield only is on</strong>' : ''}</p>
         </div>
         ${totalQ ? `<button type="button" class="ph-cta" id="fullSimCard">
@@ -1469,7 +1475,7 @@ function renderExamSdlList(examNumber) {
         <h2 class="sec-h" id="sdlH">Practice by SDL</h2>
         <div class="sdl-list">${rows}</div>
       </section>
-      <aside class="xside" id="examAtlas" aria-label="Exam ${examNumber} in the Lesion Atlas"></aside>
+      <aside class="xside" id="examAtlas" aria-label="${examLabel(examNumber)} in the Lesion Atlas"></aside>
     </div>
   `;
 
@@ -1512,7 +1518,7 @@ function fillExamAtlas(exam) {
     if (!maps.length) { el.innerHTML = ''; return; }
     const g = gTop != null ? ATLAS_GRAPHS[gTop] : null;
     el.innerHTML = `<section class="side-box">
-        <h2 class="side-h">Exam ${exam.examNumber} in the atlas</h2>
+        <h2 class="side-h">${examLabel(exam.examNumber)} in the atlas</h2>
         <p class="side-note">The maps this exam’s questions link to most</p>
         ${maps.map(m => `<div class="xmap"><a href="${ATLAS_URL}#${encodeURIComponent(m)}" target="_blank" rel="noopener">${escapeHtml(ATLAS_MAPS[m][0])}</a>
           <span>${mapN[m]} question${mapN[m] === 1 ? '' : 's'}</span><a class="amap-go" href="#atlasmap/${encodeURIComponent(m)}">Practice</a></div>`).join('')}
@@ -1549,7 +1555,7 @@ function renderExamSetup(examNumber) {
   const splitCards = splitCardsHtml(examNumber, 'using the timer setting below');
 
   main.innerHTML = `
-    <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
+    <button class="back-link" id="backExam">&larr; ${examLabel(examNumber)}</button>
     <h1>Build a Practice Exam</h1>
     <p class="subtitle">Mirror the real exam's structure, or customize the mix.</p>
     ${splitCards ? `
@@ -1562,10 +1568,10 @@ function renderExamSetup(examNumber) {
       <div class="setup-row">
         <div class="setup-label-row">
           <label for="pctSlider">Content Source</label>
-          <span id="pctReadout" class="setup-readout">${defaultPct}% Exam ${examNumber} · ${100 - defaultPct}% ${priorRangeLabel}</span>
+          <span id="pctReadout" class="setup-readout">${defaultPct}% ${examLabel(examNumber)} · ${100 - defaultPct}% ${priorRangeLabel}</span>
         </div>
         <input type="range" id="pctSlider" min="0" max="100" step="5" value="${defaultPct}">
-        <div class="setup-hint">Real exam structure: ~70% this week's material (Exam ${examNumber}), ~30% carried over from prior weeks' content across ${priorRangeLabel}, not just the immediately-preceding exam. Drag to change the mix.</div>
+        <div class="setup-hint">Real exam structure: ~70% this week's material (${examLabel(examNumber)}), ~30% carried over from prior weeks' content across ${priorRangeLabel}, not just the immediately-preceding exam. Drag to change the mix.</div>
       </div>
       ` : `
       <div class="setup-row">
@@ -1653,12 +1659,12 @@ function renderExamSetup(examNumber) {
   function updatePoolHint() {
     const { batchMode } = currentSettings();
     const { curPool, priorPool } = poolSizes(batchMode);
-    poolHint.textContent = `Available with this batch filter: ${curPool} from Exam ${examNumber}${hasPrior ? `, ${priorPool} from ${priorRangeLabel}` : ''} (combined max ${curPool + priorPool}).`;
+    poolHint.textContent = `Available with this batch filter: ${curPool} from ${examLabel(examNumber)}${hasPrior ? `, ${priorPool} from ${priorRangeLabel}` : ''} (combined max ${curPool + priorPool}).`;
   }
 
   if (pctSlider) {
     pctSlider.addEventListener('input', () => {
-      pctReadout.textContent = `${pctSlider.value}% Exam ${examNumber} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
+      pctReadout.textContent = `${pctSlider.value}% ${examLabel(examNumber)} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
     });
   }
   // A split card here starts right away, using this page's timer setting.
@@ -1783,7 +1789,7 @@ function presetSummary(preset) {
     if (last && last.key === key && last.exams[last.exams.length - 1] === e.examNumber - 1) last.exams.push(e.examNumber);
     else groups.push({ key, exams: [e.examNumber] });
   });
-  return groups.map(g => `${g.key} per SDL from ${g.exams.length > 1 ? `Exams ${g.exams[0]}–${g.exams[g.exams.length - 1]}` : `Exam ${g.exams[0]}`}`).join(' · ');
+  return groups.map(g => `${g.key} per SDL from ${g.exams.length > 1 ? `Exams ${g.exams[0]}–${g.exams[g.exams.length - 1]}` : `${examLabel(g.exams[0])}`}`).join(' · ');
 }
 // [fewest, most] questions a run can hold, capped by what each SDL actually has
 // under the current filters (High-Yield Only Mode can shrink an SDL's pool).
@@ -1836,7 +1842,7 @@ function examSessionLabel(s) {
   }
   const preset = s.presetId ? findFinalPreset(s.presetId) : null;
   if (s.presetId) return `Final Exam — ${preset ? preset.name : 'Preset'}`;
-  return s.isFinal ? 'Final Exam Simulation' : `Exam ${s.examNumber} Simulation`;
+  return s.isFinal ? 'Final Exam Simulation' : `${examLabel(s.examNumber)} Simulation`;
 }
 function examScoreKey(s) {
   if (s.splitId) return `split-${s.splitId}`;
@@ -1944,7 +1950,7 @@ function splitSummary(preset) {
   const per = splitPerObjective(preset);
   const { objectives, extra, total } = splitCounts(preset);
   const xs = splitExtraExams(preset);
-  return `${per} question${per === 1 ? '' : 's'} from each of Exam ${preset.exam}'s ${objectives} objectives${extra ? ` + ${extra} ${xs ? `${preset.extraLabel || 'Exam ' + xs.join(' & ')} review` : 'random'}` : ''} · ${total} questions`;
+  return `${per} question${per === 1 ? '' : 's'} from each of ${examLabel(preset.exam)}'s ${objectives} objectives${extra ? ` + ${extra} ${xs ? `${preset.extraLabel || 'Exam ' + xs.join(' & ')} review` : 'random'}` : ''} · ${total} questions`;
 }
 // Cards for the home screen, or for one exam's pages when examNumber is given.
 // `note` is appended to the label, e.g. on the exam setup page.
@@ -1986,13 +1992,13 @@ function renderSplitSetup(id) {
     .map(r => `<tr><td>${escapeHtml(r.title)}</td><td>${r.objectives}</td><td>${r.questions}</td></tr>`)
     .join('');
   const extraPositions = extra === 1 ? `question ${total}` : `questions ${core + 1}–${total}`;
-  const xs = splitExtraExams(preset), xName = preset.extraLabel || (xs ? `Exam ${xs.join(' & ')}` : '');
-  const extraWhere = xs ? `from ${extra} different random objectives of ${xName} (Exam ${xs.join(' & ')}) — ${Math.round(100 * extra / total)}% of the run` : `at random from the rest of Exam ${preset.exam}`;
+  const xs = splitExtraExams(preset), xName = preset.extraLabel || (xs ? `${examLabel(xs.join(' & '))}` : '');
+  const extraWhere = xs ? `from ${extra} different random objectives of ${xName} (${examLabel(xs.join(' & '))}) — ${Math.round(100 * extra / total)}% of the run` : `at random from the rest of ${examLabel(preset.exam)}`;
 
   main.innerHTML = `
     <button class="back-link" id="backHome">&larr; Home</button>
     <h1>${escapeHtml(preset.name)}</h1>
-    <p class="subtitle">Every objective in Exam ${preset.exam}: ${per} random question${per === 1 ? '' : 's'} from each of its ${objectives} objectives, in SDL order (${core} questions)${extra ? `, then ${extra} more picked ${extraWhere} as ${extraPositions}` : ''}. ${total} questions in all, drawn fresh every run.</p>
+    <p class="subtitle">Every objective in ${examLabel(preset.exam)}: ${per} random question${per === 1 ? '' : 's'} from each of its ${objectives} objectives, in SDL order (${core} questions)${extra ? `, then ${extra} more picked ${extraWhere} as ${extraPositions}` : ''}. ${total} questions in all, drawn fresh every run.</p>
     ${score ? `<p class="setup-hint">Last run: ${score.last.correct}/${score.last.total}${score.best.correct === score.last.correct && score.best.total === score.last.total ? '' : ` · Best: ${score.best.correct}/${score.best.total}`}</p>` : ''}
     ${settings.hyOnly ? '<p class="setup-hint">⚡ High-Yield Only Mode does not apply here: this split always covers every objective, including those with no high-yield questions.</p>' : ''}
     <div class="setup-card">
@@ -2019,7 +2025,7 @@ function renderSplitSetup(id) {
       <thead><tr><th>SDL</th><th>Objectives</th><th>Questions</th></tr></thead>
       <tbody>
         ${rows}
-        ${extra ? `<tr><td>${xs ? `${escapeHtml(xName)} review — one each from random Exam ${xs.join(' & ')} objectives` : `Random extras from any Exam ${preset.exam} SDL`}</td><td>—</td><td>${extra}</td></tr>` : ''}
+        ${extra ? `<tr><td>${xs ? `${escapeHtml(xName)} review — one each from random ${examLabel(xs.join(' & '))} objectives` : `Random extras from any ${examLabel(preset.exam)} SDL`}</td><td>—</td><td>${extra}</td></tr>` : ''}
         <tr><td><b>Total</b></td><td><b>${objectives}</b></td><td><b>${total}</b></td></tr>
       </tbody>
     </table>
@@ -2069,7 +2075,7 @@ function renderFinalExamSetup() {
     main.innerHTML = `
       <button class="back-link" id="backHome">&larr; Home</button>
       <h1>Final Exam Simulation</h1>
-      <p class="empty-state">Final Exam mode needs at least two exam blocks — only Exam ${examNumber} exists so far. Come back once an earlier exam's content is available to blend in.</p>
+      <p class="empty-state">Final Exam mode needs at least two exam blocks — only ${examLabel(examNumber)} exists so far. Come back once an earlier exam's content is available to blend in.</p>
     `;
     document.getElementById('backHome').addEventListener('click', () => setRoute(''));
     return;
@@ -2078,7 +2084,7 @@ function renderFinalExamSetup() {
   main.innerHTML = `
     <button class="back-link" id="backHome">&larr; Home</button>
     <h1>Final Exam Simulation</h1>
-    <p class="subtitle">Cumulative structure: ~50% Exam ${examNumber} (the most recent week's material), ~50% pooled from every week before it (${priorRangeLabel}) — not weighted toward just the last exam.</p>
+    <p class="subtitle">Cumulative structure: ~50% ${examLabel(examNumber)} (the most recent week's material), ~50% pooled from every week before it (${priorRangeLabel}) — not weighted toward just the last exam.</p>
     ${finalPresets().length ? `
     <div class="section-label">One-Click Presets</div>
     ${finalPresetCardsHtml('using the timer setting below')}
@@ -2088,10 +2094,10 @@ function renderFinalExamSetup() {
       <div class="setup-row">
         <div class="setup-label-row">
           <label for="pctSlider">Content Source</label>
-          <span id="pctReadout" class="setup-readout">${defaultPct}% Exam ${examNumber} · ${100 - defaultPct}% ${priorRangeLabel}</span>
+          <span id="pctReadout" class="setup-readout">${defaultPct}% ${examLabel(examNumber)} · ${100 - defaultPct}% ${priorRangeLabel}</span>
         </div>
         <input type="range" id="pctSlider" min="0" max="100" step="5" value="${defaultPct}">
-        <div class="setup-hint">Real final exam structure: ~50% the most recent week (Exam ${examNumber}), ~50% carried over from any earlier week across ${priorRangeLabel}. Drag to change the mix.</div>
+        <div class="setup-hint">Real final exam structure: ~50% the most recent week (${examLabel(examNumber)}), ~50% carried over from any earlier week across ${priorRangeLabel}. Drag to change the mix.</div>
       </div>
 
       <div class="setup-row">
@@ -2174,11 +2180,11 @@ function renderFinalExamSetup() {
   function updatePoolHint() {
     const { batchMode } = currentSettings();
     const { curPool, priorPool } = poolSizes(batchMode);
-    poolHint.textContent = `Available with this batch filter: ${curPool} from Exam ${examNumber}, ${priorPool} from ${priorRangeLabel} (combined max ${curPool + priorPool}).`;
+    poolHint.textContent = `Available with this batch filter: ${curPool} from ${examLabel(examNumber)}, ${priorPool} from ${priorRangeLabel} (combined max ${curPool + priorPool}).`;
   }
 
   pctSlider.addEventListener('input', () => {
-    pctReadout.textContent = `${pctSlider.value}% Exam ${examNumber} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
+    pctReadout.textContent = `${pctSlider.value}% ${examLabel(examNumber)} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
   });
   main.querySelectorAll('.final-preset-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -2242,7 +2248,7 @@ function renderBatchPicker(sdlNumber) {
 
   if (options.length === 0) {
     main.innerHTML = `
-      <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
+      <button class="back-link" id="backExam">&larr; ${examLabel(examNumber)}</button>
       <h1>${escapeHtml(sdl.title)}</h1>
       <p class="empty-state">No high-yield questions in this SDL. Turn off High-Yield Only Mode on the Home screen to practice all questions here.</p>
     `;
@@ -2269,7 +2275,7 @@ function renderBatchPicker(sdlNumber) {
     </div>`).join('');
 
   main.innerHTML = `
-    <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
+    <button class="back-link" id="backExam">&larr; ${examLabel(examNumber)}</button>
     <h1>${escapeHtml(sdl.title)}</h1>
     <p class="subtitle">Choose which batch to practice.${settings.hyOnly ? ' <strong>⚡ High-Yield Only Mode is ON</strong> — counts below are already filtered.' : ''}</p>
     <div class="sdl-list">${rows}</div>
@@ -2349,7 +2355,7 @@ function renderPracticeStart(sdlNumber, batch, forceNew) {
 
   if (questions.length === 0) {
     main.innerHTML = `
-      <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
+      <button class="back-link" id="backExam">&larr; ${examLabel(examNumber)}</button>
       <h1>${escapeHtml(sdl.title)}</h1>
       <p class="empty-state">${sdl.questions.length ? 'No questions match the current filters (High-Yield Only Mode is likely on). Turn it off on the Home screen, or pick a different batch.' : 'Questions for this SDL are coming soon.'}</p>
     `;
@@ -2495,7 +2501,7 @@ function renderPracticeQuestion() {
   main.innerHTML = `
     <div class="q-sub bleed">
       <div class="q-sub-in">
-        <nav class="crumbs" aria-label="Breadcrumb"><a href="#">${escapeHtml(blockShort())}</a><span aria-hidden="true">/</span><a href="#exam-sdls/${session.examNumber}">Exam ${session.examNumber}</a><span aria-hidden="true">/</span><a href="#practice/${session.sdlNumber}">SDL ${session.sdlNumber}</a><span class="crumb-x">· ${escapeHtml(batchLabel(batchParamFromScoreKey(session.scoreKey || '')))}</span></nav>
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#">${escapeHtml(blockShort())}</a><span aria-hidden="true">/</span><a href="#exam-sdls/${session.examNumber}">${examLabel(session.examNumber)}</a><span aria-hidden="true">/</span><a href="#practice/${session.sdlNumber}">SDL ${session.sdlNumber}</a><span class="crumb-x">· ${escapeHtml(batchLabel(batchParamFromScoreKey(session.scoreKey || '')))}</span></nav>
         <span class="q-sub-r"><span class="quiz-progress">Question <b>${session.index + 1}</b> of ${total}</span><span class="quiz-score">Score <b>${correctSoFar}/${answeredSoFar}</b></span></span>
       </div>
       <div class="q-sub-bar"><i style="width:${(session.index / total) * 100}%"></i></div>
@@ -2605,7 +2611,7 @@ function renderPracticeComplete() {
     <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
       <button class="btn secondary" id="retryBtn">Retry This Batch</button>
       <button class="btn secondary" id="backBatchBtn">Choose Different Batch</button>
-      <button class="btn" id="doneBtn">Back to Exam ${session.examNumber}</button>
+      <button class="btn" id="doneBtn">Back to ${examLabel(session.examNumber)}</button>
     </div>
   `;
   document.getElementById('retryBtn').addEventListener('click', () => setRoute(`practice/${session.sdlNumber}/${batchParamFromScoreKey(session.scoreKey)}/new`));
@@ -2620,7 +2626,7 @@ function renderExamSimStart(examNumber) {
   const questions = shuffleExamQuestions(allQuestionsForExam(examNumber));
   if (questions.length === 0) {
     main.innerHTML = `
-      <button class="back-link" id="backExam">&larr; Exam ${examNumber}</button>
+      <button class="back-link" id="backExam">&larr; ${examLabel(examNumber)}</button>
       <p class="empty-state">No questions match High-Yield Only Mode for this exam. Turn it off on the Home screen to run a full simulation.</p>
     `;
     document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
@@ -3008,7 +3014,7 @@ function renderExamResults() {
       <tbody>
         ${sourceKeys.sort((a, b) => Number(b) - Number(a)).map(key => {
           const r = bySource[key];
-          const label = r.tag === 'current' ? `Exam ${r.examNumber} (this week's material)` : `Exam ${r.examNumber} (prior weeks' carryover)`;
+          const label = r.tag === 'current' ? `${examLabel(r.examNumber)} (this week's material)` : `${examLabel(r.examNumber)} (prior weeks' carryover)`;
           return `<tr><td>${label}</td><td>${r.correct}/${r.total}</td><td>${Math.round((r.correct / r.total) * 100)}%</td></tr>`;
         }).join('')}
       </tbody>
@@ -3059,7 +3065,7 @@ function renderExamResults() {
     `).join('');
 
   main.innerHTML = `
-    <h1>${session.splitId ? `${escapeHtml(examSessionLabel(session))} Results` : session.presetId ? escapeHtml(examSessionLabel(session).replace(/^Final Exam/, 'Final Exam Results')) : session.isFinal ? 'Final Exam Results' : `Exam ${session.examNumber} Simulation Results`}</h1>
+    <h1>${session.splitId ? `${escapeHtml(examSessionLabel(session))} Results` : session.presetId ? escapeHtml(examSessionLabel(session).replace(/^Final Exam/, 'Final Exam Results')) : session.isFinal ? 'Final Exam Results' : `${examLabel(session.examNumber)} Simulation Results`}</h1>
     ${session.timeExpired ? '<p class="subtitle">Time expired — exam auto-submitted.</p>' : ''}
     <div class="result-summary">
       <div class="big-pct">${pct}%</div>
@@ -3086,7 +3092,7 @@ function renderExamResults() {
     ${missedHtml}
 
     <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
-      <button class="btn" id="doneBtn">${session.splitId ? `Back to ${escapeHtml(examSessionLabel(session))}` : session.isFinal ? 'Back to Home' : `Back to Exam ${session.examNumber}`}</button>
+      <button class="btn" id="doneBtn">${session.splitId ? `Back to ${escapeHtml(examSessionLabel(session))}` : session.isFinal ? 'Back to Home' : `Back to ${examLabel(session.examNumber)}`}</button>
     </div>
   `;
   document.getElementById('doneBtn').addEventListener('click', () => setRoute(
@@ -3403,7 +3409,7 @@ function renderSdlCards(sdlNumber) {
       });
     });
     const rows = [...tally.values()].sort((a, b) => b.top - a.top || b.n - a.n || a.c.n.localeCompare(b.c.n));
-    const back = `<button class="back-link" id="backList">&larr; Exam ${f.examNumber}</button>`;
+    const back = `<button class="back-link" id="backList">&larr; ${examLabel(f.examNumber)}</button>`;
     if (!rows.length) {
       main.innerHTML = `${back}<h1>Atlas cards</h1><p class="empty-state">No atlas cards link to ${escapeHtml(f.sdl.title)} yet.</p>`;
       document.getElementById('backList').addEventListener('click', () => setRoute(`exam-sdls/${f.examNumber}`));
@@ -3809,7 +3815,7 @@ function renderAnalytics() {
         const pcts = h.map(e => Math.round((e.correct / e.total) * 100));
         const presetId = key.startsWith('final-preset-') ? key.slice('final-preset-'.length) : null;
         const splitId = key.startsWith('split-') ? key.slice('split-'.length) : null;
-        const label = splitId ? examSessionLabel({ splitId }) : presetId ? examSessionLabel({ presetId }) : key === 'final-exam' ? 'Final Exam' : key.replace(/^exam-/, 'Exam ');
+        const label = splitId ? examSessionLabel({ splitId }) : presetId ? examSessionLabel({ presetId }) : key === 'final-exam' ? 'Final Exam' : /^exam-\d+$/.test(key) ? examLabel(key.slice(5)) : key.replace(/^exam-/, 'Exam ');
         return `
           <div style="display:flex; align-items:center; gap:16px; margin-bottom:10px; flex-wrap:wrap;">
             <div style="min-width:100px; font-weight:700; color:var(--navy); font-size:0.92rem;">${escapeHtml(label)}</div>
@@ -3872,7 +3878,7 @@ function renderAnalytics() {
         .sort((a, b) => a.sdlNumber - b.sdlNumber)
         .map(s => `<tr><td>${escapeHtml(s.title)}</td><td>${s.correct}/${s.total}</td><td>${Math.round((s.correct / s.total) * 100)}%</td></tr>`)
         .join('');
-      const title = group.examNumber === 0 ? 'Other' : `Exam ${group.examNumber}`;
+      const title = group.examNumber === 0 ? 'Other' : `${examLabel(group.examNumber)}`;
       return `
         <div class="exam-group">
           <div class="exam-group-header">
