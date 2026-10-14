@@ -872,3 +872,10 @@ in the rail between maps on one topic (`REL`, 8 clusters), New badge window 14 d
 left, card rows lifted; measured per state in the browser), 73 organ outlines replaced bare circles/ellipses/rects in 37 maps
 (organs.py), three maps got title + caption lines, 16 info panels moved below taller switch panels. All of it is applied by
 batches/m47/assemble.py (kindlabels.json, tiers.json, resize.json, organs.py) on top of the drafts modules.
+
+## m48d — topic groups, merged pairs, block filter (2026-10-13)
+The map-tab row now has three filters beside the kind chips: a **topic** menu per system (groups.json: 3–8 groups for 17 systems,
+approved by the owner; Pathology and Biostats stay ungrouped), a **block** menu (maps with ≥1 linked question in that block,
+from ATLAS_PRACTICE.maps), and the kind chips. **77 reference/moving pairs share one tab** with a ⇄ switch (Static ⇄ In motion),
+359 → 282 tabs. The open map is always shown: arriving at a map the filters would hide clears the filter that hides it; picking a
+filter that hides the open map opens the first map that passes. All of it is the m47 assemble patch "# 11" + groups.json.
