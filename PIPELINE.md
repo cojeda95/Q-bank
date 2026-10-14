@@ -351,6 +351,8 @@ the mix until named right. Letter keys on moving maps (dynKey): t Tour, n Name i
 a Moving-map mix tile (your Name-it score). Built by batches/m45/assemble.py (reruns m44 → m43 → m42).
 m46: Acid–Base Compensation Timeline (abtime) — batches/m46/assemble.py reruns m45 → … → m42, then inserts the m46 module(s).
 Nephro's splitPresets gain `extraExams` / `extraLabel`: Moorjani Split — Exam 2 is 42 objectives + 8 Week 1 (Exam 1) review = 50.
+Moorjani Split — Exam 3 is 46 objectives + 4 review = 50, with `extraExams: [1, 2]`: when a split names two or more earlier
+exams, the review picks take turns between them (each exam's objectives shuffled), so a run always mixes Weeks 1 and 2 (2 + 2).
 A card opened from a transporter (or from a graph's card link — anything with `data-plotles`)
 keeps the map where it is: the click records that spot as KEEP_PT and flashPins() only
 slides the map if the card panel now covers it, instead of taking the reader to the card's

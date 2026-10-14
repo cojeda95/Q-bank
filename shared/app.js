@@ -1865,6 +1865,7 @@ function finalPresetCardsHtml(note) {
    `extra` more at the end, drawn at random from the rest of that exam's pool —
    or, with `extraExams: [1]`, one each from that many random objectives of those
    earlier exams (a cumulative review slice; `extraLabel` names it, e.g. "Week 1").
+   With two or more (`extraExams: [1, 2]`) the picks take turns between the exams.
    Trial batches (isTrialQ) are left out as everywhere else, but High-Yield Only Mode is
    ignored: the split's size is set by the objective count, and some objectives
    have no high-yield questions at all. Blocks without splits see no change. */
@@ -1921,7 +1922,12 @@ function buildSplitQuestions(preset) {
     rest.push(...picked.slice(per));
   });
   const xs = splitExtraExams(preset);
-  if (xs) return core.concat(shuffle(xs.flatMap(n => examObjectiveGroups(n))).map(g => shuffle(g.questions)[0]).slice(0, splitExtra(preset)));
+  if (xs) {
+    // several earlier exams: take turns between them (each one's objectives shuffled), so the review is a real mix
+    const lanes = xs.map(n => shuffle(examObjectiveGroups(n))), mix = [];
+    for (let i = 0; mix.length < splitExtra(preset) && lanes.some(l => l.length); i++) { const l = lanes[i % lanes.length]; if (l.length) mix.push(shuffle(l.shift().questions)[0]); }
+    return core.concat(mix);
+  }
   return core.concat(shuffle(rest).slice(0, splitExtra(preset)));
 }
 function startSplit(preset, { timed = true, secondsPerQuestion = 90 } = {}) {

@@ -47,6 +47,16 @@
     extra: 8,
     extraExams: [1],
     extraLabel: 'Week 1'
+  }, {
+    // Exam 3 (SDLs 25-36) has 46 objectives: 46 + 4 review questions that take turns between Week 1 (Exam 1)
+    // and Week 2 (Exam 2) objectives, so a run is 2 + 2 = 50.
+    id: 'moorjani3',
+    name: 'Moorjani Split — Exam 3',
+    exam: 3,
+    perObjective: 1,
+    extra: 4,
+    extraExams: [1, 2],
+    extraLabel: 'Weeks 1–2'
   }],
   // Batch 3 (per-SDL opt-in trial slot, shared/app.js BATCH3) is the Exam 2 (SDLs 13-24) and Exam 3 (SDLs 25-36) trial set,
   // kept out of exam totals and simulations like Neuro's Bloom Batch.
