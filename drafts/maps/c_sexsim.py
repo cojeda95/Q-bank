@@ -47,13 +47,25 @@ for k, t in KARY.items():
     text(t, 430, 360, 'nf-l1', 'middle', when=O(k))
 text('pick a case on the right', 430, 360, 'nf-l1', 'middle', unless=[f'{SW}:*'])
 TESTIS, OVARY, STREAK = O('xy', 'ais', 'srd', 'pmds', 'kline'), O('xx', 'cah'), O('swyer', 'turner')
-add('<ellipse cx="430" cy="560" rx="120" ry="80" style="fill:var(--dk1);fill-opacity:.25;stroke:var(--dk1);stroke-width:4"/>', when=TESTIS)
+import re as _re
+def _sc(d, x, y, w, h):   # a 100 × 100 outline into a box
+    return _re.sub(r'(-?\d+\.?\d*) (-?\d+\.?\d*)', lambda m: f'{x + float(m.group(1)) * w / 100:.0f} {y + float(m.group(2)) * h / 100:.0f}', d)
+TESTIS_D = 'M50 10 C74 10 88 32 86 56 C84 80 66 94 46 92 C26 90 14 72 16 50 C18 28 30 10 50 10 Z'
+EPI_D = 'M78 14 C96 20 98 50 90 72 C86 82 80 88 72 90 M80 14 C86 4 90 -6 92 -16'          # epididymis, then the vas deferens leaving it
+OVARY_D = 'M8 50 C20 28 36 16 50 16 C64 16 80 28 92 50 C80 72 64 84 50 84 C36 84 20 72 8 50 Z'
+def testis(x, y, w, h, when):
+    add(f'<path d="{_sc(TESTIS_D, x, y, w, h)}" style="fill:var(--dk1);fill-opacity:.22;stroke:var(--dk1);stroke-width:4"/>'
+        f'<path d="{_sc(EPI_D, x, y, w, h)}" style="fill:none;stroke:var(--dk1);stroke-width:5;stroke-linecap:round;opacity:.7"/>', when=when)
+testis(320, 470, 220, 190, O('xy', 'ais', 'srd', 'pmds'))
+testis(360, 500, 150, 130, O('kline'))   # small, firm testis
+add(f'<path d="{_sc(OVARY_D, 330, 490, 200, 140)}" style="fill:var(--dk8);fill-opacity:.22;stroke:var(--dk8);stroke-width:4"/>'
+    + ''.join(f'<circle cx="{cx}" cy="{cy}" r="{r}" style="fill:var(--surface);stroke:var(--dk8);stroke-width:2.5"/>' for cx, cy, r in ((372, 556, 11), (392, 596, 9), (468, 540, 12), (488, 590, 10))),
+    when=OVARY)
 text('testis', 430, 566, 'nf-l1', 'middle', when=TESTIS)
 text('Sertoli → AMH · Leydig → testosterone', 430, 680, 'nf-l2', 'middle', when=TESTIS)
 text('small, firm — tubules fail', 430, 710, 'nf-l1 dyn-tag', 'middle', when=O('kline'))
-add('<ellipse cx="430" cy="560" rx="100" ry="60" style="fill:var(--dk8);fill-opacity:.25;stroke:var(--dk8);stroke-width:4"/>', when=OVARY)
 text('ovary — the default', 430, 566, 'nf-l1', 'middle', when=OVARY)
-add('<path d="M330 560 H530" style="stroke:var(--ink-3);stroke-width:8;stroke-linecap:round"/>', when=STREAK)
+add('<path d="M330 566 C380 548 480 548 530 566 C480 584 380 584 330 566 Z" style="fill:var(--ink-3);fill-opacity:.25;stroke:var(--ink-3);stroke-width:3"/>', when=STREAK)   # streak gonad: a thin band of stroma
 text('streak gonad — no AMH, no testosterone, no estrogen', 430, 620, 'nf-l1 dyn-tag', 'middle', when=STREAK)
 text('ovary forms, then loses its oocytes', 430, 650, 'nf-l2', 'middle', when=O('turner'))
 add('<rect x="280" y="860" width="300" height="110" rx="20" style="fill:var(--dk5);fill-opacity:.25;stroke:var(--dk5);stroke-width:3"/>', when=O('cah'))
