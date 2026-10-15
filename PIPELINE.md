@@ -897,3 +897,7 @@ its centre, together with every state copy at that centre, and moves the organ's
 factor down until the grown box reaches no other shape and no label that is not its own. `FORCE` entries may give an outline its
 own box (the hand-placed lungs/brains sized to their space) or `None` (a shape that is not an organ: abtime's medulla near the
 lungs heading, embsim's omphalocele sac). A browser check (organ outline vs text, organ vs organ, every state) backs it.
+
+m49: Nephron gets a coronal-section kidney (capsule, cortex, 8 pyramids + renal columns, minor/major calyces → pelvis → ureter,
+renal artery/vein, one wedge with leaders to the map's cortex/medulla bands). Static maps may now carry `bgart` (SVG drawn on the
+background layer). Built by atlas-review/batches/m47/assemble.py patch "# 12" from kidney_art.py; Nephron canvas 2500 → 3000.
