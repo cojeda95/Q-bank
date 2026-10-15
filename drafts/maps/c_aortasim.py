@@ -65,7 +65,7 @@ add(f'<path d="{DB}" style="fill:none;stroke:var(--bad);stroke-width:5;stroke-da
 text('Stanford A: ascending — surgery; AR, tamponade', 540, 610, 'nf-l1 dyn-tag', 'end', when=O('dissa'))
 text('Stanford B: descending only — β-blockers', 1150, 1260, 'nf-l1 dyn-tag', when=O('dissb'))
 add(X(1000, 395, 14), when=O('steal'))
-text('subclavian stenosis before the vertebral', 1150, 230, 'nf-l1 dyn-tag', 'middle', when=O('steal'))
+text('subclavian stenosis before the vertebral', 1220, 345, 'nf-l1 dyn-tag', when=O('steal'))
 add(X(1000, 1570, 14) + X(1100, 1570, 14), when=O('pad'))
 text('claudication · Leriche: buttock pain, impotence', 1180, 1540, 'nf-l1 dyn-tag', when=O('pad'))
 text('crystals shower downstream: blue toes, AKI — pulses intact', 1180, 1540, 'nf-l1 dyn-tag', when=O('chol'))
