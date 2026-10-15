@@ -56,16 +56,16 @@ OVARY_D = 'M8 50 C20 28 36 16 50 16 C64 16 80 28 92 50 C80 72 64 84 50 84 C36 84
 def testis(x, y, w, h, when):
     add(f'<path d="{_sc(TESTIS_D, x, y, w, h)}" style="fill:var(--dk1);fill-opacity:.22;stroke:var(--dk1);stroke-width:4"/>'
         f'<path d="{_sc(EPI_D, x, y, w, h)}" style="fill:none;stroke:var(--dk1);stroke-width:5;stroke-linecap:round;opacity:.7"/>', when=when)
-testis(320, 470, 220, 190, O('xy', 'ais', 'srd', 'pmds'))
-testis(360, 500, 150, 130, O('kline'))   # small, firm testis
-add(f'<path d="{_sc(OVARY_D, 330, 490, 200, 140)}" style="fill:var(--dk8);fill-opacity:.22;stroke:var(--dk8);stroke-width:4"/>'
-    + ''.join(f'<circle cx="{cx}" cy="{cy}" r="{r}" style="fill:var(--surface);stroke:var(--dk8);stroke-width:2.5"/>' for cx, cy, r in ((372, 556, 11), (392, 596, 9), (468, 540, 12), (488, 590, 10))),
+testis(270, 410, 320, 290, O('xy', 'ais', 'srd', 'pmds'))
+testis(335, 470, 200, 180, O('kline'))   # small, firm testis
+add(f'<path d="{_sc(OVARY_D, 270, 440, 320, 240)}" style="fill:var(--dk8);fill-opacity:.22;stroke:var(--dk8);stroke-width:4"/>'
+    + ''.join(f'<circle cx="{cx}" cy="{cy}" r="{r}" style="fill:var(--surface);stroke:var(--dk8);stroke-width:2.5"/>' for cx, cy, r in ((340, 548, 17), (372, 612, 13), (492, 528, 18), (520, 606, 14))),
     when=OVARY)
 text('testis', 430, 566, 'nf-l1', 'middle', when=TESTIS)
-text('Sertoli → AMH · Leydig → testosterone', 430, 680, 'nf-l2', 'middle', when=TESTIS)
-text('small, firm — tubules fail', 430, 710, 'nf-l1 dyn-tag', 'middle', when=O('kline'))
+text('Sertoli → AMH · Leydig → testosterone', 430, 745, 'nf-l2', 'middle', when=TESTIS)
+text('small, firm — tubules fail', 430, 775, 'nf-l1 dyn-tag', 'middle', when=O('kline'))
 text('ovary — the default', 430, 566, 'nf-l1', 'middle', when=OVARY)
-add('<path d="M330 566 C380 548 480 548 530 566 C480 584 380 584 330 566 Z" style="fill:var(--ink-3);fill-opacity:.25;stroke:var(--ink-3);stroke-width:3"/>', when=STREAK)   # streak gonad: a thin band of stroma
+add('<path d="M260 566 C350 540 510 540 600 566 C510 592 350 592 260 566 Z" style="fill:var(--ink-3);fill-opacity:.25;stroke:var(--ink-3);stroke-width:3"/>', when=STREAK)   # streak gonad: a thin band of stroma
 text('streak gonad — no AMH, no testosterone, no estrogen', 430, 620, 'nf-l1 dyn-tag', 'middle', when=STREAK)
 text('ovary forms, then loses its oocytes', 430, 650, 'nf-l2', 'middle', when=O('turner'))
 add('<rect x="280" y="860" width="300" height="110" rx="20" style="fill:var(--dk5);fill-opacity:.25;stroke:var(--dk5);stroke-width:3"/>', when=O('cah'))
