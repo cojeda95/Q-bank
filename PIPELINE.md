@@ -892,3 +892,8 @@ it is a banner (aspect > 2.5) or a panel (rect > 450 px), and on maps that draw 
 word is hormone/cartilage/valve… are not the organ. Scan (all 162 moving maps): no organ outline sits nearest another organ's
 label, no unpaired organ is drawn twice; a rendered check of every state's added shapes found one real stray — fibromyalgia's
 tender points with no body (painsim now draws a back view with the four quadrants).
+m48f (2026-10-14): organ sizing. organs.fix grows any outline smaller than ~10 % of its drawing's short side (≤ 1.6×), around
+its centre, together with every state copy at that centre, and moves the organ's label out by the same amount — stepping the
+factor down until the grown box reaches no other shape and no label that is not its own. `FORCE` entries may give an outline its
+own box (the hand-placed lungs/brains sized to their space) or `None` (a shape that is not an organ: abtime's medulla near the
+lungs heading, embsim's omphalocele sac). A browser check (organ outline vs text, organ vs organ, every state) backs it.
