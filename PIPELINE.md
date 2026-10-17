@@ -908,3 +908,6 @@ maps shorter than 1800, or in a new right-hand column on taller ones, and grows 
 lateral brain (cortex), circle of Willis (brainvessels), cord cross-section (spine), ear (hearing), normal vs RA joint (raarth),
 skin layers (skinbasics), meninges (meninges), alveolus + capillary (gasx), liver lobule (liver), GI tract (gitract).
 Applied by m47 assemble.py patch "# 13" (static-map `bgart`, same slot as the m49 kidney).
+m50 card audit: all 2,171 cards re-checked against FA 2025 + corpus (atlas_audit_1–3.md); unsupported claims resolved with
+PubMed/guideline evidence (card_fixes_1–3.md): 131 patches applied to batches/m47/base-drafts.html by m50/apply_card_patches.py
+(new refs go BEFORE fa:"…" — the build's card-head regex needs n, alias, k first, or the card drops out of question linking).
