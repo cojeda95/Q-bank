@@ -193,6 +193,7 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 
 /* Atlas cards for one SDL (#sdlcards) and the "Atlas cards" link on SDL rows */
 .sdl-atlas { color: var(--atlas-ink); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.sdl-miss { color: var(--red); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
 .sdlc-maps { font-size: 0.88rem; color: var(--text-muted); margin: -4px 0 12px; }
 .sdlc-maps a { color: var(--atlas-ink); font-weight: 600; }
 .sdlc-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--atlas-line); border-radius: 12px; background: var(--atlas-bg); overflow: hidden; }

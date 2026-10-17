@@ -189,9 +189,9 @@ function mergeAtlas(a, b) {
 }
 
 // Merge two full blobs (each a map of localStorage-key -> raw JSON string).
-function mergeBlobs(localBlob, remoteBlob) {
+function mergeBlobs(localBlob, remoteBlob, blocks) {
   const out = {};
-  BLOCK_KEYS.forEach(block => {
+  (blocks || BLOCK_KEYS).forEach(block => {
     const fKey = `${block}_flags_v1`, pKey = `${block}_progress_v1`, aKey = `${block}_attempts_v1`, sKey = `${block}_settings_v1`;
     const lf = safeParse(localBlob[fKey], {}), rf = safeParse(remoteBlob[fKey], {});
     const lp = safeParse(localBlob[pKey], {}), rp = safeParse(remoteBlob[pKey], {});
@@ -358,6 +358,82 @@ function getLastSync() {
   return v ? new Date(v).toLocaleString() : null;
 }
 
+/* ── Backup file (no PIN needed) ─────────────────────────────────────────
+   Progress lives in this browser's local storage whether or not a PIN is used. "Download my progress" saves every
+   block's flags, scores, attempts and settings, plus the Lesion Atlas progress and hub preferences, as one JSON file;
+   "Restore" MERGES a file into this browser with the same rules as PIN sync, so an older file never erases newer work. */
+const BACKUP_FORMAT = 'ocom-qhub-backup-v1';
+const BLOCK_KEY_RE = /^([a-z0-9]+)_(flags|progress|attempts|settings)_v1$/;
+function backupKeys() {
+  const out = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (BLOCK_KEY_RE.test(k) || k === ATLAS_KEY || /^(mla-|qhub-)/.test(k)) out.push(k);
+  }
+  return out.sort();
+}
+function downloadBackup() {
+  const data = {};
+  backupKeys().forEach(k => { data[k] = localStorage.getItem(k); });
+  const blob = new Blob([JSON.stringify({ format: BACKUP_FORMAT, saved: new Date().toISOString(), data })], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ocom-qhub-progress-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function restoreBackup(text) {
+  const file = JSON.parse(text);
+  if (!file || file.format !== BACKUP_FORMAT || typeof file.data !== 'object') throw new Error('not a Question Hub progress file');
+  const incoming = {}, other = {};
+  Object.keys(file.data).forEach(k => {
+    const v = file.data[k];
+    if (typeof v !== 'string') return;
+    if (BLOCK_KEY_RE.test(k) || k === ATLAS_KEY) incoming[k] = v; else if (/^(mla-|qhub-)/.test(k)) other[k] = v;
+  });
+  const blocks = [...new Set(Object.keys(incoming).map(k => (k.match(BLOCK_KEY_RE) || [])[1]).filter(Boolean))];
+  const local = {};
+  Object.keys(incoming).forEach(k => { const v = localStorage.getItem(k); if (v !== null) local[k] = v; });
+  if (localStorage.getItem(ATLAS_KEY) !== null) local[ATLAS_KEY] = localStorage.getItem(ATLAS_KEY);
+  const merged = mergeBlobs(local, incoming, blocks);
+  Object.keys(merged).forEach(k => { if (k in incoming || k in local) localStorage.setItem(k, merged[k]); });
+  Object.keys(other).forEach(k => { if (localStorage.getItem(k) === null) localStorage.setItem(k, other[k]); });   // never overwrite this browser's own preferences
+  let answers = 0;
+  blocks.forEach(b => { try { answers += (JSON.parse(localStorage.getItem(`${b}_attempts_v1`)) || []).length; } catch (e) {} });
+  return { blocks: blocks.length, answers };
+}
+function backupCardHtml() {
+  return `
+      <div class="sync-card" style="margin-top:12px">
+        <p class="sync-hint"><b>No PIN? Back up with a file.</b> Your progress is saved in this browser. Clearing browsing data, a private window, or (on iPhone) not visiting for about a week can erase it — download a copy now and then, and restore it here on any device.</p>
+        <div class="sync-actions">
+          <button class="sync-btn" id="backupBtn">⬇ Download my progress</button>
+          <button class="sync-btn secondary" id="restoreBtn">⬆ Restore from a file</button>
+          <input type="file" id="restoreFile" accept="application/json,.json" hidden>
+        </div>
+        <div class="sync-status" id="backupStatus"></div>
+      </div>`;
+}
+function bindBackupCard() {
+  const st = () => document.getElementById('backupStatus');
+  const b = document.getElementById('backupBtn'), r = document.getElementById('restoreBtn'), f = document.getElementById('restoreFile');
+  if (!b) return;
+  b.addEventListener('click', () => { try { downloadBackup(); st().textContent = '✅ Saved — keep the file somewhere safe (Files, Drive, email to yourself).'; } catch (e) { st().textContent = `❌ ${e.message}`; } });
+  r.addEventListener('click', () => f.click());
+  f.addEventListener('change', () => {
+    const file = f.files && f.files[0]; if (!file) return;
+    file.text().then(t => {
+      const res = restoreBackup(t);
+      st().textContent = `✅ Restored and merged: ${res.blocks} block${res.blocks === 1 ? '' : 's'}, ${res.answers.toLocaleString()} answers on this device now. Reload any open block to see it.`;
+    }).catch(e => { st().textContent = `❌ Couldn't restore: ${e.message}`; }).finally(() => { f.value = ''; });
+  });
+}
+/* Ask the browser to keep this site's storage (so it isn't cleared automatically under storage pressure). */
+function requestPersistentStorage() {
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persisted().then(p => { if (!p) navigator.storage.persist(); }); } catch (e) {}
+}
+requestPersistentStorage();
+
 function initSyncUI() {
   const root = document.getElementById('syncSection');
   if (!root) return;
@@ -368,7 +444,8 @@ function initSyncUI() {
     const pin = getSavedPin();
     const lastSync = getLastSync();
     if (!configured) {
-      root.innerHTML = `<p class="sync-hint">Cross-device sync isn't set up yet on this deployment.</p>`;
+      root.innerHTML = `<p class="sync-hint">Cross-device sync isn't set up yet on this deployment.</p>${backupCardHtml()}`;
+      bindBackupCard(render);
       return;
     }
     root.innerHTML = `
@@ -393,7 +470,9 @@ function initSyncUI() {
         `}
         <div class="sync-status" id="syncStatus">${status || ''}</div>
       </div>
+      ${backupCardHtml()}
     `;
+    bindBackupCard(render);
 
     if (pin) {
       document.getElementById('pushBtn').addEventListener('click', () => doAction('push', pin));

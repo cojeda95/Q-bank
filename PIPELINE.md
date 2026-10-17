@@ -911,3 +911,10 @@ Applied by m47 assemble.py patch "# 13" (static-map `bgart`, same slot as the m4
 m50 card audit: all 2,171 cards re-checked against FA 2025 + corpus (atlas_audit_1–3.md); unsupported claims resolved with
 PubMed/guideline evidence (card_fixes_1–3.md): 131 patches applied to batches/m47/base-drafts.html by m50/apply_card_patches.py
 (new refs go BEFORE fa:"…" — the build's card-head regex needs n, alias, k first, or the card drops out of question linking).
+
+Missed-question review + local backup (2026-10-17): each SDL row on an exam's SDL list shows "Review N missed" (latest
+try wrong) → #sdlwrong/<sdl>: read-only list with your answer, the key, explanation, board prep, atlas links, plus "Redo
+these" (#sdlmissed). Attempts on misses now carry pick (letter) + pickT (choice text, 90 chars) — pickOf() in app.js.
+Every page asks navigator.storage.persist(). Hub Sync panel has a backup card (sync.js): "Download my progress" (all
+<block>_*_v1 keys, mla-progress, mla-*/qhub-* prefs, format ocom-qhub-backup-v1) and "Restore from a file" (merges via
+mergeBlobs(local, file, blocks); prefs only filled when missing). Research is in backups though not in BLOCK_KEYS sync.

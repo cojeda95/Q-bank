@@ -310,6 +310,9 @@ function getScore(key) {
 }
 
 /* ── Attempt log (powers Analytics + Review Due) ─────────────────────── */
+/* Ask the browser to keep this site's local storage (attempts, flags, scores) instead of clearing it under pressure;
+   the hub's Sync panel also offers a backup file for people who don't use a PIN. */
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persisted().then(p => { if (!p) navigator.storage.persist(); }); } catch (e) {}
 function loadAttempts() {
   try { return JSON.parse(localStorage.getItem(LS_ATTEMPTS)) || []; }
   catch (e) { return []; }
@@ -832,6 +835,8 @@ function render() {
     renderSdlCards(parseInt(parts[1], 10));
   } else if (parts[0] === 'sdlmissed' && parts[1]) {
     renderSdlMissed(parseInt(parts[1], 10));
+  } else if (parts[0] === 'sdlwrong' && parts[1]) {
+    renderSdlWrong(parseInt(parts[1], 10));
   } else {
     renderHome();
   }
@@ -850,9 +855,9 @@ function rememberPlace(parts) {
   else if (parts[0] === 'review') save('Review: missed & flagged');
   else if (parts[0] === 'flagged') save('Flagged questions');
   else if (parts[0] === 'toughest') save('Toughest questions');
-  else if ((parts[0] === 'sdlcards' || parts[0] === 'sdlmissed') && parts[1]) {
+  else if ((parts[0] === 'sdlcards' || parts[0] === 'sdlmissed' || parts[0] === 'sdlwrong') && parts[1]) {
     const f = findSdl(parseInt(parts[1], 10));
-    if (f) save((parts[0] === 'sdlcards' ? 'Atlas cards: ' : 'Your misses: ') + f.sdl.title);
+    if (f) save((parts[0] === 'sdlcards' ? 'Atlas cards: ' : parts[0] === 'sdlwrong' ? 'Review misses: ' : 'Your misses: ') + f.sdl.title);
   }
   else if (parts[0] === 'atlascards' && parts[1]) save('Atlas practice: ' + (parts[2] ? decodeURIComponent(parts[2]) : 'a graph'));
   else if ((parts[0] === 'atlas' || parts[0] === 'atlasmap') && parts[1]) {
@@ -866,6 +871,12 @@ function rememberPlace(parts) {
   }
 }
 /* Questions you got wrong on your latest try, from a list of linked questions. */
+/* The choice a student picked rides on the attempt: its letter and its text (first 90 characters; misses only), so "Your answer"
+   on a later review still reads right if the question's letters are reshuffled. */
+function pickOf(q, letter) {
+  if (!letter || letter === q.correct) return {};   // only misses carry it (keeps the synced log small)
+  return { pick: letter, pickT: String(choiceText(q, letter, true) || '').slice(0, 90) };
+}
 function onlyMissed(qs) {
   const last = lastAttemptMap();
   return qs.filter(q => last[q.id] && !last[q.id].correct);
@@ -1448,6 +1459,7 @@ function renderExamSdlList(examNumber) {
         </div>
       </div>`;
     const going = snap && String(snap.sdlNumber) === String(sdl.sdlNumber);
+    const missN = onlyMissed(sdl.questions).length;
     const scoreHtml = going
       ? `<div class="sdl-score going">In progress · question ${snap.index + 1} of ${snap.questions.length}</div>`
       : best
@@ -1458,7 +1470,7 @@ function renderExamSdlList(examNumber) {
         <span class="sdl-num">${sdl.sdlNumber}</span>
         <div class="sdl-body">
           <div class="sdl-title">${escapeHtml(name)}</div>
-          <div class="sdl-meta">${regularCount} questions${trialMeta}${ATLAS_URL ? ` &middot; <a class="sdl-atlas" href="#sdlcards/${sdl.sdlNumber}" title="The atlas cards this SDL’s questions link to">Atlas cards</a>` : ''}</div>
+          <div class="sdl-meta">${regularCount} questions${trialMeta}${ATLAS_URL ? ` &middot; <a class="sdl-atlas" href="#sdlcards/${sdl.sdlNumber}" title="The atlas cards this SDL’s questions link to">Atlas cards</a>` : ''}${missN ? ` &middot; <a class="sdl-miss" href="#sdlwrong/${sdl.sdlNumber}" title="Read the questions you got wrong on your latest try, with the explanations — no need to redo the set">Review ${missN} missed</a>` : ''}</div>
           ${scoreHtml}
         </div>
         <span class="sdl-go">${going ? 'Resume' : 'Practice'}</span>
@@ -2563,7 +2575,7 @@ function renderPracticeQuestion() {
     logAttempt({
       id: q.id, sdlNumber: session.sdlNumber, sdlTitle: findSdl(session.sdlNumber).sdl.title,
       examNumber: session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
-      batch: q.batch, correct, confidence, mode: 'practice', ts,
+      batch: q.batch, correct, confidence, mode: 'practice', ts, ...pickOf(q, letter),
     });
     renderPracticeQuestion();
   }
@@ -2982,7 +2994,7 @@ function finishExamSim(timeExpired) {
       id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle,
       examNumber: q.sourceExamNumber || session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
       batch: q.batch, correct: ans === q.correct, confidence: null, mode: 'exam', ts: Date.now(),
-      timeMs: timeSpentMs[i] || 0,
+      timeMs: timeSpentMs[i] || 0, ...pickOf(q, ans),
     });
   });
 
@@ -3250,7 +3262,7 @@ function renderFlaggedQuestion() {
     logAttempt({
       id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
       objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
-      correct, confidence, mode: 'flagged', ts,
+      correct, confidence, mode: 'flagged', ts, ...pickOf(q, letter),
     });
     renderFlaggedQuestion();
   }
@@ -3441,6 +3453,40 @@ function renderSdlCards(sdlNumber) {
     document.getElementById('backList').addEventListener('click', () => setRoute(`exam-sdls/${f.examNumber}`));
   });
 }
+/* #sdlwrong/<sdl>: read the questions you got wrong on your latest try — your answer, the right one, the explanation —
+   without redoing the whole set. "Redo these" turns them into a review run (#sdlmissed). */
+function renderSdlWrong(sdlNumber) {
+  const f = findSdl(sdlNumber);
+  if (!f) { renderHome(); return; }
+  const last = lastAttemptMap();
+  const qs = onlyMissed(f.sdl.questions);
+  const back = `exam-sdls/${f.examNumber}`;
+  const yours = q => {
+    const a = last[q.id] || {};
+    if (!a.pick) return '';
+    const now = String(choiceText(q, a.pick, true) || '');
+    const txt = a.pickT && !now.startsWith(a.pickT.slice(0, 60)) ? a.pickT : now;
+    return `<div class="your-answer">Your answer: ${a.pickT && txt === a.pickT && txt !== now ? '' : `${a.pick} — `}${escapeHtml(txt)}</div>`;
+  };
+  const when = q => { const a = last[q.id]; return a && a.ts ? new Date(a.ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ''; };
+  main.innerHTML = `
+    <button class="back-link" id="backExam">&larr; ${examLabel(f.examNumber)}</button>
+    <h1>${escapeHtml(f.sdl.title)}</h1>
+    <p class="subtitle">${qs.length ? `${qs.length} question${qs.length === 1 ? '' : 's'} you got wrong on your latest try, with the explanations. Answer one right later and it drops off this list.` : 'Nothing to review — your latest try on every question you answered here was right.'}</p>
+    ${qs.length ? `<div style="display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 18px"><a class="btn" href="#sdlmissed/${sdlNumber}">Redo ${qs.length === 1 ? 'it' : `these ${qs.length}`}</a><a class="btn secondary" href="#practice/${sdlNumber}">Practice the whole SDL</a></div>` : ''}
+    ${qs.map((q, i) => `
+      <div class="missed-item">
+        <div class="missed-stem"><b>${i + 1}.</b> ${escapeHtml(q.stem)} ${isFlagged(q.id) ? '<span class="flagged-tag">&#9733; flagged</span>' : ''}${when(q) ? ` <span class="setup-hint" style="display:inline">· missed ${escapeHtml(when(q))}</span>` : ''}</div>
+        ${yours(q)}
+        <div class="correct-answer">Correct answer: ${q.correct} — ${escapeHtml(choiceText(q, q.correct, true))}</div>
+        <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
+        ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
+        ${atlasLinksHtml(q, (last[q.id] || {}).pick)}
+      </div>`).join('')}
+  `;
+  document.getElementById('backExam').addEventListener('click', () => setRoute(back));
+}
+
 /* #sdlmissed/<sdl>: the SDL's questions you got wrong on your latest try, as a review run. */
 function renderSdlMissed(sdlNumber) {
   const f = findSdl(sdlNumber);
@@ -3726,7 +3772,7 @@ function renderReviewQuestion() {
     logAttempt({
       id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
       objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
-      correct, confidence, mode: 'review', ts,
+      correct, confidence, mode: 'review', ts, ...pickOf(q, letter),
     });
     renderReviewQuestion();
   }
