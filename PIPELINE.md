@@ -813,6 +813,7 @@ question id, reason, note, exam, SDL, the letter picked and the first 160 charac
 stem; no PIN. Reports that fail to send wait in `qbank_reports_v1` and are retried
 (`flushReports`) a few seconds after a block page opens. The owner lists them with
 `python3 -I tools/reports.py` (`--block nephro`, `--json`, `--delete <id>` once handled).
+Each report that reaches the cloud also sends a short push to the owner's phone via ntfy.sh (topic in `REPORT_NTFY`, shared/app.js): only "New report on <block>: <reason>" — the note and stem stay in Firestore.
 
 ## Cross-device sync
 
