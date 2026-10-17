@@ -383,11 +383,12 @@ async function sendReport(r) {
   notifyReport(r);
 }
 /* the owner's phone gets a short push for every report that reaches the cloud (ntfy.sh; the topic is the owner's subscription).
-   It names only the block and the kind of problem — the note and the question stay in the cloud project (tools/reports.py) */
+   It names the block, the kind of problem and the student's note — the question itself stays in the cloud project (tools/reports.py) */
 const REPORT_NTFY = 'https://ntfy.sh/ocom-qbank-reports-694865bbca43a1a4';
 function notifyReport(r) {
   const why = (REPORT_WHY.find(w => w[0] === r.reason) || [, 'Something else'])[1];
-  fetch(REPORT_NTFY, { method: 'POST', body: `New report on ${r.block}: ${why}`,
+  const note = (r.note || '').trim(), body = `New report on ${r.block}: ${why}` + (note ? `\n“${note.length > 300 ? note.slice(0, 299) + '…' : note}”` : '');
+  fetch(REPORT_NTFY, { method: 'POST', body,
     headers: { Title: 'Q-bank report', Tags: 'triangular_flag_on_post' } }).catch(() => {});
 }
 function flushReports() {
