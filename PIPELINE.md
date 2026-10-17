@@ -902,3 +902,9 @@ lungs heading, embsim's omphalocele sac). A browser check (organ outline vs text
 m49: Nephron gets a coronal-section kidney (capsule, cortex, 8 pyramids + renal columns, minor/major calyces → pelvis → ureter,
 renal artery/vein, one wedge with leaders to the map's cortex/medulla bands). Static maps may now carry `bgart` (SVG drawn on the
 background layer). Built by atlas-review/batches/m47/assemble.py patch "# 12" from kidney_art.py; Nephron canvas 2500 → 3000.
+
+m50: drawings on 12 static maps (atlas-review/batches/m50/art, one module per drawing; place.py puts each under the content on
+maps shorter than 1800, or in a new right-hand column on taller ones, and grows the canvas): heart (cardproc), eye (anteye),
+lateral brain (cortex), circle of Willis (brainvessels), cord cross-section (spine), ear (hearing), normal vs RA joint (raarth),
+skin layers (skinbasics), meninges (meninges), alveolus + capillary (gasx), liver lobule (liver), GI tract (gitract).
+Applied by m47 assemble.py patch "# 13" (static-map `bgart`, same slot as the m49 kidney).
