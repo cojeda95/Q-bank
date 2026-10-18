@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 360 pan/zoom maps with 2172 diseases, drug targets and toxicities pinned to the exact step they break.">
+<meta name="description" content="Interactive pathway and physiology atlas for COMLEX Level 1 and USMLE Step 1 — 362 pan/zoom maps with 2174 diseases, drug targets and toxicities pinned to the exact step they break.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Lesion Atlas">
-<meta property="og:description" content="360 interactive maps. 2172 lesions pinned to the step they break.">
+<meta property="og:description" content="362 interactive maps. 2174 lesions pinned to the step they break.">
 <meta property="og:type" content="website">
 <style>
 :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -699,9 +699,38 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 .abg-box{width:min(640px,100%);padding-bottom:6px}
 .abg-row{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}
 .abg-f{display:flex;flex-direction:column;gap:4px;font:600 12.5px var(--font-ui);color:var(--ink-2)}
-.abg-f input{width:130px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);font:600 16px var(--font-ui)}
+.abg-f{flex:1 1 96px;max-width:150px}
+.abg-f input{width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);font:600 16px var(--font-ui)}
+.abg-f i{font-style:normal;font-weight:500;color:var(--ink-3)}
+.abg-f input[aria-invalid="true"]{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
+.abg-try{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0 6px}
+.abg-try>span{font:600 11px var(--font-ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+.abg-head{font:700 15.5px var(--font-ui);color:var(--ink);margin:12px 0 4px}
+.abg-out .abg-ok,.abg-out .abg-mix,.abg-out .abg-warn{border-left:3px solid var(--ok);padding-left:9px}
+.abg-out .abg-mix{border-left-color:var(--accent)}.abg-out .abg-warn{border-left-color:var(--bad)}
+.abg-out .abg-note{font-size:.9em;color:var(--ink-3)}
+.abg-out .abg-dim{color:var(--ink-3)}
+.abg-src{font:12px/1.45 var(--font-ui);color:var(--ink-3);margin:2px 0 4px}
 .abg-out .ds-note{margin:6px 0}
 .abg-go:disabled{opacity:.45;cursor:default}
+.qlen{display:flex;align-items:center;gap:4px;padding:0 10px 6px 30px;font:600 11px var(--font-ui);color:var(--ink-3)}
+.qlen span{margin-right:4px;letter-spacing:.03em;text-transform:uppercase}
+.qlen button{min-width:34px;padding:3px 8px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);font:600 12px var(--font-ui);cursor:pointer}
+.qlen button[aria-pressed="true"],.mixres-len .ds-x.on{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.mixres-box{width:min(620px,100%)}
+.mixres{list-style:none;margin:0 0 6px;padding:0;display:flex;flex-direction:column;gap:6px}
+.mixres-row{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;text-align:left;padding:9px 12px;border:1px solid var(--line);border-radius:12px;
+  background:var(--surface-2);color:var(--ink);font:600 13.5px var(--font-ui);cursor:pointer}
+.mixres-row:hover,.mixres-row:focus-visible{border-color:var(--accent);outline:none}
+.mixres-row .e{font:400 12.5px var(--font-ui);color:var(--ink-2)}.mixres-row .e b{font-weight:700;color:var(--ink)}
+.mixres-len{display:flex;align-items:center;gap:6px;margin:10px 0 0}.mixres-len>span{font:600 11px var(--font-ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+.mixres-go{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.mixpill{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;
+  background:var(--surface);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.mixpill button{border:0;background:none;color:var(--ink);font:600 13px var(--font-ui);padding:6px 10px;border-radius:999px;cursor:pointer}
+.mixpill button:hover{background:var(--surface-2)}.mixpill [data-mpx]{color:var(--ink-3);padding:6px 9px}
+@media (max-width:760px){ .mixpill{bottom:auto;top:calc(8px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%)} }
+@media print{ .mixpill{display:none!important} }
 
 /* ── OCOM Question Hub integration ─────────────────── */
 :root{--accent:#1f4e79;--accent-soft:#E3ECF5}
@@ -756,7 +785,8 @@ body{display:flex;flex-direction:column}
           <button class="qopt" role="menuitemradio" data-q="buzz" aria-checked="false">Buzzword → card<span>Read a buzzword, pick the card it belongs to</span></button>
           <button class="qopt" role="menuitemradio" data-q="mix" aria-checked="false">Daily mix<span id="qmixn">10 cards from every map — due, starred, missed and new</span></button>
           <button class="qopt" role="menuitemradio" data-q="graphs" aria-checked="false">Graph mix<span>10 random graphs — name each version, with a score</span></button>
-          <button class="qopt" role="menuitemradio" data-q="moving" aria-checked="false">Moving-map mix<span>10 random moving maps — name what’s switched on, with a score</span></button>
+          <button class="qopt" role="menuitemradio" data-q="moving" aria-checked="false">Moving-map mix<span id="qmovn">10 random moving maps — name what’s switched on, with a score</span></button>
+          <div class="qlen" role="group" aria-label="Moving-map mix length"><span>Questions</span><button type="button" data-mixlen="5">5</button><button type="button" data-mixlen="10">10</button><button type="button" data-mixlen="20">20</button></div>
           <button class="qopt" role="menuitemradio" data-q="case" aria-checked="false">Case vignettes<span>Findings from a disease card, its name hidden — pick the diagnosis</span></button>
           <button class="qopt" role="menuitemradio" data-q="star" aria-checked="false">Starred cards<span id="qstarn">Every card you’ve starred, across all maps</span></button>
           <button class="qopt" role="menuitemradio" data-q="due" aria-checked="false">Due cards<span id="qduen">Every card due for review, across all maps</span></button>
@@ -2103,6 +2133,14 @@ const PATHS = {
   tfGland:{n:"Thyroid gland",v:"--p-glycogen"},
   tfBlood:{n:"Blood & tissues",v:"--p-sugars"},
   tfDz:{n:"Patterns",v:"--p-tca"},
+  amIron:{n:"Iron & heme",v:"--p-glycogen"},
+  amMarrow:{n:"Marrow, EPO & DNA",v:"--p-ppp"},
+  amLysis:{n:"Red cell destruction",v:"--p-tca"},
+  amLoss:{n:"Blood loss",v:"--p-sugars"},
+  crEye:{n:"Eye reflexes",v:"--p-glycolysis"},
+  crFace:{n:"Face & jaw reflexes",v:"--p-glycogen"},
+  crThroat:{n:"Throat & airway reflexes",v:"--p-tca"},
+  crStem:{n:"Brainstem & lesions",v:"--p-ppp"},
   neutral:{n:"Transport / shuttle",v:"--p-etc"}
 };
 const MK = {dz:{n:"Disease / deficiency",v:"--m-dz",g:"!"},drug:{n:"Drug · toxin target",v:"--m-drug",g:"×"},reg:{n:"Key regulation",v:"--m-reg",g:"±"}};
@@ -19285,6 +19323,22 @@ subclinthy:{n:"Subclinical hypothyroidism & hyperthyroidism",k:"dz",p:"tfDz",enz
  src:["Katzung ch 38 — Thyroid & Antithyroid Drugs"],
  tx:["Subclinical hypothyroidism: levothyroxine may be considered when TSH is above 10 mIU/L; smaller rises are monitored","Subclinical hyperthyroidism: treatment is appropriate when TSH is below 0.1 mIU/L; milder suppression is monitored"],q:["subclinical hypothyroidism","subclinical hyperthyroidism","subclinical hypothyroid","subclinical hyperthyroid","=elevated tsh with normal free t4","=suppressed tsh with normal free t4"]},
 
+acutebloodloss:{n:"Acute blood loss anemia",k:"dz",p:"amLoss",enz:"Hemorrhage — volume is lost first, red cells show it later",inh:"—",fa:"422, 434",hi:1,
+ mech:"The first danger of acute bleeding is the lost <b>intravascular volume</b> — if massive, shock and death. If the patient survives, water moves from the interstitial fluid into the vessels within 1–3 days, diluting the blood so the hematocrit falls. The hypoxia raises renal <b>erythropoietin</b>, and about 5 days later new reticulocytes reach the blood.",
+ find:["Early red cells are normocytic and normochromic — the counts lag the bleed","Reticulocytosis reaching 10–15% after about 7 days; reticulocytes are larger and polychromatophilic","If blood pressure falls, adrenergic release mobilizes marginated granulocytes (leukocytosis); thrombocytosis is common in early recovery","Blood lost into the gut or out of the body takes its iron and can end in iron deficiency","Without further bleeding the red cell count is usually normal again within 3–6 weeks"],
+ labs:["Normocytic anemia that deepens over the first days as plasma volume is restored","Reticulocytes ↑ from about day 5"],
+ buzz:["After an acute bleed the hematocrit falls only once fluid shifts in"],
+ src:["Robbins ch 14 — Red blood cell and bleeding disorders","Guyton ch 33 — Red Blood Cells, Anemia, and Polycythemia"],
+ tx:["Restore volume; packed red cells for acute blood loss (each unit raises hemoglobin about 1 g/dL)"],q:["acute blood loss","acute blood loss anemia","anemia of acute blood loss","=blood loss anemia"]},
+
+cnreflexes:{n:"Cranial nerve reflexes — afferent & efferent limbs",k:"reg",p:"crFace",enz:"Which nerve carries each reflex in, and which carries it out",inh:"—",fa:"519, 546",hi:1,
+ mech:"Each brainstem reflex has a sensory (afferent) nerve and a motor (efferent) nerve, joined by nuclei in the brainstem. Testing one side and watching <b>both</b> sides tells which limb is broken: an afferent lesion silences the response on both sides when the bad side is stimulated; an efferent lesion silences only its own side, whichever side is stimulated.",
+ find:["<b>Pupillary light</b>: II → III · <b>Accommodation</b>: II → III","<b>Corneal</b>: V1 (nasociliary) → <b>both</b> VII (orbicularis oculi) — V1 cut: no blink either eye from that cornea; VII cut: that eye never blinks","<b>Lacrimation</b>: V1 → VII (greater petrosal → pterygopalatine ganglion); emotional tears are spared","<b>Jaw jerk</b>: V3 spindle afferents (cell bodies in the mesencephalic nucleus) → V3 motor to the masseter, both sides","<b>Gag</b>: IX → X · <b>Cough</b>: X → X, plus phrenic and spinal nerves"],
+ labs:["—"],
+ buzz:["One-sided CN V motor lesion: jaw deviates toward the lesion","CN X lesion: uvula deviates away from the lesion"],
+ src:["Fundamental Neuroscience ch 14 — A Synopsis of Cranial Nerves of the Brainstem","Fundamental Neuroscience ch 33 — The Neurologic Examination","Moore ch 10 — Cranial Nerves","Bootcamp.com Neurology — Cranial nerves I–VI","Bootcamp.com Neurology — Cranial nerves VII–XII"],
+ tx:["—"],q:["cranial nerve reflexes","corneal reflex","corneal blink reflex","jaw jerk","jaw jerk reflex","gag reflex","lacrimation reflex","=jaw deviates toward the side of the lesion","=uvula deviates away from the side of the lesion"]},
+
 /* ── seizures, anticonvulsants & headache (m14) ─────────────────────── */
 seizure:{n:"Seizures: phases & causes by age",k:"reg",p:"szclass",enz:"Synchronized, high-frequency neuronal firing",inh:"—",fa:"531",hi:1,
  mech:"A seizure is synchronized, high-frequency firing of a population of neurons. It runs in three phases: <b>aura</b> (the early part — odd smells or tastes), <b>ictal</b> (first symptom to end of seizure activity) and <b>postictal</b> (gradual recovery to baseline). <b>Epilepsy</b> is a disorder of recurrent, <b>unprovoked</b> seizures.",
@@ -19977,7 +20031,7 @@ MAPS.nitrogen = {
    ["6","Lyase → arginine + fumarate (to TCA)"],
    ["7","Arginase → urea + ornithine (recycled)"],
    ["Nitrogens","One from NH₄⁺, one from aspartate"],
-   ["Where","Liver: steps 1–2 mito, 3–5 cytosol"]]},
+   ["Where","Liver: steps 2–4 mito, 5–7 cytosol"]]},
   {x:140,y:1460,w:530,h:170,t:"Reading the newborn metabolic panel",rows:[
    ["Urea cycle defect","↑ NH₃, respiratory alkalosis, no acidosis"],
    ["Organic acidemia","↑ NH₃ WITH anion gap acidosis + ketosis"],
@@ -20648,7 +20702,7 @@ MAPS.nephron = {
    ["","Sjögren, RA, amphotericin B"],
    ["Type 2 proximal","Can't reclaim HCO₃⁻ · pH < 5.5"],
    ["","↓ K⁺ · Fanconi · rickets"],
-   ["Type 4","Hypoaldosteronism · pH < 5.5"],
+   ["Type 4","Hypoaldosteronism · urine pH variable"],
    ["","↑ K⁺ · diabetes, ACEi, NSAIDs"],
    ["All three","Normal anion gap acidosis"]]},
   {x:1900,y:970,w:540,h:182,kw:126,t:"Pre vs intrinsic vs post",rows:[
@@ -20725,13 +20779,13 @@ MAPS.cardiac = {
   {x:1060,y:1430,w:700,h:226,kw:140,t:"ECG intervals",rows:[
    ["P wave","Atrial depolarization"],
    ["PR interval","120–200 ms · AV nodal delay"],
-   ["QRS","< 120 ms · ventricular depolarization"],
+   ["QRS","≤ 100 ms · ventricular depolarization"],
    ["ST segment","Ventricles fully depolarized"],
    ["QT interval","Depolarization + repolarization"],
    ["T wave","Ventricular repolarization"],
    ["U wave","Hypokalemia, bradycardia"]]},
   {x:1820,y:1430,w:620,h:226,kw:150,t:"Murmurs that move",rows:[
-   ["↑ Preload","Squat, leg raise, hand grip"],
+   ["↑ Preload","Squat, leg raise"],
    ["↓ Preload","Valsalva, standing"],
    ["Most murmurs","Louder with more preload"],
    ["HCM and MVP","LOUDER with Valsalva/standing"],
@@ -39827,7 +39881,7 @@ MAPS.pthsim = {
  fa:"224, 336–337, 348–349, 361, 621–622, 695",
  src:["Costanzo ch 9 — Endocrine physiology", "Guyton ch 80 — Parathyroid Hormone, Calcitonin, Calcium and Phosphate Metabolism, Vitamin D, Bone, and Teeth", "Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis", "Robbins ch 24 — The endocrine system", "Robbins ch 20 — The kidney"],
  art:"kit",
- dyn:{"lazy":"6f0366c9ae","switches":[{"id":"dz","label":"Pick a disorder","type":"one","options":[["p1","Primary hyperparathyroidism","hyperpara1"],["p2","Secondary (kidney disease)","hyperpara2"],["p3","Tertiary","renalod"],["vd","Vitamin D deficiency","vitddef"],["hp","Hypoparathyroidism","hypopara"],["pha","Pseudohypoparathyroidism","pha"],["fhh","FHH","fhh"],["mal","Malignancy — PTHrP","hcmalig"],["sarc","Sarcoidosis","sarcoid"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"df2f4e63e6","switches":[{"id":"dz","label":"Pick a disorder","type":"one","options":[["p1","Primary hyperparathyroidism","hyperpara1"],["p2","Secondary (kidney disease)","hyperpara2"],["p3","Tertiary","renalod"],["vd","Vitamin D deficiency","vitddef"],["hp","Hypoparathyroidism","hypopara"],["pha","Pseudohypoparathyroidism","pha"],["fhh","FHH","fhh"],["mal","Malignancy — PTHrP","hcmalig"],["sarc","Sarcoidosis","sarcoid"]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -39890,7 +39944,7 @@ MAPS.szsim = {
  fa:"230, 531, 532, 560, 561, 562, 632",
  src:["Katzung ch 24 — Antiseizure Medications", "Kaplan & Sadock ch 21 — Psychopharmacology", "Katzung ch 22 — Sedative-Hypnotic Drugs"],
  art:"kit",
- dyn:{"lazy":"16f68251e2","switches":[{"id":"sz","label":"Seizure","type":"one","options":[["focal","Focal","epilepsyreg"],["absence","Absence","epilepsyreg"],["gtc","Generalized tonic-clonic","epilepsyreg"],["status","Status epilepticus","statusepi"]]},{"id":"rx","label":"Drug","type":"one","options":[["phen","Phenytoin","phenytoin"],["carb","Carbamazepine","carbamazepine"],["lamo","Lamotrigine","lamotrigine"],["valp","Valproate","valproate"],["topi","Topiramate","topiramate"],["leve","Levetiracetam","levetiracetam"],["etho","Ethosuximide","ethosuximide"],["gaba","Gabapentin","gabapentinoids"],["benzo","Lorazepam","benzos"]]}],"panel":{"x":2120,"y":110,"w":1000}},
+ dyn:{"lazy":"99d57e8e93","switches":[{"id":"sz","label":"Seizure","type":"one","options":[["focal","Focal","epilepsyreg"],["absence","Absence","epilepsyreg"],["gtc","Generalized tonic-clonic","epilepsyreg"],["status","Status epilepticus","statusepi"]]},{"id":"rx","label":"Drug","type":"one","options":[["phen","Phenytoin","phenytoin"],["carb","Carbamazepine","carbamazepine"],["lamo","Lamotrigine","lamotrigine"],["valp","Valproate","valproate"],["topi","Topiramate","topiramate"],["leve","Levetiracetam","levetiracetam"],["etho","Ethosuximide","ethosuximide"],["gaba","Gabapentin","gabapentinoids"],["benzo","Lorazepam","benzos"]]}],"panel":{"x":2120,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -41962,7 +42016,85 @@ MAPS.tftsim = {
  edges:[]
 };
 
-const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["oral","Oral Cavity & Salivary Glands"],["skinbasics","Skin Basics — Layers, Lesions & Terms"],["gidrugs","GI Motility, Laxative & Antiemetic Drugs"],["cardproc","Cardiac Anatomy, Catheters & Vascular Access"],["transfuse","Blood Groups & Transfusion"],["nmjflow","Neuromuscular Junction in Motion"],["synflow","Monoamine Synapse in Motion"],["apflow","Action Potential in Motion"],["bgflow","Basal Ganglia in Motion"],["cordsim","Spinal Cord Lesion Simulator"],["stemsim","Brainstem Lesion Simulator"],["visfield","Visual Pathway Lesion Simulator"],["cardap","Cardiac Action Potential in Motion"],["coagflow","Coagulation Cascade in Motion"],["alvflow","Alveolus in Motion"],["asthflow","Asthma Airway in Motion"],["axisflow","HPA Axis in Motion"],["betaflow","β Cell in Motion"],["follflow","Thyroid Follicle in Motion"],["cochflow","Cochlea in Motion"],["gutabs","Gut Absorption in Motion"],["boneflow","Bone Remodeling in Motion"],["goutflow","Uric Acid & Gout in Motion"],["rajoint","Rheumatoid Joint in Motion"],["vsmotion","Viscerosomatic Reflex in Motion"],["lymphflow","Lymphatic Pump in Motion"],["biliflow","Bilirubin in Motion"],["ironflow","Iron in Motion"],["abflow","Acid–Base in Motion"],["glomsim","Glomerular Disease Locator"],["abxsim","Antibiotic Targets in Motion"],["misim","MI Locator"],["pvflow","Pressure–Volume Loop in Motion"],["edemaflow","Capillary & Edema in Motion"],["hivflow","HIV Life Cycle in Motion"],["eyesim","Pupil & Eye Movement Simulator"],["plexsim","Brachial Plexus Lesion Simulator"],["mensflow","Menstrual Cycle in Motion"],["baroflow","Autonomic Drugs & Baroreflex in Motion"],["shocksim","Shock Simulator"],["ecgsim","Conduction & ECG Simulator"],["cahflow","Steroid Synthesis & CAH in Motion"],["lipoflow","Lipoprotein Transport in Motion"],["hemeflow","Heme Synthesis & Porphyrias in Motion"],["nucflow","Nucleotide Synthesis & Drug Sites in Motion"],["acidflow","Parietal Cell in Motion"],["legsim","Lower Limb Nerve Lesion Simulator"],["abtime","Acid–Base Compensation Timeline"],["aasim","Amino Acid Disorders in Motion"],["bvitsim","B Vitamins & Zinc in Motion"],["colsim","Collagen Assembly in Motion"],["energysim","Energy Metabolism in Motion"],["faosim","Fatty Acid Oxidation in Motion"],["glyxsim","Glycolysis Odds & Ends in Motion"],["gsdsim","Glycogen Storage Diseases in Motion"],["labsim","Lab Techniques in Motion"],["lsdsim","Lysosomal Storage in Motion"],["pedsim","Pedigree Simulator"],["rtasim","Renal Tubular Acidosis Simulator"],["sugarsim","Fructose & Galactose in Motion"],["ureasim","Urea Cycle in Motion"],["cbsim","Cerebellar Lesions in Motion"],["papezsim","The Papez Circuit in Motion"],["rxsim","Psych Drugs in Motion"],["sleepsim","Sleep Stages in Motion"],["stimsim","Stimulants & Addiction in Motion"],["aortasim","The Aorta in Motion"],["archsim","Pharyngeal Arches in Motion"],["carditsim","Heart Infection & Inflammation in Motion"],["cyansim","Cyanotic Heart Disease in Motion"],["embsim","Embryo & Gut-Tube Defects in Motion"],["fetalsim","Fetal Circulation in Motion"],["gonadsim","Gonadal Tumors in Motion"],["htnsim","Hypertension in Motion"],["lyteecg","Electrolytes & the ECG Simulator"],["murmursim","Murmurs & Maneuvers in Motion"],["placsim","Bleeding in Pregnancy in Motion"],["pregsim","Pregnancy Hormones in Motion"],["prossim","The Prostate in Motion"],["scrotsim","The Scrotum in Motion"],["sexsim","Sex Differentiation in Motion"],["aqsim","Aqueous Humor & Retina in Motion"],["vestsim","Vertigo in Motion"],["voxsim","Larynx & Voice in Motion"],["bleedsim","Head Bleeds in Motion"],["btsim","Brain Tumors in Motion"],["csfsim","CSF Flow in Motion"],["demsim","Dementias in Motion"],["hasim","Headaches in Motion"],["pthsim","Calcium & PTH Lab Simulator"],["spreadsim","Seizure Spread in Motion"],["szsim","Antiseizure Drugs in Motion"],["testsim","Diagnostic Test Simulator"],["antidsim","Poison & Antidote in Motion"],["bowelsim","Bowel Blockages in Motion"],["esosim","Swallowing in Motion"],["laxsim","Laxatives in Motion"],["pksim","Pharmacokinetics & Dose–Response Simulator"],["portsim","Liver Blood Flow in Motion"],["complsim","Complement in Motion"],["hypsim","Hypersensitivity Types in Motion"],["idsim","Immunodeficiency Simulator"],["tcellsim","T-Cell Activation in Motion"],["tfsim","Blood Transfusion in Motion"],["vaxsim","Vaccines in Motion"],["altsim","Climbing to Altitude in Motion"],["alvdzsim","Alveoli in Trouble in Motion"],["hypoxsim","Hypoxemia Simulator"],["lcsim","Lung Cancer in Motion"],["odcsim","The O₂ Curve in Motion"],["pftsim","PFT & Flow–Volume Loop Simulator"],["pnasim","Pneumonia in Motion"],["bonesim","Bones & Kids by Age in Motion"],["cervsim","The Cervical Spine in Motion"],["footsim","The Foot in Motion"],["fxsim","Growth Plates & Arm Injuries in Motion"],["healsim","Inflammation & Wound Healing in Motion"],["injsim","Cell Injury & Death Simulator"],["shsim","The Shoulder in Motion"],["sxedema","Edema Work-Up"],["sxfever","Fever & Hyperthermia Work-Up"],["sxgibleed","GI Bleeding Work-Up"],["sxjoint","Joint Pain Work-Up"],["sxrash","Fever & Rash Work-Up"],["sxsyncope","Syncope Work-Up"],["sxweight","Weight Loss Work-Up"],["anemiasim","Anemia Work-Up"],["bcellsim","B Cells & Lymphomas in Motion"],["chemosim","Chemo & DNA Repair in Motion"],["lftsim","Liver Tests Work-Up"],["mapksim","Growth Signals in Motion"],["myelsim","Myeloid Neoplasms in Motion"],["netsim","Pancreatic Endocrine Tumors in Motion"],["pancsim","Pancreatitis in Motion"],["pltsim","Platelets in Motion"],["thytsim","Thyroid Tumors in Motion"],["avsim","Antiviral Targets in Motion"],["blistsim","Blister Simulator"],["bugid","Name-the-Bug Simulator"],["gxsim","Bacterial Gene Transfer in Motion"],["lesionsim","Skin Lesion Simulator"],["negsim","Negative-Strand Viruses in Motion"],["parasim","Parasite Life Cycles in Motion"],["protosim","Protozoa in Motion"],["toxinsim","Bacterial Toxins in Motion"],["zoosim","Zoonoses & Bites in Motion"],["anessim","Anesthetics in Motion"],["biassim","Bias in Motion"],["designsim","Study Design Simulator"],["ethicsim","Consent & Capacity Simulator"],["orbitsim","The Orbit & Tears in Motion"],["painsim","Pain Gone Wrong in Motion"],["ribsim","Rib Motion in Motion"],["amylsim","Amyloid in Motion"],["cransim","Cranial Mechanism in Motion"],["frysim","Spinal Mechanics & OMT in Motion"],["lbpsim","Low Back Pain in Motion"],["neosim","Neoplasia in Motion"],["pelvsim","Pelvis in Motion"],["sacsim","The Sacrum in Motion"],["embolsim","Emboli in Motion"],["plsim","Pleural Fluid in Motion"],["akisim","Acute Kidney Injury in Motion"],["cystsim","Kidney Cysts in Motion"],["utisim","UTI & Incontinence in Motion"],["watersim","Water Balance in Motion"],["tftsim","Thyroid Function Tests in Motion"],["index","Index"]];
+MAPS.anemsim = {
+ t:"Anemia Work-up in Motion", sub:"Iron from the gut on transferrin, heme and globin and DNA built in the marrow erythroblast on EPO's signal, reticulocytes into the blood for 120 days, then the splenic macrophage or lysis in the vessel — pick a cause and read the MCV, reticulocytes, ferritin, TIBC, LDH, haptoglobin and MMA beside a smear. Tap a transporter or enzyme for its card",
+ w:3500, h:1900,
+ fa:"67, 209, 381, 413, 420–430, 434, 607",
+ src:["Robbins ch 14 — Red blood cell and bleeding disorders", "Guyton ch 33 — Red Blood Cells, Anemia, and Polycythemia", "Bootcamp.com Hematology & Oncology — Microcytic anemia", "Bootcamp.com Hematology & Oncology — Normocytic anemia", "Bootcamp.com Hematology & Oncology — Macrocytic anemia"],
+ art:"kit",
+ dyn:{"lazy":"8e95aa77f9","switches":[{"id":"an","label":"Cause","type":"one","options":[["ida","Iron deficiency","ida"],["acd","Anemia of chronic disease","acd"],["thal","Thalassemia trait (α or β)","betathal"],["sidero","Sideroblastic anemia","sidero"],["lead","Lead poisoning","lead"],["aplastic","Aplastic anemia","aplastic"],["ckd","Chronic kidney disease","ckdanemia"],["bleed","Acute blood loss (a week on)","acutebloodloss"],["hs","Hereditary spherocytosis","hs"],["g6pd","G6PD deficiency","g6pd"],["sickle","Sickle cell anemia","sickle"],["aiha","Warm autoimmune hemolysis","warmaiha"],["maha","Microangiopathic (TTP, HUS, DIC)","ttp"],["b12","B12 deficiency","b12def"],["fol","Folate deficiency","b9def"],["liver","Liver disease · alcohol","nonmegalo"]],"sections":[["Microcytic — MCV < 80",["ida","acd","thal","sidero","lead"]],["Normocytic — not hemolysis",["aplastic","ckd","bleed"]],["Normocytic — hemolysis",["hs","g6pd","sickle","aiha","maha"]],["Macrocytic — MCV > 100",["b12","fol","liver"]]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:940,w:1000,h:138,kw:179,t:"Where the red cell dies (First Aid pp. 427–428; Robbins ch 14)",rows:[
+   ["Extravascular","splenic macrophages · splenomegaly · spherocytes · no hemoglobinuria"],
+   ["Intravascular","haptoglobin used up · hemoglobinuria · hemosiderinuria · schistocytes"],
+   ["Both show","LDH ↑ · reticulocytes ↑ · unconjugated bilirubin ↑ · pigment stones"],
+   ["Both kinds at once","sickle cell anemia · G6PD deficiency"]]},
+  {x:2420,y:1110,w:1000,h:160,kw:136,t:"Reading the reticulocytes (First Aid p. 423; Robbins ch 14)",rows:[
+   ["Normal","about 0.5–1.5% of red cells"],
+   ["Index > 3","the marrow is compensating — hemolysis, or recovery from a bleed"],
+   ["Index < 2","inadequate response — marrow, iron, B12/folate or EPO short"],
+   ["Index","retic % × (Hct ÷ normal Hct) ÷ maturation time"],
+   ["Mentzer index","MCV ÷ RBC count — under 13 favors thalassemia trait"]]}],
+ nodes:[
+  {id:"am1",l:"Classifying anemia",x:1880,y:150,p:"amMarrow",k:"hub",s:"MCV · reticulocytes",m:["anemiaapproach","reticindex"]},
+  {id:"am2",l:"Iron in and out",x:1880,y:215,p:"amIron",s:"DMT1 · ferroportin · transferrin",m:["ironcycle","ironstudies","ironrx"]},
+  {id:"am3",l:"Iron-poor vs iron-locked",x:1030,y:660,p:"amIron",s:"deficiency · chronic disease · overload",m:["ida","acd","hemochrom"]},
+  {id:"am4",l:"B12 · folate",x:1060,y:780,p:"amMarrow",s:"megaloblastic · non-megaloblastic",m:["b12def","b9def","mmacid","folatetrap","nonmegalo"]},
+  {id:"am5",l:"Immune & mechanical",x:1560,y:860,p:"amLysis",s:"AIHA · TTP · HUS · DIC · PNH",m:["warmaiha","coldaiha","antiglobulin","ttp","ahus","dic","pnh"]},
+  {id:"am6",l:"Heme & globin",x:960,y:1340,p:"amIron",s:"lead · sideroblastic · thalassemias",m:["hemesynth","lead","sidero","betathal","alphathal","hbtypes"]},
+  {id:"am7",l:"Marrow failure",x:960,y:1430,p:"amMarrow",s:"aplastic · pure red cell aplasia",m:["aplastic","fanconi","dba","parvo","myelophthisic"]},
+  {id:"am8",l:"EPO & the kidney",x:1000,y:1700,p:"amMarrow",s:"CKD · ESA therapy",m:["ckdanemia","esa"]},
+  {id:"am9",l:"Acute blood loss",x:1010,y:1250,p:"amLoss",s:"volume first, retics by day 5–7",m:["acutebloodloss","hypovshock","bloodproducts"]},
+  {id:"am10",l:"Where red cells die",x:1620,y:1140,p:"amLysis",k:"hub",s:"extravascular vs intravascular",m:["hemolysislabs","bilicycle","jaundice","transfusion"]},
+  {id:"am11",l:"Membrane · enzyme · Hb",x:2000,y:1300,p:"amLysis",s:"spherocytosis · G6PD · sickle",m:["hs","g6pd","pkdef","sickle","sickletrait","hbc","asplenia"]}],
+ edges:[]
+};
+
+MAPS.cnrefsim = {
+ t:"Cranial Nerve Reflexes in Motion", sub:"The brainstem reflex arcs — pupillary light, near response, corneal blink, lacrimation, jaw jerk, gag, cough — each with its afferent nerve, its nuclei on both sides and its efferent nerve lit as the signal moves. Put a lesion on the left (II, III, V1, V3, VII, IX, X, or both pretectal nuclei) and read which responses are lost on which side. Tap a pin for its card",
+ w:3500, h:2200,
+ fa:"145, 519, 527, 546, 554, 556, 557",
+ src:["Fundamental Neuroscience ch 14 — A Synopsis of Cranial Nerves of the Brainstem", "Fundamental Neuroscience ch 28 — Visual Motor Systems", "Fundamental Neuroscience ch 19 — Viscerosensory Pathways", "Fundamental Neuroscience ch 33 — The Neurologic Examination", "Moore ch 10 — Cranial Nerves", "Moore ch 9 — Head", "Guyton ch 38 — Pulmonary Ventilation", "Bootcamp.com Neurology — Cranial nerves I–VI", "Bootcamp.com Neurology — Cranial nerves VII–XII"],
+ art:"kit",
+ dyn:{"lazy":"da8f27030a","switches":[{"id":"rx","label":"Reflex","type":"steps","options":[["light","Pupillary light","pupilpath"],["near","Near response","neartriad"],["corneal","Corneal blink","cnreflexes"],["lacri","Lacrimation","lacrimal"],["jaw","Jaw jerk","cnreflexes"],["gag","Gag","cnreflexes"],["cough","Cough","coughreflex"]]},{"id":"les","label":"Lesion — pick one (on the patient’s left)","type":"one","options":[["cn2","Left optic nerve (II)","opticneuritis"],["rapd","Marcus Gunn (partial II)","rapd"],["cn3","Left oculomotor (III)","cn3palsy"],["argyll","Argyll Robertson (both)","lightnear"],["v1","Left V1","cnreflexes"],["v3","Left V3","cnreflexes"],["cn7","Left facial (VII) — Bell","bell"],["cn9","Left glossopharyngeal (IX)","jugfor"],["cn10","Left vagus (X)","jugfor"]],"sections":[["Eye",["cn2","rapd","cn3","argyll"]],["Face and jaw",["v1","v3","cn7"]],["Throat",["cn9","cn10"]]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ comps:[
+],
+ panels:[
+  {x:2420,y:860,w:1000,h:204,kw:239,t:"Cranial nerve reflexes (First Aid p. 519)",rows:[
+   ["Pupillary · accommodation","II in → III out"],
+   ["Corneal","V1 (nasociliary) in → both VII out (orbicularis oculi)"],
+   ["Lacrimation","V1 in → VII out — emotional tears survive"],
+   ["Jaw jerk","V3 spindle in (masseter) → V3 motor out"],
+   ["Gag","IX in → X out"],
+   ["Cough","X in → X out, plus phrenic and spinal nerves"],
+   ["Carotid sinus","IX in (X: aortic arch) — the baroreflex map moves it"]]},
+  {x:2420,y:1110,w:1000,h:160,kw:170,t:"One-sided lesion signs (First Aid p. 546; Moore ch 10; Fund. Neurosci. ch 14, 28)",rows:[
+   ["Afferent limb cut","no response on either side from that side"],
+   ["Efferent limb cut","only that side fails, whichever side is tested"],
+   ["CN V motor","jaw deviates toward the lesion"],
+   ["CN X","uvula and palate pulled away from the lesion"],
+   ["CN VII (LMN)","whole half of the face, forehead too; eye won’t close"]]}],
+ nodes:[
+  {id:"cr1",l:"Pupillary light reflex",x:2640,y:1640,p:"crEye",k:"hub",s:"II in · III out, direct + consensual",m:["pupilpath"]},
+  {id:"cr2",l:"Near response",x:2640,y:1720,p:"crEye",s:"converge · accommodate · constrict",m:["neartriad","accommodation","lensaccom"]},
+  {id:"cr3",l:"Marcus Gunn pupil",x:2640,y:1800,p:"crEye",s:"partial afferent defect",m:["rapd","opticneuritis"]},
+  {id:"cr4",l:"Argyll Robertson pupil",x:2640,y:1880,p:"crEye",s:"light-near dissociation",m:["lightnear"]},
+  {id:"cr5",l:"Oculomotor nerve palsy",x:2640,y:1960,p:"crStem",s:"blown pupil · down and out",m:["cn3palsy"]},
+  {id:"cr6",l:"Corneal blink · eyelids",x:2640,y:2040,p:"crFace",k:"hub",s:"V1 in · both VII out",m:["cnreflexes","eyelids"]},
+  {id:"cr7",l:"Lacrimal gland",x:2640,y:2120,p:"crFace",s:"VII → pterygopalatine ganglion",m:["lacrimal"]},
+  {id:"cr8",l:"Bell palsy",x:3110,y:1640,p:"crStem",s:"whole half of the face",m:["bell"]},
+  {id:"cr9",l:"Trigeminal nerve",x:3110,y:1720,p:"crFace",s:"V1 corneal · V3 jaw",m:["cavernous","trigeminal","chewing"]},
+  {id:"cr10",l:"Gag · palate",x:3110,y:1800,p:"crThroat",s:"IX in · X out",m:["jugfor","pharynxanat"]},
+  {id:"cr11",l:"Cough",x:3110,y:1880,p:"crThroat",s:"X in · X out",m:["coughreflex","laryngealnerves"]},
+  {id:"cr12",l:"Solitary nucleus",x:3110,y:1960,p:"crThroat",s:"visceral relay · baroreflex",m:["nts","baroreflex"]},
+  {id:"cr13",l:"Brainstem strokes",x:3110,y:2040,p:"crStem",s:"PICA · AICA · Weber",m:["wallenberg","aicastroke","weber"]},
+  {id:"cr14",l:"Cranial nerve nuclei",x:3110,y:2120,p:"crStem",s:"motor medial · sensory lateral",m:["cncomponents","pons"]}],
+ edges:[]
+};
+
+const VIEWS = [["core","Core Carbon"],["lipid","Lipids"],["steroid","Steroids"],["lysosome","Lysosome"],["nitrogen","Nitrogen"],["nucleo","Heme & Nucleotides"],["collagen","Collagen"],["vitamins","Vitamins"],["cellcycle","Cell Cycle"],["endocrine","RAAS & Calcium"],["nephron","Nephron"],["cardiac","Cardiac"],["pulm","Pulmonary"],["eicosanoid","Eicosanoids"],["gut","GI & Absorption"],["rbc","Red Cell"],["hemostasis","Hemostasis"],["immune","Immunity"],["cytokine","Cytokines"],["sexdev","Sex Differentiation"],["axes","Endocrine Axes"],["pancreas","Diabetes"],["ans","Autonomic"],["neurotx","Neurotransmitters"],["abx","Antimicrobials"],["antiviral","Antivirals"],["spine","Spinal Cord"],["stroke","Stroke & Brainstem"],["signal","Growth Signals"],["muscle","Muscle"],["bone","Bone"],["repro","Cycle & Pregnancy"],["gpos","Gram-Positive"],["gneg","Gram-Negative"],["rclass","Receptor Classes"],["toxins","Toxins & Gene Transfer"],["hemeonc","Heme Malignancies"],["carcino","Viruses & Carcinogens"],["chemo","Chemotherapy"],["tumgut","GI & Breast Tumors"],["tumgu","GU & Gyn Tumors"],["tumcns","Brain, Thyroid, Skin & Bone"],["glom","Glomerular Disease"],["acidbase","Acid-Base & Electrolytes"],["vasc","Vasculitis"],["chd","Congenital Heart"],["tox","Toxicology & Antidotes"],["environ","Environment & Nutrition"],["cyp","CYP450 Interactions"],["hypimm","Hypersensitivity & Immunodeficiency"],["fungpar","Fungi & Parasites"],["virus","Virus Families"],["genetics","Genetics"],["arthritis","Arthritis & Autoantibodies"],["malerepro","Male Repro & Urology"],["akickd","Kidney Injury & CKD"],["valves","Murmurs & Valves"],["liver","Liver, Gallbladder & Pancreas"],["derm","Dermatology"],["basal","Basal Ganglia & Movement"],["biostats","Biostats & Epidemiology"],["pkpd","Pharmacokinetics & Dynamics"],["anesth","Anesthesia"],["lungdz","Lung Disease & PFTs"],["psychdx","Psychosis, Mood & Anxiety"],["psychsom","Personality, Somatic & Eating"],["substance","Substance Use"],["sleepdev","Sleep & Development"],["eyecn","Eye & Cranial Nerves"],["ent","Ear, Nose & Throat"],["plexus","Plexus & Peripheral Nerves"],["gitract","GI Tract"],["transplant","Transplant & Immunosuppression"],["vaccines","Vaccines & Spleen"],["embryo","Embryology"],["obgyn","Obstetrics & Gynecology"],["vascshock","Vessels & Shock"],["rhythm","Arrhythmias"],["neuroer","Neuro Emergencies"],["cnsinf","CNS Infections & TB"],["vsomatic","Viscerosomatic Levels"],["chapman","Chapman Points"],["omt","OMT Techniques"],["ommmech","Spine, Ribs & Pelvis"],["ethics","Ethics & Safety"],["seizhead","Seizures & Headache"],["infsite","Infections by Site"],["pain","Pain & Analgesia"],["orthoinj","Ortho Injuries & Peds"],["microlab","Micro Lab & Virulence"],["molbio","Molecular Biology"],["cellbio","Cell Biology & Histology"],["htnrx","Hypertension Drugs"],["aging","Aging & Geriatrics"],["iemlab","Inborn Errors by Lab"],["respdrug","Respiratory Drugs"],["adr","Drug Reactions by Organ"],["tumark","Tumor Markers & Stains"],["zoonoses","Zoonoses & Vectors"],["brainreg","Brain Regions & Lesions"],["abdanat","Abdominal Anatomy"],["genpath","Cell Injury & Inflammation"],["ihd","Ischemic Heart Disease"],["cardcycle","Cardiac Cycle & PV Loops"],["neoplasia","Neoplasia"],["thromboemb","Edema, Thrombosis & Embolism"],["lungmech","Lung Mechanics"],["gihorm","GI Hormones & Secretions"],["renalphys","Renal Physiology"],["mabs","Therapeutic Antibodies"],["antipara","Antifungal & Antiparasitic Drugs"],["weakness","Weakness — Localize It"],["sxchest","Chest Pain"],["sxdyspnea","Dyspnea"],["sxjaundice","Jaundice"],["cranial","Cranial Osteopathy"],["jones","Counterstrain Points"],["sxabdpain","Abdominal Pain"],["sxdiarrhea","Diarrhea"],["sxurine","Hematuria & Proteinuria"],["sxams","Altered Mental Status"],["membrane","Membrane Potentials"],["urineconc","Urine Concentration"],["hearing","Hearing & Balance"],["vision","Vision"],["larynx","Larynx & Swallowing"],["sportsortho","Fractures & Sports Injuries"],["gasx","Gas Exchange"],["bonehisto","Bone & Joint Histology"],["hormones","Hormone Actions"],["psychmse","Interview & MSE"],["janda","Muscle Imbalance (Janda)"],["chestomt","Chest & Visceral OMT"],["histoembryo","Lung & Kidney Histology"],["brainstem","Brainstem Levels"],["chemvisc","Visceral Sense, Smell & Taste"],["renalna","Sodium & Clearance"],["synapse","Synaptic Transmission"],["motorctl","Motor Control"],["neiomm","Neuroendocrine-Immune (OMM)"],["orthowork","Knee, Hip & Hand Workups"],["respinf","Respiratory Infections"],["psychtx","Depression Care & Forensics"],["androgen","Androgens & Testicular Axis"],["renvasc","Renal Vascular & Cystic"],["lbp","Low Back Pain (OMM)"],["anteye","Front of the Eye"],["ptrehab","PT & Rehab"],["limbmem","Limbic System & Memory"],["placenta","Placenta & Pregnancy"],["agingomt","Geriatric OMT"],["softtissue","Soft-Tissue Tumors"],["integrative","Integrative Medicine"],["gfrk","Filtration & Potassium"],["highalt","Altitude, Hypoxia & CF"],["cerebellum","Cerebellum"],["meninges","Meninges, Sinuses & CSF"],["brainvessels","Brain Arteries"],["neurodev","ADHD, Autism & Tics"],["dsmdx","DSM-5 & Suicide Risk"],["crystals","Crystal Arthropathies"],["hypoxia","Hypoxia & O₂ Delivery"],["legfx","Lower-Limb Fractures"],["gaze","Eye Movements & Gaze"],["neckpain","Neck & Back Pain"],["ionchan","Ion Channels & Potentials"],["psyrxprin","Psychopharm Principles"],["somatcare","Somatic & Factitious Care"],["gcpharm","Glucocorticoids"],["lymphdev","Lymphocyte Development"],["lungcancer","Lung Cancer"],["pitgh","Pituitary & GH"],["buffers","Buffers & Henderson–Hasselbalch"],["renalmin","Renal Ca, Phosphate & Mg"],["ventmech","Ventilation Mechanics"],["shoulder","Shoulder Pain"],["ctdis","Connective Tissue Disorders"],["thyroid","Thyroid Disease"],["innate","Innate Immune Cells"],["pleural","Pleural Disease"],["fuelstate","Fed & Fasting Fuel Use"],["prosobs","Prostate & Urinary Obstruction"],["rbflow","Renal Blood Flow"],["kshift","Potassium Shifts"],["tissues","Epithelium & Tissue Types"],["cortex","Cerebral Cortex & Lobes"],["adrenal","Adrenal Gland"],["raasrx","RAAS & Its Drugs"],["fluids","Body Fluids & Fluid Shifts"],["raarth","Rheumatoid & Infectious Arthritis"],["footleg","Foot, Ankle & Leg"],["anxtx","Anxiety Disorders & Treatment"],["nephflow","Nephron in Motion"],["oral","Oral Cavity & Salivary Glands"],["skinbasics","Skin Basics — Layers, Lesions & Terms"],["gidrugs","GI Motility, Laxative & Antiemetic Drugs"],["cardproc","Cardiac Anatomy, Catheters & Vascular Access"],["transfuse","Blood Groups & Transfusion"],["nmjflow","Neuromuscular Junction in Motion"],["synflow","Monoamine Synapse in Motion"],["apflow","Action Potential in Motion"],["bgflow","Basal Ganglia in Motion"],["cordsim","Spinal Cord Lesion Simulator"],["stemsim","Brainstem Lesion Simulator"],["visfield","Visual Pathway Lesion Simulator"],["cardap","Cardiac Action Potential in Motion"],["coagflow","Coagulation Cascade in Motion"],["alvflow","Alveolus in Motion"],["asthflow","Asthma Airway in Motion"],["axisflow","HPA Axis in Motion"],["betaflow","β Cell in Motion"],["follflow","Thyroid Follicle in Motion"],["cochflow","Cochlea in Motion"],["gutabs","Gut Absorption in Motion"],["boneflow","Bone Remodeling in Motion"],["goutflow","Uric Acid & Gout in Motion"],["rajoint","Rheumatoid Joint in Motion"],["vsmotion","Viscerosomatic Reflex in Motion"],["lymphflow","Lymphatic Pump in Motion"],["biliflow","Bilirubin in Motion"],["ironflow","Iron in Motion"],["abflow","Acid–Base in Motion"],["glomsim","Glomerular Disease Locator"],["abxsim","Antibiotic Targets in Motion"],["misim","MI Locator"],["pvflow","Pressure–Volume Loop in Motion"],["edemaflow","Capillary & Edema in Motion"],["hivflow","HIV Life Cycle in Motion"],["eyesim","Pupil & Eye Movement Simulator"],["plexsim","Brachial Plexus Lesion Simulator"],["mensflow","Menstrual Cycle in Motion"],["baroflow","Autonomic Drugs & Baroreflex in Motion"],["shocksim","Shock Simulator"],["ecgsim","Conduction & ECG Simulator"],["cahflow","Steroid Synthesis & CAH in Motion"],["lipoflow","Lipoprotein Transport in Motion"],["hemeflow","Heme Synthesis & Porphyrias in Motion"],["nucflow","Nucleotide Synthesis & Drug Sites in Motion"],["acidflow","Parietal Cell in Motion"],["legsim","Lower Limb Nerve Lesion Simulator"],["abtime","Acid–Base Compensation Timeline"],["aasim","Amino Acid Disorders in Motion"],["bvitsim","B Vitamins & Zinc in Motion"],["colsim","Collagen Assembly in Motion"],["energysim","Energy Metabolism in Motion"],["faosim","Fatty Acid Oxidation in Motion"],["glyxsim","Glycolysis Odds & Ends in Motion"],["gsdsim","Glycogen Storage Diseases in Motion"],["labsim","Lab Techniques in Motion"],["lsdsim","Lysosomal Storage in Motion"],["pedsim","Pedigree Simulator"],["rtasim","Renal Tubular Acidosis Simulator"],["sugarsim","Fructose & Galactose in Motion"],["ureasim","Urea Cycle in Motion"],["cbsim","Cerebellar Lesions in Motion"],["papezsim","The Papez Circuit in Motion"],["rxsim","Psych Drugs in Motion"],["sleepsim","Sleep Stages in Motion"],["stimsim","Stimulants & Addiction in Motion"],["aortasim","The Aorta in Motion"],["archsim","Pharyngeal Arches in Motion"],["carditsim","Heart Infection & Inflammation in Motion"],["cyansim","Cyanotic Heart Disease in Motion"],["embsim","Embryo & Gut-Tube Defects in Motion"],["fetalsim","Fetal Circulation in Motion"],["gonadsim","Gonadal Tumors in Motion"],["htnsim","Hypertension in Motion"],["lyteecg","Electrolytes & the ECG Simulator"],["murmursim","Murmurs & Maneuvers in Motion"],["placsim","Bleeding in Pregnancy in Motion"],["pregsim","Pregnancy Hormones in Motion"],["prossim","The Prostate in Motion"],["scrotsim","The Scrotum in Motion"],["sexsim","Sex Differentiation in Motion"],["aqsim","Aqueous Humor & Retina in Motion"],["vestsim","Vertigo in Motion"],["voxsim","Larynx & Voice in Motion"],["bleedsim","Head Bleeds in Motion"],["btsim","Brain Tumors in Motion"],["csfsim","CSF Flow in Motion"],["demsim","Dementias in Motion"],["hasim","Headaches in Motion"],["pthsim","Calcium & PTH Lab Simulator"],["spreadsim","Seizure Spread in Motion"],["szsim","Antiseizure Drugs in Motion"],["testsim","Diagnostic Test Simulator"],["antidsim","Poison & Antidote in Motion"],["bowelsim","Bowel Blockages in Motion"],["esosim","Swallowing in Motion"],["laxsim","Laxatives in Motion"],["pksim","Pharmacokinetics & Dose–Response Simulator"],["portsim","Liver Blood Flow in Motion"],["complsim","Complement in Motion"],["hypsim","Hypersensitivity Types in Motion"],["idsim","Immunodeficiency Simulator"],["tcellsim","T-Cell Activation in Motion"],["tfsim","Blood Transfusion in Motion"],["vaxsim","Vaccines in Motion"],["altsim","Climbing to Altitude in Motion"],["alvdzsim","Alveoli in Trouble in Motion"],["hypoxsim","Hypoxemia Simulator"],["lcsim","Lung Cancer in Motion"],["odcsim","The O₂ Curve in Motion"],["pftsim","PFT & Flow–Volume Loop Simulator"],["pnasim","Pneumonia in Motion"],["bonesim","Bones & Kids by Age in Motion"],["cervsim","The Cervical Spine in Motion"],["footsim","The Foot in Motion"],["fxsim","Growth Plates & Arm Injuries in Motion"],["healsim","Inflammation & Wound Healing in Motion"],["injsim","Cell Injury & Death Simulator"],["shsim","The Shoulder in Motion"],["sxedema","Edema Work-Up"],["sxfever","Fever & Hyperthermia Work-Up"],["sxgibleed","GI Bleeding Work-Up"],["sxjoint","Joint Pain Work-Up"],["sxrash","Fever & Rash Work-Up"],["sxsyncope","Syncope Work-Up"],["sxweight","Weight Loss Work-Up"],["anemiasim","Anemia Work-Up"],["bcellsim","B Cells & Lymphomas in Motion"],["chemosim","Chemo & DNA Repair in Motion"],["lftsim","Liver Tests Work-Up"],["mapksim","Growth Signals in Motion"],["myelsim","Myeloid Neoplasms in Motion"],["netsim","Pancreatic Endocrine Tumors in Motion"],["pancsim","Pancreatitis in Motion"],["pltsim","Platelets in Motion"],["thytsim","Thyroid Tumors in Motion"],["avsim","Antiviral Targets in Motion"],["blistsim","Blister Simulator"],["bugid","Name-the-Bug Simulator"],["gxsim","Bacterial Gene Transfer in Motion"],["lesionsim","Skin Lesion Simulator"],["negsim","Negative-Strand Viruses in Motion"],["parasim","Parasite Life Cycles in Motion"],["protosim","Protozoa in Motion"],["toxinsim","Bacterial Toxins in Motion"],["zoosim","Zoonoses & Bites in Motion"],["anessim","Anesthetics in Motion"],["biassim","Bias in Motion"],["designsim","Study Design Simulator"],["ethicsim","Consent & Capacity Simulator"],["orbitsim","The Orbit & Tears in Motion"],["painsim","Pain Gone Wrong in Motion"],["ribsim","Rib Motion in Motion"],["amylsim","Amyloid in Motion"],["cransim","Cranial Mechanism in Motion"],["frysim","Spinal Mechanics & OMT in Motion"],["lbpsim","Low Back Pain in Motion"],["neosim","Neoplasia in Motion"],["pelvsim","Pelvis in Motion"],["sacsim","The Sacrum in Motion"],["embolsim","Emboli in Motion"],["plsim","Pleural Fluid in Motion"],["akisim","Acute Kidney Injury in Motion"],["cystsim","Kidney Cysts in Motion"],["utisim","UTI & Incontinence in Motion"],["watersim","Water Balance in Motion"],["tftsim","Thyroid Function Tests in Motion"],["anemsim","Anemia Work-up in Motion"],["cnrefsim","Cranial Nerve Reflexes in Motion"],["index","Index"]];
 /* The top bar shows these broad topics; choosing one shows its maps in a row
    beneath. Every VIEWS id belongs to exactly one topic (the build checks). */
 const TOPICS = [
@@ -41972,11 +42104,11 @@ const TOPICS = [
   ["pulmo","Pulmonary",["pulm","lungmech","ventmech","gasx","odcsim","alvflow","highalt","altsim","hypoxia","hypoxsim","lungdz","alvdzsim","pftsim","asthflow","pleural","plsim","lungcancer","lcsim","respinf","pnasim","respdrug"]],
   ["renal","Renal",["nephron","nephflow","fluids","edemaflow","renalphys","rbflow","gfrk","kshift","renalna","renalmin","urineconc","watersim","histoembryo","glom","glomsim","renvasc","cystsim","raasrx","buffers","acidbase","abflow","abtime","rtasim","akickd","akisim","utisim","endocrine"]],
   ["gi","GI",["gut","gihorm","acidflow","gidrugs","laxsim","liver","portsim","lftsim","pancsim","biliflow","gitract","bowelsim","esosim","gutabs","oral","abdanat"]],
-  ["heme","Heme/Onc",["rbc","anemiasim","ironflow","hemeflow","hemostasis","coagflow","pltsim","transfuse","tfsim","hemeonc","bcellsim","myelsim","carcino","mapksim","chemo","chemosim","tumgut","tumgu","tumcns","btsim","softtissue","tumark"]],
+  ["heme","Heme/Onc",["rbc","anemiasim","ironflow","anemsim","hemeflow","hemostasis","coagflow","pltsim","transfuse","tfsim","hemeonc","bcellsim","myelsim","carcino","mapksim","chemo","chemosim","tumgut","tumgu","tumcns","btsim","softtissue","tumark"]],
   ["immuno","Immunology",["immune","tcellsim","innate","complsim","lymphdev","hypimm","hypsim","idsim","cytokine","eicosanoid","transplant","mabs","vaccines","vaxsim"]],
   ["endo","Endocrine",["axes","axisflow","pitgh","thyroid","thytsim","follflow","tftsim","adrenal","cahflow","hormones","pthsim","gcpharm","rclass","pancreas","netsim","betaflow","fuelstate"]],
   ["devrepro","Repro & Development",["sexdev","sexsim","androgen","repro","mensflow","placenta","pregsim","obgyn","placsim","malerepro","gonadsim","scrotsim","prosobs","prossim","embryo","archsim","embsim"]],
-  ["neuro","Neuro",["neurotx","synapse","nmjflow","ans","baroflow","membrane","apflow","ionchan","spine","cordsim","brainstem","stemsim","chemvisc","motorctl","cerebellum","cbsim","gaze","weakness","stroke","brainvessels","brainreg","cortex","demsim","meninges","csfsim","basal","bgflow","neuroer","bleedsim","seizhead","hasim","spreadsim","szsim"]],
+  ["neuro","Neuro",["neurotx","synapse","nmjflow","ans","baroflow","membrane","apflow","ionchan","spine","cordsim","brainstem","stemsim","cnrefsim","chemvisc","motorctl","cerebellum","cbsim","gaze","weakness","stroke","brainvessels","brainreg","cortex","demsim","meninges","csfsim","basal","bgflow","neuroer","bleedsim","seizhead","hasim","spreadsim","szsim"]],
   ["behav","Psych & Behavior",["limbmem","papezsim","psychmse","dsmdx","psychdx","anxtx","psychtx","synflow","psyrxprin","rxsim","psychsom","somatcare","substance","stimsim","sleepdev","sleepsim","neurodev"]],
   ["eent","EENT",["eyecn","eyesim","aqsim","anteye","orbitsim","vision","visfield","ent","hearing","cochflow","vestsim","larynx","voxsim"]],
   ["msk","Musculoskeletal",["muscle","bone","bonesim","boneflow","bonehisto","arthritis","raarth","rajoint","crystals","goutflow","derm","blistsim","skinbasics","lesionsim","plexus","plexsim","legsim","orthoinj","sportsortho","fxsim","legfx","footleg","footsim","orthowork","neckpain","cervsim","shoulder","shsim","ptrehab","integrative"]],
@@ -43587,12 +43719,14 @@ function dynSections(d,st){
     const Q=st.quiz;
     if(Q&&Q.s===s.id){   // naming it: this switch's chips become the choices
       const chips=Q.ch.map((k,i)=>{ const o=s.options.find(x=>x[0]===k); return {key:"q:"+k,l:(Q.ans?(k===Q.k?"✓ ":k===Q.ans?"✗ ":""):(i+1)+" · ")+o[1],on:!!Q.ans&&k===Q.k}; });
+      const undo=Q.ans&&Q.undo&&Date.now()-Q.undo.t<UNDO_MS?{key:"quiz:undo",l:"↶ Undo",on:false}:null;
       if(Q.ans&&NMIX){ const tp=topicOf(state.view);
-        chips.push(NMIX.k<NMIX.n?{key:"quiz:mix",l:"Next map ›",on:true}:{key:"quiz:mix10",l:"Another 10",on:true});
-        if(NMIX.scope==="weak") chips.push({key:"quiz:scope",l:"All moving maps",on:false});
+        chips.push(NMIX.k<NMIX.n?{key:"quiz:mix",l:"Next map ›",on:true}:{key:"quiz:mixres",l:"Results ›",on:true});
+        if(undo) chips.push(undo);
+        else if(NMIX.scope==="weak") chips.push({key:"quiz:scope",l:"All moving maps",on:false});
         else if(tp&&mixPool(tp[0]).length>=3) chips.push({key:"quiz:scope",l:NMIX.scope?"All moving maps":"Only "+tp[1],on:false});
         chips.push({key:"quiz:end",l:"Done",on:false}); }
-      else if(Q.ans) chips.push({key:"quiz:new",l:"Another one",on:false},{key:"quiz:end",l:"Done",on:false});
+      else if(Q.ans) chips.push({key:"quiz:new",l:"Another one",on:false},...(undo?[undo]:[]),{key:"quiz:end",l:"Done",on:false});
       S.push({h:Q.ans?"Name it — the answer":"Name it — which one is on?",chips}); return; }
     const chips=s.options.map(([k,l],i)=>({key:"o:"+s.id+":"+k,l:(s.type==="steps"&&!/^(Phase|\d)/.test(l)?(i+1)+" · ":"")+l,on:st.sw[s.id]===k}));   // "Phase 0…" labels carry their own number
     if(s.type==="steps"){ chips.push({key:"n:"+s.id,l:"Next ›",on:false});
@@ -43612,7 +43746,7 @@ function dynSections(d,st){
     else if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"cmp:pin",l:"Compare",on:false});
     if(!(st.quiz&&!st.quiz.ans)&&mapQuizHref(state.view)) tail.push({key:"qb:go",l:"Quiz me",on:false});
     if(!(st.quiz&&!st.quiz.ans)) tail.push({key:"link",l:st.copied?"✓ Link copied":"Copy link",on:!!st.copied});
-    if(DYN_ABG[state.view]&&!(st.quiz&&!st.quiz.ans)){ tail.push({key:"abg:open",l:st.abg?"Blood gas: "+abgShort(st.abg):"Check a blood gas",on:!!st.abg});
+    if(DYN_ABG[state.view]&&!(st.quiz&&!st.quiz.ans)){ tail.push({key:"abg:open",l:st.abg?"ABG "+abgShort(st.abg):"Plug in an ABG",on:!!st.abg});
       if(st.abg) tail.push({key:"abg:clear",l:"Clear it",on:false}); } }
   S.push({h:"",chips:tail});
   return S;
@@ -43637,7 +43771,7 @@ function dynNotes(d,st){
   if(!notes.length&&d.notes&&d.notes[""]) notes.push(d.notes[""]);
   if(Q&&Q.ans){ const s=d.switches.find(x=>x.id===Q.s), o=s.options.find(x=>x[0]===Q.k), p=s.options.find(x=>x[0]===Q.ans);
     const r=nameitScores()[state.view];
-    notes.unshift((Q.ans===Q.k?`Right — it’s ${o[1]}.`:`It’s ${o[1]} (you picked ${p[1]}).`)+(NMIX?` Mix: ${NMIX.ok} of ${NMIX.k} right${NMIX.k>=NMIX.n?" — done.":"."}`:` ${st.qz.ok} of ${st.qz.n} so far`+(r&&r[1]>st.qz.n?` · ${r[0]} of ${r[1]} on this map, on this device.`:"."))); }
+    notes.unshift((Q.ans===Q.k?`Right — it’s ${o[1]}.`:`It’s ${o[1]} (you picked ${p[1]}).`)+(NMIX?` Mix: ${NMIX.ok} of ${NMIX.k} right${NMIX.k>=NMIX.n?` — done. Results › ${(NMIX.miss||[]).length?"lists the "+NMIX.miss.length+" you missed":"— nothing missed"}.`:"."}`:` ${st.qz.ok} of ${st.qz.n} so far`+(r&&r[1]>st.qz.n?` · ${r[0]} of ${r[1]} on this map, on this device.`:"."))); }
   if(st.tour){ const T=dynTour(d); notes.unshift(`Tour ${st.tour.i+1} of ${T.length} — ${T[st.tour.i].l}.`); }
   if(st.cmp&&!st.tour&&!Q) notes.push(`Pinned for comparing: ${st.cmp.l}. Change the switches, then press Side by side.`);
   if(st.pred&&st.pred.chk){ const ok=live.filter(r=>st.pred.g[r.i]===r.dir).length;
@@ -43906,11 +44040,16 @@ function dynSet(k,timer){
     else if(b==="end"){ st.tour=null; tourStop(); }
     else { const i=b==="go"?0:b==="next"?((st.tour?st.tour.i:-1)+1)%T.length:Math.max(0,(st.tour?st.tour.i:0)-1);
       dynGo(v,T[i].str,{tour:{i},quiz:null}); } }
+  else if(a==="quiz"&&b==="undo") nameitUndo(v,st);
+  else if(a==="quiz"&&b==="mixres"){ mixResults(); return; }
   else if(a==="quiz"){ if(b==="mix"){ nameMixNext(); return; } if(b==="mix10"){ startNameMix(NMIX&&NMIX.scope); return; }
     if(b==="scope"&&NMIX){ const tp=topicOf(v); NMIX.scope=NMIX.scope?null:tp&&tp[0]; }
     else
     if(b==="end"){ st.quiz=null; NMIX=null; } else { NMIX=null; dynQuiz(v); } }
-  else if(a==="q"&&st.quiz&&!st.quiz.ans){ const ok=b===st.quiz.k; st.quiz.ans=b; st.qz.n++; if(ok) st.qz.ok++; nameitSave(v,ok,st.quiz.s+":"+st.quiz.k); if(NMIX){ NMIX.k++; if(ok) NMIX.ok++; } }
+  else if(a==="q"&&st.quiz&&!st.quiz.ans){ const ok=b===st.quiz.k, item=st.quiz.s+":"+st.quiz.k, Q=st.quiz;
+    const U={t:Date.now(),qz:Object.assign({},st.qz),nit:PROG.nit[v]?PROG.nit[v].slice():null,nitm:PROG.nitm[v+"|"+item],mix:NMIX?{k:NMIX.k,ok:NMIX.ok,miss:(NMIX.miss||[]).length}:null};
+    st.quiz.ans=b; st.qz.n++; if(ok) st.qz.ok++; nameitSave(v,ok,item); if(NMIX){ NMIX.k++; if(ok) NMIX.ok++; else (NMIX.miss||(NMIX.miss=[])).push(mixMiss(v,Q,b)); }
+    Q.undo=U; setTimeout(()=>{ if(Q.undo!==U) return; Q.undo=null; if(state.view===v&&DYN[v]&&DYN[v].quiz===Q) dynRedraw(); },UNDO_MS); }
   else if(a==="qb"){ const h=mapQuizHref(v); if(h) window.open(h,"_blank","noopener"); return; }
   else if(a==="link"){ writeHash(); const u=location.href;
     try{ navigator.clipboard.writeText(u).then(()=>{ const s2=DYN[v]; if(!s2) return; s2.copied=true; dynRedraw(); setTimeout(()=>{ if(DYN[v]){ DYN[v].copied=false; if(state.view===v) dynRedraw(); } },1800); },()=>{ prompt("Copy this link:",u); }); }catch(e){ prompt("Copy this link:",u); }
@@ -43979,7 +44118,7 @@ const nitMissed=maps=>Object.keys(PROG.nitm).map(k=>{ const [v,so]=k.split("|"),
 /* Quiz → Moving-map mix: ten Name-it questions, each on a random moving map */
 let NMIX=null;
 const topicOf=v=>TOPICS.find(t=>t[2].includes(v));
-const GROUPS={"bio":[["Carbs & energy",["core","energysim","glyxsim","gsdsim","sugarsim"]],["Lipids & steroids",["lipid","faosim","lipoflow","steroid"]],["Amino acids & nitrogen",["nitrogen","aasim","ureasim"]],["Storage & inborn errors",["lysosome","lsdsim","iemlab"]],["Nucleotides & vitamins",["nucleo","nucflow","vitamins","bvitsim"]],["Collagen",["collagen","colsim","ctdis"]],["Cells",["cellcycle","cellbio","tissues","signal"]],["Genetics & lab",["molbio","labsim","genetics","pedsim"]]],"cardio":[["Physiology",["cardiac","cardcycle","pvflow","cardproc"]],["Rhythm & ECG",["rhythm","cardap","ecgsim","lyteecg"]],["Valves & infection",["valves","murmursim","carditsim"]],["Ischemia",["ihd","misim"]],["Congenital & fetal",["chd","cyansim","fetalsim"]],["Vessels, shock & BP",["vasc","aortasim","vascshock","shocksim","htnrx","htnsim"]]],"pulmo":[["Mechanics",["pulm","lungmech","ventmech"]],["Gas exchange & O₂",["gasx","odcsim","alvflow"]],["Altitude & hypoxia",["highalt","altsim","hypoxia","hypoxsim"]],["Obstructive & restrictive",["lungdz","alvdzsim","pftsim","asthflow"]],["Pleura & cancer",["pleural","plsim","lungcancer","lcsim"]],["Infections & drugs",["respinf","pnasim","respdrug"]]],"renal":[["Nephron & transport",["nephron","nephflow","renalphys","rbflow","histoembryo"]],["Fluids, sodium & water",["fluids","edemaflow","renalna","urineconc","watersim","raasrx"]],["Potassium, calcium & minerals",["gfrk","kshift","renalmin","endocrine"]],["Acid–base",["buffers","acidbase","abflow","abtime","rtasim"]],["Kidney disease",["glom","glomsim","renvasc","cystsim","akickd","akisim","utisim"]]],"gi":[["Upper GI & secretion",["oral","esosim","gihorm","acidflow"]],["Absorption & motility",["gut","gutabs","gidrugs","laxsim","bowelsim"]],["Liver, biliary & pancreas",["liver","portsim","lftsim","biliflow","pancsim"]],["Anatomy",["gitract","abdanat"]]],"heme":[["Red cells & anemia",["rbc","anemiasim","ironflow","hemeflow"]],["Clotting & transfusion",["hemostasis","coagflow","pltsim","transfuse","tfsim"]],["Blood cancers",["hemeonc","bcellsim","myelsim"]],["Cancer biology & chemo",["carcino","mapksim","chemo","chemosim","tumark"]],["Solid tumors",["tumgut","tumgu","tumcns","btsim","softtissue"]]],"immuno":[["Cells & signals",["immune","tcellsim","innate","complsim","lymphdev","cytokine","eicosanoid"]],["Hypersensitivity & immunodeficiency",["hypimm","hypsim","idsim"]],["Therapy & vaccines",["transplant","mabs","vaccines","vaxsim"]]],"endo":[["Axes & pituitary",["axes","axisflow","pitgh","hormones","rclass"]],["Thyroid & parathyroid",["thyroid","follflow","tftsim","thytsim","pthsim"]],["Adrenal",["adrenal","cahflow","gcpharm"]],["Pancreas & fuel",["pancreas","betaflow","netsim","fuelstate"]]],"devrepro":[["Embryology & sex differentiation",["sexdev","sexsim","embryo","embsim","archsim"]],["Cycle & pregnancy",["repro","mensflow","placenta","pregsim","obgyn","placsim"]],["Male",["androgen","malerepro","scrotsim","gonadsim","prosobs","prossim"]]],"neuro":[["Cells & signaling",["neurotx","synapse","nmjflow","membrane","apflow","ionchan"]],["Autonomic & senses",["ans","baroflow","chemvisc"]],["Localizing lesions",["spine","cordsim","brainstem","stemsim","weakness","gaze"]],["Motor systems",["motorctl","cerebellum","cbsim","basal","bgflow"]],["Brain regions & vessels",["brainreg","cortex","brainvessels","stroke","meninges","csfsim"]],["Clinical neuro",["demsim","neuroer","bleedsim","seizhead","hasim","spreadsim","szsim"]]],"behav":[["Brain & drugs",["limbmem","papezsim","synflow","psyrxprin","rxsim"]],["Assessment & diagnosis",["psychmse","dsmdx","psychdx","psychsom"]],["Treatment & care",["anxtx","psychtx","somatcare"]],["Substances, sleep & development",["substance","stimsim","sleepdev","sleepsim","neurodev"]]],"eent":[["Eye & vision",["eyecn","eyesim","anteye","aqsim","orbitsim","vision","visfield"]],["Ear, nose & throat",["ent","hearing","cochflow","vestsim","larynx","voxsim"]]],"msk":[["Muscle & bone",["muscle","bone","boneflow","bonesim","bonehisto"]],["Joints & rheum",["arthritis","raarth","rajoint","crystals","goutflow"]],["Skin",["derm","blistsim","skinbasics","lesionsim"]],["Peripheral nerves",["plexus","plexsim","legsim"]],["Fractures & sports",["orthoinj","fxsim","sportsortho","legfx","footleg","footsim"]],["Pain & rehab by region",["orthowork","neckpain","cervsim","shoulder","shsim","ptrehab","integrative"]]],"omm":[["Spinal mechanics",["ommmech","frysim","ribsim","sacsim","pelvsim","janda"]],["Techniques & points",["omt","jones","chapman","cranial","cransim"]],["Reflexes & lymph",["vsomatic","vsmotion","lymphflow","neiomm"]],["Clinical OMT",["lbp","lbpsim","agingomt","chestomt"]]],"id":[["Bacteria",["microlab","bugid","gpos","gneg","toxins","toxinsim","gxsim"]],["Viruses",["virus","negsim","hivflow"]],["Fungi & parasites",["fungpar","parasim","protosim"]],["Antimicrobials",["abx","abxsim","antiviral","avsim","antipara"]],["By site & exposure",["cnsinf","infsite","zoonoses","zoosim"]]],"pharm":[["Principles",["pkpd","pksim","cyp","adr","aging"]],["Toxicology",["tox","antidsim","environ"]],["Anesthesia & pain",["anesth","anessim","pain","painsim"]]],"sx":[["Chest & breathing",["sxchest","sxsyncope","sxdyspnea","sxedema"]],["Belly",["sxjaundice","sxabdpain","sxgibleed","sxdiarrhea"]],["Whole body",["sxurine","sxams","sxfever","sxjoint","sxrash","sxweight"]]]};
+const GROUPS={"bio":[["Carbs & energy",["core","energysim","glyxsim","gsdsim","sugarsim"]],["Lipids & steroids",["lipid","faosim","lipoflow","steroid"]],["Amino acids & nitrogen",["nitrogen","aasim","ureasim"]],["Storage & inborn errors",["lysosome","lsdsim","iemlab"]],["Nucleotides & vitamins",["nucleo","nucflow","vitamins","bvitsim"]],["Collagen",["collagen","colsim","ctdis"]],["Cells",["cellcycle","cellbio","tissues","signal"]],["Genetics & lab",["molbio","labsim","genetics","pedsim"]]],"cardio":[["Physiology",["cardiac","cardcycle","pvflow","cardproc"]],["Rhythm & ECG",["rhythm","cardap","ecgsim","lyteecg"]],["Valves & infection",["valves","murmursim","carditsim"]],["Ischemia",["ihd","misim"]],["Congenital & fetal",["chd","cyansim","fetalsim"]],["Vessels, shock & BP",["vasc","aortasim","vascshock","shocksim","htnrx","htnsim"]]],"pulmo":[["Mechanics",["pulm","lungmech","ventmech"]],["Gas exchange & O₂",["gasx","odcsim","alvflow"]],["Altitude & hypoxia",["highalt","altsim","hypoxia","hypoxsim"]],["Obstructive & restrictive",["lungdz","alvdzsim","pftsim","asthflow"]],["Pleura & cancer",["pleural","plsim","lungcancer","lcsim"]],["Infections & drugs",["respinf","pnasim","respdrug"]]],"renal":[["Nephron & transport",["nephron","nephflow","renalphys","rbflow","histoembryo"]],["Fluids, sodium & water",["fluids","edemaflow","renalna","urineconc","watersim","raasrx"]],["Potassium, calcium & minerals",["gfrk","kshift","renalmin","endocrine"]],["Acid–base",["buffers","acidbase","abflow","abtime","rtasim"]],["Kidney disease",["glom","glomsim","renvasc","cystsim","akickd","akisim","utisim"]]],"gi":[["Upper GI & secretion",["oral","esosim","gihorm","acidflow"]],["Absorption & motility",["gut","gutabs","gidrugs","laxsim","bowelsim"]],["Liver, biliary & pancreas",["liver","portsim","lftsim","biliflow","pancsim"]],["Anatomy",["gitract","abdanat"]]],"heme":[["Red cells & anemia",["rbc","anemiasim","anemsim","ironflow","hemeflow"]],["Clotting & transfusion",["hemostasis","coagflow","pltsim","transfuse","tfsim"]],["Blood cancers",["hemeonc","bcellsim","myelsim"]],["Cancer biology & chemo",["carcino","mapksim","chemo","chemosim","tumark"]],["Solid tumors",["tumgut","tumgu","tumcns","btsim","softtissue"]]],"immuno":[["Cells & signals",["immune","tcellsim","innate","complsim","lymphdev","cytokine","eicosanoid"]],["Hypersensitivity & immunodeficiency",["hypimm","hypsim","idsim"]],["Therapy & vaccines",["transplant","mabs","vaccines","vaxsim"]]],"endo":[["Axes & pituitary",["axes","axisflow","pitgh","hormones","rclass"]],["Thyroid & parathyroid",["thyroid","follflow","tftsim","thytsim","pthsim"]],["Adrenal",["adrenal","cahflow","gcpharm"]],["Pancreas & fuel",["pancreas","betaflow","netsim","fuelstate"]]],"devrepro":[["Embryology & sex differentiation",["sexdev","sexsim","embryo","embsim","archsim"]],["Cycle & pregnancy",["repro","mensflow","placenta","pregsim","obgyn","placsim"]],["Male",["androgen","malerepro","scrotsim","gonadsim","prosobs","prossim"]]],"neuro":[["Cells & signaling",["neurotx","synapse","nmjflow","membrane","apflow","ionchan"]],["Autonomic & senses",["ans","baroflow","chemvisc"]],["Localizing lesions",["spine","cordsim","brainstem","stemsim","cnrefsim","weakness","gaze"]],["Motor systems",["motorctl","cerebellum","cbsim","basal","bgflow"]],["Brain regions & vessels",["brainreg","cortex","brainvessels","stroke","meninges","csfsim"]],["Clinical neuro",["demsim","neuroer","bleedsim","seizhead","hasim","spreadsim","szsim"]]],"behav":[["Brain & drugs",["limbmem","papezsim","synflow","psyrxprin","rxsim"]],["Assessment & diagnosis",["psychmse","dsmdx","psychdx","psychsom"]],["Treatment & care",["anxtx","psychtx","somatcare"]],["Substances, sleep & development",["substance","stimsim","sleepdev","sleepsim","neurodev"]]],"eent":[["Eye & vision",["eyecn","eyesim","anteye","aqsim","orbitsim","vision","visfield"]],["Ear, nose & throat",["ent","hearing","cochflow","vestsim","larynx","voxsim"]]],"msk":[["Muscle & bone",["muscle","bone","boneflow","bonesim","bonehisto"]],["Joints & rheum",["arthritis","raarth","rajoint","crystals","goutflow"]],["Skin",["derm","blistsim","skinbasics","lesionsim"]],["Peripheral nerves",["plexus","plexsim","legsim"]],["Fractures & sports",["orthoinj","fxsim","sportsortho","legfx","footleg","footsim"]],["Pain & rehab by region",["orthowork","neckpain","cervsim","shoulder","shsim","ptrehab","integrative"]]],"omm":[["Spinal mechanics",["ommmech","frysim","ribsim","sacsim","pelvsim","janda"]],["Techniques & points",["omt","jones","chapman","cranial","cransim"]],["Reflexes & lymph",["vsomatic","vsmotion","lymphflow","neiomm"]],["Clinical OMT",["lbp","lbpsim","agingomt","chestomt"]]],"id":[["Bacteria",["microlab","bugid","gpos","gneg","toxins","toxinsim","gxsim"]],["Viruses",["virus","negsim","hivflow"]],["Fungi & parasites",["fungpar","parasim","protosim"]],["Antimicrobials",["abx","abxsim","antiviral","avsim","antipara"]],["By site & exposure",["cnsinf","infsite","zoonoses","zoosim"]]],"pharm":[["Principles",["pkpd","pksim","cyp","adr","aging"]],["Toxicology",["tox","antidsim","environ"]],["Anesthesia & pain",["anesth","anessim","pain","painsim"]]],"sx":[["Chest & breathing",["sxchest","sxsyncope","sxdyspnea","sxedema"]],["Belly",["sxjaundice","sxabdpain","sxgibleed","sxdiarrhea"]],["Whole body",["sxurine","sxams","sxfever","sxjoint","sxrash","sxweight"]]]};
 const PAIR={"lysosome":"lsdsim","nucleo":"nucflow","vitamins":"bvitsim","collagen":"colsim","cardcycle":"pvflow","valves":"murmursim","chd":"cyansim","htnrx":"htnsim","highalt":"altsim","lungdz":"alvdzsim","pleural":"plsim","lungcancer":"lcsim","respinf":"pnasim","nephron":"nephflow","fluids":"edemaflow","urineconc":"watersim","renvasc":"cystsim","acidbase":"abflow","akickd":"akisim","gihorm":"acidflow","gut":"gutabs","gidrugs":"laxsim","liver":"portsim","hemostasis":"coagflow","transfuse":"tfsim","chemo":"chemosim","tumcns":"btsim","immune":"tcellsim","innate":"complsim","hypimm":"hypsim","vaccines":"vaxsim","axes":"axisflow","thyroid":"follflow","adrenal":"cahflow","pancreas":"betaflow","sexdev":"sexsim","embryo":"embsim","repro":"mensflow","placenta":"pregsim","obgyn":"placsim","malerepro":"scrotsim","prosobs":"prossim","synapse":"nmjflow","membrane":"apflow","ans":"baroflow","cerebellum":"cbsim","basal":"bgflow","meninges":"csfsim","neuroer":"bleedsim","seizhead":"hasim","limbmem":"papezsim","psyrxprin":"rxsim","substance":"stimsim","sleepdev":"sleepsim","anteye":"aqsim","hearing":"cochflow","larynx":"voxsim","bone":"boneflow","raarth":"rajoint","crystals":"goutflow","orthoinj":"fxsim","footleg":"footsim","neckpain":"cervsim","shoulder":"shsim","ommmech":"frysim","cranial":"cransim","vsomatic":"vsmotion","lbp":"lbpsim","toxins":"toxinsim","virus":"negsim","fungpar":"parasim","abx":"abxsim","antiviral":"avsim","zoonoses":"zoosim","tox":"antidsim","anesth":"anessim","pain":"painsim"}, PAIR_OF={}; Object.entries(PAIR).forEach(([r,m])=>{ PAIR_OF[r]=m; PAIR_OF[m]=r; });
 let GRPF={}, BLKF="all"; try{ GRPF=JSON.parse(localStorage.getItem("mla-grp")||"{}")||{}; BLKF=localStorage.getItem("mla-blk")||"all"; }catch(e){}
 const blkMaps=b=>{ const P=window.ATLAS_PRACTICE; if(!P||!P.maps) return null; const i=P.blocks.findIndex(x=>x[0]===b); if(i<0) return null; const s=new Set(); Object.entries(P.maps).forEach(([v,rows])=>{ if(rows.some(r=>r[0]===i)) s.add(v); }); return s; };
@@ -43995,7 +44134,64 @@ const mixScopeName=s=>s==="weak"?"your weakest maps":(TOPICS.find(t=>t[0]===s)||
 const mixPool=scope=>{ const kit=v=>MAPS[v]&&MAPS[v].art==="kit"&&MAPS[v].dyn&&dynQuizable(MAPS[v].dyn).length;
   if(scope==="weak") return weakMaps(10).filter(kit);
   return VIEWS.map(x=>x[0]).filter(v=>kit(v)&&(!scope||(topicOf(v)||[])[0]===scope)); };
-function startNameMix(scope){ NMIX={k:0,n:10,ok:0,scope:scope||null}; nameMixNext(); }
+let MIXN=10; try{ const n=+localStorage.getItem("mla-mixlen"); if([5,10,20].includes(n)) MIXN=n; }catch(e){}
+let LASTMIX=null;   // a finished mix whose results are still open to come back to (after jumping to a miss)
+const UNDO_MS=3000;
+function startNameMix(scope){ LASTMIX=null; mixPill(); const d=document.getElementById("mixRes"); if(d) d.remove();
+  NMIX={k:0,n:MIXN,ok:0,scope:scope||null,miss:[]}; nameMixNext(); }
+function setMixLen(n){ if(![5,10,20].includes(n)) return; MIXN=n; try{ localStorage.setItem("mla-mixlen",String(n)); }catch(e){} mixLenUi(); }
+function mixLenUi(){
+  const s=document.getElementById("qmovn"); if(s) s.textContent=MIXN+" random moving maps — name what’s switched on, with a score";
+  document.querySelectorAll("[data-mixlen]").forEach(b=>{ const on=+b.dataset.mixlen===MIXN; b.setAttribute("aria-pressed",String(on)); b.classList.toggle("on",on); });
+  document.querySelectorAll("[data-mragain]").forEach(b=>{ b.textContent="Another "+MIXN; });
+}
+document.addEventListener("click",e=>{ const b=e.target.closest("#qmenu [data-mixlen]"); if(b){ e.preventDefault(); setMixLen(+b.dataset.mixlen); } });
+const mixMiss=(v,Q,b)=>{ const s=((MAPS[v].dyn||{}).switches||[]).find(x=>x.id===Q.s)||{options:[]}, lab=k=>(s.options.find(o=>o[0]===k)||[k,k])[1];
+  return {v,s:Q.s,k:Q.k,a:b,sl:s.label||"",kl:lab(Q.k),al:lab(b)}; };
+/* undo a Name-it answer while its 3 s last: the answer, the map's tally, the saved score and miss, the mix count */
+function nameitUndo(v,st){ const Q=st.quiz, U=Q&&Q.undo; if(!U||!Q.ans||Date.now()-U.t>UNDO_MS+400) return;
+  const pk=v+"|"+Q.s+":"+Q.k;
+  st.qz=U.qz; if(U.nit) PROG.nit[v]=U.nit; else delete PROG.nit[v];
+  if(U.nitm===undefined) delete PROG.nitm[pk]; else PROG.nitm[pk]=U.nitm; saveProg();
+  if(NMIX&&U.mix){ NMIX.k=U.mix.k; NMIX.ok=U.mix.ok; (NMIX.miss||[]).length=U.mix.miss; }
+  Q.ans=null; Q.undo=null; }
+/* the end of a mix: score, what was missed (tap → that map, right answer on), the next mix's length */
+function mixResults(){
+  const X=NMIX||LASTMIX; if(!X) return; const miss=X.miss||[];
+  const old=document.getElementById("mixRes"); if(old) old.remove();
+  const el=document.createElement("div"); el.id="mixRes"; el.className="dcmp"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true");
+  el.setAttribute("aria-label","Moving-map mix results");
+  el.innerHTML=`<div class="dcmp-box mixres-box"><div class="dcmp-h"><b>Moving-map mix — ${X.ok} of ${X.k} right</b><span class="ds-hb"><button class="ds-x" data-mrx>Close</button></span></div>
+    ${miss.length?`<p class="dcmp-sub">What you missed — tap one to open that map with the right answer switched on.</p>
+    <ul class="mixres">${miss.map((r,i)=>`<li><button class="mixres-row" type="button" data-mixgo="${i}"><span class="t">${esc(MAPS[r.v]?MAPS[r.v].t:r.v)}</span><span class="e">${esc(r.sl)}: <b>${esc(r.kl)}</b> · you picked ${esc(r.al)}</span></button></li>`).join("")}</ul>`
+    :`<p class="dcmp-sub">Nothing missed — every one named right.</p>`}
+    <div class="mixres-len" role="group" aria-label="Length of the next mix"><span>Next mix</span>${[5,10,20].map(n=>`<button class="ds-x" type="button" data-mixlen="${n}">${n}</button>`).join("")}</div>
+    <div class="abg-row"><button class="ds-x mixres-go" type="button" data-mragain>Another ${MIXN}</button><button class="ds-x" type="button" data-mrdone>Done</button></div></div>`;
+  document.body.appendChild(el); mixLenUi();
+  const back=document.activeElement;
+  const close=()=>{ el.remove(); removeEventListener("keydown",key,true); try{ back&&back.focus({preventScroll:true}); }catch(e){} };
+  const key=e=>{ if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); close(); } };
+  addEventListener("keydown",key,true);
+  el.addEventListener("click",e=>{
+    const L=e.target.closest("[data-mixlen]"); if(L){ setMixLen(+L.dataset.mixlen); return; }
+    const j=e.target.closest("[data-mixgo]"); if(j){ close(); mixJump(X,miss[+j.dataset.mixgo]); return; }
+    if(e.target.closest("[data-mragain]")){ close(); startNameMix(X.scope); return; }
+    if(e.target.closest("[data-mrdone]")){ close(); NMIX=null; LASTMIX=null; mixPill(); const s=DYN[state.view]; if(s) s.quiz=null; dynRedraw(); return; }
+    if(e.target===el||e.target.closest("[data-mrx]")) close(); });
+  const f=el.querySelector("[data-mixgo]")||el.querySelector("[data-mragain]"); if(f) f.focus();
+}
+function mixJump(X,r){ if(!r||!MAPS[r.v]) return; LASTMIX=X; NMIX=null; const cur=DYN[state.view]; if(cur) cur.quiz=null;
+  if(state.view!==r.v) setView(r.v);
+  const go=n=>{ if(state.view!==r.v) return; if(MAPS[r.v].dyn.lazy){ if(!DYNFAIL[r.v]&&n<100) setTimeout(()=>go(n+1),100); return; }
+    dynGo(r.v,r.s+":"+r.k,{quiz:null,tour:null}); dynRedraw(); writeHash(); dynFrame(); };
+  go(0); mixPill(); }
+function mixPill(){ let p=document.getElementById("mixPill");
+  if(!LASTMIX){ if(p) p.remove(); return; }
+  if(!p){ p=document.createElement("div"); p.id="mixPill"; p.className="mixpill";
+    p.innerHTML=`<button type="button" data-mpo></button><button type="button" data-mpx aria-label="Close the mix results">×</button>`; document.body.appendChild(p);
+    p.querySelector("[data-mpo]").onclick=()=>mixResults(); p.querySelector("[data-mpx]").onclick=()=>{ LASTMIX=null; mixPill(); }; }
+  p.querySelector("[data-mpo]").textContent=`‹ Mix results · ${(LASTMIX.miss||[]).length} missed`; }
+mixLenUi();
 function nameMixNext(){
   if(!NMIX) return;
   let pool=mixPool(NMIX.scope).filter(v=>v!==state.view); if(!pool.length) pool=mixPool(NMIX.scope);
@@ -44032,7 +44228,8 @@ function dynKey(ev){
     if(k==="n"&&dynQuizable(m.dyn).length){ dynSet("quiz:new"); return true; }
     if(k==="p"&&(m.dyn.readouts||[]).length&&!st.tour){ dynSet("p:on"); return true; }
     if(k==="c"&&!st.tour){ dynSet(st.cmp?"cmp:show":"cmp:pin"); return true; } }
-  if(st.quiz&&st.quiz.ans&&ev.key==="Enter"){ dynSet(NMIX?(NMIX.k<NMIX.n?"quiz:mix":"quiz:mix10"):"quiz:new"); return true; }
+  if(st.quiz&&st.quiz.ans&&st.quiz.undo&&(k==="u"||ev.key==="Backspace")){ dynSet("quiz:undo"); return true; }
+  if(st.quiz&&st.quiz.ans&&ev.key==="Enter"){ dynSet(NMIX?(NMIX.k<NMIX.n?"quiz:mix":"quiz:mixres"):"quiz:new"); return true; }
   return false;
 }
 /* what is switched on, in words */
@@ -44085,50 +44282,88 @@ const DYN_ABG={
           go:{ma:"ma",malk:"malk",ara:"ara",cra:"cra",aralk:"aralk",cralk:"cralk",mxra:"mxra"},
           time:{ma:"day",malk:"day",ara:"min",cra:"days",aralk:"min",cralk:"days",mxra:"day"}}
 };
-// UNVERIFIED: the normal ranges (pH 7.35–7.45, PaCO₂ 35–45, HCO₃⁻ 22–26) — standard values, not yet checked against First Aid
-const ABG_N={ph:[7.35,7.45],pco2:[35,45],hco3:[22,26]};
+/* #15 (m52) "Plug in an ABG" — sources and display choices in assemble.py patch #15 */
+const ABG_N={ph:[7.35,7.45],pco2:[36,44],hco3:[20,28]};   // First Aid p. 610 flowchart
+const ABG_LIM={ph:[6.8,7.8,"pH","6.8–7.8"],pco2:[10,130,"PaCO₂","10–130 mm Hg"],hco3:[2,60,"HCO₃⁻","2–60 mEq/L"],na:[100,180,"Na⁺","100–180"],cl:[60,140,"Cl⁻","60–140"]};
 const abgShort=g=>`${g.ph.toFixed(2)} / ${Math.round(g.pco2)} / ${Math.round(g.hco3)}`;
 const r1=x=>Math.round(x*10)/10;
-/* reads a blood gas: {lines:[…], go:map key of the matching disorder or ""} */
-function abgRead(ph,pco2,hco3){
-  const L=[], hh=6.1+Math.log10(hco3/(0.03*pco2));
-  if(Math.abs(hh-ph)>0.05) L.push(`Check the numbers: from PaCO₂ and HCO₃⁻, Henderson–Hasselbalch gives pH ${hh.toFixed(2)}, not ${ph.toFixed(2)}.`);
-  const acid=ph<ABG_N.ph[0], alk=ph>ABG_N.ph[1], hiC=pco2>ABG_N.pco2[1], loC=pco2<ABG_N.pco2[0], loB=hco3<ABG_N.hco3[0], hiB=hco3>ABG_N.hco3[1];
-  let go="";
-  const off=(meas,exp,tol,hi,lo)=>meas>exp+tol?hi:meas<exp-tol?lo:"";
-  if(acid&&loB){
-    const e=1.5*hco3+8; go="ma";
-    L.push(`Acidemia with a low HCO₃⁻: metabolic acidosis.`,`Winters: expected PaCO₂ = 1.5 × ${r1(hco3)} + 8 = ${r1(e)} ± 2; measured ${r1(pco2)}.`);
-    const x=off(pco2,e,2,"PaCO₂ is above the expected range — a respiratory acidosis as well.","PaCO₂ is below the expected range — a respiratory alkalosis as well.");
-    L.push(x||"Within the range: an appropriately compensated metabolic acidosis."); if(x&&pco2>e) go="mxra";
-  } else if(acid&&hiC){
-    const a=24+0.1*(pco2-40), c=24+0.3*(pco2-40); go="ara";
-    L.push(`Acidemia with a high PaCO₂: respiratory acidosis.`,`Expected HCO₃⁻: acute ${r1(a)}, chronic ${r1(c)}; measured ${r1(hco3)}.`);
-    if(hco3<a-2) L.push("HCO₃⁻ is below even the acute value — a metabolic acidosis as well.");
-    else if(hco3>c+2) L.push("HCO₃⁻ is above even the chronic value — a metabolic alkalosis as well.");
-    else if(hco3>=c-1){ go="cra"; L.push("Near the chronic value: the kidneys have compensated (chronic)."); }
-    else if(hco3<=a+1) L.push("Near the acute value: the kidneys have not yet acted (acute).");
-    else L.push("Between the two: acute-on-chronic, or the kidneys partway there.");
-  } else if(alk&&hiB){
-    const e=40+0.6*(hco3-24); go="malk";
-    L.push(`Alkalemia with a high HCO₃⁻: metabolic alkalosis.`,`Expected PaCO₂ ≈ 40 + 0.6 × ${r1(hco3-24)} = ${r1(e)}; measured ${r1(pco2)}.`);
-    // UNVERIFIED: the ± 2 tolerance here is a display choice (the rule gives a point, not a range)
-    L.push(off(pco2,e,2,"PaCO₂ is well above that — a respiratory acidosis as well.","PaCO₂ is well below that — a respiratory alkalosis as well.")||"Close to it: an appropriately compensated metabolic alkalosis.");
-  } else if(alk&&loC){
-    const a=24-0.2*(40-pco2), c=24-0.4*(40-pco2); go="aralk";
-    L.push(`Alkalemia with a low PaCO₂: respiratory alkalosis.`,`Expected HCO₃⁻: acute ${r1(a)}, chronic ${r1(c)}; measured ${r1(hco3)}.`);
-    if(hco3>a+2) L.push("HCO₃⁻ is above even the acute value — a metabolic alkalosis as well.");
-    else if(hco3<c-2) L.push("HCO₃⁻ is below even the chronic value — a metabolic acidosis as well.");
-    else if(hco3<=c+1){ go="cralk"; L.push("Near the chronic value: the kidneys have compensated (chronic)."); }
-    else if(hco3>=a-1) L.push("Near the acute value: the kidneys have not yet acted (acute).");
-    else L.push("Between the two: the kidneys partway there.");
+/* reads a blood gas {ph,pco2,hco3,na?,cl?}: {head, lines:[{t,c}], go: the abtime disorder to show, or ""} */
+function abgRead(g){
+  const ph=g.ph, pco2=g.pco2, hco3=g.hco3, L=[], add=(t,c)=>L.push({t,c:c||""});
+  let head="", go="", metAcid=false;
+  const hh=6.1+Math.log10(hco3/(0.03*pco2));
+  if(Math.abs(hh-ph)>0.05) add(`Check the numbers: from this PaCO₂ and HCO₃⁻, Henderson–Hasselbalch gives pH ${hh.toFixed(2)}, not ${ph.toFixed(2)}.`,"warn");
+  const hiC=pco2>ABG_N.pco2[1], loC=pco2<ABG_N.pco2[0], loB=hco3<ABG_N.hco3[0], hiB=hco3>ABG_N.hco3[1];
+  /* a pH inside 7.35–7.45 with PaCO₂ and HCO₃⁻ both off the same way reads as compensated, by the side of 7.40 it sits on
+     (compensation moves pH toward 7.40, not past it); exactly 7.40 stays "two disorders or fully compensated" below */
+  const both=(hiC&&hiB)||(loC&&loB), acid=ph<ABG_N.ph[0]||(both&&ph<7.4), alk=ph>ABG_N.ph[1]||(both&&ph>7.4);
+  const edge=acid&&ph>=ABG_N.ph[0]||alk&&ph<=ABG_N.ph[1];
+  if(edge) add(`pH ${ph.toFixed(2)} is inside the normal 7.35–7.45 but on the ${acid?"acid":"alkaline"} side of 7.40, with PaCO₂ and HCO₃⁻ both off: read as a compensated disorder.`);
+  /* the value that explains the pH: HCO₃⁻ off 24 or PaCO₂ off 40 the matching way; when both do, the larger relative change leads
+     and the compensation rule then names the second disorder */
+  const mDev=acid?(24-hco3)/24:alk?(hco3-24)/24:0, rDev=acid?(pco2-40)/40:alk?(40-pco2)/40:0;
+  const kind=mDev>0&&mDev>=rDev?"met":rDev>0?"resp":"";
+  const pn=(edge?"":"pH ")+ph.toFixed(2), AC=edge?"A low-normal pH":"Acidemia", AK=edge?"A high-normal pH":"Alkalemia";
+  if(acid&&kind==="met"){
+    head="Metabolic acidosis"; go="ma"; metAcid=true;
+    add(`${AC} (${pn}) with a low HCO₃⁻ (${r1(hco3)}): a primary metabolic acidosis.`);
+    const e=1.5*hco3+8;
+    add(`Winters: expected PaCO₂ = 1.5 × ${r1(hco3)} + 8 = ${r1(e)} ± 2 (${r1(e-2)}–${r1(e+2)}); measured ${r1(pco2)}.`);
+    if(pco2>e+2){ head+=" + respiratory acidosis"; go="mxra"; add("PaCO₂ is above the range — the lungs are not keeping up: a respiratory acidosis as well (mixed).","mix"); }
+    else if(pco2<e-2){ head+=" + respiratory alkalosis"; add("PaCO₂ is below the range — more breathing than the acidosis explains: a respiratory alkalosis as well (mixed — e.g., salicylates).","mix"); }
+    else add("Within the range: appropriate respiratory compensation — a simple metabolic acidosis.","ok");
+  } else if(alk&&kind==="met"){
+    head="Metabolic alkalosis"; go="malk";
+    const d=hco3-24, e6=40+0.6*d, e7=40+0.7*d;
+    add(`${AK} (${pn}) with a high HCO₃⁻ (${r1(hco3)}): a primary metabolic alkalosis.`);
+    add(`Expected PaCO₂ ≈ 40 + 0.6 × ${r1(d)} = ${r1(e6)} (Costanzo’s table; its worked example uses 0.7 → ${r1(e7)}); measured ${r1(pco2)}.`);
+    if(pco2>e7+2){ head+=" + respiratory acidosis"; add("PaCO₂ is well above that — a respiratory acidosis as well (mixed).","mix"); }
+    else if(pco2<e6-2){ head+=" + respiratory alkalosis"; add("PaCO₂ is well below that — a respiratory alkalosis as well (mixed).","mix"); }
+    else add("Close to it: appropriate respiratory compensation — a simple metabolic alkalosis.","ok");
+  } else if(kind==="resp"){
+    const up=acid, d=Math.abs(pco2-40), a=up?24+0.1*d:24-0.2*d, c=up?24+0.3*d:24-0.4*d, nm=up?"respiratory acidosis":"respiratory alkalosis";
+    head=nm[0].toUpperCase()+nm.slice(1); go=up?"ara":"aralk";
+    add(`${up?AC:AK} (${pn}) with a ${up?"high":"low"} PaCO₂ (${r1(pco2)}): a primary ${nm}.`);
+    add(`Expected HCO₃⁻ — acute: 24 ${up?"+":"−"} ${up?"0.1":"0.2"} × ${r1(d)} = ${r1(a)} · chronic: 24 ${up?"+":"−"} ${up?"0.3":"0.4"} × ${r1(d)} = ${r1(c)}; measured ${r1(hco3)}.`);
+    const fa=Math.abs(hco3-a)<=2, fc=Math.abs(hco3-c)<=2, beyondLow=hco3<Math.min(a,c)-2, beyondHigh=hco3>Math.max(a,c)+2;
+    if(fa&&fc) add("Fits both — PaCO₂ has moved too little to tell acute from chronic.","ok");
+    else if(fa){ head="Acute "+nm; add(`Fits the acute value: the kidneys have not acted yet — an acute ${nm}.`,"ok"); }
+    else if(fc){ head="Chronic "+nm; go=up?"cra":"cralk"; add(`Fits the chronic value: renal compensation is in place (3–5 days) — a chronic ${nm}.`,"ok"); }
+    else if(beyondLow){ head+=" + metabolic acidosis"; metAcid=true; add(`HCO₃⁻ is below ${up?"even the acute":"even the chronic"} value — a metabolic acidosis as well (mixed).`,"mix"); }
+    else if(beyondHigh){ head+=" + metabolic alkalosis"; add(`HCO₃⁻ is above ${up?"even the chronic":"even the acute"} value — a metabolic alkalosis as well (mixed).`,"mix"); }
+    else { head+=" — between acute and chronic"; add("Between the acute and chronic values: acute-on-chronic, or the kidneys partway there — indeterminate.","mix"); }
   } else if(acid||alk){
-    L.push(`${acid?"Acidemia":"Alkalemia"}, but neither PaCO₂ nor HCO₃⁻ moves the way that explains it — recheck the numbers.`);
-  } else if((hiC&&hiB)||(loC&&loB)){
-    L.push("pH in the normal range, but PaCO₂ and HCO₃⁻ have both moved: two disorders pulling pH opposite ways (e.g., salicylate overdose), or a fully compensated one — compensation rarely brings pH all the way back.");
-  } else if(hiC||loC||loB||hiB) L.push("pH in the normal range with one value off — look again, or think of a mild or mixed disorder.");
-  else L.push("All three in the normal range.");
-  return {lines:L,go};
+    head="Doesn’t add up";
+    add(`${acid?"Acidemia":"Alkalemia"} (${pn}), but neither PaCO₂ nor HCO₃⁻ has moved the way that explains it — recheck the numbers.`,"warn");
+  } else {
+    metAcid=loB;
+    if(both){ head="pH normal — but PaCO₂ and HCO₃⁻ are not";
+      add("pH in the normal range while PaCO₂ and HCO₃⁻ have both moved: two disorders pulling pH opposite ways (e.g., salicylate overdose), or a fully compensated one — compensation rarely brings pH all the way back.","mix"); }
+    else if(hiC||loC||loB||hiB){ head="pH normal, one value off"; add("pH in the normal range with one value off — look again, or think of a mild or mixed disorder.","mix"); }
+    else { head="Normal"; add("pH, PaCO₂ and HCO₃⁻ all in the normal range (First Aid p. 610).","ok"); }
+  }
+  /* anion gap and Δ/Δ (First Aid p. 610; Costanzo ch 7) */
+  if(g.na!=null&&g.cl!=null){
+    const ag=g.na-(g.cl+hco3);
+    add(`Anion gap = ${r1(g.na)} − (${r1(g.cl)} + ${r1(hco3)}) = ${r1(ag)} (normal 8–12).`);
+    if(ag>12){
+      const dAG=ag-12, dHB=24-hco3;
+      add(metAcid?"High: an anion gap metabolic acidosis — unmeasured anions (e.g., ketoacids, lactate) have taken HCO₃⁻’s place."
+                 :"High: unmeasured anions are present — an anion gap metabolic acidosis is there as well.","mix");
+      if(!metAcid) head+=" + anion gap metabolic acidosis";
+      add(dHB>0?`Δ/Δ: the gap rose ${r1(dAG)} (from 12) and HCO₃⁻ fell ${r1(dHB)} (from 24) — ΔAG/ΔHCO₃⁻ = ${(dAG/dHB).toFixed(1)}.`
+               :`Δ/Δ: the gap rose ${r1(dAG)} (from 12), but HCO₃⁻ has not fallen (${r1(hco3)}).`);
+      if(dHB>0&&Math.abs(dAG-dHB)<=2) add("They match: the gap acidosis alone explains the fall in HCO₃⁻.","ok");
+      else if(dAG>dHB){ add("HCO₃⁻ fell less than the gap rose — a metabolic alkalosis as well (e.g., vomiting).","mix"); if(!/metabolic alkalosis/.test(head)) head+=" + metabolic alkalosis"; }
+      else { add("HCO₃⁻ fell more than the gap rose — a normal-gap (hyperchloremic) metabolic acidosis as well (e.g., diarrhea).","mix"); head+=" + normal-gap metabolic acidosis"; }
+      if(dHB>0) add("How close counts as a match differs by source: this reading follows Costanzo ch 7 (the two changes within 2 mEq/L of each other), and the result above follows that range. Other references set the cutoff on the ΔAG/ΔHCO₃⁻ ratio instead, so a borderline value can read differently there.","note");
+    } else if(ag<8) add("Below the normal range — recheck Na⁺ and Cl⁻.","warn");
+    else if(metAcid){ add("Normal gap: a normal anion gap (hyperchloremic) metabolic acidosis — HCO₃⁻ lost and replaced by Cl⁻ (e.g., diarrhea, RTA).","ok"); if(/^Metabolic acidosis/.test(head)) head=head.replace("Metabolic acidosis","Normal-gap metabolic acidosis"); }
+    else add("Normal.");
+    if(ag>12&&/^Metabolic acidosis/.test(head)) head=head.replace("Metabolic acidosis","Anion gap metabolic acidosis");
+  } else if(g.na!=null||g.cl!=null) add("Enter both Na⁺ and Cl⁻ for the anion gap.","dim");
+  else add(`Add Na⁺ and Cl⁻ for the anion gap${metAcid?" — and, if it is high, the Δ/Δ":""}.`,"dim");
+  return {head,lines:L,go};
 }
 function abgMarks(cfg,st){
   const g=st.abg, x=cfg.cols[st.sw[cfg.step]]||cfg.plots.ph[1]-60; let s="";
@@ -44138,31 +44373,40 @@ function abgMarks(cfg,st){
        `<text class="nf-l1" x="${x-22}" y="${y+5}" text-anchor="end">patient ${f(v)}${out?(v>hi?" ▲":" ▼"):""}</text>`; });
   return s;
 }
+/* examples: a DKA-like gap acidosis whose Δs match, chronic CO₂ retention, and Costanzo's own vomiting example (ch 7) */
+const ABG_TRY=[["Gap acidosis",{ph:7.25,pco2:26,hco3:11,na:140,cl:105}],["COPD",{ph:7.35,pco2:60,hco3:32,na:null,cl:null}],["Vomiting",{ph:7.50,pco2:48,hco3:37,na:null,cl:null}]];
 function dynAbg(v){
   const m=MAPS[v], st=DYN[v]||dynSt(v), cfg=DYN_ABG[v]; if(!cfg) return;
-  const g=st.abg||{ph:7.27,pco2:26,hco3:12};
+  const g=st.abg||{ph:7.25,pco2:26,hco3:11,na:null,cl:null};
   const old=document.getElementById("dynAbg"); if(old) old.remove();
   const el=document.createElement("div"); el.id="dynAbg"; el.className="dcmp"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true");
-  el.setAttribute("aria-label","Check a blood gas");
-  const inp=(k,l,step,val)=>`<label class="abg-f"><span>${l}</span><input type="number" inputmode="decimal" step="${step}" data-abg="${k}" value="${val}"></label>`;
-  el.innerHTML=`<div class="dcmp-box abg-box"><div class="dcmp-h"><b>Check a blood gas</b><span class="ds-hb"><button class="ds-x" data-abgx>Close</button></span></div>
+  el.setAttribute("aria-label","Plug in an ABG");
+  const inp=(k,l,step,val,opt)=>`<label class="abg-f"><span>${l}${opt?` <i>optional</i>`:""}</span><input type="number" inputmode="decimal" step="${step}" data-abg="${k}" value="${val==null?"":val}" aria-invalid="false"></label>`;
+  el.innerHTML=`<div class="dcmp-box abg-box"><div class="dcmp-h"><b>Plug in an ABG</b><span class="ds-hb"><button class="ds-x" data-abgx>Close</button></span></div>
     <div class="abg-row">${inp("ph","pH","0.01",g.ph)}${inp("pco2","PaCO₂ (mm Hg)","1",g.pco2)}${inp("hco3","HCO₃⁻ (mEq/L)","1",g.hco3)}</div>
+    <div class="abg-row">${inp("na","Na⁺ (mEq/L)","1",g.na,1)}${inp("cl","Cl⁻ (mEq/L)","1",g.cl,1)}</div>
+    <div class="abg-try"><span>Try</span>${ABG_TRY.map(([l,o],i)=>`<button class="ds-x" type="button" data-abgtry="${i}" title="${esc(abgShort(o)+(o.na!=null?` · Na⁺ ${o.na} · Cl⁻ ${o.cl}`:""))}">${esc(l)}</button>`).join("")}</div>
     <div class="abg-out" aria-live="polite"></div>
     <div class="abg-row"><button class="ds-x abg-go" data-abggo>Show it on the graphs</button></div>
-    <p class="dcmp-sub">Uses the rules this map draws. A study aid, not for patient care.</p></div>`;
+    <p class="abg-src">Rules as this map draws them: Winters (First Aid p. 609) · metabolic alkalosis and the acute/chronic respiratory rules (Costanzo Table 7.3) · anion gap, normal 8–12 (First Aid p. 610) · Δ/Δ (Costanzo ch 7). A study aid, not for patient care.</p></div>`;
   document.body.appendChild(el);
-  const val=()=>{ const o={}; el.querySelectorAll("[data-abg]").forEach(i=>{ o[i.dataset.abg]=parseFloat(i.value); }); return o; };
-  const ok=o=>o.ph>=6.8&&o.ph<=7.8&&o.pco2>=10&&o.pco2<=130&&o.hco3>=2&&o.hco3<=60;
+  const val=()=>{ const o={}; el.querySelectorAll("[data-abg]").forEach(i=>{ const s=String(i.value).trim(); o[i.dataset.abg]=s===""?null:parseFloat(s); }); return o; };
+  const bad=o=>Object.keys(ABG_LIM).filter(k=>{ const [lo,hi]=ABG_LIM[k], x=o[k]; if(x==null) return k!=="na"&&k!=="cl"; return !isFinite(x)||x<lo||x>hi; });
   const out=el.querySelector(".abg-out"), go=el.querySelector("[data-abggo]");
-  const upd=()=>{ const o=val(); if(!ok(o)){ out.innerHTML=`<p class="ds-note">Enter pH 6.8–7.8, PaCO₂ 10–130 and HCO₃⁻ 2–60.</p>`; go.disabled=true; return; }
-    go.disabled=false; out.innerHTML=abgRead(o.ph,o.pco2,o.hco3).lines.map(t=>`<p class="ds-note">${esc(t)}</p>`).join(""); };
+  const upd=()=>{ const o=val(), b=bad(o);
+    el.querySelectorAll("[data-abg]").forEach(i=>i.setAttribute("aria-invalid",String(b.includes(i.dataset.abg))));
+    if(b.length){ out.innerHTML=`<p class="ds-note abg-warn">Check ${b.map(k=>ABG_LIM[k][2]).join(", ")}: enter pH 6.8–7.8, PaCO₂ 10–130 mm Hg and HCO₃⁻ 2–60 mEq/L${b.some(k=>k==="na"||k==="cl")?" — and, if given, Na⁺ 100–180 and Cl⁻ 60–140 mEq/L":""}.</p>`; go.disabled=true; return; }
+    go.disabled=false; const r=abgRead(o);
+    out.innerHTML=`<p class="abg-head">${esc(r.head)}</p>`+r.lines.map(x=>`<p class="ds-note${x.c?" abg-"+x.c:""}">${esc(x.t)}</p>`).join(""); };
   el.addEventListener("input",upd); upd();
   const back=document.activeElement;
   const close=()=>{ el.remove(); removeEventListener("keydown",key,true); try{ back&&back.focus({preventScroll:true}); }catch(e){} };
   const key=e=>{ if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); close(); } };
   addEventListener("keydown",key,true);
   el.addEventListener("click",e=>{
-    if(e.target.closest("[data-abggo]")){ const o=val(); if(!ok(o)) return; const r=abgRead(o.ph,o.pco2,o.hco3), s2=DYN[v]||dynSt(v);
+    const t=e.target.closest("[data-abgtry]");
+    if(t){ const o=ABG_TRY[+t.dataset.abgtry][1]; el.querySelectorAll("[data-abg]").forEach(i=>{ const x=o[i.dataset.abg]; i.value=x==null?"":x; }); upd(); return; }
+    if(e.target.closest("[data-abggo]")){ const o=val(); if(bad(o).length) return; const r=abgRead(o), s2=DYN[v]||dynSt(v);
       if(r.go&&cfg.go[r.go]){ s2.sw[cfg.dz]=cfg.go[r.go]; if(cfg.time[r.go]) s2.sw[cfg.step]=cfg.time[r.go]; s2.auto=null; }
       s2.abg=o; s2.tour=null; s2.quiz=null; s2.pred=null; close(); dynRedraw(); return; }
     if(e.target===el||e.target.closest("[data-abgx]")) close(); });
@@ -45621,7 +45865,7 @@ function renderIndex(){
     </details></div>
     ${(()=>{ if(q) return ""; const N=PROG.nit, R=PROG.prd, W=weakMaps(6), mixable=mixPool("weak").length>=2;
       const part=(r,l)=>r&&r[1]?`${l} ${r[0]}/${r[1]}`:"";
-      return W.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Your weakest moving maps</h3>${mixable?`<button class="idxrow" data-weakmix><span class="t">▶ Mix your weakest — 10 Name-it questions</span><span class="e">from these maps, the ones you named wrong first</span></button>`:""}<ul>${W.map(v=>`<li><button class="idxrow" data-nameit="${v}"><span class="t">${esc(MAPS[v].t)}</span><span class="e">${[part(N[v],"Name it"),part(R[v],"Predict")].filter(Boolean).join(" · ")} — tap to try Name it again</span></button></li>`).join("")}</ul></section>`:""; })()}
+      return W.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Your weakest moving maps</h3>${mixable?`<button class="idxrow" data-weakmix><span class="t">▶ Mix your weakest — ${MIXN} Name-it questions</span><span class="e">from these maps, the ones you named wrong first</span></button>`:""}<ul>${W.map(v=>`<li><button class="idxrow" data-nameit="${v}"><span class="t">${esc(MAPS[v].t)}</span><span class="e">${[part(N[v],"Name it"),part(R[v],"Predict")].filter(Boolean).join(" · ")} — tap to try Name it again</span></button></li>`).join("")}</ul></section>`:""; })()}
     ${(()=>{ const SW=q?switchMatches(q):[]; return SW.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Moving maps · ${SW.length}</h3><ul>${SW.slice(0,20).map(x=>switchRowHtml(x,"idx")).join("")}</ul></section>`:""; })()}
     ${(()=>{ GHITS=q?graphMatches(q):[]; return GHITS.length?`<section class="idxcard" style="--c:var(--accent)"><h3><span class="bar"></span>Graphs · ${GHITS.length}</h3><ul>${GHITS.slice(0,20).map(g=>graphRowHtml(g,"idx")).join("")}</ul></section>`:""; })()}
     ${(()=>{ BOXHITS=q?boxMatches(q):[]; return BOXHITS.length?`<section class="idxcard" style="--c:var(--ink-3)"><h3><span class="bar"></span>In map boxes · ${BOXHITS.length}</h3><ul>${BOXHITS.slice(0,30).map((b,i)=>boxRowHtml(b,i,"idx")).join("")}</ul>${BOXHITS.length>30?`<p class="revnote">${BOXHITS.length-30} more — add a word to narrow it</p>`:""}</section>`:""; })()}
@@ -45668,8 +45912,9 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   misim:"2026-10-09",pvflow:"2026-10-09",edemaflow:"2026-10-09",hivflow:"2026-10-09",eyesim:"2026-10-09",plexsim:"2026-10-09",mensflow:"2026-10-09",
   baroflow:"2026-10-10",shocksim:"2026-10-10",ecgsim:"2026-10-10",cahflow:"2026-10-10",lipoflow:"2026-10-10",hemeflow:"2026-10-10",nucflow:"2026-10-10",acidflow:"2026-10-10",legsim:"2026-10-10",
   abtime:"2026-10-10",
-  aasim:"2026-10-12",bvitsim:"2026-10-12",colsim:"2026-10-12",energysim:"2026-10-12",faosim:"2026-10-12",glyxsim:"2026-10-12",gsdsim:"2026-10-12",labsim:"2026-10-12",lsdsim:"2026-10-12",pedsim:"2026-10-12",rtasim:"2026-10-12",sugarsim:"2026-10-12",ureasim:"2026-10-12",cbsim:"2026-10-12",papezsim:"2026-10-12",rxsim:"2026-10-12",sleepsim:"2026-10-12",stimsim:"2026-10-12",aortasim:"2026-10-12",archsim:"2026-10-12",carditsim:"2026-10-12",cyansim:"2026-10-12",embsim:"2026-10-12",fetalsim:"2026-10-12",gonadsim:"2026-10-12",htnsim:"2026-10-12",lyteecg:"2026-10-12",murmursim:"2026-10-12",placsim:"2026-10-12",pregsim:"2026-10-12",prossim:"2026-10-12",scrotsim:"2026-10-12",sexsim:"2026-10-12",aqsim:"2026-10-12",vestsim:"2026-10-12",voxsim:"2026-10-12",bleedsim:"2026-10-12",btsim:"2026-10-12",csfsim:"2026-10-12",demsim:"2026-10-12",hasim:"2026-10-12",pthsim:"2026-10-12",spreadsim:"2026-10-12",szsim:"2026-10-12",testsim:"2026-10-12",antidsim:"2026-10-12",bowelsim:"2026-10-12",esosim:"2026-10-12",laxsim:"2026-10-12",pksim:"2026-10-12",portsim:"2026-10-12",complsim:"2026-10-12",hypsim:"2026-10-12",idsim:"2026-10-12",tcellsim:"2026-10-12",tfsim:"2026-10-12",vaxsim:"2026-10-12",altsim:"2026-10-12",alvdzsim:"2026-10-12",hypoxsim:"2026-10-12",lcsim:"2026-10-12",odcsim:"2026-10-12",pftsim:"2026-10-12",pnasim:"2026-10-12",bonesim:"2026-10-12",cervsim:"2026-10-12",footsim:"2026-10-12",fxsim:"2026-10-12",healsim:"2026-10-12",injsim:"2026-10-12",shsim:"2026-10-12",sxedema:"2026-10-12",sxfever:"2026-10-12",sxgibleed:"2026-10-12",sxjoint:"2026-10-12",sxrash:"2026-10-12",sxsyncope:"2026-10-12",sxweight:"2026-10-12",anemiasim:"2026-10-12",bcellsim:"2026-10-12",chemosim:"2026-10-12",lftsim:"2026-10-12",mapksim:"2026-10-12",myelsim:"2026-10-12",netsim:"2026-10-12",pancsim:"2026-10-12",pltsim:"2026-10-12",thytsim:"2026-10-12",avsim:"2026-10-12",blistsim:"2026-10-12",bugid:"2026-10-12",gxsim:"2026-10-12",lesionsim:"2026-10-12",negsim:"2026-10-12",parasim:"2026-10-12",protosim:"2026-10-12",toxinsim:"2026-10-12",zoosim:"2026-10-12",anessim:"2026-10-12",biassim:"2026-10-12",designsim:"2026-10-12",ethicsim:"2026-10-12",orbitsim:"2026-10-12",painsim:"2026-10-12",ribsim:"2026-10-12",amylsim:"2026-10-12",cransim:"2026-10-12",frysim:"2026-10-12",lbpsim:"2026-10-12",neosim:"2026-10-12",pelvsim:"2026-10-12",sacsim:"2026-10-12",embolsim:"2026-10-12",plsim:"2026-10-12",akisim:"2026-10-12",cystsim:"2026-10-12",utisim:"2026-10-12",watersim:"2026-10-12",tftsim:"2026-10-18"};
+  aasim:"2026-10-12",bvitsim:"2026-10-12",colsim:"2026-10-12",energysim:"2026-10-12",faosim:"2026-10-12",glyxsim:"2026-10-12",gsdsim:"2026-10-12",labsim:"2026-10-12",lsdsim:"2026-10-12",pedsim:"2026-10-12",rtasim:"2026-10-12",sugarsim:"2026-10-12",ureasim:"2026-10-12",cbsim:"2026-10-12",papezsim:"2026-10-12",rxsim:"2026-10-12",sleepsim:"2026-10-12",stimsim:"2026-10-12",aortasim:"2026-10-12",archsim:"2026-10-12",carditsim:"2026-10-12",cyansim:"2026-10-12",embsim:"2026-10-12",fetalsim:"2026-10-12",gonadsim:"2026-10-12",htnsim:"2026-10-12",lyteecg:"2026-10-12",murmursim:"2026-10-12",placsim:"2026-10-12",pregsim:"2026-10-12",prossim:"2026-10-12",scrotsim:"2026-10-12",sexsim:"2026-10-12",aqsim:"2026-10-12",vestsim:"2026-10-12",voxsim:"2026-10-12",bleedsim:"2026-10-12",btsim:"2026-10-12",csfsim:"2026-10-12",demsim:"2026-10-12",hasim:"2026-10-12",pthsim:"2026-10-12",spreadsim:"2026-10-12",szsim:"2026-10-12",testsim:"2026-10-12",antidsim:"2026-10-12",bowelsim:"2026-10-12",esosim:"2026-10-12",laxsim:"2026-10-12",pksim:"2026-10-12",portsim:"2026-10-12",complsim:"2026-10-12",hypsim:"2026-10-12",idsim:"2026-10-12",tcellsim:"2026-10-12",tfsim:"2026-10-12",vaxsim:"2026-10-12",altsim:"2026-10-12",alvdzsim:"2026-10-12",hypoxsim:"2026-10-12",lcsim:"2026-10-12",odcsim:"2026-10-12",pftsim:"2026-10-12",pnasim:"2026-10-12",bonesim:"2026-10-12",cervsim:"2026-10-12",footsim:"2026-10-12",fxsim:"2026-10-12",healsim:"2026-10-12",injsim:"2026-10-12",shsim:"2026-10-12",sxedema:"2026-10-12",sxfever:"2026-10-12",sxgibleed:"2026-10-12",sxjoint:"2026-10-12",sxrash:"2026-10-12",sxsyncope:"2026-10-12",sxweight:"2026-10-12",anemiasim:"2026-10-12",bcellsim:"2026-10-12",chemosim:"2026-10-12",lftsim:"2026-10-12",mapksim:"2026-10-12",myelsim:"2026-10-12",netsim:"2026-10-12",pancsim:"2026-10-12",pltsim:"2026-10-12",thytsim:"2026-10-12",avsim:"2026-10-12",blistsim:"2026-10-12",bugid:"2026-10-12",gxsim:"2026-10-12",lesionsim:"2026-10-12",negsim:"2026-10-12",parasim:"2026-10-12",protosim:"2026-10-12",toxinsim:"2026-10-12",zoosim:"2026-10-12",anessim:"2026-10-12",biassim:"2026-10-12",designsim:"2026-10-12",ethicsim:"2026-10-12",orbitsim:"2026-10-12",painsim:"2026-10-12",ribsim:"2026-10-12",amylsim:"2026-10-12",cransim:"2026-10-12",frysim:"2026-10-12",lbpsim:"2026-10-12",neosim:"2026-10-12",pelvsim:"2026-10-12",sacsim:"2026-10-12",embolsim:"2026-10-12",plsim:"2026-10-12",akisim:"2026-10-12",cystsim:"2026-10-12",utisim:"2026-10-12",watersim:"2026-10-12",tftsim:"2026-10-18",anemsim:"2026-10-18",cnrefsim:"2026-10-18"};
 const WHATSNEW=[
+  ["2026-10-18","New: <b>Anemia Work-up in Motion</b> — 17 causes from iron deficiency to B12, with MCV, retics, iron studies, hemolysis labs and the smear; <b>Cranial Nerve Reflexes in Motion</b> — light, near, corneal, lacrimation, jaw jerk, gag and cough arcs with a lesion switch. <b>Plug in an ABG</b> on the Compensation Timeline now reads the anion gap and Δ/Δ; moving-map mixes come in 5, 10 or 20 with a missed list and Undo."],
   ["2026-10-18","New: <b>Thyroid Function Tests in Motion</b> — TSH, T4, T3, TBG and uptake across primary, central, pill, binding-protein and euthyroid-sick patterns. The <b>Renal Tubular Acidosis Simulator</b> now has 23 causes by type plus urine pH and urine anion gap readouts."],
   ["2026-10-12","118 new moving maps — <b>Amino Acid Disorders in Motion</b>, <b>B Vitamins &amp; Zinc in Motion</b>, <b>Collagen Assembly in Motion</b>, <b>Energy Metabolism in Motion</b>, <b>Fatty Acid Oxidation in Motion</b>, <b>Glycolysis Odds &amp; Ends in Motion</b>, <b>Glycogen Storage Diseases in Motion</b>, <b>Lab Techniques in Motion</b>, <b>Lysosomal Storage in Motion</b>, <b>Pedigree Simulator</b>, <b>Renal Tubular Acidosis Simulator</b>, <b>Fructose &amp; Galactose in Motion</b>, <b>Urea Cycle in Motion</b>, <b>Cerebellar Lesions in Motion</b>, <b>The Papez Circuit in Motion</b>, <b>Psych Drugs at the Receptors</b>, <b>Sleep Stages in Motion</b>, <b>Stimulants &amp; Addiction in Motion</b>, <b>The Aorta in Motion</b>, <b>Pharyngeal Arches in Motion</b>, <b>Heart Infection &amp; Inflammation in Motion</b>, <b>Cyanotic Heart Disease in Motion</b>, <b>Embryo &amp; Gut-Tube Defects in Motion</b>, <b>Fetal Circulation in Motion</b>, <b>Gonadal Tumors in Motion</b>, <b>Hypertension in Motion</b>, <b>Electrolytes &amp; the ECG</b>, <b>Murmurs &amp; Maneuvers in Motion</b>, <b>Bleeding in Pregnancy in Motion</b>, <b>Pregnancy Hormones in Motion</b>, <b>The Prostate in Motion</b>, <b>The Scrotum in Motion</b>, <b>Sex Differentiation in Motion</b>, <b>Aqueous Humor &amp; Retina in Motion</b>, <b>Vertigo in Motion</b>, <b>Larynx &amp; Voice in Motion</b>, <b>Head Bleeds in Motion</b>, <b>Brain Tumors in Motion</b>, <b>CSF Flow in Motion</b>, <b>Dementias Over Time</b>, <b>Headaches in Motion</b>, <b>Calcium &amp; PTH Lab Simulator</b>, <b>Seizure Spread in Motion</b>, <b>Antiseizure Drugs in Motion</b>, <b>Diagnostic Test Simulator</b>, <b>Poison &amp; Antidote in Motion</b>, <b>Bowel Blockages in Motion</b>, <b>Swallowing in Motion</b>, <b>Laxatives in Motion</b>, <b>Pharmacokinetics &amp; Dose–Response Simulator</b>, <b>Liver Blood Flow in Motion</b>, <b>Complement in Motion</b>, <b>Hypersensitivity Types in Motion</b>, <b>Immunodeficiency Simulator</b>, <b>T-Cell Activation in Motion</b>, <b>Blood Transfusion in Motion</b>, <b>Vaccines in Motion</b>, <b>Climbing to Altitude in Motion</b>, <b>Alveoli in Trouble in Motion</b>, <b>Hypoxemia Simulator — A–a Gradient &amp; 100% O₂</b>, <b>Lung Cancer in Motion</b>, <b>The O₂ Curve in Motion</b>, <b>PFTs &amp; Flow–Volume Loops</b>, <b>Pneumonia in Motion</b>, <b>Bones &amp; Kids by Age in Motion</b>, <b>The Cervical Spine in Motion</b>, <b>The Foot in Motion</b>, <b>Growth Plates &amp; Arm Injuries in Motion</b>, <b>Inflammation &amp; Wound Healing in Motion</b>, <b>Cell Injury &amp; Death Simulator</b>, <b>The Shoulder in Motion</b>, <b>Edema</b>, <b>Fever &amp; Hyperthermia</b>, <b>GI Bleeding</b>, <b>Joint Pain</b>, <b>Fever &amp; Rash</b>, <b>Syncope</b>, <b>Weight Loss</b>, <b>Anemia Work-Up</b>, <b>B Cells &amp; Lymphomas in Motion</b>, <b>Chemo &amp; DNA Repair in Motion</b>, <b>Liver Tests Decoder</b>, <b>Growth Signals in Motion</b>, <b>Myeloid Neoplasms in Motion</b>, <b>Pancreatic Endocrine Tumors in Motion</b>, <b>Pancreatitis in Motion</b>, <b>Platelets in Motion</b>, <b>Thyroid Tumors in Motion</b>, <b>Antiviral Targets in Motion</b>, <b>Blisters — Where the Skin Splits</b>, <b>Name the Bug</b>, <b>Bacterial Gene Transfer in Motion</b>, <b>Skin Lesions Drawn to Scale</b>, <b>Negative-Strand Viruses in Motion</b>, <b>Parasite Life Cycles in Motion</b>, <b>Protozoa in Motion</b>, <b>Bacterial Toxins in Motion</b>, <b>Zoonoses &amp; Bites in Motion</b>, <b>Anesthetics in Motion</b>, <b>Bias in Motion</b>, <b>Study Design Picker</b>, <b>Who Decides? Consent &amp; Capacity</b>, <b>The Orbit &amp; Tears in Motion</b>, <b>Pain Gone Wrong in Motion</b>, <b>Rib Motion in Motion</b>, <b>Amyloid in Motion</b>, <b>Cranial Mechanism in Motion</b>, <b>Spinal Mechanics &amp; OMT in Motion</b>, <b>Low Back Pain in Motion</b>, <b>Neoplasia in Motion</b>, <b>Pelvis in Motion</b>, <b>The Sacrum in Motion</b>, <b>Emboli in Motion</b>, <b>Pleural Fluid in Motion</b>, <b>Acute Kidney Injury in Motion</b>, <b>Kidney Cysts in Motion</b>, <b>UTI &amp; Incontinence in Motion</b>, <b>Water Balance in Motion</b>."],
   ["2026-10-10","New moving map — <b>Acid–Base Compensation Timeline</b> (Renal): buffers in seconds, the lungs in hours, the kidneys over days — and how far each disorder is expected to compensate."],

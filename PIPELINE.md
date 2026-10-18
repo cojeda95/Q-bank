@@ -924,3 +924,12 @@ m47 PASSED.txt; NEW date and its own WHATSNEW line set in assemble; Endocrine gr
 to 23 causes with urine pH / urine anion gap readouts (a_rtasim.py, appended only — index patches intact). Kit: a "one" switch
 may carry quiz:[keys] so Name it asks only those (assemble patch #14; rtasim → d1, p2, h4, dia). Uptake/T4 arrows sourced:
 Jonklaas 2014 ATA (PMID 25266247), De Leo 2016 Lancet Table 1 (PMID 27038492) as refs on thyroiddrugs/pitnet; Guyton ch 77.
+
+m52 (2026-10-18): two new moving maps — anemsim "Anemia Work-up in Motion" (e_anemsim.py, heme after ironflow, new card
+acutebloodloss) and cnrefsim "Cranial Nerve Reflexes in Motion" (b_cnrefsim.py, neuro after stemsim, new card cnreflexes);
+both in m47 PASSED.txt + groups.json, dated 2026-10-18 via NEW18 in assemble. Kit (assemble #15): abtime's blood-gas dialog
+→ "Plug in an ABG" (optional Na/Cl → anion gap + Δ/Δ per Costanzo ch 7, match = within 2 mEq/L, with a note that the cutoff
+differs by source; acute and chronic expected HCO₃⁻; normal limits from FA p. 610). Kit (#16): mix length 5/10/20 (mla-mixlen),
+missed list at the end ("Results ›", tap → map with the answer on), 3-second Undo after a Name-it tap. Map-text audit (batches/
+m52/map_audit.md): 161 moving + 189 static maps read; 6 fixes (szsim carbamazepine GTC, pthsim PTHrP calcitriol cut, cardiac
+hand grip + QRS ≤100 ms, nitrogen urea-cycle compartments, nephron RTA4 urine pH variable).
