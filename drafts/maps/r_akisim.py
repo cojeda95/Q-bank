@@ -76,7 +76,8 @@ LAB = dict(pre='BUN:Cr > 20 · FENa < 1% · urine Na⁺ < 20 · Uosm > 500 · bl
            intr='BUN:Cr < 15 · FENa > 2% · urine Na⁺ > 40 · Uosm < 350 · active sediment',
            post='hydronephrosis on ultrasound · indices vary with duration · type 4 RTA possible')
 text(LAB['pre'], 1100, 1640, 'nf-l1', 'middle', when=D(*PRE))
-text(LAB['intr'], 1100, 1640, 'nf-l1', 'middle', when=D('atn', 'ain', 'gn'))
+text(LAB['intr'], 1100, 1640, 'nf-l1', 'middle', when=D('atn', 'ain'))
+text('FENa often < 1% early — tubules intact · RBC casts · dysmorphic red cells', 1100, 1640, 'nf-l1', 'middle', when=D('gn'))
 text(LAB['post'], 1100, 1640, 'nf-l1', 'middle', when=D('post'))
 
 # ════════ motion ════════
@@ -91,7 +92,7 @@ flows = [
   dict(d='M1420 1120 C1420 1200 1560 1240 1640 1260', len=280, speed=120, r=8, base=dict(fil=2), unless=D('post')),
   dict(d='M1640 1260 C1560 1240 1420 1200 1420 1120 V900', len=500, speed=60, r=8, base=dict(bp=4), when=D('post')),
   dict(d=f'M1100 820 C1060 760 1100 700 1140 {GY + 20}', len=320, speed=100, r=8, base=dict(na=3),
-       mods=[m(D(*PRE), set=dict(na=7)), m(D('atn', 'atnrec', 'ain', 'gn'), set=dict(na=0))]),
+       mods=[m(D(*PRE), set=dict(na=7)), m(D('atn', 'atnrec', 'ain'), set=dict(na=0))]),
 ]
 sites = [dict(x=600, y=GY + 60, n=[0, 1], w=10, t='rec', l='', aria='Pre-renal AKI', c='prerenal', ions=[]),
          dict(x=1060, y=1000, n=[-1, 0], w=10, t='rec', l='', aria='Acute tubular necrosis', c='atn', ions=[]),
@@ -101,9 +102,9 @@ sites = [dict(x=600, y=GY + 60, n=[0, 1], w=10, t='rec', l='', aria='Pre-renal A
 
 readouts = [
   dict(l='Creatinine', mods=[dict(when=D(*PRE, 'atn', 'ain', 'gn', 'post'), d=1), dict(when=D('atnrec'), d=-1)]),
-  dict(l='BUN:Cr ratio', mods=[dict(when=D(*PRE), d=1), dict(when=D('atn', 'ain', 'gn'), d=-1)]),
-  dict(l='FENa', mods=[dict(when=D(*PRE), d=-1), dict(when=D('atn', 'ain', 'gn'), d=1)]),
-  dict(l='Urine osmolality', mods=[dict(when=D(*PRE), d=1), dict(when=D('atn', 'ain', 'gn'), d=-1)]),
+  dict(l='BUN:Cr ratio', mods=[dict(when=D(*PRE), d=1), dict(when=D('atn', 'ain'), d=-1)]),
+  dict(l='FENa', mods=[dict(when=D(*PRE, 'gn'), d=-1), dict(when=D('atn', 'ain'), d=1)]),
+  dict(l='Urine osmolality', mods=[dict(when=D(*PRE), d=1), dict(when=D('atn', 'ain'), d=-1)]),
   dict(l='Urine output', mods=[dict(when=D('hypo', 'atn'), d=-1), dict(when=D('atnrec'), d=1)]),
   dict(l='Serum K⁺', mods=[dict(when=D('atn', 'acei'), d=1), dict(when=D('atnrec'), d=-1)]),
 ]
@@ -122,7 +123,9 @@ notes = {
             'maintenance phase 1–3 weeks: hyperkalemia, acidosis, uremia.',
   'dx:atnrec': 'ATN recovery phase: polyuric; BUN and creatinine fall, with a risk of hypokalemia and loss of other electrolytes.',
   'dx:ain': 'AIN: drug hypersensitivity in the interstitium — WBC casts, urine eosinophils, sometimes fever and rash.',
-  'dx:gn': 'Glomerulonephritis: RBC casts, dysmorphic red cells, hypertension.',
+  'dx:gn': 'Glomerulonephritis: RBC casts, dysmorphic red cells, hypertension. Early in acute (e.g., post-streptococcal) GN the '
+           'tubules still work and hold on to sodium, so FENa is often < 1% as in pre-renal AKI — the salt retention behind the edema '
+           'and hypertension; crescentic GN with tubular injury can push it higher.',
   'dx:post': 'Post-renal: obstruction (BPH in older men, stones, tumor) pushes pressure back into Bowman’s space and opposes '
              'filtration. Creatinine rises only if bilateral or in a solitary kidney. Relieve it (catheter; α-blocker for BPH) — '
              'a large salt-rich diuresis often follows.',

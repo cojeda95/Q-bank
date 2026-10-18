@@ -169,7 +169,8 @@ add(''.join(f'<circle cx="{340 + 92 * c}" cy="{1010 + 92 * s}" r="7" fill="var(-
             for c, s in ((1, 0), (.87, .5), (.5, .87), (0, 1), (-.5, .87), (-.87, .5), (-1, 0), (-.87, -.5), (.5, -.87), (.87, -.5))),
     when=O('sidero', 'lead'))
 text('ringed sideroblasts — iron-laden mitochondria (Prussian blue)', 180, 1276, TAG, when=O('sidero', 'lead'))
-text('megaloblasts: the nucleus lags the cytoplasm — many die in the marrow', 180, 1276, TAG, when=MEGA)
+text('megaloblasts: the nucleus lags the cytoplasm —', 180, 1258, TAG, when=MEGA)   # two lines: one ran across the EPO line
+text('many die in the marrow', 180, 1276, TAG, when=MEGA)
 text('globin chains short — small cells despite normal iron', 180, 1276, TAG, when=O('thal'))
 text('heme short — the cell keeps dividing into a small, pale cell', 180, 1276, TAG, when=O('ida', 'acd'))
 
@@ -230,9 +231,9 @@ text('Macrophage', 2045, 1006, 'nf-l1', 'middle')
 text('heme → bilirubin · iron out', 2045, 1024, 'nf-l2', 'middle')
 add(''.join(f'<circle cx="{x}" cy="{y}" r="9" fill="var(--dk2)"/>' for x, y in ((1900, 1110), (1930, 1140), (1965, 1118), (2150, 1130), (2180, 1105))),
     when=EXTRA)
-text('splenomegaly — spherocytes trapped in the cords', 1880, 1236, TAG, when=EXTRA)
-text('spleen infarcts over time — autosplenectomy', 1880, 1236, TAG, when=O('sickle'))
-text('macrophages bite out Heinz bodies', 1880, 1236, TAG, when=O('g6pd'))
+text('splenomegaly — spherocytes trapped in the cords', 1880, 1214, TAG, when=EXTRA)
+text('spleen infarcts over time — autosplenectomy', 1880, 1214, TAG, when=O('sickle'))
+text('macrophages bite out Heinz bodies', 1880, 1214, TAG, when=O('g6pd'))
 # bilirubin to the liver
 add('<path d="M2165 1010 H2300 V300 H1600" class="dyn-dash" marker-end="url(#ah-amLysis)"/>')
 text('unconjugated (indirect) bilirubin → liver', 1700, 286, 'nf-l2')
@@ -256,8 +257,10 @@ def stipple(x, y, r=30, pal=.33):
 def bite(x, y, r=30):
     return (f'<circle cx="{x}" cy="{y}" r="{r}" {RBC}/><circle cx="{x}" cy="{y}" r="{r * .33:.1f}" {PALE}/>'
             f'<circle cx="{x + r * .95:.1f}" cy="{y - r * .35:.1f}" r="{r * .45:.1f}" fill="var(--surface)"/>')
+# inclusions stay dark in both themes (--dyn-lost: the kit's dark fill; --ink turns light in dark mode)
+INCL = 'fill="var(--dyn-lost)"'
 def heinz(x, y, r=30):
-    return disc(x, y, r) + ''.join(f'<circle cx="{x + dx}" cy="{y + dy}" r="4" fill="var(--ink-3)"/>' for dx, dy in ((-20, -14), (18, 16), (-8, 22)))
+    return disc(x, y, r) + ''.join(f'<circle cx="{x + dx}" cy="{y + dy}" r="4" {INCL}/>' for dx, dy in ((-20, -14), (18, 16), (-8, 22)))
 def sickle(x, y):
     return f'<path d="M{x - 42} {y + 6} Q{x} {y - 40} {x + 42} {y + 6} Q{x} {y - 16} {x - 42} {y + 6} Z" fill="var(--dk2)" opacity=".8"/>'
 def schisto(x, y, k=1):
@@ -273,7 +276,7 @@ def oval(x, y):
 def retic(x, y, r=34):
     return f'<circle cx="{x}" cy="{y}" r="{r}" fill="var(--dk1)" opacity=".45"/>'
 def hj(x, y):
-    return target(x, y) + f'<circle cx="{x + 12}" cy="{y + 12}" r="5" fill="var(--ink)"/>'
+    return target(x, y) + f'<circle cx="{x + 16}" cy="{y + 16}" r="5" {INCL}/>'   # on the stained ring, not the pale one
 def neut(x, y):
     lobes = ''.join(f'<circle cx="{x + dx}" cy="{y + dy}" r="10" fill="var(--dk4)"/>' for dx, dy in ((-24, -6), (-12, -18), (4, -20), (18, -10), (22, 8), (6, 16)))
     return f'<circle cx="{x}" cy="{y}" r="46" fill="var(--dk4)" opacity=".22"/>' + lobes
