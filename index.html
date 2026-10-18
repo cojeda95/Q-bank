@@ -111,6 +111,8 @@
 
   .today { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
   #tileNew { grid-column: 1 / -1; }
+  #tileNew .nw { display: block; }
+  #tileNew .nw + .nw { margin-top: 0.35rem; }
   .tile { background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--text); text-decoration: none; }
   a.tile:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
   .tile .big { font-family: var(--serif); font-size: 2.5rem; font-weight: 600; line-height: 1; color: var(--teal); }
@@ -454,7 +456,10 @@
       document.getElementById('newCount').textContent = count + (d ? (d === iso ? ' added today' : ' added ' + new Date(d + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })) : '');
       /* no list — with a batch this size the atlas index (and each system's New pills) does the listing; name three to give the flavour */
       var sample = latest.slice(0, 3).map(function (v) { return H.maps[v][0]; });
-      document.getElementById('newDesc').textContent = (sample.length ? sample.join(' · ') + (n > 3 ? ' and more' : '') + ' — ' : '') + 'each system\u2019s map row marks the ones you haven\u2019t opened yet.';
+      /* the batch's What's-new lines from the atlas (our own build, only <b> markup) when there are any; else name three maps */
+      var news = (H.latestNews || []).map(function (t) { return esc(String(t).replace(/&amp;/g, '&').replace(/<\/?b>/g, '\u0001')).replace(/\u0001([^\u0001]*)\u0001/g, '<b>$1</b>').replace(/^New:\s*/, ''); });
+      if (news.length) document.getElementById('newDesc').innerHTML = news.map(function (t) { return '<span class="nw">' + t + '</span>'; }).join('');
+      else document.getElementById('newDesc').textContent = (sample.length ? sample.join(' · ') + (n > 3 ? ' and more' : '') + ' — ' : '') + 'each system\u2019s map row marks the ones you haven\u2019t opened yet.';
       document.getElementById('tileNew').hidden = false;
     }
 

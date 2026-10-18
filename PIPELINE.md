@@ -933,3 +933,13 @@ differs by source; acute and chronic expected HCO₃⁻; normal limits from FA p
 missed list at the end ("Results ›", tap → map with the answer on), 3-second Undo after a Name-it tap. Map-text audit (batches/
 m52/map_audit.md): 161 moving + 189 static maps read; 6 fixes (szsim carbamazepine GTC, pthsim PTHrP calcitriol cut, cardiac
 hand grip + QRS ≤100 ms, nitrogen urea-cycle compartments, nephron RTA4 urine pH variable).
+m52b (2026-10-18): G6PD fix (assemble #17: atlas no longer opens g6pd on a link-less load). New-map seen logic (#18): opening
+either side of a ⇄ pair marks both seen (markSeen), and the tab's New pill checks the whole slot — the system tab's dot had
+counted an unopened moving partner with no pill anywhere. Hub "New in the atlas" tile: the 2026-10-18 maps get their own last
+NEW_MAPS line (assemble, NEW18), and build-atlas exports latestNews (that date's WHATSNEW lines) which index.html shows on the
+tile. pthsim upgraded to 22 causes in sections + urine cAMP and ALP readouts; PTHrP calcitriol ↓ per Stewart 1980 NEJM
+(PMID 6253785) / Schilling 1993 (PMID 8445039) on hcmalig — Costanzo Table 9.17 prints ↑ (conflict noted in e_pthsim.py).
+akisim GN: FENa ↓ (Steiner 1984 PMID 6486145, Ozdemir 1992 PMID 1482636 on intrarenal). Name-it answers are held until the
+3-s Undo window closes (NIT_PEND / nitCommit; commits on timeout, next question, view change, pagehide/hidden) so an undone
+answer never reaches localStorage or a sync push. Phone/dark pass: anemsim inclusions use --dyn-lost, captions moved; ABG
+dialog grey text → --ink-2.

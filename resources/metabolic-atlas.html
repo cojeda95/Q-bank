@@ -708,9 +708,9 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 .abg-head{font:700 15.5px var(--font-ui);color:var(--ink);margin:12px 0 4px}
 .abg-out .abg-ok,.abg-out .abg-mix,.abg-out .abg-warn{border-left:3px solid var(--ok);padding-left:9px}
 .abg-out .abg-mix{border-left-color:var(--accent)}.abg-out .abg-warn{border-left-color:var(--bad)}
-.abg-out .abg-note{font-size:.9em;color:var(--ink-3)}
-.abg-out .abg-dim{color:var(--ink-3)}
-.abg-src{font:12px/1.45 var(--font-ui);color:var(--ink-3);margin:2px 0 4px}
+.abg-out .abg-note{font-size:.9em;color:var(--ink-2)}
+.abg-out .abg-dim{color:var(--ink-2)}
+.abg-src{font:12px/1.45 var(--font-ui);color:var(--ink-2);margin:2px 0 4px}
 .abg-out .ds-note{margin:6px 0}
 .abg-go:disabled{opacity:.45;cursor:default}
 .qlen{display:flex;align-items:center;gap:4px;padding:0 10px 6px 30px;font:600 11px var(--font-ui);color:var(--ink-3)}
@@ -3480,7 +3480,7 @@ prerenal:{n:"Pre-renal acute kidney injury",k:"dz",p:"aki",q:["bun disproportion
  tx:["Restore volume with isotonic fluid; treat the heart or liver; stop the offending drug"],
  ref:[{a:"Naesens M, Kuypers DR, Sarwal M",t:"Calcineurin inhibitor nephrotoxicity",j:"Clin J Am Soc Nephrol",y:2009,pmid:"19218475",doi:"10.2215/CJN.04800908"},{a:"Ronco C, Bellomo R, Kellum JA",t:"Acute kidney injury",j:"Lancet",y:2019,pmid:"31777389",doi:"10.1016/S0140-6736(19)32563-2"}]},
 
-intrarenal:{n:"Intrinsic (intra-renal) kidney injury",k:"dz",p:"aki",enz:"Tubules · interstitium · glomeruli · vessels",inh:"Acquired",fa:"612, 620",hi:1,
+intrarenal:{n:"Intrinsic (intra-renal) kidney injury",k:"dz",p:"aki",enz:"Tubules · interstitium · glomeruli · vessels",inh:"Acquired",ref:[{a:"Ozdemir S et al.",t:"Plasma atrial natriuretic peptide and endothelin levels in acute poststreptococcal glomerulonephritis",j:"Pediatr Nephrol",y:1992,pmid:"1482636",doi:"10.1007/BF00866489"},{a:"Steiner RW",t:"Interpreting the fractional excretion of sodium",j:"Am J Med",y:1984,pmid:"6486145",doi:"10.1016/0002-9343(84)90368-1"}],fa:"612, 620",hi:1,
  mech:"Damage inside the kidney itself. Injured tubules can no longer reabsorb sodium, so the fractional excretion of sodium rises and the urine cannot be concentrated — the mirror image of the pre-renal picture. <b>The cast in the urine tells you which compartment is involved.</b>",
  find:["<b>Tubules — ATN</b>: ischemia or toxin; muddy brown granular casts","<b>Interstitium — AIN</b>: drug hypersensitivity; WBC casts, eosinophils in the urine, sometimes fever and rash","<b>Glomeruli — glomerulonephritis</b>: RBC casts, dysmorphic red cells, hypertension","Vessels: vasculitis, hypertensive emergency, TTP-HUS"],
  labs:["<b>BUN:Cr < 15</b>","<b>FENa > 2%</b> · urine Na⁺ > 40 mEq/L","<b>Urine osmolality < 350</b> — the tubule cannot concentrate","Active sediment: the casts above"],
@@ -6835,7 +6835,7 @@ mesothelioma:{n:"Mesothelioma",alias:"malignant pleural mesothelioma",k:"dz",p:"
  src:["Robbins ch 15 — The lung"],
  tx:["—"],q:["mesothelioma","calretinin"]},
 
-hcmalig:{n:"Hypercalcemia of malignancy",alias:"PTHrP · osteolytic metastases",k:"dz",p:"cxpara",enz:"Tumor PTHrP, tumor calcitriol, or bone destroyed directly",inh:"Squamous cell carcinomas; renal, bladder, breast and ovarian carcinoma; lymphoma; myeloma; bone metastases",fa:"224, 336, 342, 349",hi:1,
+hcmalig:{n:"Hypercalcemia of malignancy",alias:"PTHrP · osteolytic metastases",k:"dz",p:"cxpara",enz:"Tumor PTHrP, tumor calcitriol, or bone destroyed directly",inh:"Squamous cell carcinomas; renal, bladder, breast and ovarian carcinoma; lymphoma; myeloma; bone metastases",ref:[{a:"Schilling T et al.",t:"Parathyroid hormone-related protein (PTHrP) does not regulate 1,25-dihydroxyvitamin D serum levels in hypercalcemia of malignancy",j:"J Clin Endocrinol Metab",y:1993,pmid:"8445039",doi:"10.1210/jcem.76.3.8445039"},{a:"Stewart AF et al.",t:"Biochemical evaluation of patients with cancer-associated hypercalcemia: evidence for humoral and nonhumoral groups",j:"N Engl J Med",y:1980,pmid:"6253785",doi:"10.1056/NEJM198012113032401"}],fa:"224, 336, 342, 349",hi:1,
  mech:"Three routes. <b>PTHrP</b> from squamous cell carcinomas (lung, head and neck) and from renal, bladder, breast and ovarian carcinomas acts on the PTH receptor, releasing bone calcium and holding calcium in the kidney — the most common route. Some <b>lymphomas</b> make calcitriol, raising gut absorption. <b>Lytic bone lesions</b> — myeloma, breast metastases — release calcium locally through osteoclast-activating cytokines.",
  find:["Stones, bones, groans, thrones and psychiatric overtones: polyuria, constipation, abdominal pain, confusion","Nephrogenic diabetes insipidus"],
  labs:["PTHrP route: ↑ Ca²⁺, <b>↓ PTH</b>, ↑ PTHrP, ↓ phosphate","Calcitriol route (lymphoma): ↓ PTH, ↑ 1,25-(OH)₂ vitamin D"],
@@ -39876,16 +39876,16 @@ MAPS.hasim = {
 };
 
 MAPS.pthsim = {
- t:"Calcium & PTH Lab Simulator", sub:"The parathyroids, their Ca²⁺ sensor, and PTH’s three targets — bone, kidney and (through calcitriol) gut. Pick a disorder to see what the glands and targets do and the lab pattern: Ca²⁺, PO₄³⁻, PTH, calcitriol and urine Ca²⁺. Tap a receptor or transporter for its card",
- w:3500, h:2100,
- fa:"224, 336–337, 348–349, 361, 621–622, 695",
- src:["Costanzo ch 9 — Endocrine physiology", "Guyton ch 80 — Parathyroid Hormone, Calcitonin, Calcium and Phosphate Metabolism, Vitamin D, Bone, and Teeth", "Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis", "Robbins ch 24 — The endocrine system", "Robbins ch 20 — The kidney"],
+ t:"Calcium & PTH Lab Simulator", sub:"The parathyroids, their Ca²⁺ sensor, and PTH’s three targets — bone, kidney and (through calcitriol) gut. Pick a disorder or a cause — PTH, PTHrP and lymphoma, vitamin D, thiazides and loops, lithium, milk-alkali, magnesium, tumor lysis and more — to see what the glands and targets do and the lab pattern: Ca²⁺, PO₄³⁻, PTH, calcitriol, urine Ca²⁺, urine cAMP and ALP. Tap a receptor or transporter for its card",
+ w:3500, h:2180,
+ fa:"68, 205, 224, 336–337, 348–349, 361, 404, 406, 434, 436, 440, 592, 609, 621–622, 626–627, 695",
+ src:["Costanzo ch 9 — Endocrine physiology", "Guyton ch 80 — Parathyroid Hormone, Calcitonin, Calcium and Phosphate Metabolism, Vitamin D, Bone, and Teeth", "Katzung ch 42 — Agents That Affect Bone Mineral Homeostasis", "Robbins ch 24 — The endocrine system", "Robbins ch 20 — The kidney", "Costanzo ch 7 — Acid-base physiology", "Katzung ch 15 — Diuretic Agents", "Robbins ch 2 — Cell injury, cell death, and adaptations", "Kaplan & Sadock ch 21 — Psychopharmacology", "Bootcamp.com Nephrology — Electrolytes"],
  art:"kit",
- dyn:{"lazy":"df2f4e63e6","switches":[{"id":"dz","label":"Pick a disorder","type":"one","options":[["p1","Primary hyperparathyroidism","hyperpara1"],["p2","Secondary (kidney disease)","hyperpara2"],["p3","Tertiary","renalod"],["vd","Vitamin D deficiency","vitddef"],["hp","Hypoparathyroidism","hypopara"],["pha","Pseudohypoparathyroidism","pha"],["fhh","FHH","fhh"],["mal","Malignancy — PTHrP","hcmalig"],["sarc","Sarcoidosis","sarcoid"]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"56ae6d33bb","switches":[{"id":"dz","label":"Pick a cause","type":"one","options":[["p1","Primary hyperparathyroidism","hyperpara1"],["p3","Tertiary","renalod"],["li","Lithium","lithium"],["fhh","FHH","fhh"],["mal","Malignancy — PTHrP","hcmalig"],["lym","Lymphoma — calcitriol","hcmalig"],["mm","Myeloma · bone metastases","myeloma"],["sarc","Sarcoidosis · granulomas","sarcoid"],["vdx","Vitamin D excess","vitddef"],["milk","Milk-alkali syndrome","mucosal"],["thz","Thiazide","thiazides"],["imm","Immobilization"],["p2","Secondary (kidney disease)","hyperpara2"],["vd","Vitamin D deficiency","vitddef"],["pha","Pseudohypoparathyroidism","pha"],["hp","Hypoparathyroidism","hypopara"],["mg","Severe hypomagnesemia","mgpo4"],["panc","Acute pancreatitis","acutepanc"],["tx","Massive transfusion","massivetx"],["tls","Tumor lysis syndrome","tls"],["rhab","Rhabdomyolysis","rhabdo"],["loop","Loop diuretic","loopdiuretics"]],"sections":[["high Ca²⁺ · PTH high or normal",["p1","p3","li","fhh"]],["high Ca²⁺ · PTH suppressed",["mal","lym","mm","sarc","vdx","milk","thz","imm"]],["low Ca²⁺ · PTH high",["p2","vd","pha"]],["low Ca²⁺ · PTH low",["hp","mg"]],["low Ca²⁺ · Ca²⁺ bound or precipitated",["panc","tx","tls","rhab"]],["serum Ca²⁺ holds · urine Ca²⁺ up",["loop"]]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
-  {x:2420,y:880,w:1000,h:226,kw:256,t:"The lab patterns (First Aid pp. 348–349 · Costanzo ch 9)",rows:[
+  {x:2420,y:1040,w:1000,h:226,kw:256,t:"The lab patterns (First Aid pp. 348–349 · Costanzo ch 9)",rows:[
    ["Primary hyperparathyroidism","Ca²⁺ ↑ · PO₄³⁻ ↓ · PTH ↑ · urine Ca²⁺ ↑"],
    ["Secondary (CKD)","Ca²⁺ ↓ · PO₄³⁻ ↑ · PTH ↑ · calcitriol ↓"],
    ["Tertiary","Ca²⁺ ↑ · PTH ↑↑"],
@@ -39893,23 +39893,28 @@ MAPS.pthsim = {
    ["Hypoparathyroidism","Ca²⁺ ↓ · PO₄³⁻ ↑ · PTH ↓"],
    ["Pseudohypoparathyroidism","Ca²⁺ ↓ · PO₄³⁻ ↑ · PTH ↑"],
    ["FHH","Ca²⁺ ↑ · PTH normal or slightly ↑ · urine Ca²⁺ ↓"],
-   ["Malignancy (PTHrP)","Ca²⁺ ↑ · PO₄³⁻ ↓ · PTH ↓"]]},
-  {x:2420,y:1180,w:1000,h:160,kw:248,t:"Telling them apart (First Aid pp. 348–349)",rows:[
+   ["Malignancy (PTHrP)","Ca²⁺ ↑ · PO₄³⁻ ↓ · PTH ↓ · calcitriol ↓ (Stewart 1980)"]]},
+  {x:2420,y:1330,w:1000,h:204,kw:248,t:"Telling them apart (First Aid pp. 224, 336, 348–349, 627 · Robbins ch 24)",rows:[
    ["Low Ca²⁺, high PO₄³⁻","kidney disease, hypoparathyroidism or pseudohypoparathyroidism"],
    ["Low Ca²⁺, low PO₄³⁻","vitamin D deficiency"],
+   ["Low Ca²⁺, PTH low","hypoparathyroidism · severe hypomagnesemia"],
    ["High Ca²⁺, urine Ca²⁺ high","primary hyperparathyroidism"],
-   ["High Ca²⁺, urine Ca²⁺ low","FHH"],
-   ["High Ca²⁺, PTH low","malignancy · granulomas · vitamin D excess"]]}],
+   ["High Ca²⁺, urine Ca²⁺ low","FHH · thiazides"],
+   ["High Ca²⁺, PTH low","malignancy · granulomas · vitamin D excess · thiazides · immobilization"],
+   ["High Ca²⁺, calcitriol high","sarcoidosis and other granulomas · lymphoma"]]}],
  nodes:[
   {id:"pt1",l:"PTH actions & control",x:380,y:1800,p:"ptGland",s:"raise Ca²⁺, trash PO₄³⁻",m:["pthaction","casr"]},
   {id:"pt2",l:"Vitamin D",x:820,y:1800,p:"ptTarget",s:"skin → liver 25 → kidney 1α",m:["calcitriol","vitddef"]},
   {id:"pt3",l:"PTH on the nephron",x:1260,y:1800,p:"ptTarget",s:"phosphaturic · hypocalciuric",m:["pthneph","renalpo4"]},
   {id:"pt4",l:"Hyperparathyroidism",x:1700,y:1800,p:"ptDz",s:"primary · secondary · tertiary",m:["hyperpara1","hyperpara2","renalod"]},
   {id:"pt5",l:"Low PTH or no response",x:2140,y:1800,p:"ptDz",s:"hypo · pseudohypo",m:["hypopara","pha"]},
-  {id:"pt6",l:"High Ca²⁺, low PTH",x:380,y:1940,p:"ptDz",s:"malignancy · granulomas",m:["hcmalig","sarcoid"]},
+  {id:"pt6",l:"High Ca²⁺, low PTH",x:380,y:1940,p:"ptDz",s:"malignancy · granulomas",m:["hcmalig","sarcoid","myeloma"]},
   {id:"pt7",l:"FHH",x:820,y:1940,p:"ptDz",s:"the sensor set too high",m:["fhh"]},
   {id:"pt8",l:"Kidney disease",x:1260,y:1940,p:"ptDz",s:"phosphate retained",m:["ckdphos","ckd"]},
-  {id:"pt9",l:"Treatment",x:1700,y:1940,p:"ptDz",s:"bisphosphonates · cinacalcet",m:["calciumdrugs"]}],
+  {id:"pt9",l:"Treatment",x:1700,y:1940,p:"ptDz",s:"bisphosphonates · cinacalcet",m:["calciumdrugs"]},
+  {id:"pt10",l:"Drug causes",x:2140,y:1940,p:"ptDz",s:"thiazide · loop · lithium · antacid",m:["thiazides","loopdiuretics","lithium","mucosal"]},
+  {id:"pt11",l:"Ca²⁺ bound or Mg²⁺ low",x:380,y:2080,p:"ptDz",s:"soaps · citrate · magnesium",m:["acutepanc","massivetx","mgpo4"]},
+  {id:"pt12",l:"Cells breaking down",x:820,y:2080,p:"ptDz",s:"tumor lysis · rhabdomyolysis",m:["tls","rhabdo"]}],
  edges:[]
 };
 
@@ -41876,7 +41881,7 @@ MAPS.akisim = {
  fa:"601, 611, 612, 618, 620, 621, 628",
  src:["Robbins ch 20 — The kidney", "Guyton ch 32 — Diuretics and Kidney Diseases"],
  art:"kit",
- dyn:{"lazy":"f9344d0235","switches":[{"id":"dx","label":"Injury","type":"one","options":[["hypo","Hypovolemia","prerenal"],["nsaid","NSAID","prerenal"],["acei","ACE inhibitor / ARB","prerenal"],["atn","ATN (oliguric)","atn"],["atnrec","ATN recovery","atn"],["ain","AIN","intrarenal"],["gn","Glomerulonephritis","intrarenal"],["post","BPH obstruction","postrenal"]]}],"panel":{"x":2100,"y":110,"w":1000}},
+ dyn:{"lazy":"8e0fe20727","switches":[{"id":"dx","label":"Injury","type":"one","options":[["hypo","Hypovolemia","prerenal"],["nsaid","NSAID","prerenal"],["acei","ACE inhibitor / ARB","prerenal"],["atn","ATN (oliguric)","atn"],["atnrec","ATN recovery","atn"],["ain","AIN","intrarenal"],["gn","Glomerulonephritis","intrarenal"],["post","BPH obstruction","postrenal"]]}],"panel":{"x":2100,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -42022,7 +42027,7 @@ MAPS.anemsim = {
  fa:"67, 209, 381, 413, 420–430, 434, 607",
  src:["Robbins ch 14 — Red blood cell and bleeding disorders", "Guyton ch 33 — Red Blood Cells, Anemia, and Polycythemia", "Bootcamp.com Hematology & Oncology — Microcytic anemia", "Bootcamp.com Hematology & Oncology — Normocytic anemia", "Bootcamp.com Hematology & Oncology — Macrocytic anemia"],
  art:"kit",
- dyn:{"lazy":"8e95aa77f9","switches":[{"id":"an","label":"Cause","type":"one","options":[["ida","Iron deficiency","ida"],["acd","Anemia of chronic disease","acd"],["thal","Thalassemia trait (α or β)","betathal"],["sidero","Sideroblastic anemia","sidero"],["lead","Lead poisoning","lead"],["aplastic","Aplastic anemia","aplastic"],["ckd","Chronic kidney disease","ckdanemia"],["bleed","Acute blood loss (a week on)","acutebloodloss"],["hs","Hereditary spherocytosis","hs"],["g6pd","G6PD deficiency","g6pd"],["sickle","Sickle cell anemia","sickle"],["aiha","Warm autoimmune hemolysis","warmaiha"],["maha","Microangiopathic (TTP, HUS, DIC)","ttp"],["b12","B12 deficiency","b12def"],["fol","Folate deficiency","b9def"],["liver","Liver disease · alcohol","nonmegalo"]],"sections":[["Microcytic — MCV < 80",["ida","acd","thal","sidero","lead"]],["Normocytic — not hemolysis",["aplastic","ckd","bleed"]],["Normocytic — hemolysis",["hs","g6pd","sickle","aiha","maha"]],["Macrocytic — MCV > 100",["b12","fol","liver"]]]}],"panel":{"x":2420,"y":110,"w":1000}},
+ dyn:{"lazy":"a18f41545e","switches":[{"id":"an","label":"Cause","type":"one","options":[["ida","Iron deficiency","ida"],["acd","Anemia of chronic disease","acd"],["thal","Thalassemia trait (α or β)","betathal"],["sidero","Sideroblastic anemia","sidero"],["lead","Lead poisoning","lead"],["aplastic","Aplastic anemia","aplastic"],["ckd","Chronic kidney disease","ckdanemia"],["bleed","Acute blood loss (a week on)","acutebloodloss"],["hs","Hereditary spherocytosis","hs"],["g6pd","G6PD deficiency","g6pd"],["sickle","Sickle cell anemia","sickle"],["aiha","Warm autoimmune hemolysis","warmaiha"],["maha","Microangiopathic (TTP, HUS, DIC)","ttp"],["b12","B12 deficiency","b12def"],["fol","Folate deficiency","b9def"],["liver","Liver disease · alcohol","nonmegalo"]],"sections":[["Microcytic — MCV < 80",["ida","acd","thal","sidero","lead"]],["Normocytic — not hemolysis",["aplastic","ckd","bleed"]],["Normocytic — hemolysis",["hs","g6pd","sickle","aiha","maha"]],["Macrocytic — MCV > 100",["b12","fol","liver"]]]}],"panel":{"x":2420,"y":110,"w":1000}},
  comps:[
 ],
  panels:[
@@ -44047,9 +44052,9 @@ function dynSet(k,timer){
     else
     if(b==="end"){ st.quiz=null; NMIX=null; } else { NMIX=null; dynQuiz(v); } }
   else if(a==="q"&&st.quiz&&!st.quiz.ans){ const ok=b===st.quiz.k, item=st.quiz.s+":"+st.quiz.k, Q=st.quiz;
-    const U={t:Date.now(),qz:Object.assign({},st.qz),nit:PROG.nit[v]?PROG.nit[v].slice():null,nitm:PROG.nitm[v+"|"+item],mix:NMIX?{k:NMIX.k,ok:NMIX.ok,miss:(NMIX.miss||[]).length}:null};
-    st.quiz.ans=b; st.qz.n++; if(ok) st.qz.ok++; nameitSave(v,ok,item); if(NMIX){ NMIX.k++; if(ok) NMIX.ok++; else (NMIX.miss||(NMIX.miss=[])).push(mixMiss(v,Q,b)); }
-    Q.undo=U; setTimeout(()=>{ if(Q.undo!==U) return; Q.undo=null; if(state.view===v&&DYN[v]&&DYN[v].quiz===Q) dynRedraw(); },UNDO_MS); }
+    nitCommit(false); const U={t:Date.now(),qz:Object.assign({},st.qz),mix:NMIX?{k:NMIX.k,ok:NMIX.ok,miss:(NMIX.miss||[]).length}:null};
+    st.quiz.ans=b; st.qz.n++; if(ok) st.qz.ok++; NIT_PEND={v,ok,item,Q,U}; if(NMIX){ NMIX.k++; if(ok) NMIX.ok++; else (NMIX.miss||(NMIX.miss=[])).push(mixMiss(v,Q,b)); }
+    Q.undo=U; setTimeout(()=>{ if(NIT_PEND&&NIT_PEND.U===U){ nitCommit(true); return; } if(Q.undo!==U) return; Q.undo=null; if(state.view===v&&DYN[v]&&DYN[v].quiz===Q) dynRedraw(); },UNDO_MS); }
   else if(a==="qb"){ const h=mapQuizHref(v); if(h) window.open(h,"_blank","noopener"); return; }
   else if(a==="link"){ writeHash(); const u=location.href;
     try{ navigator.clipboard.writeText(u).then(()=>{ const s2=DYN[v]; if(!s2) return; s2.copied=true; dynRedraw(); setTimeout(()=>{ if(DYN[v]){ DYN[v].copied=false; if(state.view===v) dynRedraw(); } },1800); },()=>{ prompt("Copy this link:",u); }); }catch(e){ prompt("Copy this link:",u); }
@@ -44091,7 +44096,7 @@ function dynGo(v,str,carry){
 }
 /* Name it asks about a drug / disease / lesion (a "one" switch); the phases of a cycle only on a map with nothing else */
 const dynQuizable=d=>{ const ok=t=>(d.switches||[]).filter(s=>s.type===t&&s.options.length>=3); const o=ok("one"); return o.length?o:ok("steps"); };
-function dynQuiz(v,want){
+function dynQuiz(v,want){ nitCommit(false);   // a new question: the last answer's Undo is gone
   const d=MAPS[v].dyn, Sw=dynQuizable(d); if(!Sw.length) return;
   const all=[]; Sw.forEach(s=>s.options.forEach(o=>{ if(!s.quiz||s.quiz.includes(o[0])) all.push([s,o[0]]); }));
   const last=DYN[v]&&DYN[v].quiz?DYN[v].quiz.k:null, pool=all.filter(x=>x[1]!==last);
@@ -44108,7 +44113,14 @@ function dynQuiz(v,want){
 try{ const old=JSON.parse(localStorage.getItem("mla-nameit")||"null");   // m43–m44 kept Name-it scores on their own
   if(old&&typeof old==="object"){ Object.keys(old).forEach(v=>{ const a=PROG.nit[v]||[0,0], b=old[v]||[0,0]; PROG.nit[v]=[Math.max(a[0],b[0]),Math.max(a[1],b[1])]; });
     saveProg(); localStorage.removeItem("mla-nameit"); } }catch(e){}
-const nameitScores=()=>PROG.nit;
+/* #16c (m52): a Name-it answer waits out its 3-second Undo before it is saved (assemble.py patch #16) */
+let NIT_PEND=null;   // {v, ok, item, Q, U}: the answer not yet in PROG
+function nitCommit(redraw){ const p=NIT_PEND; if(!p) return; NIT_PEND=null; nameitSave(p.v,p.ok,p.item);
+  if(p.Q.undo===p.U){ p.Q.undo=null; if(redraw&&state.view===p.v&&DYN[p.v]&&DYN[p.v].quiz===p.Q) dynRedraw(); } }
+addEventListener("pagehide",()=>nitCommit(false));
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden") nitCommit(true); });
+const nameitScores=()=>{ const p=NIT_PEND; if(!p) return PROG.nit;
+  const r=(PROG.nit[p.v]||[0,0]).slice(); r[1]++; if(p.ok) r[0]++; return Object.assign({},PROG.nit,{[p.v]:r}); };
 function nameitSave(v,ok,item){ const r=(PROG.nit[v]||[0,0]).slice(); r[1]++; if(ok) r[0]++; PROG.nit[v]=r;
   const key=v+"|"+item; if(ok) delete PROG.nitm[key]; else PROG.nitm[key]=(PROG.nitm[key]||0)+1; saveProg(); }
 function predictSave(v,ok,n){ const r=(PROG.prd[v]||[0,0]).slice(); r[0]+=ok; r[1]+=n; PROG.prd[v]=r; saveProg(); }
@@ -44148,11 +44160,11 @@ function mixLenUi(){
 document.addEventListener("click",e=>{ const b=e.target.closest("#qmenu [data-mixlen]"); if(b){ e.preventDefault(); setMixLen(+b.dataset.mixlen); } });
 const mixMiss=(v,Q,b)=>{ const s=((MAPS[v].dyn||{}).switches||[]).find(x=>x.id===Q.s)||{options:[]}, lab=k=>(s.options.find(o=>o[0]===k)||[k,k])[1];
   return {v,s:Q.s,k:Q.k,a:b,sl:s.label||"",kl:lab(Q.k),al:lab(b)}; };
-/* undo a Name-it answer while its 3 s last: the answer, the map's tally, the saved score and miss, the mix count */
+/* undo a Name-it answer while its 3 s last: the answer, the map's tally, the mix count — and the held-back save (NIT_PEND)
+   is dropped, so nothing of it was ever stored */
 function nameitUndo(v,st){ const Q=st.quiz, U=Q&&Q.undo; if(!U||!Q.ans||Date.now()-U.t>UNDO_MS+400) return;
-  const pk=v+"|"+Q.s+":"+Q.k;
-  st.qz=U.qz; if(U.nit) PROG.nit[v]=U.nit; else delete PROG.nit[v];
-  if(U.nitm===undefined) delete PROG.nitm[pk]; else PROG.nitm[pk]=U.nitm; saveProg();
+  if(!NIT_PEND||NIT_PEND.U!==U) return;   // already saved (the page was hidden): nothing to take back
+  NIT_PEND=null; st.qz=U.qz;
   if(NMIX&&U.mix){ NMIX.k=U.mix.k; NMIX.ok=U.mix.ok; (NMIX.miss||[]).length=U.mix.miss; }
   Q.ans=null; Q.undo=null; }
 /* the end of a mix: score, what was missed (tap → that map, right answer on), the next mix's length */
@@ -44192,7 +44204,7 @@ function mixPill(){ let p=document.getElementById("mixPill");
     p.querySelector("[data-mpo]").onclick=()=>mixResults(); p.querySelector("[data-mpx]").onclick=()=>{ LASTMIX=null; mixPill(); }; }
   p.querySelector("[data-mpo]").textContent=`‹ Mix results · ${(LASTMIX.miss||[]).length} missed`; }
 mixLenUi();
-function nameMixNext(){
+function nameMixNext(){ nitCommit(false);
   if(!NMIX) return;
   let pool=mixPool(NMIX.scope).filter(v=>v!==state.view); if(!pool.length) pool=mixPool(NMIX.scope);
   if(!pool.length){ NMIX.scope=null; pool=mixPool(null).filter(v=>v!==state.view); }   // the weak list emptied: all moving maps
@@ -45912,10 +45924,11 @@ const NEW_MAPS={ommmech:"2026-10-07",vaccines:"2026-10-07",environ:"2026-10-07",
   misim:"2026-10-09",pvflow:"2026-10-09",edemaflow:"2026-10-09",hivflow:"2026-10-09",eyesim:"2026-10-09",plexsim:"2026-10-09",mensflow:"2026-10-09",
   baroflow:"2026-10-10",shocksim:"2026-10-10",ecgsim:"2026-10-10",cahflow:"2026-10-10",lipoflow:"2026-10-10",hemeflow:"2026-10-10",nucflow:"2026-10-10",acidflow:"2026-10-10",legsim:"2026-10-10",
   abtime:"2026-10-10",
-  aasim:"2026-10-12",bvitsim:"2026-10-12",colsim:"2026-10-12",energysim:"2026-10-12",faosim:"2026-10-12",glyxsim:"2026-10-12",gsdsim:"2026-10-12",labsim:"2026-10-12",lsdsim:"2026-10-12",pedsim:"2026-10-12",rtasim:"2026-10-12",sugarsim:"2026-10-12",ureasim:"2026-10-12",cbsim:"2026-10-12",papezsim:"2026-10-12",rxsim:"2026-10-12",sleepsim:"2026-10-12",stimsim:"2026-10-12",aortasim:"2026-10-12",archsim:"2026-10-12",carditsim:"2026-10-12",cyansim:"2026-10-12",embsim:"2026-10-12",fetalsim:"2026-10-12",gonadsim:"2026-10-12",htnsim:"2026-10-12",lyteecg:"2026-10-12",murmursim:"2026-10-12",placsim:"2026-10-12",pregsim:"2026-10-12",prossim:"2026-10-12",scrotsim:"2026-10-12",sexsim:"2026-10-12",aqsim:"2026-10-12",vestsim:"2026-10-12",voxsim:"2026-10-12",bleedsim:"2026-10-12",btsim:"2026-10-12",csfsim:"2026-10-12",demsim:"2026-10-12",hasim:"2026-10-12",pthsim:"2026-10-12",spreadsim:"2026-10-12",szsim:"2026-10-12",testsim:"2026-10-12",antidsim:"2026-10-12",bowelsim:"2026-10-12",esosim:"2026-10-12",laxsim:"2026-10-12",pksim:"2026-10-12",portsim:"2026-10-12",complsim:"2026-10-12",hypsim:"2026-10-12",idsim:"2026-10-12",tcellsim:"2026-10-12",tfsim:"2026-10-12",vaxsim:"2026-10-12",altsim:"2026-10-12",alvdzsim:"2026-10-12",hypoxsim:"2026-10-12",lcsim:"2026-10-12",odcsim:"2026-10-12",pftsim:"2026-10-12",pnasim:"2026-10-12",bonesim:"2026-10-12",cervsim:"2026-10-12",footsim:"2026-10-12",fxsim:"2026-10-12",healsim:"2026-10-12",injsim:"2026-10-12",shsim:"2026-10-12",sxedema:"2026-10-12",sxfever:"2026-10-12",sxgibleed:"2026-10-12",sxjoint:"2026-10-12",sxrash:"2026-10-12",sxsyncope:"2026-10-12",sxweight:"2026-10-12",anemiasim:"2026-10-12",bcellsim:"2026-10-12",chemosim:"2026-10-12",lftsim:"2026-10-12",mapksim:"2026-10-12",myelsim:"2026-10-12",netsim:"2026-10-12",pancsim:"2026-10-12",pltsim:"2026-10-12",thytsim:"2026-10-12",avsim:"2026-10-12",blistsim:"2026-10-12",bugid:"2026-10-12",gxsim:"2026-10-12",lesionsim:"2026-10-12",negsim:"2026-10-12",parasim:"2026-10-12",protosim:"2026-10-12",toxinsim:"2026-10-12",zoosim:"2026-10-12",anessim:"2026-10-12",biassim:"2026-10-12",designsim:"2026-10-12",ethicsim:"2026-10-12",orbitsim:"2026-10-12",painsim:"2026-10-12",ribsim:"2026-10-12",amylsim:"2026-10-12",cransim:"2026-10-12",frysim:"2026-10-12",lbpsim:"2026-10-12",neosim:"2026-10-12",pelvsim:"2026-10-12",sacsim:"2026-10-12",embolsim:"2026-10-12",plsim:"2026-10-12",akisim:"2026-10-12",cystsim:"2026-10-12",utisim:"2026-10-12",watersim:"2026-10-12",tftsim:"2026-10-18",anemsim:"2026-10-18",cnrefsim:"2026-10-18"};
+  aasim:"2026-10-12",bvitsim:"2026-10-12",colsim:"2026-10-12",energysim:"2026-10-12",faosim:"2026-10-12",glyxsim:"2026-10-12",gsdsim:"2026-10-12",labsim:"2026-10-12",lsdsim:"2026-10-12",pedsim:"2026-10-12",rtasim:"2026-10-12",sugarsim:"2026-10-12",ureasim:"2026-10-12",cbsim:"2026-10-12",papezsim:"2026-10-12",rxsim:"2026-10-12",sleepsim:"2026-10-12",stimsim:"2026-10-12",aortasim:"2026-10-12",archsim:"2026-10-12",carditsim:"2026-10-12",cyansim:"2026-10-12",embsim:"2026-10-12",fetalsim:"2026-10-12",gonadsim:"2026-10-12",htnsim:"2026-10-12",lyteecg:"2026-10-12",murmursim:"2026-10-12",placsim:"2026-10-12",pregsim:"2026-10-12",prossim:"2026-10-12",scrotsim:"2026-10-12",sexsim:"2026-10-12",aqsim:"2026-10-12",vestsim:"2026-10-12",voxsim:"2026-10-12",bleedsim:"2026-10-12",btsim:"2026-10-12",csfsim:"2026-10-12",demsim:"2026-10-12",hasim:"2026-10-12",pthsim:"2026-10-12",spreadsim:"2026-10-12",szsim:"2026-10-12",testsim:"2026-10-12",antidsim:"2026-10-12",bowelsim:"2026-10-12",esosim:"2026-10-12",laxsim:"2026-10-12",pksim:"2026-10-12",portsim:"2026-10-12",complsim:"2026-10-12",hypsim:"2026-10-12",idsim:"2026-10-12",tcellsim:"2026-10-12",tfsim:"2026-10-12",vaxsim:"2026-10-12",altsim:"2026-10-12",alvdzsim:"2026-10-12",hypoxsim:"2026-10-12",lcsim:"2026-10-12",odcsim:"2026-10-12",pftsim:"2026-10-12",pnasim:"2026-10-12",bonesim:"2026-10-12",cervsim:"2026-10-12",footsim:"2026-10-12",fxsim:"2026-10-12",healsim:"2026-10-12",injsim:"2026-10-12",shsim:"2026-10-12",sxedema:"2026-10-12",sxfever:"2026-10-12",sxgibleed:"2026-10-12",sxjoint:"2026-10-12",sxrash:"2026-10-12",sxsyncope:"2026-10-12",sxweight:"2026-10-12",anemiasim:"2026-10-12",bcellsim:"2026-10-12",chemosim:"2026-10-12",lftsim:"2026-10-12",mapksim:"2026-10-12",myelsim:"2026-10-12",netsim:"2026-10-12",pancsim:"2026-10-12",pltsim:"2026-10-12",thytsim:"2026-10-12",avsim:"2026-10-12",blistsim:"2026-10-12",bugid:"2026-10-12",gxsim:"2026-10-12",lesionsim:"2026-10-12",negsim:"2026-10-12",parasim:"2026-10-12",protosim:"2026-10-12",toxinsim:"2026-10-12",zoosim:"2026-10-12",anessim:"2026-10-12",biassim:"2026-10-12",designsim:"2026-10-12",ethicsim:"2026-10-12",orbitsim:"2026-10-12",painsim:"2026-10-12",ribsim:"2026-10-12",amylsim:"2026-10-12",cransim:"2026-10-12",frysim:"2026-10-12",lbpsim:"2026-10-12",neosim:"2026-10-12",pelvsim:"2026-10-12",sacsim:"2026-10-12",embolsim:"2026-10-12",plsim:"2026-10-12",akisim:"2026-10-12",cystsim:"2026-10-12",utisim:"2026-10-12",watersim:"2026-10-12",
+  tftsim:"2026-10-18",anemsim:"2026-10-18",cnrefsim:"2026-10-18"};
 const WHATSNEW=[
-  ["2026-10-18","New: <b>Anemia Work-up in Motion</b> — 17 causes from iron deficiency to B12, with MCV, retics, iron studies, hemolysis labs and the smear; <b>Cranial Nerve Reflexes in Motion</b> — light, near, corneal, lacrimation, jaw jerk, gag and cough arcs with a lesion switch. <b>Plug in an ABG</b> on the Compensation Timeline now reads the anion gap and Δ/Δ; moving-map mixes come in 5, 10 or 20 with a missed list and Undo."],
-  ["2026-10-18","New: <b>Thyroid Function Tests in Motion</b> — TSH, T4, T3, TBG and uptake across primary, central, pill, binding-protein and euthyroid-sick patterns. The <b>Renal Tubular Acidosis Simulator</b> now has 23 causes by type plus urine pH and urine anion gap readouts."],
+  ["2026-10-18","<b>Anemia Work-up in Motion</b>, <b>Cranial Nerve Reflexes in Motion</b> and <b>Thyroid Function Tests in Motion</b> are new. The <b>Calcium &amp; PTH Lab Simulator</b> now has 22 causes with urine cAMP and ALP readouts, and the <b>RTA Simulator</b> 23 causes with urine pH and urine anion gap."],
+  ["2026-10-18","<b>Plug in an ABG</b> on the Compensation Timeline now reads the anion gap and Δ/Δ. Moving-map mixes come in 5, 10 or 20, end with a list of what you missed, and give you 3 seconds to undo a tap. New-map dots now clear once you’ve opened a map."],
   ["2026-10-12","118 new moving maps — <b>Amino Acid Disorders in Motion</b>, <b>B Vitamins &amp; Zinc in Motion</b>, <b>Collagen Assembly in Motion</b>, <b>Energy Metabolism in Motion</b>, <b>Fatty Acid Oxidation in Motion</b>, <b>Glycolysis Odds &amp; Ends in Motion</b>, <b>Glycogen Storage Diseases in Motion</b>, <b>Lab Techniques in Motion</b>, <b>Lysosomal Storage in Motion</b>, <b>Pedigree Simulator</b>, <b>Renal Tubular Acidosis Simulator</b>, <b>Fructose &amp; Galactose in Motion</b>, <b>Urea Cycle in Motion</b>, <b>Cerebellar Lesions in Motion</b>, <b>The Papez Circuit in Motion</b>, <b>Psych Drugs at the Receptors</b>, <b>Sleep Stages in Motion</b>, <b>Stimulants &amp; Addiction in Motion</b>, <b>The Aorta in Motion</b>, <b>Pharyngeal Arches in Motion</b>, <b>Heart Infection &amp; Inflammation in Motion</b>, <b>Cyanotic Heart Disease in Motion</b>, <b>Embryo &amp; Gut-Tube Defects in Motion</b>, <b>Fetal Circulation in Motion</b>, <b>Gonadal Tumors in Motion</b>, <b>Hypertension in Motion</b>, <b>Electrolytes &amp; the ECG</b>, <b>Murmurs &amp; Maneuvers in Motion</b>, <b>Bleeding in Pregnancy in Motion</b>, <b>Pregnancy Hormones in Motion</b>, <b>The Prostate in Motion</b>, <b>The Scrotum in Motion</b>, <b>Sex Differentiation in Motion</b>, <b>Aqueous Humor &amp; Retina in Motion</b>, <b>Vertigo in Motion</b>, <b>Larynx &amp; Voice in Motion</b>, <b>Head Bleeds in Motion</b>, <b>Brain Tumors in Motion</b>, <b>CSF Flow in Motion</b>, <b>Dementias Over Time</b>, <b>Headaches in Motion</b>, <b>Calcium &amp; PTH Lab Simulator</b>, <b>Seizure Spread in Motion</b>, <b>Antiseizure Drugs in Motion</b>, <b>Diagnostic Test Simulator</b>, <b>Poison &amp; Antidote in Motion</b>, <b>Bowel Blockages in Motion</b>, <b>Swallowing in Motion</b>, <b>Laxatives in Motion</b>, <b>Pharmacokinetics &amp; Dose–Response Simulator</b>, <b>Liver Blood Flow in Motion</b>, <b>Complement in Motion</b>, <b>Hypersensitivity Types in Motion</b>, <b>Immunodeficiency Simulator</b>, <b>T-Cell Activation in Motion</b>, <b>Blood Transfusion in Motion</b>, <b>Vaccines in Motion</b>, <b>Climbing to Altitude in Motion</b>, <b>Alveoli in Trouble in Motion</b>, <b>Hypoxemia Simulator — A–a Gradient &amp; 100% O₂</b>, <b>Lung Cancer in Motion</b>, <b>The O₂ Curve in Motion</b>, <b>PFTs &amp; Flow–Volume Loops</b>, <b>Pneumonia in Motion</b>, <b>Bones &amp; Kids by Age in Motion</b>, <b>The Cervical Spine in Motion</b>, <b>The Foot in Motion</b>, <b>Growth Plates &amp; Arm Injuries in Motion</b>, <b>Inflammation &amp; Wound Healing in Motion</b>, <b>Cell Injury &amp; Death Simulator</b>, <b>The Shoulder in Motion</b>, <b>Edema</b>, <b>Fever &amp; Hyperthermia</b>, <b>GI Bleeding</b>, <b>Joint Pain</b>, <b>Fever &amp; Rash</b>, <b>Syncope</b>, <b>Weight Loss</b>, <b>Anemia Work-Up</b>, <b>B Cells &amp; Lymphomas in Motion</b>, <b>Chemo &amp; DNA Repair in Motion</b>, <b>Liver Tests Decoder</b>, <b>Growth Signals in Motion</b>, <b>Myeloid Neoplasms in Motion</b>, <b>Pancreatic Endocrine Tumors in Motion</b>, <b>Pancreatitis in Motion</b>, <b>Platelets in Motion</b>, <b>Thyroid Tumors in Motion</b>, <b>Antiviral Targets in Motion</b>, <b>Blisters — Where the Skin Splits</b>, <b>Name the Bug</b>, <b>Bacterial Gene Transfer in Motion</b>, <b>Skin Lesions Drawn to Scale</b>, <b>Negative-Strand Viruses in Motion</b>, <b>Parasite Life Cycles in Motion</b>, <b>Protozoa in Motion</b>, <b>Bacterial Toxins in Motion</b>, <b>Zoonoses &amp; Bites in Motion</b>, <b>Anesthetics in Motion</b>, <b>Bias in Motion</b>, <b>Study Design Picker</b>, <b>Who Decides? Consent &amp; Capacity</b>, <b>The Orbit &amp; Tears in Motion</b>, <b>Pain Gone Wrong in Motion</b>, <b>Rib Motion in Motion</b>, <b>Amyloid in Motion</b>, <b>Cranial Mechanism in Motion</b>, <b>Spinal Mechanics &amp; OMT in Motion</b>, <b>Low Back Pain in Motion</b>, <b>Neoplasia in Motion</b>, <b>Pelvis in Motion</b>, <b>The Sacrum in Motion</b>, <b>Emboli in Motion</b>, <b>Pleural Fluid in Motion</b>, <b>Acute Kidney Injury in Motion</b>, <b>Kidney Cysts in Motion</b>, <b>UTI &amp; Incontinence in Motion</b>, <b>Water Balance in Motion</b>."],
   ["2026-10-10","New moving map — <b>Acid–Base Compensation Timeline</b> (Renal): buffers in seconds, the lungs in hours, the kidneys over days — and how far each disorder is expected to compensate."],
   ["2026-10-10","Moving maps: options you name wrong come back first, <b>Predict the arrows</b> keeps a score too, and both scores now sync with your PIN. Keys: <b>t</b> Tour, <b>n</b> Name it, <b>p</b> Predict, <b>c</b> Compare. The hub home has a <b>Moving-map mix</b> tile with your score."],
@@ -45983,7 +45996,7 @@ const WHATSNEW=[
 let SEEN={}; try{ SEEN=JSON.parse(localStorage.getItem("mla-seen")||"{}")||{}; }catch(e){ SEEN={}; }
 const newSince=d=>Date.now()-Date.parse(d+"T00:00:00")<NEW_DAYS*DAY;
 const isNewMap=v=>!!NEW_MAPS[v]&&!SEEN[v]&&newSince(NEW_MAPS[v]);
-function markSeen(v){ if(NEW_MAPS[v]&&!SEEN[v]){ SEEN[v]=Date.now(); try{ localStorage.setItem("mla-seen",JSON.stringify(SEEN)); }catch(e){} } }
+function markSeen(v){ const ns=[v,PAIR_OF[v]].filter(m=>m&&NEW_MAPS[m]&&!SEEN[m]); if(ns.length){ ns.forEach(m=>SEEN[m]=Date.now()); try{ localStorage.setItem("mla-seen",JSON.stringify(SEEN)); }catch(e){} } }
 function graphsIdxHtml(){
   const name=v=>(VIEWS.find(x=>x[0]===v)||[v,MAPS[v].t])[1];
   const groups=TOPICS.map(([,l,vs])=>[l,vs.flatMap(v=>((MAPS[v]&&MAPS[v].plots)||[]).map((p,i)=>({v,i,p})))]).filter(g=>g[1].length);
@@ -46036,7 +46049,7 @@ function renderNav(){
     +(groups.length?sel("tgrp","Topic",[["","All topics"],...groups.map(([g,ids])=>[g,`${g} (${ids.length})`])],GRPF[t]||""):"")
     +(blkOpts.length?sel("tblk","Block",[["all","All blocks"],...blkOpts.map(([d,l,n])=>[d,`${l} block (${n})`])],BLKF):"");
   tabsEl.innerHTML=(ctl?`<span class="tctl">${ctl}</span>`:"")+slots.map(sl=>{ const v=face(sl), o=sl.length>1?sl.find(m=>m!==v):null, on=sl.includes(state.view);
-      return `<button class="tab${o?" paired":""}" role="tab" data-v="${v}" aria-selected="${on}">${esc((VIEWS.find(x=>x[0]===v)||[v,v])[1])}${o?`<span class="pairsw" data-swap="${o}" role="button" tabindex="0" title="${TIER[o]==="motion"?"Open the moving version":"Open the static reference"}">⇄${on?(TIER[o]==="motion"?" In motion":" Static"):""}</span>`:""}${isNewMap(v)?'<span class="newpill">New</span>':""}${(M=>M?`<span class="mprog${M.solid?"":" zero"}" title="${M.solid} of ${M.n} cards on this map answered right more often than missed, or marked known">${Math.round(M.solid/M.n*100)}%</span>`:"")(mastery(mapIds(v)))}</button>`; }).join("")
+      return `<button class="tab${o?" paired":""}" role="tab" data-v="${v}" aria-selected="${on}">${esc((VIEWS.find(x=>x[0]===v)||[v,v])[1])}${o?`<span class="pairsw" data-swap="${o}" role="button" tabindex="0" title="${TIER[o]==="motion"?"Open the moving version":"Open the static reference"}">⇄${on?(TIER[o]==="motion"?" In motion":" Static"):""}</span>`:""}${sl.some(isNewMap)?'<span class="newpill">New</span>':""}${(M=>M?`<span class="mprog${M.solid?"":" zero"}" title="${M.solid} of ${M.n} cards on this map answered right more often than missed, or marked known">${Math.round(M.solid/M.n*100)}%</span>`:"")(mastery(mapIds(v)))}</button>`; }).join("")
     +(!slots.length?`<span class="tnone">No maps match these filters</span>`:"");
   tabsEl.querySelectorAll(".tab").forEach(b=>b.onclick=e=>{ const sw=e.target.closest(".pairsw"); setView(sw?sw.dataset.swap:b.dataset.v); });
   tabsEl.querySelectorAll(".pairsw").forEach(b=>b.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); e.stopPropagation(); setView(b.dataset.swap); } });
@@ -46055,7 +46068,7 @@ function renderNav(){
 }
 
 /* ── views & camera ─────────────────────────────────── */
-function setView(v){
+function setView(v){ nitCommit(false);   // leaving a map (or the Index's weakest list) — save a held-back Name-it answer
   if(WALK&&WALK.v!==v) endWalk(true);
   if(v!==state.view) state.reveal.clear();   // revealed steps and captions belong to one map
   markSeen(v);
