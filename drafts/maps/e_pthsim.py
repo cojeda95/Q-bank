@@ -8,7 +8,7 @@
 # cite, checked against Costanzo Table 9.17 and Robbins ch 24 (Causes of hypercalcemia). Arrows left "–" where no source gives one.
 # Sources: First Aid 2025 pp. 224, 336–337, 348–349, 361, 621–622, 695 · Costanzo ch 9 · Guyton ch 80 · Katzung ch 42 · Robbins ch 20, 24.
 # m52 upgrade (2026-10-18): 13 more causes grouped with `sections` (by serum Ca²⁺ and what PTH does), two more readouts
-# (urine cAMP, alkaline phosphatase), and calcitriol ↓ for the PTHrP route. Option keys of the 9 old disorders unchanged
+# (urine cAMP, alkaline phosphatase). PTHrP route: calcitriol ↑ as Costanzo Table 9.17 prints it (owner's call, 2026-10-18). Option keys of the 9 old disorders unchanged
 # (p1 p2 p3 vd hp pha fhh mal sarc); only their order changed. Every old shape/flow/site keeps its index (flows 0, 1, 5 carry
 # guide tracks in m47 tracks.json); new shapes are appended in section 7b, new flows after flow 5. Old shapes/sites only had
 # their when/unless/boost/low lists widened to the new keys.
@@ -19,11 +19,8 @@
 # (hyperphosphatemia in vitamin D intoxication; Mg²⁺ deficiency inhibits PTH secretion and response; citrated blood) · Katzung ch 15
 # (loops: hypercalciuria, serum Ca²⁺ seldom falls) · Costanzo ch 7 Table 7.5 (milk-alkali alkalosis) · Kaplan & Sadock ch 21
 # (lithium: hyperparathyroidism) · Bootcamp Nephrology Electrolytes (TLS, rhabdomyolysis: PO₄³⁻ released, precipitates Ca²⁺) ·
-# Stewart AF et al. N Engl J Med 1980;303:1377–83, PMID 6253785 (humoral cancer hypercalcemia: 1,25-(OH)₂D markedly reduced vs
-# primary hyperparathyroidism, means 20 vs 83 pg/mL; nephrogenous cAMP elevated) · Schilling T et al. J Clin Endocrinol Metab
-# 1993;76:801–3, PMID 8445039 (1,25-(OH)₂D suppressed or low-normal in hypercalcemia of malignancy, PTHrP does not raise it).
-# NOTE for the owner: Costanzo Table 9.17 prints 1,25-(OH)₂D ↑ for humoral hypercalcemia of malignancy (by analogy with PTH);
-# the measured data above contradict it, so the map follows the papers. Cut for lack of a corpus source: hungry bone syndrome.
+# Costanzo Table 9.17 (humoral hypercalcemia of malignancy: PTH ↓, 1,25-(OH)₂D ↑, urine Ca²⁺ and cAMP ↑). The owner chose the
+# textbook over measured series that report calcitriol low in HHM (Stewart 1980, PMID 6253785; Schilling 1993, PMID 8445039). Cut for lack of a corpus source: hungry bone syndrome.
 # Not added as options (already covered): CKD (p2/p3). Other granulomatous diseases are folded into sarc (FA pp. 68, 213).
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
@@ -178,7 +175,7 @@ text('disuse — bone is resorbed without any PTH push', 920, 700, TAG, when=Z('
 text('thiazide — the distal tubule reabsorbs more Ca²⁺', 1660, 700, TAG, when=Z('thz'))               # FA p. 627
 text('loop diuretic — the thick ascending limb wastes Ca²⁺', 1660, 700, TAG, when=Z('loop'))          # FA p. 626
 text('more Ca²⁺ in the urine — hypercalciuria', 1660, 700, TAG, when=Z('vdx'))                        # FA p. 68
-text('calcitriol low despite PTHrP (Stewart 1980)', 1660, 724, TAG, when=Z('mal'))
+text('PTHrP turns on 1α-hydroxylase like PTH — calcitriol ↑', 1660, 724, TAG, when=Z('mal'))   # Costanzo Table 9.17
 text('calcium phosphate and uric acid crystals — acute kidney injury', 1660, 700, TAG, when=Z('tls'))  # FA p. 440
 text('myoglobin injures the tubules — acute tubular necrosis', 1660, 700, TAG, when=Z('rhab'))         # FA p. 621
 # gut
@@ -258,9 +255,9 @@ sites = [
   dict(x=2150, y=300, n=[0, 1], w=60, t='ch', l='Ca²⁺ reabsorption', s='PTH turns it up', reach=50, cross=True,
        ions=[['ca', 'in', 1]], c='pthneph', boost=Z('p1', 'mal', 'fhh', 'thz'), low=Z('hp', 'pha'),
        sfx=dict(low=' — little PTH effect'), lx=2150, ly=410, la='middle'),
-  # m52: mal joins the "low" list — calcitriol is low in humoral hypercalcemia of malignancy (Stewart 1980; Schilling 1993)
+  # mal boosts 1α-hydroxylase as PTH does (Costanzo Table 9.17)
   dict(x=1990, y=600, n=[0, -1], w=20, t='ex', l='1α-hydroxylase', s='25-OH-D → calcitriol', ions=[], c='calcitriol',
-       boost=Z('p1'), low=Z('p2', 'p3', 'hp', 'pha', 'mal'), stop=Z('vd'), sfx=dict(stop=' — little vitamin D to activate'),
+       boost=Z('p1', 'mal'), low=Z('p2', 'p3', 'hp', 'pha'), stop=Z('vd'), sfx=dict(stop=' — little vitamin D to activate'),
        lx=1990, ly=540, la='middle'),
   dict(x=670, y=1060, n=[0, -1], w=80, t='co', l='Ca²⁺ absorption', s='calbindin, built by calcitriol', reach=60, cross=True,
        ions=[['ca', 'out', 1]], c='calcitriol', boost=Z('p1', 'sarc', 'vdx', 'lym', 'milk'), low=Z('p2', 'vd', 'hp'), lx=670, ly=950, la='middle'),
@@ -283,9 +280,8 @@ readouts = [
   # severe hypomagnesemia (FA p. 336 "↓↓ serum Mg²⁺ → ↓ PTH secretion"; Katzung ch 42)
   dict(l='PTH', mods=[m(HIPTH + Z('p3'), d=1), m(LOPTH, d=-1), m(Z('fhh'), d=0)]),
   # Costanzo Table 9.17: 1,25-(OH)₂D ↑ in primary, ↓ in hypo-, pseudohypo- and CKD. Lymphoma ↑ (FA p. 224).
-  # m52 — mal ↓: measured 1,25-(OH)₂D markedly reduced in humoral cancer hypercalcemia (Stewart 1980, PMID 6253785) and suppressed or
-  # low-normal (Schilling 1993, PMID 8445039). Costanzo Table 9.17 prints ↑ here; the audit (m52 F2) ruled that unsupported.
-  dict(l='Calcitriol', mods=[m(Z('p1', 'sarc', 'lym'), d=1), m(Z('p2', 'hp', 'pha', 'mal'), d=-1)]),
+  # PTHrP malignancy ↑ (Costanzo Table 9.17).
+  dict(l='Calcitriol', mods=[m(Z('p1', 'sarc', 'lym', 'mal'), d=1), m(Z('p2', 'hp', 'pha'), d=-1)]),
   # urine Ca²⁺ ↑ from the high filtered load: primary and malignancy (Costanzo Table 9.17), sarcoidosis (Robbins ch 20)
   # m52 — ↑ vitamin D excess (FA p. 68 hypercalciuria), loop diuretics (FA p. 626 "↑ Ca²⁺ excretion"); ↓ thiazides (FA p. 627)
   dict(l='Urine Ca²⁺', mods=[m(Z('p1', 'mal', 'sarc', 'vdx', 'loop'), d=1), m(Z('fhh', 'thz'), d=-1)]),
@@ -323,8 +319,7 @@ notes = {
             'hyperparathyroidism). Observation only.',
   'dz:mal': 'Hypercalcemia of malignancy, PTHrP route — squamous cell carcinomas (lung, head and neck) and renal, bladder, '
             'breast and ovarian carcinoma make PTHrP, which acts on the PTH receptor: Ca²⁺ ↑, PO₄³⁻ ↓, PTH ↓; like PTH it raises '
-            'urine Ca²⁺ and urine cAMP (Costanzo). Calcitriol, though, is low — measured levels are far below those of primary '
-            'hyperparathyroidism (Stewart 1980); high calcitriol is the lymphoma route.',
+            'urine Ca²⁺, urine cAMP and calcitriol through renal 1α-hydroxylase (Costanzo Table 9.17).',
   'dz:sarc': 'Sarcoidosis: granuloma macrophages carry 1α-hydroxylase and make calcitriol, so the gut absorbs more Ca²⁺ — '
              'Ca²⁺ ↑, calcitriol ↑ and urine Ca²⁺ ↑ while PTH is suppressed (Robbins). Other granulomatous diseases do the same '
              '(First Aid); glucocorticoids shrink the granulomas.',
@@ -340,7 +335,7 @@ notes = {
   'dz:imm': 'Immobilization: bone that is not used is resorbed without any PTH push, so Ca²⁺ rises and the parathyroids are '
             'suppressed (Guyton; Robbins). Paget disease patients are at risk of immobilization hypercalcemia (Katzung).',
   'dz:lym': 'Lymphoma is the calcitriol route of hypercalcemia of malignancy: the tumor raises 1,25-(OH)₂ vitamin D, the gut absorbs '
-            'more Ca²⁺ — Ca²⁺ ↑, calcitriol ↑, PTH ↓ (First Aid p. 224). Unlike the PTHrP tumors, calcitriol is high, as in sarcoidosis.',
+            'more Ca²⁺ — Ca²⁺ ↑, calcitriol ↑, PTH ↓ (First Aid p. 224). Here the tumor makes the calcitriol itself, as granulomas do in sarcoidosis.',
   'dz:mm': 'Multiple myeloma and bone metastases (e.g., breast) raise Ca²⁺ straight from bone: tumor cytokines (IL-1, TNF-α, RANKL) '
            'switch on osteoclasts and punch lytic holes, and PTH is suppressed. Myeloma is CRAB — hyperCalcemia, Renal insufficiency, '
            'Anemia, Bone lytic lesions.',
@@ -388,7 +383,7 @@ dyn = dict(
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
   src='First Aid pp. 68, 224, 336–349, 404–406, 434–440, 592, 609, 621–627, 695 · Costanzo ch 7, 9 · Guyton ch 80 · Katzung ch 15, 42 · '
-      'Robbins ch 2, 20, 24 · Kaplan & Sadock ch 21 · Bootcamp · Stewart 1980')
+      'Robbins ch 2, 20, 24 · Kaplan & Sadock ch 21 · Bootcamp')
 
 MAP = dict(
   id='pthsim', title='Calcium & PTH Lab Simulator', topic='endo', after='hormones',
@@ -423,7 +418,7 @@ MAP = dict(
       ('Hypoparathyroidism', 'Ca²⁺ ↓ · PO₄³⁻ ↑ · PTH ↓'),
       ('Pseudohypoparathyroidism', 'Ca²⁺ ↓ · PO₄³⁻ ↑ · PTH ↑'),
       ('FHH', 'Ca²⁺ ↑ · PTH normal or slightly ↑ · urine Ca²⁺ ↓'),
-      ('Malignancy (PTHrP)', 'Ca²⁺ ↑ · PO₄³⁻ ↓ · PTH ↓ · calcitriol ↓ (Stewart 1980)')]),
+      ('Malignancy (PTHrP)', 'Ca²⁺ ↑ · PO₄³⁻ ↓ · PTH ↓ · calcitriol ↑ (Costanzo)')]),
     (2420, 1330, 1000, 'Telling them apart (First Aid pp. 224, 336, 348–349, 627 · Robbins ch 24)', [
       ('Low Ca²⁺, high PO₄³⁻', 'kidney disease, hypoparathyroidism or pseudohypoparathyroidism'),
       ('Low Ca²⁺, low PO₄³⁻', 'vitamin D deficiency'),
