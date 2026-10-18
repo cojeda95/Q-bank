@@ -943,3 +943,4 @@ akisim GN: FENa ↓ (Steiner 1984 PMID 6486145, Ozdemir 1992 PMID 1482636 on int
 3-s Undo window closes (NIT_PEND / nitCommit; commits on timeout, next question, view change, pagehide/hidden) so an undone
 answer never reaches localStorage or a sync push. Phone/dark pass: anemsim inclusions use --dyn-lost, captions moved; ABG
 dialog grey text → --ink-2.
+m52c (2026-10-18): owner chose Costanzo Table 9.17 for PTHrP malignancy → calcitriol ↑ on pthsim (readout, 1α-hydroxylase site, note, panel); Stewart/Schilling refs removed from hcmalig (kept only as a comment in e_pthsim.py).
