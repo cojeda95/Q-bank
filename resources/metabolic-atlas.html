@@ -46387,7 +46387,6 @@ if(!readHash()){
   let start="core";
   try{const v=localStorage.getItem("mla-view"); if(v&&VIEWS.some(x=>x[0]===v)) start=v;}catch(e){}
   setView(start);
-  openLes("g6pd",false);
 }
 booted=true;
 document.addEventListener("DOMContentLoaded",()=>{ try{ const m=MAPS[state.view]; if(m&&m.plots&&m.plots.length) render(); }catch(e){} });
