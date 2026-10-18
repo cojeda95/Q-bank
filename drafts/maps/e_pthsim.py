@@ -173,7 +173,7 @@ sites = [
        ions=[['ca', 'in', 1]], c='pthneph', boost=Z('p1', 'mal', 'fhh'), low=Z('hp', 'pha'),
        sfx=dict(low=' — little PTH effect'), lx=2150, ly=410, la='middle'),
   dict(x=1990, y=600, n=[0, -1], w=20, t='ex', l='1α-hydroxylase', s='25-OH-D → calcitriol', ions=[], c='calcitriol',
-       boost=Z('p1', 'mal'), low=Z('p2', 'p3', 'hp', 'pha'), stop=Z('vd'), sfx=dict(stop=' — little vitamin D to activate'),
+       boost=Z('p1'), low=Z('p2', 'p3', 'hp', 'pha'), stop=Z('vd'), sfx=dict(stop=' — little vitamin D to activate'),
        lx=1990, ly=540, la='middle'),
   dict(x=670, y=1060, n=[0, -1], w=80, t='co', l='Ca²⁺ absorption', s='calbindin, built by calcitriol', reach=60, cross=True,
        ions=[['ca', 'out', 1]], c='calcitriol', boost=Z('p1', 'sarc'), low=Z('p2', 'vd', 'hp'), lx=670, ly=950, la='middle'),
@@ -187,7 +187,7 @@ readouts = [
   # fhh: "PTH normal or minimally elevated" → ↔ · sarc: PTH ↓ — Robbins ch 24 Table (granulomatous disease under "Decreased PTH")
   dict(l='PTH', mods=[m(HIPTH + Z('p3'), d=1), m(LOPTH, d=-1), m(Z('fhh'), d=0)]),
   # Costanzo Table 9.17: 1,25-(OH)₂D ↑ in primary and in humoral hypercalcemia of malignancy, ↓ in hypo-, pseudohypo- and CKD
-  dict(l='Calcitriol', mods=[m(Z('p1', 'sarc', 'mal'), d=1), m(Z('p2', 'hp', 'pha'), d=-1)]),
+  dict(l='Calcitriol', mods=[m(Z('p1', 'sarc'), d=1), m(Z('p2', 'hp', 'pha'), d=-1)]),
   # urine Ca²⁺ ↑ from the high filtered load: primary and malignancy (Costanzo Table 9.17), sarcoidosis (Robbins ch 20)
   dict(l='Urine Ca²⁺', mods=[m(Z('p1', 'mal', 'sarc'), d=1), m(Z('fhh'), d=-1)]),
 ]
@@ -218,7 +218,7 @@ notes = {
             'hyperparathyroidism). Observation only.',
   'dz:mal': 'Hypercalcemia of malignancy, PTHrP route — squamous cell carcinomas (lung, head and neck) and renal, bladder, '
             'breast and ovarian carcinoma make PTHrP, which acts on the PTH receptor: Ca²⁺ ↑, PO₄³⁻ ↓, PTH ↓; like PTH it raises '
-            'calcitriol and urine Ca²⁺ (Costanzo). High Ca²⁺ with suppressed PTH = malignancy until proven otherwise.',
+            'urine Ca²⁺ (Costanzo). High Ca²⁺ with suppressed PTH = malignancy until proven otherwise.',
   'dz:sarc': 'Sarcoidosis: granuloma macrophages carry 1α-hydroxylase and make calcitriol, so the gut absorbs more Ca²⁺ — '
              'Ca²⁺ ↑, calcitriol ↑ and urine Ca²⁺ ↑ while PTH is suppressed (Robbins). Glucocorticoids shrink the granulomas.',
 }

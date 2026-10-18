@@ -35,11 +35,11 @@ CA = D('gaba', 'valp')
 GABAUP = D('benzo', 'topi', 'valp')
 QUIET = NA + CA + D('leve', 'benzo')
 # which drug covers which seizure — FA p. 560 (narrow = focal; broad = focal and generalized; ethosuximide = absence only),
-# Katzung ch 24 (phenytoin also prevents tonic-clonic seizures; valproate treats absence; benzodiazepine then fosphenytoin or
+# Katzung ch 24 (phenytoin and carbamazepine also prevent tonic-clonic seizures; valproate treats absence; benzodiazepine then fosphenytoin or
 # IV valproate for status). Carbamazepine and gabapentin can worsen absence seizures (Katzung ch 24).
 ALLRX = ('phen', 'carb', 'lamo', 'valp', 'topi', 'leve', 'etho', 'gaba', 'benzo')
 WORKS = dict(focal=('phen', 'carb', 'gaba', 'valp', 'lamo', 'leve', 'topi'), absence=('etho', 'valp'),
-             gtc=('valp', 'lamo', 'leve', 'topi', 'phen'), status=('benzo', 'phen', 'valp'))
+             gtc=('valp', 'lamo', 'leve', 'topi', 'phen', 'carb'), status=('benzo', 'phen', 'valp'))
 OK = lambda *z: [f'sz:{k}&rx:{r}' for k in z for r in WORKS[k]]
 NOTOK = lambda *z: [f'sz:{k}&!rx:*' for k in z] + [f'sz:{k}&rx:{r}' for k in z for r in ALLRX if r not in WORKS[k]]
 WORSE = ['sz:absence&rx:carb', 'sz:absence&rx:gaba']
@@ -142,7 +142,7 @@ notes = {
                 'T-type Ca²⁺ channels → ethosuximide, or valproate if tonic-clonic seizures coexist. Carbamazepine and gabapentin '
                 'can make absence worse.',
   'sz:gtc': 'Generalized tonic-clonic: both hemispheres from the outset → broad spectrum: valproate, lamotrigine, levetiracetam, '
-            'topiramate; phenytoin also prevents tonic-clonic seizures (Katzung).',
+            'topiramate; phenytoin and carbamazepine also prevent tonic-clonic seizures (Katzung).',
   'sz:status': 'Status epilepticus: ≥ 5 minutes of seizure, or recurrent seizures without recovery — benzodiazepine (lorazepam) first, '
                'then IV fosphenytoin (or IV valproate).',
   'rx:phen': 'Phenytoin (fosphenytoin IV): holds Na⁺ channels inactivated; focal seizures. Zero-order kinetics; gingival hypertrophy, '
