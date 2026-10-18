@@ -918,3 +918,9 @@ these" (#sdlmissed). Attempts on misses now carry pick (letter) + pickT (choice 
 Every page asks navigator.storage.persist(). Hub Sync panel has a backup card (sync.js): "Download my progress" (all
 <block>_*_v1 keys, mla-progress, mla-*/qhub-* prefs, format ocom-qhub-backup-v1) and "Restore from a file" (merges via
 mergeBlobs(local, file, blocks); prefs only filled when missing). Research is in backups though not in BLOCK_KEYS sync.
+
+m51 (2026-10-18): new moving map tftsim "Thyroid Function Tests in Motion" (qbank-drafts/drafts/maps/c_tftsim.py, added to
+m47 PASSED.txt; NEW date and its own WHATSNEW line set in assemble; Endocrine group "Thyroid & parathyroid"); rtasim upgraded
+to 23 causes with urine pH / urine anion gap readouts (a_rtasim.py, appended only — index patches intact). Kit: a "one" switch
+may carry quiz:[keys] so Name it asks only those (assemble patch #14; rtasim → d1, p2, h4, dia). Uptake/T4 arrows sourced:
+Jonklaas 2014 ATA (PMID 25266247), De Leo 2016 Lancet Table 1 (PMID 27038492) as refs on thyroiddrugs/pitnet; Guyton ch 77.
