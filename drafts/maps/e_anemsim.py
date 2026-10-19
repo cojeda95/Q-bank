@@ -172,7 +172,7 @@ text('ringed sideroblasts — iron-laden mitochondria (Prussian blue)', 180, 127
 text('megaloblasts: the nucleus lags the cytoplasm —', 180, 1258, TAG, when=MEGA)   # two lines: one ran across the EPO line
 text('many die in the marrow', 180, 1276, TAG, when=MEGA)
 text('globin chains short — small cells despite normal iron', 180, 1276, TAG, when=O('thal'))
-text('heme short — the cell keeps dividing into a small, pale cell', 180, 1276, TAG, when=O('ida', 'acd'))
+text('heme short — small, pale cells with too little hemoglobin', 180, 1276, TAG, when=O('ida', 'acd'))
 
 # ════════ 5. kidney: EPO ════════
 KIDNEY = ('M470 1390 C340 1390 280 1470 280 1545 C280 1625 340 1695 470 1695 C560 1695 620 1655 632 1605 '

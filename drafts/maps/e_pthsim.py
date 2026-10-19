@@ -153,7 +153,7 @@ SIGNS = dict(
   p3=['high Ca²⁺ in a long-term dialysis patient', 'treated by parathyroidectomy'],
   vd=['rickets (bow legs, rachitic rosary) or osteomalacia (bone pain, pseudofractures)', 'hypocalcemic tetany'],
   hp=['perioral numbness, carpopedal spasm, tetany · Chvostek and Trousseau signs', 'long QT interval · check Mg²⁺'],
-  pha=['short 4th and 5th metacarpals (knuckle dimples), short stature, round face', 'high PTH with low Ca²⁺ is the giveaway'],
+  pha=['short 4th and 5th metacarpals, short stature, round face', 'high PTH with low Ca²⁺ is the giveaway'],
   fhh=['mild hypercalcemia with low urinary Ca²⁺', 'observation — not surgery'],
   mal=['squamous cell carcinoma (lung, head and neck), renal, bladder, breast, ovarian carcinoma', 'high Ca²⁺ with suppressed PTH = malignancy until proven otherwise'],
   sarc=['bilateral hilar adenopathy, erythema nodosum', 'hypercalcemia from granuloma 1α-hydroxylase'])
@@ -273,7 +273,7 @@ readouts = [
   # p3: PO₄³⁻ ↑ — ckdphos and FA p. 622 (late CKD keeps phosphate high despite high PTH)
   # m52 — ↑ in vitamin D intoxication (Katzung ch 42 "Hyperphosphatemia … vitamin D intoxication"; vitddef card), tumor lysis (FA p. 440),
   # rhabdomyolysis (Bootcamp Electrolytes)
-  dict(l='Serum PO₄³⁻', mods=[m(Z('p1', 'vd', 'mal'), d=-1), m(Z('p2', 'p3', 'hp', 'pha', 'vdx', 'tls', 'rhab'), d=1)]),
+  dict(l='Serum PO₄³⁻', mods=[m(Z('p1', 'vd', 'mal'), d=-1), m(Z('p2', 'hp', 'pha', 'vdx', 'tls', 'rhab'), d=1)]),
   # fhh: "PTH normal or minimally elevated" → ↔ · sarc: PTH ↓ — Robbins ch 24 Table (granulomatous disease under "Decreased PTH")
   # m52 — li ↑ (Kaplan & Sadock ch 21: hyperparathyroidism); ↓ for vitamin D toxicity, immobilization, thiazides (Robbins Table 24.5),
   # excess Ca²⁺ intake and cancer (FA p. 348 figure: PTH-independent hypercalcemia; Guyton ch 80), lymphoma (hcmalig card),

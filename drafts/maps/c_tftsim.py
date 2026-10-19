@@ -315,7 +315,8 @@ readouts = [
                           R(O('subhypo', 'subhyper', 'tbghi', 'tbglo', 'sick'), 0)]),
   dict(l='Total T4', mods=[R(O('hashi', 'sec', 'ter', 'lt3', 'tbglo'), -1), R(O('graves', 'tshoma', 'lt4', 'tbghi'), 1),
                            R(O('subhypo', 'subhyper', 'sick'), 0)]),
-  dict(l='Total T3', mods=[R(O('hashi', 'sec', 'ter', 'tbglo', 'sick'), -1), R(O('graves', 'tshoma', 'lt4', 'lt3', 'tbghi'), 1),
+  # hypothyroidism (Hashimoto, central): total T3 'normal or low' (Katzung Table 38-2) → no arrow
+  dict(l='Total T3', mods=[R(O('tbglo', 'sick'), -1), R(O('graves', 'tshoma', 'lt4', 'lt3', 'tbghi'), 1),
                            R(O('subhypo', 'subhyper'), 0)]),
   dict(l='TBG', mods=[R(O('tbghi'), 1), R(O('tbglo'), -1)]),
   dict(l='RAIU', mods=[R(O('graves', 'tshoma'), 1), R(O('hashi', 'sec', 'ter', 'lt4', 'lt3'), -1)]),

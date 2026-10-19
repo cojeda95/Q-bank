@@ -382,7 +382,7 @@ MAP = dict(
       ('Positive', 'little NH₄⁺: distal acidification fails — type 1 or type 4 RTA')]),
     (2420, 1620, 1000, 'More causes (First Aid pp. 440, 560, 604 · Bootcamp · Robbins · Kaplan & Sadock · Katzung)', [
       ('Type 1', 'Sjögren syndrome (Bootcamp; Robbins ch 6) · lithium, occasionally (Kaplan & Sadock ch 21)'),
-      ('Type 2 via Fanconi', 'Wilson disease · lead · ifosfamide · cisplatin · tenofovir · expired tetracyclines (FA p. 604)'),
+      ('Type 2 via Fanconi', 'Wilson disease · lead · ifosfamide · cisplatin · tenofovir · expired tetracyclines (FA pp. 250, 604)'),
       ('Type 2, drugs', 'topiramate — a weak carbonic anhydrase inhibitor (Katzung ch 24; Bootcamp)'),
       ('Type 4', 'heparin — type 4 RTA is a listed adverse effect (FA p. 440)')])],
   dyn=dyn)
