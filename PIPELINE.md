@@ -944,3 +944,11 @@ akisim GN: FENa ↓ (Steiner 1984 PMID 6486145, Ozdemir 1992 PMID 1482636 on int
 answer never reaches localStorage or a sync push. Phone/dark pass: anemsim inclusions use --dyn-lost, captions moved; ABG
 dialog grey text → --ink-2.
 m52c (2026-10-18): owner chose Costanzo Table 9.17 for PTHrP malignancy → calcitriol ↑ on pthsim (readout, 1α-hydroxylase site, note, panel); Stewart/Schilling refs removed from hcmalig (kept only as a comment in e_pthsim.py).
+
+Exam-wide missed review (2026-10-18): an exam's SDL list header shows "Review all N missed in this exam" (N > 0; same rule as
+the SDL rows — latest try wrong, every question in sdl.questions incl. trial/ex3t/grid) → #examwrong/<examNumber>
+(renderExamWrong): misses grouped under SDL headings in exam order, numbered straight through, SDL jump chips, each heading links
+#sdlwrong/<sdl>; cards come from missedItemHtml() (shared with renderSdlWrong); atlas blocks fill after first paint
+(fillAtlasLater, ~10 ms/question, keeps the view still; overflow-anchor off on that view). "Redo these N" → #exammissed/<exam>
+(renderExamMissed → startMissedRun, the generalized #sdlmissed run); session.back sends that run's back link and Finish to
+#examwrong. Helpers: examMissedGroups(exam, last), onlyMissed(qs, last?). No storage changes.

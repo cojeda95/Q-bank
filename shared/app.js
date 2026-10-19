@@ -837,6 +837,10 @@ function render() {
     renderSdlMissed(parseInt(parts[1], 10));
   } else if (parts[0] === 'sdlwrong' && parts[1]) {
     renderSdlWrong(parseInt(parts[1], 10));
+  } else if (parts[0] === 'examwrong' && parts[1]) {
+    renderExamWrong(parseInt(parts[1], 10));
+  } else if (parts[0] === 'exammissed' && parts[1]) {
+    renderExamMissed(parseInt(parts[1], 10));
   } else {
     renderHome();
   }
@@ -859,6 +863,8 @@ function rememberPlace(parts) {
     const f = findSdl(parseInt(parts[1], 10));
     if (f) save((parts[0] === 'sdlcards' ? 'Atlas cards: ' : parts[0] === 'sdlwrong' ? 'Review misses: ' : 'Your misses: ') + f.sdl.title);
   }
+  else if ((parts[0] === 'examwrong' || parts[0] === 'exammissed') && parts[1] && DATA && DATA.exams.some(e => e.examNumber === parseInt(parts[1], 10)))
+    save((parts[0] === 'examwrong' ? 'Review misses: ' : 'Your misses: ') + examLabel(parts[1]));
   else if (parts[0] === 'atlascards' && parts[1]) save('Atlas practice: ' + (parts[2] ? decodeURIComponent(parts[2]) : 'a graph'));
   else if ((parts[0] === 'atlas' || parts[0] === 'atlasmap') && parts[1]) {
     const id = decodeURIComponent(parts[1]), route = window.location.hash, miss = parts[2] === 'missed' ? ' — your misses' : '';
@@ -877,9 +883,15 @@ function pickOf(q, letter) {
   if (!letter || letter === q.correct) return {};   // only misses carry it (keeps the synced log small)
   return { pick: letter, pickT: String(choiceText(q, letter, true) || '').slice(0, 90) };
 }
-function onlyMissed(qs) {
-  const last = lastAttemptMap();
+function onlyMissed(qs, last) {
+  last = last || lastAttemptMap();
   return qs.filter(q => last[q.id] && !last[q.id].correct);
+}
+/* An exam's misses, SDL by SDL in the exam's SDL order: [{sdl, qs}] for each SDL with at least one. Same rule as an SDL
+   row's "Review N missed" (latest try wrong; every question in sdl.questions, trial batches included), one attempt-log read. */
+function examMissedGroups(exam, last) {
+  last = last || lastAttemptMap();
+  return exam.sdls.map(sdl => ({ sdl, qs: onlyMissed(sdl.questions, last) })).filter(g => g.qs.length);
 }
 
 homeBtn.addEventListener('click', () => setRoute(''));
@@ -1439,6 +1451,8 @@ function renderExamSdlList(examNumber) {
   const estMinutes = Math.round(totalQ * 90 / 60);
   const snap = loadPracticeSessionSnapshot();
   const when = examWhen(loadExamDates()[`${blockDirName()}:${examNumber}`]);
+  const lastTry = lastAttemptMap();
+  const examMissN = examMissedGroups(exam, lastTry).reduce((n, g) => n + g.qs.length, 0);
 
   const rows = exam.sdls.map(sdl => {
     const best = bestScoreForSdl(sdl.sdlNumber);
@@ -1459,7 +1473,7 @@ function renderExamSdlList(examNumber) {
         </div>
       </div>`;
     const going = snap && String(snap.sdlNumber) === String(sdl.sdlNumber);
-    const missN = onlyMissed(sdl.questions).length;
+    const missN = onlyMissed(sdl.questions, lastTry).length;
     const scoreHtml = going
       ? `<div class="sdl-score going">In progress · question ${snap.index + 1} of ${snap.questions.length}</div>`
       : best
@@ -1484,6 +1498,7 @@ function renderExamSdlList(examNumber) {
           <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">All blocks</a><span aria-hidden="true">/</span><a href="#">${escapeHtml(blockShort())}</a><span aria-hidden="true">/</span><span>${examLabel(examNumber)}</span></nav>
           <h1 id="exTitle">${examLabel(examNumber)}</h1>
           <p class="ph-meta">${exam.sdls.length} SDLs · ${totalQ ? `${totalQ} questions` : 'questions coming soon'}${when ? ` · <span class="ph-when">${escapeHtml(when)}</span>` : ''}${settings.hyOnly ? ' · <strong>⚡ High-yield only is on</strong>' : ''}</p>
+          ${examMissN ? `<p class="ph-miss"><a href="#examwrong/${examNumber}" title="Every question in this exam you got wrong on your latest try, SDL by SDL, with the explanations">Review all ${examMissN} missed in this exam</a></p>` : ''}
         </div>
         ${totalQ ? `<button type="button" class="ph-cta" id="fullSimCard">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>
@@ -3453,62 +3468,158 @@ function renderSdlCards(sdlNumber) {
     document.getElementById('backList').addEventListener('click', () => setRoute(`exam-sdls/${f.examNumber}`));
   });
 }
+/* One read-only card for a missed question: your answer (pick/pickT — see pickOf), the key, the explanation, board prep and
+   atlas links. #sdlwrong and #examwrong share it; `last` is lastAttemptMap(), `n` the number shown before the stem.
+   `lazyAtlas` leaves an empty .xw-atlas slot for fillAtlasLater() — matching atlas cards costs ~10 ms a question. */
+function missedItemHtml(q, n, last, lazyAtlas) {
+  const a = last[q.id] || {};
+  let yours = '';
+  if (a.pick) {
+    const now = String(choiceText(q, a.pick, true) || '');
+    const txt = a.pickT && !now.startsWith(a.pickT.slice(0, 60)) ? a.pickT : now;
+    yours = `<div class="your-answer">Your answer: ${a.pickT && txt === a.pickT && txt !== now ? '' : `${a.pick} — `}${escapeHtml(txt)}</div>`;
+  }
+  const when = a.ts ? new Date(a.ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
+  return `
+      <div class="missed-item">
+        <div class="missed-stem"><b>${n}.</b> ${escapeHtml(q.stem)} ${isFlagged(q.id) ? '<span class="flagged-tag">&#9733; flagged</span>' : ''}${when ? ` <span class="setup-hint" style="display:inline">· missed ${escapeHtml(when)}</span>` : ''}</div>
+        ${yours}
+        <div class="correct-answer">Correct answer: ${q.correct} — ${escapeHtml(choiceText(q, q.correct, true))}</div>
+        <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
+        ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
+        ${lazyAtlas && ATLAS_URL ? `<div class="xw-atlas" data-qid="${escapeHtml(q.id)}"></div>` : atlasLinksHtml(q, a.pick)}
+      </div>`;
+}
+/* Fills the .xw-atlas slots in page order, ~12 ms of work per turn, so a long exam-wide list draws at once and its atlas
+   links follow. Each turn keeps the first card that starts on screen where it was (its own scroll anchoring: Safari has none, and the
+   view turns Chrome's off in style.css so the two don't add up), so a jump down the page stays put while cards above fill. */
+function fillAtlasLater(byId, last) {
+  const route = window.location.hash;
+  const slots = [...main.querySelectorAll('.xw-atlas[data-qid]')];
+  let i = 0;
+  const step = () => {
+    if (window.location.hash !== route) return;
+    const anchor = window.scrollY > 0 && [...main.querySelectorAll('.missed-item, .xw-head')].find(el => el.getBoundingClientRect().top >= 0);
+    const y0 = anchor ? anchor.getBoundingClientRect().top : 0;
+    const t0 = performance.now();
+    while (i < slots.length && performance.now() - t0 < 12) {
+      const el = slots[i++], q = byId[el.dataset.qid];
+      if (!el.isConnected || !q) continue;
+      const html = atlasLinksHtml(q, (last[q.id] || {}).pick);
+      if (html) el.insertAdjacentHTML('afterend', html);
+      el.remove();
+    }
+    if (anchor) { const d = anchor.getBoundingClientRect().top - y0; if (Math.abs(d) >= 1) window.scrollBy(0, d); }
+    if (i < slots.length) setTimeout(step, 0);
+  };
+  step();
+}
+/* A read-only misses page opened straight from a link can beat atlas-terms.js; draw it again once that has loaded so the
+   atlas links show up. */
+function redrawWhenAtlasReady(redraw) {
+  if (ATLAS_INDEX || !ATLAS_URL) return;
+  const route = window.location.hash;
+  ATLAS_READY.then(() => { if (ATLAS_INDEX && window.location.hash === route) redraw(); });
+}
 /* #sdlwrong/<sdl>: read the questions you got wrong on your latest try — your answer, the right one, the explanation —
    without redoing the whole set. "Redo these" turns them into a review run (#sdlmissed). */
 function renderSdlWrong(sdlNumber) {
   const f = findSdl(sdlNumber);
   if (!f) { renderHome(); return; }
   const last = lastAttemptMap();
-  const qs = onlyMissed(f.sdl.questions);
+  const qs = onlyMissed(f.sdl.questions, last);
   const back = `exam-sdls/${f.examNumber}`;
-  const yours = q => {
-    const a = last[q.id] || {};
-    if (!a.pick) return '';
-    const now = String(choiceText(q, a.pick, true) || '');
-    const txt = a.pickT && !now.startsWith(a.pickT.slice(0, 60)) ? a.pickT : now;
-    return `<div class="your-answer">Your answer: ${a.pickT && txt === a.pickT && txt !== now ? '' : `${a.pick} — `}${escapeHtml(txt)}</div>`;
-  };
-  const when = q => { const a = last[q.id]; return a && a.ts ? new Date(a.ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ''; };
   main.innerHTML = `
     <button class="back-link" id="backExam">&larr; ${examLabel(f.examNumber)}</button>
     <h1>${escapeHtml(f.sdl.title)}</h1>
     <p class="subtitle">${qs.length ? `${qs.length} question${qs.length === 1 ? '' : 's'} you got wrong on your latest try, with the explanations. Answer one right later and it drops off this list.` : 'Nothing to review — your latest try on every question you answered here was right.'}</p>
     ${qs.length ? `<div style="display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 18px"><a class="btn" href="#sdlmissed/${sdlNumber}">Redo ${qs.length === 1 ? 'it' : `these ${qs.length}`}</a><a class="btn secondary" href="#practice/${sdlNumber}">Practice the whole SDL</a></div>` : ''}
-    ${qs.map((q, i) => `
-      <div class="missed-item">
-        <div class="missed-stem"><b>${i + 1}.</b> ${escapeHtml(q.stem)} ${isFlagged(q.id) ? '<span class="flagged-tag">&#9733; flagged</span>' : ''}${when(q) ? ` <span class="setup-hint" style="display:inline">· missed ${escapeHtml(when(q))}</span>` : ''}</div>
-        ${yours(q)}
-        <div class="correct-answer">Correct answer: ${q.correct} — ${escapeHtml(choiceText(q, q.correct, true))}</div>
-        <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
-        ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
-        ${atlasLinksHtml(q, (last[q.id] || {}).pick)}
-      </div>`).join('')}
+    ${qs.map((q, i) => missedItemHtml(q, i + 1, last)).join('')}
   `;
   document.getElementById('backExam').addEventListener('click', () => setRoute(back));
+  redrawWhenAtlasReady(() => renderSdlWrong(sdlNumber));
 }
 
+/* #examwrong/<exam>: the same read-only review for a whole exam — every question across its SDLs whose latest try was wrong,
+   under SDL headings in the exam's SDL order (examMissedGroups), numbered straight through. "Redo these" runs exactly
+   those questions (#exammissed); each heading also links to that SDL's own list. */
+function renderExamWrong(examNumber) {
+  const exam = DATA.exams.find(e => e.examNumber === examNumber);
+  if (!exam) { renderHome(); return; }
+  const last = lastAttemptMap();
+  const groups = examMissedGroups(exam, last);
+  const total = groups.reduce((n, g) => n + g.qs.length, 0);
+  const sdlName = sdl => String(sdl.title).replace(/^SDL\s*\d+\s*(?:[—–:-]+|--)\s*/i, '');
+  let n = 0;
+  main.innerHTML = `
+    <button class="back-link" id="backExam">&larr; ${examLabel(examNumber)}</button>
+    <h1>${examLabel(examNumber)} — your misses</h1>
+    <p class="subtitle">${total ? `${total} question${total === 1 ? '' : 's'} across ${groups.length} SDL${groups.length === 1 ? '' : 's'} you got wrong on your latest try, with the explanations. Answer one right later and it drops off this list.` : 'Nothing to review — your latest try on every question you answered in this exam was right.'}</p>
+    ${total ? `<div class="xw-actions"><a class="btn" href="#exammissed/${examNumber}">Redo ${total === 1 ? 'it' : `these ${total}`}</a><a class="btn secondary" href="#exam-sdls/${examNumber}">Back to the SDL list</a></div>` : ''}
+    ${groups.length > 1 ? `<nav class="xw-jump" aria-label="Jump to an SDL">${groups.map(g =>
+      `<button type="button" data-jump="${g.sdl.sdlNumber}" title="${escapeHtml(sdlName(g.sdl))}">SDL ${g.sdl.sdlNumber} <span>${g.qs.length}</span></button>`).join('')}</nav>` : ''}
+    ${groups.map(g => `
+    <section class="xw-group" id="xw-${g.sdl.sdlNumber}" aria-labelledby="xwh-${g.sdl.sdlNumber}">
+      <div class="xw-head">
+        <span class="sdl-num">${g.sdl.sdlNumber}</span>
+        <h2 class="xw-h" id="xwh-${g.sdl.sdlNumber}">${escapeHtml(sdlName(g.sdl))}</h2>
+        <a class="xw-one" href="#sdlwrong/${g.sdl.sdlNumber}">${g.qs.length} missed · this SDL only</a>
+      </div>
+      ${g.qs.map(q => missedItemHtml(q, ++n, last, true)).join('')}
+    </section>`).join('')}
+  `;
+  document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
+  main.querySelectorAll('.xw-jump button').forEach(b => b.addEventListener('click', () => {
+    const el = document.getElementById('xw-' + b.dataset.jump);
+    if (el) el.scrollIntoView({ block: 'start' });   // instant: the atlas slots still filling would move a smooth scroll's target
+  }));
+  const byId = {};
+  groups.forEach(g => g.qs.forEach(q => { byId[q.id] = q; }));
+  if (ATLAS_INDEX) fillAtlasLater(byId, last);
+  redrawWhenAtlasReady(() => renderExamWrong(examNumber));
+}
+
+/* A review run of a fixed list of missed questions (each already carrying sdlNumber/sdlTitle/examNumber), shuffled.
+   `back` = { route, label } sends the run's back link and Finish there instead of Home. */
+function startMissedRun(qs, queueLabel, back) {
+  session = {
+    mode: 'review',
+    queueLabel,
+    questions: shuffle(qs),
+    index: 0,
+    records: new Array(qs.length).fill(null),
+    pendingLetter: null,
+    back: back || null,
+  };
+  renderReviewQuestion();
+}
+function noMissesLeft(title, msg, back) {
+  main.innerHTML = `
+    <button class="back-link" id="backHome">&larr; ${back ? escapeHtml(back.label) : 'Home'}</button>
+    <h1>${escapeHtml(title)}</h1>
+    <p class="empty-state">${msg}</p>`;
+  document.getElementById('backHome').addEventListener('click', () => setRoute(back ? back.route : ''));
+}
 /* #sdlmissed/<sdl>: the SDL's questions you got wrong on your latest try, as a review run. */
 function renderSdlMissed(sdlNumber) {
   const f = findSdl(sdlNumber);
   if (!f) { renderHome(); return; }
   const qs = onlyMissed(f.sdl.questions).map(q => Object.assign({}, q, { sdlNumber, sdlTitle: f.sdl.title, examNumber: f.examNumber }));
-  if (!qs.length) {
-    main.innerHTML = `
-      <button class="back-link" id="backHome">&larr; Home</button>
-      <h1>${escapeHtml(f.sdl.title)}</h1>
-      <p class="empty-state">No misses left in this SDL — your latest try on each question you answered was right.</p>`;
-    document.getElementById('backHome').addEventListener('click', () => setRoute(''));
-    return;
-  }
-  session = {
-    mode: 'review',
-    queueLabel: f.sdl.title + ' · your misses',
-    questions: shuffle(qs),
-    index: 0,
-    records: new Array(qs.length).fill(null),
-    pendingLetter: null,
-  };
-  renderReviewQuestion();
+  if (!qs.length) return noMissesLeft(f.sdl.title, 'No misses left in this SDL — your latest try on each question you answered was right.');
+  startMissedRun(qs, f.sdl.title + ' · your misses');
+}
+/* #exammissed/<exam>: every question in the exam whose latest try was wrong (the #examwrong list), as one review run;
+   back and Finish return to that list, which by then holds only what is still wrong. */
+function renderExamMissed(examNumber) {
+  const exam = DATA.exams.find(e => e.examNumber === examNumber);
+  if (!exam) { renderHome(); return; }
+  const back = { route: `examwrong/${examNumber}`, label: examLabel(examNumber) + ' misses' };
+  const qs = [];
+  examMissedGroups(exam).forEach(g => g.qs.forEach(q =>
+    qs.push(Object.assign({}, q, { sdlNumber: g.sdl.sdlNumber, sdlTitle: g.sdl.title, examNumber }))));
+  if (!qs.length) return noMissesLeft(examLabel(examNumber), 'No misses left in this exam — your latest try on each question you answered was right.',
+    { route: `exam-sdls/${examNumber}`, label: examLabel(examNumber) });
+  startMissedRun(qs, examLabel(examNumber) + ' · your misses', back);
 }
 
 /* ── Practice a whole atlas map ──────────────────────────────────────────
@@ -3724,8 +3835,9 @@ function renderReviewQuestion() {
   const answeredSoFar = session.records.filter(r => r).length;
   const correctSoFar = session.records.filter(r => r && r.correct).length;
 
+  const back = session.back;
   main.innerHTML = `
-    <button class="back-link" id="backHome">&larr; Home</button>
+    <button class="back-link" id="backHome">&larr; ${back ? escapeHtml(back.label) : 'Home'}</button>
     <div class="quiz-header">
       <span class="quiz-progress">${escapeHtml(session.queueLabel || 'Review Due')} — Question ${session.index + 1} of ${total}</span>
       <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}</span>
@@ -3747,7 +3859,7 @@ function renderReviewQuestion() {
     </div>
   `;
 
-  document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+  document.getElementById('backHome').addEventListener('click', () => setRoute(back ? back.route : ''));
   bindReportBtn(q, answered ? record.letter : null);
   if (answered) bindMissWhy(q, record, renderReviewQuestion);
   document.getElementById('flagBtn').addEventListener('click', () => {
@@ -3810,7 +3922,7 @@ function renderReviewQuestion() {
         } else if (session.quickMap) {
           renderQuickDone();
         } else {
-          setRoute('');
+          setRoute(back ? back.route : '');
         }
       });
     }

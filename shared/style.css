@@ -992,6 +992,21 @@ h1 { font-size: 1.9rem; line-height: 1.15; margin: 6px 0 6px; }
 .sdl-row.going .sdl-go { background: var(--navy-fill); border-color: var(--navy-fill); color: #fff; }
 .container[data-view="exam-sdls"] .sdl-list .sdl-row.pending { background: transparent; }
 .sdl-atlas { color: var(--teal); }
+/* Exam page: "Review all N missed in this exam" (#examwrong) — and that page's SDL groups */
+.ph-miss { margin: 2px 0 0; }
+.ph-miss a { display: inline-flex; align-items: center; min-height: 36px; padding: 6px 14px; border-radius: 999px; background: var(--red-bg); color: var(--red); font-weight: 600; font-size: 0.9rem; text-decoration: none; }
+.ph-miss a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.xw-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 6px 0 14px; }
+.xw-jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.xw-jump button { font: inherit; font-size: 0.82rem; font-weight: 600; padding: 5px 11px; min-height: 32px; border-radius: 999px; border: 1px solid var(--grey-border); background: var(--card-bg); color: var(--text); cursor: pointer; }
+.xw-jump button:hover { background: var(--surface-hover); }
+.xw-jump button span { color: var(--red); margin-left: 3px; }
+.xw-group { scroll-margin-top: 84px; }
+/* fillAtlasLater() keeps the view still itself when slots above it fill (Safari has no scroll anchoring), so Chrome's own anchoring must not add to it */
+.container[data-view="examwrong"] { overflow-anchor: none; }
+.xw-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 6px 12px; margin: 24px 0 10px; }
+.xw-h { margin: 0; font-family: var(--serif); font-size: 1.15rem; font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.xw-one { font-size: 0.85rem; font-weight: 600; color: var(--red); white-space: nowrap; }
 .xmap { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 9px 12px; border-radius: 10px; background: var(--atlas-bg); }
 .xmap > a:first-child { flex: 1 1 160px; font-weight: 600; color: var(--atlas-ink); text-decoration: none; font-size: 0.92rem; }
 .xmap > a:first-child:hover { text-decoration: underline; }
@@ -1078,6 +1093,9 @@ h1 { font-size: 1.9rem; line-height: 1.15; margin: 6px 0 6px; }
   .container[data-view="exam-sdls"] .sdl-list .sdl-row { grid-template-columns: 40px minmax(0, 1fr); padding: 12px 14px; }
   .sdl-num { width: 38px; height: 38px; font-size: 0.95rem; }
   .sdl-go { display: none; }
+  .xw-head { grid-template-columns: auto minmax(0, 1fr); }
+  .xw-one { grid-column: 2; white-space: normal; }
+  .xw-group { scroll-margin-top: 120px; }
   .qlayout > .q-card { padding: 16px; }
   .q-stem { font-size: 1.04rem; }
   .choice { padding: 11px 12px; gap: 10px; font-size: 0.94rem; }
