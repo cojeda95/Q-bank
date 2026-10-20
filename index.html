@@ -398,6 +398,10 @@
         <div class="block-title">Research Midterm</div>
         <div class="block-desc">5 SDLs &middot; 50 questions</div>
       </a>
+      <a class="block-card" href="gastro/index.html">
+        <div class="block-title">Gastroenterology Block</div>
+        <div class="block-desc">3 exams &middot; 40 SDLs &middot; questions coming soon</div>
+      </a>
     </div>
   </section>
 
@@ -605,7 +609,8 @@
     /* a block named in the search ("nephro SDL 23", "psych 12", "pulm asthma") narrows the SDLs to that block */
     var ALIAS = { nephro: ['nephro', 'nephrology', 'renal', 'urology', 'uro'], psych: ['psych', 'psychiatry'], neuro: ['neuro', 'neurology'],
       endocrine: ['endo', 'endocrine', 'endocrinology'], eent: ['eent', 'ent'], pulm: ['pulm', 'pulmo', 'pulmonary', 'pulmonology'],
-      ortho: ['ortho', 'orthopedics', 'orthopaedics', 'orthopedic'], rheum: ['rheum', 'rheumatology'], omm: ['omm'], research: ['research', 'biostats', 'biostatistics'] };
+      ortho: ['ortho', 'orthopedics', 'orthopaedics', 'orthopedic'], rheum: ['rheum', 'rheumatology'], omm: ['omm'], research: ['research', 'biostats', 'biostatistics'],
+      gastro: ['gastro', 'gi', 'gastroenterology'] };
     var BLOCKS = H.blocks.map(function (b, i) {
       var tile = document.querySelector('.block-card[href="' + b[0] + '/index.html"] .block-title');
       return { i: i, alias: ALIAS[b[0]] || [norm(b[1])], t: tile ? tile.textContent.trim() : b[1] + ' block', s: 'Open the block', h: b[0] + '/index.html' };
@@ -874,6 +879,7 @@
            (totals from resources/qbank-counts.js, built by tools/build-atlas.py; trial batches excluded) */
         var C = window.QBANK_COUNTS && window.QBANK_COUNTS[dir];
         if (C) C.exams.forEach(function (e) {
+          if (!e[1]) return; // exam published with no questions yet
           var seen = 0, right = 0;
           ids.forEach(function (id) { var x = last[id]; if (x.examNumber === e[0] && C.trial.indexOf(x.batch) < 0) { seen++; if (x.correct) right++; } });
           chip(a, 'ex' + e[0], 'exr', seen && e[1] ? 'Exam ' + e[0] + ' · ' + Math.min(100, Math.round(100 * seen / e[1])) + '% seen · ' + Math.round(100 * right / seen) + '% right' : '',
@@ -896,10 +902,11 @@
       if (!window.QBANK_COUNTS || list.childElementCount) return;
       blocks.forEach(function (a) {
         var dir = a.getAttribute('href').replace(/\/index\.html$/, ''), C = window.QBANK_COUNTS[dir];
-        if (!C || !C.exams.length) return;
+        if (!C || !C.exams.some(function (e) { return e[1]; })) return;
         var box = document.createElement('div'), h = document.createElement('div');
         h.className = 'cd-block-name'; h.textContent = name(a); box.appendChild(h);
         C.exams.forEach(function (e) {
+          if (!e[1]) return; // exam published with no questions yet
           var row = document.createElement('label'), span = document.createElement('span'), inp = document.createElement('input');
           row.className = 'cd-row'; span.textContent = 'Exam ' + e[0]; inp.type = 'date'; inp.value = DATES[dir + ':' + e[0]] || '';
           inp.setAttribute('aria-label', name(a) + ' exam ' + e[0] + ' date');
