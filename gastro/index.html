@@ -30,9 +30,34 @@
   // Exam 1 = SDLs 1–20. Exam 2 = SDLs 21–30 (SDL 30 is Review).
   // Exam 3 = SDLs 31–40 (SDL 40 is Review); it is the course final, so the
   // shared Final Exam Simulation treats it as the last exam (50% of a run).
-  // Questions land later in data.js (same schema as nephro/data.js). An empty
-  // questions array renders as "coming soon" until then.
-  finalPresets: []
+  // Questions are in data.js (same schema as nephro/data.js). Exam 1 (SDLs 1–20) is
+  // filled; an empty questions array renders as "coming soon".
+  finalPresets: [],
+  // Batch 3 (shared/app.js BATCH3) is the opt-in trial set, as in Nephro: 6 per SDL,
+  // shorter clinical stems + shorter answer choices. Extras only, never replacing
+  // Batches 1–2, and kept out of exam totals, Full Exam Simulation and the builder.
+  batch3: {
+    name: 'Trial',
+    listLabel: 'trial questions',
+    icon: '🧪',
+    title: '🧪 Trial: shorter clinical stems + shorter answer choices',
+    meta: 'experimental format, kept separate from Batches 1–2',
+    hint: 'Trial set: the same exam content written with shorter clinical stems and shorter answer choices. It is kept out of the exam totals, Full Exam Simulation and the Custom Exam Builder.',
+    banner: '🧪 Trial: shorter clinical stems + shorter answer choices',
+    afterBatch2: true
+  },
+  // Batch 4 (second trial slot, shared/app.js TRIAL_BATCHES) is the grid-answer-choice
+  // trial (SDLs 3, 5, 6, 7), trial-only as in Nephro.
+  batch4: {
+    name: 'Grid trial',
+    listLabel: 'grid trial',
+    icon: '▦',
+    title: '▦ Trial: grid answer choices',
+    meta: 'experimental format, kept separate from Batches 1–2',
+    hint: 'Grid trial: answer choices are rows of findings (↑ / ↓ / ↔) under column headings, the table format used by board question banks. It is kept out of the exam totals, Full Exam Simulation and the Custom Exam Builder.',
+    banner: '▦ Trial: grid answer choices',
+    afterBatch2: true
+  }
 };</script>
 <script src="data.js"></script>
 <script src="../shared/app.js"></script>
