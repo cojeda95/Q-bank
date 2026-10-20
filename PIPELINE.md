@@ -952,3 +952,46 @@ the SDL rows — latest try wrong, every question in sdl.questions incl. trial/e
 (fillAtlasLater, ~10 ms/question, keeps the view still; overflow-anchor off on that view). "Redo these N" → #exammissed/<exam>
 (renderExamMissed → startMissedRun, the generalized #sdlmissed run); session.back sends that run's back link and Finish to
 #examwrong. Helpers: examMissedGroups(exam, last), onlyMissed(qs, last?). No storage changes.
+
+Spaced review of missed questions (m54, 2026-10-19): a missed question comes back after 1 day, then 3 days, until it is answered
+right twice in a row in review; any wrong answer (any mode) restarts it at 1 day. No new storage — the schedule is rebuilt per
+question from `<block>_attempts_v1` (attempts sorted by `ts`, since PIN-sync merges interleave devices), so sync.js is unchanged.
+Rule (`spacedSchedule` in shared/app.js; SR_STEPS_DAYS = [1, 3, 7], SR_RETIRE_AFTER = 2): miss → step 0, due = that local
+calendar day + 1; a right answer on/after the due day → step + 1 counted from that answer (due + 3 days), and at 2 steps the
+question is retired; right answers before the due day (an immediate redo, a same-day repeat) are ignored. The 7-day step is
+reached only if SR_RETIRE_AFTER is raised to 3. Surfaces: block home → "Spaced review · N missed questions due today" card at
+the top of the hero's side column (#spacedDueHero; a "nothing due today · K come back <day>" line above Your progress when only
+later ones exist, #spacedDueHome); exam SDL list header → "Review N due today" pill (examSpacedDueHtml); runs: #spaced (back/
+Finish → block home), #spaced/exam/<n> (→ that exam's SDL list), #spaced/hub (→ the hub, via #spaced-hub → leaveToHub) —
+renderSpacedRun → startMissedRun (mode 'review', shuffled), ids missing from data.js skipped. Hub: "Questions due" card at the
+top of the main column (#dueCard, hidden at 0), one row per block linking to `<block>/index.html#spaced/hub`; it counts from the
+attempt logs only (srHubDue in index.html repeats the rule — keep it in step with spacedSchedule), so a question deleted from a
+block can be counted on the hub until its block page skips it.
+
+"See it move →" after a miss (m54, 2026-10-19): a missed question offers its moving map already switched to the state the
+question is about (a missed type 4 RTA question → `metabolic-atlas.html#rtasim/~rt:h4`, RTA Simulator with Type 4 on). The atlas
+needed no change: readHash already applies a trailing `~<switch>:<option>` segment (dynApplyStr) before the drawing loads.
+Mapping (tools/build-atlas.py, "question states", after the practice index) → resources/atlas-qstates.js: per block index,
+question id → [map, switch id, option key], only confident matches (714 of 8,590 questions on 2026-10-19; the build prints the count). It
+reuses links_for() (the question's top-3 linked cards) and each moving map's switch options [key, label, card]; tiers, strongest
+first: 0-2 an option pinned to the question's linked card of that rank, its label named in the answer or as the subject of the
+explanation lead; 3 the answer's headline names an option whose card wasn't linked, on a map whose title the question uses;
+4 the stem's question names an option followed by the map's title ("type 4 RTA" — First Aid abbreviations are spelled out).
+Guards, each from a spot-check miss: drugs need map context (a drug switch shows one effect), contrasts ("unlike X", "no X",
+"rather than X") don't name X, a bare "Type II"/"Zone 1" only counts followed by the map's title, a numbered class the label
+lacks vetoes it, options sharing a name ("Median — supracondylar"/"— carpal tunnel") need their qualifier, ↑/↓ labels need the
+same direction, symptom work-ups need their symptom asked, "combined/concomitant" answers take only a mixed option, and two
+options on one map that nothing separates → no state. Spot-check 30 random matches after any rule change (stem → map/option).
+Question bank (shared/app.js, self-contained "See it move →" block after atlasLinksHtml): on a wrong answer atlasLinksHtml puts a
+.amc-slot first in the atlas block — practice/exam review, the rail, and the #sdlwrong/#examwrong cards (fillAtlasLater) all go
+through it. seeMoveLoad() lazy-loads atlas-qstates.js on the first miss and seeMoveFillSlots() fills slots drawn before it
+arrived. No state → the moving map of the best card as it opens, with no switch guessed (the old CTA's first-switch-for-the-card
+guess opened RTA Type 2 for every RTA question). Styles: `.amc-slot` block at the end of shared/style.css. sw.js caches the file
+on first fetch; add 'resources/atlas-qstates.js' to its CORE list and the hub's "Save all" list (index.html) to precache it.
+
+m54/m55 (2026-10-19): 8 new moving maps (b_reflexsim, f_psychclock ⇄ psychdx, c_hpgsim, g_pulmflow, b_strokesim, r_gfrsim,
+m_vascsim ⇄ vasc, j_kneesim; drafts modules, m47 PASSED + groups.json, dated 2026-10-19 via NEW19 in assemble) from the
+coverage sweep (batches/m54/coverage.md); new cards spinalshock, wshedinf, kneebursa. Second fact-check of ~160 older moving
+maps (batches/m54/check_A–D.md): 25 fixes applied (patches_A–D.json), mostly "normal or X → –"; mensflow PCOS FSH curve/flows
+set to normal. cbsim pins cerebellar + cbzones. Spaced review retire rule = 3 right reviews (1 → 3 → 7 days). sync.js
+mergeAtlas carries `note` (newest t wins). build-atlas keeps the previous commit's atlas-les.<hash>.js for one deploy.

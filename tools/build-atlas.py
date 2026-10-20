@@ -30,6 +30,7 @@ QLINKS_OUT = ROOT / "resources" / "atlas-qlinks.js"
 COUNTS_OUT = ROOT / "resources" / "qbank-counts.js"
 HOME_OUT = ROOT / "resources" / "atlas-home.js"
 CARDS_OUT = ROOT / "resources" / "atlas-cards.js"
+QSTATES_OUT = ROOT / "resources" / "atlas-qstates.js"
 HOMES = TOOLS / "atlas-homes.json"
 art = src.read_text(encoding="utf-8")
 
@@ -231,6 +232,10 @@ body{display:flex;flex-direction:column}
 .subtabs .tab[aria-selected="true"]{background:var(--p-ppp);color:#fff;border-color:transparent}
 """
 
+# a kit with qlLoad (assemble.py #23) starts atlas-qlinks.js itself after the first map draws, and redraws what the
+# practice counts touch once the deferred atlas-practice.js is in, so neither holds up the page; an older kit gets both up front
+HEAD_SCRIPTS = ('<script src="atlas-practice.js" defer></script>\n' if "function qlLoad(" in art
+                else '<script src="atlas-practice.js"></script>\n<script src="atlas-qlinks.js" defer></script>\n')
 head = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -249,9 +254,7 @@ img{{max-width:100%}}
 [hidden]{{display:none!important}}
 </style>
 <title>Lesion Atlas — COMLEX 1 / Step 1</title>
-<script src="atlas-practice.js"></script>
-<script src="atlas-qlinks.js" defer></script>
-"""
+{HEAD_SCRIPTS}"""
 
 TOPBAR = ('<header class="ocom-topbar"><div class="ocom-topbar-inner">'
           '<a class="ocom-brand" href="../index.html">OCOM Question Hub</a>'
@@ -268,6 +271,13 @@ styled = artifact[:last_style_close] + OCOM_CSS + artifact[last_style_close:]
 marker = '<div class="app">'
 i = styled.index(marker)
 built = head + styled[:i] + "\n</head>\n<body>\n" + TOPBAR + styled[i:] + "\n</body>\n</html>\n"
+# the Google Fonts stylesheet must not hold up the first paint (or the page's script, which waits for every stylesheet above
+# it): load it as a preload that turns into a stylesheet when it arrives; the fonts swap in (display=swap), and the kit
+# re-fits its labels on the FontFaceSet's loadingdone (assemble.py #23). Without JS, the plain stylesheet.
+built, nf = re.subn(r'<link rel="stylesheet" href="(https://fonts\.googleapis\.com/[^"]+)">',
+                    lambda m: (f'<link rel="preload" as="style" href="{m.group(1)}" onload="this.onload=null;this.rel=\'stylesheet\'">'
+                               f'<noscript><link rel="stylesheet" href="{m.group(1)}"></noscript>'), built)
+assert nf <= 1, nf
 
 # ── moving maps: each drawing goes to resources/dyn/<map>.js and loads when its map opens (the kit's dynLoad);
 #    the page keeps {lazy: content hash, switches, panel} so search, links and the switch state work before it arrives
@@ -288,9 +298,56 @@ for f in DYN_DIR.glob("*.js"):
         f.unlink()
 if not keep:
     DYN_DIR.rmdir() if not any(DYN_DIR.iterdir()) else None
+
+# ── card text: each card's text (LES_TEXT) goes to resources/atlas-les.<hash>.js, which the kit loads right after the first map
+#    draws (lesLoad, assemble.py #23) — about 55 % of the page. The page keeps every other field (n, k, p, q, alias, hi, fa, enz):
+#    the Index, the rail, search by name / alias / match term, #card links, homes and the quiz pickers work before it arrives;
+#    opening a card waits for it ("Loading card…"). The name carries a hash of the content, so a page served from the offline
+#    copy (sw.js) always asks for the card text of its own build; the previous file is deleted (a build artifact). LES is a JS
+#    literal (unquoted keys), so JavaScriptCore evaluates it, as in the deep check. No jsc, or a kit without lesLoad → no split.
+LES_TEXT = ("mech", "find", "labs", "buzz", "src", "tx", "inh", "gen", "ref")
+les_name = None
+_jsc = shutil.which("jsc") or next((p for p in JSC_PATHS if pathlib.Path(p).exists()), None)
+if "function lesLoad(" in built and _jsc:
+    la = built.index("const LES = {"); lb = built.index("\n};\n", la) + 4
+    with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as f:
+        f.write(built[la:lb] + "\nprint(JSON.stringify(LES));\n")
+    try:
+        r = subprocess.run([_jsc, f.name], capture_output=True, text=True, timeout=120)
+    finally:
+        pathlib.Path(f.name).unlink(missing_ok=True)
+    if r.returncode:
+        sys.exit(f"card text split: LES does not evaluate — {(r.stderr or r.stdout).strip()[:400]}")
+    les_all = json.loads(r.stdout)
+    skel = {cid: {k: v for k, v in L.items() if k not in LES_TEXT} for cid, L in les_all.items()}
+    les_text = {cid: {k: v for k, v in L.items() if k in LES_TEXT} for cid, L in les_all.items()}
+    les_text = {cid: t for cid, t in les_text.items() if t}
+    js = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
+    les_body = ("/* Built by tools/build-atlas.py — do not edit. The text of every Lesion Atlas card (" + ", ".join(LES_TEXT) +
+            "), merged into the page's LES when it loads. */\nwindow.LESBODY=" + js(les_text) + ";\n")
+    les_name = f"atlas-les.{hashlib.sha1(les_body.encode('utf-8')).hexdigest()[:10]}.js"
+    (ROOT / "resources" / les_name).write_text(les_body, encoding="utf-8")
+    built = (built[:la] + "const LES = " + js(skel).replace("</", "<\\/") + ";\n" +
+             f"const LES_BODY = {json.dumps(les_name)};   /* the card text (tools/build-atlas.py) */\n" + built[lb:])
+elif "function lesLoad(" in built:   # no jsc: the page keeps the whole LES, and LES_BODY = null tells the kit so (it still loads atlas-qlinks.js)
+    print("  ! card text not split — JavaScriptCore (jsc) not found", file=sys.stderr)
+    lb = built.index("\n};\n", built.index("const LES = {")) + 4
+    built = built[:lb] + "const LES_BODY = null;   /* the card text is inline (tools/build-atlas.py) */\n" + built[lb:]
+# keep the card text the last commit's page names too: a browser still holding that page (HTTP cache, no service worker)
+# asks for it for a while after a deploy; anything older goes
+try:
+    _prev = subprocess.run(["git", "-C", str(ROOT), "show", "HEAD:resources/metabolic-atlas.html"], capture_output=True, text=True).stdout
+    _m = re.search(r'const LES_BODY = "(atlas-les\.[0-9a-f]+\.js)"', _prev); _keep_prev = _m.group(1) if _m else None
+except Exception:
+    _keep_prev = None
+for f in (ROOT / "resources").glob("atlas-les.*.js"):
+    if f.name not in (les_name, _keep_prev):
+        f.unlink()
 out.write_text(built, encoding="utf-8")
 print(f"built {out.relative_to(out.parents[1])}  —  {maps} maps, {cards} cards, {len(built):,} bytes")
 print(f"built resources/dyn/  —  {len(keep)} moving-map drawings, {moved:,} bytes moved out of the page")
+if les_name:
+    print(f"built resources/{les_name}  —  the text of {len(les_text)} cards, {len(les_body.encode('utf-8')):,} bytes moved out of the page")
 
 if homes_now is not None:
     snap = json.dumps(dict(sorted(homes_now.items())), indent=0, ensure_ascii=False) + "\n"
@@ -471,6 +528,7 @@ maps_of = {}
 for mid, (_, ids) in map_cards.items():
     for cid in ids:
         maps_of.setdefault(cid, set()).add(mid)
+qrecs = []        # (block index, question, linked cards) — for the question states below
 nq = 0
 nlinked = 0       # questions linked to at least one card
 sdl_list = []     # [block index, SDL number, title] for the hub's search
@@ -491,6 +549,7 @@ for bi, (b, _) in enumerate(blocks):
                 hit_maps = set(); hit_graphs = set()
                 qcards = links_for(q)
                 nlinked += bool(qcards)
+                qrecs.append((bi, q, qcards))
                 for cid in qcards:
                     hit_graphs |= graphs_of.get(cid, set())
                     counts.setdefault(cid, {}).setdefault(bi, 0)
@@ -521,6 +580,270 @@ COUNTS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. Per blo
 print(f"built {COUNTS_OUT.relative_to(ROOT)}  —  exam totals for {len(exam_counts)} blocks")
 print(f"built {QLINKS_OUT.relative_to(ROOT)}  —  question ids for {len(qlinks)} cards ({QLINKS_OUT.stat().st_size // 1024} KB)")
 print(f"built {PRACTICE_OUT.relative_to(ROOT)}  —  {len(counts)} cards and {len(map_counts)} maps with practice questions from {nq} questions in {len(blocks)} blocks")
+
+
+# ── question states: "See it move →" after a miss ─────────────────────────────
+# For each question, the moving-map switch option that shows what the question is about, so the question bank can open
+# that map with it already on (#<map>/~<switch>:<option>). Only confident matches are kept; any other question opens
+# the map for its card as before (atlas-terms.js moves). resources/atlas-qstates.js: per block, question id ->
+# [map, switch id, option key]. The rules, in order of strength (a tier is "where the match comes from"):
+#   0-2  an option pinned to the question's linked card of that rank (links_for above). The option's label must be named
+#        in the answer or as the subject of the explanation lead (its first words: a lead's examples and contrasts do not
+#        count). Rank 0: the answer opens with it, or something else in the question is about the map (another linked card on it, its title words, another of its options); a drug's switch shows one of
+#        its effects ("Glucocorticoids" on Bone Remodeling is not fat redistribution, "Beta-blockers" for akathisia not
+#        the ECG), so a drug must be in the answer with two such things (one of them the map's title when the drug has states on
+#        several maps: lithium's dose in CKD is not Calcium & PTH) — or one, opening the answer, on its only map.
+#        Named only after a contrast ("unlike …", "rather than …") does not count.
+#        Rank 1-2 (never a drug): the answer must open with it (its first four words), and the rank-0 card must have no state of its own on another map.
+#   3    the answer opens (first four words) by naming an option whose card was not linked: a long several-word label on a
+#        map one of the question's cards is on and whose title the question uses ("Beta-blockers" for akathisia is not
+#        Poison & Antidote's β-blocker), or any label on a map whose title the question spells out ("Type 2 renal tubular
+#        acidosis" → Renal Tubular Acidosis Simulator · Type 2 — proximal).
+#   4    the stem's question asks about an option by a several-word name on a map whose title the stem spells out ("Which pairing … best
+#        fits type 4 RTA?"); that map then goes first, though a card the answer names on it still wins there.
+# Then: the best tier, the place it is named (answer < lead < stem), the most context, the atlas's own order; two options
+# on that map that nothing tells apart → no state.
+ROMAN = {"i": "1", "ii": "2", "iii": "3", "iv": "4", "v": "5", "vi": "6", "vii": "7", "viii": "8"}
+def qs_canon(t):
+    """atlas_norm text, with type/class/grade IV → 4, so "Type IV RTA" meets the label "Type 4 — hyperkalemic\""""
+    return re.sub(r"\b(type|class|grade|stage|mobitz) (i|ii|iii|iv|v|vi|vii|viii)\b", lambda m: m.group(1) + " " + ROMAN[m.group(2)], t)
+QS_STOP = {"in", "motion", "the", "a", "an", "of", "and", "or", "to", "on", "map", "maps", "simulator", "work", "up", "flow", "with",
+           "for", "how", "what", "it", "its", "at", "by", "from", "explorer", "lab", "labs", "cause", "causes", "type", "types",
+           "drug", "drugs", "test", "tests", "function", "normal", "none", "baseline", "healthy", "control", "other", "left", "right",
+           "blood", "body", "cell", "cells", "system", "systems", "human", "loss", "pain"}
+# First Aid abbreviations with one several-word meaning ("di" → "diabetes insipidus"): the label "Nephrogenic DI" also
+# matches the spelled-out name, and a question's "RTA" counts toward the title Renal Tubular Acidosis
+_am = re.search(r"^const ABBR=(\{.*?\});$", art, re.M)
+QS_ABBR = {k: qs_canon(atlas_norm(v[0])) for k, v in (json.loads(_am.group(1)).items() if _am else [])
+           if len(v) == 1 and len(k) >= 2 and " " in v[0] and k not in {"as", "at", "if", "so", "top", "post", "ant", "max", "pat", "med", "pick"}}
+def qs_expand(n):
+    return " ".join(QS_ABBR.get(w, w) for w in n.split())
+def qs_term(p):
+    n = qs_canon(atlas_norm(p))
+    return n if (len(n) >= 4 or re.fullmatch(r"[A-Z0-9]{3}", p.strip())) and n not in QS_STOP and not n.isdigit() else None
+def qs_label_terms(label):
+    """(names, qualifiers) of an option label. Names: the whole label, and each alternative before any dash or
+    parenthesis ("Sjögren · SLE" → sjogren, sle; "Hemiballismus (STN lesion)" → hemiballismus), and qualifiers of two or
+    more words ("Type 2 — proximal" is named by "type 2", never by "proximal" alone; "Locked-in (basilar)" never by
+    "basilar"). Qualifiers: every part after a dash or in parentheses, used only to tell apart options that share a name."""
+    head = re.split(r" — | – ", label)[0]
+    quals = re.findall(r"\(([^)]*)\)", label) + re.split(r" — | – ", label)[1:]
+    names = [label] + re.split(r" · |/|, ", re.sub(r"\s*\([^)]*\)", "", head))
+    quals = [q for p in quals for q in re.split(r" · |/|, ", re.sub(r"\s*\([^)]*\)", "", p))]
+    names = [qs_term(p) for p in names] + [qs_term(q) for q in quals if qs_term(q) and " " in qs_term(q)]
+    out = []
+    for n in names:
+        if n:
+            out += [v for v in dict.fromkeys([n, qs_expand(n)]) if v not in out]
+    return out, [q for q in map(qs_term, quals) if q]
+# A label term inside the longer name of a card from another map is not the label: "type 2" in "type 2 diabetes" is not
+# the RTA simulator's Type 2 (but "type 1" in "type 1 renal tubular acidosis", a card on that map, still is)
+QS_CARDTERMS = {}
+for _r in rows:
+    for _t in _r[3]:
+        QS_CARDTERMS.setdefault(_t.lstrip("=").split(" ")[0], set()).add((_t.lstrip("="), _r[0]))
+QS_LONGER = {}
+def qs_mask(t, text, mid):
+    if t not in QS_LONGER:
+        QS_LONGER[t] = sorted(((ct, c) for ct, c in QS_CARDTERMS.get(t.split(" ")[0], ()) if ct.startswith(t + " ")), key=lambda x: -len(x[0]))
+    on = qs_mapcards.get(mid, ())
+    for ct, c in QS_LONGER[t]:
+        if c not in on:
+            text = text.replace(" " + ct + " ", " # ").replace(" " + ct + "s ", " # ")
+    return text
+def qs_hit(terms, text, mid=None):
+    for t in terms:
+        if f" {t} " in text or f" {t}s " in text:
+            if mid is None:
+                return True
+            text2 = qs_mask(t, text, mid)
+            if f" {t} " in text2 or f" {t}s " in text2:
+                return True
+    return False
+QS_NOT = {"unlike", "not", "no", "non", "without", "than", "versus", "vs", "excluding", "except", "nor"}
+def qs_early(terms, head, mid=None, within=5):
+    """a term named in the first words of the answer's headline, and not as what it is NOT ("Unlike S. pneumoniae")"""
+    words = head.split()
+    while words and words[0] in ("the", "a", "an"):
+        words = words[1:]
+    text = " " + " ".join(words) + " "
+    for t in terms:
+        for m in re.finditer(re.escape(" " + t) + r"s? ", qs_mask(t, text, mid) if mid else text):
+            i = text[:m.start()].count(" ")
+            if i <= within and not (i and words[i - 1] in QS_NOT):
+                return True
+    return False
+QS_NUMBERED = re.compile(r"(?:type|class|grade|stage|zone|phase) \d")
+QS_CONTRAST = re.compile(r" (unlike|rather than|in contrast|instead of|whereas|versus|vs|compared with|as opposed to|not|no|without|negative|"
+                         r"absent|absence of|excluded?|exclusion|rules? out|distinguished from|differs? from) ")
+QS_UP = {"increased", "increase", "increases", "raised", "raises", "high", "higher", "elevated", "rise", "rises", "rising", "greater"}
+QS_DOWN = {"decreased", "decrease", "decreases", "reduced", "reduces", "low", "lower", "lowers", "fall", "falls", "falling", "less", "diminished"}
+
+QS_OPT = {}      # (map, switch, option) -> {"names", "quals", "card", "dir", "sib"}
+qs_opts = {}     # card id -> [(map, switch, option, order)]
+qs_bylabel = []  # every option: (map, switch, option, order, card)
+qs_mapcards, qs_mapwords, qs_maplabels = {}, {}, {}
+qs_workup = set()   # the symptom work-ups (Weight Loss Work-Up …): every disease is an option there, so the question must be about the symptom
+order = 0
+for mid, d in dyn_maps(art):
+    tm = re.search(r"^MAPS\." + mid + r" = \{\s*t:\"([^\"]*)\"", art, re.M)
+    if re.search(r"work-?up", tm.group(1) if tm else "", re.I):
+        qs_workup.add(mid)
+    qs_mapwords[mid] = {re.sub(r"(?<=[^s])s$", "", w) for w in qs_canon(atlas_norm(tm.group(1) if tm else "")).split() if len(w) >= 4 and w not in QS_STOP}
+    on = set(map_cards.get(mid, [None, []])[1]) | {x.get("c") for x in d.get("sites", []) if x.get("c")}
+    labs = []
+    for sw in d.get("switches", []):
+        first = {}
+        for o in sw.get("options", []):
+            order += 1
+            names, quals = qs_label_terms(o[1])
+            card = o[2] if len(o) > 2 and o[2] in card_ids else None
+            key = (mid, sw["id"], o[0])
+            QS_OPT[key] = {"names": names, "quals": quals, "card": card, "sib": False,
+                           "dir": 1 if "↑" in o[1] else -1 if "↓" in o[1] else 0}
+            labs.append((card, names))
+            first.setdefault(names[1] if len(names) > 1 else names[0] if names else "", []).append(key)
+            if card:
+                on.add(card)
+                qs_opts.setdefault(card, []).append((mid, sw["id"], o[0], order))
+            qs_bylabel.append((mid, sw["id"], o[0], order, card))
+        for keys in first.values():        # options on one switch that share a name ("Median — supracondylar", "Median — carpal tunnel")
+            if len(keys) > 1:
+                for k in keys:
+                    QS_OPT[k]["sib"] = True
+    qs_mapcards[mid], qs_maplabels[mid] = on, labs
+qs_first = {}    # first word of a name -> options, so tiers 3 and 4 only try options the text could name
+for li, x in enumerate(qs_bylabel):
+    for term in QS_OPT[x[:3]]["names"]:
+        qs_first.setdefault(term.split(" ")[0], set()).add(li)
+qs_drugs = {r[0] for r in rows if r[2] == "drug"}
+qs_drugmaps = {c: {x[0] for x in v} for c, v in qs_opts.items()}
+qs_cardterms = {r[0]: [t.lstrip("=") for t in r[3]] for r in rows}
+
+def qs_titled(t, text, mid):
+    """t followed by one of the map's title words: "type 4 renal tubular acidosis" (text with abbreviations spelled out)"""
+    return bool(qs_mapwords[mid]) and bool(re.search(re.escape(" " + t) + r"s? (?:" + "|".join(map(re.escape, qs_mapwords[mid])) + r")s? ",
+                                                     qs_mask(t, text, mid)))
+def zx(z):
+    return " " + " ".join(QS_ABBR.get(w, w) for w in z.split()) + " "
+
+def qs_state(q, qcards):
+    expl = str(q.get("explanation") or "")
+    lead = (re.findall(r"[^.!?]+[.!?]+", expl) or [expl])[0]
+    ans = (q.get("choices") or {}).get(q.get("correct"))
+    if isinstance(ans, list):
+        ans = " / ".join(str(c) for c in ans)
+    zones = [" " + qs_canon(atlas_norm(z or "")) + " " for z in (ans, lead, q.get("stem"))]
+    alltext = "".join(zones)
+    alltext += " " + " ".join(QS_ABBR[w] for w in set(alltext.split()) if w in QS_ABBR) + " "
+    # the answer's headline: what it names before the reasoning that follows (as atlasOptionCard in shared/app.js)
+    head = " " + qs_canon(atlas_norm(re.split(r"[,;:(]| [—–-] | (?:which|because|since|due to|caused by|as|so|while|whereas|that) ",
+                                              str(ans or ""), flags=re.I)[0])) + " "
+    hwords = set(head.split())
+    def named(names, z, mid):   # named in z, and not only after a contrast ("…, unlike the receptor antibodies of myasthenia gravis")
+        for t in names:
+            if QS_NUMBERED.fullmatch(t) and not ((z is zones[0] and qs_early([t], head, mid) and title(mid, alltext))
+                                                 or (z is not zones[2] and qs_titled(t, zx(z), mid))):
+                continue   # a bare "Type II" / "Zone 1" only followed by the map's title ("type 1 RTA"), or opening the
+                           # answer to a question that uses the title ("Salter-Harris Type II" on Fractures); never the stem
+            z2 = qs_mask(t, z, mid)
+            m = re.search(re.escape(" " + t) + r"s? ", z2)
+            if m and not QS_CONTRAST.search(z2[:m.start() + 1]):
+                return True
+        return False
+    def lab(names, mid):   # where the question names the option: 0 answer, 1 explanation lead, 2 stem, 3 nowhere
+        return next((zi for zi, z in enumerate(zones) if named(names, z, mid)), 3)
+    def title(mid, text):
+        return sum(f" {w} " in text or f" {w}s " in text for w in qs_mapwords[mid])
+    def ctx(mid, card):    # what ELSE in the question is about this map: its other linked cards, its title words, its other options
+        return (sum(c in qs_mapcards[mid] for c in qcards if c != card) + title(mid, alltext)
+                + sum(qs_hit(t, alltext, mid) for c, t in qs_maplabels[mid] if t and (c != card or not c)))
+    cands = []   # (tier, where named, context, order, map, switch, option)
+    for r, c in enumerate(qcards):                                                 # tiers 0-2
+        for mid, sw, key, o in qs_opts.get(c, []):
+            names = QS_OPT[(mid, sw, key)]["names"]
+            lb, cx, early = lab(names, mid), ctx(mid, c), qs_early(names, head, mid)
+            if r == 0:
+                good = (lb == 0 and (cx >= 1 or early)
+                        or lb == 1 and cx >= 1 and qs_early(names, zones[1], mid, 7)) if c not in qs_drugs else lb == 0 and (
+                    (cx >= 2 and (len(qs_drugmaps[c]) == 1 or title(mid, alltext))) or (cx >= 1 and early and len(qs_drugmaps[c]) == 1))
+            else:
+                good = lb < 2 and qs_early(names, head, mid, 3) and c not in qs_drugs
+            if good:
+                cands.append((r, lb, cx, o, mid, sw, key))
+    first_maps = {x[4] for x in cands if x[0] == 0}
+    cands = [x for x in cands if x[0] == 0 or not (first_maps - {x[4]})]
+    two = re.search(r" (combined|mixed|both|concomitant|superimposed|concurrent|coexisting) ", head)
+    if not two:                                                                    # tier 3 — not "Combined respiratory and metabolic acidosis"
+        words = hwords | {w[:-1] for w in hwords if w.endswith("s")}
+        for li in sorted({li for w in words for li in qs_first.get(w, ())}):
+            mid, sw, key, o, card = qs_bylabel[li]
+            # a bare "Zone 1" or "Type 2" only when followed by the map's title ("Zone 1, creating dead space" is not
+            # the liver's zone 1)
+            names = [n for n in QS_OPT[(mid, sw, key)]["names"] if not QS_NUMBERED.fullmatch(n) or qs_titled(n, zx(head), mid)]
+            tw = title(mid, alltext)
+            quals = QS_OPT[(mid, sw, key)]["quals"]
+            if quals and not qs_hit(quals, alltext, mid):    # "Compression atelectasis" is not "Atelectasis (suction)"
+                names = [n for n in names if " " in n]
+            if card not in qcards and ((qs_early([t for t in names if len(t) >= 8 and " " in t], head, mid, 3) and tw and any(c in qs_mapcards[mid] for c in qcards))
+                                       or (qs_early(names, head, mid, 3) and tw >= 2)):
+                cands.append((3, 0, ctx(mid, card), o, mid, sw, key))
+    # tier 4: in the stem's question itself (its last sentence), not the history before it, and named as the map's subject —
+    # followed by a title word ("type 4 RTA" = "type 4 renal tubular acidosis"; not "just after the optic chiasm, …")
+    ask = " " + qs_canon(atlas_norm((re.findall(r"[^.!?\n]+[.!?]*\s*$", str(q.get("stem") or "")) or [""])[0])) + " "
+    swords = set(ask.split())
+    ask = " " + " ".join(QS_ABBR.get(w, w) for w in ask.split()) + " "
+    stemx = zones[2] + " ".join(QS_ABBR[w] for w in set(zones[2].split()) if w in QS_ABBR) + " "
+    for li in sorted({li for w in swords for li in qs_first.get(w, ())}):
+        mid, sw, key, o, card = qs_bylabel[li]
+        if title(mid, stemx) >= 2 and any(qs_titled(t, ask, mid) for t in QS_OPT[(mid, sw, key)]["names"] if " " in t):
+            cands.append((4, 2, ctx(mid, card), o, mid, sw, key))
+    # vetoes: an answer naming two states at once ("Metabolic acidosis with concomitant respiratory acidosis") unless the
+    # option is the mixed one; a work-up whose symptom the question does not ask about; a numbered class or type the answer names and the label does not
+    # ("Class VI with …" is not "Lupus nephritis (DPGN)"); options sharing a name where the question gives none of this
+    # one's qualifiers; the opposite direction ("Reduced venous return and lower preload" is not "↑ Preload"); and an
+    # answer that opens by naming another linked card ("Bulimia nervosa; distinguished from anorexia nervosa…")
+    num = re.findall(r" ((?:class|type|grade|stage) \d) ", head)
+    head_cards = {c for c in qcards if qs_early(qs_cardterms.get(c, []), head)}
+    def veto(x):
+        op = QS_OPT[(x[4], x[5], x[6])]
+        if two and not any(re.search(r"\bmixed\b|\bcombined\b|\+", n) for n in op["names"]):   # two states, one option
+            return True
+        if x[4] in qs_workup and not title(x[4], zones[0] + zones[1] + ask):   # the symptom in what is asked, not the history
+            return True
+        if num and not all(n in " ".join(op["names"] + op["quals"]) + " " for n in num):
+            return True
+        if op["sib"] and not qs_hit(op["quals"], alltext, x[4]):
+            return True
+        if op["dir"] and (hwords & (QS_DOWN if op["dir"] > 0 else QS_UP)) and not (hwords & (QS_UP if op["dir"] > 0 else QS_DOWN)):
+            return True
+        if x[0] < 3 and head_cards and qcards[x[0]] not in head_cards and not qs_early(op["names"], head, x[4]):
+            return True
+        return False
+    cands = [x for x in cands if not veto(x)]
+    if not cands:
+        return None
+    stem_maps = {x[4] for x in cands if x[0] == 4}
+    cands.sort(key=lambda x: (x[4] not in stem_maps, x[0], x[1], -x[2], x[3]))
+    best = cands[0]
+    for x in cands[1:]:                    # two options on the best map that nothing tells apart
+        if x[4] == best[4] and (x[5], x[6]) != (best[5], best[6]) and x[:3] == best[:3]:
+            return None
+    return [best[4], best[5], best[6]]
+
+qstates = {}
+for bi, q, qcards in qrecs:
+    if q.get("id"):
+        st = qs_state(q, qcards)
+        if st:
+            qstates.setdefault(str(bi), {})[q["id"]] = st
+nqs = sum(len(v) for v in qstates.values())
+QSTATES_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. per block index: question id -> [moving map, switch id, option key] — "
+                       "the question bank's \"See it move →\" after a miss opens #<map>/~<switch>:<option> */\n"
+                       "window.ATLAS_QSTATES=" + json.dumps({"blocks": [b for b, _ in blocks], "q": qstates},
+                                                          ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
+print(f"built {QSTATES_OUT.relative_to(ROOT)}  —  moving-map states for {nqs} of {nq} questions "
+      f"({len({s[0] for v in qstates.values() for s in v.values()})} maps, {QSTATES_OUT.stat().st_size // 1024} KB)")
 
 
 # ── the hub's home page (index.html): the atlas at a glance ─────────────────
@@ -614,7 +937,8 @@ home = {"stats": {"maps": len(home_maps), "cards": len(rows), "graphs": len(all_
         "topics": topics, "maps": home_maps, "latest": [v for v in latest if v in home_maps], "latestDate": latest_date, "latestNews": latest_news,
         "graphs": all_plots, "blocks": [list(b) for b in blocks], "sdls": sdl_list,
         "moves": [x[:4] for x in moves if x[1]],
-        "dyn": sorted(keep)}   # the moving-map drawings (resources/dyn/), so the hub's "Save all" saves them too
+        "dyn": sorted(keep),   # the moving-map drawings (resources/dyn/), so the hub's "Save all" saves them too
+        "les": les_name}       # the card text file (resources/atlas-les.<hash>.js) — Save all saves it too
 HOME_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. The hub home page: atlas stats, systems, map titles and "
                     "schematics, the newest maps, every graph, and each block's SDLs for the search */\n"
                     "window.ATLAS_HOME=" + json.dumps(home, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")

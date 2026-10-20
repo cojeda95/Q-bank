@@ -1133,3 +1133,22 @@ button, input, select, textarea { font-family: inherit; }
 .exam-paused p { margin: 0 auto 10px; max-width: 520px; }
 .exam-paused .paused-note { font-size: 0.85rem; color: var(--grey-text); }
 .paused-icon { font-size: 2rem; color: var(--navy); letter-spacing: -4px; }
+/* Spaced review of missed questions (m54): the block hero's "N due today" card, the quiet "next due" line, the exam-list pill */
+.srdue-slot { display: contents; }
+.srdue-card { text-decoration: none; border-left: 5px solid var(--teal); }
+.srdue-card:hover .btn { background: var(--navy-dark); }
+.srdue-card:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.srdue-later { margin: 0 0 10px; font-size: 0.85rem; color: var(--grey-text); }
+.ph-due a { background: var(--sky-bg); color: var(--navy); }
+/* "See it move →" after a miss (m54): the moving map, already switched to the state the question is about (shared/app.js
+   seeMoveSlotHtml) — the button on the left, the map · option it opens beside it (stacked on a phone) */
+.amc-slot:empty { display: none; }
+.info-block.atlas .amc-slot .atlas-move-cta { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.info-block.atlas .amc-slot .amc-k { flex: none; padding: 6px 14px; border-radius: 999px; background: var(--atlas-ink); color: var(--card-bg);
+  font-size: 0.9rem; font-weight: 700; text-transform: none; letter-spacing: 0; opacity: 1; white-space: nowrap; }
+.info-block.atlas .amc-slot .amc-t { flex: 1 1 200px; min-width: 0; font-size: 0.9rem; font-weight: 600; overflow-wrap: anywhere; }
+.info-block.atlas .amc-slot .amc-t::after { content: none; }
+.info-block.atlas .amc-slot .amc-opt { font-weight: 700; }
+.info-block.atlas .amc-slot .atlas-move-cta:hover .amc-k { filter: brightness(1.12); }
+.info-block.atlas .amc-slot .atlas-move-cta:focus-visible { outline: 3px solid var(--atlas-ink); outline-offset: 2px; }
+@media (max-width: 480px) { .info-block.atlas .amc-slot .amc-t { flex-basis: 100%; } }

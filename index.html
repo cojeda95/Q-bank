@@ -160,6 +160,15 @@
   .side-desc { font-size: 0.88rem; color: var(--grey-text); line-height: 1.45; }
   .side-go { font-size: 0.92rem; font-weight: 600; color: var(--navy); }
   .continue-card[hidden] { display: none; }
+  /* "Questions due" (spaced review of missed questions, m54): one row per block with questions due today */
+  .col-main .due-card { gap: 6px; border-left: 5px solid var(--teal); }
+  .due-card[hidden] { display: none; }
+  .due-list { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); column-gap: 24px; }
+  .due-list li { border-top: 1px solid var(--line-soft); }
+  .due-list a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 8px 0; color: var(--text); text-decoration: none; font-size: 0.92rem; }
+  .due-list a:hover .due-name { color: var(--navy); text-decoration: underline; text-underline-offset: 3px; }
+  .due-name { min-width: 0; line-height: 1.35; }
+  .due-n { flex: none; font-weight: 600; color: var(--navy); white-space: nowrap; }
   /* Exam countdown — your exam dates (this device only) and the pace to finish each exam (script at the end) */
   .countdown-card > summary { display: flex; flex-direction: column; gap: 6px; cursor: pointer; list-style: none; }
   .countdown-card > summary::-webkit-details-marker { display: none; }
@@ -276,6 +285,12 @@
 
   <main class="wrap cols">
     <div class="col-main">
+      <section class="side-card due-card" id="dueCard" aria-labelledby="dueTitle" hidden>
+        <span class="kicker">Questions due</span>
+        <span class="side-title" id="dueTitle"></span>
+        <span class="side-desc">Questions you missed come back after 1 day, then 3 days, until you get them right twice in a row.</span>
+        <ul class="due-list" id="dueList"></ul>
+      </section>
       <section aria-labelledby="todayH">
         <h2 id="todayH">Today in the atlas</h2>
         <div class="today">
@@ -770,8 +785,10 @@
       var urls = ['./', 'index.html', 'announcements.js', 'sync.js', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
         'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png',
         'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js', 'resources/qbank-counts.js',
-        'resources/atlas-home.js', 'resources/atlas-cards.js'];
-      // the moving maps' drawings load only when a map opens — save them all here (list from atlas-home.js)
+        'resources/atlas-home.js', 'resources/atlas-cards.js', 'resources/atlas-qstates.js'];
+      // the atlas's card text (its name changes with every build) and the moving maps' drawings load only after the page
+      // or when a map opens — save them all here (names from atlas-home.js)
+      if (window.ATLAS_HOME && window.ATLAS_HOME.les) urls.push('resources/' + window.ATLAS_HOME.les);
       ((window.ATLAS_HOME && window.ATLAS_HOME.dyn) || []).forEach(function (f) { urls.push('resources/dyn/' + f); });
       Array.prototype.forEach.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]'), function (a) {
         var dir = a.getAttribute('href').replace(/index\.html$/, '');
@@ -958,7 +975,8 @@
     /* Save one block (or the atlas) for offline use: its own files plus the shared files it
        needs, into the same cache — without saving everything. */
     var SHARED = ['./', 'index.html', 'announcements.js', 'sync.js', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
-      'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-home.js', 'resources/atlas-cards.js'];
+      'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-home.js', 'resources/atlas-cards.js',
+      'resources/atlas-qstates.js'];
     function saveBtn(a, files, show, label) {
       var m = meta(a), el = m.querySelector('[data-k="save"]');
       if (!show || !navigator.onLine) { if (el) el.remove(); return; }
@@ -993,6 +1011,7 @@
           return [a, [dir + 'index.html', dir + 'data.js']];
         });
         if (atlas) jobs.push([atlas, ['resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js']
+          .concat(window.ATLAS_HOME && window.ATLAS_HOME.les ? ['resources/' + window.ATLAS_HOME.les] : [])
           .concat(((window.ATLAS_HOME && window.ATLAS_HOME.dyn) || []).map(function (f) { return 'resources/dyn/' + f; }))]);
         var res = [];
         return jobs.reduce(function (p, j) {
@@ -1023,6 +1042,55 @@
     var start = function () { run(); };
     if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 2500 }); else setTimeout(start, 800);
     window.addEventListener('online', start);
+  })();
+</script>
+<script>
+  /* Questions due (m54): missed questions due for spaced review today, per block, read only from each block's attempt log
+     ('<folder>_attempts_v1'; data.js is not loaded here, so a question since deleted from a block can still be counted here
+     until its block page skips it). Same rule as spacedSchedule() in shared/app.js — keep the two in step: a miss → due
+     1 day later; a right answer on/after the due day → next step (3 days); SR_RETIRE right answers in a row → retired;
+     right answers before the due day are ignored; local calendar days. Each row opens that block's run (#spaced/hub). */
+  (function () {
+    var STEPS = [1, 3, 7], SR_RETIRE = 3;
+    function day(ts) { var d = new Date(ts); return Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+    function srHubDue(list, today) {
+      var by = {}, n = 0;
+      (Array.isArray(list) ? list : []).forEach(function (a) { if (a && a.id != null && typeof a.ts === 'number') (by[a.id] = by[a.id] || []).push(a); });
+      Object.keys(by).forEach(function (id) {
+        var st = null;
+        by[id].sort(function (a, b) { return a.ts - b.ts; }).forEach(function (a) {
+          if (!a.correct) st = { step: 0, last: a.ts };
+          else if (st && day(a.ts) - day(st.last) >= STEPS[Math.min(st.step, STEPS.length - 1)]) st = st.step + 1 >= SR_RETIRE ? null : { step: st.step + 1, last: a.ts };
+        });
+        if (st && day(st.last) + STEPS[Math.min(st.step, STEPS.length - 1)] <= today) n++;
+      });
+      return n;
+    }
+    function dueCard() {
+      var card = document.getElementById('dueCard'), ul = document.getElementById('dueList');
+      if (!card || !ul) return;
+      var today = day(Date.now()), rows = [], total = 0;
+      [].slice.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]')).forEach(function (a) {
+        var dir = a.getAttribute('href').replace(/\/index\.html$/, ''), list = [];
+        try { list = JSON.parse(localStorage.getItem(dir + '_attempts_v1')) || []; } catch (e) { list = []; }
+        var n = srHubDue(list, today), t = a.querySelector('.block-title');
+        if (n) { total += n; rows.push([dir, t ? t.textContent.replace(/^\W+\s*/, '').trim() : dir, n]); }
+      });
+      if (!total) { card.hidden = true; ul.innerHTML = ''; return; }
+      document.getElementById('dueTitle').textContent = total.toLocaleString('en-US') + ' missed question' + (total === 1 ? '' : 's') + ' due today';
+      ul.innerHTML = '';
+      rows.forEach(function (r) {
+        var li = document.createElement('li'), a = document.createElement('a'), nm = document.createElement('span'), c = document.createElement('span');
+        a.href = r[0] + '/index.html#spaced/hub'; nm.className = 'due-name'; nm.textContent = r[1];
+        c.className = 'due-n'; c.textContent = r[2] + ' due →'; a.setAttribute('aria-label', r[1] + ': review ' + r[2] + ' due');
+        a.appendChild(nm); a.appendChild(c); li.appendChild(a); ul.appendChild(li);
+      });
+      card.hidden = false;
+    }
+    window.qhubDueCard = dueCard;
+    dueCard();
+    window.addEventListener('pageshow', dueCard);
+    window.addEventListener('storage', function (e) { if (e.key && /_attempts_v1$/.test(e.key)) dueCard(); });
   })();
 </script>
 </body>

@@ -200,19 +200,93 @@ function atlasLinksHtml(q, picked) {
   const table = picked && ATLAS_INDEX && q && q.choices && picked !== q.correct ? atlasChoicesHtml(q, picked, cards, link) : '';
   // No table (e.g. a select-all question): fall back to the single "You picked" line.
   const wrong = table ? null : atlasPickedFor(q, picked, cards);
-  if (!cards.length && !wrong && !table) return '';
+  // Missed it: "See it move →" first — the moving map already switched to what the question is about (seeMoveSlotHtml)
+  const missed = picked && q && picked !== q.correct;
+  const ctaHtml = missed ? seeMoveSlotHtml(q, cards) : '';
+  if (!cards.length && !wrong && !table && !ctaHtml) return '';
   const pickedHtml = wrong ? `<div class="atlas-picked"><span class="atlas-picked-lbl">You picked ${escapeHtml(picked)}:</span>${link(wrong)}${cards.length
     ? `<a class="atlas-cmp" href="${ATLAS_URL}#cmp/${encodeURIComponent(wrong.id)}/${encodeURIComponent(cards[0].id)}" target="_blank" rel="noopener">Compare with ${escapeHtml(cards[0].n)}</a>` : ''}</div>` : '';
   // the first graph that illustrates one of the linked cards, best card first
   const g = ATLAS_GRAPHS && cards.map(c => ATLAS_GRAPHS.find(x => x[3].includes(c.id))).find(Boolean);
   const graphHtml = g ? `<a class="atlas-graph" href="${ATLAS_URL}#graph/${encodeURIComponent(g[0])}/${g[1]}" target="_blank" rel="noopener">See it on a graph: ${escapeHtml(g[2])}</a>` : '';
-  // a moving map for the best card: with that card's switch already on if one exists, else the map itself
-  const mv = ATLAS_MOVES && cards.map(c => ATLAS_MOVES.find(x => x[1] && x[4].includes(c.id)) || ATLAS_MOVES.find(x => !x[1] && x[4].includes(c.id))).find(Boolean);
+  const mv = atlasCardMove(cards);
   const moveHtml = mv ? `<a class="atlas-graph atlas-move" href="${ATLAS_URL}#${encodeURIComponent(mv[0])}${mv[1] ? '/~' + mv[1].split(':').map(encodeURIComponent).join(':') : ''}" target="_blank" rel="noopener">See it move: ${escapeHtml(mv[3])}${mv[2] ? ' — ' + escapeHtml(mv[2]) : ''}</a>` : '';
-  // Missed it: the moving map for the right answer goes first, as a prompt to watch it.
-  const missed = picked && q && picked !== q.correct && mv;
-  const ctaHtml = missed ? `<a class="atlas-move-cta" href="${ATLAS_URL}#${encodeURIComponent(mv[0])}${mv[1] ? '/~' + mv[1].split(':').map(encodeURIComponent).join(':') : ''}" target="_blank" rel="noopener"><span class="amc-k">Missed it? Watch it move</span><span class="amc-t">${escapeHtml(mv[3])}${mv[2] ? ' — ' + escapeHtml(mv[2]) : ''}</span></a>` : '';
   return `<div class="info-block atlas">${ctaHtml}<b>On the Lesion Atlas</b>${cards.map(link).join('')}${graphHtml}${missed ? '' : moveHtml}${pickedHtml}${table}</div>`;
+}
+
+// a moving map for the best card: with that card's switch already on if one exists, else the map itself
+function atlasCardMove(cards) {
+  return ATLAS_MOVES && cards.map(c => ATLAS_MOVES.find(x => x[1] && x[4].includes(c.id)) || ATLAS_MOVES.find(x => !x[1] && x[4].includes(c.id))).find(Boolean);
+}
+
+/* ── "See it move →" after a miss (m54) ─────────────────────────────────
+   resources/atlas-qstates.js (tools/build-atlas.py) gives, per block, question id -> [moving map, switch, option]: the
+   state the question is about (a missed type 4 RTA question → RTA Simulator with Type 4 on). It loads on the first miss.
+   The button opens #<map>/~<switch>:<option>, which the atlas applies on load (readHash → dynApplyStr). A question with
+   no state there gets the moving map of its best card as the map opens — no switch guessed, since a card's first switch
+   can be the wrong state (Type 2 for a Type 4 question). Each miss leaves a .amc-slot; seeMoveFillSlots() draws the
+   ones left empty once the file (and atlas-terms.js) arrive. */
+let ATLAS_QSTATES = null;          // { blocks: [folder], q: { block index: { question id: [map, switch, option] } } }
+let ATLAS_QSTATES_LOADING = false;
+function seeMoveLoad() {
+  if (ATLAS_QSTATES || ATLAS_QSTATES_LOADING || !APP_SRC) return;
+  ATLAS_QSTATES_LOADING = true;
+  const s = document.createElement('script');
+  s.src = new URL('../resources/atlas-qstates.js', APP_SRC).href;
+  s.async = true;
+  const done = () => { ATLAS_QSTATES = window.ATLAS_QSTATES || { blocks: [], q: {} }; ATLAS_READY.then(seeMoveFillSlots); };
+  s.onload = done;
+  s.onerror = done;   // missing file: every miss falls back to the map itself
+  document.head.appendChild(s);
+}
+function seeMoveState(q) {
+  if (!ATLAS_QSTATES || !q || q.id == null) return null;
+  const bi = (ATLAS_QSTATES.blocks || []).indexOf(blockDirName());
+  const st = bi >= 0 && ATLAS_QSTATES.q && ATLAS_QSTATES.q[bi] && ATLAS_QSTATES.q[bi][q.id];
+  return Array.isArray(st) && st.length === 3 ? st : null;
+}
+/* [map, "switch:option" or "", option label, map title] for the button, or null */
+function seeMoveTarget(q, cards) {
+  const st = seeMoveState(q);
+  if (st) {
+    const key = st[1] + ':' + st[2];
+    const known = (ATLAS_MOVES || []).find(x => x[0] === st[0] && x[1] === key);
+    if (known) return known;
+    const map = (ATLAS_MOVES || []).find(x => x[0] === st[0]);
+    return [st[0], key, '', map ? map[3] : 'Lesion Atlas'];
+  }
+  const mv = atlasCardMove(cards || []);
+  if (!mv) return null;
+  return (ATLAS_MOVES || []).find(x => x[0] === mv[0] && !x[1]) || [mv[0], '', '', mv[3]];
+}
+function seeMoveHref(t) {
+  return `${ATLAS_URL}#${encodeURIComponent(t[0])}${t[1] ? '/~' + t[1].split(':').map(encodeURIComponent).join(':') : ''}`;
+}
+function seeMoveInnerHtml(q, cards) {
+  const t = seeMoveTarget(q, cards);
+  if (!t) return '';
+  const title = escapeHtml(t[3]) + (t[2] ? `<span class="amc-sep" aria-hidden="true"> · </span><span class="amc-opt">${escapeHtml(t[2])}</span>` : '');
+  return `<a class="atlas-move-cta${t[1] ? ' has-state' : ''}" href="${seeMoveHref(t)}" target="_blank" rel="noopener"
+    title="${t[1] ? 'Opens the moving map with this switched on' : 'Opens the moving map'}"><span class="amc-k">See it move →</span><span class="amc-t">${title}</span></a>`;
+}
+/* The slot under a missed question's atlas links: drawn now when the states are in, else when they arrive */
+function seeMoveSlotHtml(q, cards) {
+  if (!ATLAS_URL || !q) return '';
+  seeMoveLoad();
+  if (ATLAS_QSTATES && ATLAS_MOVES) {
+    const inner = seeMoveInnerHtml(q, cards);
+    return inner ? `<div class="amc-slot">${inner}</div>` : '';
+  }
+  // (a question with no linked card shows no atlas block until the states are in)
+  return q.id != null && cards && cards.length ? `<div class="amc-slot" data-amc-qid="${escapeHtml(String(q.id))}"></div>` : '';
+}
+function seeMoveFillSlots() {
+  document.querySelectorAll('.amc-slot[data-amc-qid]').forEach(el => {
+    const q = questionById(el.dataset.amcQid);
+    el.removeAttribute('data-amc-qid');
+    const inner = q ? seeMoveInnerHtml(q, atlasLinksFor(q)) : '';
+    if (inner) el.innerHTML = inner; else el.remove();
+  });
 }
 
 /* Missed questions feed the Lesion Atlas review list. The atlas keeps its
@@ -841,6 +915,10 @@ function render() {
     renderExamWrong(parseInt(parts[1], 10));
   } else if (parts[0] === 'exammissed' && parts[1]) {
     renderExamMissed(parseInt(parts[1], 10));
+  } else if (parts[0] === 'spaced') {
+    renderSpacedRun(parts[1], parts[2]);
+  } else if (parts[0] === 'spaced-hub') {
+    leaveToHub(); return;
   } else {
     renderHome();
   }
@@ -865,6 +943,7 @@ function rememberPlace(parts) {
   }
   else if ((parts[0] === 'examwrong' || parts[0] === 'exammissed') && parts[1] && DATA && DATA.exams.some(e => e.examNumber === parseInt(parts[1], 10)))
     save((parts[0] === 'examwrong' ? 'Review misses: ' : 'Your misses: ') + examLabel(parts[1]));
+  else if (parts[0] === 'spaced') save('Spaced review — due today');
   else if (parts[0] === 'atlascards' && parts[1]) save('Atlas practice: ' + (parts[2] ? decodeURIComponent(parts[2]) : 'a graph'));
   else if ((parts[0] === 'atlas' || parts[0] === 'atlasmap') && parts[1]) {
     const id = decodeURIComponent(parts[1]), route = window.location.hash, miss = parts[2] === 'missed' ? ' — your misses' : '';
@@ -1232,12 +1311,13 @@ function renderHome() {
             <button type="submit">Search</button>
           </form>
         </div>
-        <div class="bhero-side">${resumeHtml}${practiceResumeHtml}<div id="atlasMovesHero"></div></div>
+        <div class="bhero-side"><div id="spacedDueHero" class="srdue-slot"></div>${resumeHtml}${practiceResumeHtml}<div id="atlasMovesHero"></div></div>
       </div>
     </section>
     <div class="bcols">
       <div class="bcol-main">
         <section class="bsec" aria-labelledby="exH">
+          <div id="spacedDueHome"></div>
           ${progressHtml}
           <h2 class="sec-h" id="exH">Exams</h2>
           <div class="exam-grid">${examCards}</div>
@@ -1280,6 +1360,7 @@ function renderHome() {
       </aside>
     </div>
   `;
+  fillSpacedDueHome();
   fillWeakSdlsHome();
   fillAtlasMapsHome();
   fillAtlasMovesHome();
@@ -1498,6 +1579,7 @@ function renderExamSdlList(examNumber) {
           <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">All blocks</a><span aria-hidden="true">/</span><a href="#">${escapeHtml(blockShort())}</a><span aria-hidden="true">/</span><span>${examLabel(examNumber)}</span></nav>
           <h1 id="exTitle">${examLabel(examNumber)}</h1>
           <p class="ph-meta">${exam.sdls.length} SDLs · ${totalQ ? `${totalQ} questions` : 'questions coming soon'}${when ? ` · <span class="ph-when">${escapeHtml(when)}</span>` : ''}${settings.hyOnly ? ' · <strong>⚡ High-yield only is on</strong>' : ''}</p>
+          ${examSpacedDueHtml(examNumber)}
           ${examMissN ? `<p class="ph-miss"><a href="#examwrong/${examNumber}" title="Every question in this exam you got wrong on your latest try, SDL by SDL, with the explanations">Review all ${examMissN} missed in this exam</a></p>` : ''}
         </div>
         ${totalQ ? `<button type="button" class="ph-cta" id="fullSimCard">
@@ -3621,6 +3703,99 @@ function renderExamMissed(examNumber) {
     { route: `exam-sdls/${examNumber}`, label: examLabel(examNumber) });
   startMissedRun(qs, examLabel(examNumber) + ' · your misses', back);
 }
+
+/* ── Spaced review of missed questions (m54, 2026-10-19) ─────────────────
+   A question you miss comes back after 1 day, then 3 days, until you answer it right twice in a row in review; a wrong answer
+   (any mode) starts it over at 1 day. Nothing new is stored: the schedule is rebuilt per question from the attempt log
+   (LS_ATTEMPTS, so PIN sync needs no change), its attempts sorted by time because a sync merge can interleave devices.
+     miss               → step 0, due = that day + SR_STEPS_DAYS[0]
+     right, on/after due → step + 1, counted from that answer; at SR_RETIRE_AFTER steps the question is retired
+     right, before due   → ignored (an immediate redo or a same-day repeat is not a spaced review)
+   Days are local calendar days (missed yesterday evening = due this morning). The hub repeats this rule in its own script
+   (srHubDue in index.html, which has no app.js) — keep the two in step. Retired after 3 right reviews in a row,
+   so a miss comes back at 1, 3 and 7 days. */
+const SR_STEPS_DAYS = [1, 3, 7];
+const SR_RETIRE_AFTER = 3;
+function srDay(ts) { const d = new Date(ts); return Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+/* id -> { step, last (ts), due (local day number) } for every question still on the schedule */
+function spacedSchedule(attempts) {
+  const byId = {};
+  (Array.isArray(attempts) ? attempts : []).forEach(a => {
+    if (a && a.id != null && typeof a.ts === 'number') (byId[a.id] = byId[a.id] || []).push(a);
+  });
+  const out = {};
+  Object.keys(byId).forEach(id => {
+    let st = null;
+    byId[id].sort((a, b) => a.ts - b.ts).forEach(a => {
+      if (!a.correct) st = { step: 0, last: a.ts };
+      else if (st && srDay(a.ts) - srDay(st.last) >= SR_STEPS_DAYS[Math.min(st.step, SR_STEPS_DAYS.length - 1)]) {
+        st = st.step + 1 >= SR_RETIRE_AFTER ? null : { step: st.step + 1, last: a.ts };
+      }
+    });
+    if (st) out[id] = Object.assign(st, { due: srDay(st.last) + SR_STEPS_DAYS[Math.min(st.step, SR_STEPS_DAYS.length - 1)] });
+  });
+  return out;
+}
+/* This block's due questions (ids missing from data.js are skipped), each with sdlNumber/sdlTitle/examNumber;
+   examNumber narrows to one exam. Also returns how many are scheduled later and the next due day. */
+function spacedDueQuestions(examNumber) {
+  const sched = spacedSchedule(loadAttempts()), today = srDay(Date.now());
+  const qs = [];
+  let later = 0, next = null;
+  DATA.exams.forEach(exam => {
+    if (examNumber != null && exam.examNumber !== examNumber) return;
+    exam.sdls.forEach(sdl => sdl.questions.forEach(q => {
+      const s = sched[q.id];
+      if (!s) return;
+      if (s.due <= today) qs.push(Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title, examNumber: exam.examNumber }));
+      else { later++; if (next == null || s.due < next) next = s.due; }
+    }));
+  });
+  return { qs, later, next };
+}
+function srDayLabel(day) {
+  const diff = day - srDay(Date.now());
+  if (diff <= 1) return 'tomorrow';
+  const d = new Date(day * 86400000);
+  return diff < 7 ? d.toLocaleDateString(undefined, { weekday: 'long', timeZone: 'UTC' }) : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+}
+/* Block home: a "Spaced review · N due today" card at the top of the hero's side column (#spacedDueHero, above any resume
+   card — on a phone it sits right under the search); when nothing is due but some come back later, a quiet line above
+   "Your progress" (#spacedDueHome) says when. */
+function fillSpacedDueHome() {
+  const hero = document.getElementById('spacedDueHero'), slot = document.getElementById('spacedDueHome');
+  if (!hero || !slot) return;
+  const { qs, later, next } = spacedDueQuestions();
+  const n = qs.length;
+  hero.innerHTML = n ? `
+    <a class="bh-card srdue-card" href="#spaced">
+      <span class="kicker">Spaced review</span>
+      <span class="bh-title">${n} missed question${n === 1 ? '' : 's'} due today</span>
+      <span class="bh-meta">Misses come back after 1 day, then 3 days — two right in a row and they’re done.${later ? ` ${later} more come${later === 1 ? 's' : ''} back later.` : ''}</span>
+      <span class="bh-actions"><span class="btn">Review ${n} due</span></span>
+    </a>` : '';
+  slot.innerHTML = !n && later ? `<p class="srdue-later">Spaced review: nothing due today · ${later} missed question${later === 1 ? '' : 's'} come${later === 1 ? 's' : ''} back ${srDayLabel(next)}.</p>` : '';
+}
+/* #spaced (from the block home), #spaced/hub (from the hub's "Questions due" card), #spaced/exam/<n> (from an exam's SDL list):
+   exactly the due questions, shuffled, as a review run; back and Finish return to where the run was opened. */
+function renderSpacedRun(from, arg) {
+  const exam = from === 'exam' ? parseInt(arg, 10) : null;
+  if (from === 'exam' && !DATA.exams.some(e => e.examNumber === exam)) { renderHome(); return; }
+  const back = from === 'hub' ? { route: 'spaced-hub', label: 'Question Hub' }
+    : from === 'exam' ? { route: `exam-sdls/${exam}`, label: examLabel(exam) }
+    : { route: '', label: blockShort() + ' home' };
+  const { qs, later, next } = spacedDueQuestions(exam);
+  if (!qs.length) return noMissesLeft('Spaced review', 'Nothing is due for review right now.' +
+    (later ? ` ${later} missed question${later === 1 ? '' : 's'} come${later === 1 ? 's' : ''} back ${srDayLabel(next)}.` : ''), back);
+  startMissedRun(qs, 'Spaced review' + (exam != null ? ' · ' + examLabel(exam) : ''), back);
+}
+/* Finish/back of a run opened from the hub: leave the block for the hub (replace, so Back does not reopen the empty run). */
+/* Exam SDL list header: "N due for spaced review" → #spaced/exam/<n> (nothing when none are due in this exam). */
+function examSpacedDueHtml(examNumber) {
+  const n = spacedDueQuestions(examNumber).qs.length;
+  return n ? `<p class="ph-miss ph-due"><a href="#spaced/exam/${examNumber}" title="Questions from this exam you missed that are due for spaced review today">Review ${n} due today</a></p>` : '';
+}
+function leaveToHub() { window.location.replace('../index.html'); }
 
 /* ── Practice a whole atlas map ──────────────────────────────────────────
    "Practice this map" opens #atlasmap/<map id>: every question in this block that

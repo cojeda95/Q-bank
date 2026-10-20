@@ -147,7 +147,7 @@ function mergeSettings(a, b, preferRemote) {
 function mergeAtlas(a, b) {
   a = a || {}; b = b || {};
   const part = (o, k) => (o[k] && typeof o[k] === 'object') ? o[k] : {};
-  const out = { rev: {}, ok: {}, miss: {}, qok: {}, qmiss: {}, box: {}, due: {}, at: {}, known: {}, star: {}, nit: {}, prd: {}, nitm: {} };
+  const out = { rev: {}, ok: {}, miss: {}, qok: {}, qmiss: {}, box: {}, due: {}, at: {}, known: {}, star: {}, nit: {}, prd: {}, nitm: {}, note: {} };
   [a, b].forEach(src => Object.entries(part(src, 'rev')).forEach(([id, t]) => {
     out.rev[id] = Math.max(+out.rev[id] || 0, +t || 0) || t;
   }));
@@ -168,6 +168,13 @@ function mergeAtlas(a, b) {
     const c = out[k][v] || [0, 0]; out[k][v] = [Math.max(c[0], +r[0] || 0), Math.max(c[1], +r[1] || 0)];
   })));
   [a, b].forEach(src => Object.entries(part(src, 'nitm')).forEach(([id, n]) => { out.nitm[id] = Math.max(out.nitm[id] || 0, +n || 0); }));
+  // personal notes on cards ({t: last edit, text}; an emptied note keeps its time, so the deletion syncs too):
+  // the newest edit wins, card by card. The atlas also keeps a copy in mla-notes on each device.
+  [a, b].forEach(src => Object.entries(part(src, 'note')).forEach(([id, n]) => {
+    if (!n || typeof n !== 'object' || typeof n.text !== 'string') return;
+    const t = +n.t || 0;
+    if (!(id in out.note) || t > out.note[id].t) out.note[id] = { t, text: n.text.slice(0, 1000) };
+  }));
   const ids = new Set([a, b].flatMap(src => Object.keys(part(src, 'box')).concat(Object.keys(part(src, 'at')))));
   ids.forEach(id => {
     const ta = +part(a, 'at')[id] || 0, tb = +part(b, 'at')[id] || 0;
