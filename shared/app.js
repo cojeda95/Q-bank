@@ -18,7 +18,7 @@ const homeBtn = document.getElementById('homeBtn');
    shows and hides it) but each screen's breadcrumb does its job, so the stylesheet hides it.
    theme.js adds the ◐ toggle after this runs. */
 const BLOCK_SHORT = { nephro: 'Nephro', psych: 'Psych', neuro: 'Neuro', endocrine: 'Endocrine', eent: 'EENT', pulm: 'Pulm',
-  ortho: 'Ortho', rheum: 'Rheum', omm: 'OMM', gi: 'GI' };
+  ortho: 'Ortho', rheum: 'Rheum', omm: 'OMM', gi: 'GI', gastro: 'Gastro' };
 (function hubHeader() {
   const bar = document.querySelector('.topbar-inner');
   if (!bar) return;
@@ -2366,10 +2366,15 @@ function renderBatchPicker(sdlNumber) {
   });
 
   if (options.length === 0) {
+    // A titled SDL with no questions yet is the coming-soon skeleton. The high-yield
+    // message is only for an SDL that has questions, all filtered out.
+    const emptyMsg = sdl.questions.length
+      ? 'No high-yield questions in this SDL. Turn off High-Yield Only Mode on the Home screen to practice all questions here.'
+      : 'Questions for this SDL are coming soon.';
     main.innerHTML = `
       <button class="back-link" id="backExam">&larr; ${examLabel(examNumber)}</button>
       <h1>${escapeHtml(sdl.title)}</h1>
-      <p class="empty-state">No high-yield questions in this SDL. Turn off High-Yield Only Mode on the Home screen to practice all questions here.</p>
+      <p class="empty-state">${emptyMsg}</p>
     `;
     document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
     return;

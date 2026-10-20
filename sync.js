@@ -37,7 +37,7 @@ const FIREBASE_CONFIG = {
 };
 // ----------------------------------------------------------------------
 
-const BLOCK_KEYS = ['neuro', 'pulm', 'eent', 'endocrine', 'ortho', 'rheum', 'psych', 'nephro', 'omm'];
+const BLOCK_KEYS = ['neuro', 'pulm', 'eent', 'endocrine', 'ortho', 'rheum', 'psych', 'nephro', 'gastro', 'omm'];
 const SUFFIXES = ['flags_v1', 'progress_v1', 'attempts_v1', 'settings_v1'];
 // The Lesion Atlas keeps its review progress (reviewed marks, quiz record and the
 // spaced-review schedule, including question-bank misses) under one key, synced in

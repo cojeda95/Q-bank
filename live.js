@@ -37,6 +37,7 @@ const BLOCKS = [
   { key: 'ortho', label: 'Orthopedics' },
   { key: 'rheum', label: 'Rheumatology' },
   { key: 'nephro', label: 'Nephrology/Urology', batch3Label: 'Batch 3 — Trial: shorter clinical stems + shorter answer choices', batch4Label: 'Batch 4 — Trial: grid answer choices' },
+  { key: 'gastro', label: 'Gastroenterology' },
   { key: 'omm', label: 'OMM III' },
 ];
 
