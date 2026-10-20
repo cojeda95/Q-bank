@@ -110,7 +110,7 @@ sites = [
 readouts = [
   dict(l='Ammonia', mods=[dict(when=O(*UC, 'hep'), d=1), dict(when=O('oro'), d=0)]),
   dict(l='BUN', mods=[dict(when=O(*UC), d=-1)]),
-  dict(l='Orotic acid', mods=[dict(when=O('otc', 'oro'), d=1), dict(when=O('cps'), d=-1)]),
+  dict(l='Orotic acid', mods=[dict(when=O('otc', 'oro'), d=1)]),
   dict(l='Citrulline', mods=[dict(when=O('ass', 'asl'), d=1), dict(when=O('cps', 'otc'), d=-1)]),
   dict(l='Arginine', mods=[dict(when=O('cps', 'otc', 'ass', 'asl'), d=-1), dict(when=O('arg'), d=1)]),
   dict(l='MCV (megaloblastic)', mods=[dict(when=O('oro'), d=1), dict(when=O('otc'), d=0)]),
@@ -120,7 +120,7 @@ notes = {
   '': 'Amino-acid nitrogen leaves the body as urea. NH₃ and CO₂ become carbamoyl phosphate in the mitochondrion (CPS-1, which needs '
       'N-acetylglutamate); OTC adds ornithine to make citrulline; the cytosol finishes the cycle and arginase releases urea.',
   'def:cps': 'CPS-1 or N-acetylglutamate synthase deficiency: carbamoyl phosphate is never made — neonatal hyperammonemic coma like '
-             'OTC deficiency, but citrulline is low and orotic acid is low, not raised.',
+             'OTC deficiency, but citrulline is low and orotic acid is not raised.',
   'def:otc': 'OTC deficiency, the commonest urea cycle disorder (X-linked): carbamoyl phosphate spills into the pyrimidine pathway, so '
              'orotic acid rises with ammonia — but no megaloblastic anemia. Limit protein; benzoate or phenylbutyrate.',
   'def:ass': 'Argininosuccinate synthetase deficiency (citrullinemia): hyperammonemia with very high citrulline and low arginine — each '

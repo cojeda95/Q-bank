@@ -66,7 +66,7 @@ TAG = dict(kors='Korsakoff (thiamine) — mammillary bodies and anterior thalamu
            ca1='anoxia (arrest, drowning, hypoglycemia) — CA1 Sommer sector dies first',
            cing='bilateral anterior cingulate — blunted emotion, akinetic mutism',
            kb='Klüver-Bucy (bilateral amygdala: trauma, surgery, HSV-1) — placid, hyperoral, hypersexual',
-           acc='accumbens lesion — addiction and impulsive behavior', sep='septal infarct — rage behavior in a few patients')
+           acc='nucleus accumbens — gratification site · addiction', sep='septal infarct — rage behavior in a few patients')
 for k, s in TAG.items(): text(s, 1000, 1330, 'nf-l1 dyn-tag', 'middle', when=D(k))
 
 # ════════ hippocampal inset ════════
@@ -108,7 +108,6 @@ readouts = [
   dict(l='Old memories', mods=[dict(when=D('kors'), d=-1), dict(when=D('hippo'), d=0)]),
   dict(l='Short-term recall', mods=[dict(when=D('hippo', 'ca1'), d=0)]),
   dict(l='Fear response', mods=[dict(when=D('kb'), d=-1)]),
-  dict(l='Impulse control', mods=[dict(when=D('acc'), d=-1)]),
   dict(l='Rage / anger', mods=[dict(when=D('sep'), d=1), dict(when=D('kb'), d=-1)]),
 ]
 
@@ -130,8 +129,8 @@ notes = {
              'unresponsive but not in coma.',
   'dx:kb': 'Klüver-Bucy: bilateral temporal lesions abolish the amygdalae — placidity, hyperorality, hyperphagia, hypersexuality, '
            'visual agnosia, hypermetamorphosis. Trauma, temporal lobe surgery, HSV-1 encephalitis.',
-  'dx:acc': 'Nucleus accumbens: VTA dopamine via the medial forebrain bundle makes it a gratification center; lesions → addiction '
-            'and impulsive behavior.',
+  'dx:acc': 'Nucleus accumbens: VTA dopamine via the medial forebrain bundle makes it a gratification center; it is central to reward '
+            'and addiction.',
   'dx:sep': 'Septal nuclei: rage behavior has been seen in a few patients with midline septal infarcts.',
 }
 

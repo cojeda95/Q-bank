@@ -136,7 +136,7 @@ notes = {
                 'dinner fork, radial shortening; usually unites well.',
   'inj:monteggia': 'Monteggia: ulna fracture with radial head dislocation — often missed in children.',
   'inj:galeazzi': 'Galeazzi: radial shaft fracture with distal radioulnar joint disruption — unstable, ORIF.',
-  'inj:ll': 'Little League shoulder: proximal humeral epiphysiolysis in pitchers — rest; pitch-count limits.',
+  'inj:ll': 'Little League shoulder: painful widening of the proximal humeral physis in throwers — an overuse stress fracture.',
 }
 
 dyn = dict(

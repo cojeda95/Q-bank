@@ -140,7 +140,7 @@ PY = cy + 110; PANY = 700
 # ════════ readouts ════════
 O = lambda *k: [f'{SW}:{x}' for x in k]
 readouts = [
-  dict(l='MCV', mods=[dict(when=O('ida', 'acd', 'thal', 'lead', 'sidero'), d=-1), dict(when=O('aplastic', 'ckd', 'hs', 'g6pd', 'aiha'), d=0),
+  dict(l='MCV', mods=[dict(when=O('ida', 'thal', 'lead', 'sidero'), d=-1), dict(when=O('aplastic', 'ckd', 'hs', 'g6pd', 'aiha'), d=0),
                       dict(when=O('b12', 'fol'), d=1)]),
   dict(l='Reticulocyte index', mods=[dict(when=O('ida', 'acd', 'aplastic', 'ckd'), d=-1), dict(when=O('hs', 'g6pd', 'aiha'), d=1)]),
   dict(l='Ferritin', mods=[dict(when=O('ida'), d=-1), dict(when=O('acd', 'sidero'), d=1), dict(when=O('thal'), d=0)]),

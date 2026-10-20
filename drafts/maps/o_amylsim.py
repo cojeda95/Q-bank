@@ -119,8 +119,8 @@ notes = {
   'typ:cal': 'Medullary thyroid carcinoma: the C cells’ calcitonin forms amyloid in the tumor stroma, which stains with Congo red. '
              'Serum calcitonin rises.',
   'typ:amy': 'In type 2 diabetes, amylin co-secreted with insulin deposits as islet amyloid as the β cells fail.',
-  'typ:ttr': 'Transthyretin (carries thyroxine and retinol): wild-type TTR deposits in the heart of men over 70 — the second most '
-             'common systemic amyloid; autosomal dominant variants hit peripheral and autonomic nerves (familial amyloid polyneuropathy) '
+  'typ:ttr': 'Transthyretin (carries thyroxine and retinol): wild-type TTR deposits in the heart of people 70 and older; '
+             'autosomal dominant variants hit peripheral and autonomic nerves (familial amyloid polyneuropathy) '
              'and the heart.',
   'congo': 'Congo red stains amyloid red-orange in ordinary light and gives apple-green birefringence under polarized light — the '
            'diagnostic stain, shared by every type because of the cross-β-pleated fibrils.',

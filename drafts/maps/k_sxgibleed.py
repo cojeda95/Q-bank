@@ -134,7 +134,7 @@ O = lambda *k: [f'{SW}:{x}' for x in k]
 ALL = O('pud', 'var', 'mw', 'div', 'angio', 'meck', 'hem', 'crc', 'uc')
 readouts = [
   dict(l='BUN : creatinine', mods=[dict(when=O('pud', 'var', 'mw'), d=1)]),
-  dict(l='Hemoglobin', mods=[dict(when=ALL, d=-1)]),
+  dict(l='Hemoglobin', mods=[dict(when=O('pud', 'var', 'mw', 'div', 'angio', 'meck', 'crc', 'uc'), d=-1)]),
   dict(l='Platelets', mods=[dict(when=O('var'), d=-1), dict(when=O('uc'), d=1)]),
   dict(l='PT', mods=[dict(when=O('var'), d=1)]),
   dict(l='Ferritin (iron stores)', mods=[dict(when=O('crc', 'angio'), d=-1)]),

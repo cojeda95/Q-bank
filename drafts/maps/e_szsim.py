@@ -128,7 +128,7 @@ sites = [
 readouts = [
   dict(l='Neuronal firing', mods=[dict(when=NOTOK('focal', 'gtc', 'status'), d=1), dict(when=OK('focal', 'gtc', 'status'), d=0),
                                   dict(when=[f'!sz:*&{c}' for c in QUIET], d=-1)]),
-  dict(l='Glutamate release', mods=[dict(when=D('leve') + CA, d=-1)]),
+  dict(l='Glutamate release', mods=[dict(when=D('leve', 'gaba'), d=-1)]),
   dict(l='GABA tone', mods=[dict(when=GABAUP, d=1)]),
   dict(l='Thalamic 3-Hz rhythm', mods=[dict(when=NOTOK('absence'), d=1), dict(when=OK('absence'), d=0), dict(when=['!sz:*&rx:etho'], d=-1)]),
 ]

@@ -119,8 +119,8 @@ notes = {
   'dx:derma': 'Dermatosparaxis EDS: procollagen N-peptidase (ADAMTS2) deficiency — recessive enzyme defect.',
   'dx:menkes': 'Menkes disease: ATP7A copper transport fails, so lysyl oxidase can’t cross-link — kinky hair, hypotonia, developmental '
                'delay, cerebral aneurysms. X-linked recessive.',
-  'dx:vasc': 'Vascular EDS: abnormal type III collagen (COL3A1) — spontaneous rupture of arteries, colon, gravid uterus; skin usually not '
-             'hyperextensible.',
+  'dx:vasc': 'Vascular EDS: abnormal type III collagen (COL3A1) — spontaneous rupture of arteries, colon, gravid uterus; thin, translucent '
+             'skin.',
   'dx:classic': 'Classic EDS: type V collagen (COL5A1/2) — hyperextensible, fragile skin and hypermobile joints. Hypermobile EDS is the '
                 'commonest type; its gene is unknown.',
 }

@@ -93,7 +93,7 @@ for x in range(460, 1260, 140):
     for dx, dy in ((0, 0), (14, 10), (-12, 12), (6, -12)):
         add(f'<circle cx="{x + dx}" cy="{1170 + dy}" r="6" style="fill:var(--ok)"/>', when=O('dh'))
 IF = dict(pv='reticular, net-like IgG around each keratinocyte', bp='linear IgG and C3 along the dermal-epidermal junction',
-          dh='granular IgA at the tips of the dermal papillae', ssss='toxin, not antibody — blisters often culture-negative',
+          dh='granular IgA at the tips of the dermal papillae', ssss='toxin, not antibody',
           ten='usually a drug reaction — T-cell injury, no antibody deposits')
 for k, t in IF.items():
     text(t, 1330, 1176, 'nf-l1', when=O(k))

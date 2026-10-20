@@ -105,7 +105,7 @@ readouts = [
   dict(l='Platelet count', mods=[dict(when=O('itp', 'ttp', 'dic', 'hit'), d=-1), dict(when=O('vwd', 'glanz', 'uremia'), d=0)]),
   dict(l='Bleeding time', mods=[dict(when=O('vwd', 'bss', 'glanz', 'aspirin', 'uremia', 'itp', 'ttp', 'dic'), d=1)]),
   dict(l='PT', mods=[dict(when=O('dic'), d=1), dict(when=O('itp', 'ttp', 'aspirin', 'vwd'), d=0)]),
-  dict(l='PTT', mods=[dict(when=O('dic', 'vwd'), d=1), dict(when=O('itp', 'ttp', 'aspirin'), d=0)]),
+  dict(l='PTT', mods=[dict(when=O('dic'), d=1), dict(when=O('itp', 'ttp', 'aspirin'), d=0)]),
   dict(l='Schistocytes', mods=[dict(when=O('ttp', 'dic'), d=1), dict(when=O('itp'), d=0)]),
 ]
 

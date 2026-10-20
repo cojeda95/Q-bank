@@ -151,7 +151,7 @@ readouts = [
   dict(l='T cells', mods=[m(Z('digeorge', 'scid'), d=-1), m(Z('xla'), d=0)]),
   dict(l='IgG', mods=[m(Z('xla', 'cvid', 'hyperigm', 'scid'), d=-1), m(Z('igadef'), d=0)]),
   dict(l='IgA', mods=[m(Z('igadef', 'xla', 'hyperigm', 'scid'), d=-1), m(Z('wiskott'), d=1)]),
-  dict(l='IgM', mods=[m(Z('xla', 'wiskott'), d=-1), m(Z('hyperigm'), d=1), m(Z('igadef'), d=0)]),
+  dict(l='IgM', mods=[m(Z('xla'), d=-1), m(Z('igadef'), d=0)]),
   dict(l='IgE', mods=[m(Z('job', 'wiskott'), d=1), m(Z('xla', 'hyperigm'), d=-1)]),
   dict(l='Neutrophils', mods=[m(Z('lad'), d=1), m(Z('chediak'), d=-1)]),
 ]
@@ -175,7 +175,7 @@ notes = {
   'id:scid': 'SCID (X-linked common γ chain): IL-7 and IL-15 signals are lost, so T and NK cells fail and B cells cannot work '
              'without help — very low antibody. Failure to thrive, thrush, opportunistic infections; low TRECs on newborn screening.',
   'id:wiskott': 'Wiskott-Aldrich syndrome: WASp remodels actin for lymphocytes and platelets — thrombocytopenia with small '
-                'platelets, eczema, recurrent infections (WATER). IgM low, IgA and IgE high. X-linked.',
+                'platelets, eczema, recurrent infections (WATER). IgA and IgE high; IgG and IgM low to normal. X-linked.',
   'id:job': 'Job syndrome (hyper-IgE, STAT3): no Th17 cells to call neutrophils to skin and mucosa — cold staphylococcal '
             'abscesses, retained baby teeth, coarse facies, eczema, fractures; very high IgE and eosinophilia.',
   'id:lad': 'Leukocyte adhesion deficiency: without CD18 neutrophils roll but cannot adhere and leave the blood — very high '

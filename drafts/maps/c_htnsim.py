@@ -104,7 +104,7 @@ readouts = [
   dict(l='Acute end-organ damage', mods=[dict(when=B('emerg'), d=1)]),
   dict(l='Renin', mods=[dict(when=C('athero', 'fmd'), d=1), dict(when=C('conn'), d=-1)]),
   dict(l='Aldosterone', mods=[dict(when=C('athero', 'fmd', 'conn'), d=1)]),
-  dict(l='Serum K⁺', mods=[dict(when=C('conn'), d=-1)]),
+  dict(l='Serum K⁺', mods=[]),
 ]
 
 notes = {
