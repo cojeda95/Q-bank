@@ -245,9 +245,9 @@ sites = [
 R = lambda l, *mm: dict(l=l, mods=[dict(when=F(*w) if isinstance(w, tuple) else F(w), d=d) for w, d in mm])
 readouts = [
   R('Serum iron', (('ida', 'acd'), -1), (('hh', 'sidero'), 1), (('thal', 'preg'), 0)),
-  R('TIBC', (('ida', 'preg'), 1), (('acd', 'hh', 'sidero'), -1), ('thal', 0)),
+  R('TIBC', (('ida', 'preg'), 1), (('acd', 'hh'), -1), ('thal', 0)),
   R('Ferritin', ('ida', -1), (('acd', 'hh', 'sidero'), 1), (('thal', 'preg'), 0)),
-  R('% saturation', (('ida', 'acd', 'preg'), -1), (('hh', 'sidero'), 1), ('thal', 0)),
+  R('% saturation', (('ida', 'preg'), -1), (('hh', 'sidero'), 1), ('thal', 0)),
   R('FEP', (('ida', 'lead'), 1)),
   R('Reticulocytes', (('ida', 'acd'), -1), ('tx', 1)),
 ]
@@ -278,7 +278,7 @@ notes = {
              'true iron deficiency. Pregnancy also raises iron needs (absorption climbs to 3–4 mg/day), so real iron deficiency is common — '
              'serum ferritin, the store, is the number to check.',
   'fe:tx': 'Treating iron deficiency — oral ferrous salts (sulfate, gluconate, fumarate) correct it as fast as IV iron if absorption is normal; '
-           'reticulocytes rise in about 5–7 days, then hemoglobin climbs. Keep going 3–6 months after the cause is fixed to refill stores. '
+           'reticulocytes rise first, then hemoglobin climbs. Keep going 3–6 months after the cause is fixed to refill stores. '
            'GI upset, black stools. IV iron for malabsorption or CKD on EPO. Find the bleeding source.',
 }
 

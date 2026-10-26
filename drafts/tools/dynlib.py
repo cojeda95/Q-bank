@@ -252,7 +252,9 @@ def check(modname, S=None):
             if not ok(c): P.append(f'{where}: condition {c!r} does not match a switch/option')
     kinds = d.get('kinds', {})
     groups = {g for g, _ in d.get('groups', [])}
-    for k, (g, col) in kinds.items():
+    for k, v in kinds.items():   # [group, colour] or [group, colour, Key label]
+        if not 2 <= len(v) <= 3: P.append(f'kind {k}: want [group, colour, label?]'); continue
+        g, col = v[0], v[1]
         if groups and g not in groups: P.append(f'kind {k}: group {g} not in groups')
         if not re.fullmatch(r'--[a-z0-9-]+', col): P.append(f'kind {k}: colour {col}')
     for s in d.get('switches', []):

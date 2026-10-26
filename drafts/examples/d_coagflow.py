@@ -167,7 +167,7 @@ text('no XI', XI_ + 56, 562, TAG, when=Z('hemc'))
 R = lambda l, *m: dict(l=l, mods=[dict(when=w, d=d) for w, d in m])
 readouts = [
   R('PT', (D('warf'), 1), (D('tpa'), 1), (Z('hema', 'hemb', 'hemc', 'vwd', 'atd'), 0), (Z('vitk', 'dic', 'liver'), 1)),
-  R('PTT', (D('ufh', 'dti', 'tpa'), 1), (Z('hema', 'hemb', 'hemc', 'vitk', 'vwd', 'dic', 'liver'), 1), (Z('atd'), 0), (['dz:atd&rx:ufh'], -1)),
+  R('PTT', (D('ufh', 'dti', 'tpa'), 1), (Z('hema', 'hemb', 'hemc', 'vitk', 'dic', 'liver'), 1), (Z('atd'), 0), (['dz:atd&rx:ufh'], -1)),
   R('Bleeding time', (Z('hema', 'hemb', 'hemc', 'vitk'), 0), (Z('vwd', 'dic'), 1)),
   R('Platelet count', (D('tpa'), 0), (Z('hema', 'hemb', 'hemc', 'vwd'), 0), (Z('dic', 'liver'), -1)),
   R('D-dimer', (Z('hema', 'hemb', 'hemc', 'vwd'), 0), (Z('dic'), 1))]

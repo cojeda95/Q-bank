@@ -52,9 +52,19 @@
 #   subtype, minimal for HNF1α, high for β-catenin-activated) · hemangioma (no source states a risk either way).
 # Cut: hepatoblastoma (Robbins only, not in FA), GIST (FA one line only, not in the spec), HCC polycythemia (not in Robbins
 #   ch 18 or FA p. 399), Courvoisier for cholangiocarcinoma (Bootcamp only; a hilar tumor sits above the cystic duct).
+# m57 pins (pins3.md P5 + cardgap #11): "Hepatic adenoma" → "Hepatocellular adenoma" (the course and Robbins term; FA p. 399
+#   says hepatic adenoma); "HCC · hepatocellular carcinoma"; + focal nodular hyperplasia (FA p. 399: second commonest benign
+#   liver tumor, women 35–50, reaction to an aberrant dystrophic artery, central stellate scar; Robbins ch 18 / GI Exam 1 lecture
+#   notes SDL 17: radiating septa, map-like glutamine synthetase stain, no malignant change or rupture); + fibrolamellar HCC
+#   (Robbins ch 18 / lecture notes SDL 17: adolescents and young adults without liver disease or cirrhosis, DNAJB1–PRKACA
+#   fusion → protein kinase A, oncocytic cells in lamellar collagen, AFP not raised, up to 40% survive ≥ 10 years);
+#   + new card pancysts and three options — serous cystic neoplasm, mucinous cystic neoplasm, IPMN (Robbins ch 19 in the course
+#   text, course_sdl_19_patho pp. 21–25, and the lecture notes SDL 19 section 3; First Aid has no pancreatic cyst entry).
+#   Arrows: AFP "–" (0) for fibrolamellar (AFP negative); cancer risk ↑ for MCN and IPMN (precancerous); none for serous
+#   ("almost always benign") or FNH (no malignant risk) — left "–".
 import sys, re, math
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
-from common import full
+from common import full, card
 
 RB17, RB18, RB19 = full('Robbins', 17), full('Robbins', 18), full('Robbins', 19)
 BC = 'Bootcamp.com Gastroenterology — '
@@ -262,6 +272,13 @@ text('may bleed or rupture — pain, shock', 570, 590, TAG, when=O('had'))
 add(''.join(blob(x, y, r, r * .8, 'fill:var(--dk2);fill-opacity:.5;stroke:var(--bad);stroke-width:3') for x, y, r in ((680, 770, 22), (760, 820, 16), (840, 720, 18), (640, 850, 14)))
     + ring(740, 790, 130, 90), when=O('angio'))
 text('endothelial tumor — many bloody foci', 570, 590, TAG, when=O('angio'))
+add(blob(840, 750, 44, 38, 'fill:var(--dk6);fill-opacity:.35;stroke:var(--dk6);stroke-width:4') +
+    ''.join(f'<path d="M840 750 L{840 + 40 * math.cos(math.radians(a)):.0f} {750 + 34 * math.sin(math.radians(a)):.0f}" style="stroke:var(--ink-2);stroke-width:4"/>'
+            for a in range(0, 360, 60)) + ring(840, 750, 74, 66), when=O('fnh'))
+text('central stellate scar — a reaction to an aberrant artery', 570, 590, TAG, when=O('fnh'))
+add(blob(720, 790, 50, 44) + ''.join(f'<path d="M{684 + i * 18} {766 + (i % 2) * 6} q12 24 0 48" style="fill:none;stroke:var(--ink-2);stroke-width:3;opacity:.7"/>' for i in range(4))
+    + ring(720, 790, 84, 76), when=O('fl'))
+text('one demarcated nodule — no cirrhosis', 570, 590, TAG, when=O('fl'))
 LIVMET = O('crcl', 'crcr', 'net', 'panc')
 add(''.join(f'<circle cx="{x}" cy="{y}" r="12" style="fill:var(--dk4);fill-opacity:.5;stroke:var(--bad);stroke-width:2"/>'
             for x, y in ((650, 780), (740, 840), (820, 730), (680, 870))), when=LIVMET)
@@ -281,6 +298,19 @@ text('hilar tumor · bile dammed upstream', 880, 860, TAG, when=O('chol'))
 add(blob(920, 1112, 40, 34) + ring(920, 1110, 70, 60), when=O('panc'))
 text('head mass squeezes the bile duct', 1320, 1160, TAG, when=O('panc'))
 text('Courvoisier: big, painless GB', 700, 1022, TAG, 'end', when=O('panc'))
+# pancreatic cystic neoplasms
+add(''.join(f'<circle cx="{x}" cy="{y}" r="7" style="fill:var(--surface);stroke:var(--dk5);stroke-width:2.5"/>'
+            for x, y in ((1236, 1056), (1250, 1056), (1243, 1068), (1257, 1068), (1229, 1068), (1236, 1080), (1250, 1080)))
+    + ring(1243, 1068, 40, 32), when=O('scn'))
+text('honeycomb of tiny cysts in the tail', 1320, 1160, TAG, 'end', when=O('scn'))
+add(''.join(f'<circle cx="{x}" cy="{y}" r="{r}" style="fill:var(--dk5);fill-opacity:.25;stroke:var(--dk5);stroke-width:3"/>'
+            for x, y, r in ((1230, 1062, 22), (1262, 1060, 16), (1248, 1088, 14)))
+    + ring(1245, 1068, 50, 42), when=O('mcn'))
+text('large mucin-filled cysts in the tail', 1320, 1160, TAG, 'end', when=O('mcn'))
+add('<path d="M900 1075 C1000 1072 1150 1062 1280 1060" style="fill:none;stroke:var(--dk5);stroke-width:14;opacity:.55"/>'
+    + ''.join(f'<path d="M{x} 1070 l6 -10 l6 10" style="fill:none;stroke:var(--dk4);stroke-width:3"/>' for x in (930, 980, 1030, 1080))
+    + blob(930, 1080, 26, 20, 'fill:var(--dk5);fill-opacity:.3;stroke:var(--dk5);stroke-width:3') + ring(940, 1076, 62, 46), when=O('ipmn'))
+text('dilated main duct with papillae — head', 1320, 1160, TAG, 'end', when=O('ipmn'))
 JAUND = O('panc', 'chol', 'hcc')
 
 # ════════ the road to cancer (right column) ════════
@@ -323,12 +353,20 @@ ROAD = {
   'hem': (1, [('Cavernous hemangioma', 'a venous malformation · the commonest benign liver tumor')]),
   'had': (2, [('Oral contraceptives · anabolic steroids', ''), ('Hepatocellular adenoma', 'may regress or rupture'),
               ('HCC — uncommon', 'mainly β-catenin-activated adenomas')]),
+  'fnh': (2, [('Altered arterial flow', 'an aberrant, dystrophic artery'), ('Focal nodular hyperplasia', 'hepatocytes react — not a neoplasm')]),
+  'fl': (3, [('No cirrhosis · no liver disease', 'adolescents and young adults'), ('DNAJB1–PRKACA fusion', 'protein kinase A overactive'),
+             ('Fibrolamellar HCC', 'oncocytic cells in lamellar collagen')]),
   'angio': (2, [('Vinyl chloride · arsenic', 'also thorotrast'), ('Hepatic angiosarcoma', 'malignant endothelium · almost always fatal')]),
   'gbca': (4, [('Gallstones', 'in 95% of cases'), ('Chronic cholecystitis', 'porcelain gallbladder'),
                ('Dysplasia · metaplasia', 'flat in situ lesions'), ('Adenocarcinoma', 'fundus · found late')]),
   'chol': (2, [('Chronic duct inflammation', 'PSC (with UC) · liver fluke (Clonorchis)'), ('Cholangiocarcinoma', 'hilum most often · KRAS')]),
   'panc': (5, [('Normal duct', ''), ('Low-grade PanIN', 'KRAS — the first hit'), ('PanIN', 'CDKN2A (p16) lost'),
                ('High-grade PanIN', 'TP53, SMAD4, BRCA2 lost'), ('Invasive adenocarcinoma', '60% in the head')]),
+  'scn': (2, [('VHL inactivated', 'chromosome 3p'), ('Serous cystic neoplasm', 'almost always benign')]),
+  'mcn': (2, [('KRAS (about half) · RNF43', 'mucinous columnar lining on ovarian-type stroma'), ('Mucinous cystic neoplasm', 'precancerous'),
+              ('Invasive adenocarcinoma', 'in up to a third · TP53, SMAD4')]),
+  'ipmn': (2, [('KRAS (~80%) · GNAS (~⅔)', 'GNAS: in no other pancreatic cyst'), ('IPMN', 'in the main or a branch duct'),
+               ('Invasive adenocarcinoma', 'TP53, SMAD4 on invasion')]),
 }
 for k, (reach, steps) in ROAD.items():
     svg = ''
@@ -374,12 +412,21 @@ INFO = {
           'hematogenous spread · ultrasound screening in cirrhosis'],
   'hem': ['subcapsular, usually < 2 cm · age 30–50', 'incidental on imaging', 'biopsy is contraindicated — it bleeds'],
   'had': ['young women on oral contraceptives', 'anabolic steroids too', 'may regress when the drug stops, or rupture'],
+  'fnh': ['women 35–50 · second commonest benign liver tumor', 'central stellate scar, radiating septa · map-like GS stain',
+          'no malignant change, no rupture · left alone'],
+  'fl': ['adolescents and young adults · no cirrhosis', 'AFP not raised · DNAJB1–PRKACA fusion', 'resectable — up to 40% live 10 years or more'],
   'angio': ['rare, malignant', 'PVC-pipe workers (vinyl chloride), arsenic', 'almost uniformly fatal'],
   'gbca': ['fundus · women at least 2× · Chile, northern India', 'mimics gallstone disease · found late',
            'spreads into the liver and porta hepatis nodes · 5-yr survival < 10%'],
   'chol': ['where the right and left hepatic ducts meet', 'painless obstructive jaundice, weight loss', 'desmoplastic stroma around the glands'],
   'panc': ['head of the pancreas', 'painless jaundice + palpable gallbladder (Courvoisier) · Trousseau',
            'smoking (strongest), chronic pancreatitis, diabetes · survival about 1 year'],
+  'scn': ['pancreatic tail · women 2× · age 50–70', 'honeycomb of 1–3 mm cysts · glycogen-rich cuboidal cells, clear fluid',
+          'almost always benign · resection cures'],
+  'mcn': ['pancreatic tail · about 95% women', 'thick mucin · columnar lining over ovarian-type stroma (ER/PR+)',
+          'precancerous — resect early'],
+  'ipmn': ['pancreatic head · men more often · up to 20% multifocal', 'in the main or branch ducts · no ovarian stroma',
+           'precancerous — find and resect early'],
 }
 KEYS = ('Where', 'Clue', 'Then')
 for k, rows in INFO.items():
@@ -496,6 +543,12 @@ notes = {
                'subcapsular and found by chance at age 30–50. Biopsy is contraindicated because it bleeds.',
   O('had')[0]: 'Hepatocellular adenoma: a rare benign tumor of young women on oral contraceptives, or of anabolic steroid users. '
                'It may regress, or rupture with abdominal pain and shock; β-catenin-activated adenomas can turn into HCC.',
+  O('fnh')[0]: 'Focal nodular hyperplasia: the second commonest benign liver tumor, mostly in women aged 35–50 — not a neoplasm but '
+               'a hyperplastic reaction of hepatocytes to an aberrant, dystrophic artery. A central stellate scar with radiating '
+               'septa; usually found by chance. No malignant change and no rupture.',
+  O('fl')[0]: 'Fibrolamellar HCC: a variant in adolescents and young adults with no cirrhosis or other liver disease, driven by a '
+              'DNAJB1–PRKACA fusion (overactive protein kinase A). Oncocytic tumor cells sit in lamellar bands of collagen. AFP is '
+              'not raised; resection is possible, and up to 40% live 10 years or more.',
   O('angio')[0]: 'Hepatic angiosarcoma: a rare malignant tumor of the liver’s endothelium, tied to vinyl chloride (PVC '
                  'manufacture), arsenic and thorotrast. It is almost uniformly fatal.',
   O('gbca')[0]: 'Gallbladder adenocarcinoma: gallstones are present in 95%, though only 1–2% of stone carriers get it; a porcelain '
@@ -507,17 +560,26 @@ notes = {
   O('panc')[0]: 'Pancreatic adenocarcinoma: PanIN steps from KRAS to CDKN2A to TP53/SMAD4. Most arise in the head and squeeze the '
                 'bile duct: painless jaundice with a palpable, nontender gallbladder (Courvoisier), pain to the back, Trousseau '
                 'thrombophlebitis. CA 19-9 is the marker; smoking is the strongest risk.',
+  O('scn')[0]: 'Serous cystic neoplasm (serous cystadenoma): usually in the pancreatic tail, twice as common in women, age 50–70 — a '
+               'honeycomb of 1–3 mm cysts lined by glycogen-rich cuboidal cells with clear, thin fluid. VHL is inactivated. Almost '
+               'always benign; resection cures.',
+  O('mcn')[0]: 'Mucinous cystic neoplasm: about 95% in women, in the pancreatic tail, painless and slow-growing. Large cysts of thick '
+               'mucin, lined by mucinous columnar cells over a dense ovarian-type stroma (ER/PR+). Precancerous — up to a third '
+               'harbor invasive adenocarcinoma, so it is resected early.',
+  O('ipmn')[0]: 'Intraductal papillary mucinous neoplasm (IPMN): more often men, in the pancreatic head, inside the main duct or a '
+                'branch duct, up to 20% multifocal; no ovarian stroma. GNAS mutations (about two-thirds) are found in no other '
+                'pancreatic cyst. Precancerous — found and resected before it invades.',
 }
 
 R = lambda when, d: dict(when=when if isinstance(when, list) else [when], d=d)
 readouts = [
-  dict(l='AFP', mods=[R(O('hcc'), 1)]),
+  dict(l='AFP', mods=[R(O('hcc'), 1), R(O('fl'), 0)]),
   dict(l='CEA', mods=[R(O('crcl', 'crcr', 'panc', 'gbca', 'chol'), 1)]),
   dict(l='CA 19-9', mods=[R(O('panc', 'gbca', 'chol'), 1)]),
   dict(l='Urine 5-HIAA', mods=[R(O('net'), 1)]),
   dict(l='Bilirubin', mods=[R(JAUND, 1)]),
   dict(l='Hemoglobin', mods=[R(O('crcr'), -1)]),
-  dict(l='Cancer risk', mods=[R(O('tub', 'vil', 'ssp', 'fap', 'pj', 'jp', 'lynch'), 1)]),
+  dict(l='Cancer risk', mods=[R(O('tub', 'vil', 'ssp', 'fap', 'pj', 'jp', 'lynch', 'mcn', 'ipmn'), 1)]),
 ]
 
 OPTS = [
@@ -530,14 +592,37 @@ OPTS = [
   ['fap', 'FAP (APC)', 'fap'], ['pj', 'Peutz-Jeghers', 'polyposis'], ['jp', 'Juvenile polyposis', 'polyposis'],
   ['lynch', 'Lynch syndrome (MSI)', 'lynch'],
   ['crcl', 'Colorectal — left-sided', 'crc'], ['crcr', 'Colorectal — right-sided', 'crc'],
-  ['hcc', 'Hepatocellular carcinoma', 'hcc'], ['hem', 'Hepatic hemangioma', 'livertumors'], ['had', 'Hepatic adenoma', 'livertumors'],
+  ['hcc', 'HCC · hepatocellular carcinoma', 'hcc'], ['fl', 'Fibrolamellar HCC', 'hcc'], ['hem', 'Hepatic hemangioma', 'livertumors'],
+  ['fnh', 'Focal nodular hyperplasia', 'livertumors'], ['had', 'Hepatocellular adenoma', 'livertumors'],
   ['angio', 'Hepatic angiosarcoma', 'angiosarcoma'],
   ['gbca', 'Gallbladder carcinoma', 'gbca'], ['chol', 'Cholangiocarcinoma', 'cholangio'], ['panc', 'Pancreatic adenocarcinoma', 'pancca'],
+  ['scn', 'Serous cystic neoplasm', 'pancysts'], ['mcn', 'Mucinous cystic neoplasm', 'pancysts'],
+  ['ipmn', 'IPMN · intraductal papillary mucinous neoplasm', 'pancysts'],
 ]
 SECTIONS = [['Esophagus', ['escc', 'eac']], ['Stomach', ['gint', 'gdif', 'malt']], ['Small bowel', ['net']],
             ['Colon polyps', ['hyp', 'tub', 'vil', 'ssp']], ['Inherited syndromes', ['fap', 'pj', 'jp', 'lynch']],
-            ['Colorectal cancer', ['crcl', 'crcr']], ['Liver', ['hcc', 'hem', 'had', 'angio']],
-            ['Gallbladder, ducts & pancreas', ['gbca', 'chol', 'panc']]]
+            ['Colorectal cancer', ['crcl', 'crcr']], ['Liver', ['hcc', 'fl', 'hem', 'fnh', 'had', 'angio']],
+            ['Gallbladder, ducts & pancreas', ['gbca', 'chol', 'panc', 'scn', 'mcn', 'ipmn']]]
+
+# ════════ new card (m57 cardgap #11) ════════
+card('pancysts', 'Pancreatic cystic neoplasms — serous, mucinous & IPMN', 'dz', 'gtLiver',
+     'Serous is benign; mucinous cystic neoplasm and IPMN are precancerous', 0,
+     '<b>Serous cystic neoplasms</b> are almost always benign. <b>Mucinous cystic neoplasms (MCN)</b> and <b>IPMNs</b> are '
+     'precancerous: they can progress to invasive adenocarcinoma, so they are found and removed early.',
+     ['<b>Serous</b>: pancreatic tail, women 2×, age 50–70; honeycomb of 1–3 mm cysts, glycogen-rich cuboidal cells, thin clear '
+      'fluid; VHL inactivated',
+      '<b>MCN</b>: ~95% women, tail, painless and slow-growing; thick mucin, columnar mucinous lining over a dense '
+      '<b>ovarian-type stroma</b> (ER/PR+); up to one-third harbor invasive cancer',
+      '<b>IPMN</b>: men more often, head; inside the main or a branch duct; no ovarian stroma; up to 20% multifocal',
+      'Genes: MCN KRAS (~half) and RNF43; IPMN KRAS (~80%) and <b>GNAS</b> (~two-thirds, in no other pancreatic cyst); '
+      'TP53 and SMAD4 only on invasion'],
+     ['—'],
+     ['Ovarian stroma = MCN; GNAS = IPMN; honeycomb = serous'],
+     [RB19],
+     ['MCN and IPMN: early resection, before invasive cancer', 'Serous: resection is curative when it causes symptoms'],
+     ['mucinous cystic neoplasm', 'mcn', 'intraductal papillary mucinous neoplasm', 'ipmn', 'serous cystic neoplasm',
+      'serous cystadenoma', 'ovarian type stroma', 'ovarian-type stroma'],
+     alias='MCN · IPMN · serous cystadenoma', fa='')
 
 PX = 2420
 dyn = dict(
@@ -551,7 +636,7 @@ MAP = dict(
   id='gitumsim', title='GI Cancers along the Tube in Motion', topic='gi', after='gitract',
   sub='The tube from esophagus to rectum, with liver, gallbladder and pancreas — light one cancer, polyp or syndrome to see its '
       'site, what it blocks, where it spreads, and its precursor road (APC → KRAS → TP53, serrated/MSI, Barrett, PanIN, '
-      'cirrhosis); read AFP, CEA, CA 19-9, 5-HIAA, bilirubin and hemoglobin. Tap a site for its card',
+      'cirrhosis, mucinous cysts); read AFP, CEA, CA 19-9, 5-HIAA, bilirubin and hemoglobin. Tap a site for its card',
   w=3500, h=2080,
   fa='220, 221, 222, 357, 385, 386, 394, 395, 399, 402, 403, 404, 405, 435', src=SRC,
   lanes=[('gtUpper', 'Esophagus & stomach', 'glycolysis'), ('gtBowel', 'Small bowel & colon', 'tca'),
@@ -561,11 +646,11 @@ MAP = dict(
     ('gt1', 'Esophageal cancer', 260, 200, 'gtUpper', 'squamous ⅔ · adeno ⅓', ['esophca', 'barrett'], 'hub'),
     ('gt2', 'Gastric adenocarcinoma', 260, 320, 'gtUpper', 'intestinal · diffuse', ['gastricca', 'hpylori']),
     ('gt3', 'Gastric MALT lymphoma', 260, 440, 'gtUpper', 't(11;18)', ['malt']),
-    ('gt4', 'Hepatocellular carcinoma', 260, 600, 'gtLiver', 'cirrhosis · HBV · aflatoxin', ['hcc']),
+    ('gt4', 'Hepatocellular carcinoma', 260, 600, 'gtLiver', 'cirrhosis · HBV · fibrolamellar', ['hcc']),
     ('gt5', 'Benign liver tumors', 260, 720, 'gtLiver', 'hemangioma · FNH · adenoma', ['livertumors']),
     ('gt6', 'Hepatic angiosarcoma', 260, 840, 'gtLiver', 'vinyl chloride · arsenic', ['angiosarcoma']),
     ('gt7', 'Gallbladder · bile ducts', 260, 960, 'gtLiver', 'porcelain GB · Klatskin', ['gbca', 'cholangio']),
-    ('gt8', 'Pancreatic adenocarcinoma', 260, 1080, 'gtLiver', 'head · CA 19-9 · Courvoisier', ['pancca'], 'hub'),
+    ('gt8', 'Pancreatic cancer & cysts', 260, 1080, 'gtLiver', 'PanIN · MCN · IPMN · CA 19-9', ['pancca', 'pancysts'], 'hub'),
     ('gt9', 'Small-bowel carcinoid', 260, 1240, 'gtBowel', '5-HT · 5-HIAA', ['carcinoid']),
     ('gt10', 'Colonic polyps', 260, 1360, 'gtBowel', 'hyperplastic · adenoma · serrated', ['polyps'], 'hub'),
     ('gt11', 'FAP & polyposis', 260, 1480, 'gtBowel', 'APC · STK11 · SMAD4', ['fap', 'polyposis']),

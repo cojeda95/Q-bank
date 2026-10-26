@@ -59,7 +59,7 @@ GL = dict(ins='low — Whipple triad', gluc='high', som='high (insulin suppresse
 for d, s in GL.items(): text(s, 1900, 680, 'nf-l1 dyn-tag', 'middle', when=D(d))
 TAG = dict(ins='insulinoma — insulin ↑ and C-peptide ↑ while glucose falls · confusion, syncope · resect, or diazoxide',
            gluc='glucagonoma — 6 D’s: dermatitis (necrolytic migratory erythema), diabetes, DVT, declining weight, depression, diarrhea',
-           som='somatostatinoma — the brake stuck on: diabetes, gallstones (no CCK), steatorrhea, achlorhydria (no gastrin)',
+           som='somatostatinoma — the brake stuck on: diabetes, gallstones (no CCK), steatorrhea, achlorhydria (FA) or hypochlorhydria (Robbins) — no gastrin',
            vip='VIPoma — WDHA: watery diarrhea that continues fasting, hypokalemia, achlorhydria · a secretory diarrhea',
            zes='gastrinoma (Zollinger-Ellison) — multiple refractory ulcers in duodenum and jejunum; gastrin rises after secretin')
 for k, s in TAG.items(): text(s, 1100, 1480, 'nf-l1 dyn-tag', 'middle', when=D(k))
@@ -105,7 +105,7 @@ notes = {
   'dx:gluc': 'Glucagonoma: α-cell glucagon drives glycogenolysis and gluconeogenesis — 6 D’s: necrolytic migratory erythema, '
              'diabetes, DVT, declining weight, depression, diarrhea; anemia. Resect; octreotide.',
   'dx:som': 'Somatostatinoma: the brake stuck on — insulin, glucagon, gastrin, CCK, secretin and GIP all suppressed: diabetes, '
-            'gallstones, steatorrhea, achlorhydria. Resect; octreotide.',
+            'gallstones, steatorrhea, achlorhydria (First Aid) or hypochlorhydria (Robbins). Resect; octreotide.',
   'dx:vip': 'VIPoma: VIP raises cAMP in the gut epithelium (like cholera) and inhibits acid — WDHA: watery diarrhea that continues '
             'fasting, hypokalemia, achlorhydria; flushing. Resect; octreotide when it can’t all come out.',
   'dx:zes': 'Zollinger-Ellison: a gastrinoma (duodenum, else pancreas) drives relentless acid — multiple refractory ulcers, '

@@ -4,6 +4,14 @@
 # with bile running the other way. A `dx` switch blocks or injures it: cirrhosis (inside the liver), portal vein thrombosis
 # (before), Budd-Chiari (after — nutmeg liver), TIPS, and zone hits (viral hepatitis zone 1, yellow fever zone 2, ischemia and
 # acetaminophen zone 3). 5 readouts. Facts from the pinned cards; FA pages in `fa`. No new cards.
+# m57: zone options relabelled with the zone names First Aid p. 374 and the course (Robbins ch 18, Pawlina ch 18) use —
+#   periportal (zone 1), midzonal / intermediate (zone 2), pericentral/centrilobular (zone 3) — so questions that name them find
+#   the option. "Midzonal" is the course's word (GI Exam 1 lecture notes, SDL 12: "Zone 2 (Midzonal)", "Zone 3 (Pericentral /
+#   Centrilobular)"); "intermediate" is FA 374's and Bootcamp's.
+# m58 pins (P12): + "Esophageal varices — left gastric → azygos" {portosys} (First Aid p. 372: esophagus, left gastric ↔
+#   esophageal draining to the azygos; GI Exam 1 lecture notes pp. 43–44: portal pressure diverts blood into collaterals, left
+#   gastric (coronary) vein → esophageal veins → azygos, distal subepithelial/submucosal plexus dilates, varices in ~40–60% of
+#   cirrhotics, rupture → hematemesis). Readouts: portal pressure ↑, varices ↑.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -68,6 +76,10 @@ for k, ((x, y), l) in ANA.items():
     add(f'<circle cx="{x}" cy="{y}" r="22" style="fill:var(--nf-h2o);fill-opacity:.35;stroke:var(--dk9);stroke-width:3"/>', unless=PORTAL_HTN)
     add(f'<circle cx="{x}" cy="{y}" r="38" style="fill:var(--bad);fill-opacity:.35;stroke:var(--bad);stroke-width:4"/>', when=PORTAL_HTN)
     text(l, x - 40, y + 6, 'nf-l2', 'end')
+# m58: esophageal varices — the esophageal anastomosis alone, lit
+add('<circle cx="520" cy="300" r="38" style="fill:var(--bad);fill-opacity:.35;stroke:var(--bad);stroke-width:4"/>'
+    '<circle cx="520" cy="300" r="54" style="fill:none;stroke:var(--accent);stroke-width:5"/>', when=D('var'))
+text('dilated submucosal veins of the distal esophagus', 480, 350, 'nf-l2', 'end', when=D('var'))
 
 # ════════ lobule ════════
 LX, LY = 1720, 780
@@ -89,6 +101,7 @@ TAG = dict(cirr='cirrhosis — stellate-cell fibrosis around nodules; resistance
            bc='Budd-Chiari — hepatic veins blocked: congested zone 3 (nutmeg), big painful liver, ascites, no JVD',
            tips='TIPS — portal vein to hepatic vein, bypassing the liver: can precipitate encephalopathy',
            viral='zone 1 — viral hepatitis, ingested toxins (cocaine)', yf='zone 2 — yellow fever',
+           var='esophageal varices — left gastric (coronary) vein → esophageal veins → azygos: rupture → hematemesis',
            isch='zone 3 — ischemia (congestive hepatopathy): least oxygen', apap='zone 3 — acetaminophen: CYP2E1 makes NAPQI; N-acetylcysteine')
 for k, s in TAG.items(): text(s, 1150, 1480, 'nf-l1 dyn-tag', 'middle', when=D(k))
 
@@ -101,7 +114,8 @@ flows = [
   dict(d=f'M{LV[0] + 150} {LV[1] - 100} C850 380 920 360 980 360 V240', len=420, speed=120, r=9, base=dict(hv=3), mods=[m(D('bc', 'cirr', 'pvt'), set=dict(hv=1))]),
   dict(d='M700 900 C760 900 900 820 980 700', len=330, speed=140, r=9, base=dict(pv=4), when=D('tips')),
 ] + [dict(d=f'M680 {y0} C620 {y0} 580 {y1} 540 {y1}', len=170, speed=90, r=8, base=dict(pv=3), when=PORTAL_HTN)
-      for y0, y1 in ((640, 300), (880, 860), (1180, 1280))]
+      for y0, y1 in ((640, 300), (880, 860), (1180, 1280))] + [
+  dict(d='M680 640 C620 640 580 300 540 300', len=170, speed=90, r=8, base=dict(pv=4), when=D('var'))]
 for a in (0, 120, 240):
     x, y = LX + 330 * math.cos(math.radians(a)), LY + 330 * math.sin(math.radians(a))
     flows.append(dict(d=f'M{x:.0f} {y:.0f} L{LX} {LY}', len=330, speed=80, r=8, base=dict(pv=2), mods=[m(D('bc'), speed=0.2)]))
@@ -115,8 +129,8 @@ sites = [dict(x=LV[0] - 300, y=LV[1] - 120, n=[-1, -1], w=10, t='rec', l='', ari
          dict(x=LX - 360, y=LY, n=[-1, 0], w=10, t='rec', l='', aria='Acetaminophen', c='acetaminophen', ions=[])]
 
 readouts = [
-  dict(l='Portal pressure', mods=[dict(when=PORTAL_HTN, d=1), dict(when=D('tips'), d=-1)]),
-  dict(l='Varices · caput medusae', mods=[dict(when=PORTAL_HTN, d=1)]),
+  dict(l='Portal pressure', mods=[dict(when=PORTAL_HTN + D('var'), d=1), dict(when=D('tips'), d=-1)]),
+  dict(l='Varices · caput medusae', mods=[dict(when=PORTAL_HTN + D('var'), d=1)]),
   dict(l='Liver size', mods=[dict(when=D('bc'), d=1), dict(when=D('pvt'), d=0)]),
   dict(l='Ascites', mods=[dict(when=PORTAL_HTN, d=1)]),
   dict(l='Encephalopathy risk', mods=[dict(when=D('tips', 'cirr'), d=1)]),
@@ -124,7 +138,7 @@ readouts = [
 ]
 
 notes = {
-  '': 'About 80% of liver blood comes by the portal vein, 20% by the hepatic artery; it crosses each lobule from the portal triad '
+  '': 'Most liver blood comes by the portal vein, the rest by the hepatic artery — about 80/20 by First Aid, 70–75/25–30 by the GI course, 60–70/30–40 by Robbins; it crosses each lobule from the portal triad '
       '(zone 1) to the central vein (zone 3), so oxygen falls along the way while bile runs the other direction.',
   'dx:cirr': 'Cirrhosis: stellate cells lay down bridging fibrosis around regenerative nodules — resistance inside the liver → '
              'portal hypertension: varices, caput medusae, anorectal varices, splenomegaly, ascites.',
@@ -134,8 +148,12 @@ notes = {
            'painful hepatomegaly, ascites, varices; no JVD. Polycythemia vera, hypercoagulability, postpartum, HCC.',
   'dx:tips': 'TIPS joins the portal vein to a hepatic vein, bypassing the liver — lowers portal pressure, can precipitate hepatic '
              'encephalopathy.',
+  'dx:var': 'Esophageal varices: high portal pressure diverts portal blood into collaterals. At the esophagogastric junction it '
+            'shunts from the left gastric (coronary) vein into esophageal veins that drain to the azygos system; the submucosal '
+            'plexus of the distal esophagus dilates. Varices form in about 40–60% of cirrhotic patients and can rupture — '
+            'massive hematemesis.',
   'dx:viral': 'Zone 1 (periportal): first hit by viral hepatitis and ingested toxins such as cocaine; best oxygenated.',
-  'dx:yf': 'Zone 2 (intermediate): yellow fever.',
+  'dx:yf': 'Zone 2 (midzonal, intermediate): yellow fever.',
   'dx:isch': 'Zone 3 (pericentral): least oxygen — first hit by ischemia (congestive hepatopathy); site of alcoholic hepatitis.',
   'dx:apap': 'Acetaminophen: zone 3 is richest in CYP450 (CYP2E1) — overdose saturates conjugation, NAPQI outruns glutathione. '
              'Alcohol lowers the threshold. N-acetylcysteine.',
@@ -145,8 +163,9 @@ dyn = dict(
   kinds=dict(pv=['mov', '--dk9'], hv=['mov', '--nf-h2o'], bile=['mov', '--dk5']), groups=[['mov', 'Portal blood · hepatic venous · bile']],
   switches=[dict(id='dx', label='Problem', type='one', options=[
               ['cirr', 'Cirrhosis', 'cirrhosis'], ['pvt', 'Portal vein thrombosis', 'buddchiari'], ['bc', 'Budd-Chiari', 'buddchiari'],
-              ['tips', 'TIPS', 'portosys'], ['viral', 'Zone 1 — viral hepatitis', 'liverzones'], ['yf', 'Zone 2 — yellow fever', 'liverzones'],
-              ['isch', 'Zone 3 — ischemia', 'liverzones'], ['apap', 'Zone 3 — acetaminophen', 'acetaminophen']])],
+              ['tips', 'TIPS', 'portosys'], ['var', 'Esophageal varices — left gastric → azygos', 'portosys'], ['viral', 'Zone 1 · periportal — viral hepatitis', 'liverzones'], ['yf', 'Zone 2 · midzonal · intermediate — yellow fever', 'liverzones'],
+              ['isch', 'Zone 3 · pericentral · centrilobular — ischemia', 'liverzones'],
+              ['apap', 'Zone 3 · pericentral · centrilobular — acetaminophen', 'acetaminophen']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
   src='First Aid pp. 372, 374, 396–397, 495 · Robbins ch 18')

@@ -172,7 +172,7 @@ notes = {
             'high IgG and plasma cells in the infiltrate.',
   'dx:stone': 'Choledocholithiasis: a stone in the common bile duct raises ALP, GGT, direct bilirubin and the aminotransferases. '
               'Ultrasound first; it can cause pancreatitis and cholangitis.',
-  'dx:pbc': 'Primary biliary cholangitis: autoimmune destruction of small intralobular ducts in a middle-aged woman — itch and '
+  'dx:pbc': 'Primary biliary cholangitis: autoimmune destruction of small interlobular ducts in a middle-aged woman — itch and '
             'fatigue, antimitochondrial antibody, ↑ ALP and IgM.',
   'dx:psc': 'Primary sclerosing cholangitis: onion-skin fibrosis beads the large ducts in a man with ulcerative colitis — p-ANCA, '
             'cholestatic enzymes, cholangiocarcinoma risk.',

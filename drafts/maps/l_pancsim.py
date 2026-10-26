@@ -5,6 +5,12 @@
 # calcium soaps, and a gallstone at the ampulla stops bile and juice. Chronic pancreatitis draws fibrosis and
 # calcifications with little juice. One `one` switch (cause) and 6 readouts. Facts from the pinned cards
 # (acutepanc, chronicpanc, pancsec, gallstones, hypertg, pancins); their FA pages are in `fa`. No new cards.
+# m58 pins (P9): switch "Cause" → "Cause or complication" with sections, + Pseudocyst and Fat necrosis · saponification
+#   (First Aid p. 404: pseudocyst lined by granulation tissue, not epithelium; hypocalcemia from Ca²⁺ soaps; Robbins ch 19,
+#   course_sdl_19_patho pp. 10–21: lipase secreted active → fat necrosis → saponification, insoluble calcium soaps;
+#   pseudocysts = walled-off hemorrhagic fat necrosis, no epithelial lining, solitary, most often in the lesser sac, after
+#   acute pancreatitis or trauma; lecture notes pp. 106–107). Readout: serum Ca²⁺ ↓ for fat necrosis (FA 404); none for the
+#   pseudocyst. Keys of the old options unchanged.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -73,8 +79,17 @@ text('trypsin switched on inside the gland — autodigestion', 1430, 1000, 'nf-l
 # fat necrosis: calcium soaps (acute)
 SOAPS = [(760, 1060), (1060, 1080), (1360, 1070), (1660, 1080), (1960, 1050), (2160, 760)]
 for x, y in SOAPS:
-    add(f'<circle cx="{x}" cy="{y}" r="22" style="fill:var(--surface);stroke:var(--ink-3);stroke-width:3;stroke-dasharray:4 3"/>', when=ACUTE)
-text('fat necrosis: fatty acids bind Ca²⁺ — calcium soaps', 1360, 1130, 'nf-l2', 'middle', when=ACUTE)
+    add(f'<circle cx="{x}" cy="{y}" r="22" style="fill:var(--surface);stroke:var(--ink-3);stroke-width:3;stroke-dasharray:4 3"/>', when=ACUTE + O('fatn'))
+    add(f'<circle cx="{x}" cy="{y}" r="30" style="fill:none;stroke:var(--accent);stroke-width:5"/>', when=O('fatn'))
+text('fat necrosis: fatty acids bind Ca²⁺ — calcium soaps', 1360, 1130, 'nf-l2', 'middle', when=ACUTE + O('fatn'))
+text('lipase leaks out and digests peripancreatic fat', 1430, 1000, 'nf-l1 dyn-tag', 'middle', when=O('fatn'))
+
+# pseudocyst (a complication): walled-off necrosis, no epithelial lining, most often in the lesser sac
+add('<ellipse cx="1650" cy="430" rx="120" ry="90" style="fill:var(--dk11);fill-opacity:.18;stroke:var(--ink-3);stroke-width:16;opacity:.85"/>'
+    '<ellipse cx="1650" cy="430" rx="120" ry="90" style="fill:none;stroke:var(--bad);stroke-width:3;stroke-dasharray:6 6"/>'
+    '<path d="M1640 520 V586" class="dyn-dash"/>', when=O('pseudo'))
+text('pseudocyst — fibrous + granulation tissue wall', 1800, 410, 'nf-l1 dyn-tag', when=O('pseudo'))
+text('no epithelium · lesser sac · after acute pancreatitis', 1800, 436, 'nf-l2', when=O('pseudo'))
 
 # chronic: fibrosis + calcifications + beaded duct
 for x, y in [(980, 760), (1330, 760), (1630, 760), (1030, 900), (1630, 640), (1330, 900), (1930, 820)]:
@@ -87,7 +102,7 @@ text('fibrosis and calcifications replace the acini · islets lost late', 1430, 
 # the blood: triglycerides or calcium high
 shapes.append(dict(vessel='M680 1230 H2240', w=50, color='--dk1'))
 text('Blood', 2240, 1196, 'nf-l1', 'end')
-text('triglycerides over 1000 mg/dL', 1460, 1300, 'nf-l1 dyn-tag', 'middle', when=O('tg'))
+text('triglycerides over 1000 (FA) · 700 (Katzung) mg/dL', 1460, 1300, 'nf-l1 dyn-tag', 'middle', when=O('tg'))
 text('hypercalcemia', 1460, 1300, 'nf-l1 dyn-tag', 'middle', when=O('ca'))
 
 # ════════ motion ════════
@@ -117,7 +132,7 @@ sites = [
 # ════════ readouts ════════
 readouts = [
   dict(l='Lipase · amylase', mods=[dict(when=ACUTE, d=1)]),
-  dict(l='Serum Ca²⁺', mods=[dict(when=O('stone', 'etoh', 'tg'), d=-1), dict(when=O('ca'), d=1)]),
+  dict(l='Serum Ca²⁺', mods=[dict(when=O('stone', 'etoh', 'tg', 'fatn'), d=-1), dict(when=O('ca'), d=1)]),
   dict(l='ALP · direct bilirubin', mods=[dict(when=O('stone'), d=1)]),
   dict(l='Triglycerides', mods=[dict(when=O('tg'), d=1)]),
   dict(l='Fecal elastase', mods=[dict(when=O('chr'), d=-1)]),
@@ -132,9 +147,15 @@ notes = {
                  'inside the gland, and the stone in the duct raises ALP and direct bilirubin. Symptomatic stones → cholecystectomy.',
   'cause:etoh': 'Alcohol is the other common cause of acute pancreatitis — epigastric pain to the back, nausea and vomiting, with '
                 'lipase over 3× normal. Repeated attacks lead to chronic pancreatitis.',
-  'cause:tg': 'Triglycerides over 1000 mg/dL can cause acute pancreatitis — the H of I GET SMASHED (hypercalcemia or '
+  'cause:tg': 'Triglycerides over 1000 mg/dL (First Aid; Katzung treats above 700) can cause acute pancreatitis — the H of I GET SMASHED (hypercalcemia or '
               'hypertriglyceridemia).',
   'cause:ca': 'Hypercalcemia is on the I GET SMASHED list of causes, beside hypertriglyceridemia.',
+  'cause:pseudo': 'Pancreatic pseudocyst: hemorrhagic fat necrosis walled off by fibrous and granulation tissue with no epithelial '
+                  'lining — hence "pseudo". Usually solitary and most often in the lesser sac; it follows acute pancreatitis (often on '
+                  'chronic alcoholic disease) or trauma. Many resolve; some become infected or compress nearby organs.',
+  'cause:fatn': 'Fat necrosis: lipase, secreted in its active form, leaks into the gland and peripancreatic fat. Freed fatty acids '
+                'bind calcium and form insoluble calcium soaps (saponification) — granular and blue under the microscope — and the '
+                'calcium they trap is why serum calcium falls in acute pancreatitis.',
   'cause:chr': 'Chronic pancreatitis (alcohol; genetic — CF, SPINK1): fibrosis and calcifications replace the acini, islets spared '
                'until late. Below about 10% function come steatorrhea, fat-soluble vitamin loss and diabetes; lipase may be normal, '
                'fecal elastase is low. A risk for pancreatic cancer.',
@@ -144,9 +165,11 @@ dyn = dict(
   kinds=dict(zym=['enz', '--dk9'], tryp=['enz', '--bad'], bile=['bile', '--dk5'], chyme=['bile', '--dk4'],
              tg=['blood', '--dk2'], ca=['blood', '--nf-ca']),
   groups=[['enz', 'Enzymes'], ['bile', 'Bile & chyme'], ['blood', 'Blood']],
-  switches=[dict(id=SW, label='Cause', type='one', options=[
+  switches=[dict(id=SW, label='Cause or complication', type='one', options=[
     ['stone', 'Gallstone', 'gallstones'], ['etoh', 'Alcohol', 'acutepanc'], ['tg', 'Hypertriglyceridemia', 'hypertg'],
-    ['ca', 'Hypercalcemia', 'acutepanc'], ['chr', 'Chronic pancreatitis', 'chronicpanc']])],
+    ['ca', 'Hypercalcemia', 'acutepanc'], ['chr', 'Chronic pancreatitis', 'chronicpanc'],
+    ['pseudo', 'Pseudocyst', 'acutepanc'], ['fatn', 'Fat necrosis · saponification', 'acutepanc']],
+    sections=[['Cause', ['stone', 'etoh', 'tg', 'ca', 'chr']], ['Complication', ['pseudo', 'fatn']]])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2420, y=110, w=1000),
   src='First Aid pp. 92, 205, 380, 388, 403–405 · Robbins ch 19')
@@ -163,7 +186,7 @@ MAP = dict(
     ('pn1', 'Pancreatic secretions', 330, 1460, 'pnPhys', 'zymogens · bicarbonate', ['pancsec', 'cck'], 'hub'),
     ('pn2', 'Acute pancreatitis', 780, 1460, 'pnAcute', 'I GET SMASHED', ['acutepanc']),
     ('pn3', 'Gallstones', 1200, 1460, 'pnAcute', 'the ampulla', ['gallstones']),
-    ('pn4', 'Hypertriglyceridemia', 1620, 1460, 'pnAcute', 'over 1000 mg/dL', ['hypertg']),
+    ('pn4', 'Hypertriglyceridemia', 1620, 1460, 'pnAcute', 'over 1000 (FA) or 700 (Katzung) mg/dL', ['hypertg']),
     ('pn5', 'Chronic pancreatitis', 330, 1590, 'pnChronic', 'calcifications', ['chronicpanc']),
     ('pn6', 'Pancreatic insufficiency', 780, 1590, 'pnChronic', 'steatorrhea', ['pancins']),
     ('pn7', 'Pancreatic cancer', 1200, 1590, 'pnChronic', 'a late risk', ['pancca'])],

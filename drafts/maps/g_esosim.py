@@ -4,6 +4,25 @@
 # shows achalasia, distal esophageal spasm, GERD, Barrett, a Schatzki ring, a stricture, a Plummer-Vinson web, a Zenker
 # diverticulum and a Mallory-Weiss tear: the bolus sticks, piles up, refluxes or spills, as the cards say. 5 readouts.
 # Facts from the pinned cards; FA pages in `fa`. No new cards.
+# m57: + eosinophilic esophagitis (stacked rings and furrows, solids impact), infectious esophagitis (Candida plaques, HSV and
+#   CMV ulcers) and Boerhaave rupture (transmural, distal, air into the mediastinum). Sources: First Aid p. 384 (EoE: atopy,
+#   rings, linear furrows; infectious: Candida white pseudomembranes, HSV-1 punched-out ulcers, CMV linear ulcers,
+#   immunosuppression; Boerhaave: transmural, usually distal, violent retching; pneumomediastinum, crepitus) and Robbins ch 17
+#   in the course text (course_sdl_8_9_patho pp. 14–15, 20: EoE atopy, food impaction, dysphagia, feline rings, strictures,
+#   furrows, intraepithelial eosinophils, diet/PPI/topical steroids; HSV in healthy hosts, HSV/CMV/fungi in the
+#   immunosuppressed, Candida commonest fungus, gray-white pseudomembranes, punched-out HSV ulcers with nuclear inclusions,
+#   shallower CMV ulcers with endothelial inclusions, odynophagia; Boerhaave chest pain, tachypnea, shock, fatal untreated).
+#   GI Exam 1 lecture notes (SDL 8, section 2) agree on every line and add EoE ≥ 15 eosinophils/HPF (used in the note).
+#   Readouts: only "Dysphagia — solids ↑" for EoE (food impaction). Odynophagia is not a readout, so the infection and the
+#   rupture change none.
+# m58 pins (P6, P11): a second `one` switch, "Stage of the swallow" (oral, pharyngeal, UES, primary and secondary
+#   peristalsis, swallowing center), all on the swallowing card — Guyton ch 64 (course_sdl_4_7_guyton_supplement_p2 pp. 2–6:
+#   voluntary/pharyngeal/esophageal stages, soft palate, vocal cords, epiglottis, UES = upper 3–4 cm, relaxed in the swallow and
+#   contracted between swallows, pharyngeal stage < 2 s, trigeminal + glossopharyngeal afferents to the tractus solitarius,
+#   deglutition center in the medulla and lower pons, motor V IX X XII, respiration inhibited, primary wave 8–10 s (5–8 s
+#   upright), secondary waves from distension via myenteric circuits and vagal reflexes). No readout arrows for the stages.
+#   "Schatzki ring" relabelled "… · B ring · distal esophageal ring" (Robbins ch 17, course_sdl_8_9_patho p. 12; lecture notes
+#   p. 40). Keys unchanged.
 import sys
 sys.path.insert(0, 'drafts/tools')   # run from the repo root
 from common import full
@@ -31,7 +50,7 @@ def X(cx, cy, s=16): return f'<path d="M{cx - s} {cy - s} L{cx + s} {cy + s} M{c
 EX, TOP, UES, LES, BOT = 900, 300, 420, 1140, 1240
 W = 46                                            # half-width of the tube
 STUCK_ANY = O('ach')                              # solids and liquids stop
-STUCK_SOLID = ['dx:ring&!liq', 'dx:strict&!liq', 'dx:web&!liq']
+STUCK_SOLID = ['dx:ring&!liq', 'dx:strict&!liq', 'dx:web&!liq', 'dx:eoe&!liq']
 STUCK = STUCK_ANY + STUCK_SOLID
 
 text('Swallowing — the bolus, the wave and the sphincters', 180, 150, 'dyn-big')
@@ -70,12 +89,56 @@ text('regurgitates undigested food · halitosis', EX - 240, UES + 128, 'nf-l2', 
 add(f'<path d="M{EX - W + 6} {LES - 10} v50" style="stroke:var(--bad);stroke-width:8"/>', when=O('mw'))
 text('mucosal tear at the GE junction after retching — hematemesis', EX + W + 50, LES + 40, 'nf-l1 dyn-tag', when=O('mw'))
 text('uncoordinated contractions — “corkscrew”, chest pain', EX + W + 50, 700, 'nf-l1 dyn-tag', when=O('des'))
+# eosinophilic esophagitis: stacked circular rings ("feline") and linear furrows along the tube
+add(''.join(f'<path d="M{EX - W} {y} h16 M{EX + W} {y} h-16" style="stroke:var(--dk3);stroke-width:7"/>' for y in range(UES + 120, LES - 20, 56))
+    + f'<path d="M{EX - 14} {UES + 130} V{LES - 40} M{EX + 14} {UES + 130} V{LES - 40}" style="stroke:var(--dk3);stroke-width:3;stroke-dasharray:22 14;opacity:.7"/>',
+    when=O('eoe'))
+text('stacked rings + linear furrows — eosinophils in the lining', EX + W + 50, 700, 'nf-l1 dyn-tag', when=O('eoe'))
+text('atopy (asthma, eczema) · food impaction', EX + W + 50, 728, 'nf-l2', when=O('eoe'))
+# infectious esophagitis: Candida pseudomembranes, herpes punched-out ulcers, CMV shallow linear ulcers
+add(''.join(f'<ellipse cx="{EX + dx}" cy="{y}" rx="12" ry="7" style="fill:var(--dk11);fill-opacity:.55;stroke:var(--dk11);stroke-width:2"/>'
+            for dx, y in ((-28, 560), (26, 600), (-30, 660), (28, 720)))
+    + ''.join(f'<circle cx="{EX + dx}" cy="{y}" r="9" style="fill:var(--surface);stroke:var(--bad);stroke-width:4"/>' for dx, y in ((-30, 860), (30, 900), (-30, 960)))
+    + f'<path d="M{EX + 32} {LES - 110} v60" style="stroke:var(--bad);stroke-width:5"/>', when=O('inf'))
+text('Candida — white pseudomembranes (commonest)', EX + W + 50, 620, 'nf-l1 dyn-tag', when=O('inf'))
+text('HSV — punched-out ulcers · CMV — shallow linear ulcers', EX + W + 50, 900, 'nf-l1 dyn-tag', when=O('inf'))
+text('immunosuppressed · pain on swallowing (odynophagia)', EX + W + 50, 928, 'nf-l2', when=O('inf'))
+# Boerhaave: the whole wall torn, distally — air out into the mediastinum
+add(f'<rect x="{EX - W - 14}" y="{LES - 150}" width="28" height="70" style="fill:var(--surface)"/>'
+    f'<path d="M{EX - W - 14} {LES - 150} l14 18 l-10 16 l14 18 l-10 18" style="fill:none;stroke:var(--bad);stroke-width:6"/>', when=O('boer'))
+text('transmural rupture, distal — after violent retching', EX + W + 50, LES - 130, 'nf-l1 dyn-tag', when=O('boer'))
+text('air in the mediastinum · neck crepitus · chest pain, shock', EX + W + 50, LES - 102, 'nf-l2', when=O('boer'))
+text('mediastinum', EX - 330, LES - 250, 'nf-l2', 'end', when=O('boer'))
+# stages of the swallow (switch `stg`, m58) — tags on the left, out of the way of the dx tags on the right
+G = lambda *k: [f'stg:{x}' for x in k]
+SX = EX - 120
+PHX = f'M{EX - 120} {TOP - 60} Q{EX} {TOP - 120} {EX + 120} {TOP - 60}'
+add(f'<path d="{PHX}" style="fill:none;stroke:var(--accent);stroke-width:12;opacity:.5"/>', when=G('oral', 'phar'))
+text('tongue rolls the bolus back against the palate', SX, 640, 'nf-l1 dyn-tag', 'end', when=G('oral'))
+text('voluntary — after this, automatic', SX, 668, 'nf-l2', 'end', when=G('oral'))
+text('soft palate shuts the nose · vocal cords close', SX, 640, 'nf-l1 dyn-tag', 'end', when=G('phar'))
+text('epiglottis tips back · UES opens · < 2 s', SX, 668, 'nf-l2', 'end', when=G('phar'))
+add(f'<rect x="{EX - W - 40}" y="{UES - 18}" width="{2 * W + 80}" height="36" rx="10" style="fill:none;stroke:var(--accent);stroke-width:5"/>', when=G('ues', 'phar'))
+text('upper 3–4 cm: relaxes as the larynx rises', SX, 640, 'nf-l1 dyn-tag', 'end', when=G('ues'))
+text('shut between swallows — keeps air out', SX, 668, 'nf-l2', 'end', when=G('ues'))
+add(f'<path d="M{EX - W - 14} {UES + 20} V{LES - 20} M{EX + W + 14} {UES + 20} V{LES - 20}" style="stroke:var(--accent);stroke-width:5;stroke-dasharray:16 12;opacity:.7"/>', when=G('prim'))
+text('the pharyngeal wave runs on to the stomach', SX, 640, 'nf-l1 dyn-tag', 'end', when=G('prim'))
+text('pharynx → stomach in 8–10 s', SX, 668, 'nf-l2', 'end', when=G('prim'))
+text('food left behind stretches the wall', SX, 640, 'nf-l1 dyn-tag', 'end', when=G('sec'))
+text('→ a new wave from there (myenteric + vagal)', SX, 668, 'nf-l2', 'end', when=G('sec'))
+add(f'<rect x="300" y="210" width="330" height="64" rx="18" style="fill:var(--dk9);fill-opacity:.15;stroke:var(--accent);stroke-width:4"/>'
+    f'<path d="M630 242 C700 250 740 260 {EX - 120} {TOP - 60}" class="dyn-dash"/>', when=G('center'))
+text('swallowing center', 465, 238, 'nf-l1', 'middle', when=G('center'))
+text('medulla · lower pons', 465, 262, 'nf-l2', 'middle', when=G('center'))
+text('in: V, IX → tractus solitarius', SX, 640, 'nf-l1 dyn-tag', 'end', when=G('center'))
+text('out: V, IX, X, XII · breathing paused', SX, 668, 'nf-l2', 'end', when=G('center'))
+
 # pile above a block
 def pile(y, when):
     add(''.join(f'<circle cx="{EX + dx}" cy="{y + dy}" r="14" style="fill:var(--dk10);opacity:.85"/>'
                 for dx, dy in ((-20, 0), (12, -6), (-4, -30), (22, -32), (-24, -58))), when=when)
 pile(LES - 30, STUCK_ANY); pile(LES - 340, ['dx:strict&!liq']); pile(LES - 76, ['dx:ring&!liq']); pile(UES + 50, ['dx:web&!liq'])
-pile(UES - 70, O('zenker'))
+pile(UES - 70, O('zenker')); pile(790, ['dx:eoe&!liq']); pile(700, G('sec'))
 
 # ════════ motion ════════
 def m(when, **kw): return dict(when=when, **kw)
@@ -85,6 +148,7 @@ flows = [
   dict(d=stop_at(LES - 40), len=LES - 40 - TOP, speed=110, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=STUCK_ANY),
   dict(d=stop_at(LES - 350), len=LES - 350 - TOP, speed=110, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=['dx:strict&!liq']),
   dict(d=stop_at(LES - 86), len=LES - 86 - TOP, speed=110, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=['dx:ring&!liq']),
+  dict(d=stop_at(780), len=780 - TOP, speed=110, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=['dx:eoe&!liq']),
   dict(d=stop_at(UES + 40), len=UES + 40 - TOP, speed=60, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=['dx:web&!liq']),
   dict(d=f'M{EX} {TOP} V{UES - 110} C{EX - 120} {UES - 120} {EX - 180} {UES - 60} {EX - 120} {UES - 70}', len=360, speed=80, r=22, base=dict(bol=1), mods=[m(['liq'], set=dict(bol=0, liqd=1))], when=O('zenker')),
   dict(d=f'M{EX - W} {TOP} V{LES}', len=LES - TOP, speed=110, r=10, base=dict(wave=1), unless=O('ach', 'des', 'scl')),
@@ -95,12 +159,15 @@ flows = [
   dict(d=f'M{EX + W} {LES - 60} V{UES + 60}', len=600, speed=260, r=10, base=dict(wave=5), when=O('des')),
   dict(d=f'M{EX} {LES + 80} V{LES - 240}', len=320, speed=90, r=9, base=dict(acid=4), when=O('gerd', 'barrett', 'scl')),
   dict(d=f'M{EX - W + 6} {LES + 20} C{EX - 150} {LES + 120} {EX - 150} {LES + 200} {EX - 120} {BOT + 60}', len=300, speed=80, r=8, base=dict(bl=4), when=O('mw')),
-]
+  dict(d=f'M{EX - W} 720 V{LES}', len=LES - 720, speed=110, r=10, base=dict(wave=1), when=G('sec')),
+  dict(d=f'M{EX + W} 720 V{LES}', len=LES - 720, speed=110, r=10, base=dict(wave=1), when=G('sec')),
+] + [dict(d=f'M{EX - W - 6} {LES - 115} C{EX - 120} {LES - 140} {EX - 200} {LES - 190 + dy} {EX - 320} {LES - 230 + dy}', len=300, speed=70, r=8,
+          base=dict(air=3), when=O('boer')) for dy in (0, 70)]
 sites = [dict(x=EX + W + 30, y=LES, n=[1, 0], w=10, t='rec', l='', aria='Lower esophageal sphincter', c='achalasia', ions=[]),
          dict(x=EX + W + 30, y=UES, n=[1, 0], w=10, t='rec', l='', aria='Swallowing', c='swallowing', ions=[])]
 
 readouts = [
-  dict(l='Dysphagia — solids', mods=[dict(when=O('ach', 'ring', 'strict', 'web', 'zenker', 'des', 'scl'), d=1)]),
+  dict(l='Dysphagia — solids', mods=[dict(when=O('ach', 'ring', 'strict', 'web', 'zenker', 'des', 'scl', 'eoe'), d=1)]),
   dict(l='Dysphagia — liquids', mods=[dict(when=O('ach'), d=1), dict(when=O('ring', 'strict', 'web'), d=0)]),
   dict(l='LES resting pressure', mods=[dict(when=O('ach'), d=1), dict(when=O('des'), d=0), dict(when=O('scl'), d=-1)]),
   dict(l='Coordinated peristalsis', mods=[dict(when=O('ach', 'des', 'scl'), d=-1)]),
@@ -112,6 +179,21 @@ notes = {
       'contract top to bottom, and primary peristalsis carries the bolus to the stomach in 8–10 seconds as the LES relaxes.',
   'liq': 'Liquids: a mechanical narrowing (ring, stricture, web) lets them through — dysphagia starts with solids. Achalasia, a motility '
          'problem, stops both.',
+  'stg:oral': 'Oral (voluntary) stage: the tongue squeezes or rolls the bolus up and back against the palate into the pharynx. '
+              'From here on, swallowing is automatic and ordinarily cannot be stopped.',
+  'stg:phar': 'Pharyngeal stage, a reflex of under 2 seconds: the soft palate closes the nasal passages, the vocal cords close '
+              'and the larynx rises so the epiglottis swings back over it, the UES relaxes, and a fast wave from the top of the '
+              'pharynx drives the bolus into the esophagus. Breathing pauses.',
+  'stg:ues': 'Upper esophageal sphincter (pharyngoesophageal sphincter): the upper 3–4 cm of the esophageal wall. It relaxes as '
+             'the larynx rises during the pharyngeal stage, and between swallows stays strongly contracted so air does not enter '
+             'the esophagus with each breath.',
+  'stg:prim': 'Primary peristalsis: the continuation of the pharyngeal wave, running from the pharynx to the stomach in about '
+              '8–10 seconds. Upright, food arrives a little faster (5–8 s) because gravity helps.',
+  'stg:sec': 'Secondary peristalsis: if the primary wave leaves food behind, the stretched esophagus starts new waves at that point '
+             'until it is empty — through the myenteric plexus and through vagal reflexes via the medulla.',
+  'stg:center': 'Swallowing (deglutition) center: neurons of the reticular substance of the medulla and lower pons. Touch on the '
+                'tonsillar pillars and pharynx reaches it by the trigeminal and glossopharyngeal nerves (tractus solitarius); it fires '
+                'the sequence through cranial nerves V, IX, X and XII, and inhibits the respiratory center meanwhile.',
   'dx:ach': 'Achalasia: the inhibitory (NO, VIP) neurons of the myenteric plexus degenerate, so the LES can’t relax and peristalsis fails — '
             'dysphagia to solids AND liquids (an obstruction is mainly solids), bird’s beak, ↑ LES pressure on manometry, ↑ cancer risk. Chagas is a cause.',
   'dx:des': 'Distal esophageal spasm: uncoordinated contractions with a normal LES — corkscrew esophagus, chest pain. Nitrates, CCBs.',
@@ -121,7 +203,14 @@ notes = {
             'achalasia. Acid refluxes: dysphagia, then stricture, Barrett esophagus and aspiration.',
   'dx:barrett': 'Barrett esophagus: years of reflux replace the distal squamous lining with columnar epithelium with goblet cells '
                 '(intestinal metaplasia) — can progress through dysplasia to adenocarcinoma.',
-  'dx:ring': 'Schatzki ring: a circumferential band narrowing the distal esophagus — dysphagia and regurgitation; hiatal hernia, GERD.',
+  'dx:eoe': 'Eosinophilic esophagitis: an immune-mediated, allergic (Th2) disorder of atopic patients — asthma, eczema, allergic '
+            'rhinitis. Eosinophils crowd the squamous lining (≥ 15 per high-power field); the esophagus shows stacked circular rings (feline esophagus), '
+            'linear furrows and strictures. Food impaction, dysphagia and GERD-like symptoms. Diet elimination, PPIs, topical steroids.',
+  'dx:inf': 'Infectious esophagitis: HSV in otherwise healthy people; HSV, CMV or fungi in the immunosuppressed. Candida, the '
+            'commonest fungus, lays down adherent gray-white pseudomembranes; HSV makes punched-out ulcers (nuclear inclusions '
+            'in multinucleate cells at the edge); CMV makes shallower, linear ulcers. Pain on swallowing (odynophagia).',
+  'dx:ring': 'Schatzki ring: a circumferential band narrowing the distal esophagus — dysphagia and regurgitation; hiatal hernia, GERD. '
+             'A B ring sits at the squamocolumnar junction (cardia-type mucosa beneath); an A ring lies just above the GE junction.',
   'dx:strict': 'Stricture: healing lays down fibrous submucosa until the lumen narrows (reflux, irradiation, caustics) — progressive '
                'dysphagia that starts with solids; weight kept if benign.',
   'dx:web': 'Esophageal web: a semicircumferential ledge; an upper web is part of Plummer-Vinson syndrome (iron deficiency anemia, '
@@ -130,16 +219,26 @@ notes = {
                'Dysphagia, gurgling, regurgitated undigested food, halitosis, aspiration.',
   'dx:mw': 'Mallory-Weiss tear: violent retching (alcohol, bulimia) tears the mucosa at the GE junction — hematemesis. A transmural '
            'rupture is Boerhaave (pneumomediastinum, crepitus).',
+  'dx:boer': 'Boerhaave syndrome: violent retching or straining raises intraesophageal pressure against a negative intrathoracic '
+             'pressure and tears the whole wall, usually distally. Air escapes into the mediastinum (pneumomediastinum, crepitus '
+             'in the neck); sudden chest pain, tachypnea, shock that mimic an MI. Fatal untreated. A Mallory-Weiss tear stays in the mucosa.',
 }
 
 dyn = dict(
-  kinds=dict(bol=['food', '--dk10'], liqd=['food', '--nf-h2o'], wave=['wave', '--dk3'], acid=['acid', '--bad'], bl=['acid', '--nf-blood']),
-  groups=[['food', 'Bolus'], ['wave', 'Peristaltic wave'], ['acid', 'Acid · blood']],
+  kinds=dict(bol=['food', '--dk10'], liqd=['food', '--nf-h2o'], wave=['wave', '--dk3'], acid=['acid', '--bad'], bl=['acid', '--nf-blood'], air=['acid', '--dk8']),
+  groups=[['food', 'Bolus'], ['wave', 'Peristaltic wave'], ['acid', 'Acid · blood · air']],
   switches=[dict(id='liq', label='Swallow', type='toggle', on='Liquids', off='Solids', def_=False),
             dict(id='dx', label='What goes wrong', type='one', options=[
               ['ach', 'Achalasia', 'achalasia'], ['des', 'Distal esophageal spasm', 'achalasia'], ['scl', 'Scleroderma esophagus', 'achalasia'], ['gerd', 'GERD', 'gerd'],
-              ['barrett', 'Barrett esophagus', 'barrett'], ['ring', 'Schatzki ring', 'schatzki'], ['strict', 'Stricture', 'esostricture'],
-              ['web', 'Plummer-Vinson web', 'esophagitis'], ['zenker', 'Zenker diverticulum', 'zenker'], ['mw', 'Mallory-Weiss tear', 'mallorywb']])],
+              ['barrett', 'Barrett esophagus', 'barrett'], ['eoe', 'Eosinophilic esophagitis', 'esophagitis'],
+              ['inf', 'Infectious esophagitis — Candida · HSV · CMV', 'esophagitis'], ['ring', 'Schatzki ring · B ring · distal esophageal ring', 'schatzki'], ['strict', 'Stricture', 'esostricture'],
+              ['web', 'Plummer-Vinson web', 'esophagitis'], ['zenker', 'Zenker diverticulum', 'zenker'], ['mw', 'Mallory-Weiss tear', 'mallorywb'],
+              ['boer', 'Boerhaave rupture', 'mallorywb']]),
+            dict(id='stg', label='Stage of the swallow', type='one', options=[
+              ['oral', 'Oral (voluntary) stage', 'swallowing'], ['phar', 'Pharyngeal stage', 'swallowing'],
+              ['ues', 'Upper esophageal sphincter · UES', 'swallowing'], ['prim', 'Primary peristalsis', 'swallowing'],
+              ['sec', 'Secondary peristalsis · secondary peristaltic wave', 'swallowing'],
+              ['center', 'Swallowing center · medulla', 'swallowing']])],
   notes=notes, shapes=shapes, flows=flows, sites=sites, readouts=readouts,
   panel=dict(x=2500, y=110, w=1000),
   src='First Aid pp. 377, 383–385, 391 · Robbins ch 17 · Guyton ch 64 · Bootcamp GI')
@@ -148,7 +247,8 @@ dyn['switches'][0]['def'] = dyn['switches'][0].pop('def_')
 MAP = dict(
   id='esosim', title='Swallowing in Motion', topic='gi', after='gitract',
   sub='Watch a bolus ride the peristaltic wave through both sphincters, switch solids for liquids, then see it stick, reflux or spill — '
-      'achalasia, esophageal spasm, GERD, Barrett, Schatzki ring, stricture, Plummer-Vinson web, Zenker and Mallory-Weiss',
+      'achalasia, esophageal spasm, GERD, Barrett, eosinophilic and infectious esophagitis, Schatzki ring, stricture, Plummer-Vinson web, '
+      'Zenker, Mallory-Weiss and Boerhaave',
   w=3600, h=1900,
   fa='377, 383, 384, 385, 391',
   src=['Robbins ch 17 — The gastrointestinal tract', 'Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases',
