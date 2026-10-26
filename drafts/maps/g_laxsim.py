@@ -144,7 +144,7 @@ MAP = dict(
   src=['Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases', 'Katzung ch 31 — Opioid Agonists & Antagonists'],
   lanes=[('lxStool', 'Change the stool', 'tca'), ('lxGut', 'Push the gut', 'glycolysis')],
   nodes=[
-    ('lx1', 'Bulk-forming & softeners', 330, 1700, 'lxStool', 'fiber · docusate · oil', ['bulklax'], 'hub'),
+    ('lx1', 'Bulk-forming & softeners', 330, 1700, 'lxStool', 'fiber · docusate · oil', ['bulklax', 'laxatives'], 'hub'),
     ('lx2', 'Osmotic laxatives', 760, 1700, 'lxStool', 'PEG · lactulose · Mg', ['osmolax']),
     ('lx3', 'Stimulant laxatives', 1200, 1700, 'lxGut', 'senna · bisacodyl · prucalopride', ['stimlax', 'prokinetic']),
     ('lx4', 'Intestinal secretagogues', 1640, 1700, 'lxGut', 'ClC-2 · GC-C · NHE3', ['secretlax']),

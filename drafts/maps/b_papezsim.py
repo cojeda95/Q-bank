@@ -156,7 +156,7 @@ MAP = dict(
        'Guyton ch 59 — The Limbic System and the Hypothalamus—Behavioral and Motivational Mechanisms of the Brain'],
   lanes=[('pzMem', 'Memory loop', 'glycolysis'), ('pzEmo', 'Emotion & reward', 'tca')],
   nodes=[
-    ('pz1', 'Papez circuit', 330, 1700, 'pzMem', 'fornix → thalamus → cingulate', ['papez'], 'hub'),
+    ('pz1', 'Papez circuit', 330, 1700, 'pzMem', 'fornix → thalamus → cingulate', ['papez', 'limbic', 'limbiclobe'], 'hub'),
     ('pz2', 'Hippocampal formation', 760, 1700, 'pzMem', 'DG → CA3 → CA1', ['hippoform']),
     ('pz3', 'Memory consolidation', 1200, 1700, 'pzMem', 'short → long term', ['memconsol']),
     ('pz4', 'Amnesia & Korsakoff', 1640, 1700, 'pzMem', 'anterograde', ['amnesia']),

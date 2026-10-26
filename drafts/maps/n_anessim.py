@@ -149,7 +149,7 @@ MAP = dict(
     ('an3', 'Propofol', 1200, 1720, 'anIv', 'GABA-A · NMDA', ['propofol']),
     ('an4', 'Etomidate', 1640, 1720, 'anIv', 'neutral BP · adrenals', ['etomidate']),
     ('an5', 'Ketamine', 2080, 1720, 'anIv', 'NMDA block · ↑ BP', ['nmdadrugs']),
-    ('an6', 'Malignant hyperthermia', 2150, 1240, 'anInh', 'RYR1 · dantrolene', ['mhyper', 'nmb'])],
+    ('an6', 'Malignant hyperthermia', 2150, 1420, 'anInh', 'RYR1 · dantrolene', ['mhyper', 'nmb'])],
   panels=[
     (2500, PANY, 1000, 'Solubility rules (Katzung ch 25)', [
       ('Low blood:gas', 'fast in, fast out (N₂O)'), ('High oil:gas', 'potent (isoflurane)'), ('Potency', '1 / MAC')])],

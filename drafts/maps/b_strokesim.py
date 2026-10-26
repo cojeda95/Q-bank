@@ -607,7 +607,7 @@ MAP = dict(
   comps=[],
   nodes=[
     ('sk1', 'ACA stroke', 2640, 1240, 'skAnt', 'leg · bladder', ['acastroke']),
-    ('sk2', 'MCA stroke', 2640, 1320, 'skAnt', 'face, arm · aphasia or neglect', ['mcastroke'], 'hub'),
+    ('sk2', 'MCA stroke', 2640, 1320, 'skAnt', 'face, arm · aphasia or neglect', ['mcastroke', 'corticonuc'], 'hub'),
     ('sk3', 'Aphasias · language areas', 2640, 1400, 'skAnt', 'Broca · Wernicke · global', ['aphasia', 'ctxareas']),
     ('sk4', 'Dominance · cortical signs', 2640, 1480, 'skAnt', 'Gerstmann · neglect', ['ctxdominance', 'cortexlesions']),
     ('sk5', 'Motor strip · eye fields', 2640, 1560, 'skAnt', 'homunculus · gaze', ['motorcortex', 'corteye']),

@@ -164,8 +164,8 @@ MAP = dict(
   lanes=[('alPhys', 'Physiology', 'glycolysis'), ('alDz', 'Illness', 'tca')],
   nodes=[
     ('al1', 'Altitude & alveolar PO₂', 330, 1660, 'alPhys', '760 → 349 mm Hg', ['alttable'], 'hub'),
-    ('al2', 'Ventilatory responses', 760, 1660, 'alPhys', '1.65× → 5×', ['ventresp']),
-    ('al3', 'Acclimatization', 1200, 1660, 'alPhys', 'five changes', ['acclim']),
+    ('al2', 'Ventilatory responses', 760, 1660, 'alPhys', '1.65× → 5×', ['ventresp', 'respctr']),
+    ('al3', 'Acclimatization', 1200, 1660, 'alPhys', 'five changes', ['acclim', 'hifswitch']),
     ('al4', 'High-altitude natives', 1640, 1660, 'alPhys', 'PaO₂ ≈ 40', ['altnatives']),
     ('al5', 'Mountain sickness', 2080, 1660, 'alDz', 'AMS · HACE · HAPE', ['altillness', 'acetazolamide'])],
   panels=[

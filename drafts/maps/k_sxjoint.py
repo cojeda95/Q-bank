@@ -182,7 +182,7 @@ MAP = dict(
   src=[full('Robbins', 26), full('Robbins', 6), full('Katzung', 36), 'Bootcamp.com MSK — Arthritis and Spondyloarthritis'],
   lanes=[('xjMono', 'One hot joint', 'glycolysis'), ('xjPoly', 'Many joints', 'tca'), ('xjB27', 'HLA-B27 & lupus', 'gluconeo')],
   nodes=[
-    ('xj1', 'Septic arthritis', 330, PY, 'xjMono', 'aspirate · drain · antibiotics', ['septicarth', 'synfluid'], 'hub'),
+    ('xj1', 'Septic arthritis', 330, PY, 'xjMono', 'aspirate · drain · antibiotics', ['septicarth', 'synfluid', 'septichip'], 'hub'),
     ('xj2', 'Gout', 760, PY, 'xjMono', 'needles, negative', ['goutclin']),
     ('xj3', 'Pseudogout', 1160, PY, 'xjMono', 'rhomboids, positive', ['cppd']),
     ('xj4', 'Rheumatoid arthritis', 1580, PY, 'xjPoly', 'symmetric · spares DIP', ['ra']),

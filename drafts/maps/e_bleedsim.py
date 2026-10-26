@@ -187,10 +187,10 @@ MAP = dict(
   src=[full('Robbins', 28), full('Fundamental Neuroscience', 7), full('Moore', 9)],
   lanes=[('hbBleed', 'Bleeds', 'tca'), ('hbHern', 'Herniation', 'glycolysis')],
   nodes=[
-    ('hb1', 'Epidural hematoma', 330, 1700, 'hbBleed', 'artery · lens · lucid', ['epidural'], 'hub'),
+    ('hb1', 'Epidural hematoma', 330, 1700, 'hbBleed', 'artery · lens · lucid', ['epidural', 'duralayers'], 'hub'),
     ('hb2', 'Subdural hematoma', 760, 1700, 'hbBleed', 'veins · crescent', ['subdural']),
     ('hb3', 'Subarachnoid hemorrhage', 1200, 1700, 'hbBleed', 'aneurysm · thunderclap', ['sah']),
-    ('hb4', 'Herniation syndromes', 1640, 1700, 'hbHern', 'falx · uncus · tonsils', ['herniation'])],
+    ('hb4', 'Herniation syndromes', 1640, 1700, 'hbHern', 'falx · uncus · tonsils', ['herniation', 'duralfolds'])],
   panels=[
     (2500, PANY, 1000, 'On CT (Robbins ch 28)', [
       ('Epidural', 'lens, stops at sutures'), ('Subdural', 'crescent, crosses sutures'), ('Acute vs chronic', 'bright vs dark'),

@@ -167,7 +167,7 @@ MAP = dict(
   nodes=[
     ('pr1', 'Prostate zones', 330, 1700, 'prNl', 'transition vs peripheral', ['prozones'], 'hub'),
     ('pr2', 'Semen & accessory glands', 760, 1700, 'prNl', 'SV 60% · prostate 30%', ['semen']),
-    ('pr3', 'BPH & stromal DHT', 1200, 1700, 'prDz', '5α-reductase', ['bphpath']),
+    ('pr3', 'BPH & stromal DHT', 1200, 1700, 'prDz', '5α-reductase', ['bphpath', 'bph']),
     ('pr4', 'High-grade PIN', 1640, 1700, 'prDz', 'basal cells kept', ['hgpin']),
     ('pr5', 'Prostate adenocarcinoma', 2080, 1700, 'prDz', 'peripheral · Batson', ['prostateca']),
     ('pr6', 'Gleason score', 2520, 1700, 'prDz', 'primary + secondary', ['gleason'])],

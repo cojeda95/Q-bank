@@ -212,7 +212,7 @@ MAP = dict(
        'OCOM OMM — SDL 1 lecture: Low Back Pain I', 'Foundations of Osteopathic Medicine ch 93 — Osteopathic Considerations in the Patient With Low Back Pain'],   # cauda equina: red flags, Achilles reflex, emergency MRI + decompression
   lanes=[('cfFlow', 'CSF flow', 'glycolysis'), ('cfHydro', 'Hydrocephalus & pressure', 'tca'), ('cfCanal', 'Spinal canal', 'gluconeo')],
   nodes=[
-    ('cf1', 'CSF production & flow', 330, 1990, 'cfFlow', 'plexus → sinus', ['csfflow', 'ventwalls'], 'hub'),
+    ('cf1', 'CSF production & flow', 330, 1990, 'cfFlow', 'plexus → sinus', ['csfflow', 'ventwalls', 'sinuses'], 'hub'),
     ('cf2', 'Hydrocephalus', 760, 1990, 'cfHydro', 'communicating or not', ['hydroceph']),
     ('cf3', 'NPH · pseudotumor', 1160, 1990, 'cfHydro', 'wobbly, wacky, wet · TOAD', ['nph', 'iih']),
     ('cf4', 'Chiari · Dandy-Walker', 1580, 1990, 'cfHydro', 'posterior fossa', ['chiari']),

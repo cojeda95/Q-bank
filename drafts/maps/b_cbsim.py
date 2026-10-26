@@ -154,7 +154,7 @@ MAP = dict(
        'Robbins ch 28 — The central nervous system'],
   lanes=[('cbRule', 'Which side', 'tca'), ('cbDz', 'Ataxia & causes', 'glycolysis')],
   nodes=[
-    ('cb1', 'The ipsilateral rule', 400, 1720, 'cbRule', 'two crossings', ['cbipsi', 'cbzones'], 'hub'),
+    ('cb1', 'The ipsilateral rule', 400, 1720, 'cbRule', 'two crossings', ['cbipsi', 'cbzones', 'cerebcircuit', 'cbpeduncle', 'cbcompare'], 'hub'),
     ('cb2', 'Cerebellar vs sensory ataxia', 950, 1720, 'cbDz', 'Romberg', ['cbataxia']),
     ('cb3', 'Causes of cerebellar ataxia', 1500, 1720, 'cbDz', 'alcohol · tumors · SCA', ['cbcauses', 'cerebellar'])],
   panels=[

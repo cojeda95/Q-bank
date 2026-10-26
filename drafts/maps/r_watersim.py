@@ -159,13 +159,13 @@ MAP = dict(
        'Katzung ch 58 — Management of the Poisoned Patient', 'Katzung ch 15 — Diuretic Agents'],
   lanes=[('waNorm', 'ADH and the collecting duct', 'glycolysis'), ('waDz', 'Too much or too little ADH', 'tca'), ('waRx', 'Drugs', 'gluconeo')],
   nodes=[
-    ('wa1', 'Posterior pituitary — ADH', 330, 1620, 'waNorm', 'osmolality drives it', ['posteriorpit'], 'hub'),
+    ('wa1', 'Posterior pituitary — ADH', 330, 1620, 'waNorm', 'osmolality drives it', ['posteriorpit', 'hypothalnuc', 'plasmaosm'], 'hub'),
     ('wa2', 'Concentrating urine', 760, 1620, 'waNorm', 'countercurrent · free water', ['countercurrent', 'freewater']),
     ('wa3', 'Aquaporins', 1200, 1620, 'waNorm', 'AQP2 in the principal cell', ['aquaporins']),
     ('wa4', 'SIADH', 1640, 1620, 'waDz', 'euvolemic hyponatremia', ['siadh']),
     ('wa5', 'Diabetes insipidus', 2080, 1620, 'waDz', 'central vs nephrogenic', ['di']),
     ('wa6', 'Polyuria work-up', 330, 1760, 'waDz', 'water restriction, DDAVP', ['polyuriadx']),
-    ('wa7', 'Hyponatremia · hypernatremia', 760, 1760, 'waDz', 'correct slowly', ['hyponat', 'hypernat']),
+    ('wa7', 'Hyponatremia · hypernatremia', 760, 1760, 'waDz', 'correct slowly', ['hyponat', 'hypernat', 'tonicity']),
     ('wa8', 'ADH drugs', 1200, 1760, 'waRx', 'desmopressin · vaptans', ['adhdrugs']),
     ('wa9', 'Lithium', 1640, 1760, 'waRx', 'nephrogenic DI', ['lithium'])],
   panels=[

@@ -172,7 +172,7 @@ MAP = dict(
     ('sx2', 'Swyer · Turner', 760, 1270, 'sxGonad', 'streak gonads', ['swyer', 'turner']),
     ('sx3', 'Klinefelter', 1160, 1270, 'sxGonad', '47,XXY', ['klinefelter']),
     ('sx4', 'Androgen insensitivity', 1560, 1270, 'sxHorm', 'no receptor', ['ais']),
-    ('sx5', '5α-reductase deficiency', 1990, 1270, 'sxHorm', 'no DHT', ['reductase5a']),
+    ('sx5', '5α-reductase deficiency', 1990, 1270, 'sxHorm', 'no DHT', ['reductase5a', 'hypospadias']),
     ('sx6', 'Persistent Müllerian duct', 330, 1400, 'sxDuct', 'no AMH effect', ['pmds', 'ductremnants']),
     ('sx7', '21-hydroxylase deficiency', 780, 1400, 'sxHorm', 'adrenal androgens', ['cah21'])],
   panels=[

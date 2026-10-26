@@ -177,10 +177,10 @@ MAP = dict(
     ('aq2', 'Glaucoma · drugs', 760, 1660, 'aqFront', 'open vs closed', ['glaucoma', 'glaucomadrugs']),
     ('aq3', 'Uveitis', 1200, 1660, 'aqFront', 'hypopyon', ['uveitis']),
     ('aq4', 'Cataract', 1640, 1660, 'aqFront', 'cloudy lens', ['cataract']),
-    ('aq5', 'Macular degeneration', 330, 1790, 'aqRet', 'drusen · anti-VEGF', ['amd']),
+    ('aq5', 'Macular degeneration', 330, 1790, 'aqRet', 'drusen · anti-VEGF', ['amd', 'retinacells']),
     ('aq6', 'Diabetic retinopathy', 760, 1790, 'aqRet', 'VEGF', ['retinopathy']),
     ('aq7', 'Retinal vessel occlusion', 1200, 1790, 'aqRet', 'cherry-red spot', ['retinalocc']),
-    ('aq8', 'Detachment · RP · ROP', 1640, 1790, 'aqRet', 'curtain · spicules', ['retinaldetach', 'retinitispig', 'rop'])],
+    ('aq8', 'Detachment · RP · ROP', 1640, 1790, 'aqRet', 'curtain · spicules', ['retinaldetach', 'retinitispig', 'rop', 'phototrans'])],
   panels=[
     (2500, PANY, 1000, 'Glaucoma drugs (First Aid pp. 550–551, 568)', [
       ('Less aqueous made', 'timolol, brimonidine, acetazolamide'),

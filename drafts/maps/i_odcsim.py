@@ -165,7 +165,7 @@ MAP = dict(
        'Katzung ch 12 — Vasodilators & the Treatment of Angina Pectoris & Coronary Syndromes'],
   lanes=[('hbNorm', 'Oxygen transport', 'glycolysis'), ('hbPois', 'Poisons', 'tca'), ('hbType', 'Hemoglobin types & disease', 'gluconeo')],
   nodes=[
-    ('hb1', 'O₂ content & the curve', 330, 1620, 'hbNorm', 'left is lower (P50)', ['odc'], 'hub'),
+    ('hb1', 'O₂ content & the curve', 330, 1620, 'hbNorm', 'left is lower (P50)', ['odc', 'tissueo2'], 'hub'),
     ('hb2', 'High altitude', 760, 1620, 'hbNorm', '↑ 2,3-BPG, ↑ EPO', ['altitude']),
     ('hb3', 'Hemoglobin as a buffer', 1200, 1620, 'hbNorm', 'deoxyHb buffers better', ['intrabuffer']),
     ('hb4', 'CO poisoning', 1640, 1620, 'hbPois', 'pulse oximeter lies', ['cohb']),

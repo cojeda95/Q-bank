@@ -176,14 +176,14 @@ MAP = dict(
        'Langman ch 22 — Answers to Problems', 'Bootcamp.com Nephrology — Anatomy & Embryology'],
   lanes=[('ebWk', 'Weeks 1–8', 'glycolysis'), ('ebGut', 'Gut & wall', 'tca'), ('ebUro', 'Kidney & urinary', 'gluconeo')],
   nodes=[
-    ('eb1', 'Weeks 1–8', 330, 1660, 'ebWk', 'organogenesis', ['earlydev'], 'hub'),
+    ('eb1', 'Weeks 1–8', 330, 1660, 'ebWk', 'organogenesis', ['earlydev', 'brainvesicles'], 'hub'),
     ('eb2', 'Germ layers', 760, 1660, 'ebWk', 'EMO PASSES', ['germlayers']),
     ('eb3', 'Teratogens · FAS', 1200, 1660, 'ebWk', 'weeks 3–8', ['teratogens', 'fas']),
     ('eb4', 'Morphogenesis · twins', 1640, 1660, 'ebWk', 'sequence, deformation', ['morpherrors', 'twins']),
     ('eb5', 'TEF · atresia', 2080, 1660, 'ebGut', 'can’t swallow', ['tef', 'atresia']),
     ('eb6', 'Gastroschisis · omphalocele', 330, 1790, 'ebGut', 'sac or no sac', ['walldefects']),
     ('eb7', 'Annular pancreas · VACTERL', 760, 1790, 'ebGut', 'ring · mesoderm', ['annularpanc', 'vacterl']),
-    ('eb8', 'Potter sequence', 1200, 1790, 'ebUro', 'no urine', ['potter']),
+    ('eb8', 'Potter sequence', 1200, 1790, 'ebUro', 'no urine', ['potter', 'kidneydev']),
     ('eb9', 'Horseshoe · valves', 1640, 1790, 'ebUro', 'IMA · male outlet', ['horseshoe'])],
   panels=[
     (2500, PANY, 1000, 'Amniotic fluid tells you which side broke', [
