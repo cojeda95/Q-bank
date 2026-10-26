@@ -132,6 +132,8 @@ function atlasNorm(t) {
 }
 // Cards whose terms appear in the given zones (zone 0 = an answer's text, where
 // "=term" also counts), best first: earlier zone, then longer matching term.
+// a term's s/es form that is an ordinary word is not its plural: LES + s = "less" (tools/build-atlas.py NOT_PLURAL must match)
+const ATLAS_NOT_PLURAL = new Set(['less', 'has', 'was', 'yes', 'does', 'goes', 'lies', 'dies', 'bias', 'gas', 'bus', 'its', 'thus', 'plus']);
 function atlasMatch(zones) {
   const found = new Map();
   zones.forEach((z, zone) => {
@@ -142,16 +144,22 @@ function atlasMatch(zones) {
       // a term written "=term" is answer-only: it never matches in the explanation
       const hit = c.t.find(t => {
         if (t[0] === '=') { if (zone) return false; t = t.slice(1); }
-        return text.includes(' ' + t + ' ') || text.includes(' ' + t + 's ') || text.includes(' ' + t + 'es ');
+        return text.includes(' ' + t + ' ') || (!ATLAS_NOT_PLURAL.has(t + 's') && text.includes(' ' + t + 's ')) || (!ATLAS_NOT_PLURAL.has(t + 'es') && text.includes(' ' + t + 'es '));
       });
       if (hit) found.set(c.id, { c, zone, len: hit.replace(/^=/, '').length });
     }
   });
   return [...found.values()].sort((a, b) => a.zone - b.zone || b.len - a.len).map(x => x.c);
 }
+// The explanation's first sentence: it ends at . ! or ? followed by a space or the end, but not after
+// a lone capital ("H. pylori", "E. coli") — tools/build-atlas.py expl_lead() must match
+function atlasLead(e) {
+  const m = /(?<!\b[A-Z])[.!?]+(?=\s|$)/.exec(e);
+  return m ? e.slice(0, m.index + m[0].length) : e;
+}
 function atlasLinksFor(q) {
   if (!ATLAS_INDEX || !q) return [];
-  const lead = (String(q.explanation || '').match(/[^.!?]+[.!?]+/g) || [q.explanation || ''])[0];
+  const lead = atlasLead(String(q.explanation || ''));
   return atlasMatch([q.choices && choiceText(q, q.correct), lead]).slice(0, 3);
 }
 /* "You picked": after a miss, the option the person chose is matched the same way as

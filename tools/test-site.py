@@ -479,6 +479,22 @@ def test_block(C, block, BQ, QS):
         errs = p.take_errors(); record(S, "home: no console errors", not errs, fmt_errs(errs))
         a11y_checks(C, p, S, "home")
 
+        # the page's own card links (shared/app.js atlasLinksFor) agree with the built atlas-qlinks.js (build-atlas.py)
+        stepname = "links"
+        QL = js_json(os.path.join(ROOT, "resources", "atlas-qlinks.js"), "window.ATLAS_QLINKS=")
+        bi = [b[0] for b in QL["blocks"]].index(block) if block in [b[0] for b in QL["blocks"]] else -1
+        exp = {}
+        for cid, v in QL["cards"].items():
+            for b, ids in v:
+                if b == bi:
+                    for q in ids: exp.setdefault(q, []).append(cid)
+        p.wait("typeof ATLAS_INDEX!=='undefined' && ATLAS_INDEX && ATLAS_INDEX.length", timeout=20)
+        got = p.js("""(()=>{ const o={}; for(const e of DATA.exams) for(const s of e.sdls) for(const q of s.questions){
+            const c=atlasLinksFor(q).map(c=>c.id); if(c.length) o[q.id]=c; } return o; })()""")
+        bad = sorted(q for q in set(exp) | set(got) if sorted(exp.get(q, [])) != sorted(got.get(q, [])))
+        record(S, "card links: page = build", not bad, "%d questions linked" % len(got) if not bad else
+               "%d differ, e.g. %s" % (len(bad), "; ".join("%s page %s build %s" % (q, got.get(q), exp.get(q)) for q in bad[:3])))
+
         # SDL to practice: one holding a question with a state (See it move), else the first with questions
         state_ids = pick_targets(block, BQ, QS)
         pick = p.js("""((ids)=>{ const set=new Set(ids);

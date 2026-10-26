@@ -42,7 +42,7 @@ ESCAPED_TAG = re.compile(r"</?(?:b|i|em|strong)>")
 KNOWN_SRC = re.compile(r"(Robbins|Katzung|Guyton|Costanzo|Kaplan & Sadock|Marks|Langman|Moore|Pawlina|"
                        r"Fundamental Neuroscience|Foundations of Osteopathic Medicine|Atlas of Osteopathic Techniques|"
                        r"Somatic Dysfunction in Osteopathic Family Medicine|An Osteopathic Approach to Diagnosis and Treatment|DeGowin|"
-                       r"OCOM OMM|OCOM Ortho|OCOM Psych|OCOM Rheum|OCOM Nephro|Osmosis|Bootcamp\.com) ")
+                       r"OCOM OMM|OCOM Ortho|OCOM Psych|OCOM Rheum|OCOM Nephro|OCOM Gastro|Osmosis|Bootcamp\.com) ")
 
 def dyn_maps(text):
     """[(map id, its m.dyn data)] for every drawn, moving map (art:"kit") — the data is JSON on the map's dyn: line"""
@@ -479,19 +479,30 @@ for ci, (cid, _, _, terms) in enumerate(rows):
     for t in terms:
         by_first.setdefault(t.lstrip("=").split(" ")[0], set()).add(ci)
 
+# The explanation's first sentence: it ends at . ! or ? followed by a space or the end, but not
+# after a lone capital ("H. pylori", "E. coli") — shared/app.js atlasLead() must match
+LEAD_END = re.compile(r"(?<!\b[A-Z])[.!?]+(?=\s|$)")
+
+def expl_lead(expl):
+    m = LEAD_END.search(expl)
+    return expl[:m.end()] if m else expl
+
+# a term's s/es form that is an ordinary word is not its plural: LES + s = "less" (app.js atlasMatch must match)
+NOT_PLURAL = {"less", "has", "was", "yes", "does", "goes", "lies", "dies", "bias", "gas", "bus", "its", "thus", "plus"}
+
 def first_hit(terms, text, zone):
     for t in terms:
         if t.startswith("="):           # answer-only term
             if zone:
                 continue
             t = t[1:]
-        if f" {t} " in text or f" {t}s " in text or f" {t}es " in text:
+        if f" {t} " in text or (f"{t}s" not in NOT_PLURAL and f" {t}s " in text) or (f"{t}es" not in NOT_PLURAL and f" {t}es " in text):
             return t
     return None
 
 def links_for(q):
     expl = str(q.get("explanation") or "")
-    lead = (re.findall(r"[^.!?]+[.!?]+", expl) or [expl])[0]
+    lead = expl_lead(expl)
     ans = (q.get("choices") or {}).get(q.get("correct"))
     if isinstance(ans, list):   # grid ("matrix") choice, PROTOTYPE: cells joined, as choiceText() in app.js
         ans = " / ".join(str(c) for c in ans)
@@ -729,7 +740,7 @@ def zx(z):
 
 def qs_state(q, qcards):
     expl = str(q.get("explanation") or "")
-    lead = (re.findall(r"[^.!?]+[.!?]+", expl) or [expl])[0]
+    lead = expl_lead(expl)
     ans = (q.get("choices") or {}).get(q.get("correct"))
     if isinstance(ans, list):
         ans = " / ".join(str(c) for c in ans)
