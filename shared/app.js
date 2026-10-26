@@ -2567,7 +2567,7 @@ function renderPracticeQuestion() {
   const q = session.questions[session.index];
   const total = session.questions.length;
   const flagged = isFlagged(q.id);
-  const letters = ['A', 'B', 'C', 'D', 'E'];
+  const letters = choiceLetters(q);
   const record = session.records[session.index];
   const answered = !!record;
   if (!session.struck) session.struck = {};
@@ -2940,7 +2940,7 @@ function renderExamQuestion() {
   const q = session.questions[session.index];
   const total = session.questions.length;
   const flagged = isFlagged(q.id);
-  const letters = ['A', 'B', 'C', 'D', 'E'];
+  const letters = choiceLetters(q);
   const selected = session.answers[session.index];
   const instantFeedback = loadSettings().examInstantFeedback;
   const locked = instantFeedback && !!selected; // answer revealed, choice no longer changeable
@@ -3259,10 +3259,16 @@ function renderFlaggedReview() {
   renderFlaggedQuestion();
 }
 
+/* the choice letters a question actually has (Pulm SDL 32 items have A–D only; no blank E button) */
+function choiceLetters(q) {
+  const c = (q && q.choices) || {};
+  return ['A', 'B', 'C', 'D', 'E'].filter(l => c[l] != null && String(c[l]).trim() !== '');
+}
+
 function renderFlaggedQuestion() {
   const q = session.questions[session.index];
   const total = session.questions.length;
-  const letters = ['A', 'B', 'C', 'D', 'E'];
+  const letters = choiceLetters(q);
   const record = session.records[session.index];
   const answered = !!record;
   if (!session.struck) session.struck = {};
@@ -3961,7 +3967,7 @@ function renderReviewQuestion() {
   const q = session.questions[session.index];
   const total = session.questions.length;
   const flagged = isFlagged(q.id);
-  const letters = ['A', 'B', 'C', 'D', 'E'];
+  const letters = choiceLetters(q);
   const record = session.records[session.index];
   const answered = !!record;
   if (!session.struck) session.struck = {};
@@ -4359,6 +4365,85 @@ function renderStudySheet() {
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
   document.getElementById('printBtn').addEventListener('click', () => window.print());
 }
+
+/* ── Accessibility (m56) ─────────────────────────────────────────────────────────────────────────────────────────────
+   Every view re-renders #main with innerHTML, so this watches #main and, after each render:
+   · choice buttons say whether they are picked (aria-pressed) and, once answered, which is right and which was yours;
+   · the confidence prompt and the result are announced (a polite live region) — with the keyboard, focus moves to the
+     confidence buttons and then to the result banner instead;
+   · keyboard focus that the re-render dropped goes back to the same control (same id / letter), else to the view's heading;
+   · the practice / exam / review question gets a screen-reader heading ("Question 3 of 10");
+   · clickable cards (div.action-card) become buttons: Tab reaches them, Enter / Space opens them;
+   · the report form's note gets a label and its status line is announced. */
+(function a11yMain() {
+  const root = document.getElementById('main');
+  if (!root || !window.MutationObserver) return;
+  let kbd = false, lastKey = null;
+  addEventListener('keydown', e => { if (!e.metaKey && !e.ctrlKey) kbd = true; }, true);
+  addEventListener('pointerdown', () => { kbd = false; }, true);
+  const live = document.createElement('div');
+  live.className = 'sr-only'; live.id = 'a11yLive'; live.setAttribute('role', 'status'); live.setAttribute('aria-live', 'polite');
+  document.body.appendChild(live);
+  const say = t => { live.textContent = ''; setTimeout(() => { live.textContent = t; }, 60); };
+  const keyOf = el => {
+    if (!el || el === document.body || !root.contains(el)) return null;
+    for (const a of ['id', 'data-letter', 'data-strike-letter', 'data-why', 'data-preset', 'data-split', 'href'])
+      if (el.getAttribute(a)) return [el.tagName, a, el.getAttribute(a)];
+    return null;
+  };
+  root.addEventListener('focusin', e => { lastKey = keyOf(e.target); });
+  const focus = el => { if (!el) return false; if (!el.matches('a[href],button,input,select,textarea,[tabindex]')) el.setAttribute('tabindex', '-1');
+    try { el.focus({ preventScroll: true }); } catch (e) { return false; } return document.activeElement === el; };
+  let seenBanner = null, seenConf = null, busy = false;
+  function enhance(rerender) {
+    if (busy) return; busy = true;
+    try {
+      // choices
+      root.querySelectorAll('.choice[data-letter]').forEach(b => {
+        const sel = b.classList.contains('selected'), right = b.classList.contains('correct'), wrong = b.classList.contains('incorrect');
+        if (b.disabled || right || wrong) b.removeAttribute('aria-pressed'); else b.setAttribute('aria-pressed', String(sel));
+        let s = b.querySelector('.a11y-st');
+        const txt = right ? ' — correct answer' : wrong ? ' — your answer, incorrect' : '';
+        if (txt) { if (!s) { s = document.createElement('span'); s.className = 'sr-only a11y-st'; b.appendChild(s); } if (s.textContent !== txt) s.textContent = txt; }
+        else if (s) s.remove();
+      });
+      // a heading for the question (the stem itself is plain text)
+      const stem = root.querySelector('.q-stem');
+      if (stem && !root.querySelector('.a11y-qh')) {
+        const p = root.querySelector('.quiz-progress');
+        const h = document.createElement('h2'); h.className = 'sr-only a11y-qh';
+        h.textContent = p ? p.textContent.replace(/\s+/g, ' ').trim() : 'Question';
+        stem.parentNode.insertBefore(h, stem);
+      }
+      // cards that only listen for clicks
+      root.querySelectorAll('div.action-card:not([tabindex])').forEach(c => { c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0'); });
+      // the report form
+      const rn = root.querySelector('#rfNote'); if (rn && !rn.getAttribute('aria-label')) rn.setAttribute('aria-label', 'What should it say? (optional)');
+      const rm = root.querySelector('#rfMsg'); if (rm && !rm.getAttribute('role')) rm.setAttribute('role', 'status');
+      // announce / move focus
+      const banner = root.querySelector('.feedback-banner'), conf = root.querySelector('.confidence-prompt');
+      const lost = !document.activeElement || document.activeElement === document.body;
+      if (banner && banner !== seenBanner && !seenBannerText(banner)) {
+        if (kbd && (lost || root.contains(document.activeElement))) focus(banner); else say(banner.textContent.replace(/\s+/g, ' ').trim());
+      } else if (conf && conf !== seenConf) {
+        const lab = conf.querySelector('.confidence-label');
+        if (kbd) focus(conf.querySelector('button')); else if (lab) say(lab.textContent.replace(/\s+/g, ' ').trim());
+      } else if (rerender && lost && lastKey) {
+        let el = null;
+        try { el = root.querySelector(lastKey[0].toLowerCase() + '[' + lastKey[1] + '="' + CSS.escape(lastKey[2]) + '"]'); } catch (e) {}
+        if (!(el && !el.disabled && focus(el)) && kbd) focus(root.querySelector('.a11y-qh, h1, h2'));
+      }
+      seenBanner = banner; seenConf = conf;
+    } finally { busy = false; }
+  }
+  // the same answered question re-rendered (a flag, a "why did you miss it" tap) is not a new result
+  let lastBannerText = '';
+  function seenBannerText(b) { const k = (root.querySelector('.quiz-progress') || {}).textContent + '|' + b.textContent; const same = k === lastBannerText; lastBannerText = k; return same; }
+  new MutationObserver(recs => { if (!busy) enhance(recs.some(r => r.target === root)); }).observe(root, { childList: true, subtree: true });
+  root.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('div.action-card[role="button"]')) { e.preventDefault(); e.target.click(); }
+  });
+})();
 
 /* ── Boot ─────────────────────────────────────────────────────────────── */
 try {

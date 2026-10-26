@@ -147,7 +147,7 @@ function mergeSettings(a, b, preferRemote) {
 function mergeAtlas(a, b) {
   a = a || {}; b = b || {};
   const part = (o, k) => (o[k] && typeof o[k] === 'object') ? o[k] : {};
-  const out = { rev: {}, ok: {}, miss: {}, qok: {}, qmiss: {}, box: {}, due: {}, at: {}, known: {}, star: {}, nit: {}, prd: {}, nitm: {}, note: {} };
+  const out = { rev: {}, ok: {}, miss: {}, qok: {}, qmiss: {}, box: {}, due: {}, at: {}, known: {}, star: {}, nit: {}, prd: {}, nitm: {}, cas: {}, note: {} };
   [a, b].forEach(src => Object.entries(part(src, 'rev')).forEach(([id, t]) => {
     out.rev[id] = Math.max(+out.rev[id] || 0, +t || 0) || t;
   }));
@@ -160,10 +160,10 @@ function mergeAtlas(a, b) {
   ['ok', 'miss', 'qok', 'qmiss'].forEach(k => [a, b].forEach(src => Object.entries(part(src, k)).forEach(([id, n]) => {
     out[k][id] = Math.max(out[k][id] || 0, +n || 0);
   })));
-  // moving maps: Name-it and Predict scores per map ([right, asked], the larger of each), and the Name-it options
+  // moving maps: Name-it, Predict and Case scores per map ([right, asked], the larger of each), and the Name-it options
   // missed and not yet put right (the larger count; one named right on either device clears it there, and the
   // other device's copy comes back until it is answered there too)
-  ['nit', 'prd'].forEach(k => [a, b].forEach(src => Object.entries(part(src, k)).forEach(([v, r]) => {
+  ['nit', 'prd', 'cas'].forEach(k => [a, b].forEach(src => Object.entries(part(src, k)).forEach(([v, r]) => {
     if (!Array.isArray(r)) return;
     const c = out[k][v] || [0, 0]; out[k][v] = [Math.max(c[0], +r[0] || 0), Math.max(c[1], +r[1] || 0)];
   })));

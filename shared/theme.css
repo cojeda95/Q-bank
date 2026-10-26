@@ -6,9 +6,10 @@
 :root {
   --text: #222;
   --text-strong: #333;
-  --text-muted: #888;
-  --text-faint: #999;
-  --text-fainter: #aaa;
+  /* a11y (m56): muted / faint text reach 4.5:1 on white, the page and the explanation grey (was #888 / #999 / #aaa) */
+  --text-muted: #6b6b6b;
+  --text-faint: #707070;
+  --text-fainter: #737373;
   --topbar-bg: var(--navy);
   --navy-fill: var(--navy);
   --surface-hover: #f5f8fb;
@@ -40,8 +41,8 @@
     --text: #e4e6ea;
     --text-strong: #f1f2f4;
     --text-muted: #8b9099;
-    --text-faint: #7f848d;
-    --text-fainter: #6f747c;
+    --text-faint: #8e939c;    /* a11y (m56): 4.5:1 on cards and inputs (was #7f848d / #6f747c) */
+    --text-fainter: #8b9099;
     --navy: #86b6e8;          /* headings, links, borders, bars */
     --navy-fill: #2b5d8e;     /* filled buttons */
     --navy-dark: #234d77;     /* filled-button hover */

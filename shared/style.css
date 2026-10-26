@@ -1152,3 +1152,25 @@ button, input, select, textarea { font-family: inherit; }
 .info-block.atlas .amc-slot .atlas-move-cta:hover .amc-k { filter: brightness(1.12); }
 .info-block.atlas .amc-slot .atlas-move-cta:focus-visible { outline: 3px solid var(--atlas-ink); outline-offset: 2px; }
 @media (max-width: 480px) { .info-block.atlas .amc-slot .amc-t { flex-basis: 100%; } }
+/* ── Accessibility pass (m56) ─────────────────────────────────────────────────────────────────────────────────────────
+   Screen-reader-only text (the live region and the per-question heading app.js adds), readable flagged / answered states,
+   and 32 px+ tap targets on touch screens and phones. */
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.flag-btn.flagged { color: var(--amber-ink); }   /* gold on amber read 2:1 */
+.feedback-banner:focus { outline: none; }
+.feedback-banner:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+.action-card[role="button"]:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+@media screen {
+  /* dark: the green / red letter badges are light there — dark ink on them (white read 2.1–2.7:1) */
+  :root[data-theme="dark"] .choice.correct .letter,
+  :root[data-theme="dark"] .choice.incorrect .letter { color: #15171a; }
+}
+@media (pointer: coarse), (max-width: 600px) {
+  .theme-btn { min-height: 34px; min-width: 40px; }
+  .hub-brand { display: inline-flex; align-items: center; min-height: 32px; }
+  .hub-nav a { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 32px; }
+  .crumbs a, .back-link, .gt-links a, .gt-name, .mt-sw a, .amap-name, .mh-name, .xw-one, .sec-head > a, .news-box > a, .rail-card h2 a { display: inline-flex; align-items: center; min-height: 32px; }
+  .back-link { margin-bottom: 8px; }
+  .report-btn, .flag-btn, .mw-b, .amap-go { min-height: 32px; }
+  .amap-more > summary { padding-top: 7px; padding-bottom: 7px; }
+}

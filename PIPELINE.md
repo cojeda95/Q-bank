@@ -995,3 +995,26 @@ coverage sweep (batches/m54/coverage.md); new cards spinalshock, wshedinf, kneeb
 maps (batches/m54/check_A–D.md): 25 fixes applied (patches_A–D.json), mostly "normal or X → –"; mensflow PCOS FSH curve/flows
 set to normal. cbsim pins cerebellar + cbzones. Spaced review retire rule = 3 right reviews (1 → 3 → 7 days). sync.js
 mergeAtlas carries `note` (newest t wins). build-atlas keeps the previous commit's atlas-les.<hash>.js for one deploy.
+
+Regression tests (m56, 2026-10-25): `python3 tools/test-site.py` (stdlib + Google Chrome via the DevTools protocol, client in
+tools/cdp_mini.py; ~1 min full, ~10-30 s `--quick`). It serves the repo on a free local port, runs headless Chrome with a temp
+profile and checks: data (every data.js parses, 5 choices A-E / correct letter present / explanation non-empty / ids unique;
+atlas-qlinks + atlas-qstates point at real cards, questions, moving maps, switches and options; resources/dyn/<map>.js exists
+for every moving map and matches its content hash and switch list; the LES_BODY file matches its hash; sw.js CORE exists),
+the hub tiles, each block (exam list, an SDL answered right and wrong, "See it move" on the miss, #sdlwrong, #examwrong,
+#spaced), every atlas map via #<id> and every switch option of every moving map (state applies, readouts row, no errors),
+Name it / Predict / #quiz/mix / #quiz/moving / a deep card link / search / notes / print, and the service worker offline path
+(server cut + CDP offline → hub and atlas still render). PASS/FAIL table, exit 1 on any FAIL. Flags: --quick, --maps a,b,
+--blocks a,b, --only data,hub,blocks,atlas,features,offline, --shots [dir], --phone, --dark, --jobs N, --headed, --root DIR
+(test a copy), -v. Run it before every push. Harness notes: each tab gets its own window (a background tab is "hidden": no
+requestAnimationFrame), and the in-page helper paces hash/history changes (Chrome throttles > 200 per 10 s per tab).
+
+m56 (2026-10-26): second independent QC of all 10 question blocks (batches/m56/qc2_*.md; ~289 questions edited via qfix,
+originals in batches/m56/databak/; conivaptan sdl20_q05 edit held for owner) + follow-up on "unsure" items. Deep card audit
+of 2,171 cards (cards2_1..6; 132 patches applied, rsvab + pitnet ref removal held). Static-map text audit (static_patches.json,
+38). 8 new moving maps (f_msesim ⇄ psychmse, f_persim, f_neurodevsim ⇄ neurodev, d_smellsim ⇄ chemvisc, j_anklesim ⇄ legfx,
+j_handsim, m_ossim ⇄ bonehisto, g_gitumsim [new gi group "GI cancers"]) dated 2026-10-26 via NEW26 (whole-word id match —
+"ossim" ⊂ "prossim"). 19 pin fixes (batches/m56/pins.md). 15 more static drawings (m50/art; base.py leader halo + A.inner()).
+Case mode (assemble #24, PROG.cas, sync.js cas merge). Accessibility pass (#25 + app.js a11yMain + theme.css contrast).
+Pulm SDL 32 has 4 choices — app.js choiceLetters(q) draws only existing letters. tools/test-site.py: full regression suite
+(python3 tools/test-site.py [--quick|--phone --dark|--only …|--root DIR]) — run before every push.

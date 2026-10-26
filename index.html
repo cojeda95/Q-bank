@@ -245,6 +245,15 @@
     .offline-card { flex-direction: column; align-items: stretch; }
     .offline-btn { width: 100%; }
   }
+  /* a11y (m56): 32 px+ tap targets on touch screens and phones */
+  @media (pointer: coarse), (max-width: 600px) {
+    .brand { display: inline-flex; align-items: center; min-height: 32px; }
+    .mainnav a { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 32px; }
+    .tile .go-row a, .tile .t a, .sys-x, .sec-head > a { display: inline-flex; align-items: center; min-height: 32px; }
+    .sys-x { margin-top: -10px; margin-bottom: 6px; }
+    .bm.savebtn { display: inline-flex; align-items: center; min-height: 32px; }
+    .theme-btn { min-height: 34px; min-width: 40px; }
+  }
 </style>
 <link rel="stylesheet" href="shared/theme.css">
 <script src="shared/theme.js"></script>
