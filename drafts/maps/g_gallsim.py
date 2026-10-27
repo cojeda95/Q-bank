@@ -437,7 +437,7 @@ card('gbstruct', 'Gallbladder wall & bile concentration', 'reg', 'gbWall', 'Simp
      '<b>Na⁺, Cl⁻ and HCO₃⁻</b> across their lateral membranes (Na⁺/K⁺-ATPase) into the intercellular spaces, water follows through '
      '<b>aquaporins</b> (AQP1, AQP8), and the nearly isotonic fluid passes into the fenestrated capillaries of the lamina propria. '
      'Bile salts, cholesterol and bilirubin stay behind and concentrate.',
-     ['Concentrates bile up to 10–20-fold (Pawlina: up to 10-fold; Guyton: about 5-fold, at most 20-fold) · holds about 50 mL',
+     ['Concentrates bile up to 10–20-fold (Pawlina: up to 10-fold; Guyton: about 5-fold, at most 20-fold) · holds about 50 mL (Pawlina, Robbins; Guyton 30–60 mL)',
       'Empty or partly filled: many deep <b>mucosal folds</b> that flatten as it fills',
       '<b>Simple columnar epithelium</b> (cholangiocytes): short microvilli, apical tight junctions, many mitochondria — like intestinal absorptive cells',
       'Wall: mucosa → muscularis externa (bundles run every way) → adventitia (liver side) or serosa — <b>no muscularis mucosae, no submucosa</b>',

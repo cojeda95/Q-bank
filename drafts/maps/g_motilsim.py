@@ -449,7 +449,7 @@ card('gastricmotility', 'Gastric motility & emptying — retropulsion, pyloric p
      'down. About 20% of the time the waves become the strong <b>pyloric pump</b> that empties chyme.',
      ['Pyloric sphincter: circular muscle 50–100% thicker than the antrum and tonically contracted — lets fluids through, holds solids until they are fluid chyme',
       'Pyloric pump contractions reach 50–70 cm H₂O, about six times the mixing waves; caudad slow waves 3–5 per minute',
-      'Solids must be under 1 mm to pass; liquids empty faster than solids, isotonic faster than hypo- or hypertonic',
+      'Solids must be 1 mm or less to pass (Costanzo); liquids empty faster than solids, isotonic faster than hypo- or hypertonic',
       '<b>Enterogastric reflexes</b>: duodenal distension, irritation, acid (pH below 3.5–4), osmolality, protein and fat products → inhibit the pump and ↑ pyloric tone within about 30 s',
       'Three routes: the myenteric plexus, sympathetics via the prevertebral ganglia, the vagus to the brainstem',
       'Hormonal brake: <b>CCK</b> (fat) is the strongest; secretin and GIP are weaker'],

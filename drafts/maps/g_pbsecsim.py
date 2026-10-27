@@ -401,8 +401,8 @@ card('islets', 'Pancreas histology — acini, ducts & islet cells', 'reg', 'psPa
      'the tail, and are threaded by fenestrated capillaries.',
      ['<b>B (β) cells</b> 60–70%, mainly central: insulin; ~300 nm granules with a dense crystalline (angular) core and a clear halo',
       '<b>A (α) cells</b> 15–20%, mainly at the periphery: glucagon; ~250 nm granules with a dense round eccentric core',
-      '<b>D (δ) cells</b> 5–10%, at the periphery: somatostatin; ~325 nm granules with a homogeneous matrix',
-      '<b>PP (F) cells</b> 1–2%, also scattered in the exocrine tissue: pancreatic polypeptide inhibits pancreatic enzyme and '
+      '<b>D (δ) cells</b> 5–10%, at the periphery: somatostatin; 300–350 nm granules with a homogeneous matrix',
+      '<b>PP (F) cells</b> (with the other minor cells ~5% of islet tissue), also scattered in the exocrine tissue: pancreatic polypeptide inhibits pancreatic enzyme and '
       'HCO₃⁻ secretion, bile secretion and intestinal motility',
       'Capillaries reach the A and D cells before the central B cells; no striated ducts in the pancreas'],
      ['—'],
