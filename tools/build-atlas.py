@@ -738,6 +738,22 @@ def qs_titled(t, text, mid):
 def zx(z):
     return " " + " ".join(QS_ABBR.get(w, w) for w in z.split()) + " "
 
+# The lead rule: a question that links a single card may take a state from the explanation's opening words alone (cx 0),
+# but only on a map of the block's own system — elsewhere the same lead lands on look-alike maps (biliary atresia on edema).
+LEAD_SYS = {"gastro": {"gi"}, "gi": {"gi"}, "nephro": {"renal"}, "pulm": {"pulmo"}, "endocrine": {"endo"}, "neuro": {"neuro"},
+            "psych": {"behav"}, "eent": {"eent"}, "rheum": {"msk", "immuno"}, "ortho": {"msk"}, "omm": {"omm"}}
+_tseg = art[art.index("const TOPICS"):]
+MAP_SYS = {v: t for t, vs in re.findall(r'\["([a-z0-9_]+)","[^"]+",\[([^\]]*)\]\]', _tseg[:_tseg.index("]];") + 3])
+           for v in re.findall(r'"([a-z0-9_]+)"', vs)}
+# hand-checked (m60): the lead names the map's option but the question is about something the map does not show
+LEAD_NO = {"gastro": {"sdl11_q20"}, "neuro": {"sdl09_q05", "sdl38_q24"}, "psych": {"sdl25_q04", "sdl32_q01", "sdl16_q19"},
+           "pulm": {"sdl18_ex1_q02_b1", "sdl18_ex1_q15_b1", "sdl22_ex1_q15_b1", "sdl23_ex1_q04_b1", "sdl23_ex1_q05_b1",
+                    "sdl23_ex1_q08_b1", "sdl23_ex1_q14_b1"}}
+QS_BLOCK = [None, None]   # block, question id
+def lead_ok(mid, qcards):
+    return (len(qcards) == 1 and MAP_SYS.get(mid) in LEAD_SYS.get(QS_BLOCK[0], ())
+            and QS_BLOCK[1] not in LEAD_NO.get(QS_BLOCK[0], ()))
+
 def qs_state(q, qcards):
     expl = str(q.get("explanation") or "")
     lead = expl_lead(expl)
@@ -776,7 +792,7 @@ def qs_state(q, qcards):
             lb, cx, early = lab(names, mid), ctx(mid, c), qs_early(names, head, mid)
             if r == 0:
                 good = (lb == 0 and (cx >= 1 or early)
-                        or lb == 1 and cx >= 1 and qs_early(names, zones[1], mid, 7)) if c not in qs_drugs else lb == 0 and (
+                        or lb == 1 and (cx >= 1 or lead_ok(mid, qcards)) and qs_early(names, zones[1], mid, 7)) if c not in qs_drugs else lb == 0 and (
                     (cx >= 2 and (len(qs_drugmaps[c]) == 1 or title(mid, alltext))) or (cx >= 1 and early and len(qs_drugmaps[c]) == 1))
             else:
                 good = lb < 2 and qs_early(names, head, mid, 3) and c not in qs_drugs
@@ -845,6 +861,7 @@ def qs_state(q, qcards):
 qstates = {}
 for bi, q, qcards in qrecs:
     if q.get("id"):
+        QS_BLOCK[:] = [blocks[bi][0], q["id"]]
         st = qs_state(q, qcards)
         if st:
             qstates.setdefault(str(bi), {})[q["id"]] = st
