@@ -249,6 +249,34 @@ def check_data(A):
     except Exception as e:
         record(S, "atlas-qlinks: cards + questions exist", False, "parse: %s" % e)
 
+    # answer-only link terms (m61): a q:["=…"] term counts only when it appears in a question's correct answer. Answers get
+    # reworded (length parity, duplicate swaps), and then the term silently stops linking anything — list those (WARN)
+    try:
+        GREEK = {"α": " alpha ", "β": " beta ", "γ": " gamma ", "δ": " delta ", "κ": " kappa ", "ε": " epsilon ", "μ": " mu "}
+        SUB = str.maketrans("₀₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻", "01234567890123456789+-")
+        def anorm(t):   # = atlas_norm in tools/build-atlas.py
+            t = t.lower()
+            for k, v in GREEK.items(): t = t.replace(k, v)
+            t = t.translate(SUB); t = re.sub(r"<[^>]+>", " ", t); t = re.sub(r"['’‘`]", "", t)
+            t = re.sub(r"[‐‑‒–—―\-/]", " ", t); t = re.sub(r"[^a-z0-9+ ]", " ", t)
+            return re.sub(r"\s+", " ", t).strip()
+        answers = []
+        for b, qs in BQ.items():
+            for q in qs.values():
+                a = (q.get("choices") or {}).get(q.get("correct"))
+                if isinstance(a, list): a = " / ".join(str(c) for c in a)
+                answers.append(" " + anorm(str(a or "")) + " ")
+        blob = "\n".join(answers)
+        TT = js_json(os.path.join(ROOT, "resources", "atlas-terms.js"), "window.ATLAS_TERMS=")
+        dead = [(c[0], t[1:]) for c in TT["cards"] for t in c[3] if t.startswith("=")
+                and not any(f" {t[1:]}{s} " in blob for s in ("", "s", "es"))]
+        nall = sum(1 for c in TT["cards"] for t in c[3] if t.startswith("="))
+        record(S, "atlas-terms: every answer-only (=) term matches some correct answer", not dead,
+               "%d answer-only terms" % nall if not dead else "%d of %d match no answer (reworded answers?): %s" % (
+                   len(dead), nall, fmt_errs(["%s %r" % d for d in dead], 8)), warn=True)
+    except Exception as e:
+        record(S, "atlas-terms: every answer-only (=) term matches some correct answer", False, "parse: %s" % e, warn=True)
+
     # qstates
     probs, QS, n = [], None, 0
     try:

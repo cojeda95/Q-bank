@@ -42,7 +42,8 @@ ESCAPED_TAG = re.compile(r"</?(?:b|i|em|strong)>")
 KNOWN_SRC = re.compile(r"(Robbins|Katzung|Guyton|Costanzo|Kaplan & Sadock|Marks|Langman|Moore|Pawlina|"
                        r"Fundamental Neuroscience|Foundations of Osteopathic Medicine|Atlas of Osteopathic Techniques|"
                        r"Somatic Dysfunction in Osteopathic Family Medicine|An Osteopathic Approach to Diagnosis and Treatment|DeGowin|"
-                       r"OCOM OMM|OCOM Ortho|OCOM Psych|OCOM Rheum|OCOM Nephro|OCOM Gastro|Osmosis|Bootcamp\.com) ")
+                       r"OCOM OMM|OCOM Ortho|OCOM Psych|OCOM Rheum|OCOM Nephro|OCOM Gastro|OCOM Pulm|Osmosis|Bootcamp\.com|"
+                       r"Research Methodology in the Health Sciences) ")
 
 def dyn_maps(text):
     """[(map id, its m.dyn data)] for every drawn, moving map (art:"kit") — the data is JSON on the map's dyn: line"""
@@ -749,6 +750,19 @@ MAP_SYS = {v: t for t, vs in re.findall(r'\["([a-z0-9_]+)","[^"]+",\[([^\]]*)\]\
 LEAD_NO = {"gastro": {"sdl11_q20"}, "neuro": {"sdl09_q05", "sdl38_q24"}, "psych": {"sdl25_q04", "sdl32_q01", "sdl16_q19"},
            "pulm": {"sdl18_ex1_q02_b1", "sdl18_ex1_q15_b1", "sdl22_ex1_q15_b1", "sdl23_ex1_q04_b1", "sdl23_ex1_q05_b1",
                     "sdl23_ex1_q08_b1", "sdl23_ex1_q14_b1"}}
+# hand-checked (m61): a "Follow one step" option (switch id "step") that names the question but shows the wrong thing —
+# block -> {question id: map}; vetoed at every tier (LEAD_NO only covers the lead rule, and these are named in the answer)
+STEP_NO = {
+    "neuro": {"sdl26_q02": "bgflow", "sdl27_bloom_q01": "bgflow", "sdl43_q02": "bgflow", "sdl43_q20": "bgflow",
+              "sdl31_q46": "abflow", "sdl46_q17": "watersim", "sdl05_q24": "nmjflow", "sdl35_q09": "nmjflow",
+              "sdl36_q09": "nmjflow", "sdl35_bloom_q08": "nmjflow", "sdl05_q27": "nmjflow"},
+    "psych": {"sdl04_q27": "bgflow", "sdl13_q21": "hpgsim", "sdl04_q02": "papezsim", "sdl07_q48": "papezsim",
+              "sdl35_q17": "papezsim"},
+    "eent": {"sdl23_q10": "abflow", "sdl14_q10": "cochflow", "sdl15_q10": "cochflow", "sdl15_q21": "cochflow",
+             "sdl15_q25": "cochflow", "sdl15_q26": "cochflow", "sdl15_q27": "cochflow", "sdl15_q30": "cochflow"},
+    "endocrine": {"sdl4_q17": "watersim", "sdl10_q10": "watersim", "sdl10_q11": "watersim", "sdl10_q23": "watersim",
+                  "sdl39_q22": "hpgsim", "sdl19_q13": "baroflow", "sdl16_q02": "follflow"},
+    "pulm": {"sdl9_ex1_q22_b1": "alvflow", "sdl9_ex1_q43_b1": "alvflow"}}
 QS_BLOCK = [None, None]   # block, question id
 def lead_ok(mid, qcards):
     return (len(qcards) == 1 and MAP_SYS.get(mid) in LEAD_SYS.get(QS_BLOCK[0], ())
@@ -844,6 +858,8 @@ def qs_state(q, qcards):
             return True
         if op["dir"] and (hwords & (QS_DOWN if op["dir"] > 0 else QS_UP)) and not (hwords & (QS_UP if op["dir"] > 0 else QS_DOWN)):
             return True
+        if x[5] == "step" and STEP_NO.get(QS_BLOCK[0], {}).get(QS_BLOCK[1]) == x[4]:
+            return True
         if x[0] < 3 and head_cards and qcards[x[0]] not in head_cards and not qs_early(op["names"], head, x[4]):
             return True
         return False
@@ -853,9 +869,21 @@ def qs_state(q, qcards):
     stem_maps = {x[4] for x in cands if x[0] == 4}
     cands.sort(key=lambda x: (x[4] not in stem_maps, x[0], x[1], -x[2], x[3]))
     best = cands[0]
-    for x in cands[1:]:                    # two options on the best map that nothing tells apart
-        if x[4] == best[4] and (x[5], x[6]) != (best[5], best[6]) and x[:3] == best[:3]:
+    # two options on the best map that nothing tells apart → no state; but a map's own disease/drug/lesion option beats its
+    # "Follow one step" options (m61): steps that tie among themselves give way to the next best non-step option, so adding
+    # the steps never erases a state
+    while True:
+        tied = {(x[5], x[6]) for x in cands if x[4] == best[4] and x[:3] == best[:3]}
+        if len(tied) == 1:
+            break
+        own = {t for t in tied if t[0] != "step"}
+        if len(own) == 1:
+            best = next(x for x in cands if x[4] == best[4] and x[:3] == best[:3] and (x[5], x[6]) in own)
+            break
+        if own or not any(x[5] != "step" for x in cands):
             return None
+        cands = [x for x in cands if x[5] != "step"]
+        best = cands[0]
     return [best[4], best[5], best[6]]
 
 qstates = {}
