@@ -157,10 +157,57 @@ function atlasLead(e) {
   const m = /(?<!\b[A-Z])[.!?]+(?=\s|$)/.exec(e);
   return m ? e.slice(0, m.index + m[0].length) : e;
 }
+// Ranking (m63) — tools/build-atlas.py links_for() must match. Each matching card gets a tier, then the longer
+// first-matched term and the atlas's order break ties: 0 named in the answer and the lead, or by an "=" phrase of 3+ words;
+// 1 named in the answer's leading phrase (before , ; : ( a dash or a which/because/... clause, as atlasOptionCard);
+// 2 named only later in the answer or only in the lead; 3 only inside a longer term of another card or right after a negation;
+// within a tier, a card named in the answer's leading phrase first.
+const ATLAS_HEAD_SPLIT = /[,;:(]| [—–-] | (?:which|because|since|due to|caused by|as|so|while|whereas|that) /i;
+const ATLAS_NEG_BEFORE = / (?:without|not|no|rather than|unlike|instead of|excluding|except|nor) (?:a |an |the )?$/;
+function atlasTermAt(t, text) {
+  for (const suf of ['', 's', 'es']) {
+    if (suf && ATLAS_NOT_PLURAL.has(t + suf)) continue;
+    const i = text.indexOf(' ' + t + suf + ' ');
+    if (i >= 0) return [i + 1, i + 1 + t.length + suf.length];
+  }
+  return null;
+}
+function atlasRank(ans, lead) {
+  const texts = [ans ? ' ' + atlasNorm(ans) + ' ' : null, lead ? ' ' + atlasNorm(lead) + ' ' : null];
+  const hits = texts.map((text, zone) => {
+    const m = new Map();
+    if (!text) return m;
+    ATLAS_INDEX.forEach((c, ci) => {
+      const hs = [];
+      for (let t of c.t) {
+        const eq = t[0] === '=';
+        if (eq) { if (zone) continue; t = t.slice(1); }
+        const at = atlasTermAt(t, text);
+        if (at) hs.push([t, at[0], at[1], eq]);
+      }
+      if (hs.length) m.set(ci, hs);
+    });
+    return m;
+  });
+  const [A, L] = hits;
+  const inside = (h, ci, H) => { for (const [cj, hs] of H) { if (cj === ci) continue;
+    for (const h2 of hs) if (!h2[3] && h2[1] <= h[1] && h[2] <= h2[2] && h2[2] - h2[1] > h[2] - h[1]) return true; } return false; };
+  const head = ans ? ' ' + atlasNorm(String(ans).split(ATLAS_HEAD_SPLIT)[0]) + ' ' : '';
+  const out = [];
+  for (const ci of new Set([...A.keys(), ...L.keys()])) {
+    const ok = (A.get(ci) || []).filter(h => !inside(h, ci, A) && !ATLAS_NEG_BEFORE.test(texts[0].slice(0, h[1])));
+    const inLead = (L.get(ci) || []).some(h => !inside(h, ci, L));
+    const leadPhrase = ok.some(h => atlasTermAt(h[0], head));
+    const tier = ok.length && (inLead || ok.some(h => h[3] && h[0].split(' ').length >= 3)) ? 0
+      : leadPhrase ? 1 : ok.length || inLead ? 2 : 3;
+    out.push({ c: ATLAS_INDEX[ci], tier, lp: leadPhrase ? 0 : 1, len: (A.get(ci) || L.get(ci))[0][0].length, ci });
+  }
+  return out.sort((a, b) => a.tier - b.tier || a.lp - b.lp || b.len - a.len || a.ci - b.ci).map(x => x.c);
+}
 function atlasLinksFor(q) {
   if (!ATLAS_INDEX || !q) return [];
   const lead = atlasLead(String(q.explanation || ''));
-  return atlasMatch([q.choices && choiceText(q, q.correct), lead]).slice(0, 3);
+  return atlasRank(q.choices && choiceText(q, q.correct), lead).slice(0, 3);
 }
 /* "You picked": after a miss, the option the person chose is matched the same way as
    a correct answer, and its best card — one not already linked for the right answer —

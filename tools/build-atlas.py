@@ -464,7 +464,7 @@ print(f"built {TERMS_OUT.relative_to(ROOT)}  —  {sum(len(r[3]) for r in rows)}
 # The same rule as atlasLinksFor() in shared/app.js — a term as a whole phrase
 # (or with -s/-es) in the correct answer or the first explanation sentence
 # ("=" terms in the answer only),
-# earlier zone first, then longer term, top 3 cards per question — so the count
+# ranked as in links_for below, top 3 cards per question — so the count
 # on a card's button matches what #atlas/<id> finds when it runs in the block.
 
 SHORT = {"psych": "Psych", "neuro": "Neuro", "endocrine": "Endocrine", "eent": "EENT", "pulm": "Pulm",
@@ -491,15 +491,52 @@ def expl_lead(expl):
 # a term's s/es form that is an ordinary word is not its plural: LES + s = "less" (app.js atlasMatch must match)
 NOT_PLURAL = {"less", "has", "was", "yes", "does", "goes", "lies", "dies", "bias", "gas", "bus", "its", "thus", "plus"}
 
-def first_hit(terms, text, zone):
-    for t in terms:
-        if t.startswith("="):           # answer-only term
-            if zone:
-                continue
-            t = t[1:]
-        if f" {t} " in text or (f"{t}s" not in NOT_PLURAL and f" {t}s " in text) or (f"{t}es" not in NOT_PLURAL and f" {t}es " in text):
-            return t
+# Ranking (m63). Which of a question's matching cards opens first. A card the answer merely mentions in passing (a drug in the
+# management clause, "… and prevents swan neck deformity", "the adrenal medulla remains preserved") used to beat the card for
+# the concept the explanation's first sentence names. Each card gets a tier, then the longer first-matched term and the
+# atlas's own order break ties, as before:
+#   0  named in the answer AND in the lead — or by an "=" phrase of three or more words written for this answer
+#   1  named in the answer's leading phrase: the text before its first , ; : ( dash or "which / because / since / due to /
+#      caused by / as / so / while / whereas / that" clause (the same split as atlasOptionCard in shared/app.js)
+#   2  named only later in the answer, or only in the lead
+#   3  only in the answer and only inside a longer term of another card ("medulla" in "adrenal medulla") or right after a
+#      negation ("without talar neck fracture", "unlike S. pneumoniae") — still linked, last
+# Within a tier a card named in the answer's leading phrase comes first ("Pheochromocytoma …" before "sustentacular cells").
+# Every matching card is still found (top 3 as before), so which questions link does not change. shared/app.js atlasRank must match.
+HEAD_SPLIT = re.compile(r"[,;:(]| [—–-] | (?:which|because|since|due to|caused by|as|so|while|whereas|that) ", re.I)
+NEG_BEFORE = re.compile(r" (?:without|not|no|rather than|unlike|instead of|excluding|except|nor) (?:a |an |the )?$")
+
+def term_at(t, text):
+    """(start, end) of the first whole-word t, ts or tes in text (padded with spaces), else None"""
+    for suf in ("", "s", "es"):
+        if suf and t + suf in NOT_PLURAL:
+            continue
+        i = text.find(f" {t}{suf} ")
+        if i >= 0:
+            return i + 1, i + 1 + len(t) + len(suf)
     return None
+
+def zone_hits(text, cand, zone):
+    """card index -> [(term, start, end, is "=" term)] for each of its terms in this zone"""
+    out = {}
+    for ci in cand:
+        hs = []
+        for t in rows[ci][3]:
+            eq = t.startswith("=")
+            if eq:
+                if zone:
+                    continue
+                t = t[1:]
+            at = term_at(t, text)
+            if at:
+                hs.append((t, at[0], at[1], eq))
+        if hs:
+            out[ci] = hs
+    return out
+
+def inside_longer(h, ci, hits):
+    return any(not h2[3] and h2[1] <= h[1] and h[2] <= h2[2] and h2[2] - h2[1] > h[2] - h[1]
+               for cj, hs in hits.items() if cj != ci for h2 in hs)
 
 def links_for(q):
     expl = str(q.get("explanation") or "")
@@ -507,26 +544,30 @@ def links_for(q):
     ans = (q.get("choices") or {}).get(q.get("correct"))
     if isinstance(ans, list):   # grid ("matrix") choice, PROTOTYPE: cells joined, as choiceText() in app.js
         ans = " / ".join(str(c) for c in ans)
-    zones = [ans, lead]
-    found = {}
-    for zone, z in enumerate(zones):
-        if not z:
-            continue
-        text = " " + atlas_norm(z) + " "
-        words = set(text.split())
+    texts = [" " + atlas_norm(z) + " " if z else None for z in (ans, lead)]
+    hits = []
+    for zone, text in enumerate(texts):
+        if not text:
+            hits.append({}); continue
         cand = set()
-        for w in words:
+        for w in set(text.split()):
             for key in (w, w[:-1] if w.endswith("s") else None, w[:-2] if w.endswith("es") else None):
                 if key and key in by_first:
                     cand |= by_first[key]
-        for ci in sorted(cand):
-            cid = rows[ci][0]
-            if cid in found:
-                continue
-            hit = first_hit(rows[ci][3], text, zone)
-            if hit:
-                found[cid] = (zone, len(hit), ci)
-    return [cid for cid, _ in sorted(found.items(), key=lambda kv: (kv[1][0], -kv[1][1], kv[1][2]))[:3]]
+        hits.append(zone_hits(text, sorted(cand), zone))
+    A, L = hits
+    head = " " + atlas_norm(HEAD_SPLIT.split(str(ans))[0]) + " " if ans else ""
+    rank = {}
+    for ci in set(A) | set(L):
+        ok = [h for h in A.get(ci, []) if not inside_longer(h, ci, A) and not NEG_BEFORE.search(texts[0][:h[1]])]
+        in_lead = any(not inside_longer(h, ci, L) for h in L.get(ci, []))
+        tier = (0 if ok and (in_lead or any(h[3] and len(h[0].split()) >= 3 for h in ok)) else
+                1 if any(term_at(h[0], head) for h in ok) else
+                2 if ok or in_lead else 3)
+        first = (A.get(ci) or L.get(ci))[0][0]
+        lead_phrase = any(term_at(h[0], head) for h in ok)
+        rank[ci] = (tier, not lead_phrase, -len(first), ci)
+    return [rows[ci][0] for ci in sorted(rank, key=rank.get)[:3]]
 
 counts = {}
 qlinks = {}       # card id -> block index -> question ids linked to it (the atlas card's "Your record")
@@ -763,6 +804,22 @@ STEP_NO = {
     "endocrine": {"sdl4_q17": "watersim", "sdl10_q10": "watersim", "sdl10_q11": "watersim", "sdl10_q23": "watersim",
                   "sdl39_q22": "hpgsim", "sdl19_q13": "baroflow", "sdl16_q02": "follflow"},
     "pulm": {"sdl9_ex1_q22_b1": "alvflow", "sdl9_ex1_q43_b1": "alvflow"}}
+# hand-checked (m63): the same veto for the m62 rewrites and the m63 ranking — a step that names the question but shows
+# another structure (lenticular fasciculus ≠ STN, globus pallidus ≠ striatum, the cupula ≠ stria vascularis, TPO ≠ NIS)
+for _b, _q, _m in (("neuro", "sdl26_bloom_q03", "bgflow"), ("neuro", "sdl26_q10", "bgflow"), ("neuro", "sdl27_bloom_q02", "bgflow"),
+                   ("neuro", "sdl36_bloom_q06", "cochflow"), ("endocrine", "sdl13_q15", "follflow"),
+                   ("endocrine", "sdl14_q22", "follflow")):
+    STEP_NO.setdefault(_b, {})[_q] = _m
+# hand-checked (m63): one option of any switch that the question names but the map does not show — block -> {question id:
+# ("map/switch:option", …)} (renal medullary carcinoma is not the thyroid's; the Galeazzi sign of DDH is not the Galeazzi fracture)
+STATE_NO = {
+    "nephro": {"sdl43_q11": ("akisim/dx:atn",), "sdl43_q41": ("thytsim/dx:med",)},
+    "neuro": {"sdl08_q29": ("visfield/les:chi",), "sdl14_bloom_q01": ("stemsim/les:lmed",), "sdl16_bloom_q01": ("cordsim/les:asa",),
+              "sdl06_q15": ("emesim/e:ond",)},
+    "ortho": {"sdl8_q17": ("fxsim/inj:galeazzi",)},
+    "pulm": {"sdl3_ex1_q15_b1": ("alvflow/dz:emph", "pftsim/pf:copd")},   # congenital lobar overinflation, not emphysema/COPD
+    "eent": {"sdl11_q09": ("cochflow/dz:om",)},
+    "psych": {"sdl39_q16": ("synflow/ad:traz",)}}
 QS_BLOCK = [None, None]   # block, question id
 def lead_ok(mid, qcards):
     return (len(qcards) == 1 and MAP_SYS.get(mid) in LEAD_SYS.get(QS_BLOCK[0], ())
@@ -859,6 +916,8 @@ def qs_state(q, qcards):
         if op["dir"] and (hwords & (QS_DOWN if op["dir"] > 0 else QS_UP)) and not (hwords & (QS_UP if op["dir"] > 0 else QS_DOWN)):
             return True
         if x[5] == "step" and STEP_NO.get(QS_BLOCK[0], {}).get(QS_BLOCK[1]) == x[4]:
+            return True
+        if f"{x[4]}/{x[5]}:{x[6]}" in STATE_NO.get(QS_BLOCK[0], {}).get(QS_BLOCK[1], ()):
             return True
         if x[0] < 3 and head_cards and qcards[x[0]] not in head_cards and not qs_early(op["names"], head, x[4]):
             return True
