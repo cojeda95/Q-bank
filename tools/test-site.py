@@ -10,6 +10,8 @@ tools/cdp_mini.py):
     python3 tools/test-site.py --only data,atlas       # sections: data, hub, blocks, atlas, features, offline
     python3 tools/test-site.py --shots [DIR]   # save screenshots (default $TMPDIR/qbank-test-shots)
     python3 tools/test-site.py --phone --dark  # phone viewport (390x844, touch) and/or dark colour scheme
+    python3 tools/test-site.py --viewport 466x678   # any size (m65: iPhone Duo folded 466x678, open 626x890 / 890x626);
+                                               # touch + mobile emulation when the width is under 1024
     python3 tools/test-site.py --jobs 6 --headed -v
 
 It serves the repo on a free local port (http.server in a thread), launches headless Chrome with a temp profile and checks:
@@ -424,8 +426,8 @@ class Ctx:
 
     def page(self):
         a = self.args
-        w, h = (390, 844) if a.phone else (1366, 900)
-        p = self.browser.page(w=w, h=h, mobile=a.phone, dark=a.dark)
+        w, h = a.vp
+        p = self.browser.page(w=w, h=h, mobile=a.mobile, dark=a.dark)
         add_init(p)
         if a.dark:   # the site's own ◐ choice ('mla-theme'): prefers-color-scheme alone leaves the hub and the blocks light
             p.cmd("Page.addScriptToEvaluateOnNewDocument", source="try{localStorage.setItem('mla-theme','dark')}catch(e){}")
@@ -472,7 +474,7 @@ def a11y_checks(C, p, S, label, ring=True):
         a = p.js("__T.a11y()")
         record(S, "a11y %s: no sideways scroll" % label, a["docW"] <= a["W"] + 1, "%d px wide at %d" % (a["docW"], a["W"]))
         record(S, "a11y %s: every control has a name" % label, not a["unnamed"], ", ".join(a["unnamed"]))
-        if C.args.phone and a["tiny"]:
+        if C.args.mobile and a["tiny"]:
             record(S, "a11y %s: tap targets >= 24 px" % label, False, ", ".join(a["tiny"]), warn=True)
         if ring:
             p.js("document.activeElement && document.activeElement.blur && document.activeElement.blur()")
@@ -910,19 +912,27 @@ def main():
     ap.add_argument("--shots", nargs="?", const=os.path.join(tempfile.gettempdir(), "qbank-test-shots"), default=None, help="save screenshots here")
     ap.add_argument("--phone", action="store_true", help="phone viewport (390x844, touch)")
     ap.add_argument("--dark", action="store_true", help="dark colour scheme")
+    ap.add_argument("--viewport", default="", metavar="WxH",
+                    help="any viewport, e.g. 466x678 (iPhone Duo folded), 626x890 / 890x626 (unfolded); touch + mobile emulation when W < 1024")
     ap.add_argument("--jobs", type=int, default=6, help="parallel browser tabs (default 6)")
     ap.add_argument("--headed", action="store_true", help="show the Chrome window")
     ap.add_argument("--root", default=None, help="serve and check this copy of the site instead of the repo")
     ap.add_argument("-v", "--verbose", action="store_true", help="print every check as it runs")
     args = ap.parse_args()
     VERBOSE = args.verbose
+    if args.viewport:   # m65: run at any size (overrides --phone's 390x844)
+        m = re.fullmatch(r"\s*(\d+)\s*[xX×]\s*(\d+)\s*", args.viewport)
+        if not m: ap.error("--viewport wants WxH, e.g. 466x678")
+        args.vp = (int(m.group(1)), int(m.group(2))); args.mobile = args.vp[0] < 1024
+    else:
+        args.vp = (390, 844) if args.phone else (1366, 900); args.mobile = args.phone
     global ROOT
     if args.root: ROOT = os.path.abspath(args.root)
     only = set(x.strip() for x in args.only.split(",") if x.strip()) or {"data", "hub", "blocks", "atlas", "features", "offline"}
     if args.shots: os.makedirs(args.shots, exist_ok=True)
 
     T0 = time.time()
-    print("OCOM Question Hub tests — %s%s%s" % ("quick" if args.quick else "full", " · phone" if args.phone else "", " · dark" if args.dark else ""), flush=True)
+    print("OCOM Question Hub tests — %s%s%s" % ("quick" if args.quick else "full", (" · %dx%d%s" % (args.vp + (" touch" if args.mobile else "",))) if args.viewport else (" · phone" if args.phone else ""), " · dark" if args.dark else ""), flush=True)
     A = atlas_model()
     BQ, QS = {}, None
     if "data" in only or "blocks" in only:

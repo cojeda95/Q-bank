@@ -763,6 +763,24 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 .updnote button:hover,.updnote button:focus-visible{background:var(--surface-2);outline:none}
 .updnote .updx{color:var(--ink-3);font-size:16px;line-height:1}
 @media print{ .updnote{display:none!important} }.mixres-row .mixres-wr b{color:var(--ink-2)}
+/* ── #27 (m65) iPhone Duo: short screens and landscape — see assemble.py #27 ── */
+@supports (height:100dvh){ html body{height:100dvh} }
+@media (max-width:1000px) and (max-height:760px){
+  html body .ocom-topbar{padding:4px 14px;padding-top:calc(4px + env(safe-area-inset-top,0px))}
+  html body .ocom-topbar-inner{flex-wrap:nowrap;gap:14px}
+  html body .ocom-brand{flex:none;font-size:15.5px}
+  html body .ocom-nav{flex:1 1 auto;min-width:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:14px;font-size:13.5px;justify-content:flex-start}
+  html body .ocom-nav::-webkit-scrollbar{display:none}
+  html body .ocom-nav a{white-space:nowrap;flex:none}
+  html body .hdr{padding:6px 14px;gap:6px 10px}
+}
+@media (max-width:1000px) and (min-width:700px) and (orientation:landscape){
+  .drawer{top:0;bottom:0;height:auto;width:min(420px,48%);max-width:none;border-top:none;border-left:1px solid var(--line);border-radius:0}
+  .dynsheet:not([hidden]){left:auto;top:0;bottom:0;width:min(360px,42%);max-height:none;border-top:none;border-left:1px solid var(--line);
+    border-radius:0;box-shadow:-6px 0 18px rgba(0,0,0,.08)}
+  .dynsheet.ds-full:not([hidden]){max-height:none}
+  .mapwrap.ds-open .toolbar{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+}
 </style>
 
 <div class="app">
@@ -45659,9 +45677,10 @@ function dynFrame(){
   const m=MAPS[state.view]; if(!m||m.art!=="kit"||innerWidth>1000) return;
   const r=svg.getBoundingClientRect(); if(!r.width||!r.height) return;
   const s0=Math.min(r.width/m.w,r.height/m.h), sh=document.getElementById("dynSheet");
-  const hb=sh&&!sh.hidden?sh.getBoundingClientRect().height:0, visH=Math.max(120,r.height-hb);
+  const sr=sh&&!sh.hidden?sh.getBoundingClientRect():null, side=!!sr&&sr.left>r.left+40&&sr.height>r.height*.6;   // #27: a panel down the right edge
+  const hb=sr&&!side?sr.height:0, visH=Math.max(120,r.height-hb), visW=side?Math.max(200,sr.left-r.left):r.width;
   const P=(m.dyn&&m.dyn.panel)||{x:m.w-1080}, x0=0, y0=0, x1=Math.max(600,P.x-40), y1=m.h;
-  const z=Math.min(6,Math.max(1,Math.min(r.width/(s0*(x1-x0)),visH/(s0*(y1-y0)))));
+  const z=Math.min(6,Math.max(1,Math.min(visW/(s0*(x1-x0)),visH/(s0*(y1-y0)))));
   state.z=z; state.tx=-(r.width-s0*m.w)/(2*s0)-z*x0; state.ty=-(r.height-s0*m.h)/(2*s0)-z*y0; applyCam();
 }
 /* ── switch state in the address: #coagflow/~dz:hema,!adh — shareable, and how the question bank says "See it move" ── */
@@ -46457,6 +46476,14 @@ function setMini(on){ MINI_OFF=!on; try{ if(on) localStorage.removeItem("mla-min
 document.getElementById("mmx").onclick=()=>setMini(false);
 if(zmini) zmini.onclick=()=>setMini(true);
 addEventListener("resize",()=>{ if(state.view!=="index") drawMini(); });
+/* #27 (m65): a fold / unfold or a turn of the phone (the width moves 80 px or more; the page is not reloaded) frames an open
+   moving map again for the new screen. The view, the switches and an open card are left as they are. */
+let FOLDW=innerWidth, FOLDT=0;
+addEventListener("resize",()=>{ clearTimeout(FOLDT); FOLDT=setTimeout(()=>{
+  const w=innerWidth; if(Math.abs(w-FOLDW)<80) return; FOLDW=w;
+  const v=state.view, m=MAPS[v]; if(v==="index"||!m||w>1000||!drawer.hidden) return;
+  try{ if(m.art==="kit"&&m.dyn&&!m.dyn.lazy) dynFrame(); else secbarRender(); }catch(e){}
+},150); });
 function applyFilter(){
   svg.querySelectorAll("[data-p]").forEach(el=>{
     el.classList.toggle("dim", !!state.filter && el.getAttribute("data-p")!==state.filter);

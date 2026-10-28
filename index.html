@@ -232,11 +232,13 @@
     .mainnav { order: 3; flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; gap: 18px; margin: 0 -16px; padding: 0 16px; font-size: 0.9rem; scrollbar-width: none; }
     .mainnav::-webkit-scrollbar { display: none; }
     .mainnav a { white-space: nowrap; padding: 8px 0; }
-    .chips { display: none; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chips a { flex: none; }
+    .sbox { flex-basis: 220px; }
     .sbox input, .search > button { height: 50px; }
     .hero-in { padding: 28px 16px 32px; gap: 24px; }
     .hero h1 { font-size: 2rem; }
-    .search > button { flex: 1 1 100%; }
     .pickup { padding: 16px; }
     .cols { padding-top: 28px; gap: 28px; }
     .systems { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -244,6 +246,24 @@
     .settings { grid-template-columns: 1fr; }
     .offline-card { flex-direction: column; align-items: stretch; }
     .offline-btn { width: 100%; }
+  }
+  /* m65 (iPhone Duo): the search button drops under the box only on a narrow phone; the system shortcuts only show from the
+     folded Duo's width up (one row that scrolls sideways) */
+  @media (max-width: 459px) {
+    .chips { display: none; }
+    .search > button { flex: 1 1 100%; }
+  }
+  /* m65: short landscape screens (the open Duo on its side, 890 x 626): a shorter hero, so the search and the map you
+     were on fit on the first screen side by side */
+  @media (max-height: 700px) and (orientation: landscape) and (min-width: 700px) and (max-width: 1100px) {
+    .hero-main { flex-basis: 380px; }
+    .pickup { flex-basis: 340px; }
+    .sbox { flex-basis: 220px; }
+    .hero-in { padding-top: 24px; padding-bottom: 28px; gap: 24px; }
+    .hero-main { gap: 12px; }
+    .hero h1 { font-size: 2.1rem; }
+    .pickup { padding: 16px; gap: 10px; }
+    .pk-sketch { max-height: 46vh; }
   }
   /* a11y (m56): 32 px+ tap targets on touch screens and phones */
   @media (pointer: coarse), (max-width: 600px) {
