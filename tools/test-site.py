@@ -551,6 +551,11 @@ def test_qsearch(C):
         record(S, "question search: pheochromocytoma → results from >= 2 blocks", len(r["blocks"]) >= 2 and r["marks"] > 0,
                "%s · %d shown · blocks %s · %d marked" % (r["sum"], r["n"], ",".join(r["blocks"]), r["marks"]))
         record(S, "question search: panel focus + #qsearch", r["focus"] == "qsH" and r["hash"] == "#qsearch", "focus %s, hash %s" % (r["focus"], r["hash"]))
+        # m67: the panel's "In the Lesion Atlas" row — the pheochromocytoma card, linking into the atlas
+        a = p.wait("""(()=>{ const as=[...document.querySelectorAll('#qsAtlas .qs-atl-a')]; return as.length&&!document.getElementById('qsAtlas').hidden?
+          as.map(x=>[x.querySelector('b').textContent, x.getAttribute('href')]):null; })()""", timeout=20)
+        record(S, "question search: In the Lesion Atlas row", any("pheochromocytoma" in t.lower() and h.startswith("resources/metabolic-atlas.html#") for t, h in a),
+               " · ".join("%s → %s" % (t, h.split("#")[-1]) for t, h in a))
         # keyboard: Down from the box goes to the first result
         p.js("document.getElementById('qsQ').focus()")
         p.cmd("Input.dispatchKeyEvent", type="keyDown", key="ArrowDown", code="ArrowDown", windowsVirtualKeyCode=40)
@@ -743,6 +748,15 @@ def test_whynot(C):
         p.wait("typeof DATA!=='undefined' && DATA && document.querySelectorAll('.exam-card').length", timeout=20)
         # m66: until every part is in, the matcher weighs words over the questions loaded so far — test it on the whole block
         p.js("loadAllQuestions().then(() => 1)", timeout=30)
+        # m67: a hand-checked label (q.whyNot, batches/m67/apply_whynot.py) marks the sentence it names
+        lab = p.js("""(()=>{ let n=0, ok=0, bad=[];
+          DATA.exams.forEach(e=>e.sdls.forEach(s=>s.questions.forEach(q=>{ if(!q.whyNot) return;
+            Object.keys(q.whyNot).forEach(L=>{ n++; const h=explanationHtml(q, L), m=h.match(/<mark class="whynot">([\\s\\S]*?)<\\/mark>/);
+              const t=m ? m[1].replace(/<span class="whynot-tag">[^<]*<\\/span>\\s*/, '') : '';
+              if (t.startsWith(escapeHtml(q.whyNot[L]))) ok++; else if (bad.length<3) bad.push(q.id+' '+L); }); })));
+          return {n, ok, bad}; })()""", timeout=30)
+        record(S, "why not your answer: every hand-checked label marks its sentence", lab["n"] > 0 and lab["ok"] == lab["n"],
+               "%d/%d labels%s" % (lab["ok"], lab["n"], (" · " + ", ".join(lab["bad"])) if lab["bad"] else ""))
         RUN = """(async (qid, letter) => {
           const ok = await __T.until(() => typeof session!=='undefined' && session && session.mode==='practice'
             && document.querySelectorAll('.choice[data-letter]').length, 8000);
@@ -785,6 +799,52 @@ def test_whynot(C):
         if VERBOSE: traceback.print_exc()
     finally:
         p.close()
+
+
+WEAK_BLOCK = "pulm"
+
+
+def test_weakspots(C):
+    """m67: the hub's Weak spots card — 3 misses on one pulm objective (seeded attempt log) list it first with 0/3; its
+    row opens <block>#obj/<sdl>/<objective>, a review run of exactly that objective's questions. The log is put back."""
+    S, t0 = "hub", time.time()
+    block = WEAK_BLOCK
+    M = js_json(os.path.join(ROOT, block, "q", "manifest.js"), "window.QUIZ_MANIFEST=")
+    pick = None
+    for e in M["exams"]:
+        for sd in e["sdls"]:
+            by = {}
+            for q in sd["questions"]: by.setdefault(q.get("objective"), []).append(q["id"])
+            for o, ids in by.items():
+                if o is not None and len(ids) >= 3 and not pick: pick = (sd["sdlNumber"], o, ids, (sd.get("objLabels") or {}).get(str(o), ""))
+    p = C.page()
+    try:
+        sdl, obj, ids, label = pick
+        p.goto(C.server.base + "index.html")
+        p.wait("document.getElementById('weakCard')", timeout=15)
+        key = block + "_attempts_v1"
+        old = p.js("localStorage.getItem(%s)" % json.dumps(key))
+        seed = [{"id": i, "sdlNumber": sdl, "objective": obj, "correct": False, "mode": "practice", "ts": 1700000000000 + k} for k, i in enumerate(ids[:3])]
+        p.js("localStorage.setItem(%s, %s); qhubWeakCard(); 1" % (json.dumps(key), json.dumps(json.dumps(seed))))
+        r = p.wait("""(()=>{ const c=document.getElementById('weakCard'); const a=c&&!c.hidden&&c.querySelector('#weakList a'); return a?{href:a.getAttribute('href'), name:a.querySelector('.due-name').textContent, n:a.querySelector('.due-n').textContent}:null; })()""", timeout=15)
+        want = "%s/index.html#obj/%s/%s" % (block, sdl, obj)
+        record(S, "weak spots: a missed objective is listed first", r["href"] == want and r["n"].startswith("0/3") and label[:20] in r["name"],
+               "%s · %s · %s" % (r["href"], r["name"][:60], r["n"]))
+        C.shot(p, "hub-weakspots")
+        errs = p.take_errors(); record(S, "weak spots: no console errors", not errs, fmt_errs(errs))
+        p.js("__T.click('#weakList a')")
+        o = p.wait("""(()=>{ if(location.pathname.indexOf('/%s/')<0||typeof session==='undefined'||!session||!session.questions||!document.querySelector('.q-stem')) return null;
+          return {mode:session.mode, n:session.questions.length, objs:[...new Set(session.questions.map(q=>String(q.objective)))], label:session.queueLabel}; })()""" % block, timeout=20)
+        record(S, "weak spots: the row opens that objective's questions", o["mode"] == "review" and o["n"] == len(ids) and o["objs"] == [str(obj)],
+               "%d questions · %s" % (o["n"], o["label"][:70]))
+        errs = p.take_errors(); record(S, "weak spots: objective run, no console errors", not errs, fmt_errs(errs))
+        p.js(("localStorage.setItem(%s, %s)" % (json.dumps(key), json.dumps(old))) if old is not None else "localStorage.removeItem(%s)" % json.dumps(key))
+    except Exception as e:
+        record(S, "weak spots run", False, "%s" % e)
+        if VERBOSE: traceback.print_exc()
+    finally:
+        p.close()
+    record(S, "total", True, "", time.time() - t0)
 
 
 def test_split(C):
@@ -1289,6 +1349,7 @@ def main():
             # after the block tabs, not beside them: tabs share localStorage, and two tabs logging answers at once
             # overwrite each other's attempt log (the psych tab's #sdlwrong would come up empty)
             if "blocks" in only and WHYNOT_Q[0] in blocks: test_whynot(C)
+            if "hub" in only and "blocks" in only and WEAK_BLOCK in blocks: test_weakspots(C)
             if "blocks" in only: test_split(C)
             if "atlas" in only:
                 failed = [r for r in RESULTS if r[0] == "atlas" and r[1].startswith("map ") and r[2] == "FAIL"]

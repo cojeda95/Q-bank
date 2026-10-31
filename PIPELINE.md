@@ -1039,3 +1039,16 @@ j_handsim, m_ossim ⇄ bonehisto, g_gitumsim [new gi group "GI cancers"]) dated 
 Case mode (assemble #24, PROG.cas, sync.js cas merge). Accessibility pass (#25 + app.js a11yMain + theme.css contrast).
 Pulm SDL 32 has 4 choices — app.js choiceLetters(q) draws only existing letters. tools/test-site.py: full regression suite
 (python3 tools/test-site.py [--quick|--phone --dark|--only …|--root DIR]) — run before every push.
+
+## m67 — labelled "Why not your answer", weak spots, atlas row in search (2026-10-31)
+
+- **`whyNot` on a question** (`{"B": "start of a sentence", …}`): the explanation sentence that answers that wrong option,
+  hand-checked (written by `~/Developer/atlas-review/batches/m67/apply_whynot.py` from `labels_part*.json`). app.js
+  (`whyNotRange`) marks it before trying the word matcher; if the explanation is later rewritten so the sentence no
+  longer starts with that text, the matcher takes over again. Coverage of wrong picks: 52% → 73%.
+- **`objLabels` per SDL in `q/manifest.js`** (tools/build-split.py): objective → label, so the hub's **Weak spots**
+  card (index.html) can group your latest answers by today's objectives without loading data.js. Each row opens
+  `<block>/index.html#obj/<sdl>/<objective>`, a review run of that objective's questions.
+- **Question search panel**: an "In the Lesion Atlas" row of strong card/map matches above the results.
+- **Faster first question**: on a screen that needs no questions yet, the page starts the part the next tap most likely
+  wants (the exam on screen, else the SDL last answered, else the first) before atlas-terms.js.

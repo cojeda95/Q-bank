@@ -9,7 +9,8 @@ This builder derives from it, so run it after ANY data.js change (tools/test-sit
 
   q/manifest.js   window.QUIZ_MANIFEST = { v: 1, src: first 10 hex of sha1(data.js), chunks: [file names],
                     exams: [{ examNumber, sdls: [{ sdlNumber, title, chunk: index into chunks (absent when the SDL has
-                    no questions), questions: [{ id, batch, objective, isHighYield }] }] }] }
+                    no questions), objLabels: { objective: objectiveLabel } (m67, the hub's Weak spots),
+                    questions: [{ id, batch, objective, isHighYield }] }] }] }
                   Everything the block home, the SDL lists, counts, progress and the exam / split / final builders need,
                   and nothing else (about 3-7 KB gzipped). Other exam and SDL fields are copied as they are.
   q/<part>.<hash>.js   the full questions, a few SDLs per file:
@@ -88,6 +89,11 @@ def plan(block):
             o = {k: v for k, v in s.items() if k != "questions"}
             if j in chunk_of: o["chunk"] = chunk_of[j]
             o["questions"] = [{k: q[k] for k in LIGHT if k in q} for q in s.get("questions") or []]
+            # m67: each objective's label once per SDL, for the hub's "Weak spots" (it reads manifests, not data.js)
+            labs = {}
+            for q in s.get("questions") or []:
+                if q.get("objective") is not None and q.get("objectiveLabel"): labs.setdefault(str(q["objective"]), q["objectiveLabel"])
+            if labs: o["objLabels"] = labs
             m_sdls.append(o)
         e = {k: v for k, v in ex.items() if k != "sdls"}
         e["sdls"] = m_sdls

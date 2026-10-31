@@ -163,6 +163,8 @@
   /* "Questions due" (spaced review of missed questions, m54): one row per block with questions due today */
   .col-main .due-card { gap: 6px; border-left: 5px solid var(--teal); }
   .due-card[hidden] { display: none; }
+  .col-main .weak-card { border-left-color: var(--amber-line); }
+  .weak-card .due-name small { display: block; font-size: 0.8rem; color: var(--grey-text); }
   .due-list { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); column-gap: 24px; }
   .due-list li { border-top: 1px solid var(--line-soft); }
   .due-list a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 8px 0; color: var(--text); text-decoration: none; font-size: 0.92rem; }
@@ -231,7 +233,7 @@
     .topbar-actions { order: 2; }
     .mainnav { order: 3; flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; gap: 18px; margin: 0 -16px; padding: 0 16px; font-size: 0.9rem; scrollbar-width: none; }
     .mainnav::-webkit-scrollbar { display: none; }
-    .mainnav a { white-space: nowrap; padding: 8px 0; }
+    .mainnav a { white-space: nowrap; padding: 8px 0; flex: none; }   /* m67: never shrink under the text (the 32px tap rule below) */
     .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
     .chips::-webkit-scrollbar { display: none; }
     .chips a { flex: none; }
@@ -292,6 +294,13 @@
   .qs-help, .qs-sum { margin: 0; font-size: 0.86rem; color: var(--grey-text); }
   .qs-sum { font-size: 0.95rem; color: var(--text); }
   .qs-sum:empty { display: none; }
+  .qs-atl { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px; }
+  .qs-atl[hidden] { display: none; }
+  .qs-atl-h { flex-basis: 100%; font-size: 0.82rem; font-weight: 600; color: var(--grey-text); }
+  .qs-atl-a { display: flex; flex-direction: column; gap: 1px; min-height: 44px; justify-content: center; padding: 6px 12px; border: 1px solid var(--grey-border); border-radius: 10px; text-decoration: none; color: var(--text); max-width: 100%; box-sizing: border-box; }
+  .qs-atl-a b { font-size: 0.92rem; font-weight: 600; color: var(--navy); }
+  .qs-atl-a span { font-size: 0.78rem; color: var(--grey-text); }
+  .qs-atl-a:hover, .qs-atl-a:focus-visible { background: var(--surface-hover); border-color: var(--navy); }
   .qs-filter { display: flex; flex-wrap: wrap; gap: 6px; }
   .qs-filter[hidden] { display: none; }
   .qs-filter button { min-height: 34px; padding: 0 12px; border: 1px solid var(--grey-border); border-radius: 999px; background: transparent; color: var(--text); font: inherit; font-size: 0.85rem; cursor: pointer; }
@@ -362,6 +371,7 @@
         <input id="qsQ" type="search" placeholder="Search every block’s questions, e.g. pheochromocytoma" spellcheck="false" aria-describedby="qsHelp">
       </form>
       <p class="qs-help" id="qsHelp">Matches the question, its answer and the first line of its explanation. Results open in their block as a one-question review.</p>
+      <div class="qs-atl" id="qsAtlas" hidden></div>
       <p class="qs-sum" id="qsSum" role="status" aria-live="polite"></p>
       <div class="qs-filter" id="qsFilter" role="group" aria-label="Show results from" hidden></div>
       <div id="qsList"></div>
@@ -376,6 +386,12 @@
         <span class="side-title" id="dueTitle"></span>
         <span class="side-desc">Questions you missed come back after 1 day, then 3 days, until you get them right twice in a row.</span>
         <ul class="due-list" id="dueList"></ul>
+      </section>
+      <section class="side-card due-card weak-card" id="weakCard" aria-labelledby="weakTitle" hidden>
+        <span class="kicker">Weak spots</span>
+        <span class="side-title" id="weakTitle">Your weakest objectives across every block</span>
+        <span class="side-desc">Your latest answer to each question, once you have answered 3 in an objective — under 80% right, weakest first. This device only. Each opens that objective’s questions.</span>
+        <ul class="due-list" id="weakList"></ul>
       </section>
       <section aria-labelledby="todayH">
         <h2 id="todayH">Today in the atlas</h2>
@@ -717,6 +733,7 @@
           return { n: norm(c[1]), ab: ab, t: c[1], terms: c[3].map(function (x) { return x.replace(/^=/, ''); }), s: v && H.maps[v] ? 'Card on ' + H.maps[v][0] : 'Card', h: ATLAS + '#' + c[0] };
         });
         if (q.value.trim()) show();
+        if (window.HUB_QSEARCH && window.HUB_QSEARCH.refresh) window.HUB_QSEARCH.refresh();
       }
       if (window.ATLAS_TERMS) return ready();
       loading = true;
@@ -753,6 +770,19 @@
       hits.sort(function (a, b) { return b[0] - a[0] || a[1].t.length - b[1].t.length; });
       return hits.slice(0, k);
     }
+    /* m67: the question search panel's "In the Lesion Atlas" row — strong matches only (a whole title, its start or a
+       word start, an abbreviation, a link term said in full), maps and moving maps first, at most 5 */
+    window.HUB_NORM.atlas = function (raw) {
+      var qn = norm(raw || '');
+      if (!qn) return [];
+      loadCards();
+      var words = qn.split(' '), hits = [];
+      [[MAPS, 2], [MOVES, 2], [CARDS || [], 4]].forEach(function (x) {
+        top(x[0], qn, words, x[1]).forEach(function (h) { if (h[0] >= 55) hits.push(h); });
+      });
+      hits.sort(function (a, b) { return b[0] - a[0] || a[1].t.length - b[1].t.length; });
+      return hits.slice(0, 5).map(function (h) { return { t: h[1].t, s: h[1].s, h: h[1].h }; });
+    };
     var opts = [], active = -1;
     function show() {
       var qn = norm(q.value);
@@ -849,7 +879,7 @@
     var U = window.HUB_NORM, panel = document.getElementById('qsearch'), hubQ = document.getElementById('hubQ');
     if (!U || !panel) return;
     var qi = document.getElementById('qsQ'), form = document.getElementById('qsForm'), sum = document.getElementById('qsSum'),
-      list = document.getElementById('qsList'), more = document.getElementById('qsMore'), filt = document.getElementById('qsFilter');
+      list = document.getElementById('qsList'), more = document.getElementById('qsMore'), filt = document.getElementById('qsFilter'), atl = document.getElementById('qsAtlas');
     var esc = U.esc, norm = U.norm, PAGE = 50, KEY = 'qhub-qsearch';
     var IDX = null, loading = null, failed = false;
 
@@ -997,7 +1027,8 @@
         if (r.order.length) items.push({ all: true, t: 'All ' + count(r.full || r.order.length) + ' matching “' + esc(raw.trim()) + '”', s: 'Grouped by block and SDL', h: '#qsearch' });
         return { items: items };
       },
-      open: function (raw) { open(raw, true); }
+      open: function (raw) { open(raw, true); },
+      refresh: function () { if (!panel.hidden) drawAtlas(); }
     };
 
     /* ── the panel ── */
@@ -1007,6 +1038,7 @@
     function run(keep) {
       if (!keep) { st.shown = PAGE; }
       st.q = qi.value; save();
+      drawAtlas();
       if (!norm(st.q)) { sum.textContent = ''; list.innerHTML = ''; filt.hidden = true; more.hidden = true; return; }
       if (!IDX) {
         sum.textContent = failed ? 'The question index could not be loaded — check your connection and try again.' : 'Loading the question index…';
@@ -1049,6 +1081,14 @@
       var left = shownList.length - page.length;
       more.hidden = left <= 0;
       more.textContent = 'Show ' + Math.min(PAGE, left) + ' more (' + left + ' left)';
+    }
+    /* m67: "In the Lesion Atlas" above the results — redrawn alone once the atlas cards arrive, so the results (and the
+       focus on one of them) are left as they are */
+    function drawAtlas() {
+      var at = U.atlas ? U.atlas(qi.value) : [];
+      atl.hidden = !at.length;
+      atl.innerHTML = at.length ? '<span class="qs-atl-h">In the Lesion Atlas</span>' + at.map(function (a) {
+        return '<a class="qs-atl-a" href="' + esc(a.h) + '"><b>' + esc(a.t) + '</b><span>' + esc(a.s) + '</span></a>'; }).join('') : '';
     }
     function hits() { return [].slice.call(list.querySelectorAll('.qs-hit')); }
     var wantPlace = null;   // where focus goes once the index has loaded (open() before it is in)
@@ -1502,6 +1542,66 @@
       card.hidden = false;
     }
     window.qhubDueCard = dueCard;
+
+    /* Weak spots (m67): every SDL objective you have answered at least WEAK_MIN questions of (latest try per question,
+       from each block's attempt log), under 80% right, weakest first — top 6. Objectives and their labels come from the
+       block's q/manifest.js (objLabels, tools/build-split.py), so renumbered objectives group under today's numbers; a
+       question no longer in the manifest falls back to what its attempt recorded. Rows open <block>#obj/<sdl>/<objective>. */
+    var WEAK_MIN = 3, MAN = {};
+    function manifest(dir) {
+      if (MAN[dir]) return MAN[dir];
+      return (MAN[dir] = new Promise(function (res) {
+        var sc = document.createElement('script'); sc.src = dir + '/q/manifest.js';
+        sc.onload = function () { var m = window.QUIZ_MANIFEST; delete window.QUIZ_MANIFEST; sc.remove(); res(m || null); };
+        sc.onerror = function () { sc.remove(); MAN[dir] = null; res(null); };
+        document.head.appendChild(sc);
+      }));
+    }
+    function weakCard() {
+      var card = document.getElementById('weakCard'), ul = document.getElementById('weakList');
+      if (!card || !ul) return;
+      var jobs = [];
+      [].slice.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]')).forEach(function (a) {
+        var dir = a.getAttribute('href').replace(/\/index\.html$/, ''), list = [], t = a.querySelector('.block-title');
+        try { list = JSON.parse(localStorage.getItem(dir + '_attempts_v1')) || []; } catch (e) { list = []; }
+        var last = {};
+        (Array.isArray(list) ? list : []).forEach(function (x) { if (x && x.id != null && (!last[x.id] || (x.ts || 0) >= (last[x.id].ts || 0))) last[x.id] = x; });
+        if (Object.keys(last).length < WEAK_MIN) return;
+        var name = t ? t.textContent.replace(/^\W+\s*/, '').trim() : dir;
+        jobs.push(manifest(dir).then(function (m) {
+          var where = {}, rows = {};
+          if (m && m.exams) m.exams.forEach(function (e) { (e.sdls || []).forEach(function (sd) { (sd.questions || []).forEach(function (q) {
+            where[q.id] = [sd.sdlNumber, q.objective, (sd.objLabels || {})[String(q.objective)]]; }); }); });
+          Object.keys(last).forEach(function (id) {
+            var x = last[id], w = where[id] || (m ? null : [x.sdlNumber, x.objective, x.objectiveLabel]);
+            if (!w || w[0] == null || w[1] == null) return;
+            var k = w[0] + '|' + w[1], r = rows[k] || (rows[k] = { dir: dir, block: name, sdl: w[0], obj: w[1], label: w[2] || 'Objective ' + w[1], n: 0, ok: 0 });
+            r.n++; if (x.correct) r.ok++;
+          });
+          return Object.keys(rows).map(function (k) { return rows[k]; });
+        }));
+      });
+      Promise.all(jobs).then(function (all) {
+        var rows = [].concat.apply([], all).filter(function (r) { return r.n >= WEAK_MIN && r.ok / r.n < 0.8; })
+          .sort(function (a, b) { return a.ok / a.n - b.ok / b.n || b.n - a.n; }).slice(0, 6);
+        ul.innerHTML = '';
+        if (!rows.length) { card.hidden = true; return; }
+        rows.forEach(function (r) {
+          var li = document.createElement('li'), a = document.createElement('a'), nm = document.createElement('span'), sm = document.createElement('small'), c = document.createElement('span');
+          var p = Math.round(100 * r.ok / r.n);
+          a.href = r.dir + '/index.html#obj/' + r.sdl + '/' + encodeURIComponent(r.obj);
+          nm.className = 'due-name'; nm.textContent = r.label; sm.textContent = r.block + ' · SDL ' + r.sdl; nm.appendChild(sm);
+          c.className = 'due-n'; c.textContent = r.ok + '/' + r.n + ' · ' + p + '% →';
+          a.setAttribute('aria-label', r.label + ', ' + r.block + ' SDL ' + r.sdl + ': ' + r.ok + ' of ' + r.n + ' right — practice it');
+          a.appendChild(nm); a.appendChild(c); li.appendChild(a); ul.appendChild(li);
+        });
+        card.hidden = false;
+      });
+    }
+    window.qhubWeakCard = weakCard;
+    if ('requestIdleCallback' in window) requestIdleCallback(weakCard, { timeout: 3000 }); else setTimeout(weakCard, 1000);
+    window.addEventListener('pageshow', function (e) { if (e.persisted) weakCard(); });
+    window.addEventListener('storage', function (e) { if (e.key && /_attempts_v1$/.test(e.key)) weakCard(); });
     dueCard();
     window.addEventListener('pageshow', dueCard);
     window.addEventListener('storage', function (e) { if (e.key && /_attempts_v1$/.test(e.key)) dueCard(); });

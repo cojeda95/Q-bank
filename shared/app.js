@@ -864,6 +864,13 @@ function wnScore(q, pick, pickText, idf) {
 /* The [start, end) of the sentence in q.explanation that explains why `pick` is wrong, or null when no sentence
    stands out — see wnScore for the arguments */
 function whyNotRange(q, pick, pickText, idf) {
+  // m67: a hand-checked label first — q.whyNot[letter] is the start of the sentence that answers that option
+  // (atlas-review batches/m67/apply_whynot.py); it is skipped when the option was reworded since it was answered
+  const lab = q.whyNot && q.whyNot[pick];
+  if (lab && (!pickText || pickText === (q.choices || {})[pick])) {
+    const e = String(q.explanation || ''), hit = wnSentences(e).find(([a, b]) => e.slice(a, b).startsWith(lab));
+    if (hit) return hit;
+  }
   const r = wnScore(q, pick, pickText, idf);
   if (!r || !r.cand.length) return null;
   const [best, next] = r.cand;
@@ -1055,7 +1062,7 @@ const ROUTES_ALL = ['examsetup', 'final-examsetup', 'split', 'exam', 'flagged', 
 function routeParts(parts) {
   if (!QPARTS) return [];
   const n = parseInt(parts[1], 10);
-  const f = Number.isFinite(n) && ['practice', 'sdlcards', 'sdlmissed', 'sdlwrong'].includes(parts[0]) ? findSdl(n) : null;
+  const f = Number.isFinite(n) && ['practice', 'sdlcards', 'sdlmissed', 'sdlwrong', 'obj'].includes(parts[0]) ? findSdl(n) : null;
   QPARTS.focus = parts[0] === 'exam-sdls' || parts[0] === 'examwrong' || parts[0] === 'exammissed' ? n : f ? f.examNumber : QPARTS.focus;
   if (f) return partsForSdl(n);
   if (parts[0] === 'examwrong' || parts[0] === 'exammissed') return partsForExam(n);
@@ -1274,6 +1281,8 @@ function render() {
     renderExamMissed(parseInt(parts[1], 10));
   } else if (parts[0] === 'spaced') {
     renderSpacedRun(parts[1], parts[2]);
+  } else if (parts[0] === 'obj' && parts[1] && parts[2] != null) {   // m67: one objective, from the hub's Weak spots
+    renderObjectiveRun(parseInt(parts[1], 10), decodeURIComponent(parts[2]));
   } else if (parts[0] === 'spaced-hub') {
     leaveToHub(); return;
   } else if (parts[0] === 'q' && parts[1]) {          // m66: one question, from the hub's question search
@@ -4084,6 +4093,16 @@ function renderSdlMissed(sdlNumber) {
   if (!qs.length) return noMissesLeft(f.sdl.title, 'No misses left in this SDL — your latest try on each question you answered was right.');
   startMissedRun(qs, f.sdl.title + ' · your misses');
 }
+/* m67: #obj/<sdl>/<objective> — every question of one SDL objective as a review run, from the hub's "Weak spots";
+   back and Finish return to the hub. */
+function renderObjectiveRun(sdlNumber, objective) {
+  const f = findSdl(sdlNumber);
+  if (!f) { renderHome(); return; }
+  const qs = f.sdl.questions.filter(q => String(q.objective) === objective)
+    .map(q => Object.assign({}, q, { sdlNumber, sdlTitle: f.sdl.title, examNumber: f.examNumber }));
+  if (!qs.length) { renderHome(); return; }
+  startMissedRun(qs, f.sdl.title + ' · ' + (qs[0].objectiveLabel || 'Objective ' + objective), { route: 'spaced-hub', label: 'Question Hub' });
+}
 /* #exammissed/<exam>: every question in the exam whose latest try was wrong (the #examwrong list), as one review run;
    back and Finish return to that list, which by then holds only what is still wrong. */
 function renderExamMissed(examNumber) {
@@ -4853,6 +4872,14 @@ function boot() {
       });
     });
     render();
+    // a screen that needs nothing yet (the block home, an SDL list): start the part the next tap most likely wants —
+    // the first part of the exam on screen, else the SDL last answered, else the first part — so it is not queued
+    // behind atlas-terms.js (m67)
+    if (QPARTS && QPARTS.names.length && !QPARTS.loading.some(Boolean)) {
+      const last = loadAttempts().slice(-1)[0];
+      const p = QPARTS.focus != null ? partsForExam(QPARTS.focus) : last ? partsForSdl(last.sdlNumber) : [];
+      loadPart(p.length ? p[0] : 0).catch(() => {});
+    }
   } catch (err) {
     main.innerHTML = `<p class="empty-state">Could not load question bank: ${escapeHtml(err.message)}</p>`;
     SW_AFTER_DONE();
