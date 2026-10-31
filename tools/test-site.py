@@ -287,9 +287,12 @@ def check_data(A):
                 answers.append(" " + anorm(str(a or "")) + " ")
         blob = "\n".join(answers)
         TT = js_json(os.path.join(ROOT, "resources", "atlas-terms.js"), "window.ATLAS_TERMS=")
-        dead = [(c[0], t[1:]) for c in TT["cards"] for t in c[3] if t.startswith("=")
+        # an "=" term that is the card's own name is a guard, not a link: it keeps the name from linking through
+        # explanations (build-atlas.py: "=term" overrides the same term from the name), so it may match no answer (m67)
+        guard = lambda c, t: t[1:] == anorm(c[1].split(" — ")[0])
+        dead = [(c[0], t[1:]) for c in TT["cards"] for t in c[3] if t.startswith("=") and not guard(c, t)
                 and not any(f" {t[1:]}{s} " in blob for s in ("", "s", "es"))]
-        nall = sum(1 for c in TT["cards"] for t in c[3] if t.startswith("="))
+        nall = sum(1 for c in TT["cards"] for t in c[3] if t.startswith("=") and not guard(c, t))
         record(S, "atlas-terms: every answer-only (=) term matches some correct answer", not dead,
                "%d answer-only terms" % nall if not dead else "%d of %d match no answer (reworded answers?): %s" % (
                    len(dead), nall, fmt_errs(["%s %r" % d for d in dead], 8)), warn=True)
@@ -642,6 +645,8 @@ def test_block(C, block, BQ, QS):
                 if b == bi:
                     for q in ids: exp.setdefault(q, []).append(cid)
         p.wait("typeof ATLAS_INDEX!=='undefined' && ATLAS_INDEX && ATLAS_INDEX.length", timeout=20)
+        src = p.js("""[...document.scripts].map(s=>s.src).filter(x=>/atlas-terms\\.js$/.test(x)).map(x=>new URL(x).pathname)""")
+        record(S, "atlas terms: the block's own slice (q/atlas-terms.js) is what loaded", src == ["/%s/q/atlas-terms.js" % block], ", ".join(src or []))
         p.js("loadAllQuestions().then(() => 1)", timeout=30)   # m66: every question part in (the page itself loads them in the background)
         got = p.js("""(()=>{ const o={}; for(const e of DATA.exams) for(const s of e.sdls) for(const q of s.questions){
             const c=atlasLinksFor(q).map(c=>c.id); if(c.length) o[q.id]=c; } return o; })()""")
@@ -806,7 +811,8 @@ WEAK_BLOCK = "pulm"
 
 def test_weakspots(C):
     """m67: the hub's Weak spots card — 3 misses on one pulm objective (seeded attempt log) list it first with 0/3; its
-    row opens <block>#obj/<sdl>/<objective>, a review run of exactly that objective's questions. The log is put back."""
+    row opens <block>#obj/<sdl>/<objective>, a review run of exactly that objective's questions; the block home's
+    Weak-spots mix (#weakmix) runs the same objective with the 3 misses first. The log is put back."""
     S, t0 = "hub", time.time()
     block = WEAK_BLOCK
     M = js_json(os.path.join(ROOT, block, "q", "manifest.js"), "window.QUIZ_MANIFEST=")
@@ -838,6 +844,15 @@ def test_weakspots(C):
         record(S, "weak spots: the row opens that objective's questions", o["mode"] == "review" and o["n"] == len(ids) and o["objs"] == [str(obj)],
                "%d questions · %s" % (o["n"], o["label"][:70]))
         errs = p.take_errors(); record(S, "weak spots: objective run, no console errors", not errs, fmt_errs(errs))
+        # m67: the block home's Weak-spots mix (#weakmix) — the same objective, its 3 misses first
+        p.goto(C.server.base + block + "/index.html")
+        h = p.wait("""(()=>{ const a=document.getElementById('weakMix'); return a?a.textContent:null; })()""", timeout=20)
+        p.js("__T.click('#weakMix')")
+        o = p.wait("""(()=>{ if(typeof session==='undefined'||!session||!session.questions||!document.querySelector('.q-stem')||session.queueLabel!=='Weak-spots mix') return null;
+          return {n:session.questions.length, first:session.questions.slice(0,3).map(q=>q.id), objs:[...new Set(session.questions.map(q=>String(q.objective)))]}; })()""", timeout=20)
+        record(S, "weak spots: block home's Weak-spots mix, misses first", sorted(o["first"]) == sorted(ids[:3]) and o["objs"] == [str(obj)]
+               and o["n"] == min(40, len(ids)), "%s · %d questions" % (" ".join(h.split())[:70], o["n"]))
+        errs = p.take_errors(); record(S, "weak spots: mix, no console errors", not errs, fmt_errs(errs))
         p.js(("localStorage.setItem(%s, %s)" % (json.dumps(key), json.dumps(old))) if old is not None else "localStorage.removeItem(%s)" % json.dumps(key))
     except Exception as e:
         record(S, "weak spots run", False, "%s" % e)
@@ -900,12 +915,12 @@ def test_split(C):
                "%d of %d questions with their text, from %d parts" % (a["full"], total, a["parts"]))
         # a first visit (no service worker yet): once every part is in, the worker is registered and the page, its
         # manifest and every part are saved for offline use (saveBlockOffline)
-        want = ["/%s/q/manifest.js" % block] + ["/%s/q/%s" % (block, n) for n in M["chunks"]]
+        want = ["/%s/q/manifest.js" % block, "/%s/q/atlas-terms.js" % block] + ["/%s/q/%s" % (block, n) for n in M["chunks"]]
         try:
             p.wait("""(async()=>{ if(!('caches' in window)) return null; const c = await caches.open('qhub-v1');
               const k = new Set((await c.keys()).map(r => new URL(r.url).pathname)); return %s.every(x => k.has(x)) && k.has('/%s/index.html'); })()"""
                    % (json.dumps(want), block), timeout=30)
-            record(S, "split: first visit saves the block for offline use", True, "page + manifest + %d parts" % (len(want) - 1))
+            record(S, "split: first visit saves the block for offline use", True, "page + manifest + atlas terms + %d parts" % (len(want) - 2))
         except CDPError:
             record(S, "split: first visit saves the block for offline use", False, "not all in the cache after 30 s")
         errs = p.take_errors(); record(S, "split: no console errors", not errs, fmt_errs(errs))
@@ -1184,13 +1199,13 @@ def test_offline(C):
         # m66: a block opened once online is saved with its manifest and every question part (saveBlockOffline)
         blk = "gastro" if "gastro" in block_dirs() else block_dirs()[0]
         man = js_json(os.path.join(ROOT, blk, "q", "manifest.js"), "window.QUIZ_MANIFEST=")
-        want = ["/%s/q/manifest.js" % blk] + ["/%s/q/%s" % (blk, n) for n in man["chunks"]]
+        want = ["/%s/q/manifest.js" % blk, "/%s/q/atlas-terms.js" % blk] + ["/%s/q/%s" % (blk, n) for n in man["chunks"]]
         last_sdl = [x["sdlNumber"] for e in man["exams"] for x in e["sdls"] if x.get("chunk") == len(man["chunks"]) - 1][0]
         p.goto(C.server.base + blk + "/index.html")
         try:
             p.wait("""(async()=>{ const c = await caches.open('qhub-v1'); const k = new Set((await c.keys()).map(r => new URL(r.url).pathname));
               return %s.every(x => k.has(x)) && k.has('/%s/index.html'); })()""" % (json.dumps(want), blk), timeout=30)
-            record(S, "a block opened once is saved: page, manifest, every part", True, "%s: %d parts" % (blk, len(want) - 1))
+            record(S, "a block opened once is saved: page, manifest, every part", True, "%s: %d parts" % (blk, len(want) - 2))
         except CDPError:
             have = p.js("""(async()=>(await (await caches.open('qhub-v1')).keys()).map(r=>new URL(r.url).pathname).filter(x=>x.indexOf('/%s/')===0))()""" % blk)
             record(S, "a block opened once is saved: page, manifest, every part", False, "cached: %s" % ", ".join(have or []))
@@ -1238,7 +1253,7 @@ def test_saveall(C):
         want = []
         for b in block_dirs():
             man = js_json(os.path.join(ROOT, b, "q", "manifest.js"), "window.QUIZ_MANIFEST=")
-            want += ["/%s/index.html" % b, "/%s/q/manifest.js" % b] + ["/%s/q/%s" % (b, n) for n in man["chunks"]]
+            want += ["/%s/index.html" % b, "/%s/q/manifest.js" % b, "/%s/q/atlas-terms.js" % b] + ["/%s/q/%s" % (b, n) for n in man["chunks"]]
         have = set(p.js("(async()=>(await (await caches.open('qhub-v1')).keys()).map(r=>new URL(r.url).pathname))()") or [])
         miss = [x for x in want if x not in have]
         record(S, "Save all: every block's page, manifest and question parts saved", str(st).isdigit() and not miss,

@@ -19,6 +19,12 @@ This builder derives from it, so run it after ANY data.js change (tools/test-sit
                   LIMIT bytes (neuro's Exam 4 → e4a, e4b, e4c). The name carries a hash of the content, so the service
                   worker can serve a saved copy of that name as is, and a changed SDL changes only its own file.
 
+  q/atlas-terms.js   (m67) resources/atlas-terms.js cut to this block: every card keeps its id, name and kind, but only
+                  the cards some term of which occurs in an option or explanation of the block keep their terms ("="
+                  answer-only terms are counted anywhere, so the cut never drops a link); maps and "See it move" states
+                  keep only those cards. About 100 KB gzipped instead of about 220. shared/app.js loads it on a split
+                  block page and falls back to the full file when it is missing.
+
 shared/app.js loads the manifest with the page, then the parts a screen needs, then the rest in the background (see
 "Question data" there). Old part files left in q/ by an earlier build are deleted.
 """
@@ -104,13 +110,72 @@ def plan(block):
     files["manifest.js"] = ("/* Built by tools/build-split.py from data.js — do not edit; run it after any data.js change. "
                             "Lists, counts and ids; the questions are in the files named in chunks. */\n"
                             "window.QUIZ_MANIFEST=" + dumps(man) + ";\n")
+    terms = atlas_slice(data)
+    if terms is not None: files[TERMS] = terms
     return files
+
+
+# ── m67: the block's slice of resources/atlas-terms.js ───────────────────────
+# A block page matches its questions' text against every atlas card's link terms (shared/app.js atlasMatch / atlasRank);
+# the full file is ~220 KB gzipped. q/atlas-terms.js keeps every card's id, name and kind (titles for links) but the
+# terms only of cards whose terms occur in some option or explanation of this block — a superset of what the page can
+# match ("=" terms counted everywhere) — so links come out exactly the same; map and move rows keep only those cards. Rebuilt with the parts after
+# any data.js edit, and from resources/atlas-terms.js (tools/build-atlas.py) after any atlas build.
+TERMS = "atlas-terms.js"
+GREEK = {"α": " alpha ", "β": " beta ", "γ": " gamma ", "δ": " delta ", "κ": " kappa ", "ε": " epsilon ", "μ": " mu "}
+SUBSUP = str.maketrans("₀₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻", "01234567890123456789+-")
+NOT_PLURAL = {"less", "has", "was", "yes", "does", "goes", "lies", "dies", "bias", "gas", "bus", "its", "thus", "plus"}
+_FULL = None
+
+
+def norm(t):   # tools/build-atlas.py atlas_norm = shared/app.js atlasNorm
+    t = str(t).lower()
+    for k, v in GREEK.items(): t = t.replace(k, v)
+    t = t.translate(SUBSUP)
+    t = re.sub(r"<[^>]+>", " ", t); t = re.sub(r"['’‘`]", "", t)
+    t = re.sub(r"[‐‑‒–—―\-/]", " ", t); t = re.sub(r"[^a-z0-9+ ]", " ", t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def atlas_slice(data):
+    global _FULL
+    if _FULL is None:
+        f = ROOT / "resources" / "atlas-terms.js"
+        if not f.is_file(): _FULL = False
+        else:
+            t = f.read_text(encoding="utf-8"); _FULL = json.loads(t[t.index("{"):t.rindex("}") + 1])
+    if not _FULL: return None
+    texts = []
+    for ex in data["exams"]:
+        for s in ex["sdls"]:
+            for q in s.get("questions") or []:
+                for c in (q.get("choices") or {}).values():
+                    texts.append(" / ".join(map(str, c)) if isinstance(c, list) else str(c))
+                texts.append(str(q.get("explanation") or ""))
+    words = set()
+    blob = " " + " ".join(norm(x) for x in texts) + " "
+    keep = set()
+    for cid, _, _, terms in _FULL["cards"]:
+        for t in terms:
+            t = t.lstrip("=")
+            if any((" %s%s " % (t, suf)) in blob for suf in ("", "s", "es") if not (suf and t + suf in NOT_PLURAL)):
+                keep.add(cid); break
+    out = dict(_FULL)
+    out["cards"] = [[cid, n, k, terms if cid in keep else []] for cid, n, k, terms in _FULL["cards"]]
+    # maps and moving-map rows only ever look up cards this block can link: their card lists keep just those, and a
+    # switch row none of whose cards is kept goes (a map's own "" row and every map title stay)
+    out["maps"] = {m: [v[0], [c for c in v[1] if c in keep]] + v[2:] for m, v in _FULL["maps"].items()}
+    out["moves"] = [x[:4] + [[c for c in x[4] if c in keep]] for x in _FULL["moves"]
+                    if not x[1] or any(c in keep for c in x[4])]
+    return ("/* Built by tools/build-split.py from resources/atlas-terms.js and this block's data.js — do not edit. The "
+            "atlas link terms this block's questions can match (every card's id, name and kind; terms only where they occur). */\n"
+            "window.ATLAS_TERMS=" + dumps(out) + ";\n")
 
 
 def stale(block, files):
     """what differs between q/ on disk and `files` (missing, changed, left over)"""
     d = ROOT / block / "q"
-    have = {p.name for p in d.iterdir() if p.name == "manifest.js" or PART_RE.match(p.name)} if d.is_dir() else set()
+    have = {p.name for p in d.iterdir() if p.name in ("manifest.js", TERMS) or PART_RE.match(p.name)} if d.is_dir() else set()
     out = ["missing q/" + n for n in sorted(set(files) - have)]
     out += ["changed q/" + n for n in sorted(set(files) & have) if (d / n).read_text(encoding="utf-8") != files[n]]
     out += ["left over q/" + n for n in sorted(have - set(files))]
@@ -133,10 +198,11 @@ def main():
             if not p.exists() or p.read_text(encoding="utf-8") != text: p.write_text(text, encoding="utf-8")
         for p in d.iterdir():
             if p.name not in files and PART_RE.match(p.name): p.unlink()
-        parts = len(files) - 1
-        print("built %s/q/  —  manifest %d KB + %d part%s (%s KB)%s" % (
+        parts = len(files) - 1 - (TERMS in files)
+        print("built %s/q/  —  manifest %d KB + %d part%s (%s KB)%s%s" % (
             b, len(files["manifest.js"].encode()) // 1024, parts, "" if parts == 1 else "s",
-            ", ".join(str(len(t.encode()) // 1024) for n, t in files.items() if n != "manifest.js"),
+            ", ".join(str(len(t.encode()) // 1024) for n, t in files.items() if n not in ("manifest.js", TERMS)),
+            " + atlas terms %d KB" % (len(files[TERMS].encode()) // 1024) if TERMS in files else "",
             "" if diff else ", unchanged"))
     if check:
         print("split files: %s" % ("all fresh" if not bad else "%d block(s) stale" % bad))

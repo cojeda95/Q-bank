@@ -1052,3 +1052,18 @@ Pulm SDL 32 has 4 choices — app.js choiceLetters(q) draws only existing letter
 - **Question search panel**: an "In the Lesion Atlas" row of strong card/map matches above the results.
 - **Faster first question**: on a screen that needs no questions yet, the page starts the part the next tap most likely
   wants (the exam on screen, else the SDL last answered, else the first) before atlas-terms.js.
+- **Per-block atlas terms** (m67, second round): `<block>/q/atlas-terms.js` (tools/build-split.py, `atlas_slice`) is
+  the full `resources/atlas-terms.js` cut to the cards the block's questions can match — about 100 KB gzipped instead of
+  about 220. The block page loads it (`loadAtlasTerms`, falling back to the full file if it fails to load); "Save
+  offline" and the hub's Save all keep it; sw.js serves it network first like the manifest. test-site checks the page
+  loaded the slice and that its card links still equal the build's (`card links: page = build`).
+- **Weak-spots mix** on the block home (`#weakmix`, `renderWeakMix`): every objective you have answered at least 3 of
+  with under 80% right on your latest try (`weakObjectives`, the hub card's rule). Its questions run in one review run:
+  misses first (weakest objective first), then the unanswered ones, then the rest, at most 40.
+- **"=" guard terms**: an answer-only term that is the card's own name (tsgenes, cardecc) keeps the name from linking
+  through explanations. test-site no longer warns that it matches no answer.
+- **Sourced "why not" sentences** (m67, second round): `~/Developer/atlas-review/batches/m67/apply_reasons.py` adds
+  each sentence to its explanation and labels it in `whyNot`, but only sentences that were read against a source
+  (`reasons_part*_verified.json`) and judged on target (`judge_part*.json`). It must run **after** `apply_whynot.py`,
+  which rewrites every `whyNot`. Re-running it is safe. app.js `whyNotRange` also finds a label that starts mid-split
+  (a sentence starting lower-case, "hCG …").

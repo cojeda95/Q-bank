@@ -1219,7 +1219,7 @@
       var dirs = [];
       Array.prototype.forEach.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]'), function (a) {
         var dir = a.getAttribute('href').replace(/index\.html$/, '');
-        dirs.push(dir); urls.push(dir + 'index.html', dir + 'q/manifest.js');
+        dirs.push(dir); urls.push(dir + 'index.html', dir + 'q/manifest.js', dir + 'q/atlas-terms.js');
       });
       try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
       btn.disabled = true; bar.hidden = false; fill.style.width = '0%';
@@ -1458,7 +1458,7 @@
         return Promise.all(blocks.map(function (a) {
           var dir = a.getAttribute('href').replace(/index\.html$/, '');
           return cache.match(abs(dir + 'q/manifest.js')).then(function (r) { return r ? r.text() : ''; }).then(function (t) {
-            return [a, [dir + 'index.html', dir + 'q/manifest.js'].concat(window.qhubParts(t).map(function (n) { return dir + 'q/' + n; }))];
+            return [a, [dir + 'index.html', dir + 'q/manifest.js', dir + 'q/atlas-terms.js'].concat(window.qhubParts(t).map(function (n) { return dir + 'q/' + n; }))];
           });
         })).then(function (jobs) { return [cache, jobs]; });
       }).then(function (cj) {

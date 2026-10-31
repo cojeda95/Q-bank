@@ -104,19 +104,25 @@ let ATLAS_TERMS_GO = () => {};         // starts that load: boot() calls it once
   if (!APP_SRC) return;
   ATLAS_READY = new Promise(resolve => { ATLAS_TERMS_GO = () => {
     ATLAS_TERMS_GO = () => {};
-    const s = document.createElement('script');
-    s.src = new URL('../resources/atlas-terms.js', APP_SRC).href;
-    s.async = true;
-    s.onload = () => {
-      const d = window.ATLAS_TERMS;
-      if (d && Array.isArray(d.cards)) ATLAS_INDEX = d.cards.map(([id, n, k, t]) => ({ id, n, k, t }));
-      if (d && d.maps) ATLAS_MAPS = d.maps;
-      if (d && Array.isArray(d.graphs)) ATLAS_GRAPHS = d.graphs;
-      if (d && Array.isArray(d.moves)) ATLAS_MOVES = d.moves;
-      resolve();
+    // m67: a split block loads its own slice (q/atlas-terms.js, tools/build-split.py: only the terms its questions can
+    // match, ~100 KB gzipped instead of ~220); the full file if that is missing
+    const full = new URL('../resources/atlas-terms.js', APP_SRC).href;
+    const load = src => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => {
+        const d = window.ATLAS_TERMS;
+        if (d && Array.isArray(d.cards)) ATLAS_INDEX = d.cards.map(([id, n, k, t]) => ({ id, n, k, t }));
+        if (d && d.maps) ATLAS_MAPS = d.maps;
+        if (d && Array.isArray(d.graphs)) ATLAS_GRAPHS = d.graphs;
+        if (d && Array.isArray(d.moves)) ATLAS_MOVES = d.moves;
+        resolve();
+      };
+      s.onerror = () => { s.remove(); if (src === full) resolve(); else load(full); };
+      document.head.appendChild(s);
     };
-    s.onerror = resolve;
-    document.head.appendChild(s);
+    load(window.QUIZ_MANIFEST ? 'q/atlas-terms.js' : full);
   }; });
 })();
 const ATLAS_GREEK = { 'α': ' alpha ', 'β': ' beta ', 'γ': ' gamma ', 'δ': ' delta ', 'κ': ' kappa ', 'ε': ' epsilon ', 'μ': ' mu ' };
@@ -870,6 +876,9 @@ function whyNotRange(q, pick, pickText, idf) {
   if (lab && (!pickText || pickText === (q.choices || {})[pick])) {
     const e = String(q.explanation || ''), hit = wnSentences(e).find(([a, b]) => e.slice(a, b).startsWith(lab));
     if (hit) return hit;
+    // a labelled sentence that starts lower-case ("hCG …") is not split off by wnSentences: from the label to its stop
+    const i = e.indexOf(lab);
+    if (i >= 0) { const x = /[.!?]+["'”’)\]]*(?=\s|$)/g; x.lastIndex = i + lab.length; const m = x.exec(e); return [i, m ? m.index + m[0].length : e.length]; }
   }
   const r = wnScore(q, pick, pickText, idf);
   if (!r || !r.cand.length) return null;
@@ -1058,7 +1067,7 @@ function loadAllQuestions() { return needParts(allParts()) || Promise.resolve();
 /* What each screen needs before it can draw (render). The block home and the SDL lists need nothing: their extras that
    read question text (atlas map accuracy, "Exam N in the atlas") fill in once the background load brings it. */
 const ROUTES_ALL = ['examsetup', 'final-examsetup', 'split', 'exam', 'flagged', 'review', 'toughest', 'analytics', 'whymiss',
-  'studysheet', 'atlas', 'atlasmap', 'atlascards'];
+  'studysheet', 'atlas', 'atlasmap', 'atlascards', 'weakmix'];
 function routeParts(parts) {
   if (!QPARTS) return [];
   const n = parseInt(parts[1], 10);
@@ -1095,7 +1104,7 @@ window.addEventListener('online', prefetchParts);
 function saveBlockOffline() {
   if (!QPARTS || !('caches' in window) || !navigator.serviceWorker || !/^https?:$/.test(location.protocol)) return;
   const abs = u => new URL(u, location.href).href;
-  const keep = new Set([QDIR + 'manifest.js'].concat(QPARTS.names.map(n => QDIR + n)).map(abs));
+  const keep = new Set([QDIR + 'manifest.js', QDIR + 'atlas-terms.js'].concat(QPARTS.names.map(n => QDIR + n)).map(abs));
   navigator.serviceWorker.ready.then(() => caches.open('qhub-v1')).then(async c => {
     for (const url of [location.href.split('#')[0]].concat([...keep])) {
       if (!(await c.match(url, { ignoreSearch: true }))) await c.add(url);
@@ -1283,6 +1292,8 @@ function render() {
     renderSpacedRun(parts[1], parts[2]);
   } else if (parts[0] === 'obj' && parts[1] && parts[2] != null) {   // m67: one objective, from the hub's Weak spots
     renderObjectiveRun(parseInt(parts[1], 10), decodeURIComponent(parts[2]));
+  } else if (parts[0] === 'weakmix') {               // m67: the block's weak objectives in one run
+    renderWeakMix();
   } else if (parts[0] === 'spaced-hub') {
     leaveToHub(); return;
   } else if (parts[0] === 'q' && parts[1]) {          // m66: one question, from the hub's question search
@@ -1534,6 +1545,34 @@ function sdlAccuracy() {
   }));
   return out;
 }
+/* m67: the block's weak spots — every SDL objective with at least SDL_MIN answered (latest try per question) and under
+   80% right, the same rule as the hub's Weak spots card. Reads only the manifest's light questions (id, objective). */
+const WEAK_MIX_MAX = 40;
+function weakObjectives(last) {
+  last = last || lastAttemptMap();
+  const out = [];
+  DATA.exams.forEach(e => e.sdls.forEach(sdl => {
+    const by = {};
+    sdl.questions.forEach(q => { if (q.objective != null) (by[q.objective] = by[q.objective] || []).push(q); });
+    Object.keys(by).forEach(o => {
+      let n = 0, ok = 0;
+      by[o].forEach(q => { const a = last[q.id]; if (a) { n++; if (a.correct) ok++; } });
+      if (n >= SDL_MIN && ok / n < 0.8) out.push({ sdl, examNumber: e.examNumber, objective: o, qs: by[o], n, ok });
+    });
+  }));
+  return out.sort((a, b) => a.ok / a.n - b.ok / b.n || b.n - a.n);
+}
+/* #weakmix: those objectives' questions as one review run — misses first (weakest objective first), then the ones not
+   yet answered, then the rest, each group shuffled; at most WEAK_MIX_MAX. Back and Finish return to the block home. */
+function renderWeakMix() {
+  const last = lastAttemptMap(), objs = weakObjectives(last);
+  const tag = (o, q) => Object.assign({}, q, { sdlNumber: o.sdl.sdlNumber, sdlTitle: o.sdl.title, examNumber: o.examNumber });
+  const tiers = [[], [], []];
+  objs.forEach(o => o.qs.forEach(q => { const a = last[q.id]; tiers[!a ? 1 : a.correct ? 2 : 0].push(tag(o, q)); }));
+  const qs = [].concat(tiers[0], shuffle(tiers[1]), shuffle(tiers[2])).slice(0, WEAK_MIX_MAX);
+  if (!qs.length) return noMissesLeft('Weak-spots mix', `No weak spots yet — an objective joins once you have answered ${SDL_MIN} of its questions and got under 80% right on your latest try.`);
+  startMissedRun(qs, 'Weak-spots mix', null, { keepOrder: true });
+}
 function fillWeakSdlsHome() {
   const el = document.getElementById('weakSdlsHome');
   if (!el) return;
@@ -1551,8 +1590,10 @@ function fillWeakSdlsHome() {
       <a class="amap-go" href="#practice/${r.sdl.sdlNumber}">Practice</a></li>`;
   };
   const top = rows.slice(0, 6), rest = rows.slice(6);
+  const objs = weakObjectives(), mixN = Math.min(WEAK_MIX_MAX, objs.reduce((t, o) => t + o.qs.length, 0));
   el.innerHTML = `<section class="bsec" aria-labelledby="weakH"><h2 class="sec-h" id="weakH">Your weakest SDLs</h2>
     <p class="amap-note">Ranked by your latest answer to each question, once you have answered ${SDL_MIN} in an SDL — weakest first. This device only.</p>
+    ${objs.length ? `<a class="tool-row" id="weakMix" href="#weakmix"><b>Weak-spots mix</b><span>${mixN} questions from your ${objs.length} weak objective${objs.length > 1 ? 's' : ''} (under 80% right) — misses first</span></a>` : ''}
     <ul class="amap-list">${top.map(row).join('')}</ul>
     ${rest.length ? `<details class="amap-more"><summary>All ${rows.length} SDLs you have started</summary><ul class="amap-list">${rest.map(row).join('')}</ul></details>` : ''}</section>`;
 }
@@ -4050,13 +4091,14 @@ function renderExamWrong(examNumber) {
   redrawWhenAtlasReady(() => renderExamWrong(examNumber));
 }
 
-/* A review run of a fixed list of missed questions (each already carrying sdlNumber/sdlTitle/examNumber), shuffled.
-   `back` = { route, label } sends the run's back link and Finish there instead of Home. */
-function startMissedRun(qs, queueLabel, back) {
+/* A review run of a fixed list of missed questions (each already carrying sdlNumber/sdlTitle/examNumber), shuffled
+   (kept in order with opt.keepOrder, the weak-spots mix). `back` = { route, label } sends the run's back link and Finish
+   there instead of Home. */
+function startMissedRun(qs, queueLabel, back, opt) {
   session = {
     mode: 'review',
     queueLabel,
-    questions: shuffle(qs),
+    questions: opt && opt.keepOrder ? qs.slice() : shuffle(qs),
     index: 0,
     records: new Array(qs.length).fill(null),
     pendingLetter: null,
