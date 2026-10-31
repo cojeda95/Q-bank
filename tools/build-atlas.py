@@ -42,7 +42,7 @@ ESCAPED_TAG = re.compile(r"</?(?:b|i|em|strong)>")
 KNOWN_SRC = re.compile(r"(Robbins|Katzung|Guyton|Costanzo|Kaplan & Sadock|Marks|Langman|Moore|Pawlina|"
                        r"Fundamental Neuroscience|Foundations of Osteopathic Medicine|Atlas of Osteopathic Techniques|"
                        r"Somatic Dysfunction in Osteopathic Family Medicine|An Osteopathic Approach to Diagnosis and Treatment|DeGowin|"
-                       r"OCOM OMM|OCOM Ortho|OCOM Psych|OCOM Rheum|OCOM Nephro|OCOM Gastro|OCOM Pulm|Osmosis|Bootcamp\.com|"
+                       r"OCOM OMM|OCOM Ortho|OCOM Psych|OCOM Rheum|OCOM Nephro|OCOM Gastro|OCOM Pulm|OCOM Neuro|Osmosis|Bootcamp\.com|"
                        r"Research Methodology in the Health Sciences) ")
 
 def dyn_maps(text):
@@ -1101,3 +1101,16 @@ CARDS_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. card id 
                      "[short sources]] for every card a question links to: the question bank's On the Lesion Atlas panel */\n"
                      "window.ATLAS_CARDS=" + json.dumps(card_out, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
 print(f"built {CARDS_OUT.relative_to(ROOT)}  —  summaries of {len(card_out)} linked cards ({CARDS_OUT.stat().st_size // 1024} KB)")
+
+
+# ── the hub's question search index (m66) ────────────────────────────────────
+# resources/qsearch.js is built from every block's data.js by tools/build-search.py; it is rebuilt here with the rest so
+# a data change and the search never drift apart (tools/test-site.py fails on a stale index). Run it alone after a
+# data.js edit that does not touch the atlas.
+subprocess.run([sys.executable, "-I", str(TOOLS / "build-search.py")], check=True)
+
+# ── the block pages' split question files (m66) ──────────────────────────────
+# <block>/q/manifest.js and the part files it names are built from each data.js by tools/build-split.py (block pages load
+# those, not data.js); rebuilt here too so a data change and the pages never drift apart (tools/test-site.py fails on
+# stale parts). Run it alone after a data.js edit that does not touch the atlas.
+subprocess.run([sys.executable, "-I", str(TOOLS / "build-split.py")], check=True)

@@ -99,9 +99,11 @@ let ATLAS_MAPS = null;   // map id -> [title, card ids], for "Practice this map"
 let ATLAS_GRAPHS = null; // [map id, plot index, title, card ids] — "See it on a graph", "Graphs for this block"
 let ATLAS_MOVES = null;  // [map id, "switch:option" or "", option label, map title, card ids] — "See it move"
 let ATLAS_READY = Promise.resolve();   // settles once atlas-terms.js has loaded (or failed)
+let ATLAS_TERMS_GO = () => {};         // starts that load: boot() calls it once the first screen's questions are in (m66)
 (function loadAtlasTerms() {
   if (!APP_SRC) return;
-  ATLAS_READY = new Promise(resolve => {
+  ATLAS_READY = new Promise(resolve => { ATLAS_TERMS_GO = () => {
+    ATLAS_TERMS_GO = () => {};
     const s = document.createElement('script');
     s.src = new URL('../resources/atlas-terms.js', APP_SRC).href;
     s.async = true;
@@ -115,7 +117,7 @@ let ATLAS_READY = Promise.resolve();   // settles once atlas-terms.js has loaded
     };
     s.onerror = resolve;
     document.head.appendChild(s);
-  });
+  }; });
 })();
 const ATLAS_GREEK = { 'α': ' alpha ', 'β': ' beta ', 'γ': ' gamma ', 'δ': ' delta ', 'κ': ' kappa ', 'ε': ' epsilon ', 'μ': ' mu ' };
 const ATLAS_DIGITS = { '₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9',
@@ -355,8 +357,9 @@ const ATLAS_BOX_DAYS = [0, 1, 3, 7];
 let QUESTION_INDEX = null;
 function questionById(id) {
   if (!QUESTION_INDEX) {
+    if (!DATA) return undefined;
     QUESTION_INDEX = {};
-    ((window.QUIZ_DATA && window.QUIZ_DATA.exams) || []).forEach(e => (e.sdls || []).forEach(s =>
+    DATA.exams.forEach(e => (e.sdls || []).forEach(s =>
       (s.questions || []).forEach(q => { QUESTION_INDEX[q.id] = q; })));
   }
   return QUESTION_INDEX[id];
@@ -742,6 +745,168 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+/* WHYNOT-BEGIN ── "Why not your answer" (m66) ─────────────────────────────
+   After a miss, the explanation sentence that deals with the option the person picked is marked. Explanations
+   answer every wrong option by its content (never its letter), so the picked option's words are matched against
+   each sentence: tokens are lower-cased and lightly stemmed, stopwords dropped; a token counts for less when the
+   key or the stem also has it, when other options share it, when many sentences carry it, or when most of the
+   block's explanations use it; two-word phrases shared with the option add a bonus. A sentence must name the pick
+   (one of its leading words, or a rare word only the pick has), and one that matches the key at least as well as
+   the pick is about the key and is skipped. The best sentence is marked only when it covers enough of the pick and
+   beats the runner-up clearly — otherwise nothing is marked (a wrong mark is worse than none). Measured m66 over all
+   9,302 questions: 52% of wrong picks get a mark, 160 of 165 hand-checked marks right (97%). Pure functions, no
+   DOM: atlas-review/batches/m66/highlight/tools/run_matcher.py cuts this block out of app.js and runs it in Chrome. */
+const WN_STOP = new Set(('a an the and or nor but if then than that this these those there here of in on at to for from by with ' +
+  'without within into onto over under about after before during between through as is are was were be been being it its ' +
+  'their they them he she his her him we you your our not no do does did done doing can could would should may might must ' +
+  'will shall has have had having which who whom whose what when where why how also only both either neither each every ' +
+  'any all some such more most less least very much many other another same so too just instead rather while whereas ' +
+  'because since though although however thus therefore hence one two first second patient patients likely best ' +
+  'following answer option choice explain explains explanation cause causes caused finding findings would per via ' +
+  'whether due given still even well usually often typically always never').split(' '));
+const WN_ABBR = /(?:\b(?:e\.g|i\.e|vs|etc|approx|cf|al|Dr|Drs|St|Fig|Figs|No|Nos|ca|resp|incl|Mr|Mrs|Ms|Jr|Sr|Inc|Co|viz|Ch|Vol|pp|p|Eq|ref|Ref|sp|spp|var|subsp)|\b[A-Z])$/;
+// Sentence ranges [start, end) over the original text: a split needs . ! or ? (plus any closing quote or bracket),
+// whitespace, then a capital, a digit or an opening quote/bracket — and no abbreviation or lone initial before the stop
+function wnSentences(text) {
+  const out = [], re = /([.!?]+)["'”’)\]]*(\s+)(?=["'“‘(\[]?[A-Z0-9α-ωΑ-Ω])/g;
+  let start = 0, m;
+  while ((m = re.exec(text))) {
+    const stop = m.index;
+    if (m[1] === '.' && WN_ABBR.test(text.slice(Math.max(start, stop - 8), stop))) continue;
+    const end = m.index + m[0].length - m[2].length;
+    if (end > start) out.push([start, end]);
+    start = m.index + m[0].length;
+  }
+  if (start < text.length && text.slice(start).trim()) out.push([start, text.replace(/\s+$/, '').length]);
+  // leading whitespace never belongs to a sentence
+  return out.map(([a, b]) => { while (a < b && /\s/.test(text[a])) a++; return [a, b]; }).filter(([a, b]) => b > a);
+}
+function wnStem(w) {
+  if (/\d/.test(w)) return w;
+  if (w.length > 4) {
+    const r = w.replace(/(?:ational|ations|ation|ating|ated|ates|ically|ical|ally|ings|ing|edly|ed|ies|ness|ments|ment|ly|es|s)$/, '');
+    if (r.length >= 3 && r !== w) w = r;
+  }
+  return w.length > 6 ? w.slice(0, 6) : w;
+}
+// Content tokens in order (stopwords out); numbers keep a decimal point and a trailing %
+function wnTokens(s) {
+  const t = String(s || '').normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .match(/[a-z0-9α-ωµ]+(?:\.\d+)?%?/g) || [];
+  return t.filter(w => !WN_STOP.has(w) && (w.length > 1 || /\d/.test(w))).map(wnStem);
+}
+const WN_FLOOR = 0.3, WN_MIN = 1.0, WN_SOLE = 0.5, WN_HIGHF = 0.6, WN_LEAD = 1.6, WN_RARE = 0.75;
+// An option's leading phrase (ATLAS_HEAD_SPLIT plus with/from/in/by): what an explanation names when it answers that option
+const WN_HEAD_SPLIT = /[,;:(]| [—–-] | (?:which|because|since|due to|caused by|as|so|while|whereas|that|with|from|in|by) /i;
+/* Corpus document frequency over a block's explanations: a word most explanations use ("requiring", "common")
+   says little about which option a sentence answers. Built once per block. */
+function wnIdf(questions) {
+  const df = new Map(); let N = 0;
+  (questions || []).forEach(q => { N++; new Set(wnTokens(q && q.explanation)).forEach(w => df.set(w, (df.get(w) || 0) + 1)); });
+  return { N, df, cap: 0.55 * Math.log(N + 1) };
+}
+/* Scores every sentence of q.explanation for the picked option. `pickText` (optional) is the option's wording when it
+   was answered (a later edit may have changed q.choices); `idf` is wnIdf() of the block, or null. */
+function wnScore(q, pick, pickText, idf) {
+  if (!q || !pick || pick === q.correct || !q.choices || !(pick in q.choices)) return null;
+  if (Array.isArray(q.choices[pick]) || Array.isArray(q.choices[q.correct])) return null;   // grid choices: cells, not prose
+  const text = String(q.explanation || '');
+  const sents = wnSentences(text);
+  if (sents.length < 2) return null;
+  const sTok = sents.map(([a, b]) => wnTokens(text.slice(a, b)));
+  const sSet = sTok.map(t => new Set(t));
+  const sBig = sTok.map(t => new Set(t.slice(1).map((w, i) => t[i] + ' ' + w)));
+  const df = new Map();
+  sSet.forEach(s => s.forEach(w => df.set(w, (df.get(w) || 0) + 1)));
+  const letters = Object.keys(q.choices);
+  const raw = l => String(l === pick && pickText ? pickText : q.choices[l]);
+  const opt = {};
+  letters.forEach(l => { opt[l] = wnTokens(raw(l)); });
+  const optN = new Map();
+  letters.forEach(l => new Set(opt[l]).forEach(w => optN.set(w, (optN.get(w) || 0) + 1)));
+  const stem = new Set(wnTokens(q.stem));
+  // 0.2 (most explanations in the block use the word) .. 1 (a rare word)
+  const rare = w => idf && idf.N > 20 ? Math.max(0.2, Math.min(1, Math.log((idf.N + 1) / ((idf.df.get(w) || 0) + 1)) / idf.cap)) : 1;
+  // weight of token w for one option, measured against the rival option (the key for a pick, the pick for the key)
+  const weight = (w, rival) => {
+    let x = Math.min(1, 0.4 + w.length / 8) / (optN.get(w) || 1);
+    if (rival.has(w)) x *= 0.3;
+    if (stem.has(w)) x *= 0.5;
+    const d = df.get(w) || 0;
+    if (d > 1) x /= Math.sqrt(d);
+    return x * rare(w);
+  };
+  const scorer = (l, rivalL) => {
+    const toks = opt[l], rival = new Set(opt[rivalL]), uniq = [...new Set(toks)];
+    const W = new Map(uniq.map(w => [w, weight(w, rival)]));
+    const total = uniq.reduce((s, w) => s + W.get(w), 0) || 1;
+    const bigs = toks.slice(1).map((w, i) => [toks[i] + ' ' + w, W.get(toks[i]) + W.get(w)]);
+    return sents.map((_, i) => {
+      let s = 0;
+      uniq.forEach(w => { if (sSet[i].has(w)) s += W.get(w); });
+      bigs.forEach(([b, bw]) => { if (sBig[i].has(b)) s += 0.5 * bw; });
+      return { s, f: s / total };
+    });
+  };
+  // anchors: the pick's own leading words (first 4 of its leading phrase) that the key and the stem don't share —
+  // a sentence that answers this option names it; failing those, any word of the pick the key and stem lack
+  const keyT = new Set(opt[q.correct]), own = w => !keyT.has(w) && !stem.has(w);
+  const head = wnTokens(raw(pick).split(WN_HEAD_SPLIT)[0]).slice(0, 4).filter(own);
+  let anchors = head.concat(opt[pick].filter(w => own(w) && optN.get(w) === 1 && w.length > 2 && rare(w) >= WN_RARE));
+  if (!anchors.length) anchors = opt[pick].filter(own);
+  if (!anchors.length) return null;
+  const mine = scorer(pick, q.correct), key = scorer(q.correct, pick);
+  const all = mine.map((m, i) => ({ i, s: m.s, f: m.f, k: key[i].f, a: anchors.some(w => sSet[i].has(w)) }));
+  // a "Sources: ..." line names drugs and chapters but explains nothing
+  const cite = i => /^(?:sources?|references?|refs?)\s*[:—–-]/i.test(text.slice(sents[i][0], sents[i][1]));
+  return { sents, all, anchors, cand: all.filter(c => c.s > 0 && c.a && c.f > c.k && !cite(c.i)).sort((a, b) => b.s - a.s) };
+}
+/* The [start, end) of the sentence in q.explanation that explains why `pick` is wrong, or null when no sentence
+   stands out — see wnScore for the arguments */
+function whyNotRange(q, pick, pickText, idf) {
+  const r = wnScore(q, pick, pickText, idf);
+  if (!r || !r.cand.length) return null;
+  const [best, next] = r.cand;
+  if (!(best.f >= WN_FLOOR && best.s >= (next ? WN_MIN : WN_SOLE)) && !(best.f >= WN_HIGHF && best.s >= 0.2)) return null;
+  if (next && best.s < WN_LEAD * next.s) return null;
+  return r.sents[best.i];
+}
+/* WHYNOT-END */
+/* The explanation box. After a miss (`pick` is not the key) the sentence that answers the picked option is marked
+   (whyNotRange, above) and labelled "Why not your answer" in text, so the mark never rests on colour alone. `pickText`
+   is the option's wording when it was answered (pickOf), if it has changed since. Nothing is marked when no sentence
+   stands out, and the matcher can never break the page: any error just leaves the plain explanation. */
+let WN_IDF = null;
+function explanationHtml(q, pick, pickText) {
+  const e = String((q && q.explanation) || '');
+  let r = null;
+  if (pick && q && pick !== q.correct) {
+    try {
+      let idf = WN_IDF;
+      if (!idf && DATA && DATA.exams) {
+        const all = [].concat(...DATA.exams.map(x => [].concat(...(x.sdls || []).map(s => s.questions || []))));
+        // m66: kept once every part is in; until then (a split block still loading) the questions in so far
+        if (allQuestionsLoaded()) idf = WN_IDF = wnIdf(all); else idf = wnIdf(all.filter(x => x.explanation != null));
+      }
+      r = whyNotRange(q, pick, pickText, idf);
+    } catch (err) { r = null; }
+  }
+  const body = r ? `${escapeHtml(e.slice(0, r[0]))}<mark class="whynot"><span class="whynot-tag">Why not your answer</span> ${escapeHtml(e.slice(r[0], r[1]))}</mark>${escapeHtml(e.slice(r[1]))}`
+    : escapeHtml(e);
+  return `<div class="info-block explanation"><b>Explanation</b>${body}</div>`;
+}
+/* On a phone, bring a freshly marked sentence into view — only when it is off screen, gently, and at once under
+   prefers-reduced-motion. Called right after an answer is shown, not on every re-render. */
+function revealWhyNot() {
+  const m = main && main.querySelector('mark.whynot');
+  if (!m || !window.matchMedia || !window.matchMedia('(max-width: 700px)').matches) return;
+  const r = m.getBoundingClientRect(), vh = window.innerHeight || document.documentElement.clientHeight;
+  if (r.top >= 0 && r.bottom <= vh) return;
+  let reduced = false;
+  try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (err) {}
+  m.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+}
+
 /* ── Grid ("matrix") answer choices — PROTOTYPE ─────────────────────────
    Optional, backward-compatible: a question with
      grid: { headers: ['Serum Na⁺', 'Urine osmolality', 'ECF volume'] }
@@ -812,6 +977,127 @@ function findSdl(sdlNumber) {
   return SDL_INDEX.get(sdlNumber);
 }
 
+/* ── Question data: data.js, or split into parts (m66) ─────────────────
+   A block page loads q/manifest.js (window.QUIZ_MANIFEST, built from data.js by tools/build-split.py): every exam and
+   SDL with its title and, per question, only id, batch, objective and isHighYield — all the block home, the SDL lists,
+   counts, progress, spaced-review counts and the exam / split / final builders read. The rest of each question (stem,
+   choices, answer, explanation, …) is in q/<part>.<hash>.js, a few SDLs per file (`chunk` on each SDL says which).
+   render() asks for the parts its screen needs (routeParts → needParts) and draws once they are in; after the first
+   screen the other parts load one at a time in the background (prefetchParts: the exam on screen first), so the whole
+   block is in memory — and saved for offline use (saveBlockOffline) — soon after any visit. A part is merged into the
+   manifest's own question objects (Object.assign), so DATA keeps the data.js shape and each question stays one object.
+   A page that loads data.js itself (window.QUIZ_DATA: live.js, a block page scaffolded before m66) has everything
+   from the start: QPARTS stays null and every wait below is already over. */
+const QDIR = 'q/';
+let QPARTS = null;   // { names: [file], done: [bool], loading: [Promise], waits: [[parts, resolve]], focus: examNumber }
+function allParts() { return QPARTS ? QPARTS.names.map((_, i) => i) : []; }
+function partsForSdl(sdlNumber) {
+  const f = findSdl(sdlNumber);
+  return f && f.sdl.chunk != null ? [f.sdl.chunk] : [];
+}
+function partsForExam(examNumber) {
+  const e = DATA.exams.find(x => x.examNumber === examNumber);
+  return e ? e.sdls.filter(s => s.chunk != null).map(s => s.chunk) : [];
+}
+function partsForIds(ids) {
+  const want = new Set(ids), out = new Set();
+  DATA.exams.forEach(e => e.sdls.forEach(s => { if (s.chunk != null && s.questions.some(q => want.has(q.id))) out.add(s.chunk); }));
+  return [...out];
+}
+function partsDone(list) { return !QPARTS || list.every(i => QPARTS.done[i]); }
+function allQuestionsLoaded() { return partsDone(allParts()); }
+/* Load part i now (once; a failed load can be tried again) and merge it into DATA. */
+function loadPart(i) {
+  if (!QPARTS || QPARTS.done[i]) return Promise.resolve();
+  if (QPARTS.loading[i]) return QPARTS.loading[i];
+  const name = QPARTS.names[i];
+  return (QPARTS.loading[i] = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = QDIR + name;
+    s.async = true;
+    s.onload = () => {
+      s.remove();
+      const part = window.QUIZ_CHUNKS && window.QUIZ_CHUNKS[name];
+      if (!part) { QPARTS.loading[i] = null; reject(new Error(name + ' did not load')); return; }
+      delete window.QUIZ_CHUNKS[name];
+      Object.keys(part).forEach(n => {
+        const f = findSdl(Number(n));
+        if (!f) return;
+        const have = f.sdl.questions;
+        part[n].forEach((q, k) => {
+          const stub = have[k] && have[k].id === q.id ? have[k] : have.find(x => x.id === q.id);
+          if (stub) Object.assign(stub, q);
+        });
+      });
+      QPARTS.done[i] = true;
+      QPARTS.waits = QPARTS.waits.filter(([list, res]) => partsDone(list) ? (res(), false) : true);
+      resolve();
+    };
+    s.onerror = () => { s.remove(); QPARTS.loading[i] = null; reject(new Error('Could not load ' + name)); };
+    document.head.appendChild(s);
+  }));
+}
+/* The parts in `list` that are not in yet, loaded now: a Promise, or null when there is nothing to wait for. */
+function needParts(list) {
+  const todo = [...new Set(list)].filter(i => !partsDone([i]));
+  return todo.length ? Promise.all(todo.map(loadPart)) : null;
+}
+/* Settles once every part in `list` is in, without loading anything itself (the background load brings them). */
+function whenParts(list) {
+  return partsDone(list) ? Promise.resolve() : new Promise(res => QPARTS.waits.push([list, res]));
+}
+function whenAllQuestions() { return whenParts(allParts()); }
+function loadAllQuestions() { return needParts(allParts()) || Promise.resolve(); }   // tests, and the final-preset cards
+/* What each screen needs before it can draw (render). The block home and the SDL lists need nothing: their extras that
+   read question text (atlas map accuracy, "Exam N in the atlas") fill in once the background load brings it. */
+const ROUTES_ALL = ['examsetup', 'final-examsetup', 'split', 'exam', 'flagged', 'review', 'toughest', 'analytics', 'whymiss',
+  'studysheet', 'atlas', 'atlasmap', 'atlascards'];
+function routeParts(parts) {
+  if (!QPARTS) return [];
+  const n = parseInt(parts[1], 10);
+  const f = Number.isFinite(n) && ['practice', 'sdlcards', 'sdlmissed', 'sdlwrong'].includes(parts[0]) ? findSdl(n) : null;
+  QPARTS.focus = parts[0] === 'exam-sdls' || parts[0] === 'examwrong' || parts[0] === 'exammissed' ? n : f ? f.examNumber : QPARTS.focus;
+  if (f) return partsForSdl(n);
+  if (parts[0] === 'examwrong' || parts[0] === 'exammissed') return partsForExam(n);
+  if (parts[0] === 'q' && parts[1]) return partsForIds([decodeURIComponent(parts[1])]);
+  if (parts[0] === 'spaced') return partsForIds(spacedDueQuestions(parts[1] === 'exam' ? parseInt(parts[2], 10) : null).qs.map(q => q.id));
+  if (parts[0] === 'resume-exam') {
+    const snap = loadExamSessionSnapshot();
+    return snap && Array.isArray(snap.questions) ? partsForIds(snap.questions.map(q => q && q.id)) : [];
+  }
+  return ROUTES_ALL.includes(parts[0]) ? allParts() : [];
+}
+/* The background load: one part at a time, the exam on screen first, until all are in; then the block is saved for
+   offline use. A failed part stops it until the connection is back ('online'). */
+let PREFETCHING = false;
+function prefetchParts() {
+  if (!QPARTS || PREFETCHING) return;
+  const next = () => {
+    const left = allParts().filter(i => !QPARTS.done[i]);
+    if (!left.length) { PREFETCHING = false; saveBlockOffline(); return; }
+    const mine = QPARTS.focus != null ? partsForExam(QPARTS.focus).filter(i => left.includes(i)) : [];
+    loadPart(mine.length ? mine[0] : left[0]).then(next, () => { PREFETCHING = false; });
+  };
+  PREFETCHING = true;
+  next();
+}
+window.addEventListener('online', prefetchParts);
+/* After every part is in: the page, its manifest and its parts go into the service worker's cache ('qhub-v1', as in
+   sw.js), so the block works without signal after this one visit — sw.js saves what passes through it, but on a first
+   visit the page and the first parts arrive before it is running. Parts of older builds are dropped. */
+function saveBlockOffline() {
+  if (!QPARTS || !('caches' in window) || !navigator.serviceWorker || !/^https?:$/.test(location.protocol)) return;
+  const abs = u => new URL(u, location.href).href;
+  const keep = new Set([QDIR + 'manifest.js'].concat(QPARTS.names.map(n => QDIR + n)).map(abs));
+  navigator.serviceWorker.ready.then(() => caches.open('qhub-v1')).then(async c => {
+    for (const url of [location.href.split('#')[0]].concat([...keep])) {
+      if (!(await c.match(url, { ignoreSearch: true }))) await c.add(url);
+    }
+    const dir = abs(QDIR);
+    for (const k of await c.keys()) if (k.url.startsWith(dir) && !keep.has(k.url.split('?')[0])) await c.delete(k);
+  }).catch(() => {});
+}
+
 function allQuestionsForExam(examNumber) {
   // Excludes the trial batches (isTrialQ: batch 3, Bloom Batch / nephro short-stem trial,
   // and batch 4 where QUIZ_CONFIG.batch4 exists) — opt-in experimental trials, not part of
@@ -873,14 +1159,16 @@ function sdlTitleFor(sdlNumber) {
   const found = findSdl(sdlNumber);
   return found ? found.sdl.title : `SDL ${sdlNumber}`;
 }
-let OBJECTIVE_LABELS = null; // "sdlNumber-objective" -> objectiveLabel, built on first use
+let OBJECTIVE_LABELS = null; // "sdlNumber-objective" -> objectiveLabel, built on first use (once every part is in, m66)
 function objectiveLabelFor(sdlNumber, objective) {
   if (!OBJECTIVE_LABELS) {
-    OBJECTIVE_LABELS = new Map();
+    const labels = new Map();
     DATA.exams.forEach(e => e.sdls.forEach(sdl => sdl.questions.forEach(q => {
       const key = `${sdl.sdlNumber}-${q.objective}`;
-      if (q.objectiveLabel && !OBJECTIVE_LABELS.has(key)) OBJECTIVE_LABELS.set(key, q.objectiveLabel);
+      if (q.objectiveLabel && !labels.has(key)) labels.set(key, q.objectiveLabel);
     })));
+    if (!allQuestionsLoaded()) return labels.get(`${sdlNumber}-${objective}`) || '';
+    OBJECTIVE_LABELS = labels;
   }
   return OBJECTIVE_LABELS.get(`${sdlNumber}-${objective}`) || '';
 }
@@ -920,6 +1208,20 @@ function render() {
   // a new screen starts at the top (the block home is long now)
   if (render.lastHash !== undefined && render.lastHash !== hash) window.scrollTo(0, 0);
   render.lastHash = hash;
+
+  // m66: a screen that shows questions waits for the part files holding them (routeParts), then draws
+  const wait = needParts(routeParts(parts));
+  if (wait) {
+    main.innerHTML = '<p class="loading">Loading questions…</p>';
+    const still = () => window.location.hash.replace(/^#/, '') === hash;
+    wait.then(() => { if (still()) render(); }, err => {
+      if (!still()) return;
+      main.innerHTML = `<p class="empty-state">Could not load these questions (${escapeHtml(err.message)}). Check your connection, then
+        <button type="button" class="btn secondary" id="retryLoad">Try again</button></p>`;
+      document.getElementById('retryLoad').addEventListener('click', render);
+    });
+    return;
+  }
 
   if (parts.length === 0) {
     renderHome();
@@ -974,6 +1276,10 @@ function render() {
     renderSpacedRun(parts[1], parts[2]);
   } else if (parts[0] === 'spaced-hub') {
     leaveToHub(); return;
+  } else if (parts[0] === 'q' && parts[1]) {          // m66: one question, from the hub's question search
+    renderOneQuestion(decodeURIComponent(parts[1]));
+  } else if (parts[0] === 'qsearch-hub') {            // m66: back to the hub's search results
+    window.location.replace('../index.html#qsearch'); return;
   } else {
     renderHome();
   }
@@ -1079,7 +1385,8 @@ const AMAP_MIN = 3;   // answers on a map before it is ranked by accuracy
 function fillAtlasMapsHome() {
   const el = document.getElementById('atlasMapsHome');
   if (!el || !ATLAS_URL) return;
-  Promise.all([ATLAS_READY, loadAtlasPractice()]).then(([, P]) => {
+  // the accuracy reads each answered question's linked cards: wait for every question (m66, the background load)
+  Promise.all([ATLAS_READY, loadAtlasPractice(), whenAllQuestions()]).then(([, P]) => {
     if (!document.body.contains(el) || !P || !P.maps || !ATLAS_MAPS) return;
     const bi = (P.blocks || []).findIndex(b => b[0] === blockDirName());
     if (bi < 0) return;
@@ -1432,7 +1739,10 @@ function renderHome() {
   main.querySelectorAll('.final-preset-card').forEach(card => {
     card.addEventListener('click', () => {
       const preset = findFinalPreset(card.dataset.preset);
-      if (preset) startFinalPreset(preset);
+      if (!preset) return;
+      if (allQuestionsLoaded()) { startFinalPreset(preset); return; }
+      main.innerHTML = '<p class="loading">Loading questions…</p>';   // m66: a split block still loading its parts
+      loadAllQuestions().then(() => { renderHome(); startFinalPreset(preset); }, renderHome);
     });
   });
   // the resume cards open on click or Enter / Space; their Discard buttons stop that
@@ -1674,7 +1984,7 @@ function renderExamSdlList(examNumber) {
 function fillExamAtlas(exam) {
   const el = document.getElementById('examAtlas');
   if (!el || !ATLAS_URL) return;
-  ATLAS_READY.then(() => new Promise(r => setTimeout(r, 0))).then(() => {
+  Promise.all([ATLAS_READY, whenParts(partsForExam(exam.examNumber))]).then(() => new Promise(r => setTimeout(r, 0))).then(() => {
     if (!document.body.contains(el) || !ATLAS_MAPS || !ATLAS_INDEX) return;
     const cardMaps = {};
     Object.keys(ATLAS_MAPS).forEach(m => (ATLAS_MAPS[m][1] || []).forEach(c => { (cardMaps[c] = cardMaps[c] || []).push(m); }));
@@ -2666,7 +2976,7 @@ function renderPracticeQuestion() {
         ${record.correct ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
       </div>
       ${missWhyHtml(record)}
-      <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
+      ${explanationHtml(q, record.correct ? null : record.letter)}
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
     `;
@@ -2735,6 +3045,7 @@ function renderPracticeQuestion() {
       batch: q.batch, correct, confidence, mode: 'practice', ts, ...pickOf(q, letter),
     });
     renderPracticeQuestion();
+    if (!correct) revealWhyNot();
   }
 
   if (!answered) {
@@ -3028,7 +3339,7 @@ function renderExamQuestion() {
       <div class="feedback-banner ${isCorrect ? 'correct' : 'incorrect'}">
         ${isCorrect ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
       </div>
-      <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
+      ${explanationHtml(q, isCorrect ? null : selected)}
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
       ${atlasLinksHtml(q, isCorrect ? null : selected)}
@@ -3079,6 +3390,7 @@ function renderExamQuestion() {
         session.answers[session.index] = letter;
         if (instantFeedback && letter !== q.correct) triggerWrongFlash();
         renderExamQuestion();
+        if (instantFeedback && letter !== q.correct) revealWhyNot();
       });
     });
     main.querySelectorAll('.strike-btn').forEach(btn => {
@@ -3237,7 +3549,7 @@ function renderExamResults() {
         <div class="missed-stem">${escapeHtml(q.stem)} ${isFlagged(q.id) ? '<span class="flagged-tag">&#9733; flagged</span>' : ''}</div>
         <div class="your-answer">Your answer: ${given ? `${given} — ${escapeHtml(choiceText(q, given, true))}` : '(no answer)'}</div>
         <div class="correct-answer">Correct answer: ${q.correct} — ${escapeHtml(choiceText(q, q.correct, true))}</div>
-        <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
+        ${explanationHtml(q, given)}
         ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
         ${atlasLinksHtml(q, given)}
       </div>
@@ -3367,7 +3679,7 @@ function renderFlaggedQuestion() {
         ${record.correct ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
       </div>
       ${missWhyHtml(record)}
-      <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
+      ${explanationHtml(q, record.correct ? null : record.letter)}
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${atlasLinksHtml(q, record.correct ? null : record.letter)}
     `;
@@ -3428,6 +3740,7 @@ function renderFlaggedQuestion() {
       correct, confidence, mode: 'flagged', ts, ...pickOf(q, letter),
     });
     renderFlaggedQuestion();
+    if (!correct) revealWhyNot();
   }
 
   if (!answered) {
@@ -3621,10 +3934,11 @@ function renderSdlCards(sdlNumber) {
    `lazyAtlas` leaves an empty .xw-atlas slot for fillAtlasLater() — matching atlas cards costs ~10 ms a question. */
 function missedItemHtml(q, n, last, lazyAtlas) {
   const a = last[q.id] || {};
-  let yours = '';
+  let yours = '', pickText = null;
   if (a.pick) {
     const now = String(choiceText(q, a.pick, true) || '');
     const txt = a.pickT && !now.startsWith(a.pickT.slice(0, 60)) ? a.pickT : now;
+    if (txt !== now) pickText = txt;   // the option was reworded since: match the wording that was answered
     yours = `<div class="your-answer">Your answer: ${a.pickT && txt === a.pickT && txt !== now ? '' : `${a.pick} — `}${escapeHtml(txt)}</div>`;
   }
   const when = a.ts ? new Date(a.ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
@@ -3633,7 +3947,7 @@ function missedItemHtml(q, n, last, lazyAtlas) {
         <div class="missed-stem"><b>${n}.</b> ${escapeHtml(q.stem)} ${isFlagged(q.id) ? '<span class="flagged-tag">&#9733; flagged</span>' : ''}${when ? ` <span class="setup-hint" style="display:inline">· missed ${escapeHtml(when)}</span>` : ''}</div>
         ${yours}
         <div class="correct-answer">Correct answer: ${q.correct} — ${escapeHtml(choiceText(q, q.correct, true))}</div>
-        <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
+        ${explanationHtml(q, a.pick, pickText)}
         ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
         ${lazyAtlas && ATLAS_URL ? `<div class="xw-atlas" data-qid="${escapeHtml(q.id)}"></div>` : atlasLinksHtml(q, a.pick)}
       </div>`;
@@ -3740,6 +4054,20 @@ function startMissedRun(qs, queueLabel, back) {
     back: back || null,
   };
   renderReviewQuestion();
+}
+/* ── m66: #q/<question id> — one question opened from the hub's question search (index.html + resources/qsearch.js) ──
+   Self-contained: the question alone as a review run (the same screen as "Redo missed"). Answering it logs a review
+   attempt like any other, but no practice session, exam or saved snapshot is started, replaced or cleared, and
+   "Continue where you left off" is not touched (rememberPlace has no #q branch). Back and Finish go to #qsearch-hub,
+   which returns to the hub's search results (index.html#qsearch). An id no longer in data.js shows a short note. */
+function renderOneQuestion(id) {
+  const back = { route: 'qsearch-hub', label: 'Search results' };
+  let hit = null;
+  DATA.exams.forEach(e => e.sdls.forEach(sdl => sdl.questions.forEach(q => {
+    if (!hit && q.id === id) hit = Object.assign({}, q, { sdlNumber: sdl.sdlNumber, sdlTitle: sdl.title, examNumber: e.examNumber });
+  })));
+  if (!hit) return noMissesLeft('Question not found', 'That question is no longer in this block (it may have been replaced). Search again from the hub.', back);
+  startMissedRun([hit], 'Search result', back);
 }
 function noMissesLeft(title, msg, back) {
   main.innerHTML = `
@@ -4066,7 +4394,7 @@ function renderReviewQuestion() {
         ${record.correct ? '✅ Correct' : `❌ Incorrect — correct answer is ${q.correct}`}
       </div>
       ${missWhyHtml(record)}
-      <div class="info-block explanation"><b>Explanation</b>${escapeHtml(q.explanation)}</div>
+      ${explanationHtml(q, record.correct ? null : record.letter)}
       ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
       ${q.crossRef ? `<div class="info-block xref">${escapeHtml(q.crossRef)}</div>` : ''}
       ${atlasLinksHtml(q, record.correct ? null : record.letter)}
@@ -4128,6 +4456,7 @@ function renderReviewQuestion() {
       correct, confidence, mode: 'review', ts, ...pickOf(q, letter),
     });
     renderReviewQuestion();
+    if (!correct) revealWhyNot();
   }
 
   if (!answered) {
@@ -4197,8 +4526,12 @@ function renderAnalytics() {
     bySdl[a.sdlNumber].total++;
     if (a.correct) bySdl[a.sdlNumber].correct++;
 
-    const objKey = `${a.sdlNumber}-${a.objective}`;
-    if (!byObjective[objKey]) byObjective[objKey] = { correct: 0, total: 0, sdlNumber: a.sdlNumber, objective: a.objective, label: a.objectiveLabel || objectiveLabelFor(a.sdlNumber, a.objective) };
+    // Group by the question's objective as it is today, not the number saved with the answer, so
+    // renumbered objectives (m66: pulm SDLs 7/9-12/14/18/19/23/26, ortho SDL 7) don't split or mislabel.
+    const live = questionById(a.id);
+    const objective = live ? live.objective : a.objective;
+    const objKey = `${a.sdlNumber}-${objective}`;
+    if (!byObjective[objKey]) byObjective[objKey] = { correct: 0, total: 0, sdlNumber: a.sdlNumber, objective, label: (live && live.objectiveLabel) || a.objectiveLabel || objectiveLabelFor(a.sdlNumber, a.objective) };
     byObjective[objKey].total++;
     if (a.correct) byObjective[objKey].correct++;
 
@@ -4501,15 +4834,44 @@ function renderStudySheet() {
 })();
 
 /* ── Boot ─────────────────────────────────────────────────────────────── */
-try {
-  if (!window.QUIZ_DATA) throw new Error('data.js did not define window.QUIZ_DATA — make sure data.js is loaded before app.js in index.html.');
-  DATA = window.QUIZ_DATA;
-  DATA.exams.forEach(exam => {
-    exam.sdls.forEach(sdl => {
-      SDL_INDEX.set(sdl.sdlNumber, { sdl, examNumber: exam.examNumber });
+/* The page loads q/manifest.js (or data.js) before this file. Once the first screen and the questions it needs are in,
+   the atlas terms and the rest of the parts follow, and then the service worker is registered (theme.js waits for
+   window.QBANK_SW_AFTER), so on a first visit its install does not compete with them for a slow connection. */
+let SW_AFTER_DONE = () => {};
+window.QBANK_SW_AFTER = new Promise(res => { SW_AFTER_DONE = res; });
+function boot() {
+  try {
+    DATA = window.QUIZ_DATA || window.QUIZ_MANIFEST;
+    if (!DATA) throw new Error('q/manifest.js (or data.js) did not load — check your connection and reload.');
+    if (!window.QUIZ_DATA) {
+      const names = Array.isArray(DATA.chunks) ? DATA.chunks : [];
+      QPARTS = { names, done: names.map(() => false), loading: [], waits: [], focus: null };
+    }
+    DATA.exams.forEach(exam => {
+      exam.sdls.forEach(sdl => {
+        SDL_INDEX.set(sdl.sdlNumber, { sdl, examNumber: exam.examNumber });
+      });
     });
+    render();
+  } catch (err) {
+    main.innerHTML = `<p class="empty-state">Could not load question bank: ${escapeHtml(err.message)}</p>`;
+    SW_AFTER_DONE();
+    return;
+  }
+  const first = QPARTS ? Promise.all(QPARTS.loading.filter(Boolean)).catch(() => {}) : Promise.resolve();
+  first.then(() => {
+    ATLAS_TERMS_GO();
+    // after the page's load event, so the browser's loading indicator does not wait for the background load
+    if (document.readyState === 'complete') prefetchParts(); else window.addEventListener('load', prefetchParts);
+    whenAllQuestions().then(SW_AFTER_DONE);
+    setTimeout(SW_AFTER_DONE, 60000);
   });
-  render();
-} catch (err) {
-  main.innerHTML = `<p class="empty-state">Could not load question bank: ${escapeHtml(err.message)}</p>`;
+}
+// a block page without q/manifest.js (not built yet) falls back to its data.js
+if (window.QUIZ_DATA || window.QUIZ_MANIFEST) boot();
+else {
+  const s = document.createElement('script');
+  s.src = 'data.js';
+  s.onload = s.onerror = boot;
+  document.head.appendChild(s);
 }

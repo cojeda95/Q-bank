@@ -57,12 +57,15 @@
   // Offline support: every page that loads this file registers the site-wide
   // service worker (sw.js, at the site root next to index.html). It keeps a
   // copy of each page you open so the hub, the atlas and any block you have
-  // opened before still work without signal.
+  // opened before still work without signal. On a block page it waits for the
+  // block's questions first (shared/app.js sets window.QBANK_SW_AFTER, m66), so
+  // on a first visit its install does not compete with them for a slow signal.
   var me = document.currentScript && document.currentScript.src;
   if (me && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register(new URL('../sw.js', me).href, { scope: new URL('../', me).href })
-        .catch(function () { /* offline support is optional */ });
+      Promise.resolve(window.QBANK_SW_AFTER).then(function () {
+        return navigator.serviceWorker.register(new URL('../sw.js', me).href, { scope: new URL('../', me).href });
+      }).catch(function () { /* offline support is optional */ });
     });
   }
 })();

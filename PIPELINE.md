@@ -743,8 +743,8 @@ Nothing extra is needed when you publish. If a shared file is renamed, update th
 list at the top of `sw.js`, which pre-saves the hub, `shared/` and the atlas on first visit.
 To throw away everyone's saved copies, change `CACHE` (`qhub-v1` → `qhub-v2`).
 
-The hub's **Use Offline → Save all** button fetches every block's `index.html` and `data.js`
-(from the hub's block links), the atlas files and `shared/`, and puts them straight into the
+The hub's **Use Offline → Save all** button fetches every block's `index.html`, `q/manifest.js`
+and the question parts it names (from the hub's block links; see *Split question files* below), the atlas files and `shared/`, and puts them straight into the
 service worker's cache with the Cache API — so it works even on a first visit, before the
 worker controls the tab. The cache name is written in the hub's script too: **if `CACHE` in
 `sw.js` changes, change it in `index.html` as well**, or the saved copies land in a cache the
@@ -754,10 +754,11 @@ are left out — they cannot work offline anyway.
 
 **Block tiles** on the hub show, per device, your progress (questions answered and % right on
 your latest try, read from each block's `<folder>_attempts_v1` — so a block's `storageKey`
-must equal its folder name) and its offline status: *Saved offline* when its `index.html`
-and `data.js` are in the cache (the atlas tile checks the three atlas files), *Not saved
+must equal its folder name) and its offline status: *Saved offline* when its `index.html`,
+`q/manifest.js` and the parts that saved manifest names are in the cache (the atlas tile checks the three atlas files), *Not saved
 offline* otherwise, and *Newer version online* when a saved file's size differs from the copy
-online. Online size comes from a `HEAD` request — the size half of GitHub Pages'
+online (parts are named by their content, so only the page and the manifest are compared).
+Online size comes from a `HEAD` request — the size half of GitHub Pages'
 `"mtime-size"` ETag, or `Content-Length` — because the mtime half (and `Last-Modified`)
 changes for every file on every deploy. An edit that keeps a file's byte size identical is
 not flagged. The same script fills the summary line under Save all, and reruns after a
@@ -765,9 +766,29 @@ save. It has its own copy of `CACHE` too.
 
 Each tile also gets a **Save offline** button (`saveBtn` in the hub's script) when the block
 is not saved or a newer version is online, and the device is online. It caches that block's
-`index.html` and `data.js` (or the atlas files) plus `SHARED` — the hub, `shared/` and the
+`index.html` and `q/manifest.js` with the parts the fresh manifest names (or the atlas files) plus `SHARED` — the hub, `shared/` and the
 two atlas link files every block page loads — then re-runs the status check, so the chip
 turns to *Saved offline* without saving every block.
+
+**Split question files (m66).** Block pages no longer load `data.js` (up to 4 MB). `data.js`
+stays the one file every tool edits; `tools/build-split.py` (also run at the end of
+`tools/build-atlas.py`) derives `<block>/q/` from it: `q/manifest.js` (`window.QUIZ_MANIFEST`:
+exams, SDL titles, and per question only id, batch, objective, isHighYield — 3–7 KB gzipped)
+and `q/e<exam><a,b,…>.<hash>.js`, the full questions of a few SDLs each (one exam per file, cut
+into SDL-aligned parts of about 450 KB at most). **Run `python3 -I tools/build-split.py` after
+any `data.js` change** — `tools/test-site.py` fails while any block's `q/` is stale (and when a
+block page does not load `q/manifest.js`). In `shared/app.js` ("Question data"): the home screen
+and SDL lists draw from the manifest at once; a screen that shows questions waits for the
+parts holding them (`routeParts` / `needParts`, "Loading questions…"); after the first screen
+the other parts load one at a time (the exam on screen first), so cross-SDL features (review,
+analytics, exams) usually find everything in memory; when all are in, the page, its manifest
+and parts are put in the service worker's cache (`saveBlockOffline`), so a block works offline
+after one visit, and `theme.js` registers the worker only then (`QBANK_SW_AFTER`), so a first
+visit's precache does not compete with the questions. `sw.js` serves a saved part as is (its
+name carries its hash). A page that loads `data.js` itself (`live.html`, a newly scaffolded
+block page) still works: `app.js` uses `window.QUIZ_DATA` when present and falls back to
+loading `data.js` when `q/manifest.js` is missing. The new-block scaffold should load
+`q/manifest.js` instead of `data.js`, then run `build-split.py`.
 
 **Exam readiness.** Under the progress chip, each tile shows one chip per exam you have
 started: "Exam N · X% seen · Y% right" — questions answered (latest try per question, read

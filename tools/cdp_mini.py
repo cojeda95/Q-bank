@@ -209,6 +209,9 @@ class Page:
         try: self.browser._http("/json/close/" + self.target_id)
         except Exception: pass
         self.ws.close()
+        if getattr(self, "context", None):
+            try: self.browser._browser_cmd("Target.disposeBrowserContext", browserContextId=self.context)
+            except Exception: pass
 
 
 class Browser:
@@ -250,10 +253,15 @@ class Browser:
             finally:
                 ws.close()
 
-    def page(self, w=1280, h=900, mobile=False, dark=False):
-        """A new tab in its OWN window: a background tab in a shared window is 'hidden' (no requestAnimationFrame)."""
-        tid = self._browser_cmd("Target.createTarget", url="about:blank", newWindow=True, width=w, height=h)["targetId"]
-        return Page(self, tid, "ws://127.0.0.1:%d/devtools/page/%s" % (self.port, tid), w, h, mobile, dark)
+    def page(self, w=1280, h=900, mobile=False, dark=False, isolated=False):
+        """A new tab in its OWN window: a background tab in a shared window is 'hidden' (no requestAnimationFrame).
+        isolated=True: in a new browser context (incognito-like: its own storage, caches and service workers)."""
+        extra = {}
+        if isolated: extra["browserContextId"] = self._browser_cmd("Target.createBrowserContext")["browserContextId"]
+        tid = self._browser_cmd("Target.createTarget", url="about:blank", newWindow=True, width=w, height=h, **extra)["targetId"]
+        p = Page(self, tid, "ws://127.0.0.1:%d/devtools/page/%s" % (self.port, tid), w, h, mobile, dark)
+        p.context = extra.get("browserContextId")
+        return p
 
     def close(self):
         try: self.proc.terminate(); self.proc.wait(10)

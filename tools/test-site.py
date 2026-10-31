@@ -19,16 +19,26 @@ It serves the repo on a free local port (http.server in a thread), launches head
             explanation; ids unique per block; atlas-qlinks / atlas-qstates point at real cards, questions, moving maps,
             switches and options; resources/dyn/<map>.js exists for every moving map, matches its content hash and the
             page's switch list; the LES_BODY card-text file exists and matches its hash; sw.js CORE files exist
-  hub       loads without console errors (favicon 404 ignored); New-in-the-atlas, Moving-map mix, systems, block links
+  hub       loads without console errors (favicon 404 ignored); New-in-the-atlas, Moving-map mix, systems, block links;
+            question search (m66): "pheochromocytoma" → Questions in the hero list, the panel with >= 2 blocks, a result
+            opens that question in its block (#q/<id>), its back link returns to the results
+            (data also checks resources/qsearch.js is fresh: data.js hashes + ids; and m66: every block's q/ — manifest and
+            question parts, tools/build-split.py — is exactly what data.js builds, and every block page loads q/manifest.js)
   blocks    each block: exam list; one SDL practice answered right and wrong (explanation; "See it move" on the miss when
-            atlas-qstates has a state for it); #sdlwrong, #examwrong and #spaced render; no console errors
+            atlas-qstates has a state for it); #sdlwrong, #examwrong and #spaced render; no console errors;
+            m66 "Why not your answer": a known miss (psych sdl21_q19, Buspirone) marks the expected explanation sentence,
+            labelled, in practice and in #sdlwrong; the right answer marks nothing;
+            m66 split: with neuro's question parts held back by the server, its home and an SDL list draw, practice and
+            #flagged wait ("Loading questions…"); let through, #flagged has every flagged question (3 parts), every part
+            arrives, and the first visit saves page + manifest + parts for offline use
   atlas     every map opens via #<id> and draws its SVG with no errors; every moving map loads its drawing, then every
             switch option (data-dyn="o:<sw>:<key>") and toggle is clicked: the state applies, the readouts row renders,
             no errors
   features  Name it and Predict on a moving map; #quiz/mix and #quiz/moving run a few items; a deep card link opens the
             full card once the card text loads; search; the note box saves (and survives a reload); print doesn't throw
   offline   the service worker registers and controls the page; with the network cut (server refuses + CDP offline) the
-            hub and the atlas still render from the cache
+            hub and the atlas still render from the cache, and a block opened once shows a question from its last part;
+            the hub's Save all (fresh context) saves every block's page, manifest and parts, and every tile reads Saved
   a11y      (inside hub / blocks / atlas, m56) no horizontal page scroll; every visible button, link and field has an
             accessible name; Tab gives the first controls a visible focus ring; question choices carry aria-pressed and the
             question a heading; the map <svg> is not role="img" (that hides its pins); --phone also flags controls under
@@ -66,6 +76,7 @@ def fmt_errs(errs, n=3):
 class Server:
     def __init__(self, root):
         self.offline = False
+        self.holds = {}       # m66: token -> threading.Event; question parts asked for by a page opened with ?hold=<token> wait for it
         srv = self
 
         class H(http.server.SimpleHTTPRequestHandler):
@@ -86,6 +97,12 @@ class Server:
             def end_headers(self):
                 self.send_header("Cache-Control", "no-cache")
                 super().end_headers()
+
+            def do_GET(self):
+                m = re.search(r"[?&]hold=(\w+)", self.headers.get("Referer") or "")
+                if m and "/q/e" in self.path and m.group(1) in srv.holds:
+                    srv.holds[m.group(1)].wait(60)
+                return super().do_GET()
 
         class S(http.server.ThreadingHTTPServer):
             request_queue_size = 512
@@ -308,6 +325,47 @@ def check_data(A):
         except Exception as e:
             record(S, "resources/%s parses" % name, False, str(e)[:200])
 
+    # m66: the hub's question search index (resources/qsearch.js, tools/build-search.py) is fresh: built from these very
+    # data.js files (their sha1) and holding every block's question ids in data.js order
+    try:
+        X = js_json(os.path.join(ROOT, "resources", "qsearch.js"), "window.QSEARCH=")
+        ids = re.findall(r"[A-Z][^A-Z]*", X["ids"]); out, prev = [], ""
+        for m in ids: prev = prev[:ord(m[0]) - 65] + m[1:]; out.append(prev)
+        probs, k, per = [], 0, {}
+        for bi, num, _, cnt in X["sdls"]:
+            per.setdefault(X["blocks"][bi][0], []).extend(out[k:k + cnt]); k += cnt
+        if k != X["n"] or len(out) != X["n"] or len(X["snip"]) != X["n"]: probs.append("counts do not add up")
+        for b in BQ:
+            raw = open(os.path.join(ROOT, b, "data.js"), "rb").read()
+            if b not in X["src"]: probs.append("%s missing" % b); continue
+            if hashlib.sha1(raw).hexdigest()[:10] != X["src"][b]: probs.append("%s/data.js changed since the index was built" % b)
+            if per.get(b) != list(BQ[b].keys()): probs.append("%s: ids differ from data.js" % b)
+        extra = sorted(set(X["src"]) - set(BQ))
+        if extra: probs.append("blocks not on the site: " + ",".join(extra))
+        size = os.path.getsize(os.path.join(ROOT, "resources", "qsearch.js"))
+        record(S, "qsearch.js: fresh (data.js hashes + ids match)", not probs,
+               ("%d questions, %d KB" % (X["n"], size // 1024)) if not probs else fmt_errs(probs, 4) + " — run python3 tools/build-search.py")
+        record(S, "qsearch.js: at most 1.5 MB", size <= 1500000, "%d bytes" % size, warn=True)
+    except Exception as e:
+        record(S, "qsearch.js: fresh (data.js hashes + ids match)", False, "parse: %s" % e)
+
+    # m66: the block pages load <block>/q/ (tools/build-split.py), built from data.js — fresh, and loaded by every page
+    try:
+        import importlib.util, pathlib
+        spec = importlib.util.spec_from_file_location("build_split", os.path.join(HERE, "build-split.py"))
+        bs = importlib.util.module_from_spec(spec); spec.loader.exec_module(bs)
+        bs.ROOT = pathlib.Path(ROOT)
+        probs, nparts = [], 0
+        for b in bs.blocks():
+            files = bs.plan(b); nparts += len(files) - 1
+            probs += ["%s: %s" % (b, d) for d in bs.stale(b, files)[:3]]
+        record(S, "split question files (q/): fresh from data.js", not probs,
+               ("%d blocks, %d parts" % (len(bs.blocks()), nparts)) if not probs else fmt_errs(probs, 4) + " — run python3 -I tools/build-split.py")
+        pages = [b for b in block_dirs() if 'src="q/manifest.js"' not in open(os.path.join(ROOT, b, "index.html"), encoding="utf-8").read()]
+        record(S, "block pages load q/manifest.js (not data.js)", not pages, ",".join(pages))
+    except Exception as e:
+        record(S, "split question files (q/): fresh from data.js", False, "%s" % e)
+
     # sw.js CORE
     try:
         sw = open(os.path.join(ROOT, "sw.js"), encoding="utf-8").read()
@@ -424,10 +482,10 @@ class Ctx:
         self.args, self.server, self.browser = args, server, browser
         self.shots = args.shots
 
-    def page(self):
+    def page(self, isolated=False):
         a = self.args
         w, h = a.vp
-        p = self.browser.page(w=w, h=h, mobile=a.mobile, dark=a.dark)
+        p = self.browser.page(w=w, h=h, mobile=a.mobile, dark=a.dark, isolated=isolated)
         add_init(p)
         if a.dark:   # the site's own ◐ choice ('mla-theme'): prefers-color-scheme alone leaves the hub and the blocks light
             p.cmd("Page.addScriptToEvaluateOnNewDocument", source="try{localStorage.setItem('mla-theme','dark')}catch(e){}")
@@ -466,6 +524,66 @@ def test_hub(C):
         record(S, "hub run", False, "%s" % e)
     finally:
         p.close()
+
+
+def test_qsearch(C):
+    """m66: the hub's question search — "pheochromocytoma" in the hero box gives a Questions group; "All N" opens the panel
+    with matches from >= 2 blocks, marked; a result opens that very question in its block (#q/<id>) without touching
+    "Continue where you left off"; its back link returns to the panel, results still there."""
+    S, t0 = "hub", time.time()
+    p = C.page()
+    try:
+        p.goto(C.server.base + "index.html")
+        p.wait("document.getElementById('hubQ') && window.HUB_QSEARCH", timeout=15)
+        p.js("localStorage.setItem('qhub-last', JSON.stringify({dir:'sentinel', hash:'#x', label:'sentinel', at:1})); sessionStorage.removeItem('qhub-qsearch')")
+        p.js("document.getElementById('hubQ').focus()")
+        p.cmd("Input.insertText", text="pheochromocytoma")
+        d = p.wait("""(()=>{ const g=[...document.querySelectorAll('#hubResults .sgroup')].map(x=>x.textContent);
+          const all=document.querySelector('#hubResults [data-qs-all]'); return all&&g.includes('Questions')?{g:g, all:all.textContent}:null; })()""", timeout=20)
+        record(S, "question search: Questions group in the hero list", True, "%s · %s" % (", ".join(d["g"]), d["all"][:60]))
+        C.shot(p, "hub-qsearch-list")
+        p.js("__T.click('#hubResults [data-qs-all]')")
+        r = p.wait("""(()=>{ const hs=[...document.querySelectorAll('#qsearch .qs-hit')]; if(!hs.length||document.getElementById('qsearch').hidden) return null;
+          const blocks=[...new Set(hs.map(a=>a.getAttribute('href').split('/')[0]))];
+          return {n:hs.length, blocks:blocks, marks:document.querySelectorAll('#qsearch mark.qs-m').length, sum:document.getElementById('qsSum').textContent,
+            heads:document.querySelectorAll('#qsearch .qs-block h3').length, focus:(document.activeElement||{}).id||'', hash:location.hash,
+            first:{href:hs[0].getAttribute('href'), id:hs[0].dataset.id, snip:hs[0].querySelector('.qs-snip').textContent}}; })()""", timeout=15)
+        record(S, "question search: pheochromocytoma → results from >= 2 blocks", len(r["blocks"]) >= 2 and r["marks"] > 0,
+               "%s · %d shown · blocks %s · %d marked" % (r["sum"], r["n"], ",".join(r["blocks"]), r["marks"]))
+        record(S, "question search: panel focus + #qsearch", r["focus"] == "qsH" and r["hash"] == "#qsearch", "focus %s, hash %s" % (r["focus"], r["hash"]))
+        # keyboard: Down from the box goes to the first result
+        p.js("document.getElementById('qsQ').focus()")
+        p.cmd("Input.dispatchKeyEvent", type="keyDown", key="ArrowDown", code="ArrowDown", windowsVirtualKeyCode=40)
+        p.cmd("Input.dispatchKeyEvent", type="keyUp", key="ArrowDown", code="ArrowDown", windowsVirtualKeyCode=40)
+        kb = p.js("(document.activeElement||{}).className||''")
+        record(S, "question search: arrow key reaches the results", "qs-hit" in kb, kb)
+        C.shot(p, "hub-qsearch")
+        a11y_checks(C, p, S, "question search", ring=False)
+        errs = p.take_errors(); record(S, "question search: no console errors", not errs, fmt_errs(errs))
+        # a result opens that question in its block
+        block, qid = r["first"]["href"].split("/")[0], r["first"]["id"]
+        p.js("__T.click('#qsearch .qs-hit')")
+        o = p.wait("""(()=>{ if(location.pathname.indexOf('/%s/')<0||typeof session==='undefined'||!session||!session.questions) return null;
+          const st=document.querySelector('.q-stem'); if(!st) return null;
+          return {id:session.questions[session.index].id, n:session.questions.length, mode:session.mode, stem:st.textContent,
+            back:(document.getElementById('backHome')||{}).textContent||'', hash:location.hash, last:localStorage.getItem('qhub-last')}; })()""" % block, timeout=20)
+        snip = r["first"]["snip"].rstrip("…").strip()
+        record(S, "question search: a result opens that question in its block", o["id"] == qid and o["n"] == 1 and o["stem"].startswith(snip[:40]),
+               "%s/%s · %s · %s" % (block, o["id"], o["hash"], o["stem"][:50]))
+        record(S, "question search: Continue-where-you-left-off untouched", "sentinel" in (o["last"] or ""), (o["last"] or "")[:60])
+        C.shot(p, "hub-qsearch-opened")
+        errs = p.take_errors(); record(S, "question search: opened question, no console errors", not errs, fmt_errs(errs))
+        p.js("__T.click('#backHome')")
+        b = p.wait("""(()=>{ const pn=document.getElementById('qsearch'); if(!pn||pn.hidden) return null; const hs=document.querySelectorAll('#qsearch .qs-hit');
+          return hs.length?{n:hs.length, q:document.getElementById('qsQ').value, focus:(document.activeElement||{}).dataset?document.activeElement.dataset.id||'':''}:null; })()""", timeout=20)
+        record(S, "question search: back link returns to the results", b["q"] == "pheochromocytoma" and b["n"] == r["n"] and b["focus"] == qid, "%d results, focus on %s" % (b["n"], b["focus"] or "-"))
+        errs = p.take_errors(); record(S, "question search: back, no console errors", not errs, fmt_errs(errs))
+    except Exception as e:
+        record(S, "question search run", False, "%s" % e)
+        if VERBOSE: traceback.print_exc()
+    finally:
+        p.close()
+    record(S, "total", True, "", time.time() - t0)
 
 
 def a11y_checks(C, p, S, label, ring=True):
@@ -519,6 +637,7 @@ def test_block(C, block, BQ, QS):
                 if b == bi:
                     for q in ids: exp.setdefault(q, []).append(cid)
         p.wait("typeof ATLAS_INDEX!=='undefined' && ATLAS_INDEX && ATLAS_INDEX.length", timeout=20)
+        p.js("loadAllQuestions().then(() => 1)", timeout=30)   # m66: every question part in (the page itself loads them in the background)
         got = p.js("""(()=>{ const o={}; for(const e of DATA.exams) for(const s of e.sdls) for(const q of s.questions){
             const c=atlasLinksFor(q).map(c=>c.id); if(c.length) o[q.id]=c; } return o; })()""")
         bad = sorted(q for q in set(exp) | set(got) if sorted(exp.get(q, [])) != sorted(got.get(q, [])))
@@ -605,6 +724,136 @@ def test_block(C, block, BQ, QS):
         record(S, "run (%s)" % stepname, False, "%s" % e)
         if VERBOSE: traceback.print_exc()
     finally:
+        p.close()
+    record(S, "total", True, "", time.time() - t0)
+
+
+# m66 "Why not your answer": a question whose explanation answers each wrong option in its own sentence
+WHYNOT_Q = ("psych", 21, "sdl21_q19", "A", "Buspirone's delayed multi-week onset")
+
+
+def test_whynot(C):
+    """m66: answering a known question wrong marks the explanation sentence that answers the picked option (with its
+    "Why not your answer" label); answering it right marks nothing; #sdlwrong marks the same sentence."""
+    block, sdl, qid, wrong, want = WHYNOT_Q
+    S, t0 = "block:" + block, time.time()
+    p = C.page()
+    try:
+        p.goto(C.server.base + block + "/index.html")
+        p.wait("typeof DATA!=='undefined' && DATA && document.querySelectorAll('.exam-card').length", timeout=20)
+        # m66: until every part is in, the matcher weighs words over the questions loaded so far — test it on the whole block
+        p.js("loadAllQuestions().then(() => 1)", timeout=30)
+        RUN = """(async (qid, letter) => {
+          const ok = await __T.until(() => typeof session!=='undefined' && session && session.mode==='practice'
+            && document.querySelectorAll('.choice[data-letter]').length, 8000);
+          if (!ok) return {err: 'practice did not start'};
+          const i = session.questions.findIndex(q => q.id === qid);
+          if (i < 0) return {err: qid + ' not in the session'};
+          if (letter === 'KEY') letter = session.questions[i].correct;
+          session.index = i; session.pendingLetter = null; renderPracticeQuestion();
+          if (!__T.click('.choice[data-letter="' + letter + '"]')) return {err: 'choice ' + letter + ' not clickable'};
+          const conf = await __T.until(() => document.getElementById('confConfident'), 3000);
+          if (!conf) return {err: 'confidence prompt missing'};
+          __T.click(conf);
+          const fb = await __T.until(() => document.querySelector('.feedback-banner'), 3000);
+          const m = document.querySelector('.info-block.explanation mark.whynot');
+          return {banner: fb ? fb.className : '', marks: document.querySelectorAll('mark.whynot').length,
+                  tag: m && m.querySelector('.whynot-tag') ? m.querySelector('.whynot-tag').textContent.trim() : '',
+                  text: m ? m.textContent.replace(/^\\s*Why not your answer\\s*/, '').trim() : ''};
+        })(%s, %s)"""
+        p.js("location.hash='practice/%d/all/new'" % sdl)
+        a = p.js(RUN % (json.dumps(qid), json.dumps(wrong)), timeout=30)
+        ok = not a.get("err") and "incorrect" in a["banner"].split() and a["marks"] == 1 \
+            and a["tag"] == "Why not your answer" and a["text"].startswith(want)
+        record(S, "why not your answer: a miss marks the sentence for the pick", ok, a.get("err") or "%s %s → %s · “%s”" % (qid, wrong, a["tag"], a["text"][:70]))
+        C.shot(p, "%s-whynot" % block)
+        p.js("location.hash='sdlwrong/%d'" % sdl)
+        try:
+            t = p.wait("""(()=>{ const m=[...main.querySelectorAll('.missed-item')].map(x=>x.querySelector('mark.whynot')).filter(Boolean);
+              return m.length ? m.map(x=>x.textContent).join(' | ') : null; })()""", timeout=12)
+            record(S, "why not your answer: #sdlwrong marks it too", want in t, t[:90])
+        except CDPError:
+            record(S, "why not your answer: #sdlwrong marks it too", False, "no mark in the missed list")
+        p.js("location.hash='practice/%d/all/new'" % sdl)
+        time.sleep(0.3)
+        r = p.js(RUN % (json.dumps(qid), json.dumps("KEY")), timeout=30)
+        ok = not r.get("err") and "correct" in r["banner"].split() and r["marks"] == 0
+        record(S, "why not your answer: a right answer marks nothing", ok, r.get("err") or "%d marks" % r["marks"])
+        errs = p.take_errors(); record(S, "why not your answer: no console errors", not errs, fmt_errs(errs))
+    except Exception as e:
+        record(S, "why not your answer (run)", False, "%s" % e)
+        if VERBOSE: traceback.print_exc()
+    finally:
+        p.close()
+
+
+def test_split(C):
+    """m66: a block page loads q/manifest.js and its question parts on demand. With every part held back by the server
+    (?hold=<token>, a fresh browser context so no service worker has them): the block home and an SDL list draw, and an
+    SDL's practice and a cross-SDL review (#flagged, questions flagged in several parts) show "Loading questions…".
+    Once the parts are let through: the practice question shows, #flagged has every flagged question with its text,
+    and the background load brings in every part."""
+    blocks = block_dirs()
+    block = "neuro" if "neuro" in blocks else blocks[0]
+    S, t0 = "block:" + block, time.time()
+    M = js_json(os.path.join(ROOT, block, "q", "manifest.js"), "window.QUIZ_MANIFEST=")
+    sdls = [(e["examNumber"], s) for e in M["exams"] for s in e["sdls"] if s.get("chunk") is not None]
+    picks = [sdls[0], sdls[len(sdls) // 2], sdls[-1]]
+    flags = {s["questions"][0]["id"]: True for _, s in picks}
+    nparts = len(set(s["chunk"] for _, s in picks))
+    token = "h%d" % int(time.time() * 1000)
+    gate = threading.Event(); C.server.holds[token] = gate
+    p = C.page(isolated=True)
+    try:
+        p.cmd("Page.addScriptToEvaluateOnNewDocument", source="try{localStorage.setItem(%s, %s)}catch(e){}" % (
+            json.dumps(block + "_flags_v1"), json.dumps(json.dumps(flags))))
+        p.goto(C.server.base + block + "/index.html?hold=" + token, wait=False)
+        r = p.wait("""(()=>{ const n=document.querySelectorAll('.exam-card').length; return n && typeof QPARTS!=='undefined' && QPARTS
+          ? {cards:n, parts:QPARTS.names.length, done:QPARTS.done.filter(Boolean).length} : null; })()""", timeout=20)
+        record(S, "split: block home draws before any question part", r["cards"] >= 1 and r["done"] == 0,
+               "%d exam cards, %d of %d parts in" % (r["cards"], r["done"], r["parts"]))
+        exam, sdl = picks[-1][0], picks[-1][1]["sdlNumber"]
+        p.js("location.hash='exam-sdls/%d'" % exam)
+        n = p.wait("document.querySelectorAll('.sdl-row[data-sdl]').length", timeout=10)
+        done = p.js("QPARTS.done.filter(Boolean).length")
+        record(S, "split: SDL list draws before any question part", n >= 1 and done == 0, "%d SDLs in Exam %d, %d parts in" % (n, exam, done))
+        p.js("location.hash='practice/%d/all'" % sdl)
+        w1 = p.wait("main.querySelector('.loading') && main.textContent.trim()", timeout=10)
+        p.js("location.hash='flagged'")
+        w2 = p.wait("main.querySelector('.loading') && !document.querySelector('.q-stem') && main.textContent.trim()", timeout=10)
+        record(S, "split: practice and #flagged wait for their parts", "Loading questions" in w1 and "Loading questions" in w2, "%s / %s" % (w1, w2))
+        gate.set()
+        f = p.wait("""(()=>{ if(typeof session==='undefined'||!session||session.mode!=='flagged'||!document.querySelector('.q-stem')) return null;
+          return {ids:session.questions.map(q=>q.id), full:session.questions.filter(q=>q.stem&&q.choices&&q.correct&&q.explanation).length}; })()""", timeout=30)
+        ok = sorted(f["ids"]) == sorted(flags) and f["full"] == len(flags)
+        record(S, "split: cross-SDL review (#flagged) has every question", ok,
+               "%d of %d flagged questions from %d parts, %d with full text" % (len(f["ids"]), len(flags), nparts, f["full"]))
+        p.js("location.hash='practice/%d/all'" % sdl)
+        q = p.wait("document.querySelector('.q-stem') && document.querySelectorAll('.choice[data-letter]').length", timeout=15)
+        record(S, "split: practice question shows once its part is in", q >= 4, "%d choices" % q)
+        a = p.wait("""(()=>{ if(!allQuestionsLoaded()) return null; let n=0, full=0;
+          DATA.exams.forEach(e=>e.sdls.forEach(s=>s.questions.forEach(q=>{ n++; if(q.stem&&q.choices&&q.explanation) full++; })));
+          return {n, full, parts:QPARTS.names.length}; })()""", timeout=30)
+        D = js_json(os.path.join(ROOT, block, "data.js"), "window.QUIZ_DATA =")
+        total = sum(len(x["questions"]) for e in D["exams"] for x in e["sdls"])
+        record(S, "split: background load brings every part", a["n"] == a["full"] == total,
+               "%d of %d questions with their text, from %d parts" % (a["full"], total, a["parts"]))
+        # a first visit (no service worker yet): once every part is in, the worker is registered and the page, its
+        # manifest and every part are saved for offline use (saveBlockOffline)
+        want = ["/%s/q/manifest.js" % block] + ["/%s/q/%s" % (block, n) for n in M["chunks"]]
+        try:
+            p.wait("""(async()=>{ if(!('caches' in window)) return null; const c = await caches.open('qhub-v1');
+              const k = new Set((await c.keys()).map(r => new URL(r.url).pathname)); return %s.every(x => k.has(x)) && k.has('/%s/index.html'); })()"""
+                   % (json.dumps(want), block), timeout=30)
+            record(S, "split: first visit saves the block for offline use", True, "page + manifest + %d parts" % (len(want) - 1))
+        except CDPError:
+            record(S, "split: first visit saves the block for offline use", False, "not all in the cache after 30 s")
+        errs = p.take_errors(); record(S, "split: no console errors", not errs, fmt_errs(errs))
+    except Exception as e:
+        record(S, "split (run)", False, "%s" % e)
+        if VERBOSE: traceback.print_exc()
+    finally:
+        gate.set(); C.server.holds.pop(token, None)
         p.close()
     record(S, "total", True, "", time.time() - t0)
 
@@ -872,6 +1121,19 @@ def test_offline(C):
         p.wait("typeof LESFULL!=='undefined' && LESFULL && booted", timeout=30)
         p.wait("""(async()=>{ const c = await caches.open('qhub-v1'); const k = (await c.keys()).map(r => new URL(r.url).pathname);
           return k.some(x => /metabolic-atlas\\.html$/.test(x)) && k.some(x => /atlas-les\\.[0-9a-f]+\\.js$/.test(x)) && k.some(x => /\\/index\\.html$|\\/$/.test(x)); })()""", timeout=20)
+        # m66: a block opened once online is saved with its manifest and every question part (saveBlockOffline)
+        blk = "gastro" if "gastro" in block_dirs() else block_dirs()[0]
+        man = js_json(os.path.join(ROOT, blk, "q", "manifest.js"), "window.QUIZ_MANIFEST=")
+        want = ["/%s/q/manifest.js" % blk] + ["/%s/q/%s" % (blk, n) for n in man["chunks"]]
+        last_sdl = [x["sdlNumber"] for e in man["exams"] for x in e["sdls"] if x.get("chunk") == len(man["chunks"]) - 1][0]
+        p.goto(C.server.base + blk + "/index.html")
+        try:
+            p.wait("""(async()=>{ const c = await caches.open('qhub-v1'); const k = new Set((await c.keys()).map(r => new URL(r.url).pathname));
+              return %s.every(x => k.has(x)) && k.has('/%s/index.html'); })()""" % (json.dumps(want), blk), timeout=30)
+            record(S, "a block opened once is saved: page, manifest, every part", True, "%s: %d parts" % (blk, len(want) - 1))
+        except CDPError:
+            have = p.js("""(async()=>(await (await caches.open('qhub-v1')).keys()).map(r=>new URL(r.url).pathname).filter(x=>x.indexOf('/%s/')===0))()""" % blk)
+            record(S, "a block opened once is saved: page, manifest, every part", False, "cached: %s" % ", ".join(have or []))
         # cut the network: the server drops every connection and the tab is emulated offline
         C.server.offline = True
         p.cmd("Network.emulateNetworkConditions", offline=True, latency=0, downloadThroughput=-1, uploadThroughput=-1)
@@ -886,6 +1148,12 @@ def test_offline(C):
         lf = p.wait("""(async()=>{ await __T.until(()=>LESFULL,8000); return LESFULL?'yes':'no'; })()""", timeout=15)
         record(S, "offline: atlas card text loads from the cache", lf == "yes", lf)
         C.shot(p, "offline-atlas")
+        p.goto(C.server.base + blk + "/index.html#practice/%d/all" % last_sdl)
+        try:
+            n = p.wait("document.querySelector('.q-stem') && document.querySelectorAll('.choice[data-letter]').length", timeout=20)
+            record(S, "offline: a block opened once shows a question (last part)", n >= 4, "%s SDL %d: %d choices" % (blk, last_sdl, n))
+        except CDPError:
+            record(S, "offline: a block opened once shows a question (last part)", False, p.js("main.innerText.slice(0,160)"))
         errs = [e for e in p.take_errors() if "ERR_INTERNET_DISCONNECTED" not in e and "ERR_FAILED" not in e and "ERR_EMPTY_RESPONSE" not in e]
         record(S, "offline: no script errors", not errs, fmt_errs(errs))
     except Exception as e:
@@ -895,6 +1163,36 @@ def test_offline(C):
         C.server.offline = False
         p.close()
     record(S, "total", True, "", time.time() - t0)
+
+
+def test_saveall(C):
+    """m66: the hub's Save all puts every block's page, q/manifest.js and every question part it names in the cache
+    (a fresh browser context, so nothing was saved before)."""
+    S, t0 = "offline", time.time()
+    p = C.page(isolated=True)
+    try:
+        p.goto(C.server.base + "index.html")
+        p.wait("document.getElementById('offlineBtn') && !document.getElementById('offlineBtn').disabled", timeout=15)
+        p.js("__T.click('#offlineBtn')")
+        st = p.wait("localStorage.getItem('qhub-offline-at') || (/could not|failed/i.test(document.getElementById('offlineStatus').textContent) && document.getElementById('offlineStatus').textContent)", timeout=120)
+        want = []
+        for b in block_dirs():
+            man = js_json(os.path.join(ROOT, b, "q", "manifest.js"), "window.QUIZ_MANIFEST=")
+            want += ["/%s/index.html" % b, "/%s/q/manifest.js" % b] + ["/%s/q/%s" % (b, n) for n in man["chunks"]]
+        have = set(p.js("(async()=>(await (await caches.open('qhub-v1')).keys()).map(r=>new URL(r.url).pathname))()") or [])
+        miss = [x for x in want if x not in have]
+        record(S, "Save all: every block's page, manifest and question parts saved", str(st).isdigit() and not miss,
+               ("%d block files" % len(want)) if not miss else "status %s; missing %s" % (str(st)[:60], ", ".join(miss[:5])), time.time() - t0)
+        # the block tiles then read "Saved offline" (their check reads the parts from the saved manifests)
+        chips = p.wait("""(()=>{ const c=[...document.querySelectorAll('.block-grid a.block-card [data-k="off"]')]; 
+          return c.length && c.every(x=>/Saved offline/.test(x.textContent)) ? c.length : null; })()""", timeout=60)
+        record(S, "Save all: every block tile reads Saved offline", chips >= len(block_dirs()), "%d tiles" % chips)
+        errs = p.take_errors(); record(S, "Save all: no console errors", not errs, fmt_errs(errs))
+    except Exception as e:
+        record(S, "Save all (run)", False, "%s" % e)
+        if VERBOSE: traceback.print_exc()
+    finally:
+        p.close()
 
 
 def navigator_ok(r):
@@ -972,7 +1270,9 @@ def main():
                 chunks = balanced_chunks(ids, A["stubs"], nch)
                 for i, ch in enumerate(chunks):
                     futs[ex.submit(test_map_chunk, C, ch, "chunk%d" % i)] = ("atlas", ch)
-            if "hub" in only: futs[ex.submit(test_hub, C)] = ("hub", None)
+            if "hub" in only:
+                futs[ex.submit(test_hub, C)] = ("hub", None)
+                futs[ex.submit(test_qsearch, C)] = ("hub", None)
             if "features" in only: futs[ex.submit(test_features, C, A)] = ("features", None)
             if "blocks" in only:
                 for b in blocks: futs[ex.submit(test_block, C, b, BQ, QS)] = ("block", b)
@@ -986,6 +1286,10 @@ def main():
                 except Exception as e:
                     record(kind, "task %s" % (what if isinstance(what, str) else (what[0] + "…" if what else "")), False, "%s" % e)
             ex.shutdown()
+            # after the block tabs, not beside them: tabs share localStorage, and two tabs logging answers at once
+            # overwrite each other's attempt log (the psych tab's #sdlwrong would come up empty)
+            if "blocks" in only and WHYNOT_Q[0] in blocks: test_whynot(C)
+            if "blocks" in only: test_split(C)
             if "atlas" in only:
                 failed = [r for r in RESULTS if r[0] == "atlas" and r[1].startswith("map ") and r[2] == "FAIL"]
                 record("atlas", "every map opens + renders; moving maps: every switch", not failed and stats["maps"] == len(ids),
@@ -993,6 +1297,7 @@ def main():
             if "offline" in only:
                 print("· offline checks", flush=True)
                 test_offline(C)
+                test_saveall(C)
         finally:
             browser.close()
             server.close()

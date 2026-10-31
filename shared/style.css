@@ -554,6 +554,15 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 .info-block.xref { background: var(--blue-bg); color: var(--blue-ink); font-style: italic; font-size: 0.85rem; }
 .info-block b { display: block; margin-bottom: 4px; }
 .info-block.atlas { background: var(--atlas-bg); color: var(--atlas-ink); }
+/* m66 "Why not your answer": after a miss, the explanation sentence that answers the picked option (app.js
+   explanationHtml). Text label + underline as well as the tint, so it never rests on colour alone; amber tokens
+   are redefined for dark in theme.css. */
+.info-block mark.whynot { background: var(--amber-bg); color: inherit; border-bottom: 2px solid var(--amber-ink);
+  border-radius: 3px; padding: 1px 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; scroll-margin: 80px 0; }
+.info-block .whynot-tag { display: inline-block; margin-right: 3px; padding: 0 7px; border: 1px solid var(--amber-line);
+  border-radius: 999px; background: var(--card-bg); color: var(--amber-ink); font-size: 0.72rem; font-weight: 700;
+  line-height: 1.5; letter-spacing: 0.02em; vertical-align: 1px; white-space: nowrap; }
+@media print { .info-block mark.whynot { background: none; } }
 .info-block.atlas .atlas-link { display: inline-flex; align-items: center; gap: 7px; margin: 3px 8px 3px 0; padding: 5px 12px;
   border-radius: 999px; background: var(--input-bg); border: 1px solid var(--atlas-line); color: var(--atlas-ink); text-decoration: none; font-weight: 600; font-size: 0.86rem; }
 .info-block.atlas .atlas-link:hover { border-color: var(--atlas-ink); }

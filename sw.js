@@ -10,18 +10,25 @@
    a new build, the open atlas is told (postMessage "atlas-updated") and offers
    a reload. Its card text (resources/atlas-les.<hash>.js) and the moving-map
    drawings (resources/dyn/<map>.js?v=<hash>) are named by their content, so a
-   saved copy of the same name is served as is. Requests to other sites (the
-   Firestore sync, CDNs) are left alone, so sync and Live Session still need a
-   connection. */
+   saved copy of the same name is served as is. A block's questions (m66) are
+   <block>/q/manifest.js (network first, like a page) and the part files it names,
+   <block>/q/<part>.<hash>.js, also named by their content and so served from the
+   saved copy at once; the block page saves its manifest and parts here after its
+   first visit and drops parts of older builds (saveBlockOffline in shared/app.js).
+   Requests to other sites (the Firestore sync, CDNs) are left alone, so sync and
+   Live Session still need a connection. */
 const CACHE = 'qhub-v1';
 const CORE = ['./', 'index.html', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
   'announcements.js', 'sync.js', 'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js',
   'resources/qbank-counts.js', 'resources/atlas-home.js', 'resources/atlas-cards.js', 'resources/atlas-qstates.js'];
 // + the atlas's card text, resources/atlas-les.<hash>.js: its name changes with every build, so it is read from the saved atlas (pairLes)
+// resources/qsearch.js (m66, the hub's question search index, ~1.4 MB) is not in CORE: the hub loads it the first time a search
+// box is focused, and networkFirst saves it then (and the hub's Save all saves it), so question search works offline after one use
 
 const ATLAS = /\/resources\/metabolic-atlas\.html$/;
 const LESF = /\/resources\/atlas-les\.[0-9a-f]+\.js$/;
 const DYN = /\/resources\/dyn\/[^/]+\.js$/;
+const QPART = /\/q\/e\d+[a-z]?\.[0-9a-f]{10}\.js$/;
 const SLOW = 4000;
 const at = p => new URL(p, self.registration.scope).href;
 const lesOf = html => (String(html).match(/\bconst LES_BODY = "(atlas-les\.[0-9a-f]+\.js)"/) || [])[1];
@@ -128,6 +135,15 @@ async function atlasPage(e) {
   return copy;
 }
 
+/* a block's question part (m66), q/<part>.<hash>.js: named by its content — a saved copy is the right one, else the
+   network's, saved as it arrives (the hub's Save all and Update ask for the network's) */
+async function questionPart(e) {
+  const req = e.request, copy = !fresh(req) && await caches.match(req, { ignoreSearch: true });
+  if (copy) return copy;
+  const { net } = fetchSave(e, req);
+  try { return await net; } catch (err) { return (await caches.match(req, { ignoreSearch: true })) || Response.error(); }
+}
+
 /* the card text: named by its content — a saved copy is the right one */
 async function cardText(e) {
   const req = e.request, c = await caches.open(CACHE), copy = await c.match(req, { ignoreSearch: true });
@@ -156,5 +172,6 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   const p = url.pathname;
-  e.respondWith(ATLAS.test(p) ? atlasPage(e) : LESF.test(p) ? cardText(e) : DYN.test(p) ? drawing(e) : networkFirst(e));
+  e.respondWith(ATLAS.test(p) ? atlasPage(e) : LESF.test(p) ? cardText(e) : DYN.test(p) ? drawing(e)
+    : QPART.test(p) ? questionPart(e) : networkFirst(e));
 });

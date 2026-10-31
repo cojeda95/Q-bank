@@ -274,6 +274,43 @@
     .bm.savebtn { display: inline-flex; align-items: center; min-height: 32px; }
     .theme-btn { min-height: 34px; min-width: 40px; }
   }
+  /* m66: question search — "Questions" in the hero search's list, and the panel with every match (#qsearch) */
+  :root { --qs-mark: #ffe08a; --qs-mark-ink: #2b2200; }
+  :root[data-theme="dark"] { --qs-mark: #6a5418; --qs-mark-ink: #fff3cf; }
+  mark.qs-m { background: var(--qs-mark); color: var(--qs-mark-ink); border-radius: 3px; padding: 0 1px; }
+  .sopt b mark.qs-m { font-weight: 600; }
+  .sopt.sopt-all b { color: var(--navy); }
+  .qs-panel { padding-top: 28px; }
+  .qs-panel[hidden] { display: none; }
+  .qs-card { background: var(--card-bg); color: var(--text); border: 1px solid var(--grey-border); border-radius: 16px; padding: 20px 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; }
+  .qs-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .qs-head h2 { margin: 0; outline: none; }
+  .qs-close { min-height: 36px; padding: 0 14px; border: 1px solid var(--grey-border); border-radius: 10px; background: transparent; color: var(--text); font: inherit; font-size: 0.9rem; cursor: pointer; }
+  .qs-close:hover { background: var(--surface-hover); }
+  .qs-form input { width: 100%; height: 48px; padding: 0 16px; border: 1px solid var(--grey-border); border-radius: 12px; font: inherit; font-size: 1rem; color: var(--text); background: var(--input-bg); box-sizing: border-box; }
+  .qs-form input:focus { outline: 3px solid var(--navy); outline-offset: 1px; }
+  .qs-help, .qs-sum { margin: 0; font-size: 0.86rem; color: var(--grey-text); }
+  .qs-sum { font-size: 0.95rem; color: var(--text); }
+  .qs-sum:empty { display: none; }
+  .qs-filter { display: flex; flex-wrap: wrap; gap: 6px; }
+  .qs-filter[hidden] { display: none; }
+  .qs-filter button { min-height: 34px; padding: 0 12px; border: 1px solid var(--grey-border); border-radius: 999px; background: transparent; color: var(--text); font: inherit; font-size: 0.85rem; cursor: pointer; }
+  .qs-filter button[aria-pressed="true"] { background: var(--navy-fill); border-color: var(--navy-fill); color: #fff; }
+  .qs-filter button:hover:not([aria-pressed="true"]) { background: var(--surface-hover); }
+  .qs-block h3 { margin: 10px 0 4px; font-size: 1.05rem; display: flex; align-items: baseline; gap: 8px; }
+  .qs-block h3 .qs-n { font-size: 0.8rem; font-weight: 600; color: var(--grey-text); }
+  .qs-sdl h4 { margin: 10px 0 4px; font-size: 0.88rem; font-weight: 600; color: var(--grey-text); }
+  .qs-sdl ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .qs-hit { display: flex; flex-direction: column; gap: 2px; padding: 9px 12px; border: 1px solid var(--grey-border); border-radius: 10px; text-decoration: none; color: var(--text); line-height: 1.45; }
+  .qs-hit:hover, .qs-hit:focus-visible { background: var(--surface-hover); border-color: var(--navy); }
+  .qs-hit:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; }
+  .qs-where { font-size: 0.76rem; color: var(--grey-text); }
+  .qs-more { align-self: flex-start; cursor: pointer; font: inherit; font-weight: 600; }
+  .qs-empty { margin: 0; color: var(--grey-text); }
+  @media (max-width: 640px) {
+    .qs-panel { padding-top: 20px; }
+    .qs-card { padding: 16px; border-radius: 14px; }
+  }
 </style>
 <link rel="stylesheet" href="shared/theme.css">
 <script src="shared/theme.js"></script>
@@ -284,6 +321,7 @@
     <nav class="mainnav" aria-label="Main">
       <a class="primary" href="resources/metabolic-atlas.html">Lesion Atlas</a>
       <a href="#blocks">Blocks</a>
+      <a href="#qsearch" id="navQs">Search questions</a>
       <a href="live.html">Live Session</a>
       <a href="#sync" id="navSync">Sync</a>
       <a href="#offline">Offline</a>
@@ -309,6 +347,25 @@
       <div class="pickup" id="atlasCard" hidden>
         <div id="pickupBody"></div>
       </div>
+    </div>
+  </section>
+
+  <!-- m66: question search — every block's questions (resources/qsearch.js, loaded on first use; the script after the atlas search) -->
+  <section class="wrap qs-panel" id="qsearch" aria-labelledby="qsH" hidden>
+    <div class="qs-card">
+      <div class="qs-head">
+        <h2 id="qsH" tabindex="-1">Search questions</h2>
+        <button type="button" class="qs-close" id="qsClose">Close<span class="sr"> question search</span></button>
+      </div>
+      <form class="qs-form" id="qsForm" role="search" autocomplete="off">
+        <label class="sr" for="qsQ">Search every block’s questions</label>
+        <input id="qsQ" type="search" placeholder="Search every block’s questions, e.g. pheochromocytoma" spellcheck="false" aria-describedby="qsHelp">
+      </form>
+      <p class="qs-help" id="qsHelp">Matches the question, its answer and the first line of its explanation. Results open in their block as a one-question review.</p>
+      <p class="qs-sum" id="qsSum" role="status" aria-live="polite"></p>
+      <div class="qs-filter" id="qsFilter" role="group" aria-label="Show results from" hidden></div>
+      <div id="qsList"></div>
+      <button type="button" class="btn ghost qs-more" id="qsMore" hidden>Show more</button>
     </div>
   </section>
 
@@ -630,6 +687,8 @@
       out = out.filter(function (x, i) { return x !== qn && out.indexOf(x) === i; }).slice(0, 8);
       return (VMEMO[qn] = out);
     }
+    /* m66: the question search (next script) shares this normalizing and these abbreviations; refresh() redraws an open list */
+    window.HUB_NORM = { norm: norm, variants: variants, esc: esc, refresh: function () { if (q.value.trim() && !box.hidden) show(); } };
     var MAPS = Object.keys(H.maps).map(function (v) { var m = H.maps[v]; return { n: norm(m[0]), ab: acr(m[0]), t: m[0], s: (TOPN[m[1]] ? TOPN[m[1]] + ' · ' : '') + m[2] + ' cards', h: ATLAS + '#' + v }; });
     var GRAPHS = H.graphs.map(function (g) { return { n: norm(g[2]), ab: acr(g[2]), t: g[2], s: 'Graph on ' + ((H.maps[g[0]] || [g[0]])[0]), h: ATLAS + '#graph/' + g[0] + '/' + g[1] }; });
     /* a moving map with one switch on — "hemophilia" → Coagulation Cascade in Motion with Hemophilia A */
@@ -732,7 +791,17 @@
           html += '<a class="sopt" role="option" id="hubOpt' + k + '" href="' + esc(h[1].h) + '"><b>' + esc(h[1].t) + '</b><span>' + esc(h[1].s) + '</span></a>'; k++;
         });
       });
-      if (!k) html = '<div class="snone">' + (CARDS || !loading ? 'Nothing matches “' + esc(q.value.trim()) + '”.' : 'Searching the atlas cards…') + '</div>';
+      /* m66: the question bank's own matches (resources/qsearch.js, via the question search script below): the top few,
+         then one option that opens every match in the question search panel */
+      var QS = window.HUB_QSEARCH, qg = QS ? QS.dropdown(q.value) : null;
+      if (qg && qg.items.length) {
+        html += '<div class="sgroup" role="presentation">Questions</div>';
+        qg.items.forEach(function (it) {
+          html += '<a class="sopt' + (it.all ? ' sopt-all' : '') + '" role="option" id="hubOpt' + k + '" href="' + esc(it.h) + '"' + (it.all ? ' data-qs-all="1"' : '') +
+            '><b>' + it.t + '</b><span>' + esc(it.s) + '</span></a>'; k++;
+        });
+      }
+      if (!k) html = '<div class="snone">' + ((CARDS || !loading) && !(qg && qg.loading) ? 'Nothing matches “' + esc(q.value.trim()) + '”.' : 'Searching the atlas and the questions…') + '</div>';
       box.innerHTML = html; box.hidden = false; q.setAttribute('aria-expanded', 'true');
       opts = [].slice.call(box.querySelectorAll('.sopt')); setActive(-1);
     }
@@ -754,7 +823,8 @@
       if (!q.value.trim()) { q.focus(); return; }
       show();
       var o = opts[active >= 0 ? active : 0];
-      if (o) location.href = o.href;
+      if (o && o.getAttribute('data-qs-all') && window.HUB_QSEARCH) { hide(); window.HUB_QSEARCH.open(q.value); }
+      else if (o) location.href = o.href;
     });
     document.addEventListener('click', function (e) { if (!form.contains(e.target)) hide(); });
     /* index.html?q=… — a block's own search hands its query here ("Search the Lesion Atlas for …") */
@@ -762,6 +832,282 @@
       var pq = new URLSearchParams(location.search).get('q');
       if (pq) { q.value = pq.slice(0, 120); loadCards(); show(); q.focus(); }
     } catch (e) {}
+  })();
+</script>
+<script>
+  /* m66 — Question search: every block's questions, from the hub, without loading any block's data.js.
+     resources/qsearch.js (built by tools/build-search.py; ~1.4 MB, one inverted index of the stem, keyed answer and the
+     explanation's first sentence of all questions) is loaded the first time either search box is focused. The hero search
+     list gets a "Questions" group (its top 3 and "All N questions matching …"); the panel (#qsearch) lists every match,
+     grouped by block and SDL, 50 at a time, with a block filter. A result opens <block>/index.html#q/<id> — that question
+     alone as a review run (renderOneQuestion in shared/app.js), whose back link returns here (#qsearch).
+     Ranking: the exact phrase (in the stem's opening, the only text the index keeps in order) > every word > all but one
+     of the words (2+ words); a word in the stem or answer counts more than one only in the explanation; a whole word more than a plural
+     or the start of a longer word ("pheochromo" → pheochromocytoma); then questions of an SDL whose title names the words. Abbreviations are spelled out with the atlas search's
+     list (HUB_NORM.variants: "MS" → multiple sclerosis, mitral stenosis), a shade lower than a literal match. */
+  (function () {
+    var U = window.HUB_NORM, panel = document.getElementById('qsearch'), hubQ = document.getElementById('hubQ');
+    if (!U || !panel) return;
+    var qi = document.getElementById('qsQ'), form = document.getElementById('qsForm'), sum = document.getElementById('qsSum'),
+      list = document.getElementById('qsList'), more = document.getElementById('qsMore'), filt = document.getElementById('qsFilter');
+    var esc = U.esc, norm = U.norm, PAGE = 50, KEY = 'qhub-qsearch';
+    var IDX = null, loading = null, failed = false;
+
+    /* ── the index ── */
+    var ALPHA = []; for (var c = 0x23; c < 0x7F; c++) if (c !== 0x5C) ALPHA.push(c);
+    var CODE = new Int8Array(128).fill(-1); ALPHA.slice(0, 90).forEach(function (ch, i) { CODE[ch] = i; });   // 0-44 last digit, 45-89 more to come
+    function dec(s) {
+      var out = [], prev = -1, v = 0;
+      for (var i = 0; i < s.length; i++) {
+        var d = CODE[s.charCodeAt(i)];
+        if (d >= 45) v = v * 45 + d - 45;
+        else { v = v * 45 + d; prev += 1 + v; out.push(prev); v = 0; }
+      }
+      return out;
+    }
+    function unfront(s) {   // tools/build-search.py front_code(): a capital letter = how much of the word before to keep
+      var out = [], prev = '';
+      (s.match(/[A-Z][^A-Z]*/g) || []).forEach(function (m) { prev = prev.slice(0, m.charCodeAt(0) - 65) + m.slice(1); out.push(prev); });
+      return out;
+    }
+    function prep(X) {
+      var I = { n: X.n, blocks: X.blocks, sdls: X.sdls, snip: X.snip, ids: unfront(X.ids), words: unfront(X.words), post: X.post.split(' '),
+        stop: new Set(X.stop.split(' ')), qsdl: new Uint16Array(X.n), lists: new Map(), snipN: [], sdlN: [] };
+      var k = 0; X.sdls.forEach(function (s, si) { for (var j = 0; j < s[3]; j++) I.qsdl[k++] = si; });
+      if (k !== X.n || I.ids.length !== X.n || I.words.length !== I.post.length) throw new Error('question index does not add up');
+      return I;
+    }
+    function load() {
+      if (IDX || loading) return loading;
+      failed = false;
+      loading = new Promise(function (res) {
+        function done() {
+          try { IDX = window.QSEARCH ? prep(window.QSEARCH) : null; } catch (e) { IDX = null; }
+          if (!IDX) failed = true;
+          loading = IDX ? loading : null;
+          res(IDX); U.refresh();
+          if (!panel.hidden) { run(true); if (wantPlace !== null && IDX) place(wantPlace); wantPlace = null; }
+        }
+        if (window.QSEARCH) return done();
+        var s = document.createElement('script'); s.src = 'resources/qsearch.js';
+        s.onload = done; s.onerror = function () { failed = true; loading = null; res(null); U.refresh(); if (!panel.hidden) run(true); };
+        document.head.appendChild(s);
+      });
+      return loading;
+    }
+    function lists(wi) {   // [stem/answer questions, explanation-only questions] for word wi
+      var l = IDX.lists.get(wi);
+      if (!l) { var p = IDX.post[wi].split('!'); l = [dec(p[0]), p[1] ? dec(p[1]) : []]; IDX.lists.set(wi, l); }
+      return l;
+    }
+    function lower(w) { var a = 0, b = IDX.words.length; while (a < b) { var m = (a + b) >> 1; if (IDX.words[m] < w) a = m + 1; else b = m; } return a; }
+    function find(w) { var i = lower(w); return IDX.words[i] === w ? i : -1; }
+    /* the index words a query word matches: itself 1, a plural or singular form 0.95, a longer word it starts (3+ letters) 0.75 */
+    function matches(w) {
+      var out = [], seen = {};
+      function add(i, q) { if (i >= 0 && !seen[i]) { seen[i] = 1; out.push([i, q]); } }
+      add(find(w), 1);
+      [w + 's', w + 'es', /ies$/.test(w) ? w.slice(0, -3) + 'y' : '', /y$/.test(w) ? w.slice(0, -1) + 'ies' : '',
+        w.length > 3 && /s$/.test(w) ? w.slice(0, -1) : '', w.length > 4 && /es$/.test(w) ? w.slice(0, -2) : '']
+        .forEach(function (f) { if (f) add(find(f), 0.95); });
+      if (w.length >= 3) for (var i = lower(w), n = 0; i < IDX.words.length && IDX.words[i].indexOf(w) === 0 && n < 120; i++, n++) add(i, 0.75);
+      return out;
+    }
+    function snipN(i) { return IDX.snipN[i] || (IDX.snipN[i] = ' ' + norm(IDX.snip[i]) + ' '); }
+
+    /* ── search: one normalized query → Map(question number → score) ── */
+    var MEMO = { q: null, r: null };
+    function score1(qn, cut, out, strict) {   // strict: every word (an abbreviation spelled out)
+      var ws = qn.split(' ').filter(function (w, i, a) { return w && !IDX.stop.has(w) && a.indexOf(w) === i; });
+      if (!ws.length) return 0;
+      var k = ws.length, n = IDX.n, cnt = new Uint8Array(n), tot = new Float32Array(n), best = new Float32Array(n);
+      ws.forEach(function (w) {
+        best.fill(0);
+        matches(w).forEach(function (m) {
+          var l = lists(m[0]);
+          l[0].forEach(function (i) { if (m[1] > best[i]) best[i] = m[1]; });
+          l[1].forEach(function (i) { var v = m[1] * 0.6; if (v > best[i]) best[i] = v; });
+        });
+        for (var i = 0; i < n; i++) if (best[i]) { cnt[i]++; tot[i] += best[i]; }
+      });
+      var need = strict || k === 1 ? k : Math.max(1, k - 1), pad = ' ' + qn + ' ', titled = {};
+      /* an SDL whose title names every word ("Adrenal Medulla: Catecholamines & Pheochromocytoma") goes first among equals */
+      function inTitle(si) {
+        if (titled[si] === undefined) {
+          var t = IDX.sdlN[si] || (IDX.sdlN[si] = ' ' + norm(IDX.sdls[si][2]) + ' ');
+          titled[si] = ws.every(function (w) { return t.indexOf(' ' + w) >= 0; });
+        }
+        return titled[si];
+      }
+      for (var i = 0; i < n; i++) {
+        if (cnt[i] < need) continue;
+        var all = cnt[i] === k, avg = tot[i] / k;
+        var phrase = all && (k === 1 ? avg >= 0.95 : snipN(i).indexOf(pad) >= 0);
+        var s = (phrase ? 3000 : all ? 2000 : 1000) + avg * 100 + (inTitle(IDX.qsdl[i]) ? 40 : 0) - cut;
+        if (!(out.get(i) >= s)) out.set(i, s);
+      }
+      return ws;
+    }
+    function search(raw) {
+      var qn = norm(raw || '');
+      if (MEMO.q === qn) return MEMO.r;
+      var hits = new Map(), words = [], r;
+      if (qn) {
+        var ws = score1(qn, 0, hits);
+        if (ws) words = words.concat(ws);
+        /* spelled-out abbreviations: every word needed, and 30 lower, so a literal match of the same kind comes first; only
+           their longer words are marked ("multiple endocrine neoplasia type 2" marks neither "type" nor "2") */
+        (U.variants(qn) || []).forEach(function (v) {
+          var w2 = score1(v, 30, hits, true);
+          if (w2) words = words.concat(w2.filter(function (w) { return w.length >= 4 && w !== 'type'; }));
+        });
+      }
+      var order = Array.from(hits.keys()).sort(function (a, b) { return hits.get(b) - hits.get(a) || a - b; });
+      r = { qn: qn, order: order, score: hits, full: order.filter(function (i) { return hits.get(i) >= 1500; }).length, words: words.filter(function (w, i, a) { return a.indexOf(w) === i; }),
+        stopOnly: !!qn && !words.length };
+      MEMO.q = qn; MEMO.r = r;
+      return r;
+    }
+    /* the snippet with the query's words marked (a word, its plural, or a word it starts) */
+    function marked(i, words) {
+      return IDX.snip[i].split(/([A-Za-z0-9À-ɏͰ-Ͽ]+)/).map(function (part, j) {
+        if (!(j % 2)) return esc(part);
+        var n = norm(part);
+        var hit = n && words.some(function (w) { return n === w || (w.length >= 3 && n.indexOf(w) === 0) || n === w.replace(/e?s$/, ''); });
+        return hit ? '<mark class="qs-m">' + esc(part) + '</mark>' : esc(part);
+      }).join('');
+    }
+    function where(i, words) {   // which part matched, when the snippet does not show it
+      var inP = words.some(function (w) { return matches(w).some(function (m) { return lists(m[0])[0].indexOf(i) >= 0; }); });
+      return inP ? 'Matched in the question or its answer' : 'Matched in the explanation';
+    }
+    function href(i) { var s = IDX.sdls[IDX.qsdl[i]], b = IDX.blocks[s[0]]; return b[0] + '/index.html#q/' + encodeURIComponent(IDX.ids[i]); }
+    function sdlLabel(s) { return /^sdl\s*\d/i.test(s[2]) ? s[2] : 'SDL ' + s[1] + (s[2] ? ' · ' + s[2] : ''); }
+    function count(n) { return n.toLocaleString('en-US') + ' question' + (n === 1 ? '' : 's'); }
+
+    /* ── the hero list's "Questions" group (index.html's atlas search calls this) ── */
+    window.HUB_QSEARCH = {
+      dropdown: function (raw) {
+        if (!norm(raw || '')) return null;
+        if (!IDX) { load(); return { items: [], loading: !failed }; }
+        var r = search(raw), items = r.order.slice(0, 3).map(function (i) {
+          var s = IDX.sdls[IDX.qsdl[i]];
+          return { t: marked(i, r.words), s: IDX.blocks[s[0]][1] + ' · ' + sdlLabel(s), h: href(i) };
+        });
+        if (r.order.length) items.push({ all: true, t: 'All ' + count(r.full || r.order.length) + ' matching “' + esc(raw.trim()) + '”', s: 'Grouped by block and SDL', h: '#qsearch' });
+        return { items: items };
+      },
+      open: function (raw) { open(raw, true); }
+    };
+
+    /* ── the panel ── */
+    var st = { q: '', b: -1, shown: PAGE, last: '' };
+    function save() { try { sessionStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+    function restore() { try { var x = JSON.parse(sessionStorage.getItem(KEY) || 'null'); if (x && typeof x.q === 'string') st = Object.assign(st, x); } catch (e) {} }
+    function run(keep) {
+      if (!keep) { st.shown = PAGE; }
+      st.q = qi.value; save();
+      if (!norm(st.q)) { sum.textContent = ''; list.innerHTML = ''; filt.hidden = true; more.hidden = true; return; }
+      if (!IDX) {
+        sum.textContent = failed ? 'The question index could not be loaded — check your connection and try again.' : 'Loading the question index…';
+        list.innerHTML = ''; filt.hidden = true; more.hidden = true;
+        if (!failed) load(); return;
+      }
+      var r = search(st.q);
+      if (r.stopOnly) { sum.textContent = 'Those words are in almost every question — add a more specific word.'; list.innerHTML = ''; filt.hidden = true; more.hidden = true; return; }
+      var per = {};
+      r.order.forEach(function (i) { var b = IDX.sdls[IDX.qsdl[i]][0]; per[b] = (per[b] || 0) + 1; });
+      var bs = Object.keys(per).map(Number).sort(function (a, b) { return per[b] - per[a] || a - b; });
+      if (st.b >= 0 && !per[st.b]) st.b = -1;
+      var shownList = st.b < 0 ? r.order : r.order.filter(function (i) { return IDX.sdls[IDX.qsdl[i]][0] === st.b; });
+      var page = shownList.slice(0, st.shown);
+      var some = r.order.length - r.full;
+      sum.textContent = r.order.length ? (r.full ? count(r.full) + ' match “' + st.q.trim() + '”' + (some ? ', ' + some + ' more have some of its words' : '')
+        : count(r.order.length) + ' have some of the words in “' + st.q.trim() + '”') + (bs.length > 1 ? ' — ' + bs.length + ' blocks' : ' — ' + IDX.blocks[bs[0]][1]) +
+        (st.b >= 0 ? ' — showing ' + IDX.blocks[st.b][1] + ' (' + shownList.length + ')' : '') + '.' : 'No question matches “' + st.q.trim() + '”.';
+      filt.hidden = bs.length < 2;
+      filt.innerHTML = bs.length < 2 ? '' : '<button type="button" data-b="-1" aria-pressed="' + (st.b < 0) + '">All ' + r.order.length + '</button>' +
+        bs.map(function (b) { return '<button type="button" data-b="' + b + '" aria-pressed="' + (st.b === b) + '">' + esc(IDX.blocks[b][1]) + ' ' + per[b] + '</button>'; }).join('');
+      /* group the page by block, then SDL, each in order of its best result */
+      var groups = [], gb = {};
+      page.forEach(function (i) {
+        var si = IDX.qsdl[i], b = IDX.sdls[si][0], g = gb[b];
+        if (!g) { g = gb[b] = { b: b, sdls: [], bs: {}, n: 0 }; groups.push(g); }
+        var sg = g.bs[si]; if (!sg) { sg = g.bs[si] = { si: si, qs: [] }; g.sdls.push(sg); }
+        sg.qs.push(i); g.n++;
+      });
+      list.innerHTML = groups.map(function (g) {
+        return '<section class="qs-block" aria-label="' + esc(IDX.blocks[g.b][2]) + '"><h3>' + esc(IDX.blocks[g.b][2]) + ' <span class="qs-n">' + per[g.b] + '</span></h3>' +
+          g.sdls.map(function (sg) {
+            return '<div class="qs-sdl"><h4>' + esc(sdlLabel(IDX.sdls[sg.si])) + '</h4><ul>' + sg.qs.map(function (i) {
+              var m = marked(i, r.words), shows = m.indexOf('<mark') >= 0;
+              return '<li><a class="qs-hit" data-id="' + esc(IDX.ids[i]) + '" href="' + esc(href(i)) + '"><span class="qs-snip">' + m + '</span>' +
+                (shows ? '' : '<span class="qs-where">' + where(i, r.words) + '</span>') + '</a></li>';
+            }).join('') + '</ul></div>';
+          }).join('') + '</section>';
+      }).join('');
+      var left = shownList.length - page.length;
+      more.hidden = left <= 0;
+      more.textContent = 'Show ' + Math.min(PAGE, left) + ' more (' + left + ' left)';
+    }
+    function hits() { return [].slice.call(list.querySelectorAll('.qs-hit')); }
+    var wantPlace = null;   // where focus goes once the index has loaded (open() before it is in)
+    function open(raw, focusHead) {
+      restore();
+      if (raw != null && norm(raw) !== norm(st.q)) { st.q = raw; st.b = -1; st.shown = PAGE; st.last = ''; }
+      panel.hidden = false; qi.value = st.q || '';
+      if (location.hash !== '#qsearch') try { history.replaceState(null, '', '#qsearch'); } catch (e) {}
+      wantPlace = null;
+      if (IDX) { run(true); place(focusHead); return; }
+      panel.scrollIntoView({ block: 'start' }); document.getElementById('qsH').focus({ preventScroll: true });
+      wantPlace = !!focusHead; run(true); load();
+    }
+    /* focus: back from a result → that result; from the hero list → the panel's heading; nothing typed yet → the box */
+    function place(focusHead) {
+      var last = st.last && hits().filter(function (a) { return a.dataset.id === st.last; })[0];
+      if (!qi.value) { panel.scrollIntoView({ block: 'start' }); qi.focus({ preventScroll: true }); }
+      else if (last && !focusHead) { last.focus({ preventScroll: true }); last.scrollIntoView({ block: 'center' }); }
+      else { panel.scrollIntoView({ block: 'start' }); document.getElementById('qsH').focus({ preventScroll: true }); }
+    }
+    function close() {
+      panel.hidden = true;
+      if (location.hash === '#qsearch') try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+      hubQ.focus();
+    }
+    var timer = 0;
+    qi.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(function () { st.b = -1; st.last = ''; run(); }, 120); });
+    qi.addEventListener('focus', load);
+    hubQ.addEventListener('focus', load);
+    form.addEventListener('submit', function (e) { e.preventDefault(); clearTimeout(timer); run(); var h = hits()[0]; if (h) h.focus(); });
+    qi.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown') { var h = hits()[0]; if (h) { e.preventDefault(); h.focus(); } } else if (e.key === 'Escape' && !qi.value) close(); });
+    list.addEventListener('keydown', function (e) {   // arrow keys move through the results; Escape goes back to the box
+      var hs = hits(), i = hs.indexOf(document.activeElement);
+      if (i < 0) return;
+      if (e.key === 'ArrowDown' && i < hs.length - 1) { e.preventDefault(); hs[i + 1].focus(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); (i ? hs[i - 1] : qi).focus(); }
+      else if (e.key === 'Escape') { e.preventDefault(); qi.focus(); }
+    });
+    list.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('.qs-hit'); if (a) { st.last = a.dataset.id; save(); } });
+    filt.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('button[data-b]'); if (!b) return;
+      st.b = Number(b.dataset.b); st.shown = PAGE; run(true);
+      var nb = filt.querySelector('button[data-b="' + st.b + '"]'); if (nb) nb.focus();
+    });
+    more.addEventListener('click', function () {
+      var from = hits().length; st.shown += PAGE; run(true);
+      var h = hits()[from]; if (h) h.focus();
+    });
+    document.getElementById('qsClose').addEventListener('click', close);
+    /* the hero list's "All N questions matching …" */
+    document.getElementById('hubResults').addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('[data-qs-all]');
+      if (a) { e.preventDefault(); document.getElementById('hubResults').hidden = true; hubQ.setAttribute('aria-expanded', 'false'); open(hubQ.value, true); }
+    });
+    document.getElementById('navQs').addEventListener('click', function (e) { e.preventDefault(); open(hubQ.value.trim() ? hubQ.value : null, false); });
+    /* index.html#qsearch (a result's back link, a reload) opens the panel with the last search of this tab */
+    function fromHash() { if (location.hash === '#qsearch') open(null, false); }
+    window.addEventListener('hashchange', fromHash);
+    fromHash();
   })();
 </script>
 <script>
@@ -798,7 +1144,13 @@
   /* Save everything for offline: fetch every block page and its questions, the atlas and
      the shared files, and put them in the same cache sw.js serves from (CACHE below must
      match sw.js). Works even before the service worker controls this tab. The time of the
-     last full save is kept on this device ('qhub-offline-at'). */
+     last full save is kept on this device ('qhub-offline-at').
+     A block's questions (m66) are <block>/q/manifest.js plus the part files it names
+     (q/<part>.<hash>.js, tools/build-split.py) — qhubParts() reads those names. */
+  window.qhubParts = function (manifest) {
+    var m = String(manifest || '').match(/"chunks":(\[[^\]]*\])/);
+    try { return m ? JSON.parse(m[1]) : []; } catch (e) { return []; }
+  };
   (function () {
     var CACHE = 'qhub-v1', KEY = 'qhub-offline-at';
     var btn = document.getElementById('offlineBtn'), status = document.getElementById('offlineStatus');
@@ -819,19 +1171,27 @@
       var urls = ['./', 'index.html', 'announcements.js', 'sync.js', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
         'shared/images/wrong-flash-1.png', 'shared/images/wrong-flash-2.png',
         'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js', 'resources/qbank-counts.js',
-        'resources/atlas-home.js', 'resources/atlas-cards.js', 'resources/atlas-qstates.js'];
+        'resources/atlas-home.js', 'resources/atlas-cards.js', 'resources/atlas-qstates.js', 'resources/qsearch.js'];
       // the atlas's card text (its name changes with every build) and the moving maps' drawings load only after the page
       // or when a map opens — save them all here (names from atlas-home.js)
       if (window.ATLAS_HOME && window.ATLAS_HOME.les) urls.push('resources/' + window.ATLAS_HOME.les);
       ((window.ATLAS_HOME && window.ATLAS_HOME.dyn) || []).forEach(function (f) { urls.push('resources/dyn/' + f); });
+      var dirs = [];
       Array.prototype.forEach.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]'), function (a) {
         var dir = a.getAttribute('href').replace(/index\.html$/, '');
-        urls.push(dir + 'index.html', dir + 'data.js');
+        dirs.push(dir); urls.push(dir + 'index.html', dir + 'q/manifest.js');
       });
       try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
       btn.disabled = true; bar.hidden = false; fill.style.width = '0%';
       var done = 0, failed = 0;
       caches.open(CACHE).then(function (cache) {
+        // each block's question parts: their names come from its manifest (a failed manifest is counted below)
+        return Promise.all(dirs.map(function (dir) {
+          return fetch(new URL(dir + 'q/manifest.js', location.href).href, { cache: 'reload' })
+            .then(function (r) { return r.ok ? r.text() : ''; })
+            .then(function (t) { window.qhubParts(t).forEach(function (n) { urls.push(dir + 'q/' + n); }); }, function () {});
+        })).then(function () { return cache; });
+      }).then(function (cache) {
         return Promise.all(urls.map(function (u) {
           var url = new URL(u, location.href).href;
           return fetch(url, { cache: 'reload' }).then(function (res) {
@@ -858,8 +1218,8 @@
   /* Block tiles show your progress and offline status on this device.
      Progress: questions answered and % right on your latest try, from each block's attempt
      log ('<folder>_attempts_v1' — every block's storageKey is its folder name).
-     Offline: a block counts as saved when its page and questions (index.html, data.js) are
-     in the cache sw.js serves from (CACHE must match sw.js) — Save all puts them there, and
+     Offline: a block counts as saved when its page and questions (index.html, q/manifest.js and
+     the question parts it names, m66) are in the cache sw.js serves from (CACHE must match sw.js) — Save all puts them there, and
      so does opening a block online. When online, each saved file's size is checked against
      the copy online (the size half of GitHub Pages' "mtime-size" ETag, or Content-Length);
      a different size means a newer version is online. The mtime half changes on every
@@ -1000,7 +1360,9 @@
         return p.then(function () {
           return cache.match(abs(u), { ignoreSearch: true }).then(function (res) {
             if (!res) { st.saved = false; return; }
-            if (!online || /^resources\/dyn\//.test(u)) return;   // a moving-map drawing: saved is enough (the page itself shows when it changed)
+            // a moving-map drawing or a question part: named by its content, so saved is enough (the page or the
+            // block's manifest shows when it changed)
+            if (!online || /^resources\/dyn\//.test(u) || QPART.test(u)) return;
             return Promise.all([res.blob().then(function (b) { return b.size; }), netSize(abs(u))]).then(function (v) {
               if (v[1] != null && v[0] !== v[1]) st.newer = true;
             });
@@ -1024,12 +1386,7 @@
           if (el.getAttribute('aria-disabled') === 'true') return;
           el.setAttribute('aria-disabled', 'true'); el.textContent = 'Saving…';
           var urls = SHARED.concat(el._files);
-          caches.open(CACHE).then(function (cache) {
-            return Promise.all(urls.map(function (u) {
-              var url = abs(u);
-              return fetch(url, { cache: 'reload' }).then(function (res) { if (!res.ok) throw new Error(res.status); return cache.put(url, res); });
-            }));
-          }).then(function () { el.remove(); run(); }, function () { el.removeAttribute('aria-disabled'); el.textContent = 'Retry save'; });
+          caches.open(CACHE).then(function (cache) { return saveFiles(cache, urls); }).then(function () { el.remove(); run(); }, function () { el.removeAttribute('aria-disabled'); el.textContent = 'Retry save'; });
         };
         el.addEventListener('click', go);
         el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') go(e); });
@@ -1037,15 +1394,35 @@
       el._files = files; el.textContent = label;
       el.title = label === 'Update' ? 'Download the newer version of this block to this device' : 'Save just this block on this device so it works without signal';
     }
+    /* fetch and save `urls`; a block's q/manifest.js brings the question parts it names, saved before it */
+    function saveFiles(cache, urls) {
+      return Promise.all(urls.map(function (u) {
+        var url = abs(u);
+        return fetch(url, { cache: 'reload' }).then(function (res) {
+          if (!res.ok) throw new Error(res.status);
+          if (!/\/q\/manifest\.js$/.test(url)) return cache.put(url, res);
+          return res.clone().text().then(function (t) {
+            var parts = window.qhubParts(t).map(function (n) { return url.replace(/manifest\.js$/, n); });
+            return saveFiles(cache, parts.filter(function (p) { return urls.map(abs).indexOf(p) < 0; })).then(function () { return cache.put(url, res); });
+          });
+        });
+      }));
+    }
+    var QPART = /\/q\/e\d+[a-z]?\.[0-9a-f]{10}\.js$/;   // a question part (named by its content)
     var running = null;
     function run() {
       if (running) return running;
       var online = navigator.onLine !== false;
       running = caches.open(CACHE).then(function (cache) {
-        var jobs = blocks.map(function (a) {
+        // a block: its page, its manifest and the question parts the saved manifest names (m66)
+        return Promise.all(blocks.map(function (a) {
           var dir = a.getAttribute('href').replace(/index\.html$/, '');
-          return [a, [dir + 'index.html', dir + 'data.js']];
-        });
+          return cache.match(abs(dir + 'q/manifest.js')).then(function (r) { return r ? r.text() : ''; }).then(function (t) {
+            return [a, [dir + 'index.html', dir + 'q/manifest.js'].concat(window.qhubParts(t).map(function (n) { return dir + 'q/' + n; }))];
+          });
+        })).then(function (jobs) { return [cache, jobs]; });
+      }).then(function (cj) {
+        var cache = cj[0], jobs = cj[1];
         if (atlas) jobs.push([atlas, ['resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js']
           .concat(window.ATLAS_HOME && window.ATLAS_HOME.les ? ['resources/' + window.ATLAS_HOME.les] : [])
           .concat(((window.ATLAS_HOME && window.ATLAS_HOME.dyn) || []).map(function (f) { return 'resources/dyn/' + f; }))]);
@@ -1056,7 +1433,8 @@
             chip(j[0], 'off', st.saved ? (st.newer ? 'newer' : 'saved') : 'unsaved',
               st.saved ? (st.newer ? '↻ Newer version online' : '✓ Saved offline') : 'Not saved offline',
               st.newer ? 'The copy saved on this device is older than the one online — Save again (Use Offline, below) to update it' : '');
-            saveBtn(j[0], j[1], !st.saved || st.newer, st.newer ? 'Update' : 'Save offline');
+            // its question parts come from the manifest it saves (an update can rename them all)
+            saveBtn(j[0], j[1].filter(function (u) { return !QPART.test(u); }), !st.saved || st.newer, st.newer ? 'Update' : 'Save offline');
           });
         }, Promise.resolve()).then(function () { return check(cache, ['shared/app.js', 'shared/style.css'], online); }).then(function (core) {
           if (!detail) return;
