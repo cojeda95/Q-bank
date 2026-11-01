@@ -394,6 +394,12 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   color: var(--purple);
   white-space: nowrap;
 }
+.tb-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--blue, #2563eb);
+  white-space: nowrap;
+}
 .bloom-banner {
   background: var(--purple-bg);
   color: var(--purple-ink);

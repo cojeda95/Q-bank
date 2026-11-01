@@ -3049,7 +3049,7 @@ function renderPracticeQuestion() {
     <div class="qlayout${answered ? ' answered' : ''}">
       <div class="q-card">
         <div class="q-meta-row">
-          <span class="q-objective">Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''} ${q.bloomLevel ? `<span class="bloom-badge">${escapeHtml(q.bloomLevel)}</span>` : ''}</span>
+          <span class="q-objective">Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''} ${q.bloomLevel ? `<span class="bloom-badge">${escapeHtml(q.bloomLevel)}</span>` : ''} ${q.enrichmentSource ? `<span class="tb-badge" title="Detail from ${escapeHtml(q.enrichmentSource)}; not in this SDL's lecture notes">📚 ${escapeHtml(q.enrichmentSource)}</span>` : ''}</span>
           <span class="q-meta-btns">${reportBtnHtml(q)}<button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button></span>
         </div>
         <div class="q-stem">${escapeHtml(q.stem)}</div>
@@ -3747,7 +3747,7 @@ function renderFlaggedQuestion() {
     <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
     <div class="q-card">
       <div class="q-meta-row">
-        <span class="q-objective">${escapeHtml(q.sdlTitle)} · Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''}</span>
+        <span class="q-objective">${escapeHtml(q.sdlTitle)} · Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''} ${q.enrichmentSource ? `<span class="tb-badge" title="Detail from ${escapeHtml(q.enrichmentSource)}; not in this SDL's lecture notes">📚 ${escapeHtml(q.enrichmentSource)}</span>` : ''}</span>
         <span class="q-meta-btns">${reportBtnHtml(q)}<button class="flag-btn flagged" id="flagBtn">&#9733; Flagged</button></span>
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
@@ -4475,7 +4475,7 @@ function renderReviewQuestion() {
     <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
     <div class="q-card">
       <div class="q-meta-row">
-        <span class="q-objective">${escapeHtml(q.sdlTitle)} · Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''}</span>
+        <span class="q-objective">${escapeHtml(q.sdlTitle)} · Objective ${q.objective ?? ''} ${q.isHighYield ? '<span class="hy-badge">&#9889; HIGH YIELD</span>' : ''} ${q.enrichmentSource ? `<span class="tb-badge" title="Detail from ${escapeHtml(q.enrichmentSource)}; not in this SDL's lecture notes">📚 ${escapeHtml(q.enrichmentSource)}</span>` : ''}</span>
         <span class="q-meta-btns">${reportBtnHtml(q)}<button class="flag-btn ${flagged ? 'flagged' : ''}" id="flagBtn">${flagged ? '★ Flagged' : '☆ Flag for review'}</button></span>
       </div>
       <div class="q-stem">${escapeHtml(q.stem)}</div>
