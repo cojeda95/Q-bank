@@ -379,6 +379,13 @@ def atlas_norm(t):
     t = re.sub(r"[^a-z0-9+ ]", " ", t)
     return re.sub(r"\s+", " ", t).strip()
 
+# Term ORDER matters for ranking. shared/app.js atlasRank() (and links_for()
+# here) shows only the top 3 cards per question, sorted by tier, then
+# leading-phrase hit, then the LENGTH OF THE FIRST TERM IN THIS LIST THAT
+# MATCHED -- not the longest matching term. So name first, then alias parts,
+# then q:[...] in written order: a short early term (e.g. an acronym) that hits
+# makes the card rank as a short match even if a longer q: phrase also hits.
+# Put the most specific phrase earliest in q:[...] when a card loses a tie.
 def link_terms(n, alias, q):
     out = []
     base = n.split(" — ")[0]
