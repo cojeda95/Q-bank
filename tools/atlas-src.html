@@ -3184,7 +3184,7 @@ b7def:{n:"Biotin (B7) deficiency",k:"dz",p:"watersol",enz:"Carboxylases — pyru
  src:["Marks ch 28 — Gluconeogenesis and Maintenance of Blood Glucose Levels"],
  tx:["Oral biotin"]},
 
-b9def:{n:"Folate (B9) deficiency",k:"dz",p:"watersol",q:["folate deficiency", "folic acid deficiency"],enz:"Tetrahydrofolate — one-carbon transfer, dTMP synthesis",inh:"Acquired",fa:"426",hi:1,
+b9def:{n:"Folate (B9) deficiency",k:"dz",p:"watersol",q:["folate deficiency", "folic acid deficiency", "mcv serum methylmalonic acid serum homocysteine"],enz:"Tetrahydrofolate — one-carbon transfer, dTMP synthesis",inh:"Acquired",fa:"426",hi:1,
  mech:"Without THF the cell cannot make dTMP, so DNA synthesis lags while RNA and protein synthesis continue — the nucleus stays immature while the cytoplasm matures. Stores are small — deficiency can develop within weeks to months of stopped intake (liver stores ~3–4 months, FA) — so deficiency appears far faster than B12 deficiency.",
  find:["<b>Megaloblastic anemia with hypersegmented neutrophils</b>, glossitis","<b>No neurologic findings</b> — the single most useful discriminator from B12 deficiency","Causes: chronic alcohol overuse, pregnancy, malnutrition, malabsorption; drugs — phenytoin, trimethoprim, methotrexate"],
  labs:["↓ Serum and RBC folate","<b>↑ Homocysteine with NORMAL methylmalonic acid</b>","MCV > 100"],
@@ -3263,6 +3263,22 @@ zinc:{n:"Zinc deficiency",k:"dz",p:"watersol",enz:"Zinc-finger transcription fac
  buzz:["Periorificial rash, hair loss and diarrhea — acrodermatitis enteropathica"],
  src:["Robbins ch 9 — Environmental and nutritional diseases"],
  tx:["Oral zinc supplementation"]},
+
+selenium:{n:"Selenium deficiency",alias:"Keshan disease",k:"dz",p:"watersol",q:["selenium deficiency","keshan disease","selenium is a component of glutathione peroxidase"],enz:"Glutathione peroxidase — antioxidant selenoenzyme",inh:"—",gen:"Acquired; endemic where soil is selenium-poor",fa:"",hi:0,
+ mech:"Selenium is built into <b>glutathione peroxidase</b>, which clears peroxides and free radicals. Without it, oxidant injury falls on muscle — skeletal and cardiac — and the antioxidant role overlaps with vitamin E.",
+ find:["<b>Keshan disease</b> — endemic congestive cardiomyopathy in regions with selenium-poor soil","Myopathy","Not to be confused with wet beriberi — high-output failure from thiamine deficiency"],
+ labs:["↓ Serum selenium · ↓ glutathione peroxidase activity"],
+ buzz:["Selenium-poor soil, failing heart — Keshan disease"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases","OCOM Gastro — Exam 3 lecture notes"],
+ tx:["Selenium supplementation"]},
+
+obesity:{n:"Obesity & metabolic syndrome",k:"dz",p:"gxApp",q:["overweight or obese","activate the inflammasome"],enz:"Excess fat → free fatty acids → inflammasome → IL-1 → insulin resistance",inh:"—",gen:"Multifactorial; rare monogenic forms (leptin, MC4R)",fa:"403",hi:1,
+ mech:"In obesity, excess free fatty acids and lipid within cells activate the <b>inflammasome</b>, which releases <b>interleukin 1</b> and sets up a systemic proinflammatory state. That inflammation, with adipokine changes and hyperinsulinemia, drives <b>insulin resistance</b> — the core of the metabolic syndrome.",
+ find:["Metabolic syndrome: central obesity, hypertension, hyperglycemia, high triglycerides, low HDL; acanthosis nigricans","MASLD and cholesterol gallstones","About 40% of US cancers are associated with overweight or obesity — esophagus (adenocarcinoma), upper stomach, colorectum, gallbladder, liver, pancreas"],
+ labs:["↑ Fasting glucose · ↑ triglycerides · ↓ HDL","Leptin high, but the brain is resistant"],
+ buzz:["Fatty acids → inflammasome → IL-1 → insulin resistance"],
+ src:["Robbins ch 9 — Environmental and nutritional diseases","OCOM Gastro — Exam 3 lecture notes"],
+ tx:["Diet, exercise, weight-loss drugs, bariatric surgery"]},
 
 /* ── cell cycle & DNA repair ────────────────────────── */
 rb:{n:"Rb pathway loss — retinoblastoma",k:"dz",p:"cellcycle",q:["retinoblastoma","flexner wintersteiner rosettes"],enz:"RB1 — holds E2F at the G1/S restriction point",inh:"—",gen:"Autosomal dominant predisposition",fa:"220, 552",hi:1,
@@ -3993,7 +4009,7 @@ celiac:{n:"Celiac disease",k:"dz",p:"gut",q:["celiac disease", "tissue transglut
  src:["Robbins ch 17 — The gastrointestinal tract","Robbins ch 25 — The skin"],
  tx:["Lifelong gluten-free diet; screen for and replace iron, folate, calcium and vitamin D"]},
 
-crohn:{n:"Crohn disease vs ulcerative colitis",k:"dz",p:"gut",q:["crohn disease", "crohns disease", "ulcerative colitis", "inflammatory bowel disease", "ulcerative colitis begins"],enz:"Transmural vs mucosal inflammation",inh:"—",gen:"Multifactorial",fa:"389",hi:1,
+crohn:{n:"Crohn disease vs ulcerative colitis",k:"dz",p:"gut",q:["crohn disease", "crohns disease", "ulcerative colitis", "inflammatory bowel disease", "ulcerative colitis begins", "gross lesions transmural collagen band many iels", "ibd typically enter surveillance"],enz:"Transmural vs mucosal inflammation",inh:"—",gen:"Multifactorial",fa:"389",hi:1,
  mech:"Crohn is transmural and can hit anywhere from mouth to anus with skip lesions — and when it takes the <b>terminal ileum</b>, it takes exactly the two things only that segment absorbs: <b>B12 and bile acids</b>. UC is mucosal, continuous, and confined to the colon starting at the rectum.",
  find:["Crohn: skip lesions, rectal sparing, cobblestone mucosa, creeping fat, strictures, fistulae, perianal disease. Noncaseating granulomas. Smoking is a strong risk factor","UC: continuous from the rectum, pseudopolyps, crypt abscesses, no granulomas; loss of haustra (\"lead pipe\")","Terminal ileal Crohn or resection → B12 deficiency, <b>bile-acid diarrhea</b>, gallstones, calcium oxalate kidney stones"],
  labs:["Crohn: ↑ risk of <b>oxalate stones</b> — unabsorbed fat binds calcium, leaving oxalate free to be absorbed","UC: primary sclerosing cholangitis, MPO-ANCA/p-ANCA; colorectal cancer risk rises with pancolitis. Crohn: may be anti-Saccharomyces cerevisiae antibody (ASCA) positive","Both: erythema nodosum, pyoderma gangrenosum, uveitis, arthritis","Activity markers in both: ↑ ESR/CRP, <b>fecal calprotectin</b> and lactoferrin, reactive thrombocytosis, anemia"],
@@ -4017,7 +4033,7 @@ pancins:{n:"Exocrine pancreatic insufficiency",k:"dz",p:"gut",q:["pancrelipase",
  src:["Robbins ch 19 — The pancreas","Costanzo ch 8 — Gastrointestinal physiology","Katzung ch 62 — Drugs Used in the Treatment of Gastrointestinal Diseases","OCOM Gastro — Exam 1 lecture notes"],
  tx:["Pancreatic enzyme replacement with meals, fat-soluble vitamin supplementation, treat the cause","<b>Pancrelipase</b> with every meal and snack — acid destroys it, so enteric-coated capsules swallowed whole, or uncoated tablets with a PPI or H₂ blocker","High doses: hyperuricosuria and uric acid stones (purine-rich extracts); fibrosing colonopathy in cystic fibrosis"]},
 
-whipple:{n:"Whipple disease",k:"dz",p:"gut",q:["dense macrophage infiltrates expand villi", "whipple s original"],enz:"Tropheryma whipplei in lamina propria macrophages",inh:"Infectious",fa:"388",hi:0,
+whipple:{n:"Whipple disease",k:"dz",p:"gut",q:["dense macrophage infiltrates expand villi", "whipples original", "gram positive actinomycete"],enz:"Tropheryma whipplei in lamina propria macrophages",inh:"Infectious",fa:"388",hi:0,
  mech:"Macrophages stuffed with the organism block the lacteals of the small-bowel villi, so absorbed fat cannot be carried away — a lymphatic obstruction rather than a digestive failure.",
  find:["Most common in older males; diarrhea and steatorrhea come later in the course","Arthralgias, fever, lymphadenopathy","Cardiac and neurologic symptoms"],
  labs:["PAS-positive foamy macrophages in the lamina propria — acid-fast negative, unlike mycobacteria","<b>PCR for T. whipplei</b> DNA; ↓ D-xylose absorption (mucosal disease); ↑ ESR/CRP"],
@@ -7208,7 +7224,7 @@ crc:{n:"Colorectal cancer",alias:"colon cancer · adenoma-carcinoma sequence",k:
  labs:["Iron deficiency anemia in a man or postmenopausal woman → colonoscopy","<b>Apple-core</b> lesion on barium enema","CEA monitors recurrence — not for screening"],
  buzz:["Always kill polyps: APC → KRAS → P53","Strep bovis endocarditis → look for colon cancer","Older adult with iron deficiency anemia → colonoscopy"],
  src:["Robbins ch 17 — The gastrointestinal tract","Robbins ch 7 — Neoplasia","Katzung ch 54 — Cancer Chemotherapy"],
- tx:["Screen average-risk adults from age 45 (colonoscopy; alternatives include FIT, stool DNA, sigmoidoscopy, CT colonography); a first-degree relative → age 40 or 10 years before the relative's diagnosis; IBD → 8 years after onset","Surgery; 5-FU-based chemotherapy; anti-EGFR antibodies for RAS wild-type; bevacizumab"],q:["colorectal cancer", "colorectal carcinoma", "colon cancer", "colon carcinoma", "adenoma carcinoma sequence", "apple core lesion", "streptococcus gallolyticus", "streptococcus bovis", "microsatellite instability", "intramucosal carcinoma", "colon drains through the portal", "proximal colon tumors", "depth of invasion and lymph node"]},
+ tx:["Screen average-risk adults from age 45 (colonoscopy; alternatives include FIT, stool DNA, sigmoidoscopy, CT colonography); a first-degree relative → age 40 or 10 years before the relative's diagnosis; IBD → 8 years after onset","Surgery; 5-FU-based chemotherapy; anti-EGFR antibodies for RAS wild-type; bevacizumab"],q:["colorectal cancer", "colorectal carcinoma", "colon cancer", "colon carcinoma", "adenoma carcinoma sequence", "apple core lesion", "streptococcus gallolyticus", "streptococcus bovis", "microsatellite instability", "intramucosal carcinoma", "colon drains through the portal", "proximal colon tumors", "depth of invasion and lymph node", "chromosomal instability pathway"]},
 
 pancca:{n:"Pancreatic adenocarcinoma",alias:"pancreatic cancer",k:"dz",p:"tpanc",enz:"Ductal adenocarcinoma — KRAS activation is the most common lesion",inh:"Tobacco (strongest), chronic pancreatitis, diabetes, age over 50",fa:"405",hi:1,
  mech:"A very aggressive ductal tumor, usually metastatic when found, with average survival around a year. Most arise in the <b>head</b>, where they compress the common bile duct. Activating KRAS mutation (over 90%) is the most common and earliest genetic lesion, already present in low-grade PanIN; CDKN2A/p16, TP53 and SMAD4 losses follow.",
@@ -7663,7 +7679,7 @@ hypok:{n:"Hypokalemia",k:"dz",p:"abelectro",enz:"Potassium moves into cells or i
  labs:["Check magnesium — hypokalemia will not correct until Mg²⁺ is replaced"],
  buzz:["U waves = hypokalemia","Insulin treatment of DKA can drop K⁺ fast — replace it"],
  src:["Costanzo ch 6 — Renal physiology","Katzung ch 15 — Diuretic Agents","Guyton ch 78 — Adrenocortical Hormones"],
- tx:["Potassium replacement; correct magnesium"],q:["hypokalemia","u waves","u wave"],
+ tx:["Potassium replacement; correct magnesium"],q:["hypokalemia", "u waves", "u wave", "colonic k+ secretion depends on flow", "flow dependent colonic k+ secretion"],
  ref:[{a:"Kardalas E et al.",t:"Hypokalemia: a clinical update",j:"Endocr Connect",y:2018,pmid:"29540487",doi:"10.1530/EC-18-0109"}]},
 
 sodiumdis:{n:"Sodium disorders",alias:"hyponatremia · hypernatremia",k:"dz",p:"abelectro",enz:"Sodium concentration reflects water balance",inh:"Hypo: SIADH, heart failure, cirrhosis, thiazides, polydipsia · hyper: water loss, diabetes insipidus",fa:"342, 538, 609",hi:1,
@@ -13385,7 +13401,7 @@ gutwall:{n:"Gut wall layers & enteric plexuses",k:"reg",p:"abanal",enz:"Mucosa �
  labs:["—"],
  buzz:["MSMS — mucosa, submucosa, muscularis, serosa"],
  src:["Pawlina ch 17 — Digestive System II: Esophagus and Gastrointestinal Tract","OCOM Gastro — Exam 1 lecture notes"],
- tx:["—"],q:["myenteric plexus", "auerbach plexus", "submucosal plexus", "meissner plexus", "muscularis externa", "interstitial cells of cajal", "muscularis mucosae", "enteric nervous system", "inner circular layer", "=adventitia", "slow wave frequenc", "intrinsic slow wave frequency", "spikes per slow wave", "fewer spikes on each slow wave", "number of action potentials"]},
+ tx:["—"],q:["myenteric plexus", "auerbach plexus", "submucosal plexus", "meissner plexus", "muscularis externa", "interstitial cells of cajal", "muscularis mucosae", "enteric nervous system", "inner circular layer", "=adventitia", "slow wave frequenc", "intrinsic slow wave frequency", "spikes per slow wave", "fewer spikes on each slow wave", "number of action potentials", "slow wave frequencies"]},
 
 liverzones:{n:"Liver lobule zones",k:"reg",p:"abvasc",enz:"Zone 1 periportal · zone 2 intermediate · zone 3 pericentral",inh:"—",fa:"374",hi:1,
  mech:"Blood flows from the portal triads at the edge of each lobule to the central vein, so oxygen falls from zone 1 to zone 3. Bile flows the opposite way. Most of the liver's blood comes from the portal vein and the rest from the hepatic artery — about 80/20 by First Aid (p374), 70–75/25–30 by the GI course lecture (p66), 60–70/30–40 by Robbins (GI course reading).",
@@ -13875,7 +13891,7 @@ pancsec:{n:"Pancreatic secretions",k:"reg",p:"ghpanc",enz:"Acinar enzymes · duc
  labs:["—"],
  buzz:["Enterokinase lights the trypsin fuse"],
  src:["OCOM Gastro — Exam 1 lecture notes","Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 65 — Secretory Functions of the Alimentary Tract"],
- tx:["—"],q:["pancreatic secretion", "pancreatic secretions", "enterokinase", "enteropeptidase", "trypsinogen", "zymogen", "zymogens", "pancreatic proteases", "pancreatic juice", "centroacinar", "carboxypeptidase", "colipase", "=sodium bicarbonate symport", "=it becomes more acidic", "phospholipase a2 cleaves fatty acids", "pancreatic amylase hydrolyzes", "limit dextrins", "elastase", "without the pancreas", "pancreatic lipase secreted in active form", "phospholipase a2", "blocking lipase", "lingual and gastric lipases", "cholesterol ester hydrolase"]},
+ tx:["—"],q:["pancreatic secretion", "pancreatic secretions", "enterokinase", "enteropeptidase", "trypsinogen", "zymogen", "zymogens", "pancreatic proteases", "pancreatic juice", "centroacinar", "carboxypeptidase", "colipase", "=sodium bicarbonate symport", "=it becomes more acidic", "phospholipase a2 cleaves fatty acids", "pancreatic amylase hydrolyzes", "limit dextrins", "elastase", "without the pancreas", "pancreatic lipase secreted in active form", "phospholipase a2", "blocking lipase", "lingual and gastric lipases", "cholesterol ester hydrolase", "lactose digestion sucrose digestion starch digestion"]},
 
 renalclear:{n:"Renal clearance",k:"reg",p:"rpclear",enz:"Cx = Ux × V / Px",inh:"—",fa:"600",hi:1,
  mech:"Clearance is the volume of plasma completely cleared of a substance per unit time. Comparing it with GFR shows what the tubule did to that substance.",
@@ -14329,7 +14345,7 @@ diarrheaapproach:{n:"Approach to diarrhea",k:"reg",p:"dxapp",enz:"Watery, bloody
  labs:["↑ Stool osmotic gap in osmotic diarrhea (lactose intolerance)","D-xylose test: abnormal in mucosal disease (celiac), normal in pancreatic insufficiency"],
  buzz:["Diarrhea that continues while fasting = secretory (or exudative)","Stops with fasting = osmotic or malabsorptive"],
  src:["Robbins ch 17 — The gastrointestinal tract"],
- tx:["—"],q:["approach to diarrhea", "secretory diarrhea", "osmotic diarrhea", "exudative diarrhea", "dietary fluid plus about 7 l", "epithelial cells lining the crypts secrete", "crypt cells have a basolateral", "cl is secreted through apical channels", "diarrheal fluid", "about 7 l of salivary", "apical cl channels in crypt cells", "diarrhea loses extracellular", "classifies diarrhea", "9 l that enters the lumen", "loss of extracellular type fluid"]},
+ tx:["—"],q:["approach to diarrhea", "secretory diarrhea", "osmotic diarrhea", "exudative diarrhea", "dietary fluid plus about 7 l", "epithelial cells lining the crypts secrete", "crypt cells have a basolateral", "cl is secreted through apical channels", "diarrheal fluid", "about 7 l of salivary", "apical cl channels in crypt cells", "diarrhea loses extracellular", "classifies diarrhea", "9 l that enters the lumen", "loss of extracellular type fluid", "plasma aldosterone serum k+ serum hco3"]},
 
 hematuriaapproach:{n:"Approach to hematuria & proteinuria",k:"reg",p:"huapp",enz:"Read the urine: casts, red cell shape, protein",inh:"—",fa:"112, 428, 465, 566, 612, 613, 616, 617, 619, 624",hi:1,
  mech:"Casts mean the red or white cells came from the glomeruli or tubules; blood without casts comes from elsewhere in the urinary tract — a stone, a bladder tumor. Glomerular inflammation (nephritic) bleeds; podocyte injury (nephrotic) leaks protein.",
@@ -18150,7 +18166,7 @@ simcol:{n:"Simple columnar epithelium — stomach, intestines & gallbladder",k:"
  labs:["—"],
  buzz:["Gut lining from stomach to rectum = simple columnar"],
  src:["Pawlina ch 5 — Epithelial Tissue"],
- tx:["—"],q:["simple columnar epithelium", "simple columnar", "teniae coli", "omental appendices", "colonic columnar absorptive cells", "columnar absorptive cells predominate", "colonic absorptive cells", "colonic absorptive and goblet cells", "senile colonic epithelial cells", "collagen table", "pericryptal fibroblasts", "d2 40", "large intestinal mucosa", "colonic goblet cells", "goblet cells secrete mucus continuously", "newly generated colonic cells", "colonic galt", "galt of the large intestine", "colonic surface is divided", "lamina propria lymphatics", "lower third of the gland is the stem cell niche", "absorptive cells outnumber goblet cells"]},
+ tx:["—"],q:["simple columnar epithelium", "simple columnar", "teniae coli", "omental appendices", "colonic columnar absorptive cells", "columnar absorptive cells predominate", "colonic absorptive cells", "colonic absorptive and goblet cells", "senile colonic epithelial cells", "collagen table", "pericryptal fibroblasts", "d2 40", "large intestinal mucosa", "colonic goblet cells", "goblet cells secrete mucus continuously", "newly generated colonic cells", "colonic galt", "galt of the large intestine", "colonic surface is divided", "lamina propria lymphatics", "lower third of the gland is the stem cell niche", "absorptive cells outnumber goblet cells", "keep dividing after they differentiate", "mature goblet cells can still divide"]},
 
 pseudostrat:{n:"Pseudostratified epithelium — airways & male ducts",k:"reg",p:"tsSimple",enz:"Looks layered · every cell touches the basement membrane",inh:"—",fa:"680",hi:1,
  mech:"It appears stratified, but every cell rests on the basement membrane; some just do not reach the surface — so it is really a <b>simple</b> epithelium. <b>Where</b>: trachea and bronchial tree, ductus deferens, efferent ductules of the epididymis. <b>Function</b>: secretion and conduit (airways), absorption and conduit (male ducts).",
@@ -18320,7 +18336,7 @@ aldoaction:{n:"Aldosterone action — the mineralocorticoid receptor",k:"reg",p:
  labs:["—"],
  buzz:["Steroid → nucleus → new channels, so slow"],
  src:["Guyton ch 78 — Adrenocortical Hormones"],
- tx:["—"],q:["aldosterone action", "mechanism of aldosterone", "aldosterone receptor", "=binds a cytoplasmic mineralocorticoid receptor", "colonocytes have apical na", "aldosterone induces synthesis of apical na", "colonic k secretion"]},
+ tx:["—"],q:["aldosterone action", "mechanism of aldosterone", "aldosterone receptor", "=binds a cytoplasmic mineralocorticoid receptor", "colonocytes have apical na+", "aldosterone induces synthesis of apical na+", "aldosterone induces na+ channel synthesis"]},
 
 aldoctrl:{n:"What drives aldosterone — K⁺ and angiotensin II",k:"reg",p:"adCortex",enz:"K⁺ and Ang II strong · ACTH permissive · Na⁺ and ANP brake",inh:"—",fa:"339",hi:1,
  mech:"Aldosterone secretion by the zona glomerulosa is controlled almost independently of cortisol and androgens. <b>Raised extracellular K⁺</b> and <b>raised angiotensin II</b> are by far the most potent stimuli — a small percentage rise in K⁺ can increase secretion severalfold.",
@@ -19082,7 +19098,7 @@ tropsprue:{n:"Tropical sprue",k:"dz",p:"gismall",enz:"Celiac-like malabsorption 
  labs:["Abnormal <b>D-xylose</b> test — the mucosa itself fails to absorb","Fecal fat on Sudan III stain"],
  buzz:["Celiac look-alike in a traveler that responds to tetracycline"],
  src:["Bootcamp.com Gastroenterology — Small intestine"],
- tx:["Broad-spectrum antibiotics (tetracycline) plus vitamin and mineral replacement"],q:["tropical sprue", "environmental enteric dysfunction"]},
+ tx:["Broad-spectrum antibiotics (tetracycline) plus vitamin and mineral replacement"],q:["tropical sprue", "environmental enteric dysfunction", "fecal fat villus height anti tg2 iga serum apob"]},
 
 hepatoblastoma:{n:"Hepatoblastoma",k:"dz",p:"lacute",enz:"Most common liver tumor of early childhood",inh:"—",hi:0,
  mech:"A rare malignant hepatocellular tumor of children and the <b>most common liver tumor of early childhood</b>. It is rare after age 3. Nearly all show <b>Wnt pathway activation</b>, with β-catenin in the nucleus.",
@@ -19371,7 +19387,7 @@ nutabsorb:{n:"Nutrient absorption by gut segment",k:"reg",p:"guSm",enz:"Duodenum
  labs:["D-xylose needs no digestion and is absorbed passively in the proximal small intestine — low in mucosal disease, normal in pancreatic insufficiency"],
  buzz:["Iron in the duodenum, folate in the jejunum, B12 in the terminal ileum (Iron Fist, Bro)"],
  src:["Costanzo ch 8 — Gastrointestinal physiology","Guyton ch 66 — Digestion and Absorption in the Gastrointestinal Tract","Katzung ch 33 — Agents Used in Cytopenias; Hematopoietic Growth Factors","Bootcamp.com Gastroenterology — Small intestine","OCOM Gastro — Exam 1 lecture notes"],
- tx:["—"],q:["micelle", "micelles", "lacteal", "lacteals", "divalent metal transporter", "sglt1", "dipeptide and tripeptide", "dipeptides and tripeptides", "free amino acids cross", "fat soluble vitamins are handled", "in the jejunum h", "jejunum as the major site of na", "ileum has the jejunal mechanisms", "in the jejunum carbonic anhydrase"]},
+ tx:["—"],q:["micelle", "micelles", "lacteal", "lacteals", "divalent metal transporter", "sglt1", "dipeptide and tripeptide", "dipeptides and tripeptides", "free amino acids cross", "fat soluble vitamins are handled", "in the jejunum h", "jejunum as the major site of na", "ileum has the jejunal mechanisms", "in the jejunum carbonic anhydrase", "net nahco3 absorption", "jejunum as the major site of na+"]},
 
 gastrectomy:{n:"Gastrectomy & gastric bypass — what goes missing",k:"dz",p:"guDz",enz:"Parietal cells removed or bypassed",inh:"—",fa:"67, 378, 381, 393, 424, 426",hi:1,
  mech:"Removing or bypassing the stomach takes away the parietal cells — the only source of <b>intrinsic factor</b>, the one essential gastric secretion — and much of the acid. Without intrinsic factor B12 cannot be taken up in the ileum; with less acid, and food hurrying through the duodenum, iron absorption falls too.",
@@ -20930,6 +20946,7 @@ MAPS.vitamins = {
   {id:"nadphconn",l:"NADPH from HMP shunt",x:1120,y:900,p:"antiox",k:"ghost",go:"core"},
   {id:"gsh",l:"Reduced glutathione",x:1120,y:1040,p:"antiox"},
   {id:"napqi",l:"NAPQI",x:1440,y:1040,p:"antiox",s:"acetaminophen metabolite"},
+  {id:"gpx",l:"Glutathione peroxidase",x:1440,y:900,p:"antiox",s:"selenoenzyme · clears peroxides"},
   {id:"vita",l:"Vitamin A",x:1750,y:150,p:"fatsol",s:"retinol"},
   {id:"vitatarget",l:"Vision & epithelium",x:2190,y:150,p:"fatsol",s:"retinal · retinoic acid"},
   {id:"vitdv",l:"Vitamin D",x:1750,y:330,p:"fatsol",s:"cholecalciferol"},
@@ -20955,6 +20972,7 @@ MAPS.vitamins = {
   {a:"zn",b:"znt",p:"watersol",e:"structural cofactor",m:["zinc"]},
   {a:"nadphconn",b:"gsh",p:"antiox",e:"Glutathione reductase|FAD (B2)",m:["g6pd"]},
   {a:"gsh",b:"napqi",p:"antiox",e:"Conjugation",m:["acetaminophen"]},
+  {a:"gsh",b:"gpx",p:"antiox",e:"Selenium cofactor",m:["selenium"]},
   {a:"vita",b:"vitatarget",p:"fatsol",e:"→ retinal, retinoic acid",m:["vitadef"]},
   {a:"vitdv",b:"vitdtarget",p:"fatsol",e:"→ calcitriol",m:["vitddef"]},
   {a:"vite",b:"vitetarget",p:"fatsol",e:"blocks lipid peroxidation",m:["vitedef"]},
@@ -43243,7 +43261,7 @@ MAPS.gihormsim = {
   {id:"gn2",l:"Somatostatin · D cells",x:690,y:1990,p:"gxStom",s:"the brake · somatostatinoma",m:["sstgi","somatostatinoma"]},
   {id:"gn3",l:"Parietal cell · acid",x:1080,y:1990,p:"gxStom",s:"ACh, histamine, gastrin",m:["gastricacid"]},
   {id:"gn4",l:"Phases of secretion",x:1470,y:1990,p:"gxStom",s:"cephalic · gastric · intestinal",m:["digphases"]},
-  {id:"gn5",l:"Ghrelin & leptin",x:1860,y:1990,p:"gxApp",s:"hunger vs satiety",m:["ghrelin","leptin","hypothalnuc"]},
+  {id:"gn5",l:"Ghrelin & leptin",x:1860,y:1990,p:"gxApp",s:"hunger vs satiety",m:["ghrelin","leptin","hypothalnuc","obesity"]},
   {id:"gn6",l:"CCK · I cells",x:300,y:2075,p:"gxGut",s:"bile, enzymes, slow emptying",m:["cck"]},
   {id:"gn7",l:"Secretin · S cells",x:690,y:2075,p:"gxGut",s:"bicarbonate",m:["secretin"]},
   {id:"gn8",l:"GIP · K cells",x:1080,y:2075,p:"gxGut",s:"incretin",m:["gip","insulinsecr"]},
