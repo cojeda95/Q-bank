@@ -7,7 +7,21 @@ Page with .cmd(method, **params), .js(expr) (awaits promises, returns by value),
 """
 import base64, json, os, shutil, socket, struct, subprocess, tempfile, threading, time, urllib.request
 
-CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+def _find_chrome():
+    env = os.environ.get("CHROME") or os.environ.get("CHROME_PATH")
+    if env:
+        return env
+    mac = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    if os.path.exists(mac):
+        return mac
+    for c in ("/usr/bin/google-chrome", "google-chrome", "chromium-browser", "chromium"):
+        f = shutil.which(c)
+        if f:
+            return f
+    return mac
+
+
+CHROME = _find_chrome()
 
 
 def free_port():
