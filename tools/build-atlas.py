@@ -813,6 +813,7 @@ for _b, _q, _m in (("neuro", "sdl26_bloom_q03", "bgflow"), ("neuro", "sdl26_q10"
 # hand-checked (m63): one option of any switch that the question names but the map does not show — block -> {question id:
 # ("map/switch:option", …)} (renal medullary carcinoma is not the thyroid's; the Galeazzi sign of DDH is not the Galeazzi fracture)
 STATE_NO = {
+    "gastro": {"sdl27_q26": ("cordsim/les:scd",)},   # ileal B12-IF uptake, not the cord lesion
     "nephro": {"sdl43_q11": ("akisim/dx:atn",), "sdl43_q41": ("thytsim/dx:med",)},
     "neuro": {"sdl08_q29": ("visfield/les:chi",), "sdl14_bloom_q01": ("stemsim/les:lmed",), "sdl16_bloom_q01": ("cordsim/les:asa",),
               "sdl06_q15": ("emesim/e:ond",)},
