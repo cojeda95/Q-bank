@@ -992,7 +992,12 @@ QS_PIN = {"gastro": {
     "sdl33_q04": "gitumsim/ca:fap", "sdl33_q13": "bowelsim/dx:app", "sdl35_q09": "parasim/p:asc", "trial_sdl36_q05": "parasim/p:hook",
     "sdl05_q28": "gihormsim/h:gip", "sdl05_q29": "gihormsim/h:glp", "sdl34_q27": "gihormsim/h:glp", "sdl05_q35": "gihormsim/h:ghr",
     "sdl25_q09": "gihormsim/h:mot", "sdl25_q24": "gihormsim/h:mot", "sdl25_q20": "gihormsim/h:vip", "sdl27_q23": "gut/dz:bile",
-    "sdl39_q02": "chemosim/rx:plat", "sdl39_q05": "chemosim/rx:plat", "sdl38_q09": "nucflow/drug:6mp", "sdl16_q01": "livinhsim/l:ald"}}
+    "sdl39_q02": "chemosim/rx:plat", "sdl39_q05": "chemosim/rx:plat", "sdl38_q09": "nucflow/drug:6mp", "sdl16_q01": "livinhsim/l:ald",
+    # wave 4 (m67): leftovers, same rule
+    "sdl09_q04": "sxgibleed/dx:pud", "sdl09_q05": "sxgibleed/dx:pud", "sdl38_q05": "gidrugs/rx:octr", "sdl34_q01": "sxedema/dx:kwash",
+    "sdl34_q03": "sxedema/dx:kwash", "sdl34_q18": "sxedema/dx:kwash", "sdl10_q08": "emesim/e:ond", "trial_sdl37_q03": "laxsim/rx:osm",
+    "sdl31_q08": "gitract/dz:whip", "sdl03_q07": "mucosim/g:par", "sdl39_q11": "chemosim/rx:plat", "sdl39_q03": "mapksim/rx:mab",
+    "sdl25_q23": "motilsim/r:mmc", "sdl14_q08": "pbsecsim/p:gast", "sdl12_q27": "lobulesim/c:kup"}}
 qstates = {}
 for bi, q, qcards in qrecs:
     if q.get("id"):
