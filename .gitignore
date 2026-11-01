@@ -6,3 +6,4 @@
 *.bak
 *.bak-*
 *.ocom-stale-*
+tools/__pycache__/

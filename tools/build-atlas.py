@@ -1000,7 +1000,10 @@ QS_PIN = {"gastro": {
     "sdl25_q23": "motilsim/r:mmc", "sdl14_q08": "pbsecsim/p:gast", "sdl12_q27": "lobulesim/c:kup",
     # wave 5 (m68): leftovers, same rule
     "sdl03_q19": "mucosim/g:par", "sdl03_q21": "mucosim/g:surf", "sdl04_q21": "gutnervsim/n:cel", "sdl22_q16": "gutnervsim/n:mg",
-    "sdl22_q10": "abdanat/ac:below", "sdl22_q27": "abdanat/ac:below", "sdl22_q26": "abdanat/ac:above", "sdl16_q15": "gitumsim/ca:chol"}}
+    "sdl22_q10": "abdanat/ac:below", "sdl22_q27": "abdanat/ac:below", "sdl22_q26": "abdanat/ac:above", "sdl16_q15": "gitumsim/ca:chol",
+    # wave 6 (m69): leftovers, same rule
+    "sdl20_q07": "gutabs/drug:ppi", "sdl26_q09": "digestsim/e:cpb", "sdl27_q18": "pbsecsim/p:bs", "trial_sdl18_q02": "pbsecsim/p:bs",
+    "sdl15_q15": "faosim/dx:valp"}}
 qstates = {}
 for bi, q, qcards in qrecs:
     if q.get("id"):
