@@ -960,7 +960,21 @@ QS_PIN = {"gastro": {
     "sdl17_q26": "gitumsim/ca:fl", "sdl18_q11": "gallsim/g:chron", "sdl18_q23": "gallsim/g:acalc", "trial_sdl31_q03": "gitract/dz:whip",
     "sdl29_q16": "bowelsim/dx:intus", "sdl11_q15": "foregutsim/f:ect", "sdl11_q28": "foregutsim/f:divis",
     "trial_sdl11_q05": "foregutsim/f:divis", "sdl19_q16": "foregutsim/f:divis", "sdl20_q05": "immlivsim/a:urso",
-    "trial_sdl20_q04": "immlivsim/a:urso", "sdl16_q07": "biliflow/jx:cn1", "sdl16_q08": "biliflow/jx:gil", "sdl16_q24": "biliflow/jx:gil"}}
+    "trial_sdl20_q04": "immlivsim/a:urso", "sdl16_q07": "biliflow/jx:cn1", "sdl16_q08": "biliflow/jx:gil", "sdl16_q24": "biliflow/jx:gil",
+    # wave 2 (m65): same rule — explanation lead or correct answer names exactly one option of a linked card
+    "sdl01_q04": "embsim/dx:tef", "trial_sdl11_q06": "embsim/dx:annular", "sdl19_q17": "embsim/dx:annular", "trial_sdl19_q01": "embsim/dx:annular",
+    "sdl21_q04": "embsim/dx:omph", "sdl21_q19": "embsim/dx:omph", "trial_sdl21_q02": "embsim/dx:omph", "sdl21_q11": "embsim/dx:duod",
+    "sdl15_q09": "parasim/p:echi", "sdl15_q13": "antidsim/p:apap", "sdl15_q21": "hepvirsim/v:hdsu", "sdl15_q05": "hepvirsim/v:hcv",
+    "trial_sdl16_q03": "lftsim/dx:cn", "sdl19_q23": "gitumsim/ca:mcn", "trial_sdl19_q04": "gitumsim/ca:panc", "sdl31_q13": "parasim/p:giar",
+    "sdl31_q15": "parasim/p:cryp", "sdl31_q02": "bugid/bug:shi", "sdl31_q18": "bugid/bug:shi", "trial_sdl31_q06": "bugid/bug:sal",
+    "sdl31_q14": "abxsim/rx:metro", "sdl35_q01": "parasim/p:strong", "sdl35_q05": "parasim/p:strong", "sdl35_q17": "parasim/p:strong",
+    "sdl35_q18": "parasim/p:strong", "sdl35_q29": "parasim/p:strong", "sdl35_q02": "parasim/p:asc", "sdl35_q13": "parasim/p:asc",
+    "sdl35_q30": "parasim/p:asc", "sdl35_q08": "parasim/p:diph", "sdl35_q27": "parasim/p:diph", "sdl35_q26": "parasim/p:pin",
+    "sdl35_q16": "parasim/p:pin", "sdl35_q20": "parasim/p:hook", "sdl39_q09": "chemosim/rx:topo2", "trial_sdl39_q04": "chemosim/rx:topo2",
+    "trial_sdl39_q03": "chemosim/rx:topo1", "sdl38_q12": "laxsim/rx:stim", "trial_sdl37_q02": "laxsim/rx:pru", "sdl09_q22": "stomsim/s:fgp",
+    "sdl09_q20": "sxgibleed/dx:pud", "sdl16_q10": "immlivsim/a:obst", "sdl18_q25": "gallsim/g:chron", "sdl12_q19": "portsim/dx:isch",
+    "sdl16_q25": "biliflow/step:sterco", "sdl04_q24": "motilsim/r:def", "sdl26_q25": "digestsim/e:tryp", "sdl05_q20": "gihormsim/h:cck",
+    "sdl05_q30": "gihormsim/h:gip"}}
 qstates = {}
 for bi, q, qcards in qrecs:
     if q.get("id"):
