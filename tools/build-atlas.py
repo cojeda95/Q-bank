@@ -974,7 +974,18 @@ QS_PIN = {"gastro": {
     "trial_sdl39_q03": "chemosim/rx:topo1", "sdl38_q12": "laxsim/rx:stim", "trial_sdl37_q02": "laxsim/rx:pru", "sdl09_q22": "stomsim/s:fgp",
     "sdl09_q20": "sxgibleed/dx:pud", "sdl16_q10": "immlivsim/a:obst", "sdl18_q25": "gallsim/g:chron", "sdl12_q19": "portsim/dx:isch",
     "sdl16_q25": "biliflow/step:sterco", "sdl04_q24": "motilsim/r:def", "sdl26_q25": "digestsim/e:tryp", "sdl05_q20": "gihormsim/h:cck",
-    "sdl05_q30": "gihormsim/h:gip"}}
+    "sdl05_q30": "gihormsim/h:gip",
+    # wave 3 (m66): leftovers, same rule
+    "sdl01_q19": "embsim/dx:tef", "sdl01_q21": "embsim/dx:tef", "sdl01_q25": "embsim/dx:duod", "sdl01_q27": "embsim/dx:duod",
+    "sdl01_q15": "foregutsim/f:pyl", "sdl01_q29": "foregutsim/f:pyl", "trial_sdl03_q06": "acidflow/dz:hp", "sdl08_q14": "acidflow/dz:hp",
+    "sdl09_q17": "acidflow/dz:hp", "sdl09_q28": "acidflow/dz:hp", "sdl10_q05": "acidflow/drug:ppi", "sdl10_q18": "acidflow/drug:ppi",
+    "trial_sdl10_q02": "acidflow/drug:ppi", "sdl10_q10": "gidrugs/rx:octr", "sdl12_q05": "portsim/dx:isch", "sdl15_q22": "gallsim/g:ang",
+    "sdl16_q22": "lftsim/dx:cn", "sdl17_q22": "gitumsim/ca:fnh", "trial_sdl17_q04": "gitumsim/ca:hcc", "sdl18_q16": "gallsim/g:chol",
+    "sdl32_q01": "gidrugs/pt:ibs", "sdl32_q03": "gidrugs/pt:ibs", "sdl32_q04": "gutabs/dz:crohn", "sdl32_q13": "gitumsim/ca:jp",
+    "sdl33_q04": "gitumsim/ca:fap", "sdl33_q13": "bowelsim/dx:app", "sdl35_q09": "parasim/p:asc", "trial_sdl36_q05": "parasim/p:hook",
+    "sdl05_q28": "gihormsim/h:gip", "sdl05_q29": "gihormsim/h:glp", "sdl34_q27": "gihormsim/h:glp", "sdl05_q35": "gihormsim/h:ghr",
+    "sdl25_q09": "gihormsim/h:mot", "sdl25_q24": "gihormsim/h:mot", "sdl25_q20": "gihormsim/h:vip", "sdl27_q23": "gut/dz:bile",
+    "sdl39_q02": "chemosim/rx:plat", "sdl39_q05": "chemosim/rx:plat", "sdl38_q09": "nucflow/drug:6mp", "sdl16_q01": "livinhsim/l:ald"}}
 qstates = {}
 for bi, q, qcards in qrecs:
     if q.get("id"):
