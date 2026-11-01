@@ -997,7 +997,10 @@ QS_PIN = {"gastro": {
     "sdl09_q04": "sxgibleed/dx:pud", "sdl09_q05": "sxgibleed/dx:pud", "sdl38_q05": "gidrugs/rx:octr", "sdl34_q01": "sxedema/dx:kwash",
     "sdl34_q03": "sxedema/dx:kwash", "sdl34_q18": "sxedema/dx:kwash", "sdl10_q08": "emesim/e:ond", "trial_sdl37_q03": "laxsim/rx:osm",
     "sdl31_q08": "gitract/dz:whip", "sdl03_q07": "mucosim/g:par", "sdl39_q11": "chemosim/rx:plat", "sdl39_q03": "mapksim/rx:mab",
-    "sdl25_q23": "motilsim/r:mmc", "sdl14_q08": "pbsecsim/p:gast", "sdl12_q27": "lobulesim/c:kup"}}
+    "sdl25_q23": "motilsim/r:mmc", "sdl14_q08": "pbsecsim/p:gast", "sdl12_q27": "lobulesim/c:kup",
+    # wave 5 (m68): leftovers, same rule
+    "sdl03_q19": "mucosim/g:par", "sdl03_q21": "mucosim/g:surf", "sdl04_q21": "gutnervsim/n:cel", "sdl22_q16": "gutnervsim/n:mg",
+    "sdl22_q10": "abdanat/ac:below", "sdl22_q27": "abdanat/ac:below", "sdl22_q26": "abdanat/ac:above", "sdl16_q15": "gitumsim/ca:chol"}}
 qstates = {}
 for bi, q, qcards in qrecs:
     if q.get("id"):
