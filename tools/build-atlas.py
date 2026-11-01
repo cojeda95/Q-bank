@@ -946,11 +946,31 @@ def qs_state(q, qcards):
         best = cands[0]
     return [best[4], best[5], best[6]]
 
+# hand-checked (m64): non-grid Gastro questions that link a GI moving map and whose correct answer, or the opening words of the
+# explanation, name one of its options, but which the tiers above leave unpinned (several linked cards, no title words) —
+# block -> {question id: "map/switch:option"}; used only when qs_state finds nothing; grids never listed
+QS_PIN = {"gastro": {
+    "trial_sdl28_q05": "gidrugs/rx:octr", "sdl38_q14": "gidrugs/rx:octr", "trial_sdl38_q04": "gidrugs/rx:octr",
+    "sdl37_q13": "gidrugs/rx:lop", "sdl37_q15": "gidrugs/rx:tca", "sdl37_q06": "gidrugs/rx:elux", "sdl37_q04": "gidrugs/rx:alo",
+    "trial_sdl37_q04": "gidrugs/rx:dicy", "sdl37_q14": "laxsim/rx:lina", "sdl37_q05": "laxsim/rx:lubi", "sdl38_q01": "laxsim/rx:docu",
+    "sdl38_q03": "laxsim/rx:oil", "sdl10_q19": "emesim/e:dox", "sdl37_q01": "emesim/e:meto", "sdl37_q10": "emesim/e:meto",
+    "sdl05_q12": "gihormsim/h:glp", "sdl34_q11": "gihormsim/h:glp", "sdl19_q15": "gihorm/dz:glc",
+    "sdl08_q01": "esosim/dx:ach", "sdl08_q06": "esosim/dx:eoe", "sdl08_q07": "esosim/dx:barrett", "sdl08_q19": "esosim/dx:mw",
+    "sdl09_q03": "acidflow/dz:aag", "sdl09_q24": "stomsim/s:gad", "sdl17_q08": "gitumsim/ca:had", "sdl17_q15": "gitumsim/ca:angio",
+    "sdl17_q26": "gitumsim/ca:fl", "sdl18_q11": "gallsim/g:chron", "sdl18_q23": "gallsim/g:acalc", "trial_sdl31_q03": "gitract/dz:whip",
+    "sdl29_q16": "bowelsim/dx:intus", "sdl11_q15": "foregutsim/f:ect", "sdl11_q28": "foregutsim/f:divis",
+    "trial_sdl11_q05": "foregutsim/f:divis", "sdl19_q16": "foregutsim/f:divis", "sdl20_q05": "immlivsim/a:urso",
+    "trial_sdl20_q04": "immlivsim/a:urso", "sdl16_q07": "biliflow/jx:cn1", "sdl16_q08": "biliflow/jx:gil", "sdl16_q24": "biliflow/jx:gil"}}
 qstates = {}
 for bi, q, qcards in qrecs:
     if q.get("id"):
         QS_BLOCK[:] = [blocks[bi][0], q["id"]]
         st = qs_state(q, qcards)
+        pin = QS_PIN.get(blocks[bi][0], {}).get(q["id"])
+        if not st and pin:
+            _m, _r = pin.split("/"); _sw, _k = _r.split(":")
+            assert (_m, _sw, _k) in QS_OPT and QS_OPT[(_m, _sw, _k)]["card"] in qcards, pin
+            st = [_m, _sw, _k]
         if st:
             qstates.setdefault(str(bi), {})[q["id"]] = st
 nqs = sum(len(v) for v in qstates.values())
