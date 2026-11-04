@@ -1198,6 +1198,57 @@ button, input, select, textarea { font-family: inherit; }
   :root[data-theme="dark"] .choice.correct .letter,
   :root[data-theme="dark"] .choice.incorrect .letter { color: #15171a; }
 }
+/* Progress-save failure (shared/app.js). Best-effort writes: these never block the quiz.
+   The toast is the short "save failed" line; the nudge (once a session, after a second
+   miss) points at the hub Sync / backup panel. Fixed, so a question re-render can't drop them. */
+.save-notices {
+  position: fixed;
+  z-index: 1000;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(560px, calc(100vw - 24px));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.save-toast, .save-nudge {
+  pointer-events: auto;
+  box-sizing: border-box;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  box-shadow: var(--shadow);
+  border-radius: 10px;
+}
+.save-toast {
+  background: var(--topbar-bg);
+  color: #fff;
+  padding: 10px 14px;
+  font-weight: 600;
+}
+.save-nudge {
+  position: relative;
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+  border: 1px solid var(--amber-line);
+  padding: 10px 36px 10px 14px;
+}
+.save-nudge a { color: var(--navy); font-weight: 700; }
+.save-nudge-x {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: none;
+  border: 0;
+  color: inherit;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+@media print { .save-notices { display: none !important; } }
+
 @media (pointer: coarse), (max-width: 600px) {
   .theme-btn { min-height: 34px; min-width: 40px; }
   .hub-brand { display: inline-flex; align-items: center; min-height: 32px; }
