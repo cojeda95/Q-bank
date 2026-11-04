@@ -489,7 +489,7 @@ for ci, (cid, _, _, terms) in enumerate(rows):
 
 # The explanation's first sentence: it ends at . ! or ? followed by a space or the end, but not
 # after a lone capital ("H. pylori", "E. coli") — shared/app.js atlasLead() must match
-LEAD_END = re.compile(r"(?<!\b[A-Z])[.!?]+(?=\s|$)")
+LEAD_END = re.compile(r"(?<!\b[A-Z])[.!?]+(?=\s|$)", re.ASCII)   # ASCII \b as in app.js, where the "O" of "H₂O." is a lone capital
 
 def expl_lead(expl):
     m = LEAD_END.search(expl)
