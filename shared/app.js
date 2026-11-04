@@ -424,7 +424,8 @@ function loadProgress() {
   catch (e) { return {}; }
 }
 function saveProgress(progress) {
-  localStorage.setItem(LS_PROGRESS, JSON.stringify(progress));
+  try { localStorage.setItem(LS_PROGRESS, JSON.stringify(progress)); }
+  catch (e) { /* storage full/blocked — the score screen still shows */ }
 }
 function recordScore(key, correct, total) {
   const progress = loadProgress();
@@ -455,15 +456,159 @@ function loadAttempts() {
   try { return JSON.parse(localStorage.getItem(LS_ATTEMPTS)) || []; }
   catch (e) { return []; }
 }
+// Origins usually allow about 5MB of localStorage, shared with flags, scores and
+// snapshots. Trim the attempts payload as it nears 4–5MB, and again once the
+// list is past 80% of the cap, so setItem rarely discovers the quota mid-answer.
+const ATTEMPTS_BYTE_BUDGET = Math.floor(4.5 * 1024 * 1024);
+const ATTEMPTS_PROACTIVE_COUNT = Math.floor(MAX_ATTEMPTS_STORED * 0.8);
+// Dropped writes this page load. Two of them and we point at the hub Sync panel once.
+let attemptWriteFailures = 0;
+let attemptSyncNudgeShown = false;
+
+function isQuotaError(e) {
+  if (!e) return false;
+  const name = String(e.name || '');
+  // Chromium/Safari: QuotaExceededError (code 22). Firefox: NS_ERROR_DOM_QUOTA_REACHED (1014).
+  if (name === 'QuotaExceededError' || name === 'NS_ERROR_DOM_QUOTA_REACHED' || name === 'QUOTA_EXCEEDED_ERR') return true;
+  if (e.code === 22 || e.code === 1014) return true;
+  return /quota/i.test(String(e.message || ''));
+}
+// Newest `keep` entries. Sort by time only when something is actually dropped, so a
+// sync merge that interleaved devices still loses the oldest answers first.
+function trimAttemptsOldest(list, keep) {
+  const arr = Array.isArray(list) ? list : [];
+  const n = Math.max(0, keep | 0);
+  if (arr.length <= n) return arr.slice();
+  const sorted = arr.slice().sort((a, b) => ((a && a.ts) || 0) - ((b && b.ts) || 0));
+  return sorted.slice(sorted.length - n);
+}
+function attemptPayloadBytes(json) {
+  // Browsers charge UTF-16: two bytes per code unit, key and value both.
+  return (LS_ATTEMPTS.length + json.length) * 2;
+}
+function proactiveTrimAttempts(list) {
+  let payload = trimAttemptsOldest(list, MAX_ATTEMPTS_STORED);
+  if (payload.length > ATTEMPTS_PROACTIVE_COUNT) {
+    payload = trimAttemptsOldest(payload, ATTEMPTS_PROACTIVE_COUNT);
+  }
+  let json = JSON.stringify(payload);
+  if (attemptPayloadBytes(json) > ATTEMPTS_BYTE_BUDGET && payload.length > 1) {
+    const ratio = ATTEMPTS_BYTE_BUDGET / attemptPayloadBytes(json);
+    let keep = Math.max(1, Math.floor(payload.length * ratio * 0.9));
+    if (keep >= payload.length) keep = Math.floor(payload.length / 2);
+    payload = trimAttemptsOldest(payload, keep);
+    json = JSON.stringify(payload);
+    if (attemptPayloadBytes(json) > ATTEMPTS_BYTE_BUDGET && payload.length > 1) {
+      payload = trimAttemptsOldest(payload, Math.floor(payload.length / 2));
+    }
+  }
+  return payload;
+}
+function noteAttemptWriteFailure() {
+  try {
+    attemptWriteFailures += 1;
+    showAttemptSaveToast();
+    if (attemptWriteFailures >= 2) showAttemptSyncNudge();
+  } catch (e) { /* the answer still stands */ }
+}
+function attemptNoticeHost() {
+  if (!document.body) return null;
+  let host = document.getElementById('attemptSaveNotices');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'attemptSaveNotices';
+    host.className = 'save-notices';
+    document.body.appendChild(host);
+  }
+  return host;
+}
+function showAttemptSaveToast() {
+  const host = attemptNoticeHost();
+  if (!host) return;
+  let el = document.getElementById('attemptSaveToast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'attemptSaveToast';
+    el.className = 'save-toast';
+    el.setAttribute('role', 'status');
+    el.setAttribute('aria-live', 'polite');
+    host.prepend(el);
+  }
+  el.textContent = 'Progress save failed — free some space or use Sync backup';
+  clearTimeout(showAttemptSaveToast._t);
+  showAttemptSaveToast._t = setTimeout(() => {
+    if (el.isConnected) el.remove();
+    if (host.childElementCount === 0) host.remove();
+  }, 6000);
+}
+function showAttemptSyncNudge() {
+  if (attemptSyncNudgeShown) return;
+  const host = attemptNoticeHost();
+  if (!host) return;
+  attemptSyncNudgeShown = true;
+  const el = document.createElement('div');
+  el.id = 'attemptSyncNudge';
+  el.className = 'save-nudge';
+  el.setAttribute('role', 'status');
+  // Same panel the hub header's Sync link opens: PIN sync and the backup file.
+  el.innerHTML = 'This browser isn’t saving answers. <a href="../index.html#sync">Open Sync / backup</a> on the hub and download your progress before the store fills again. <button type="button" class="save-nudge-x" aria-label="Dismiss">×</button>';
+  host.appendChild(el);
+  const x = el.querySelector('.save-nudge-x');
+  if (x) x.addEventListener('click', () => {
+    el.remove();
+    if (host.childElementCount === 0) host.remove();
+  });
+}
 function saveAttempts(list) {
   // Cap growth so localStorage never bloats over a semester of use.
-  localStorage.setItem(LS_ATTEMPTS, JSON.stringify(list.slice(-MAX_ATTEMPTS_STORED)));
+  // Best-effort: a full or blocked store must not throw back into Confident / Guessed.
+  let payload = trimAttemptsOldest(list, MAX_ATTEMPTS_STORED);
+  try {
+    payload = proactiveTrimAttempts(payload);
+    localStorage.setItem(LS_ATTEMPTS, JSON.stringify(payload));
+    return true;
+  } catch (e) {
+    // Trim harder — half the cap, or the oldest half, whichever keeps less — and retry once.
+    let keep = Math.min(Math.floor(MAX_ATTEMPTS_STORED / 2), Math.floor(payload.length / 2));
+    if (payload.length > 0 && keep < 1) keep = 1;
+    let json;
+    try { json = JSON.stringify(trimAttemptsOldest(payload, keep)); }
+    catch (eJson) { noteAttemptWriteFailure(); return false; }
+    try {
+      if (isQuotaError(e)) {
+        // QuotaExceeded (or the same under another name): free only the attempts
+        // key, then write the shorter list. Leave flags, progress, settings and
+        // practice/exam snapshots alone.
+        const prev = localStorage.getItem(LS_ATTEMPTS);
+        try { localStorage.removeItem(LS_ATTEMPTS); } catch (eRm) {}
+        try {
+          localStorage.setItem(LS_ATTEMPTS, json);
+          return true;
+        } catch (eSet) {
+          try { if (prev != null) localStorage.setItem(LS_ATTEMPTS, prev); } catch (eBack) {}
+          noteAttemptWriteFailure();
+          return false;
+        }
+      }
+      localStorage.setItem(LS_ATTEMPTS, json);
+      return true;
+    } catch (e2) {
+      noteAttemptWriteFailure();
+      return false;
+    }
+  }
 }
 function logAttempt(rec) {
-  const list = loadAttempts();
-  list.push(rec);
-  saveAttempts(list);
-  atlasNoteAnswer(rec);
+  // Callers record the answer in memory first and re-render after. Persisting
+  // is best-effort, and a throw here must not skip that re-render.
+  try {
+    const list = loadAttempts();
+    list.push(rec);
+    saveAttempts(list);
+  } catch (e) {
+    noteAttemptWriteFailure();
+  }
+  try { atlasNoteAnswer(rec); } catch (e) {}
 }
 /* ── Why did you miss it? ─────────────────────────────────────────────
    After a wrong answer, one tap tags the miss: didn't know it, misread the question,
@@ -471,14 +616,18 @@ function logAttempt(rec) {
    it syncs with the rest of the attempt log and Analytics can show the pattern. */
 const MISS_WHY = [['know', 'Didn’t know it'], ['misread', 'Misread the question'], ['doubt', 'Second-guessed myself']];
 function tagMiss(qid, ts, why) {
-  const list = loadAttempts();
-  for (let i = list.length - 1; i >= 0; i--) {
-    if (list[i].id === qid && list[i].ts === ts) {
-      if (why) list[i].why = why; else delete list[i].why;
-      break;
+  try {
+    const list = loadAttempts();
+    for (let i = list.length - 1; i >= 0; i--) {
+      if (list[i].id === qid && list[i].ts === ts) {
+        if (why) list[i].why = why; else delete list[i].why;
+        break;
+      }
     }
+    saveAttempts(list);
+  } catch (e) {
+    noteAttemptWriteFailure();
   }
-  saveAttempts(list);
 }
 function missWhyHtml(rec) {
   if (!rec || rec.correct || !rec.ts) return '';
@@ -631,7 +780,8 @@ function loadExamSessionSnapshot() {
   catch (e) { return null; }
 }
 function clearExamSessionSnapshot() {
-  localStorage.removeItem(LS_EXAM_SESSION);
+  try { localStorage.removeItem(LS_EXAM_SESSION); }
+  catch (e) { /* storage blocked — the submitted run is already in memory */ }
 }
 
 /* ── In-progress PRACTICE session snapshot (mirrors the exam one above) ──
@@ -663,7 +813,8 @@ function loadPracticeSessionSnapshot() {
   catch (e) { return null; }
 }
 function clearPracticeSessionSnapshot() {
-  localStorage.removeItem(LS_PRACTICE_SESSION);
+  try { localStorage.removeItem(LS_PRACTICE_SESSION); }
+  catch (e) { /* storage blocked — finishing still leaves the batch */ }
 }
 // Maps a practice scoreKey (`sdl-N`, `sdl-N-b1`, `sdl-N-b2`, `sdl-N-b3`) back
 // to the batch URL segment used to reach it via #practice/<sdl>/<batch> —
@@ -3089,11 +3240,14 @@ function renderPracticeQuestion() {
     session.records[session.index] = { letter, confidence, correct, ts };
     session.pendingLetter = null;
     if (!correct) triggerWrongFlash();
-    logAttempt({
-      id: q.id, sdlNumber: session.sdlNumber, sdlTitle: findSdl(session.sdlNumber).sdl.title,
-      examNumber: session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
-      batch: q.batch, correct, confidence, mode: 'practice', ts, ...pickOf(q, letter),
-    });
+    // In memory already (session.records). Storage is best-effort — still reveal the answer.
+    try {
+      logAttempt({
+        id: q.id, sdlNumber: session.sdlNumber, sdlTitle: findSdl(session.sdlNumber).sdl.title,
+        examNumber: session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
+        batch: q.batch, correct, confidence, mode: 'practice', ts, ...pickOf(q, letter),
+      });
+    } catch (e) { /* a full store must not freeze Confident / Guessed */ }
     renderPracticeQuestion();
     if (!correct) revealWhyNot();
   }
@@ -3509,12 +3663,14 @@ function finishExamSim(timeExpired) {
   // timeMs rides along here too, purely for this device's own Pacing summary below.
   session.questions.forEach((q, i) => {
     const ans = session.answers[i];
-    logAttempt({
-      id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle,
-      examNumber: q.sourceExamNumber || session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
-      batch: q.batch, correct: ans === q.correct, confidence: null, mode: 'exam', ts: Date.now(),
-      timeMs: timeSpentMs[i] || 0, ...pickOf(q, ans),
-    });
+    try {
+      logAttempt({
+        id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle,
+        examNumber: q.sourceExamNumber || session.examNumber, objective: q.objective, objectiveLabel: q.objectiveLabel,
+        batch: q.batch, correct: ans === q.correct, confidence: null, mode: 'exam', ts: Date.now(),
+        timeMs: timeSpentMs[i] || 0, ...pickOf(q, ans),
+      });
+    } catch (e) { /* a full store must not block the results */ }
   });
 
   // Keyed by the question's actual source exam number (not just 'current'/'prior'),
@@ -3784,11 +3940,14 @@ function renderFlaggedQuestion() {
     session.records[session.index] = { letter, confidence, correct, ts };
     session.pendingLetter = null;
     if (!correct) triggerWrongFlash();
-    logAttempt({
-      id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
-      objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
-      correct, confidence, mode: 'flagged', ts, ...pickOf(q, letter),
-    });
+    // In memory already (session.records). Storage is best-effort — still reveal the answer.
+    try {
+      logAttempt({
+        id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
+        objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
+        correct, confidence, mode: 'flagged', ts, ...pickOf(q, letter),
+      });
+    } catch (e) { /* a full store must not freeze Confident / Guessed */ }
     renderFlaggedQuestion();
     if (!correct) revealWhyNot();
   }
@@ -4511,11 +4670,14 @@ function renderReviewQuestion() {
     session.records[session.index] = { letter, confidence, correct, ts };
     session.pendingLetter = null;
     if (!correct) triggerWrongFlash();
-    logAttempt({
-      id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
-      objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
-      correct, confidence, mode: 'review', ts, ...pickOf(q, letter),
-    });
+    // In memory already (session.records). Storage is best-effort — still reveal the answer.
+    try {
+      logAttempt({
+        id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle, examNumber: q.examNumber,
+        objective: q.objective, objectiveLabel: q.objectiveLabel, batch: q.batch,
+        correct, confidence, mode: 'review', ts, ...pickOf(q, letter),
+      });
+    } catch (e) { /* a full store must not freeze Confident / Guessed */ }
     renderReviewQuestion();
     if (!correct) revealWhyNot();
   }
