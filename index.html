@@ -464,6 +464,10 @@
         <div class="block-title">Gastroenterology Block</div>
         <div class="block-desc">3 exams &middot; 40 SDLs &middot; 588 questions + 124 trial</div>
       </a>
+      <a class="block-card" href="geriatrics/index.html">
+        <div class="block-title">Geriatrics Block</div>
+        <div class="block-desc">1 exam &middot; 24 SDLs &middot; coming soon</div>
+      </a>
       <a class="block-card" href="nephro/index.html">
         <div class="block-title">Nephrology/Urology/Men's Health Block</div>
         <div class="block-desc">4 exams &middot; 48 SDLs &middot; 1,122 questions + 46 trial</div>
@@ -714,7 +718,8 @@
     var ALIAS = { nephro: ['nephro', 'nephrology', 'renal', 'urology', 'uro'], psych: ['psych', 'psychiatry'], neuro: ['neuro', 'neurology'],
       endocrine: ['endo', 'endocrine', 'endocrinology'], eent: ['eent', 'ent'], pulm: ['pulm', 'pulmo', 'pulmonary', 'pulmonology'],
       ortho: ['ortho', 'orthopedics', 'orthopaedics', 'orthopedic'], rheum: ['rheum', 'rheumatology'], omm: ['omm'], research: ['research', 'biostats', 'biostatistics'],
-      gastro: ['gastro', 'gi', 'gastroenterology'] };
+      gastro: ['gastro', 'gi', 'gastroenterology'],
+      geriatrics: ['geriatrics', 'geri', 'geriatric'] };
     var BLOCKS = H.blocks.map(function (b, i) {
       var tile = document.querySelector('.block-card[href="' + b[0] + '/index.html"] .block-title');
       return { i: i, alias: ALIAS[b[0]] || [norm(b[1])], t: tile ? tile.textContent.trim() : b[1] + ' block', s: 'Open the block', h: b[0] + '/index.html' };

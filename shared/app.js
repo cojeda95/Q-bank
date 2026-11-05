@@ -18,7 +18,7 @@ const homeBtn = document.getElementById('homeBtn');
    shows and hides it) but each screen's breadcrumb does its job, so the stylesheet hides it.
    theme.js adds the ◐ toggle after this runs. */
 const BLOCK_SHORT = { nephro: 'Nephro', psych: 'Psych', neuro: 'Neuro', endocrine: 'Endocrine', eent: 'EENT', pulm: 'Pulm',
-  ortho: 'Ortho', rheum: 'Rheum', omm: 'OMM', gi: 'GI', gastro: 'Gastro' };
+  ortho: 'Ortho', rheum: 'Rheum', omm: 'OMM', gi: 'GI', gastro: 'Gastro', geriatrics: 'Geri' };
 (function hubHeader() {
   const bar = document.querySelector('.topbar-inner');
   if (!bar) return;
