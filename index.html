@@ -321,6 +321,43 @@
     .qs-card { padding: 16px; border-radius: 14px; }
   }
 </style>
+<style>
+  /* m68 declutter: quieter home page */
+  .bm.unsaved, .bm.savebtn.quiet { display: none; }
+  .col-main .blocks { padding: 0; }
+  .col-main .block-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .block-card { padding: 12px 14px; }
+  #tileNew #newDesc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  #tileNew .nw + .nw { margin-top: 0; }
+  #tileNew .nw { display: inline; }
+  #tileNew .nw + .nw::before { content: " · "; }
+  .systems { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 8px; }
+  .sys-main { padding: 8px 12px; flex-direction: row; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 8px; }
+  .sys-main b { font-size: 0.9rem; }
+  .sys-main span { font-size: 0.76rem; white-space: nowrap; }
+  .sys-x { margin: -4px 12px 8px; font-size: 0.76rem; }
+  .today { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 640px) { .today { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    .pk-sketch { display: none; }
+    .pk-title { font-size: 1.25rem; }
+    .col-main .block-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .block-card { padding: 10px 12px; }
+    .block-card { min-width: 0; }
+    .block-card .block-title { font-size: 0.9rem; overflow-wrap: anywhere; }
+    .block-card .block-desc { font-size: 0.76rem; }
+    .settings-hint { display: none; }
+  }
+  .settings-box { margin-top: 8px; margin-bottom: 16px; }
+  .settings-box > summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 14px 18px; border: 1px solid var(--grey-border); border-radius: 12px; background: var(--card-bg); }
+  .settings-box > summary::-webkit-details-marker { display: none; }
+  .settings-box > summary::after { content: "Show ▾"; margin-left: auto; font-size: 0.85rem; font-weight: 600; color: var(--navy); }
+  .settings-box[open] > summary::after { content: "Hide ▴"; }
+  .settings-box > summary:hover { background: var(--surface-hover); }
+  .settings-box > summary:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+  .settings-sum { font-weight: 700; font-size: 1.05rem; color: var(--text); }
+  .settings-hint { font-size: 0.85rem; color: var(--grey-text); }
+</style>
 <link rel="stylesheet" href="shared/theme.css">
 <script src="shared/theme.js"></script>
 </head>
@@ -332,8 +369,7 @@
       <a href="#blocks">Blocks</a>
       <a href="#qsearch" id="navQs">Search questions</a>
       <a href="live.html">Live Session</a>
-      <a href="#sync" id="navSync">Sync</a>
-      <a href="#offline">Offline</a>
+      <a href="#settings" id="navSync">Sync &amp; offline</a>
     </nav>
   </div></header>
 
@@ -384,15 +420,68 @@
       <section class="side-card due-card" id="dueCard" aria-labelledby="dueTitle" hidden>
         <span class="kicker">Questions due</span>
         <span class="side-title" id="dueTitle"></span>
-        <span class="side-desc">Questions you missed come back after 1 day, then 3 days, until you get them right twice in a row.</span>
+        <span class="side-desc">Missed questions come back after 1 day, then 3, until you get them right twice in a row.</span>
         <ul class="due-list" id="dueList"></ul>
       </section>
       <section class="side-card due-card weak-card" id="weakCard" aria-labelledby="weakTitle" hidden>
         <span class="kicker">Weak spots</span>
         <span class="side-title" id="weakTitle">Your weakest objectives across every block</span>
-        <span class="side-desc">Your latest answer to each question, once you have answered 3 in an objective — under 80% right, weakest first. This device only. Each opens that objective’s questions.</span>
+        <span class="side-desc">Objectives under 80% right (3+ answered), weakest first. This device only.</span>
         <ul class="due-list" id="weakList"></ul>
       </section>
+    <section class="blocks" id="blocks" aria-labelledby="blocksH">
+      <h2 id="blocksH">Practice by block</h2>
+      <div class="block-grid">
+        <a class="block-card" href="gastro/index.html">
+          <div class="block-title">Gastroenterology Block</div>
+          <div class="block-desc">3 exams &middot; 40 SDLs &middot; 588 questions + 124 trial</div>
+        </a>
+        <a class="block-card" href="geriatrics/index.html">
+          <div class="block-title">Geriatrics Block</div>
+          <div class="block-desc">1 exam &middot; 24 SDLs &middot; coming soon</div>
+        </a>
+        <a class="block-card" href="nephro/index.html">
+          <div class="block-title">Nephrology/Urology/Men's Health Block</div>
+          <div class="block-desc">4 exams &middot; 48 SDLs &middot; 1,122 questions + 46 trial</div>
+        </a>
+        <a class="block-card" href="psych/index.html">
+          <div class="block-title">Psychiatry Block</div>
+          <div class="block-desc">4 exams &middot; 42 SDLs &middot; 1,356 questions</div>
+        </a>
+        <a class="block-card" href="neuro/index.html">
+          <div class="block-title">Neuro Block</div>
+          <div class="block-desc">36 SDLs &middot; 1,100+ questions (incl. Bloom Batch trial)</div>
+        </a>
+        <a class="block-card" href="endocrine/index.html">
+          <div class="block-title">Endocrine Block</div>
+          <div class="block-desc">29 SDLs across 2 exams &middot; 660 questions</div>
+        </a>
+        <a class="block-card" href="eent/index.html">
+          <div class="block-title">EENT Block</div>
+          <div class="block-desc">18 SDLs &middot; 450 questions</div>
+        </a>
+        <a class="block-card" href="pulm/index.html">
+          <div class="block-title">Pulmonology Block</div>
+          <div class="block-desc">38 SDLs across 2 exams &middot; 1,019 questions</div>
+        </a>
+        <a class="block-card" href="ortho/index.html">
+          <div class="block-title">Orthopedics Block</div>
+          <div class="block-desc">19 SDLs &middot; 636 questions</div>
+        </a>
+        <a class="block-card" href="rheum/index.html">
+          <div class="block-title">Rheumatology Block</div>
+          <div class="block-desc">22 SDLs &middot; 534 questions</div>
+        </a>
+        <a class="block-card" href="omm/index.html">
+          <div class="block-title">OMM III Written Midterm</div>
+          <div class="block-desc">22 SDLs &middot; 594 questions</div>
+        </a>
+        <a class="block-card" href="research/index.html">
+          <div class="block-title">Research Midterm</div>
+          <div class="block-desc">5 SDLs &middot; 50 questions</div>
+        </a>
+      </div>
+    </section>
       <section aria-labelledby="todayH">
         <h2 id="todayH">Today in the atlas</h2>
         <div class="today">
@@ -435,16 +524,16 @@
     </div>
 
     <aside class="col-side" aria-label="Announcements and your study">
-      <section class="news" aria-labelledby="newsH">
-        <div class="news-head"><h2 id="newsH">Announcements</h2></div>
-        <div id="newsList"></div>
-      </section>
       <a class="side-card continue-card" id="continueCard" href="#" hidden>
         <span class="kicker">Continue questions</span>
         <span class="side-title" id="continueTitle"></span>
         <span class="side-desc" id="continueDesc"></span>
         <span class="side-go">Resume →</span>
       </a>
+      <section class="news" aria-labelledby="newsH">
+        <div class="news-head"><h2 id="newsH">Announcements</h2></div>
+        <div id="newsList"></div>
+      </section>
       <details class="side-card countdown-card" id="countdownCard">
         <summary>
           <span class="kicker">Exam countdown</span>
@@ -457,61 +546,10 @@
     </aside>
   </main>
 
-  <section class="wrap blocks" id="blocks" aria-labelledby="blocksH">
-    <h2 id="blocksH">Practice by block</h2>
-    <div class="block-grid">
-      <a class="block-card" href="gastro/index.html">
-        <div class="block-title">Gastroenterology Block</div>
-        <div class="block-desc">3 exams &middot; 40 SDLs &middot; 588 questions + 124 trial</div>
-      </a>
-      <a class="block-card" href="geriatrics/index.html">
-        <div class="block-title">Geriatrics Block</div>
-        <div class="block-desc">1 exam &middot; 24 SDLs &middot; coming soon</div>
-      </a>
-      <a class="block-card" href="nephro/index.html">
-        <div class="block-title">Nephrology/Urology/Men's Health Block</div>
-        <div class="block-desc">4 exams &middot; 48 SDLs &middot; 1,122 questions + 46 trial</div>
-      </a>
-      <a class="block-card" href="psych/index.html">
-        <div class="block-title">Psychiatry Block</div>
-        <div class="block-desc">4 exams &middot; 42 SDLs &middot; 1,356 questions</div>
-      </a>
-      <a class="block-card" href="neuro/index.html">
-        <div class="block-title">Neuro Block</div>
-        <div class="block-desc">36 SDLs &middot; 1,100+ questions (incl. Bloom Batch trial) &middot; per-SDL practice, flagged review, analytics, and custom/full exam simulation</div>
-      </a>
-      <a class="block-card" href="endocrine/index.html">
-        <div class="block-title">Endocrine Block</div>
-        <div class="block-desc">29 SDLs across 2 exams &middot; 660 questions</div>
-      </a>
-      <a class="block-card" href="eent/index.html">
-        <div class="block-title">EENT Block</div>
-        <div class="block-desc">18 SDLs &middot; 450 questions</div>
-      </a>
-      <a class="block-card" href="pulm/index.html">
-        <div class="block-title">Pulmonology Block</div>
-        <div class="block-desc">38 SDLs across 2 exams &middot; 1,019 questions</div>
-      </a>
-      <a class="block-card" href="ortho/index.html">
-        <div class="block-title">Orthopedics Block</div>
-        <div class="block-desc">19 SDLs &middot; 636 questions</div>
-      </a>
-      <a class="block-card" href="rheum/index.html">
-        <div class="block-title">Rheumatology Block</div>
-        <div class="block-desc">22 SDLs &middot; 534 questions</div>
-      </a>
-      <a class="block-card" href="omm/index.html">
-        <div class="block-title">OMM III Written Midterm</div>
-        <div class="block-desc">22 SDLs &middot; 594 questions</div>
-      </a>
-      <a class="block-card" href="research/index.html">
-        <div class="block-title">Research Midterm</div>
-        <div class="block-desc">5 SDLs &middot; 50 questions</div>
-      </a>
-    </div>
-  </section>
 
-  <section class="wrap settings" aria-label="Sync and offline">
+  <details class="wrap settings-box" id="settings">
+  <summary><span class="settings-sum">Sync, backup &amp; offline</span><span class="settings-hint">Link devices with a PIN, back up your progress, save everything for offline</span></summary>
+  <section class="settings" aria-label="Sync and offline">
     <div id="sync">
       <h2>Sync across devices</h2>
       <div id="syncSection"></div>
@@ -529,7 +567,8 @@
       </div>
     </div>
   </section>
-  <div class="footer">Client-side only &mdash; each block's progress and flags are stored separately in your browser, optionally synced across devices with a sync PIN. Works offline: the hub, the Lesion Atlas and any block you have opened once are saved on this device &mdash; or save them all at once with <i>Save all</i> above.</div>
+  </details>
+  <div class="footer">Your progress stays in this browser unless you sync it with a PIN. Anything you have opened once works offline.</div>
 <script src="announcements.js"></script>
 <script src="resources/atlas-home.js"></script>
 <script>
@@ -1172,12 +1211,25 @@
         (a.pinned ? '<span class="ann-tag pin">Pinned</span>' : '') + (a.tag ? '<span class="ann-tag">' + esc(a.tag) + '</span>' : '') +
         (a.date ? '<span class="ann-date">' + esc(a.date) + '</span>' : '') + '</div><p>' + a.text + '</p></article>';
     }
-    var SHOW = 3;
+    var SHOW = 1;
     root.innerHTML = list.slice(0, SHOW).map(item).join('') +
       (list.length > SHOW ? '<details class="older"><summary>Show ' + (list.length - SHOW) + ' older</summary>' + list.slice(SHOW).map(item).join('') + '</details>' : '');
   })();
 </script>
 <script src="sync.js"></script>
+<script>
+  /* m68: Sync, backup & offline is one panel, closed by default; #settings, #sync and #offline open it */
+  (function () {
+    var box = document.getElementById('settings'); if (!box) return;
+    function go() {
+      var h = location.hash; if (!/^#(settings|sync|offline)$/.test(h)) return;
+      box.open = true; var t = document.getElementById(h.slice(1));
+      if (t) setTimeout(function () { t.scrollIntoView({ block: 'start' }); }, 0);
+    }
+    window.addEventListener('hashchange', go); go();
+    document.getElementById('navSync').addEventListener('click', function () { box.open = true; });
+  })();
+</script>
 <script>
   /* the header's Sync link shows your sync PIN once you have one (sync.js) */
   (function () {
@@ -1436,7 +1488,7 @@
         el.addEventListener('click', go);
         el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') go(e); });
       }
-      el._files = files; el.textContent = label;
+      el._files = files; el.textContent = label; el.classList.toggle('quiet', label === 'Save offline');
       el.title = label === 'Update' ? 'Download the newer version of this block to this device' : 'Save just this block on this device so it works without signal';
     }
     /* fetch and save `urls`; a block's q/manifest.js brings the question parts it names, saved before it */
@@ -1477,7 +1529,7 @@
             res.push([j[0], st]);
             chip(j[0], 'off', st.saved ? (st.newer ? 'newer' : 'saved') : 'unsaved',
               st.saved ? (st.newer ? '↻ Newer version online' : '✓ Saved offline') : 'Not saved offline',
-              st.newer ? 'The copy saved on this device is older than the one online — Save again (Use Offline, below) to update it' : '');
+              st.newer ? 'The copy saved on this device is older than the one online — Save again (Sync & offline, below) to update it' : '');
             // its question parts come from the manifest it saves (an update can rename them all)
             saveBtn(j[0], j[1].filter(function (u) { return !QPART.test(u); }), !st.saved || st.newer, st.newer ? 'Update' : 'Save offline');
           });
