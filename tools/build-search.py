@@ -34,7 +34,8 @@ SNIP = 72           # snippet length (characters of the stem)
 DROP_DF = 0.25      # words in more than this share of questions are not indexed
 
 SHORT = {"psych": "Psych", "neuro": "Neuro", "endocrine": "Endocrine", "eent": "EENT", "pulm": "Pulm",
-         "ortho": "Ortho", "rheum": "Rheum", "nephro": "Nephro", "gastro": "Gastro", "omm": "OMM", "research": "Research"}
+         "ortho": "Ortho", "rheum": "Rheum", "nephro": "Nephro", "gastro": "Gastro", "omm": "OMM", "research": "Research",
+         "geriatrics": "Geri"}
 STOP = set("""a an the and or nor but of to in on at by for with from into onto over under as is are was were be been being
 am it its this that these those which who whom whose what when where why how than then so such not no do does did has have
 had having he she his her him they them their there here we our you your i me my can could would should will shall may might
