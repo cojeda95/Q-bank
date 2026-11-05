@@ -662,7 +662,9 @@ def test_block(C, block, BQ, QS):
           for(const e of DATA.exams) for(const s of e.sdls) if(s.questions.length) return {sdl:s.sdlNumber, exam:e.examNumber, target:null};
           return null; })(%s)""" % json.dumps(state_ids))
         if not pick:
-            record(S, "practice", False, "no SDL with questions"); return
+            # a block shell with no questions yet (e.g. geriatrics, "coming soon" on the hub) has nothing to practice
+            empty = p.js("DATA.exams.every(e=>e.sdls.every(s=>!s.questions.length))")
+            record(S, "practice", bool(empty), "block has no questions yet (coming soon): skipped" if empty else "no SDL with questions"); return
         sdl, exam, target = pick["sdl"], pick["exam"], pick["target"]
 
         stepname = "practice"

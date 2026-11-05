@@ -5878,6 +5878,14 @@ centralcord:{n:"Central cord syndrome",k:"dz",p:"cordlesion",enz:"Central gray m
  src:["Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement","Moore ch 2 — Back"],
  tx:["—"],q:["central cord syndrome","central cervical cord syndrome"]},
 
+sacralsparing:{n:"Sacral sparing",alias:"Incomplete vs complete cord lesion",k:"dz",p:"cordlesion",enz:"Outermost (sacral) fibers of the cord",inh:"Spinal cord injury",fa:"521",
+ mech:"Sacral sparing is preserved sensation or movement in the lowest, sacral segments below a cord injury, such as pinprick felt on the perianal skin. The Neuro Atlas classifies a lesion as incomplete once function returns; with no return of function by 24+ hours and no sacral sparing the lesion is complete, and useful neurologic recovery is unlikely. In the lateral corticospinal tract the leg fibers run laterally, so these outermost fibers can survive a lesion of the cord's center.",
+ find:["Perianal pinprick sensation or voluntary anal sphincter contraction preserved below the injury"],
+ labs:["—"],
+ buzz:["Sacral sparing = incomplete cord lesion"],
+ src:["OCOM Neuro — Neuro Atlas textbook ch 11 (spinal cord)","Fundamental Neuroscience ch 25 — Motor System II: Corticofugal Systems and the Control of Movement"],
+ tx:["—"],q:["sacral sparing","incomplete spinal cord injury","incomplete cord lesion"]},
+
 caudaequina:{n:"Cauda equina syndrome",k:"dz",p:"periph",enz:"Lumbosacral nerve roots below the conus (L1–L2)",inh:"Large central disc herniation, tumor, abscess",fa:"520",hi:1,
  mech:"The cord ends at L1–L2 (conus medullaris); below it the lumbar and sacral roots hang free as the cauda equina. Compressing them is a lower motor neuron and root injury — flaccid, areflexic, with root-pattern numbness — and loss of S2–S4 takes the bladder, bowel and saddle sensation.",
  find:["Saddle/perianal anesthesia, bladder and bowel dysfunction","Radicular low back pain; asymmetric flaccid (LMN) leg weakness","Absent ankle reflexes","Conus medullaris syndrome instead: symmetric leg weakness with UMN signs"],
@@ -22629,7 +22637,7 @@ MAPS.spine = {
   {id:"lpfried",l:"Spinocerebellar + dorsal columns + CST",x:2040,y:880,p:"cordlesion",s:"ataxia with areflexia and Babinski",m:["friedreich","vitedef"]},
   {id:"lpals",l:"Corticospinal + anterior horn",x:2780,y:880,p:"cordlesion",s:"upper and lower motor neuron, sensation spared",m:["als"]},
   {id:"lpahorn",l:"Anterior horn alone",x:560,y:1060,p:"cordlesion",s:"pure lower motor neuron",m:["polio","sma"]},
-  {id:"lpcenter",l:"Center of the cord",x:1300,y:1060,p:"cordlesion",s:"crossing pain fibers · medial arm fibers",m:["syringomyelia","centralcord"]},
+  {id:"lpcenter",l:"Center of the cord",x:1300,y:1060,p:"cordlesion",s:"crossing pain fibers · medial arm fibers · sacral sparing",m:["syringomyelia","centralcord","sacralsparing"]},
   {id:"lphemi",l:"One half of the cord",x:2040,y:1060,p:"cordlesion",s:"same-side motor and position · opposite-side pain",m:["brownsequard"]},
   {id:"lpant",l:"Anterior two-thirds",x:2780,y:1060,p:"cordlesion",s:"everything but the dorsal columns",m:["asa"]},
   {id:"lpcauda",l:"Roots below the conus",x:560,y:1240,p:"periph",s:"cauda equina — L2 and below",m:["caudaequina"]},
