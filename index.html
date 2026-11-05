@@ -356,6 +356,37 @@
   .due-more > summary { cursor: pointer; width: max-content; max-width: 100%; font-size: 0.85rem; font-weight: 600; color: var(--navy); padding: 4px 0; min-height: 24px; }
   .due-more > summary:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; border-radius: 4px; }
   .due-more[open] > summary { margin-bottom: 6px; }
+  /* m69 Sam mode: everything but the one big button is hidden */
+  body.sam-on > *:not(.topbar):not(#sam):not(script) { display: none !important; }
+  body.sam-on .mainnav { display: none; }
+  .sam { max-width: 900px; margin: 0 auto; padding: 32px 20px 48px; display: flex; flex-direction: column; gap: 28px; }
+  .sam[hidden] { display: none; }
+  .sam-go { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 58vh; padding: 32px 24px;
+    border-radius: 28px; background: var(--navy-fill); color: #fff; text-decoration: none; text-align: center; box-shadow: var(--shadow); }
+  .sam-go:hover { filter: brightness(1.08); }
+  .sam-go:focus-visible { outline: 5px solid var(--amber-line); outline-offset: 5px; }
+  .sam-go-t { font-family: var(--serif); font-size: clamp(2.6rem, 9vw, 5rem); font-weight: 700; line-height: 1.1; }
+  .sam-go-b { font-size: clamp(1.3rem, 4.5vw, 2rem); font-weight: 600; opacity: 0.92; }
+  .sam-more { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .sam-link { min-height: 60px; padding: 0 28px; border: 2px solid var(--grey-border); border-radius: 16px; background: var(--card-bg); color: var(--text);
+    font: inherit; font-size: 1.4rem; font-weight: 600; cursor: pointer; }
+  .sam-link:hover { background: var(--surface-hover); }
+  .sam-link:focus-visible { outline: 4px solid var(--navy); outline-offset: 3px; }
+  .sam-exit { font-size: 1.15rem; color: var(--grey-text); }
+  .sam-list { width: 100%; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .sam-list[hidden] { display: none; }
+  .sam-list a { display: flex; align-items: center; min-height: 72px; padding: 12px 20px; border: 2px solid var(--grey-border); border-radius: 16px;
+    background: var(--card-bg); color: var(--text); text-decoration: none; font-size: 1.35rem; font-weight: 600; }
+  .sam-list a:hover { border-color: var(--navy); background: var(--surface-hover); }
+  .sam-list a:focus-visible { outline: 4px solid var(--navy); outline-offset: 3px; }
+  .sam-h { margin-top: 22px; }
+  .sam-switch { flex: none; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px 0 6px; border: 2px solid var(--grey-border);
+    border-radius: 999px; background: var(--card-bg); color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
+  .sam-knob { width: 44px; height: 26px; border-radius: 999px; background: var(--grey-border); position: relative; transition: background 0.15s; }
+  .sam-knob::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left 0.15s; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+  .sam-switch[aria-checked="true"] .sam-knob { background: var(--navy-fill); }
+  .sam-switch[aria-checked="true"] .sam-knob::after { left: 21px; }
+  .sam-switch:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
   .settings-box { margin-top: 8px; margin-bottom: 16px; }
   .settings-box > summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 14px 18px; border: 1px solid var(--grey-border); border-radius: 12px; background: var(--card-bg); }
   .settings-box > summary::-webkit-details-marker { display: none; }
@@ -377,9 +408,23 @@
       <a href="#blocks">Blocks</a>
       <a href="#qsearch" id="navQs">Search questions</a>
       <a href="live.html">Live Session</a>
-      <a href="#settings" id="navSync">Sync &amp; offline</a>
+      <a href="#settings" id="navSync">Settings</a>
     </nav>
   </div></header>
+
+  <!-- m69 Sam mode: one giant button to your current block's questions ('qhub-sam' on this device; #sam turns it on) -->
+  <section class="sam" id="sam" aria-labelledby="samH" hidden>
+    <h1 class="sr" id="samH">Sam mode</h1>
+    <a class="sam-go" id="samGo" href="#">
+      <span class="sam-go-t" id="samGoT">Start questions</span>
+      <span class="sam-go-b" id="samGoB"></span>
+    </a>
+    <div class="sam-more">
+      <button type="button" class="sam-link" id="samPick" aria-expanded="false" aria-controls="samList">Pick a different block</button>
+      <div class="sam-list" id="samList" hidden></div>
+      <button type="button" class="sam-link sam-exit" id="samExit">Leave Sam mode</button>
+    </div>
+  </section>
 
   <section class="hero" aria-labelledby="askH">
     <div class="hero-in">
@@ -558,7 +603,7 @@
 
 
   <details class="wrap settings-box" id="settings">
-  <summary><span class="settings-sum">Sync, backup &amp; offline</span><span class="settings-hint">Link devices with a PIN, back up your progress, save everything for offline</span></summary>
+  <summary><span class="settings-sum">Settings</span><span class="settings-hint">Sync with a PIN, back up your progress, save for offline, Sam mode</span></summary>
   <section class="settings" aria-label="Sync and offline">
     <div id="sync">
       <h2>Sync across devices</h2>
@@ -574,6 +619,14 @@
           <div class="offline-bar" id="offlineBar" hidden><span id="offlineFill"></span></div>
         </div>
         <button class="offline-btn" id="offlineBtn" type="button">Save all</button>
+      </div>
+      <h2 class="sam-h">Sam mode</h2>
+      <div class="offline-card sam-card">
+        <div class="offline-text">
+          <div class="block-title" id="samSwL">Big-button home page</div>
+          <div class="block-desc" id="samSwD">Off by default. When it’s on, this device’s home page is just one huge button back to the block you were last working in, with large text and nothing else.</div>
+        </div>
+        <button type="button" class="sam-switch" id="samSwitch" role="switch" aria-checked="false" aria-labelledby="samSwL" aria-describedby="samSwD"><span class="sam-knob"></span><span class="sam-state">Off</span></button>
       </div>
     </div>
   </section>
@@ -1227,6 +1280,58 @@
   })();
 </script>
 <script src="sync.js"></script>
+<script>
+  /* m69 Sam mode (off by default; the switch under Settings, or index.html#sam): one giant button. It goes back to the last place you were in a block ('qhub-last', as the
+     Continue card), else to the first block on the list. On for this device ('qhub-sam') until "Leave Sam mode";
+     index.html#sam turns it on (bookmark it). */
+  (function () {
+    var box = document.getElementById('sam'); if (!box) return;
+    var KEY = 'qhub-sam';
+    function get() { try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; } }
+    function put(on) { try { if (on) localStorage.setItem(KEY, '1'); else localStorage.removeItem(KEY); } catch (e) {} }
+    function blocks() {   // real blocks only: a "coming soon" shell has no questions to open
+      return [].slice.call(document.querySelectorAll('.block-grid a.block-card[href$="/index.html"]')).filter(function (a) {
+        return !/coming soon/i.test(a.textContent); });
+    }
+    function title(a) { var t = a.querySelector('.block-title'); return t ? t.textContent.replace(/^\W+\s*/, '').trim() : a.getAttribute('href'); }
+    function fill() {
+      var list = blocks(), L = null, go = document.getElementById('samGo');
+      try { L = JSON.parse(localStorage.getItem('qhub-last') || 'null'); } catch (e) { L = null; }
+      var last = L && L.dir && /^[a-z0-9_-]+$/i.test(L.dir) && typeof L.hash === 'string' && /^#[\w\-\/%.]*$/.test(L.hash) &&
+        list.filter(function (a) { return a.getAttribute('href') === L.dir + '/index.html'; })[0];
+      if (last) {
+        go.href = L.dir + '/index.html' + L.hash;
+        document.getElementById('samGoT').textContent = 'Keep going';
+        document.getElementById('samGoB').textContent = title(last);
+      } else if (list[0]) {
+        go.href = list[0].getAttribute('href');
+        document.getElementById('samGoT').textContent = 'Start questions';
+        document.getElementById('samGoB').textContent = title(list[0]);
+      }
+      go.setAttribute('aria-label', document.getElementById('samGoT').textContent + ': ' + document.getElementById('samGoB').textContent);
+      document.getElementById('samList').innerHTML = list.map(function (a) {
+        return '<a href="' + a.getAttribute('href') + '">' + title(a).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</a>'; }).join('');
+    }
+    var sw = document.getElementById('samSwitch');
+    function show(on) {
+      document.body.classList.toggle('sam-on', on); box.hidden = !on;
+      if (sw) { sw.setAttribute('aria-checked', String(on)); sw.querySelector('.sam-state').textContent = on ? 'On' : 'Off'; }
+      if (on) { fill(); window.scrollTo(0, 0); }
+    }
+    if (sw) sw.addEventListener('click', function () { var on = sw.getAttribute('aria-checked') !== 'true'; put(on); show(on); });
+    document.getElementById('samPick').addEventListener('click', function () {
+      var l = document.getElementById('samList'), open = l.hidden; l.hidden = !open; this.setAttribute('aria-expanded', String(open));
+    });
+    document.getElementById('samExit').addEventListener('click', function () {
+      put(false); if (location.hash === '#sam') history.replaceState(null, '', location.pathname + location.search); show(false);
+    });
+    function fromHash() { if (location.hash === '#sam') { put(true); show(true); } }
+    window.addEventListener('hashchange', fromHash);
+    window.addEventListener('pageshow', function () { if (get()) show(true); });
+    if (location.hash === '#sam') put(true);
+    show(get());
+  })();
+</script>
 <script>
   /* m68: Sync, backup & offline is one panel, closed by default; #settings, #sync and #offline open it */
   (function () {

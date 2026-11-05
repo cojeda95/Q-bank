@@ -864,6 +864,37 @@ def test_weakspots(C):
     record(S, "total", True, "", time.time() - t0)
 
 
+def test_sam(C):
+    """m69: Sam mode — off by default; its switch under Settings (or index.html#sam) shows only the one big button (to the first block with questions; to the last
+    place in a block once 'qhub-last' is set); "Leave Sam mode" brings the full home page back. Isolated context, so
+    the other hub tests never see the mode on."""
+    S, t0 = "hub", time.time()
+    p = C.page(isolated=True)
+    try:
+        p.goto(C.server.base + "index.html")
+        off = p.wait("(()=>{ const w=document.getElementById('samSwitch'); return w ? {on:document.body.classList.contains('sam-on'), checked:w.getAttribute('aria-checked')} : null; })()", timeout=15)
+        record(S, "Sam mode: off by default", not off["on"] and off["checked"] == "false", str(off))
+        p.js("__T.click('#samSwitch')")
+        r = p.wait("""(()=>{ const g=document.getElementById('samGo'); return document.body.classList.contains('sam-on') && g && g.getAttribute('href')!=='#'
+          ? {href:g.getAttribute('href'), t:document.getElementById('samGoT').textContent, heroShown:getComputedStyle(document.querySelector('.hero')).display!=='none',
+             blocks:document.querySelectorAll('#samList a').length, h:Math.round(g.getBoundingClientRect().height)} : null; })()""", timeout=15)
+        record(S, "Sam mode: one big button, the rest hidden", r["href"].endswith("/index.html") and not r["heroShown"] and r["h"] >= 200,
+               "%s · %s · %d px tall" % (r["t"], r["href"], r["h"]))
+        p.js("localStorage.setItem('qhub-last', JSON.stringify({dir:'pulm', title:'Pulmonology Block', hash:'#practice/1/all', label:'x', at:Date.now()})); location.reload(); 1")
+        r2 = p.wait("(()=>{ const g=document.getElementById('samGo'); return g && /pulm\\/index\\.html#practice/.test(g.getAttribute('href')) ? document.getElementById('samGoT').textContent : null; })()", timeout=15)
+        record(S, "Sam mode: the button resumes the last block", r2 == "Keep going", str(r2))
+        a11y_checks(C, p, S, "sam", ring=False)
+        p.js("__T.click('#samExit')")
+        r3 = p.wait("(()=>!document.body.classList.contains('sam-on') && localStorage.getItem('qhub-sam')===null && getComputedStyle(document.querySelector('.hero')).display!=='none')()", timeout=10)
+        record(S, "Sam mode: Leave Sam mode shows the full page", bool(r3), "")
+        errs = p.take_errors(); record(S, "Sam mode: no console errors", not errs, fmt_errs(errs))
+    except Exception as e:
+        record(S, "Sam mode run", False, "%s" % e)
+        if VERBOSE: traceback.print_exc()
+    finally:
+        p.close()
+
+
 def test_split(C):
     """m66: a block page loads q/manifest.js and its question parts on demand. With every part held back by the server
     (?hold=<token>, a fresh browser context so no service worker has them): the block home and an SDL list draw, and an
@@ -1350,6 +1381,7 @@ def main():
             if "hub" in only:
                 futs[ex.submit(test_hub, C)] = ("hub", None)
                 futs[ex.submit(test_qsearch, C)] = ("hub", None)
+                futs[ex.submit(test_sam, C)] = ("hub", None)
             if "features" in only: futs[ex.submit(test_features, C, A)] = ("features", None)
             if "blocks" in only:
                 for b in blocks: futs[ex.submit(test_block, C, b, BQ, QS)] = ("block", b)
