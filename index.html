@@ -359,26 +359,63 @@
   /* m69 Sam mode: everything but the one big button is hidden */
   body.sam-on > *:not(.topbar):not(#sam):not(script) { display: none !important; }
   body.sam-on .mainnav { display: none; }
-  .sam { max-width: 900px; margin: 0 auto; padding: 32px 20px 48px; display: flex; flex-direction: column; gap: 28px; }
+  html:has(body.sam-on), body.sam-on { background: #008080; min-height: 100vh; }
+  body.sam-on .topbar { display: none; }
+  .sam { max-width: 980px; margin: 0 auto; padding: 18px 12px 28px; }
   .sam[hidden] { display: none; }
-  .sam-go { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 58vh; padding: 32px 24px;
-    border-radius: 28px; background: var(--navy-fill); color: #fff; text-decoration: none; text-align: center; box-shadow: var(--shadow); }
-  .sam-go:hover { filter: brightness(1.08); }
-  .sam-go:focus-visible { outline: 5px solid var(--amber-line); outline-offset: 5px; }
-  .sam-go-t { font-family: var(--serif); font-size: clamp(2.6rem, 9vw, 5rem); font-weight: 700; line-height: 1.1; }
-  .sam-go-b { font-size: clamp(1.3rem, 4.5vw, 2rem); font-weight: 600; opacity: 0.92; }
-  .sam-more { display: flex; flex-direction: column; align-items: center; gap: 18px; }
-  .sam-link { min-height: 60px; padding: 0 28px; border: 2px solid var(--grey-border); border-radius: 16px; background: var(--card-bg); color: var(--text);
-    font: inherit; font-size: 1.4rem; font-weight: 600; cursor: pointer; }
-  .sam-link:hover { background: var(--surface-hover); }
-  .sam-link:focus-visible { outline: 4px solid var(--navy); outline-offset: 3px; }
-  .sam-exit { font-size: 1.15rem; color: var(--grey-text); }
-  .sam-list { width: 100%; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .r-win { background: #c0c0c0; color: #000; padding: 3px; border: 2px solid; border-color: #fff #404040 #404040 #fff;
+    box-shadow: inset -1px -1px #808080, inset 1px 1px #dfdfdf, 4px 4px 0 rgba(0,0,0,0.35); font-family: Tahoma, "MS Sans Serif", Verdana, Geneva, sans-serif; font-size: 15px; }
+  .r-title { display: flex; align-items: center; gap: 6px; padding: 4px 4px 4px 6px; background: linear-gradient(90deg, #000080, #1084d0); color: #fff; font-weight: 700; }
+  .r-ico { width: 16px; height: 16px; background: radial-gradient(circle at 35% 35%, #9cf, #06c 70%); border-radius: 50%; flex: none; }
+  .r-title-t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .r-ctl { display: flex; gap: 2px; }
+  .r-ctl span { width: 20px; height: 18px; display: grid; place-items: center; background: #c0c0c0; color: #000; font-size: 12px; line-height: 1;
+    border: 1px solid; border-color: #fff #404040 #404040 #fff; }
+  .r-menu, .r-tools, .r-addr { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 14px; padding: 4px 8px; border-bottom: 1px solid #808080; box-shadow: 0 1px #fff; }
+  .r-tools span { display: inline-flex; gap: 5px; align-items: center; color: #444; }
+  .r-tools b { color: #1a6b1a; font-size: 13px; }
+  .r-sep { width: 1px; height: 22px; background: #808080; box-shadow: 1px 0 #fff; }
+  .r-addr { flex-wrap: nowrap; gap: 8px; }
+  .r-addr-box { flex: 1; min-width: 0; background: #fff; padding: 3px 6px; border: 2px solid; border-color: #808080 #fff #fff #808080; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+  .r-addr-go { white-space: nowrap; }
+  .r-page { background: #fff; margin: 4px 2px; padding: 18px 18px 22px; border: 2px solid; border-color: #808080 #fff #fff #808080;
+    font-family: "Times New Roman", Times, serif; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .r-marq { width: 100%; overflow: hidden; white-space: nowrap; background: #ffffcc; border: 1px dashed #c00; color: #c00; font: 700 20px "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive; padding: 4px 0; }
+  .r-marq span { display: inline-block; padding-left: 100%; animation: r-marq 16s linear infinite; }
+  @keyframes r-marq { to { transform: translateX(-100%); } }
+  @media (prefers-reduced-motion: reduce) { .r-marq span { animation: none; padding-left: 0; } }
+  .sam-go { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 46vh; padding: 28px 20px;
+    background: #c0c0c0; color: #000; text-decoration: none; text-align: center; border: 4px solid; border-color: #fff #404040 #404040 #fff;
+    box-shadow: inset -3px -3px #808080, inset 3px 3px #dfdfdf; font-family: Tahoma, "MS Sans Serif", Verdana, sans-serif; }
+  .sam-go:active { border-color: #404040 #fff #fff #404040; box-shadow: inset 3px 3px #808080; }
+  .sam-go:focus-visible { outline: 3px dotted #000; outline-offset: -14px; }
+  .sam-go-t { font-size: clamp(2.6rem, 9vw, 4.8rem); font-weight: 700; line-height: 1.1; color: #000080; text-shadow: 2px 2px 0 #fff; }
+  .sam-go-b { font-size: clamp(1.3rem, 4.5vw, 2rem); font-weight: 700; }
+  .r-count { font: 700 18px "Courier New", Courier, monospace; background: #000; color: #0f0; padding: 6px 14px; border: 2px inset #808080; letter-spacing: 2px; text-align: center; }
+  .r-count[hidden] { display: none; }
+  .sam-more { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
+  .sam-link { min-height: 48px; padding: 0 8px; border: 0; background: none; color: #0000ee; text-decoration: underline; font: 1.5rem "Times New Roman", Times, serif; cursor: pointer; }
+  .sam-link:hover { color: #c00; }
+  .sam-link:focus-visible { outline: 2px dotted #000; outline-offset: 2px; }
+  .sam-exit { font-size: 1.2rem; color: #551a8b; }
+  .sam-list { width: 100%; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
   .sam-list[hidden] { display: none; }
-  .sam-list a { display: flex; align-items: center; min-height: 72px; padding: 12px 20px; border: 2px solid var(--grey-border); border-radius: 16px;
-    background: var(--card-bg); color: var(--text); text-decoration: none; font-size: 1.35rem; font-weight: 600; }
-  .sam-list a:hover { border-color: var(--navy); background: var(--surface-hover); }
-  .sam-list a:focus-visible { outline: 4px solid var(--navy); outline-offset: 3px; }
+  .sam-list a { display: flex; align-items: center; min-height: 56px; padding: 8px 14px; background: #c0c0c0; color: #000; text-decoration: none;
+    font: 700 1.15rem Tahoma, "MS Sans Serif", Verdana, sans-serif; border: 3px solid; border-color: #fff #404040 #404040 #fff; }
+  .sam-list a:active { border-color: #404040 #fff #fff #404040; }
+  .sam-list a:focus-visible { outline: 2px dotted #000; outline-offset: -6px; }
+  .r-best { margin: 0; font-size: 14px; color: #444; text-align: center; }
+  .r-uc { display: inline-block; padding: 2px 8px; font: 700 12px Tahoma, Verdana, sans-serif; color: #000; background: repeating-linear-gradient(45deg, #fc0 0 10px, #000 10px 20px); }
+  .r-uc { color: #fc0; text-shadow: 0 0 2px #000, 0 0 2px #000; }
+  .r-status { display: flex; gap: 3px; padding: 2px 0 0; font-size: 13px; }
+  .r-status span { padding: 2px 8px; border: 1px solid; border-color: #808080 #fff #fff #808080; }
+  .r-st1 { flex: 1; }
+  @media (max-width: 640px) {
+    .sam { padding: 8px 6px 16px; }
+    .r-menu, .r-tools { display: none; }
+    .r-page { padding: 12px 10px 16px; gap: 16px; }
+    .sam-go { min-height: 42vh; }
+  }
   .sam-h { margin-top: 22px; }
   .sam-switch { flex: none; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px 0 6px; border: 2px solid var(--grey-border);
     border-radius: 999px; background: var(--card-bg); color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
@@ -415,14 +452,28 @@
   <!-- m69 Sam mode: one giant button to your current block's questions ('qhub-sam' on this device; #sam turns it on) -->
   <section class="sam" id="sam" aria-labelledby="samH" hidden>
     <h1 class="sr" id="samH">Sam mode</h1>
-    <a class="sam-go" id="samGo" href="#">
-      <span class="sam-go-t" id="samGoT">Start questions</span>
-      <span class="sam-go-b" id="samGoB"></span>
-    </a>
-    <div class="sam-more">
-      <button type="button" class="sam-link" id="samPick" aria-expanded="false" aria-controls="samList">Pick a different block</button>
-      <div class="sam-list" id="samList" hidden></div>
-      <button type="button" class="sam-link sam-exit" id="samExit">Leave Sam mode</button>
+    <!-- the retro window (m69b): title bar, menu, toolbar, address bar and status bar are decoration -->
+    <div class="r-win">
+      <div class="r-title" aria-hidden="true"><span class="r-ico"></span><span class="r-title-t">Sam&rsquo;s Question Page - Web Explorer</span>
+        <span class="r-ctl"><span>_</span><span>&#9633;</span><span>&times;</span></span></div>
+      <div class="r-menu" aria-hidden="true"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span>F<u>a</u>vorites</span><span><u>T</u>ools</span><span><u>H</u>elp</span></div>
+      <div class="r-tools" aria-hidden="true"><span><b>&#9664;</b> Back</span><span><b>&#9654;</b> Forward</span><span class="r-sep"></span><span><b>&#10006;</b> Stop</span><span><b>&#10227;</b> Refresh</span><span><b>&#8962;</b> Home</span></div>
+      <div class="r-addr" aria-hidden="true"><span class="r-addr-l">A<u>d</u>dress</span><span class="r-addr-box" id="samAddr">http://</span><span class="r-addr-go">&rarr; Go</span></div>
+      <div class="r-page">
+        <div class="r-marq" aria-hidden="true"><span>&#9733; Welcome to Sam&rsquo;s Question Page!!! &#9733; Click the big button to start &#9733; Welcome to Sam&rsquo;s Question Page!!! &#9733;</span></div>
+        <a class="sam-go" id="samGo" href="#">
+          <span class="sam-go-t" id="samGoT">Start questions</span>
+          <span class="sam-go-b" id="samGoB"></span>
+        </a>
+        <div class="r-count" id="samCount" hidden></div>
+        <div class="sam-more">
+          <button type="button" class="sam-link" id="samPick" aria-expanded="false" aria-controls="samList">Pick a different block</button>
+          <div class="sam-list" id="samList" hidden></div>
+          <button type="button" class="sam-link sam-exit" id="samExit">Leave Sam mode</button>
+        </div>
+        <p class="r-best" aria-hidden="true">Best viewed at 800 &times; 600 &middot; <span class="r-uc">UNDER CONSTRUCTION</span></p>
+      </div>
+      <div class="r-status" aria-hidden="true"><span class="r-st1">&#9673; Done</span><span class="r-st2">&#127760; Internet</span></div>
     </div>
   </section>
 
@@ -1309,6 +1360,13 @@
         document.getElementById('samGoB').textContent = title(list[0]);
       }
       go.setAttribute('aria-label', document.getElementById('samGoT').textContent + ': ' + document.getElementById('samGoB').textContent);
+      document.getElementById('samAddr').textContent = location.href.replace(/#.*$/, '') + '#sam';
+      var n = 0;   // the "visitor counter": questions answered on this device, every block
+      list.forEach(function (a) { var d = a.getAttribute('href').replace(/\/index\.html$/, ''), x = [];
+        try { x = JSON.parse(localStorage.getItem(d + '_attempts_v1')) || []; } catch (e) {}
+        n += Array.isArray(x) ? x.length : 0; });
+      var c = document.getElementById('samCount');
+      c.textContent = 'Questions answered: ' + ('000000' + n).slice(-6); c.hidden = !n;
       document.getElementById('samList').innerHTML = list.map(function (a) {
         return '<a href="' + a.getAttribute('href') + '">' + title(a).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</a>'; }).join('');
     }
