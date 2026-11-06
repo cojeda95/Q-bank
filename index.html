@@ -416,7 +416,55 @@
     .r-page { padding: 12px 10px 16px; gap: 16px; }
     .sam-go { min-height: 42vh; }
   }
+  /* m69c retro extras: Professor Clip and the daily joke pop-up (Sam mode only) */
+  .r-win { position: relative; }
+  .r-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 34px; padding: 2px 14px; background: #ece9d8; color: #000;
+    border: 1px solid #003c74; border-radius: 3px; font: 13px Tahoma, Verdana, sans-serif; text-decoration: none; cursor: pointer;
+    box-shadow: inset -1px -1px #c5c2b2, inset 1px 1px #fff; }
+  .r-btn:hover { box-shadow: inset 0 0 0 2px #f8b636; }
+  .r-btn:focus-visible { outline: 1px dotted #000; outline-offset: -4px; }
+  .clip { position: fixed; right: 18px; bottom: 18px; z-index: 40; display: flex; align-items: flex-end; gap: 4px; max-width: min(420px, calc(100vw - 24px)); }
+  .clip[hidden] { display: none; }
+  .clip-bubble { position: relative; flex: 1 1 auto; min-width: 0; max-width: 290px; background: #ffffe1; color: #000; border: 1px solid #000; border-radius: 10px; padding: 10px 12px; margin-bottom: 110px;
+    font: 14px Tahoma, Verdana, sans-serif; box-shadow: 3px 3px 0 rgba(0,0,0,0.25); }
+  .clip-bubble[hidden] { display: none; }
+  .clip-bubble::after { content: ""; position: absolute; right: -11px; bottom: 18px; border: 10px solid transparent; border-left-color: #ffffe1; filter: drop-shadow(1px 0 0 #000); }
+  .clip-bubble p { margin: 0 0 10px; line-height: 1.35; }
+  .clip-acts { display: flex; flex-wrap: wrap; gap: 6px; }
+  .clip-me { flex: none; width: 92px; height: 198px; padding: 0; border: 0; background: none; cursor: pointer; }
+  .clip-me:focus-visible { outline: 2px dotted #fff; outline-offset: 2px; }
+  .clip-svg { width: 100%; height: 100%; overflow: visible; animation: clip-bob 2.6s ease-in-out infinite; transform-origin: 50% 100%; }
+  @keyframes clip-bob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(-3deg); } }
+  .clip-pupil { animation: clip-look 5s ease-in-out infinite; }
+  @keyframes clip-look { 0%, 40%, 100% { transform: translate(0, 0); } 50%, 70% { transform: translate(-3px, -1px); } }
+  .clip-me:hover .clip-brow { transform: translateY(-3px); }
+  .clip-brow { transition: transform 0.15s; }
+  .xp-pop { position: fixed; z-index: 45; top: 70px; left: 50%; transform: translateX(-50%); width: min(400px, calc(100vw - 24px)); background: #ece9d8; color: #000;
+    border: 1px solid #0831d9; border-radius: 8px 8px 3px 3px; box-shadow: 4px 4px 14px rgba(0,0,0,0.45); font: 14px Tahoma, Verdana, sans-serif; overflow: hidden;
+    animation: xp-in 0.18s ease-out; }
+  .xp-pop[hidden] { display: none; }
+  @keyframes xp-in { from { opacity: 0; transform: translate(-50%, -8px) scale(0.97); } }
+  .xp-title { display: flex; align-items: center; gap: 8px; padding: 4px 4px 4px 10px; color: #fff; font-weight: 700; text-shadow: 1px 1px #0f1089;
+    background: linear-gradient(180deg, #0997ff 0%, #0053ee 8%, #0050ee 40%, #06f 88%, #0055eb 100%); }
+  .xp-title-t { flex: 1; }
+  .xp-x { width: 24px; height: 22px; display: grid; place-items: center; padding: 0; border: 1px solid #fff; border-radius: 3px; background: linear-gradient(180deg, #e8795d, #c63514);
+    color: #fff; font: 700 16px/1 Tahoma, Verdana, sans-serif; cursor: pointer; }
+  .xp-x:focus-visible { outline: 2px dotted #fff; outline-offset: 1px; }
+  .xp-body { display: flex; gap: 14px; align-items: flex-start; padding: 16px 16px 8px; }
+  .xp-body p { margin: 0; line-height: 1.4; }
+  .xp-ico { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffe9a6, #f0b400 70%);
+    border: 1px solid #a07800; font: 700 22px Tahoma, sans-serif; color: #000; }
+  .xp-acts { display: flex; justify-content: flex-end; gap: 8px; padding: 8px 16px 14px; }
+  .xp-acts .r-btn { min-width: 76px; }
+  @media (prefers-reduced-motion: reduce) { .clip-svg, .clip-pupil, .xp-pop { animation: none; } }
+  @media (max-width: 640px) {
+    .clip { right: 8px; bottom: 8px; }
+    .clip-me { width: 62px; height: 134px; }
+    .clip-bubble { margin-bottom: 70px; font-size: 13px; max-width: 230px; }
+    .xp-pop { top: 12px; }
+  }
   .sam-h { margin-top: 22px; }
+  .sam-card + .sam-card { margin-top: 10px; }
   .sam-switch { flex: none; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px 0 6px; border: 2px solid var(--grey-border);
     border-radius: 999px; background: var(--card-bg); color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
   .sam-knob { width: 44px; height: 26px; border-radius: 999px; background: var(--grey-border); position: relative; transition: background 0.15s; }
@@ -473,7 +521,29 @@
         </div>
         <p class="r-best" aria-hidden="true">Best viewed at 800 &times; 600 &middot; <span class="r-uc">UNDER CONSTRUCTION</span></p>
       </div>
+      <div class="clip" id="samClip" hidden>
+        <div class="clip-bubble" id="samClipB" role="status">
+          <p id="samClipT">It looks like you&rsquo;re studying for an exam! Would you like help?</p>
+          <div class="clip-acts"><a class="r-btn" id="samClipYes" href="#">Yes, start questions</a><button type="button" class="r-btn" id="samClipNo">Go away</button></div>
+        </div>
+        <button type="button" class="clip-me" id="samClipMe" aria-label="Professor Clip, the paperclip helper: show his tip">
+          <svg class="clip-svg" viewBox="20 1 52 112" aria-hidden="true">
+            <defs><linearGradient id="clipWire" x1="0" x2="1"><stop offset="0" stop-color="#7d8790"/><stop offset=".45" stop-color="#f4f7fa"/><stop offset="1" stop-color="#8a949c"/></linearGradient></defs>
+            <path d="M30 108 V34 a16 16 0 0 1 32 0 V92 a10 10 0 0 1 -20 0 V44" fill="none" stroke="#5b636b" stroke-width="8" stroke-linecap="round"/>
+            <path d="M30 108 V34 a16 16 0 0 1 32 0 V92 a10 10 0 0 1 -20 0 V44" fill="none" stroke="url(#clipWire)" stroke-width="5" stroke-linecap="round"/>
+            <g class="clip-eyes"><ellipse cx="36" cy="40" rx="8" ry="10" fill="#fff" stroke="#333" stroke-width="1.5"/><ellipse cx="55" cy="40" rx="8" ry="10" fill="#fff" stroke="#333" stroke-width="1.5"/>
+              <circle class="clip-pupil" cx="38" cy="42" r="3.6" fill="#111"/><circle class="clip-pupil" cx="57" cy="42" r="3.6" fill="#111"/></g>
+            <path class="clip-brow" d="M27 26 q8 -6 16 -1 M47 25 q8 -5 16 1" fill="none" stroke="#333" stroke-width="2.6" stroke-linecap="round"/>
+            <g class="clip-cap"><path d="M24 14 L46 5 L68 14 L46 23 Z" fill="#1b1b2f"/><path d="M34 18 v6 q12 6 24 0 v-6" fill="#1b1b2f"/><path d="M66 14 v12" stroke="#e0b400" stroke-width="2"/><circle cx="66" cy="27" r="2.4" fill="#e0b400"/></g>
+          </svg>
+        </button>
+      </div>
       <div class="r-status" aria-hidden="true"><span class="r-st1">&#9673; Done</span><span class="r-st2">&#127760; Internet</span></div>
+    </div>
+    <div class="xp-pop" id="samPop" role="alertdialog" aria-labelledby="samPopT" aria-describedby="samPopM" hidden>
+      <div class="xp-title"><span class="xp-title-t" id="samPopT">Study Alert</span><button type="button" class="xp-x" id="samPopX" aria-label="Close the pop-up">&times;</button></div>
+      <div class="xp-body"><span class="xp-ico" aria-hidden="true">!</span><p id="samPopM"></p></div>
+      <div class="xp-acts"><a class="r-btn" id="samPopOk" href="#">OK</a><button type="button" class="r-btn" id="samPopNo">Cancel</button></div>
     </div>
   </section>
 
@@ -678,6 +748,13 @@
           <div class="block-desc" id="samSwD">Off by default. When it’s on, this device’s home page is just one huge button back to the block you were last working in, with large text and nothing else.</div>
         </div>
         <button type="button" class="sam-switch" id="samSwitch" role="switch" aria-checked="false" aria-labelledby="samSwL" aria-describedby="samSwD"><span class="sam-knob"></span><span class="sam-state">Off</span></button>
+      </div>
+      <div class="offline-card sam-card">
+        <div class="offline-text">
+          <div class="block-title" id="samXL">Retro extras</div>
+          <div class="block-desc" id="samXD">Only in Sam mode: Professor Clip, the paperclip helper, and one joke pop-up a day.</div>
+        </div>
+        <button type="button" class="sam-switch" id="samXSwitch" role="switch" aria-checked="true" aria-labelledby="samXL" aria-describedby="samXD"><span class="sam-knob"></span><span class="sam-state">On</span></button>
       </div>
     </div>
   </section>
@@ -1388,6 +1465,66 @@
     window.addEventListener('pageshow', function () { if (get()) show(true); });
     if (location.hash === '#sam') put(true);
     show(get());
+  })();
+</script>
+<script>
+  /* m69c Retro extras (Sam mode only; on unless switched off: 'qhub-sam-extras' = '0'): Professor Clip, a paperclip
+     helper bottom right whose tip links to the big button ("Go away" hides him until tomorrow), and one joke pop-up a
+     day whose OK also goes to the big button. Days are this device's dates ('qhub-sam-clip', 'qhub-sam-pop'). */
+  (function () {
+    var clip = document.getElementById('samClip'), pop = document.getElementById('samPop'), sw = document.getElementById('samXSwitch');
+    if (!clip || !pop) return;
+    function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
+    function today() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+    function on() { return ls('qhub-sam-extras') !== '0'; }
+    function samOn() { return document.body.classList.contains('sam-on'); }
+    function target() { return document.getElementById('samGo').getAttribute('href'); }
+    function block() { return document.getElementById('samGoB').textContent || 'your block'; }
+    function due() { var t = (document.getElementById('dueTitle') || {}).textContent || '', m = t.match(/^([\d,]+)/); return m ? m[1] : ''; }
+    var TIPS = [
+      function () { return 'It looks like you\u2019re studying for an exam! Would you like help?'; },
+      function () { return 'It looks like you\u2019re about to open ' + block() + '. Would you like me to do that for you?'; },
+      function () { return due() ? 'It looks like ' + due() + ' missed question' + (due() === '1' ? ' is' : 's are') + ' waiting for you. Shall we?' : 'It looks like you haven\u2019t done any questions yet today. Want to start?'; },
+      function () { return 'Did you know? Questions are 100% more effective when you actually do them.'; },
+      function () { return 'It looks like you\u2019re staring at the big gray button. Clicking it is allowed!'; }
+    ];
+    var POPS = [
+      function () { return 'Your computer has detected that you have not done any questions today. Click OK to fix this.'; },
+      function () { return 'Low brain space! Click OK to free up space by doing a few ' + block() + ' questions.'; },
+      function () { return 'Studying is 87% complete. Please do not turn off your computer. Click OK to finish.'; },
+      function () { return 'A new version of you is available! Click OK to install 10 questions.'; },
+      function () { return 'Warning: your exam is closer than it appears. Click OK to do something about it.'; }
+    ];
+    var tip = Math.floor(Math.random() * TIPS.length);
+    function say() { document.getElementById('samClipT').textContent = TIPS[tip % TIPS.length](); document.getElementById('samClipYes').href = target(); }
+    var timer = null;
+    function render() {
+      var show = samOn() && on();
+      if (sw) { sw.setAttribute('aria-checked', String(on())); sw.querySelector('.sam-state').textContent = on() ? 'On' : 'Off'; }
+      clip.hidden = !show || ls('qhub-sam-clip') === today();
+      document.getElementById('samClipB').hidden = false;
+      if (!clip.hidden) say();
+      clearTimeout(timer);
+      if (!show) { pop.hidden = true; return; }
+      if (ls('qhub-sam-pop') !== today() && pop.hidden) timer = setTimeout(function () {
+        if (!samOn() || !on()) return;
+        document.getElementById('samPopM').textContent = POPS[Math.floor(Math.random() * POPS.length)]();
+        document.getElementById('samPopOk').href = target();
+        pop.hidden = false; ls('qhub-sam-pop', today());
+      }, 4000);
+    }
+    function closePop() { pop.hidden = true; }
+    document.getElementById('samClipNo').addEventListener('click', function () { ls('qhub-sam-clip', today()); clip.hidden = true; });
+    document.getElementById('samClipMe').addEventListener('click', function () {
+      var b = document.getElementById('samClipB'); if (b.hidden) { b.hidden = false; } else { tip++; } say(); });
+    document.getElementById('samPopX').addEventListener('click', closePop);
+    document.getElementById('samPopNo').addEventListener('click', closePop);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pop.hidden) closePop(); });
+    if (sw) sw.addEventListener('click', function () { ls('qhub-sam-extras', on() ? '0' : null); render(); });
+    new MutationObserver(render).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    window.addEventListener('pageshow', render);
+    window.qhubSamExtras = render;
+    render();
   })();
 </script>
 <script>
