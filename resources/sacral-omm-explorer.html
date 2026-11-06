@@ -55,6 +55,7 @@
   .findings-panel .fname { font-weight: 700; font-size: 1rem; color: var(--navy); margin-bottom: 8px; }
   .findings-panel .flabel { color: var(--text-muted); }
   .footer { text-align: center; padding: 20px; font-size: 0.8rem; color: var(--text-faint); }
+  .findings-panel .fsrc { font-size: 0.78rem; color: var(--text-muted); margin-top: 10px; }
   .source-note { font-size: 0.8rem; color: var(--text-muted); margin-top: 22px; line-height: 1.5; }
 </style>
 <link rel="stylesheet" href="../shared/theme.css">
@@ -64,7 +65,7 @@
   <div class="topbar"><div class="topbar-inner"><a href="../index.html">&larr; All Blocks</a><span>Sacral OMM Explorer</span></div></div>
   <div class="container">
     <h1>Sacral somatic dysfunctions — OMM Level 1</h1>
-    <p class="subtitle">A schematic, rotatable 3D model of the sacrum with the 10 sacral somatic dysfunctions and their seated flexion, sphinx, and spring test findings. Drag the model to orbit it freely — each preset oscillates the model between neutral and the dysfunctional position to show the motion.</p>
+    <p class="subtitle">A schematic, rotatable 3D model of the sacrum with the 10 sacral somatic dysfunctions and their landmark, seated flexion, sphinx, spring, and L5 findings. Drag the model to orbit it freely — each preset rocks the sacrum about its axis toward the dysfunctional position. Torsions turn about the oblique axis; shears slide one side up or down.</p>
 
     <div class="layout">
       <div class="canvas-col">
@@ -84,10 +85,10 @@
 
       <div class="controls-col">
         <div class="preset-grid">
-          <button class="preset-btn" data-p="lol">Left-on-left (anterior)</button>
-          <button class="preset-btn" data-p="ror">Right-on-right (anterior)</button>
-          <button class="preset-btn" data-p="lor">Left-on-right (posterior)</button>
-          <button class="preset-btn" data-p="rol">Right-on-left (posterior)</button>
+          <button class="preset-btn" data-p="lol">Left-on-left (forward)</button>
+          <button class="preset-btn" data-p="ror">Right-on-right (forward)</button>
+          <button class="preset-btn" data-p="lor">Left-on-right (backward)</button>
+          <button class="preset-btn" data-p="rol">Right-on-left (backward)</button>
           <button class="preset-btn" data-p="uflex-l">Unilateral flexion, left</button>
           <button class="preset-btn" data-p="uflex-r">Unilateral flexion, right</button>
           <button class="preset-btn" data-p="uext-l">Unilateral extension, left</button>
@@ -98,7 +99,7 @@
         <div class="findings-panel" id="findings-panel">
           <p style="color:var(--text-muted);">Pick a dysfunction above to see its exam findings. The model will oscillate to show the motion.</p>
         </div>
-        <p class="source-note">Diagnostic findings sourced from Osmosis' "Diagnosing sacral somatic dysfunction" reference table and cross-checked against StatPearls' "Osteopathic Manipulative Treatment: Muscle Energy Procedure — Sacral Dysfunctions." This is a simplified schematic model, not a scanned anatomical mesh — verify against your own course materials before exam use.</p>
+        <p class="source-note">Findings from the Atlas of Osteopathic Techniques 4e, ch 10 (sacral MET diagnosis blocks), and Foundations of Osteopathic Medicine 5e, ch 38 (Table 38.1) and ch 31 (Table 31.4). Where the two texts differ, both are shown. The OMM written midterm case (positive left seated flexion test with a left-on-right torsion) agrees. ILA findings are relative to the other side. This is a schematic model, not a scanned anatomical mesh.</p>
       </div>
     </div>
   </div>
@@ -107,17 +108,80 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const RED = 0xE24B4A, BLUE = 0x378ADD, NEUTRAL = 0x9a978c;
+const A_OBL_L = [[4.2,4.3],[-2.2,-5.0]], A_OBL_R = [[-4.2,4.3],[2.2,-5.0]];
+const A_MID = [[2.9,-0.4],[-2.9,-0.4]];
+const AT = "Atlas of Osteopathic Techniques 4e, ch 10 (MET diagnosis)";
+const FD = "Foundations of Osteopathic Medicine 5e, ch 38 (Table 38.1)";
+// motion: list of steps. Each step turns the sacrum about a line (two points on the
+// back of the sacrum, or an AP line through one point) and names a marker that must
+// move a given way, so the sign of the turn is set from the finding, not by hand.
 const data = {
-  lol: {name:"Left-on-left sacral torsion (anterior)", tiltX:0.35, tiltZ:-0.15, deep:"R", shallow:"L", ilaPost:"L", ilaAnt:"R", sft:"Positive on the right (oblique axis is on the left, opposite the positive side)", sphinx:"Negative — improves to symmetrical (anterior torsion)", spring:"Negative — soft, bouncy end point (anterior torsion)"},
-  ror: {name:"Right-on-right sacral torsion (anterior)", tiltX:0.35, tiltZ:0.15, deep:"L", shallow:"R", ilaPost:"R", ilaAnt:"L", sft:"Positive on the left (oblique axis is on the right)", sphinx:"Negative — improves to symmetrical (anterior torsion)", spring:"Negative — soft, bouncy end point (anterior torsion)"},
-  lor: {name:"Left-on-right sacral torsion (posterior)", tiltX:-0.35, tiltZ:-0.15, deep:"R", shallow:"L", ilaPost:"L", ilaAnt:"R", sft:"Positive on the left (oblique axis is on the right)", sphinx:"Positive — worsens/more asymmetrical (posterior torsion)", spring:"Positive — hard end point (posterior torsion)"},
-  rol: {name:"Right-on-left sacral torsion (posterior)", tiltX:-0.35, tiltZ:0.15, deep:"L", shallow:"R", ilaPost:"R", ilaAnt:"L", sft:"Positive on the right (oblique axis is on the left)", sphinx:"Positive — worsens/more asymmetrical (posterior torsion)", spring:"Positive — hard end point (posterior torsion)"},
-  "uflex-l": {name:"Unilateral sacral flexion, left", tiltX:0.15, tiltZ:-0.1, deep:"L", shallow:"R", ilaPost:"L", ilaAnt:"R", sft:"Positive on the left", sphinx:"Negative, consistent with a flexion-type finding", spring:"Negative"},
-  "uflex-r": {name:"Unilateral sacral flexion, right", tiltX:0.15, tiltZ:0.1, deep:"R", shallow:"L", ilaPost:"R", ilaAnt:"L", sft:"Positive on the right", sphinx:"Negative, consistent with a flexion-type finding", spring:"Negative"},
-  "uext-l": {name:"Unilateral sacral extension, left", tiltX:-0.15, tiltZ:-0.1, shallow:"L", deep:"R", ilaAnt:"L", ilaPost:"R", sft:"Positive on the left", sphinx:"Positive, consistent with an extension-type finding", spring:"Positive"},
-  "uext-r": {name:"Unilateral sacral extension, right", tiltX:-0.15, tiltZ:0.1, shallow:"R", deep:"L", ilaAnt:"R", ilaPost:"L", sft:"Positive on the right", sphinx:"Positive, consistent with an extension-type finding", spring:"Positive"},
-  bflex: {name:"Bilateral sacral flexion", tiltX:0.25, tiltZ:0, sulBoth:"deep", ilaBoth:"post", sft:"Negative — symmetric bilaterally", sphinx:"Negative", spring:"Negative — soft, bouncy end point"},
-  bext: {name:"Bilateral sacral extension", tiltX:-0.25, tiltZ:0, sulBoth:"shallow", ilaBoth:"ant", sft:"Negative — symmetric bilaterally", sphinx:"Positive", spring:"Positive — hard end point"}
+  lol: {name:"Left-on-left sacral torsion (forward)", axis:"Left oblique axis — left rotation", steps:[{line:A_OBL_L, ang:0.32, m:"sulR", dz:1}],
+    deep:"R", shallow:"L", ilaPost:"L", ilaAnt:"R",
+    sul:"Right deep (anterior); left shallow", ila:"Left posterior and inferior (more posterior than inferior)",
+    sft:"Positive on the right (right PSIS rises) — opposite the axis",
+    sphinx:"Negative — sulci become more symmetric (less asymmetry)",
+    spring:"Negative — normal or increased spring (lordosis increased)",
+    l5:"Neutral, rotated right, side-bent left (L5 NSLRR)", src:AT+"; "+FD},
+  ror: {name:"Right-on-right sacral torsion (forward)", axis:"Right oblique axis — right rotation", steps:[{line:A_OBL_R, ang:0.32, m:"sulL", dz:1}],
+    deep:"L", shallow:"R", ilaPost:"R", ilaAnt:"L",
+    sul:"Left deep (anterior); right shallow", ila:"Right posterior and inferior (more posterior than inferior)",
+    sft:"Positive on the left (left PSIS rises) — opposite the axis",
+    sphinx:"Negative — sulci become more symmetric (less asymmetry)",
+    spring:"Negative — normal or increased spring (lordosis increased)",
+    l5:"Neutral, rotated left, side-bent right (L5 NSRRL)", src:AT+"; "+FD},
+  lor: {name:"Left-on-right sacral torsion (backward)", axis:"Right oblique axis — left rotation", steps:[{line:A_OBL_R, ang:0.32, m:"sulL", dz:-1}],
+    deep:"R", shallow:"L", ilaPost:"L", ilaAnt:"R",
+    sul:"Left shallow (posterior); right deep", ila:"Right anterior (deep); left posterior and inferior by comparison",
+    sft:"Positive on the left (left PSIS rises) — same side as the shallow sulcus",
+    sphinx:"Positive — sulci become more asymmetric",
+    spring:"Positive — reduced or restricted spring (lordosis reduced)",
+    l5:"Non-neutral (flexed or extended), rotated right — Foundations ch 38. Atlas ch 10 prints \u201cL5 E/F SLRL\u201d under this example, the same line it gives for right-on-left", src:AT+"; "+FD},
+  rol: {name:"Right-on-left sacral torsion (backward)", axis:"Left oblique axis — right rotation", steps:[{line:A_OBL_L, ang:0.32, m:"sulR", dz:-1}],
+    deep:"L", shallow:"R", ilaPost:"R", ilaAnt:"L",
+    sul:"Right shallow (posterior); left deep", ila:"Left anterior (deep); right posterior and inferior by comparison",
+    sft:"Positive on the right (right PSIS rises) — same side as the shallow sulcus",
+    sphinx:"Positive — sulci become more asymmetric",
+    spring:"Positive — reduced or restricted spring (lordosis reduced)",
+    l5:"Non-neutral (flexed or extended), rotated left, side-bent left (L5 E/F SLRL)", src:AT+"; "+FD},
+  "uflex-l": {name:"Unilateral sacral flexion, left (inferior shear)", axis:"Left side slides down the lower arm of the SI joint", steps:[{line:A_MID, ang:0.12, m:"sulL", dz:1},{ap:[-2.2,0.6], ang:0.12, m:"ilaL", dy:-1}],
+    deep:"L", shallow:"R", ilaPost:"L", ilaAnt:"R",
+    sul:"Left deep (anterior)", ila:"Left posterior and inferior — more inferior than posterior",
+    sft:"Positive on the left (left PSIS rises)",
+    sphinx:"Atlas ch 10: less asymmetry of the sulci. Foundations ch 38: may stay asymmetric or be unaffected",
+    spring:"Negative", l5:"Not part of the diagnosis", src:AT+"; Foundations 5e, ch 38"},
+  "uflex-r": {name:"Unilateral sacral flexion, right (inferior shear)", axis:"Right side slides down the lower arm of the SI joint", steps:[{line:A_MID, ang:0.12, m:"sulR", dz:1},{ap:[2.2,0.6], ang:0.12, m:"ilaR", dy:-1}],
+    deep:"R", shallow:"L", ilaPost:"R", ilaAnt:"L",
+    sul:"Right deep (anterior)", ila:"Right posterior and inferior — more inferior than posterior",
+    sft:"Positive on the right (right PSIS rises)",
+    sphinx:"Atlas ch 10: less asymmetry of the sulci. Foundations ch 38: may stay asymmetric or be unaffected",
+    spring:"Negative", l5:"Not part of the diagnosis", src:AT+"; Foundations 5e, ch 38"},
+  "uext-l": {name:"Unilateral sacral extension, left (superior shear)", axis:"Left side slides up the lower arm of the SI joint", steps:[{line:A_MID, ang:0.12, m:"sulL", dz:-1},{ap:[-2.2,0.6], ang:0.12, m:"ilaL", dy:1}],
+    deep:"R", shallow:"L", ilaPost:"R", ilaAnt:"L",
+    sul:"Left shallow (posterior)", ila:"Left anterior and superior (deep)",
+    sft:"Positive on the left (left PSIS rises)",
+    sphinx:"Atlas ch 10: more asymmetry of the sulci. Foundations ch 38: may stay asymmetric or be unaffected",
+    spring:"Positive — reduced spring", l5:"Not part of the diagnosis", src:AT+"; Foundations 5e, ch 38"},
+  "uext-r": {name:"Unilateral sacral extension, right (superior shear)", axis:"Right side slides up the lower arm of the SI joint", steps:[{line:A_MID, ang:0.12, m:"sulR", dz:-1},{ap:[2.2,0.6], ang:0.12, m:"ilaR", dy:1}],
+    deep:"L", shallow:"R", ilaPost:"L", ilaAnt:"R",
+    sul:"Right shallow (posterior)", ila:"Right anterior and superior (deep)",
+    sft:"Positive on the right (right PSIS rises)",
+    sphinx:"Atlas ch 10: more asymmetry of the sulci. Foundations ch 38: may stay asymmetric or be unaffected",
+    spring:"Positive — reduced spring", l5:"Not part of the diagnosis", src:AT+"; Foundations 5e, ch 38"},
+  bflex: {name:"Bilateral sacral flexion", axis:"Both bases nutate about the middle transverse axis", steps:[{line:A_MID, ang:0.22, m:"sulL", dz:1}],
+    sulBoth:"deep", ilaBoth:"post",
+    sul:"Both deep (anterior)", ila:"Both posterior and inferior",
+    sft:"Atlas ch 10: positive bilaterally (both PSIS rise). Foundations ch 38: equivocal when bilateral and hard to rely on — be suspicious when the PSIS rise early",
+    sphinx:"Not listed in either text (Foundations table: N/A)",
+    spring:"Negative — lumbar curve increased or normal",
+    l5:"Neutral, non-neutral, or normal (Foundations table)", src:AT+"; "+FD},
+  bext: {name:"Bilateral sacral extension", axis:"Both bases counternutate about the middle transverse axis", steps:[{line:A_MID, ang:0.22, m:"sulL", dz:-1}],
+    sulBoth:"shallow", ilaBoth:"ant",
+    sul:"Both shallow (posterior)", ila:"Both anterior (deep)",
+    sft:"Atlas ch 10: positive bilaterally (both PSIS rise). Foundations ch 38: equivocal when bilateral and hard to rely on — be suspicious when the PSIS rise early",
+    sphinx:"Not listed in either text. Foundations: low back pain worse with backward bending",
+    spring:"Positive — reduced spring, lumbar curve decreased",
+    l5:"Not listed", src:AT+"; Foundations 5e, ch 38"}
 };
 
 const wrap = document.getElementById('canvas-wrap');
@@ -257,15 +321,33 @@ window.addEventListener('pointermove', e => {
   applyOrbit();
 });
 
-let animTiltX = 0, animTiltZ = 0;
+// Build a matrix that turns the sacrum about each step's line. A step's sign is
+// flipped if a trial turn moves its check marker the wrong way.
+const _q = new THREE.Quaternion(), _m = new THREE.Matrix4();
+function stepMatrix(st, ang){
+  let p, dir;
+  if (st.ap){ p = new THREE.Vector3(st.ap[0], st.ap[1], MARKER_Z); dir = new THREE.Vector3(0,0,1); }
+  else { p = new THREE.Vector3(st.line[0][0], st.line[0][1], MARKER_Z);
+         dir = new THREE.Vector3(st.line[1][0], st.line[1][1], MARKER_Z).sub(p).normalize(); }
+  const r = new THREE.Matrix4().makeRotationFromQuaternion(_q.setFromAxisAngle(dir, ang));
+  return new THREE.Matrix4().makeTranslation(p.x,p.y,p.z).multiply(r).multiply(new THREE.Matrix4().makeTranslation(-p.x,-p.y,-p.z));
+}
+function signed(st){
+  const v = markers[st.m].position.clone().applyMatrix4(stepMatrix(st, 0.05)).sub(markers[st.m].position);
+  const got = st.dz ? v.z * st.dz : v.y * st.dy;
+  return got >= 0 ? st.ang : -st.ang;
+}
+tiltGroup.matrixAutoUpdate = false;
+let curSteps = [];
 function animate(t){
   requestAnimationFrame(animate);
-  // Oscillates between 35% and 100% of the target tilt — always on the
-  // dysfunctional side, never swinging back through the neutral/starting axis.
-  const wave = (Math.sin((t || 0) / 900) + 1) / 2; // 0..1
-  const osc = 0.35 + 0.65 * wave; // 0.35..1
-  tiltGroup.rotation.x = animTiltX * osc;
-  tiltGroup.rotation.z = animTiltZ * osc;
+  // Rocks between 35% and 100% of the dysfunctional position.
+  const wave = (Math.sin((t || 0) / 900) + 1) / 2;
+  const osc = 0.35 + 0.65 * wave;
+  _m.identity();
+  curSteps.forEach(st => _m.premultiply(stepMatrix(st, st.sAng * osc)));
+  tiltGroup.matrix.copy(_m);
+  tiltGroup.matrixWorldNeedsUpdate = true;
   renderer.render(scene, camera);
 }
 animate();
@@ -287,14 +369,18 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
     if (d.sulBoth === 'shallow') { setColor('sulL', RED); setColor('sulR', RED); }
     if (d.ilaBoth === 'ant') { setColor('ilaL', BLUE); setColor('ilaR', BLUE); }
     if (d.ilaBoth === 'post') { setColor('ilaL', RED); setColor('ilaR', RED); }
-    animTiltX = d.tiltX;
-    animTiltZ = d.tiltZ;
+    curSteps = d.steps.map(st => Object.assign({}, st, {sAng: signed(st)}));
     const panel = document.getElementById('findings-panel');
     panel.innerHTML =
       '<p class="fname">' + d.name + '</p>' +
+      '<p><span class="flabel">Motion — </span>' + d.axis + '</p>' +
+      '<p><span class="flabel">Sacral sulcus — </span>' + d.sul + '</p>' +
+      '<p><span class="flabel">ILA — </span>' + d.ila + '</p>' +
       '<p><span class="flabel">Seated flexion test — </span>' + d.sft + '</p>' +
-      '<p><span class="flabel">Sphinx test — </span>' + d.sphinx + '</p>' +
-      '<p><span class="flabel">Spring test — </span>' + d.spring + '</p>';
+      '<p><span class="flabel">Sphinx (backward bending) test — </span>' + d.sphinx + '</p>' +
+      '<p><span class="flabel">Lumbosacral spring test — </span>' + d.spring + '</p>' +
+      '<p><span class="flabel">L5 — </span>' + d.l5 + '</p>' +
+      '<p class="fsrc">' + d.src + '</p>';
   });
 });
 </script>
