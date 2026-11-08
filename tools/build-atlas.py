@@ -966,7 +966,7 @@ QS_PIN = {"gastro": {
     "sdl08_q01": "esosim/dx:ach", "sdl08_q06": "esosim/dx:eoe", "sdl08_q07": "esosim/dx:barrett", "sdl08_q19": "esosim/dx:mw",
     "sdl09_q24": "stomsim/s:gad", "sdl17_q08": "gitumsim/ca:had", "sdl17_q15": "gitumsim/ca:angio",
     "sdl17_q26": "gitumsim/ca:fl", "sdl18_q11": "gallsim/g:chron", "sdl18_q23": "gallsim/g:acalc", "trial_sdl31_q03": "gitract/dz:whip",
-    "sdl29_q16": "bowelsim/dx:intus", "sdl11_q15": "foregutsim/f:ect", "sdl11_q28": "foregutsim/f:divis",
+    "sdl29_q16": "bowelsim/dx:intus", "sdl11_q28": "foregutsim/f:divis",
     "trial_sdl11_q05": "foregutsim/f:divis", "sdl19_q16": "foregutsim/f:divis", "sdl20_q05": "immlivsim/a:urso",
     "trial_sdl20_q04": "immlivsim/a:urso", "sdl16_q07": "biliflow/jx:cn1", "sdl16_q08": "biliflow/jx:gil", "sdl16_q24": "biliflow/jx:gil",
     # wave 2 (m65): same rule — explanation lead or correct answer names exactly one option of a linked card
