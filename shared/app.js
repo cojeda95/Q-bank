@@ -3148,6 +3148,33 @@ function refreshRailWhenReady(q, picked) {
   });
 }
 
+/* Next stays on screen the whole time. Until the question is answered it skips:
+   the record stays empty, so no attempt, confidence, weak spot, or spaced-review
+   entry is written. After an answer, the label and the click do what they did before. */
+function quizNextButton(index, total, answered, answeredLabel) {
+  const last = index + 1 >= total;
+  const label = last ? 'Finish' : (answered ? answeredLabel : 'Next &rarr;');
+  const tip = answered ? '' : (last ? 'Finish — this question stays unanswered' : 'Skip this question without answering');
+  const aria = answered ? '' : (last ? 'Finish, leave this question unanswered' : 'Next, skip without answering');
+  return `<button class="btn" id="nextBtn"${tip ? ` title="${tip}"` : ''}${aria ? ` aria-label="${aria}"` : ''}>${label}</button>`;
+}
+function skippedPastCount(records, index) {
+  return (records || []).reduce((n, r, i) => n + (!r && i !== index ? 1 : 0), 0);
+}
+function skippedQuestionList(records, questions) {
+  const items = [];
+  (records || []).forEach((r, i) => { if (!r && questions[i]) items.push({ n: i + 1, q: questions[i] }); });
+  return items;
+}
+function skippedSummaryHtml(items) {
+  if (!items.length) return '';
+  return `<p class="setup-hint">${items.length} skipped — unanswered, not counted as wrong.</p>
+    <ul class="skipped-list">${items.map(({ n, q }) => {
+      const stem = q.stem.length > 140 ? q.stem.slice(0, 140) + '…' : q.stem;
+      return `<li><span class="skipped-tag">Skipped</span> <b>${n}.</b> ${escapeHtml(stem)}</li>`;
+    }).join('')}</ul>`;
+}
+
 function renderPracticeQuestion() {
   savePracticeSessionSnapshot();
   const q = session.questions[session.index];
@@ -3212,7 +3239,7 @@ function renderPracticeQuestion() {
     <div class="q-sub bleed">
       <div class="q-sub-in">
         <nav class="crumbs" aria-label="Breadcrumb"><a href="#">${escapeHtml(blockShort())}</a><span aria-hidden="true">/</span><a href="#exam-sdls/${session.examNumber}">${examLabel(session.examNumber)}</a><span aria-hidden="true">/</span><a href="#practice/${session.sdlNumber}">SDL ${session.sdlNumber}</a><span class="crumb-x">· ${escapeHtml(batchLabel(batchParamFromScoreKey(session.scoreKey || '')))}</span></nav>
-        <span class="q-sub-r"><span class="quiz-progress">Question <b>${session.index + 1}</b> of ${total}</span><span class="quiz-score">Score <b>${correctSoFar}/${answeredSoFar}</b></span></span>
+        <span class="q-sub-r"><span class="quiz-progress">Question <b>${session.index + 1}</b> of ${total}</span><span class="quiz-score">Score <b>${correctSoFar}/${answeredSoFar}</b>${skippedPastCount(session.records, session.index) ? ` · ${skippedPastCount(session.records, session.index)} skipped` : ''}</span></span>
       </div>
       <div class="q-sub-bar"><i style="width:${(session.index / total) * 100}%"></i></div>
     </div>
@@ -3232,7 +3259,7 @@ function renderPracticeQuestion() {
         : '<div class="rail-wait"><span class="kicker">On the Lesion Atlas</span><p>Answer to see where this question lives on the atlas — its card, its map and its graph.</p></div>'}</aside>
       <div class="next-row q-nav">
         <button class="btn secondary" id="prevBtn" ${session.index === 0 ? 'disabled' : ''}>&larr; Previous</button>
-        ${answered ? `<button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next question &rarr;' : 'Finish'}</button>` : '<span></span>'}
+        ${quizNextButton(session.index, total, answered, 'Next question &rarr;')}
       </div>
     </div>
   `;
@@ -3294,34 +3321,38 @@ function renderPracticeQuestion() {
     const confConfident = document.getElementById('confConfident');
     if (confGuessed) confGuessed.addEventListener('click', () => finalizeAnswer('guessed'));
     if (confConfident) confConfident.addEventListener('click', () => finalizeAnswer('confident'));
-  } else {
-    const nextBtn = document.getElementById('nextBtn');
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        if (session.index + 1 < total) {
-          session.index++;
-          session.pendingLetter = null;
-          renderPracticeQuestion();
-          window.scrollTo(0, 0);
-        } else {
-          recordScore(session.scoreKey, correctSoFar, total);
-          clearPracticeSessionSnapshot();
-          renderPracticeComplete();
-        }
-      });
-    }
+  }
+  const nextBtn = document.getElementById('nextBtn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (session.index + 1 < total) {
+        session.index++;
+        session.pendingLetter = null;
+        renderPracticeQuestion();
+        window.scrollTo(0, 0);
+      } else {
+        // Skipped questions stay null. Score only what was answered.
+        const answeredN = session.records.filter(r => r).length;
+        if (answeredN) recordScore(session.scoreKey, session.records.filter(r => r && r.correct).length, answeredN);
+        clearPracticeSessionSnapshot();
+        renderPracticeComplete();
+      }
+    });
   }
 }
 
 function renderPracticeComplete() {
   const total = session.questions.length;
+  const skipped = skippedQuestionList(session.records, session.questions);
+  const answered = total - skipped.length;
   const correctCount = session.records.filter(r => r && r.correct).length;
-  const pct = Math.round((correctCount / total) * 100);
+  const pct = answered ? Math.round((correctCount / answered) * 100) : null;
   main.innerHTML = `
     <div class="result-summary">
-      <div class="big-pct">${pct}%</div>
-      <div class="sub">${correctCount} / ${total} correct</div>
+      <div class="big-pct">${pct == null ? '—' : pct + '%'}</div>
+      <div class="sub">${answered ? `${correctCount} / ${answered} correct` : 'No questions answered'}</div>
     </div>
+    ${skippedSummaryHtml(skipped)}
     <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
       <button class="btn secondary" id="retryBtn">Retry This Batch</button>
       <button class="btn secondary" id="backBatchBtn">Choose Different Batch</button>
@@ -3594,7 +3625,7 @@ function renderExamQuestion() {
         <button class="btn secondary" id="prevBtn" ${session.index === 0 ? 'disabled' : ''}>Previous</button>
         <div style="display:flex; gap:10px;">
           ${session.index + 1 < total
-            ? '<button class="btn" id="nextBtn">Next</button>'
+            ? `<button class="btn" id="nextBtn"${selected ? '' : ' title="Skip this question without answering" aria-label="Next, skip without answering"'}>Next</button>`
             : '<button class="btn" id="submitBtn">Submit Exam</button>'}
         </div>
       </div>
@@ -3656,12 +3687,16 @@ function finishExamSim(timeExpired) {
   const total = session.questions.length;
   let correctCount = 0;
   const missed = [];
+  const unanswered = [];
   const bySdl = {}; // sdlNumber -> {correct, total, title}
   const byObjective = {}; // "sdlNumber-objective" -> {correct, total, sdlNumber, objective}
   const timeSpentMs = session.timeSpentMs || new Array(total).fill(0);
 
   session.questions.forEach((q, i) => {
     const ans = session.answers[i];
+    // Blank at submit (Next without a choice, or left empty). Not a miss: no attempt,
+    // so it cannot become a weak spot or a spaced-review item, and it stays out of the percent.
+    if (ans == null) { unanswered.push({ q }); return; }
     const isCorrect = ans === q.correct;
     if (isCorrect) correctCount++;
     else missed.push({ q, given: ans });
@@ -3676,13 +3711,15 @@ function finishExamSim(timeExpired) {
     if (isCorrect) byObjective[objKey].correct++;
   });
 
-  recordScore(examScoreKey(session), correctCount, total);
+  const answered = correctCount + missed.length;
+  if (answered) recordScore(examScoreKey(session), correctCount, answered);
 
-  // Log every question in this simulation to the attempts history (no confidence
-  // rating is collected in timed exam mode — that's reserved for practice/review).
-  // timeMs rides along here too, purely for this device's own Pacing summary below.
+  // Log every answered question (no confidence rating in timed exam mode — that's
+  // reserved for practice/review). A blank is not an attempt. timeMs is only for
+  // this device's own Pacing summary below.
   session.questions.forEach((q, i) => {
     const ans = session.answers[i];
+    if (ans == null) return;
     try {
       logAttempt({
         id: q.id, sdlNumber: q.sdlNumber, sdlTitle: q.sdlTitle,
@@ -3699,8 +3736,9 @@ function finishExamSim(timeExpired) {
   // earlier exam's content the student is weak on.
   const bySource = {}; // examNumber -> {correct, total, examNumber, tag}
   session.questions.forEach((q, i) => {
-    if (!q.sourceTag) return;
-    const isCorrect = session.answers[i] === q.correct;
+    const ans = session.answers[i];
+    if (ans == null || !q.sourceTag) return;
+    const isCorrect = ans === q.correct;
     const key = q.sourceExamNumber;
     if (!bySource[key]) bySource[key] = { correct: 0, total: 0, examNumber: key, tag: q.sourceTag };
     bySource[key].total++;
@@ -3715,13 +3753,18 @@ function finishExamSim(timeExpired) {
   const slowest = answeredTimes.slice().sort((a, b) => b.ms - a.ms).slice(0, 5);
   const pacing = { avgMs, allottedMs, slowest, hasData: answeredTimes.length > 0 };
 
-  session.results = { correctCount, total, missed, bySdl, byObjective, bySource, pacing };
+  session.results = { correctCount, total, answered, missed, unanswered, bySdl, byObjective, bySource, pacing };
   renderExamResults();
 }
 
 function renderExamResults() {
-  const { correctCount, total, missed, bySdl, byObjective, bySource } = session.results;
-  const pct = Math.round((correctCount / total) * 100);
+  const { correctCount, answered = 0, missed, unanswered, bySdl, byObjective, bySource } = session.results;
+  const blanks = unanswered || [];
+  const scored = answered > 0;
+  const pct = scored ? Math.round((correctCount / answered) * 100) : 0;
+  const scoreSub = !scored
+    ? `No questions answered${blanks.length ? ` · ${blanks.length} unanswered` : ''}`
+    : `${correctCount} / ${answered} correct${blanks.length ? ` · ${blanks.length} unanswered` : ''}`;
 
   const sourceKeys = Object.keys(bySource || {});
   const sourceHtml = sourceKeys.length === 0 ? '' : `
@@ -3769,7 +3812,7 @@ function renderExamResults() {
   })();
 
   const missedHtml = missed.length === 0
-    ? '<p class="empty-state">No missed questions — perfect score.</p>'
+    ? `<p class="empty-state">${blanks.length ? 'No missed questions.' : 'No missed questions — perfect score.'}</p>`
     : missed.map(({ q, given }) => `
       <div class="missed-item">
         <div class="missed-stem">${escapeHtml(q.stem)} ${isFlagged(q.id) ? '<span class="flagged-tag">&#9733; flagged</span>' : ''}</div>
@@ -3781,32 +3824,47 @@ function renderExamResults() {
       </div>
     `).join('');
 
+  const unansweredHtml = !blanks.length ? '' : `
+    <div class="section-label">Unanswered (${blanks.length})</div>
+    <p class="setup-hint">Left blank — not scored, and not saved as an attempt.</p>
+    ${blanks.map(({ q }) => `
+      <div class="missed-item unanswered-item">
+        <div class="missed-stem">${escapeHtml(q.stem)} ${isFlagged(q.id) ? '<span class="flagged-tag">&#9733; flagged</span>' : ''}</div>
+        <div class="your-answer unanswered">Unanswered — not scored</div>
+        <div class="correct-answer">Correct answer: ${q.correct} — ${escapeHtml(choiceText(q, q.correct, true))}</div>
+        ${explanationHtml(q, null)}
+        ${q.boardPrep ? `<div class="info-block boardprep"><b>Board Prep</b>${escapeHtml(q.boardPrep)}</div>` : ''}
+        ${atlasLinksHtml(q, null)}
+      </div>
+    `).join('')}`;
+
   main.innerHTML = `
     <h1>${session.splitId ? `${escapeHtml(examSessionLabel(session))} Results` : session.presetId ? escapeHtml(examSessionLabel(session).replace(/^Final Exam/, 'Final Exam Results')) : session.isFinal ? 'Final Exam Results' : `${examLabel(session.examNumber)} Simulation Results`}</h1>
     ${session.timeExpired ? '<p class="subtitle">Time expired — exam auto-submitted.</p>' : ''}
     <div class="result-summary">
-      <div class="big-pct">${pct}%</div>
-      <div class="sub">${correctCount} / ${total} correct</div>
+      <div class="big-pct">${scored ? pct + '%' : '—'}</div>
+      <div class="sub">${scoreSub}</div>
     </div>
 
     ${sourceHtml}
 
-    <div class="section-label">Per-SDL Breakdown</div>
+    ${sdlRows ? `<div class="section-label">Per-SDL Breakdown</div>
     <table class="breakdown-table">
       <thead><tr><th>SDL</th><th>Score</th><th>%</th></tr></thead>
       <tbody>${sdlRows}</tbody>
-    </table>
+    </table>` : ''}
 
-    <div class="section-label">Per-Objective Breakdown</div>
+    ${objRows ? `<div class="section-label">Per-Objective Breakdown</div>
     <table class="breakdown-table">
       <thead><tr><th>Objective</th><th>Score</th><th>%</th></tr></thead>
       <tbody>${objRows}</tbody>
-    </table>
+    </table>` : ''}
 
     ${pacingHtml}
 
     <div class="section-label">Missed Questions (${missed.length})</div>
     ${missedHtml}
+    ${unansweredHtml}
 
     <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
       <button class="btn" id="doneBtn">${session.splitId ? `Back to ${escapeHtml(examSessionLabel(session))}` : session.isFinal ? 'Back to Home' : `Back to ${examLabel(session.examNumber)}`}</button>
@@ -3918,7 +3976,7 @@ function renderFlaggedQuestion() {
     <button class="back-link" id="backHome">&larr; Home</button>
     <div class="quiz-header">
       <span class="quiz-progress">Flagged Review — Question ${session.index + 1} of ${total}</span>
-      <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}</span>
+      <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}${skippedPastCount(session.records, session.index) ? ` · ${skippedPastCount(session.records, session.index)} skipped` : ''}</span>
     </div>
     <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
     <div class="q-card">
@@ -3932,7 +3990,7 @@ function renderFlaggedQuestion() {
       ${feedbackHtml}
       <div class="next-row" style="justify-content: space-between;">
         <button class="btn secondary" id="prevBtn" ${session.index === 0 ? 'disabled' : ''}>&larr; Previous</button>
-        ${answered ? `<button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next Question' : 'Finish'}</button>` : '<span></span>'}
+        ${quizNextButton(session.index, total, answered, 'Next Question')}
       </div>
     </div>
   `;
@@ -3994,19 +4052,18 @@ function renderFlaggedQuestion() {
     const confConfident = document.getElementById('confConfident');
     if (confGuessed) confGuessed.addEventListener('click', () => finalizeAnswer('guessed'));
     if (confConfident) confConfident.addEventListener('click', () => finalizeAnswer('confident'));
-  } else {
-    const nextBtn = document.getElementById('nextBtn');
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        if (session.index + 1 < total) {
-          session.index++;
-          session.pendingLetter = null;
-          renderFlaggedQuestion();
-        } else {
-          setRoute('');
-        }
-      });
-    }
+  }
+  const nextBtn = document.getElementById('nextBtn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (session.index + 1 < total) {
+        session.index++;
+        session.pendingLetter = null;
+        renderFlaggedQuestion();
+      } else {
+        setRoute('');
+      }
+    });
   }
 }
 
@@ -4489,13 +4546,17 @@ function renderAtlasMapPractice(mapId, missedOnly, quick) {
   });
 }
 function renderQuickDone() {
-  const id = session.quickMap, total = session.questions.length, ok = session.records.filter(r => r && r.correct).length;
+  const id = session.quickMap;
+  const skipped = skippedQuestionList(session.records, session.questions);
+  const answered = session.questions.length - skipped.length;
+  const ok = session.records.filter(r => r && r.correct).length;
   const name = ATLAS_MAPS && ATLAS_MAPS[id] ? ATLAS_MAPS[id][0] : id;
   main.innerHTML = `
     <div class="result-summary">
-      <div class="big-pct">${ok}/${total}</div>
+      <div class="big-pct">${answered ? `${ok}/${answered}` : '—'}</div>
       <div class="sub">Quick quiz — ${escapeHtml(name)}</div>
     </div>
+    ${skippedSummaryHtml(skipped)}
     <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
       <button class="btn" id="quickMore">3 more</button>
       <a class="btn secondary" href="#atlasmap/${encodeURIComponent(id)}">Practice the whole map</a>
@@ -4649,7 +4710,7 @@ function renderReviewQuestion() {
     <button class="back-link" id="backHome">&larr; ${back ? escapeHtml(back.label) : 'Home'}</button>
     <div class="quiz-header">
       <span class="quiz-progress">${escapeHtml(session.queueLabel || 'Review Due')} — Question ${session.index + 1} of ${total}</span>
-      <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}</span>
+      <span class="quiz-score">Score: ${correctSoFar}/${answeredSoFar}${skippedPastCount(session.records, session.index) ? ` · ${skippedPastCount(session.records, session.index)} skipped` : ''}</span>
     </div>
     <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${(session.index / total) * 100}%"></div></div>
     <div class="q-card">
@@ -4663,7 +4724,7 @@ function renderReviewQuestion() {
       ${feedbackHtml}
       <div class="next-row" style="justify-content: space-between;">
         <button class="btn secondary" id="prevBtn" ${session.index === 0 ? 'disabled' : ''}>&larr; Previous</button>
-        ${answered ? `<button class="btn" id="nextBtn">${session.index + 1 < total ? 'Next Question' : 'Finish'}</button>` : '<span></span>'}
+        ${quizNextButton(session.index, total, answered, 'Next Question')}
       </div>
     </div>
   `;
@@ -4724,21 +4785,20 @@ function renderReviewQuestion() {
     const confConfident = document.getElementById('confConfident');
     if (confGuessed) confGuessed.addEventListener('click', () => finalizeAnswer('guessed'));
     if (confConfident) confConfident.addEventListener('click', () => finalizeAnswer('confident'));
-  } else {
-    const nextBtn = document.getElementById('nextBtn');
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        if (session.index + 1 < total) {
-          session.index++;
-          session.pendingLetter = null;
-          renderReviewQuestion();
-        } else if (session.quickMap) {
-          renderQuickDone();
-        } else {
-          setRoute(back ? back.route : '');
-        }
-      });
-    }
+  }
+  const nextBtn = document.getElementById('nextBtn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (session.index + 1 < total) {
+        session.index++;
+        session.pendingLetter = null;
+        renderReviewQuestion();
+      } else if (session.quickMap) {
+        renderQuickDone();
+      } else {
+        setRoute(back ? back.route : '');
+      }
+    });
   }
 }
 
@@ -4996,6 +5056,22 @@ function renderStudySheet() {
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
   document.getElementById('printBtn').addEventListener('click', () => window.print());
 }
+
+/* Arrow keys move between questions. Right is Next, and on an unanswered question
+   that skips — the same button, so nothing is recorded. Left is Previous.
+   Search uses Up/Down. Arrows inside a text field are left alone. */
+(function bindQuizNavKeys() {
+  document.addEventListener('keydown', e => {
+    if (e.repeat || e.altKey || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const t = e.target;
+    if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]')) return;
+    const btn = document.getElementById(e.key === 'ArrowRight' ? 'nextBtn' : 'prevBtn');
+    if (!btn || btn.disabled || (main && !main.contains(btn))) return;
+    e.preventDefault();
+    btn.click();
+  });
+})();
 
 /* ── Accessibility (m56) ─────────────────────────────────────────────────────────────────────────────────────────────
    Every view re-renders #main with innerHTML, so this watches #main and, after each render:
