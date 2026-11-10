@@ -30,7 +30,9 @@ It serves the repo on a free local port (http.server in a thread), launches head
             labelled, in practice and in #sdlwrong; the right answer marks nothing;
             m66 split: with neuro's question parts held back by the server, its home and an SDL list draw, practice and
             #flagged wait ("Loading questions…"); let through, #flagged has every flagged question (3 parts), every part
-            arrives, and the first visit saves page + manifest + parts for offline use
+            arrives, and the first visit saves page + manifest + parts for offline use;
+            skip: Next before an answer records nothing (practice, review, flagged, and a timed exam); the summary
+            and exam submit show blanks as unanswered and leave them out of the percent
   atlas     every map opens via #<id> and draws its SVG with no errors; every moving map loads its drawing, then every
             switch option (data-dyn="o:<sw>:<key>") and toggle is clicked: the state applies, the readouts row renders,
             no errors
@@ -1310,6 +1312,192 @@ def test_saveall(C):
         p.close()
 
 
+def test_skip(C):
+    """Next is on screen before an answer. Skipping writes no attempt; going back still
+    answers normally. The summary and a timed-exam submit treat blanks as unanswered,
+    not wrong, and leave them out of the percent."""
+    S, t0 = "skip", time.time()
+    p = C.page(isolated=True)
+    try:
+        p.cmd("Emulation.setDeviceMetricsOverride", width=390, height=844, deviceScaleFactor=2, mobile=True)
+        p.cmd("Emulation.setTouchEmulationEnabled", enabled=True, maxTouchPoints=5)
+        p.goto(C.server.base + "gastro/index.html")
+        p.wait("typeof DATA!=='undefined' && DATA && document.querySelectorAll('.exam-card').length", timeout=20)
+        pick = p.js("""(()=>{ for (const e of DATA.exams) for (const s of e.sdls) {
+            const n = s.questions.filter(q => q.batch !== 3 && q.batch !== 4 && q.batch !== 5 && q.stem && q.correct).length;
+            if (n >= 3) return {sdl: s.sdlNumber, exam: e.examNumber};
+          } return null; })()""")
+        if not pick:
+            record(S, "skip", False, "no SDL with 3 questions")
+            return
+        p.js("location.hash='practice/%d/all/new'" % pick["sdl"])
+        p.wait("typeof session!=='undefined' && session && session.mode==='practice' && document.getElementById('nextBtn') && document.querySelectorAll('.choice[data-letter]').length", timeout=20)
+        geom = p.js("""(()=>{ const b=document.getElementById('nextBtn'), prev=document.getElementById('prevBtn');
+          b.scrollIntoView({block:'end'});
+          const r=b.getBoundingClientRect();
+          const cx=Math.min(innerWidth-2, Math.max(2, r.left+r.width/2)), cy=Math.min(innerHeight-2, Math.max(2, r.top+r.height/2));
+          const hit=document.elementFromPoint(cx, cy);
+          const nav=b.closest('.q-nav');
+          return {w:Math.round(r.width), h:Math.round(r.height), disabled:!!b.disabled, prevDisabled:!!prev.disabled,
+            sticky: nav ? getComputedStyle(nav).position : '',
+            hit: !!(hit && (hit===b || b.contains(hit))),
+            inView: r.top>=-1 && r.bottom<=innerHeight+1, label:(b.getAttribute('aria-label')||b.textContent).trim()}; })()""")
+        record(S, "phone: Next is tappable before an answer",
+               geom["h"] >= 40 and geom["w"] >= 44 and not geom["disabled"] and geom["prevDisabled"]
+               and geom["sticky"] == "sticky" and geom["hit"] and geom["inView"] and "skip" in geom["label"].lower(),
+               "Next %dx%d %s sticky=%s hit=%s" % (geom["w"], geom["h"], geom["label"], geom["sticky"], geom["hit"]))
+        C.shot(p, "skip-phone-unanswered")
+
+        flow = p.js(r"""(async () => {
+          const key = (k, el) => (el || document.body).dispatchEvent(new KeyboardEvent('keydown', {key:k, bubbles:true, cancelable:true}));
+          const before = loadAttempts().length;
+          const id0 = session.questions[0].id;
+          const wrong = ['A','B','C','D','E'].find(l => l !== session.questions[0].correct && session.questions[0].choices[l]);
+          if (!__T.click('.choice[data-letter="' + wrong + '"]')) return {err:'choice not clickable'};
+          if (!await __T.until(() => document.getElementById('confGuessed'), 3000)) return {err:'confidence missing before skip'};
+          if (!__T.click('#nextBtn')) return {err:'Next missing while a choice is pending'};
+          const skippedPending = {index: session.index, rec: session.records[0], pending: session.pendingLetter, n: loadAttempts().length};
+          const prevOn = document.getElementById('prevBtn') && !document.getElementById('prevBtn').disabled;
+          key('ArrowLeft');
+          const back = {index: session.index, rec: session.records[0], pending: session.pendingLetter,
+            choices: document.querySelectorAll('.choice[data-letter]:not([disabled])').length,
+            fb: !!document.querySelector('.feedback-banner'), prevOn};
+          const q = session.questions[0];
+          if (!__T.click('.choice[data-letter="' + q.correct + '"]')) return {err:'correct choice', skippedPending, back};
+          const conf = await __T.until(() => document.getElementById('confConfident'), 3000);
+          if (!conf) return {err:'confidence missing', skippedPending, back};
+          __T.click(conf);
+          const fb = await __T.until(() => document.querySelector('.feedback-banner'), 3000);
+          const answered = {banner: fb ? fb.className : '', expl: !!document.querySelector('.info-block.explanation'),
+            rec: session.records[0], n: loadAttempts().length,
+            why: !!document.querySelector('.info-block.explanation mark.whynot')};
+          if (!__T.click('#reportBtn')) return {err:'no report button', skippedPending, back, answered};
+          const note = await __T.until(() => document.getElementById('rfNote'), 2000);
+          if (!note) return {err:'report note missing', skippedPending, back, answered};
+          note.focus();
+          const at = session.index;
+          key('ArrowRight', note);
+          const held = session.index;
+          note.blur();
+          key('ArrowRight');
+          const moved = {at, held, to: session.index, rec1: session.records[1], n: loadAttempts().length, skippedId: session.questions[1].id};
+          session.index = session.questions.length - 1;
+          session.pendingLetter = null;
+          renderPracticeQuestion();
+          if (!__T.click('#nextBtn')) return {err:'Finish missing', skippedPending, back, answered, moved};
+          const score = getScore(session.scoreKey);
+          const logged = loadAttempts();
+          const sched = spacedSchedule(logged);
+          const skippedIds = session.questions.map(q => q.id).filter((id, i) => !session.records[i]);
+          return {skippedPending, back, answered, moved, id0,
+            pct: document.querySelector('.big-pct').textContent.trim(),
+            sub: document.querySelector('.result-summary .sub').textContent.trim(),
+            hint: (document.querySelector('.setup-hint') || {}).textContent || '',
+            tags: document.querySelectorAll('.skipped-tag').length,
+            score: score && score.last, skippedIds,
+            loggedSkipped: skippedIds.filter(id => logged.some(a => a.id === id)),
+            scheduled: skippedIds.filter(id => sched[id]),
+            attempts: logged.length, before};
+        })()""", timeout=30)
+        if flow.get("err"):
+            record(S, "practice: skip, back, answer, summary", False, flow["err"])
+        else:
+            sp, back, ans, moved = flow["skippedPending"], flow["back"], flow["answered"], flow["moved"]
+            sc = flow.get("score") or {}
+            ok = (sp["index"] == 1 and sp["rec"] is None and sp["pending"] is None and sp["n"] == flow["before"]
+                  and back["index"] == 0 and back["rec"] is None and back["pending"] is None and back["choices"] >= 2
+                  and not back["fb"] and back["prevOn"]
+                  and "correct" in (ans.get("banner") or "").split() and ans["expl"] and ans["rec"] and ans["rec"]["correct"]
+                  and ans["rec"]["confidence"] == "confident" and not ans["why"] and ans["n"] == flow["before"] + 1
+                  and moved["held"] == moved["at"] and moved["to"] == moved["at"] + 1 and moved["rec1"] is None
+                  and moved["n"] == flow["before"] + 1
+                  and flow["pct"] == "100%" and flow["sub"] == "1 / 1 correct"
+                  and "not counted as wrong" in flow["hint"] and flow["tags"] == len(flow["skippedIds"])
+                  and sc.get("correct") == 1 and sc.get("total") == 1
+                  and not flow["loggedSkipped"] and not flow["scheduled"])
+            record(S, "practice: skip records nothing; summary excludes it", ok,
+                   "%s · %s · %d skipped · attempts %d→%d" % (flow["pct"], flow["sub"], flow["tags"], flow["before"], flow["attempts"])
+                   if ok else json.dumps({"skippedPending": sp, "back": back, "answered": ans, "moved": moved,
+                     "pct": flow["pct"], "sub": flow["sub"], "hint": flow["hint"], "tags": flow["tags"],
+                     "score": sc, "loggedSkipped": flow["loggedSkipped"], "scheduled": flow["scheduled"]}, default=str)[:500])
+        C.shot(p, "skip-practice-summary")
+
+        modes = p.js(r"""(() => {
+          const bank = session.questions.slice(0, 2);
+          const n0 = loadAttempts().length;
+          function run(mode, render) {
+            session = {mode, queueLabel: mode, questions: bank, index: 0, records: [null, null], pendingLetter: null};
+            render();
+            const next = document.getElementById('nextBtn'), prev = document.getElementById('prevBtn');
+            const ready = !!(next && !next.disabled && prev && prev.disabled);
+            const h = next ? Math.round(next.getBoundingClientRect().height) : 0;
+            next && next.click();
+            return {ready, h, index: session.index, rec: session.records[0], n: loadAttempts().length,
+              prevOn: !!(document.getElementById('prevBtn') && !document.getElementById('prevBtn').disabled)};
+          }
+          const review = run('review', renderReviewQuestion);
+          const flagged = run('flagged', renderFlaggedQuestion);
+          return {review, flagged, n0};
+        })()""")
+        for name, row in (("review", modes["review"]), ("flagged", modes["flagged"])):
+            ok = (row["ready"] and row["h"] >= 40 and row["index"] == 1 and row["rec"] is None
+                  and row["n"] == modes["n0"] and row["prevOn"])
+            record(S, "%s: Next skips without an attempt" % name, ok,
+                   "index %s rec %s attempts %s height %s" % (row["index"], row["rec"], row["n"], row["h"]))
+
+        exam = p.js(r"""(() => {
+          const found = findSdl(%d);
+          const qs = found.sdl.questions.filter(q => q.batch !== 3 && q.batch !== 4 && q.batch !== 5 && q.stem && q.correct).slice(0, 3)
+            .map(q => Object.assign({}, q, {sdlNumber: found.sdl.sdlNumber, sdlTitle: found.sdl.title}));
+          const before = loadAttempts().slice();
+          beginExamSession(found.examNumber, qs, {timed: true, secondsPerQuestion: 90});
+          const next = document.getElementById('nextBtn');
+          if (!next || next.disabled) return {err:'exam Next missing'};
+          document.body.dispatchEvent(new KeyboardEvent('keydown', {key:'ArrowRight', bubbles:true, cancelable:true}));
+          const afterSkip = {index: session.index, blank: session.answers[0], n: loadAttempts().length, timed: session.timed};
+          const q = session.questions[1];
+          if (!__T.click('.choice[data-letter="' + q.correct + '"]')) return {err:'exam choice', afterSkip};
+          if (session.answers[1] !== q.correct) return {err:'exam answer not stored', afterSkip};
+          session.index = 2;
+          renderExamQuestion();
+          window.confirm = () => true;
+          if (!__T.click('#submitBtn')) return {err:'no submit', afterSkip};
+          const logged = loadAttempts();
+          const added = logged.slice(before.length);
+          const blankId = qs[2].id;
+          return {afterSkip, before: before.length,
+            pct: document.querySelector('.big-pct').textContent.trim(),
+            sub: document.querySelector('.result-summary .sub').textContent.trim(),
+            blanks: document.querySelectorAll('.unanswered-item').length,
+            missedWrong: [...document.querySelectorAll('.missed-item:not(.unanswered-item) .your-answer')].map(el => el.textContent.trim()),
+            added: added.map(a => ({id:a.id, correct:a.correct, confidence:a.confidence, mode:a.mode})),
+            blankLogged: logged.some(a => a.id === blankId && a.mode === 'exam'),
+            hint: (document.querySelector('.unanswered-item') || {}).textContent || ''};
+        })()""" % pick["sdl"], timeout=30)
+        if exam.get("err"):
+            record(S, "exam: skip, then unanswered at submit", False, exam["err"])
+        else:
+            sk = exam["afterSkip"]
+            added = exam["added"]
+            ok = (sk["index"] == 1 and sk["blank"] is None and sk["n"] == exam["before"] and sk["timed"]
+                  and exam["pct"] == "100%" and exam["sub"] == "1 / 1 correct · 2 unanswered"
+                  and exam["blanks"] == 2 and not exam["blankLogged"]
+                  and len(added) == 1 and added[0]["correct"] and added[0]["mode"] == "exam" and added[0]["confidence"] is None
+                  and not any(t.startswith("Your answer:") and "(no answer)" not in t and "Unanswered" not in t for t in exam["missedWrong"])
+                  and "not scored" in exam["hint"])
+            record(S, "exam: skip, then unanswered at submit", ok,
+                   "%s · %s · %d blanks · +%d attempts" % (exam["pct"], exam["sub"], exam["blanks"], len(added)))
+        C.shot(p, "skip-exam-results")
+        errs = p.take_errors()
+        record(S, "skip: no console errors", not errs, fmt_errs(errs))
+    except Exception as e:
+        record(S, "skip (run)", False, "%s" % e)
+        if VERBOSE: traceback.print_exc()
+    finally:
+        p.close()
+    record(S, "total", True, "", time.time() - t0)
+
+
 def navigator_ok(r):
     return isinstance(r, dict) and r.get("scope")
 
@@ -1407,6 +1595,7 @@ def main():
             if "blocks" in only and WHYNOT_Q[0] in blocks: test_whynot(C)
             if "hub" in only and "blocks" in only and WEAK_BLOCK in blocks: test_weakspots(C)
             if "blocks" in only: test_split(C)
+            if "blocks" in only: test_skip(C)
             if "atlas" in only:
                 failed = [r for r in RESULTS if r[0] == "atlas" and r[1].startswith("map ") and r[2] == "FAIL"]
                 record("atlas", "every map opens + renders; moving maps: every switch", not failed and stats["maps"] == len(ids),
