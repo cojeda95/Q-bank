@@ -77,10 +77,28 @@ if (QUIZ_CONFIG.batch4) {
   TRIAL_BATCHES[4] = Object.assign({
     name: 'Trial 2', listLabel: 'trial questions', icon: '🧪', title: '🧪 Trial', meta: 'experimental',
     hint: '', banner: '🧪 Trial (experimental)', afterBatch2: false, rowClass: 'bloom-row trial-alt-row',
+    bannerClass: 'trial-alt-banner',
   }, QUIZ_CONFIG.batch4);
+}
+// Batch 5 is an optional textbook set (QUIZ_CONFIG.batch5). Same opt-in treatment as the
+// trial slots — out of exam totals, simulations, the builder, and "Both batches" — but
+// group: 'textbook' so counts and the picker label it as textbook, not as another trial.
+if (QUIZ_CONFIG.batch5) {
+  TRIAL_BATCHES[5] = Object.assign({
+    name: 'Textbook', listLabel: 'textbook', icon: '📚', title: '📚 Textbook',
+    meta: 'textbook-specific, kept separate from Batches 1–2',
+    hint: 'Textbook questions are their own set. They are left out of exam totals, Full Exam Simulation, and the Custom Exam Builder.',
+    banner: '📚 Textbook', afterBatch2: false, rowClass: 'textbook-row', bannerClass: 'textbook-banner',
+    group: 'textbook',
+  }, QUIZ_CONFIG.batch5);
 }
 const TRIAL_KEYS = Object.keys(TRIAL_BATCHES).map(Number).sort((a, b) => a - b);
 function isTrialQ(q) { return !!TRIAL_BATCHES[q.batch]; }
+// 'regular' | 'trial' | 'textbook' — textbook is opt-in like a trial, and counted apart from it
+function batchGroup(b) {
+  const T = TRIAL_BATCHES[b];
+  return T ? (T.group || 'trial') : 'regular';
+}
 
 /* ── Lesion Atlas links ─────────────────────────────────────────────────
    resources/atlas-terms.js (written by tools/build-atlas.py) lists every atlas
@@ -1266,8 +1284,8 @@ function saveBlockOffline() {
 }
 
 function allQuestionsForExam(examNumber) {
-  // Excludes the trial batches (isTrialQ: batch 3, Bloom Batch / nephro short-stem trial,
-  // and batch 4 where QUIZ_CONFIG.batch4 exists) — opt-in experimental trials, not part of
+  // Excludes the opt-in batches (isTrialQ: batch 3, Bloom Batch / nephro short-stem trial,
+  // batch 4 where QUIZ_CONFIG.batch4 exists, and batch 5 textbook where batch5 exists) — not part of
   // the standard question pool used for exam totals, Full Exam Simulation, or the
   // Custom Exam Builder's current/prior blend. Also respects High-Yield Only mode.
   const settings = loadSettings();
@@ -1856,7 +1874,9 @@ function renderHome() {
 
   const nSdl = DATA.exams.reduce((s, e) => s + e.sdls.length, 0);
   const allQs = DATA.exams.flatMap(e => e.sdls.flatMap(s => s.questions));
-  const nReg = allQs.filter(q => !isTrialQ(q)).length, nTrial = allQs.length - nReg;
+  const nReg = allQs.filter(q => batchGroup(q.batch) === 'regular').length;
+  const nTrial = allQs.filter(q => batchGroup(q.batch) === 'trial').length;
+  const nTb = allQs.filter(q => batchGroup(q.batch) === 'textbook').length;
 
   main.innerHTML = `
     <section class="bhero bleed" aria-labelledby="bhTitle">
@@ -1864,7 +1884,7 @@ function renderHome() {
         <div class="bhero-main">
           <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">All blocks</a><span aria-hidden="true">/</span><span>${escapeHtml(blockShort())}</span></nav>
           <h1 id="bhTitle">${escapeHtml(blockDisplayTitle())}</h1>
-          <p class="bhero-meta">${DATA.exams.length} exam${DATA.exams.length === 1 ? '' : 's'} · ${nSdl} SDLs · ${nReg.toLocaleString()} questions${nTrial ? ` + ${nTrial} trial` : ''}${settings.hyOnly ? ' · <strong>⚡ High-yield only is on</strong>' : ''}</p>
+          <p class="bhero-meta">${DATA.exams.length} exam${DATA.exams.length === 1 ? '' : 's'} · ${nSdl} SDLs · ${nReg.toLocaleString()} questions${nTrial ? ` + ${nTrial.toLocaleString()} trial` : ''}${nTb ? ` + ${nTb.toLocaleString()} textbook` : ''}${settings.hyOnly ? ' · <strong>⚡ High-yield only is on</strong>' : ''}</p>
           <form class="bsearch" id="bSearch" role="search" autocomplete="off">
             <div class="bsbox">
               <label class="sr" for="bQ">Search this block’s SDLs</label>
@@ -3196,7 +3216,7 @@ function renderPracticeQuestion() {
       </div>
       <div class="q-sub-bar"><i style="width:${(session.index / total) * 100}%"></i></div>
     </div>
-    ${TRIAL_BATCHES[session.trialBatch || (session.isBloom ? 3 : 0)] ? `<div class="bloom-banner${session.trialBatch === 4 ? ' trial-alt-banner' : ''}">${escapeHtml(TRIAL_BATCHES[session.trialBatch || 3].banner)}</div>` : ''}
+    ${TRIAL_BATCHES[session.trialBatch || (session.isBloom ? 3 : 0)] ? `<div class="bloom-banner${(TRIAL_BATCHES[session.trialBatch || 3].bannerClass) ? ' ' + TRIAL_BATCHES[session.trialBatch || 3].bannerClass : ''}">${escapeHtml(TRIAL_BATCHES[session.trialBatch || 3].banner)}</div>` : ''}
     <div class="qlayout${answered ? ' answered' : ''}">
       <div class="q-card">
         <div class="q-meta-row">
