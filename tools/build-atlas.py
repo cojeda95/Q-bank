@@ -598,8 +598,10 @@ for bi, (b, _) in enumerate(blocks):
     raw = (ROOT / b / "data.js").read_text(encoding="utf-8")
     data = json.loads(raw[raw.index("=") + 1:].strip().rstrip(";"))
     # trial batches are opt-in and left out of exam totals, as in shared/app.js (isTrialQ):
-    # batch 3 always, batch 4 only where the block's QUIZ_CONFIG defines batch4
-    trial = [3] + ([4] if "batch4" in (ROOT / b / "index.html").read_text(encoding="utf-8") else [])
+    # batch 3 always, batch 4 only where the block's QUIZ_CONFIG defines batch4,
+    # batch 5 (textbook) only where the block defines batch5
+    page = (ROOT / b / "index.html").read_text(encoding="utf-8")
+    trial = [3] + ([4] if "batch4" in page else []) + ([5] if "batch5" in page else [])
     exam_counts[b] = {"trial": trial, "exams": [[ex.get("examNumber"), sum(1 for sdl in ex["sdls"] for q in sdl["questions"] if q.get("batch") not in trial)]
                                                 for ex in data["exams"]]}
     for ex in data["exams"]:

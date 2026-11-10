@@ -57,6 +57,21 @@
     hint: 'Grid trial: answer choices are rows of findings (↑ / ↓ / ↔) under column headings, the table format used by board question banks. It is kept out of the exam totals, Full Exam Simulation and the Custom Exam Builder.',
     banner: '▦ Trial: grid answer choices',
     afterBatch2: true
+  },
+  // Batch 5 (shared/app.js TRIAL_BATCHES, group "textbook") holds questions tagged
+  // enrichmentSource. Own picker row; left out of exam totals, simulations, and the builder.
+  batch5: {
+    name: 'Textbook',
+    listLabel: 'textbook',
+    icon: '📚',
+    title: '📚 Textbook',
+    meta: 'textbook-specific, kept separate from Batches 1–2',
+    hint: 'Textbook questions are details that are not in this SDL’s lecture notes. They are their own set and are left out of exam totals, Full Exam Simulation, and the Custom Exam Builder.',
+    banner: '📚 Textbook — detail not in this SDL’s lecture notes',
+    afterBatch2: false,
+    rowClass: 'textbook-row',
+    bannerClass: 'textbook-banner',
+    group: 'textbook'
   }
 };</script>
 <script src="q/manifest.js"></script>

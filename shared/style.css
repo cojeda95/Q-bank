@@ -299,6 +299,9 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
    reads as part of the purple batch-3 trial. */
 .sdl-row.bloom-row.trial-alt-row { border-color: var(--amber-line); background: var(--amber-bg); }
 .sdl-row.bloom-row.trial-alt-row .sdl-title { color: var(--amber-ink); }
+/* Textbook set (QUIZ_CONFIG.batch5): blue, matching the 📚 badge, so it is not another trial row. */
+.sdl-row.textbook-row { border-color: var(--blue-ink); background: var(--blue-bg); }
+.sdl-row.textbook-row .sdl-title { color: var(--blue-ink); }
 
 .btn {
   background: var(--navy-fill);
@@ -410,6 +413,7 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   margin-bottom: 14px;
 }
 .bloom-banner.trial-alt-banner { background: var(--amber-bg); color: var(--amber-ink); }
+.bloom-banner.textbook-banner { background: var(--blue-bg); color: var(--blue-ink); }
 .flag-btn {
   background: none;
   border: 1px solid var(--grey-border);

@@ -37,7 +37,7 @@ const BLOCKS = [
   { key: 'ortho', label: 'Orthopedics' },
   { key: 'rheum', label: 'Rheumatology' },
   { key: 'nephro', label: 'Nephrology/Urology', batch3Label: 'Batch 3 — Trial: shorter clinical stems + shorter answer choices', batch4Label: 'Batch 4 — Trial: grid answer choices' },
-  { key: 'gastro', label: 'Gastroenterology' },
+  { key: 'gastro', label: 'Gastroenterology', batch5Label: '📚 Textbook' },
   { key: 'omm', label: 'OMM III' },
 ];
 
@@ -238,8 +238,8 @@ function shuffleArr(arr) {
   }
   return a;
 }
-// Every question id in a block across both regular batches — excludes the trial
-// batches (3: Bloom Batch / nephro short-stem trial; 4: nephro grid trial), same opt-in-only exclusion the regular per-block app uses
+// Every question id in a block across both regular batches — excludes opt-in
+// batches (3: Bloom Batch / short-stem trial; 4: grid trial; 5: textbook), same opt-in-only exclusion the regular per-block app uses
 // for its own Exam/Final Exam Simulation question pools. Pass examNumber to
 // scope to just that exam; omit (or pass null) for the whole block.
 function allBlockQuestionIds(quizData, examNumber) {
@@ -355,6 +355,7 @@ function batchLabel(b) {
   if (b === 2) return 'Batch 2 — Deep Vignettes';
   if (b === 3) { const blk = BLOCKS.find(x => x.key === loadedBlockKey); return (blk && blk.batch3Label) || 'Batch 3 — Bloom Batch'; }
   if (b === 4) { const blk = BLOCKS.find(x => x.key === loadedBlockKey); return (blk && blk.batch4Label) || 'Batch 4 — Trial'; }
+  if (b === 5) { const blk = BLOCKS.find(x => x.key === loadedBlockKey); return (blk && blk.batch5Label) || '📚 Textbook'; }
   return `Batch ${b}`;
 }
 
