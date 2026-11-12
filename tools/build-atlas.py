@@ -1126,6 +1126,10 @@ HOME_OUT.write_text("/* Built by tools/build-atlas.py — do not edit. The hub h
                     "window.ATLAS_HOME=" + json.dumps(home, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
 print(f"built {HOME_OUT.relative_to(ROOT)}  —  {len(home_maps)} maps in {len(topics)} systems, {len(all_plots)} graphs, "
       f"{nlinked} linked questions, {len(sdl_list)} SDLs, {len(abbr)} abbreviations ({HOME_OUT.stat().st_size // 1024} KB)")
+# The hub's hero and block cards quote these two files. Stamp index.html so the
+# no-JS text matches, and a later rebuild cannot leave the hand-typed counts behind.
+from stamp_hub import stamp_from_objects
+print("stamped index.html — " + stamp_from_objects(exam_counts, home))
 
 
 # ── card summaries: the question bank's "On the Lesion Atlas" panel ───────────

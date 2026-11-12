@@ -37,7 +37,7 @@ const FIREBASE_CONFIG = {
 };
 // ----------------------------------------------------------------------
 
-const BLOCK_KEYS = ['neuro', 'pulm', 'eent', 'endocrine', 'ortho', 'rheum', 'psych', 'nephro', 'gastro', 'omm', 'geriatrics'];
+const BLOCK_KEYS = ['neuro', 'pulm', 'eent', 'endocrine', 'ortho', 'rheum', 'psych', 'nephro', 'gastro', 'omm', 'geriatrics', 'research'];
 const SUFFIXES = ['flags_v1', 'progress_v1', 'attempts_v1', 'settings_v1'];
 // The Lesion Atlas keeps its review progress (reviewed marks, quiz record and the
 // spaced-review schedule, including question-bank misses) under one key, synced in
@@ -471,6 +471,7 @@ function initSyncUI() {
             <button class="sync-btn" id="newPinBtn">Create a New PIN</button>
           </div>
           <div class="sync-enter-row">
+            <label class="sr" for="pinInput">Sync PIN</label>
             <input type="text" id="pinInput" class="sync-pin-input" maxlength="6" placeholder="Have a PIN? Enter it">
             <button class="sync-btn secondary" id="usePinBtn">Link Device</button>
           </div>
