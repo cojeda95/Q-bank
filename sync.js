@@ -133,10 +133,23 @@ function mergeAttempts(a, b) {
   return deduped.slice(-MAX_ATTEMPTS_STORED);
 }
 
-function mergeSettings(a, b, preferRemote) {
-  // Low-stakes toggle, not worth fancy merging — just prefer whichever side
-  // the caller says is more authoritative for this direction of sync.
-  return preferRemote ? Object.assign({}, a || {}, b || {}) : Object.assign({}, b || {}, a || {});
+function mergeSettings(a, b) {
+  // Toggles are saved together. The side with the newer updatedAt wins as a
+  // whole, so pushing from the device that just changed a setting doesn't
+  // put the stale cloud copy back. Settings saved before that stamp existed
+  // tie, and the remote copy still fills in over the local one.
+  if (!a || typeof a !== 'object' || Array.isArray(a)) a = {};
+  if (!b || typeof b !== 'object' || Array.isArray(b)) b = {};
+  const stamp = (s) => {
+    const t = s.updatedAt;
+    if (typeof t === 'number' && isFinite(t)) return t;
+    const n = Date.parse(t);
+    return isFinite(n) ? n : 0;
+  };
+  const ta = stamp(a), tb = stamp(b);
+  if (ta > tb) return Object.assign({}, a);
+  if (tb > ta) return Object.assign({}, b);
+  return Object.assign({}, a, b);
 }
 
 // Atlas progress. Reviewed marks: union, latest time. Answer counts: the larger
@@ -208,7 +221,7 @@ function mergeBlobs(localBlob, remoteBlob, blocks) {
     out[fKey] = JSON.stringify(mergeFlags(lf, rf));
     out[pKey] = JSON.stringify(mergeProgress(lp, rp));
     out[aKey] = JSON.stringify(mergeAttempts(la, ra));
-    out[sKey] = JSON.stringify(mergeSettings(ls, rs, true));
+    out[sKey] = JSON.stringify(mergeSettings(ls, rs));
   });
   const lAtlas = safeParse(localBlob[ATLAS_KEY], null), rAtlas = safeParse(remoteBlob[ATLAS_KEY], null);
   if (lAtlas || rAtlas) out[ATLAS_KEY] = JSON.stringify(mergeAtlas(lAtlas, rAtlas));
@@ -284,55 +297,88 @@ function fromFirestoreFields(doc) {
 }
 
 async function fetchDoc(docId) {
-  const res = await fetch(docUrl(docId));
+  const res = await fetch(docUrl(docId), { cache: 'no-store' });
   if (res.status === 404) return null; // nothing stored there yet
   if (!res.ok) throw new Error(`Cloud fetch failed (HTTP ${res.status})`);
   return res.json();
 }
 
-async function patchDoc(docId, body) {
-  const res = await fetch(docUrl(docId), {
+function conflictError(status) {
+  const err = new Error(`Cloud write conflict (HTTP ${status})`);
+  err.conflict = true;
+  return err;
+}
+
+// updateTime is the document's updateTime from the last read. The PATCH
+// carries it as a precondition so a concurrent push fails instead of
+// overwriting that device's attempts. A missing time means we observed no
+// document, so the write may only create one.
+async function patchDoc(docId, body, updateTime) {
+  let url = docUrl(docId);
+  if (updateTime) url += `&currentDocument.updateTime=${encodeURIComponent(updateTime)}`;
+  else url += '&currentDocument.exists=false';
+  const res = await fetch(url, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`Cloud write failed (HTTP ${res.status}) ${text}`);
-  }
+  if (res.ok) return;
+  const text = await res.text().catch(() => '');
+  if (res.status === 409 || res.status === 412 || /ABORTED|FAILED_PRECONDITION/.test(text)) throw conflictError(res.status);
+  throw new Error(`Cloud write failed (HTTP ${res.status}) ${text}`);
 }
 
 // Everything stored for a PIN: every block's document, merged over the old
 // single document. `hasLegacyData` says whether the old document still holds
 // progress, so a push knows to empty it.
 async function fetchRemoteBlob(pin) {
-  const [legacyDoc, ...blockDocs] = await Promise.all(
-    [fetchDoc(pin)].concat(BLOCK_KEYS.concat([ATLAS_DOC]).map(b => fetchDoc(blockDocId(pin, b)))));
-  const legacy = fromFirestoreFields(legacyDoc);
-  const current = Object.assign({}, ...blockDocs.map(fromFirestoreFields));
-  return { blob: mergeBlobs(legacy, current), hasLegacyData: Object.keys(legacy).length > 0 };
+  const ids = [pin].concat(BLOCK_KEYS.concat([ATLAS_DOC]).map(b => blockDocId(pin, b)));
+  const docs = await Promise.all(ids.map(fetchDoc));
+  const versions = {};
+  ids.forEach((id, i) => { versions[id] = (docs[i] && docs[i].updateTime) || null; });
+  const legacy = fromFirestoreFields(docs[0]);
+  const current = Object.assign({}, ...docs.slice(1).map(fromFirestoreFields));
+  return { blob: mergeBlobs(legacy, current), hasLegacyData: Object.keys(legacy).length > 0, versions };
 }
 
-async function writeRemoteBlob(pin, blob, clearLegacy) {
+async function writeRemoteBlob(pin, blob, clearLegacy, versions) {
+  versions = versions || {};
   const atlas = blob[ATLAS_KEY];
-  await Promise.all(BLOCK_KEYS.map(block => {
+  const writes = BLOCK_KEYS.map(block => {
     const data = cloudBlockBlob(blob, block);
-    return data ? patchDoc(blockDocId(pin, block), toFirestoreFields(data)) : null;
-  }).concat(atlas && atlas.length > 2 ? [patchDoc(blockDocId(pin, ATLAS_DOC), toFirestoreFields({ [ATLAS_KEY]: atlas }))] : []));
+    if (!data) return null;
+    const id = blockDocId(pin, block);
+    return patchDoc(id, toFirestoreFields(data), versions[id]);
+  });
+  if (atlas && atlas.length > 2) {
+    const id = blockDocId(pin, ATLAS_DOC);
+    writes.push(patchDoc(id, toFirestoreFields({ [ATLAS_KEY]: atlas }), versions[id]));
+  }
+  await Promise.all(writes);
   // Only after every block is safely stored: the old document now holds
   // nothing they don't, so empty it to stay out of the way.
   if (clearLegacy) {
-    await patchDoc(pin, { fields: { _migratedAt: { timestampValue: new Date().toISOString() } } });
+    await patchDoc(pin, { fields: { _migratedAt: { timestampValue: new Date().toISOString() } } }, versions[pin]);
   }
 }
 
 // ---- Public actions ----
+const PUSH_ATTEMPTS = 4;
 async function pushToCloud(pin) {
-  const local = readLocalBlob();
-  const remote = await fetchRemoteBlob(pin);
-  const merged = mergeBlobs(local, remote.blob);
-  await writeRemoteBlob(pin, merged, remote.hasLegacyData);
-  return merged;
+  let lastErr;
+  for (let attempt = 0; attempt < PUSH_ATTEMPTS; attempt++) {
+    const local = readLocalBlob();
+    const remote = await fetchRemoteBlob(pin);
+    const merged = mergeBlobs(local, remote.blob);
+    try {
+      await writeRemoteBlob(pin, merged, remote.hasLegacyData, remote.versions);
+      return merged;
+    } catch (err) {
+      lastErr = err;
+      if (!err.conflict || attempt === PUSH_ATTEMPTS - 1) throw err;
+    }
+  }
+  throw lastErr;
 }
 
 async function pullFromCloud(pin) {
@@ -346,8 +392,14 @@ async function pullFromCloud(pin) {
 // ---- UI wiring ----
 function generatePin() {
   const alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no 0/O/1/I to avoid confusion
+  const buf = new Uint32Array(1);
+  const limit = 0x100000000 - (0x100000000 % alphabet.length);
   let pin = '';
-  for (let i = 0; i < 6; i++) pin += alphabet[Math.floor(Math.random() * alphabet.length)];
+  for (let i = 0; i < 6; i++) {
+    let n;
+    do { crypto.getRandomValues(buf); n = buf[0]; } while (n >= limit);
+    pin += alphabet[n % alphabet.length];
+  }
   return pin;
 }
 
@@ -522,7 +574,7 @@ function initSyncUI() {
 // Exposed on window: used by index.html's inline boot script, and handy for testing/debugging.
 window.pushToCloud = pushToCloud;
 window.pullFromCloud = pullFromCloud;
-window.__syncInternals = { mergeFlags, mergeProgress, mergeScoreHistory, mergeAttempts, mergeAtlas, mergeBlobs, readLocalBlob, cloudBlockBlob, fetchRemoteBlob, writeRemoteBlob };
+window.__syncInternals = { mergeFlags, mergeProgress, mergeScoreHistory, mergeAttempts, mergeAtlas, mergeSettings, mergeBlobs, readLocalBlob, cloudBlockBlob, fetchRemoteBlob, writeRemoteBlob, patchDoc };
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initSyncUI);

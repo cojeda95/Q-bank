@@ -42,6 +42,7 @@ const BLOCKS = [
 ];
 
 const POLL_MS = 2000;
+const ROOM_TTL_MS = 24 * 60 * 60 * 1000;
 const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
 
 // ============================== Firestore REST ==============================
@@ -83,7 +84,7 @@ function fromDoc(doc) {
 }
 
 async function getDoc(path) {
-  const res = await fetch(withKey(`${baseUrl()}/${path}`));
+  const res = await fetch(withKey(`${baseUrl()}/${path}`), { cache: 'no-store' });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Firestore read failed (HTTP ${res.status})`);
   return fromDoc(await res.json());
@@ -100,7 +101,7 @@ async function putDoc(path, obj) {
   return res.json();
 }
 async function listDocs(path) {
-  const res = await fetch(withKey(`${baseUrl()}/${path}?pageSize=300`));
+  const res = await fetch(withKey(`${baseUrl()}/${path}?pageSize=300`), { cache: 'no-store' });
   if (res.status === 404) return [];
   if (!res.ok) throw new Error(`Firestore list failed (HTTP ${res.status})`);
   const json = await res.json();
@@ -150,10 +151,29 @@ async function deleteSessionTree(code) {
 
 // ============================== helpers ==============================
 
+// Uniform index in [0, max). Rejection sampling avoids the modulo bias of
+// taking getRandomValues() % max when max doesn't divide 2^32.
+function cryptoIndex(max) {
+  const buf = new Uint32Array(1);
+  const limit = 0x100000000 - (0x100000000 % max);
+  let n;
+  do {
+    crypto.getRandomValues(buf);
+    n = buf[0];
+  } while (n >= limit);
+  return n % max;
+}
 function generateCode() {
   let code = '';
-  for (let i = 0; i < 5; i++) code += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+  for (let i = 0; i < 5; i++) code += CODE_ALPHABET[cryptoIndex(CODE_ALPHABET.length)];
   return code;
+}
+// Rooms are dated with createdAt. A client treats anything older than a day
+// as gone; the host deletes it when that check runs (rules permitting).
+function roomExpired(session) {
+  const created = session && Number(session.createdAt);
+  if (!created) return false;
+  return Date.now() - created > ROOM_TTL_MS;
 }
 function randomId() {
   return Math.random().toString(36).slice(2, 10);
@@ -275,9 +295,21 @@ function joinUrl(code) {
 const root = () => document.getElementById('liveRoot');
 let state = { screen: 'landing' };
 let pollTimer = null;
+// Host writes bump hostWriteGen immediately and hostWriteSettledGen when the
+// PATCH returns. A poll that started before that — or while it is still in
+// flight — is ignored, so a slow read can't paint revealed:false over Reveal.
+let hostWriteGen = 0;
+let hostWriteSettledGen = 0;
+function hostPollStale(genAtStart) {
+  return genAtStart !== hostWriteGen || genAtStart > hostWriteSettledGen;
+}
 
 function setState(patch) {
   state = Object.assign({}, state, patch);
+  // Lobby QR, the focused control, and the Reveal button stay put when a
+  // poll only refreshes the roster or the tallies. Structural changes
+  // (screen, question, reveal) still go through render().
+  if ((state.screen === 'hostRoom' || state.screen === 'joinRoom') && patchLiveRoom()) return;
   render();
 }
 function stopPolling() {
@@ -296,6 +328,7 @@ function renderLanding() {
   root().innerHTML = `
     <div class="live-card">
       <h1>Live Session</h1>
+      ${state.notice ? `<p class="live-status">${esc(state.notice)}</p>` : ''}
       <p class="subtitle">An in-person, Kahoot-style round: one host controls the pace, everyone else answers A–E on their own phone.</p>
       <div class="live-actions">
         <button class="live-btn" id="hostBtn">🖥️ Host a Session</button>
@@ -308,14 +341,14 @@ function renderLanding() {
           <p><b>Joining</b> — go to the Live Session page, tap "Join a Session," and enter the room code plus your name. No account needed.</p>
           <p><b>Pacing</b> — by default you control it manually: Reveal Answer, then Next Question. Turning on Auto-Advance at setup reveals and moves on for you after a set number of seconds, so you don't have to babysit the host screen.</p>
           <p><b>During the round</b> — 🔓/🔒 Lock Room stops new people from joining mid-session (existing joiners are unaffected). ← Previous Question lets you back up if you moved on too fast. ⏹ End Early stops the round at any point and jumps straight to the leaderboard.</p>
-          <p><b>🧹 Clean Up Room</b> — once the session ends, this permanently deletes the room, its participants, and every submitted answer from the shared database. Please do this when you're done — old rooms don't expire on their own, and leaving a lot of them around makes room codes more likely to collide with a new session. "Back without cleaning up" is there if you want to leave it a bit longer so people can screenshot the leaderboard, but circle back and clean it up afterward.</p>
+          <p><b>🧹 Clean Up Room</b> — once the session ends, leaving the leaderboard deletes the room, its participants, and every submitted answer. Please do that when you're done. If a delete doesn't go through, the room expires after about 24 hours and the host's page removes it the next time it is opened.</p>
           <p><b>Is anyone's personal data stored?</b> — Just whatever first name a participant types in to join, and their answers/score for that one room — all of it gets deleted the moment you clean up the room. Nothing here is tied to accounts or saved long-term.</p>
         </div>
       </details>
     </div>
   `;
-  document.getElementById('hostBtn').addEventListener('click', () => setState({ screen: 'hostSetup' }));
-  document.getElementById('joinBtn').addEventListener('click', () => setState({ screen: 'joinEntry', code: '' }));
+  document.getElementById('hostBtn').addEventListener('click', () => setState({ screen: 'hostSetup', notice: '' }));
+  document.getElementById('joinBtn').addEventListener('click', () => setState({ screen: 'joinEntry', code: '', notice: '' }));
 }
 
 // ============================== host: setup ==============================
@@ -593,6 +626,12 @@ async function createSessionWithQuestionIds(questionIds) {
   for (let tries = 0; tries < 5; tries++) {
     const existing = await getDoc(`live_sessions/${code}`).catch(() => null);
     if (!existing) break;
+    // A day-old room can give its code back. If the delete is refused, pick another.
+    if (roomExpired(existing)) {
+      await deleteSessionTree(code).catch(() => {});
+      const still = await getDoc(`live_sessions/${code}`).catch(() => existing);
+      if (!still) break;
+    }
     code = generateCode();
   }
   const hostToken = randomId();
@@ -608,7 +647,7 @@ async function createSessionWithQuestionIds(questionIds) {
     hostToken,
   });
   sessionStorage.setItem(`live_host_${code}`, hostToken);
-  setState({ screen: 'hostRoom', code, hostToken });
+  setState({ screen: 'hostRoom', code, hostToken, session: null, participants: [], answers: [] });
   startHostPolling();
 }
 
@@ -616,22 +655,38 @@ async function createSessionWithQuestionIds(questionIds) {
 
 function startHostPolling() {
   startPolling(async () => {
+    const code = state.code;
+    const genAtStart = hostWriteGen;
     try {
       const [session, participants] = await Promise.all([
-        getDoc(`live_sessions/${state.code}`),
-        listDocs(`live_sessions/${state.code}/participants`),
+        getDoc(`live_sessions/${code}`),
+        listDocs(`live_sessions/${code}/participants`),
       ]);
+      if (state.code !== code || hostPollStale(genAtStart)) return;
       if (!session) return;
+      if (roomExpired(session)) { expireRoom(code); return; }
       let answers = [];
       if (session.status === 'active') {
         // Server-side filter by qIndex — only reads this question's answers,
         // not the whole answer history (which otherwise grows every question).
-        answers = await queryEquals(`live_sessions/${state.code}`, 'answers', 'qIndex', session.currentIndex);
+        answers = await queryEquals(`live_sessions/${code}`, 'answers', 'qIndex', session.currentIndex);
+        if (state.code !== code || hostPollStale(genAtStart)) return;
       }
-      setState({ session, participants, answers });
+      // hostToken may move out of this doc; keep the copy from when we created the room.
+      if (session.hostToken == null && state.hostToken) session.hostToken = state.hostToken;
+      setState({ session, participants, answers, pollError: '' });
     } catch (err) {
-      setState({ pollError: err.message });
+      if (state.code === code) setState({ pollError: err.message });
     }
+  });
+}
+
+function expireRoom(code) {
+  stopPolling();
+  deleteSessionTree(code).catch(() => {});
+  setState({
+    screen: 'landing', code: null, session: null, participants: [], answers: [],
+    notice: 'That room expired after 24 hours and was closed.',
   });
 }
 
@@ -645,7 +700,7 @@ function renderHostRoom() {
   if (s.status === 'lobby') {
     clearAutoAdvanceTimer();
     root().innerHTML = `
-      <div class="live-card">
+      <div class="live-card" data-view="host-lobby" data-code="${esc(state.code)}">
         <h1>Room Code</h1>
         <div class="room-code">${state.code}</div>
         <div id="qrCode" class="qr-wrap"></div>
@@ -654,24 +709,27 @@ function renderHostRoom() {
           <button class="live-btn secondary" id="copyBtn">Copy join link</button>
           <button class="live-btn secondary" id="lockBtn">${s.locked ? '🔒 Room Locked' : '🔓 Lock Room'}</button>
         </div>
-        ${s.locked ? `<p class="live-status">New people can't join while locked. Unlock to let more people in.</p>` : ''}
-        <h2 style="margin-top:24px;">Joined (${participants.length})</h2>
-        <div class="participant-chips">
-          ${participants.map(p => `<span class="chip">${esc(p.name)}</span>`).join('') || '<span class="live-status">Waiting for people to join…</span>'}
-        </div>
+        <p class="live-status" id="lockNote" ${s.locked ? '' : 'hidden'}>New people can't join while locked. Unlock to let more people in.</p>
+        <h2 style="margin-top:24px;" id="joinedHeading">Joined (${participants.length})</h2>
+        <div class="participant-chips" id="participantChips">${participantChipsHtml(participants)}</div>
         <div class="live-actions" style="margin-top:20px;">
           <button class="live-btn" id="startBtn" ${participants.length ? '' : 'disabled'}>Start Session</button>
           <button class="live-btn secondary" id="cancelBtn">Cancel</button>
         </div>
       </div>
     `;
+    const chips = document.getElementById('participantChips');
+    if (chips) chips.dataset.key = rosterKey(participants);
     document.getElementById('copyBtn').addEventListener('click', () => {
       navigator.clipboard.writeText(url).then(() => {
         document.getElementById('copyBtn').textContent = 'Copied!';
         setTimeout(() => { const b = document.getElementById('copyBtn'); if (b) b.textContent = 'Copy join link'; }, 1500);
       }).catch(() => {});
     });
-    document.getElementById('lockBtn').addEventListener('click', () => hostPatch({ locked: !s.locked }));
+    document.getElementById('lockBtn').addEventListener('click', () => {
+      const cur = state.session;
+      if (cur) hostPatch({ locked: !cur.locked });
+    });
     const startBtn = document.getElementById('startBtn');
     if (startBtn) startBtn.addEventListener('click', () => hostPatch({ status: 'active', currentIndex: 0, revealed: false }));
     document.getElementById('cancelBtn').addEventListener('click', endSessionAndExit);
@@ -695,9 +753,9 @@ function renderHostRoom() {
     const isLast = s.currentIndex >= s.questionIds.length - 1;
 
     root().innerHTML = `
-      <div class="live-card">
+      <div class="live-card" data-view="host-active" data-code="${esc(state.code)}" data-q="${s.currentIndex}" data-revealed="${s.revealed ? '1' : '0'}">
         <div class="host-meta">
-          Room <b>${state.code}</b> &middot; Question ${s.currentIndex + 1} of ${s.questionIds.length} &middot; ${participants.length} joined &middot; ${answers.length} answered${s.autoAdvanceSeconds ? ` &middot; ⏱ Auto-pacing on (${s.autoAdvanceSeconds}s/question)` : ''}
+          <span id="hostMetaText">${hostActiveMetaHtml(s, participants, answers)}</span>
           <button class="link-btn-inline" id="lockBtn">${s.locked ? '🔒 Locked' : '🔓 Lock room'}</button>
           <button class="link-btn-inline" id="endEarlyBtn">⏹ End Early</button>
         </div>
@@ -713,8 +771,8 @@ function renderHostRoom() {
                 <span class="letter">${letter}.</span>
                 <span class="choice-text">${choiceHtml(q, letter)}</span>
                 ${s.revealed ? `
-                  <span class="tally-bar-wrap"><span class="tally-bar" style="width:${count ? pct : 0}%"></span></span>
-                  <span class="tally-count">${count}</span>
+                  <span class="tally-bar-wrap"><span class="tally-bar" data-letter="${letter}" style="width:${count ? pct : 0}%"></span></span>
+                  <span class="tally-count" data-letter="${letter}">${count}</span>
                 ` : ''}
               </div>
             `;
@@ -732,9 +790,14 @@ function renderHostRoom() {
         </div>
       </div>
     `;
-    document.getElementById('lockBtn').addEventListener('click', () => hostPatch({ locked: !s.locked }));
+    document.getElementById('lockBtn').addEventListener('click', () => {
+      const cur = state.session;
+      if (cur) hostPatch({ locked: !cur.locked });
+    });
     document.getElementById('endEarlyBtn').addEventListener('click', () => {
-      if (confirm(`End the session now at question ${s.currentIndex + 1} of ${s.questionIds.length}? Everyone will see the final leaderboard.`)) {
+      const cur = state.session;
+      if (!cur) return;
+      if (confirm(`End the session now at question ${cur.currentIndex + 1} of ${cur.questionIds.length}? Everyone will see the final leaderboard.`)) {
         clearAutoAdvanceTimer();
         hostPatch({ status: 'ended' });
       }
@@ -743,12 +806,16 @@ function renderHostRoom() {
     if (revealBtn) revealBtn.addEventListener('click', () => { clearAutoAdvanceTimer(); hostPatch({ revealed: true }); });
     const prevBtn = document.getElementById('prevBtn');
     if (prevBtn) prevBtn.addEventListener('click', () => {
-      if (s.currentIndex > 0) { clearAutoAdvanceTimer(); hostPatch({ currentIndex: s.currentIndex - 1, revealed: false }); }
+      const cur = state.session;
+      if (cur && cur.currentIndex > 0) { clearAutoAdvanceTimer(); hostPatch({ currentIndex: cur.currentIndex - 1, revealed: false }); }
     });
     document.getElementById('nextBtn').addEventListener('click', () => {
+      const cur = state.session;
+      if (!cur) return;
       clearAutoAdvanceTimer();
-      if (isLast) hostPatch({ status: 'ended' });
-      else hostPatch({ currentIndex: s.currentIndex + 1, revealed: false });
+      const last = cur.currentIndex >= cur.questionIds.length - 1;
+      if (last) hostPatch({ status: 'ended' });
+      else hostPatch({ currentIndex: cur.currentIndex + 1, revealed: false });
     });
     scheduleAutoAdvance(s);
     return;
@@ -759,20 +826,25 @@ function renderHostRoom() {
     stopPolling();
     const sorted = participants.slice().sort((a, b) => (b.score || 0) - (a.score || 0));
     root().innerHTML = `
-      <div class="live-card">
+      <div class="live-card" data-view="host-ended" data-code="${esc(state.code)}">
         <h1>Session Ended</h1>
         <h2>Leaderboard</h2>
         <ol class="leaderboard">
           ${sorted.map(p => `<li><span>${esc(p.name)}</span><span class="lb-score">${p.score || 0}</span></li>`).join('') || '<li>No participants.</li>'}
         </ol>
-        <p class="live-status" id="cleanupStatus">Everyone's had a chance to see this? Clean up the room so it doesn't sit around in the database.</p>
+        <p class="live-status" id="cleanupStatus">Leaving closes this room. If a delete doesn't go through, it expires after about 24 hours.</p>
         <div class="live-actions" style="margin-top:8px;">
-          <button class="live-btn secondary" id="doneBtn">Back without cleaning up</button>
+          <button class="live-btn secondary" id="doneBtn">Back</button>
           <button class="live-btn" id="cleanupBtn">🧹 Clean Up Room</button>
         </div>
       </div>
     `;
-    document.getElementById('doneBtn').addEventListener('click', () => setState({ screen: 'landing', code: null, session: null }));
+    document.getElementById('doneBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('doneBtn');
+      if (btn) btn.disabled = true;
+      await deleteSessionTree(state.code).catch(() => {});
+      setState({ screen: 'landing', code: null, session: null });
+    });
     document.getElementById('cleanupBtn').addEventListener('click', async () => {
       const btn = document.getElementById('cleanupBtn');
       btn.disabled = true;
@@ -784,19 +856,29 @@ function renderHostRoom() {
 }
 
 async function hostPatch(patch) {
+  const gen = ++hostWriteGen;
+  const code = state.code;
   const merged = Object.assign({}, state.session, patch);
-  await putDoc(`live_sessions/${state.code}`, {
-    block: merged.block,
-    status: merged.status,
-    currentIndex: merged.currentIndex,
-    revealed: merged.revealed,
-    locked: !!merged.locked,
-    questionIds: merged.questionIds,
-    autoAdvanceSeconds: merged.autoAdvanceSeconds || 0,
-    createdAt: merged.createdAt,
-    hostToken: merged.hostToken,
-  });
+  // Paint the click before the round trip. A poll already in flight is
+  // stale (hostPollStale) and will not put the previous document back.
   setState({ session: merged });
+  try {
+    await putDoc(`live_sessions/${code}`, {
+      block: merged.block,
+      status: merged.status,
+      currentIndex: merged.currentIndex,
+      revealed: merged.revealed,
+      locked: !!merged.locked,
+      questionIds: merged.questionIds,
+      autoAdvanceSeconds: merged.autoAdvanceSeconds || 0,
+      createdAt: merged.createdAt,
+      hostToken: merged.hostToken,
+    });
+  } catch (err) {
+    if (state.code === code && gen === hostWriteGen) setState({ pollError: err.message });
+  } finally {
+    if (gen > hostWriteSettledGen) hostWriteSettledGen = gen;
+  }
 }
 
 // ============================== host: auto-advance ==============================
@@ -847,7 +929,7 @@ function renderJoinEntry() {
       <input type="text" id="codeInput" class="live-select" maxlength="5" style="text-transform:uppercase;" value="${esc(state.code || '')}" placeholder="e.g. K7QRT">
       <label class="live-label" style="margin-top:12px;">Your Name</label>
       <input type="text" id="nameInput" class="live-select" maxlength="30" placeholder="First name is fine">
-      <div class="live-status" id="joinStatus"></div>
+      <div class="live-status" id="joinStatus">${esc(state.joinNote || '')}</div>
       <div class="live-actions" style="margin-top:16px;">
         <button class="live-btn" id="joinSubmitBtn">Join</button>
       </div>
@@ -866,6 +948,7 @@ async function submitJoin() {
   try {
     const session = await getDoc(`live_sessions/${code}`);
     if (!session) { statusEl.textContent = `No session found for code ${code}.`; return; }
+    if (roomExpired(session)) { statusEl.textContent = 'That room has expired (rooms close after 24 hours).'; return; }
     if (session.status === 'ended') { statusEl.textContent = 'That session has already ended.'; return; }
 
     let pid = localStorage.getItem(`live_pid_${code}`);
@@ -910,13 +993,21 @@ function markScored(code, idx) {
 
 function startJoinPolling() {
   startPolling(async () => {
+    const code = state.code;
     try {
-      const session = await getDoc(`live_sessions/${state.code}`);
+      const session = await getDoc(`live_sessions/${code}`);
+      if (state.code !== code) return;
       if (!session) return;
+      if (roomExpired(session)) {
+        stopPolling();
+        setState({ screen: 'joinEntry', code, session: null, joinNote: 'That room expired after 24 hours.' });
+        return;
+      }
       let answeredThisQ = state.answeredThisQ;
       if (session.status === 'active') {
         if (!state._lastIndex || state._lastIndex !== session.currentIndex) {
-          const own = await getDoc(`live_sessions/${state.code}/answers/${session.currentIndex}_${state.pid}`);
+          const own = await getDoc(`live_sessions/${code}/answers/${session.currentIndex}_${state.pid}`);
+          if (state.code !== code) return;
           answeredThisQ = own ? own.choice : null;
           // Keep a running local record of this participant's own answer per
           // question — powers the "Your Answers" breakdown once the session
@@ -924,7 +1015,12 @@ function startJoinPolling() {
           if (own) state.myAnswers = Object.assign({}, state.myAnswers, { [session.currentIndex]: own.choice });
         }
       }
-      setState({ session, answeredThisQ, _lastIndex: session.currentIndex });
+      // A poll that started before this tap captured answeredThisQ as null.
+      // Don't put that back over the choice they just made on this question.
+      if (state.session && session.currentIndex === state.session.currentIndex && state.answeredThisQ && !answeredThisQ) {
+        answeredThisQ = state.answeredThisQ;
+      }
+      setState({ session, answeredThisQ, _lastIndex: session.currentIndex, pollError: '' });
 
       // Score exactly once per question, right after reveal, from this device.
       if (session.status === 'active' && session.revealed && answeredThisQ) {
@@ -943,7 +1039,7 @@ function startJoinPolling() {
         }
       }
     } catch (err) {
-      setState({ pollError: err.message });
+      if (state.code === code) setState({ pollError: err.message });
     }
   });
 }
@@ -954,7 +1050,7 @@ function renderJoinRoom() {
 
   if (s.status === 'lobby') {
     root().innerHTML = `
-      <div class="live-card">
+      <div class="live-card" data-view="join-lobby" data-code="${esc(state.code)}">
         <h1>You're in, ${esc(state.name)} 👋</h1>
         <p class="subtitle">Waiting for the host to start room <b>${state.code}</b>…</p>
       </div>
@@ -966,7 +1062,7 @@ function renderJoinRoom() {
     const q = questionById(state.quizData, s.questionIds[s.currentIndex]);
     const mine = state.answeredThisQ;
     root().innerHTML = `
-      <div class="live-card">
+      <div class="live-card" data-view="join-active" data-code="${esc(state.code)}" data-q="${s.currentIndex}" data-revealed="${s.revealed ? '1' : '0'}" data-mine="${esc(mine || '')}">
         <div class="host-meta">Room ${state.code} &middot; Question ${s.currentIndex + 1} of ${s.questionIds.length}</div>
         <h2 class="q-stem">${esc(q ? q.stem : '')}</h2>
         ${q ? choiceListOpen(q) : '<div class="choice-list">'}
@@ -1031,7 +1127,7 @@ function renderJoinRoom() {
     }).join('');
 
     root().innerHTML = `
-      <div class="live-card">
+      <div class="live-card" data-view="join-ended" data-breakdown="${showBreakdown ? '1' : '0'}">
         <h1>Session Ended</h1>
         <p class="subtitle">Thanks for playing, ${esc(state.name)}! You got ${correctCount} of ${s.questionIds.length} correct.</p>
         <div class="live-actions" style="margin-top:16px;">
@@ -1057,6 +1153,99 @@ async function submitAnswer(letter) {
   } catch (err) {
     setState({ answeredThisQ: null, pollError: err.message });
   }
+}
+
+// ============================== in-place updates ==============================
+// Polls call setState every couple of seconds. Rebuilding the card redraws the
+// QR code and drops focus, so when the question/reveal hasn't changed we only
+// touch the roster, the lock control, and the tally bars.
+
+function rosterKey(list) {
+  return (list || []).map(p => `${p._id || ''}:${p.name || ''}`).join('|');
+}
+function participantChipsHtml(participants) {
+  return (participants || []).map(p => `<span class="chip">${esc(p.name)}</span>`).join('')
+    || '<span class="live-status">Waiting for people to join…</span>';
+}
+function hostActiveMetaHtml(s, participants, answers) {
+  const nP = (participants || []).length;
+  const nA = (answers || []).length;
+  return `Room <b>${esc(state.code)}</b> &middot; Question ${s.currentIndex + 1} of ${s.questionIds.length} &middot; ${nP} joined &middot; ${nA} answered${s.autoAdvanceSeconds ? ` &middot; ⏱ Auto-pacing on (${s.autoAdvanceSeconds}s/question)` : ''}`;
+}
+function patchTallies(answers) {
+  const tally = {};
+  (answers || []).forEach(a => { if (a && a.choice) tally[a.choice] = (tally[a.choice] || 0) + 1; });
+  const maxTally = Math.max(1, ...Object.values(tally));
+  root().querySelectorAll('.tally-count').forEach(el => {
+    el.textContent = String(tally[el.dataset.letter] || 0);
+  });
+  root().querySelectorAll('.tally-bar').forEach(el => {
+    const count = tally[el.dataset.letter] || 0;
+    const pct = Math.round((count / maxTally) * 100);
+    el.style.width = (count ? pct : 0) + '%';
+  });
+}
+function patchHostLobby(s) {
+  const card = root().querySelector('[data-view="host-lobby"]');
+  if (!card || card.dataset.code !== state.code) return false;
+  const lockBtn = document.getElementById('lockBtn');
+  if (lockBtn) lockBtn.textContent = s.locked ? '🔒 Room Locked' : '🔓 Lock Room';
+  const note = document.getElementById('lockNote');
+  if (note) note.hidden = !s.locked;
+  const participants = state.participants || [];
+  const heading = document.getElementById('joinedHeading');
+  if (heading) heading.textContent = `Joined (${participants.length})`;
+  const chips = document.getElementById('participantChips');
+  const key = rosterKey(participants);
+  if (chips && chips.dataset.key !== key) {
+    chips.dataset.key = key;
+    chips.innerHTML = participantChipsHtml(participants);
+  }
+  const startBtn = document.getElementById('startBtn');
+  if (startBtn) startBtn.disabled = participants.length === 0;
+  return true;
+}
+function patchHostActive(s) {
+  const card = root().querySelector('[data-view="host-active"]');
+  if (!card || card.dataset.code !== state.code) return false;
+  if (card.dataset.q !== String(s.currentIndex)) return false;
+  if (card.dataset.revealed !== (s.revealed ? '1' : '0')) return false;
+  const meta = document.getElementById('hostMetaText');
+  if (meta) meta.innerHTML = hostActiveMetaHtml(s, state.participants, state.answers);
+  const lockBtn = document.getElementById('lockBtn');
+  if (lockBtn) lockBtn.textContent = s.locked ? '🔒 Locked' : '🔓 Lock room';
+  if (s.revealed) patchTallies(state.answers);
+  return true;
+}
+function patchLiveRoom() {
+  const s = state.session;
+  if (!s) return false;
+  if (state.screen === 'hostRoom') {
+    if (s.status === 'lobby') return patchHostLobby(s);
+    if (s.status === 'active') return patchHostActive(s);
+    if (s.status === 'ended') {
+      const card = root().querySelector('[data-view="host-ended"]');
+      return !!(card && card.dataset.code === state.code);
+    }
+    return false;
+  }
+  if (s.status === 'lobby') {
+    const card = root().querySelector('[data-view="join-lobby"]');
+    return !!(card && card.dataset.code === state.code);
+  }
+  if (s.status === 'active') {
+    const card = root().querySelector('[data-view="join-active"]');
+    if (!card || card.dataset.code !== state.code) return false;
+    if (card.dataset.q !== String(s.currentIndex)) return false;
+    if (card.dataset.revealed !== (s.revealed ? '1' : '0')) return false;
+    return (card.dataset.mine || '') === (state.answeredThisQ || '');
+  }
+  if (s.status === 'ended') {
+    const card = root().querySelector('[data-view="join-ended"]');
+    if (!card) return false;
+    return (card.dataset.breakdown === '1') === !!state.showBreakdown;
+  }
+  return false;
 }
 
 // ============================== dispatch ==============================
