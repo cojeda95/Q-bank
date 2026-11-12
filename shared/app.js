@@ -1167,12 +1167,12 @@ function findSdl(sdlNumber) {
    SDL with its title and, per question, only id, batch, objective and isHighYield — all the block home, the SDL lists,
    counts, progress, spaced-review counts and the exam / split / final builders read. The rest of each question (stem,
    choices, answer, explanation, …) is in q/<part>.<hash>.js, a few SDLs per file (`chunk` on each SDL says which).
-   render() asks for the parts its screen needs (routeParts → needParts) and draws once they are in; after the first
-   screen the other parts load one at a time in the background (prefetchParts: the exam on screen first), so the whole
-   block is in memory — and saved for offline use (saveBlockOffline) — soon after any visit. A part is merged into the
+   render() asks for the parts its screen needs (routeParts → needParts) and draws once they are in. Anything else
+   waits until the browser is idle (prefetchParts, one part at a time, the exam on screen first) or until a screen
+   that needs it is opened, then the block is saved for offline use (saveBlockOffline). A part is merged into the
    manifest's own question objects (Object.assign), so DATA keeps the data.js shape and each question stays one object.
-   A page that loads data.js itself (window.QUIZ_DATA: live.js, a block page scaffolded before m66) has everything
-   from the start: QPARTS stays null and every wait below is already over. */
+   A page that loads data.js itself (window.QUIZ_DATA) has everything from the start: QPARTS stays null and every
+   wait below is already over. */
 const QDIR = 'q/';
 let QPARTS = null;   // { names: [file], done: [bool], loading: [Promise], waits: [[parts, resolve]], focus: examNumber }
 function allParts() { return QPARTS ? QPARTS.names.map((_, i) => i) : []; }
@@ -1252,8 +1252,9 @@ function routeParts(parts) {
   }
   return ROUTES_ALL.includes(parts[0]) ? allParts() : [];
 }
-/* The background load: one part at a time, the exam on screen first, until all are in; then the block is saved for
-   offline use. A failed part stops it until the connection is back ('online'). */
+/* The rest of the block, after whatever is on screen: one part at a time once the browser is idle, the exam on
+   screen first, until all are in; then the block is saved for offline use. needParts loads a part immediately when
+   a screen is opened that needs it, and does not wait for this. A failed part stops it until the connection is back. */
 let PREFETCHING = false;
 function prefetchParts() {
   if (!QPARTS || PREFETCHING) return;
@@ -1261,10 +1262,16 @@ function prefetchParts() {
     const left = allParts().filter(i => !QPARTS.done[i]);
     if (!left.length) { PREFETCHING = false; saveBlockOffline(); return; }
     const mine = QPARTS.focus != null ? partsForExam(QPARTS.focus).filter(i => left.includes(i)) : [];
-    loadPart(mine.length ? mine[0] : left[0]).then(next, () => { PREFETCHING = false; });
+    const pick = (mine.length ? mine : left).find(i => !QPARTS.loading[i]);
+    if (pick == null) {
+      Promise.all(left.map(i => QPARTS.loading[i]).filter(Boolean)).then(next, () => { PREFETCHING = false; });
+      return;
+    }
+    loadPart(pick).then(next, () => { PREFETCHING = false; });
   };
   PREFETCHING = true;
-  next();
+  if (window.requestIdleCallback) requestIdleCallback(() => next(), { timeout: 1500 });
+  else setTimeout(next, 800);
 }
 window.addEventListener('online', prefetchParts);
 /* After every part is in: the page, its manifest and its parts go into the service worker's cache ('qhub-v3', as in
@@ -1618,16 +1625,20 @@ function fillAtlasMapsHome() {
    opens the map with it on (#<map>/~<switch>:<option>) — and a Practice button (#atlasmap/<map>). */
 function fillAtlasMovesHome() {
   const el = document.getElementById('atlasMovesHome');
-  if (!el || !ATLAS_URL) return;
+  const hero = document.getElementById('atlasMovesHero');
+  // no card is coming: drop the reserved box. Only this home's own hero — a newer visit has its own.
+  const dropHero = () => { if (hero && hero.isConnected) hero.classList.add('no-moves'); };
+  if (!el || !ATLAS_URL) { dropHero(); return; }
   Promise.all([ATLAS_READY, loadAtlasPractice()]).then(([, P]) => {
-    if (!document.body.contains(el) || !P || !P.maps || !ATLAS_MOVES || !ATLAS_MAPS) return;
+    if (!el.isConnected) return;
+    if (!P || !P.maps || !ATLAS_MOVES || !ATLAS_MAPS) { dropHero(); return; }
     const bi = (P.blocks || []).findIndex(b => b[0] === blockDirName());
-    if (bi < 0) return;
+    if (bi < 0) { dropHero(); return; }
     const nOf = (rows) => ((rows || []).find(x => x[0] === bi) || [0, 0])[1];
     const moving = [...new Set(ATLAS_MOVES.map(x => x[0]))].filter(v => ATLAS_MAPS[v]);
     const rows = moving.map(v => [v, nOf(P.maps[v])]).filter(([, n]) => n > 0)
       .sort((a, b) => b[1] - a[1] || ATLAS_MAPS[a[0]][0].localeCompare(ATLAS_MAPS[b[0]][0]));
-    if (!rows.length) return;
+    if (!rows.length) { dropHero(); return; }
     let named = {}; try { named = (JSON.parse(localStorage.getItem('mla-progress') || '{}') || {}).nit || {}; } catch (e) {}   // Name-it scores, saved by the atlas
     const open = (v, sw) => `${ATLAS_URL}#${encodeURIComponent(v)}${sw ? '/~' + sw.split(':').map(encodeURIComponent).join(':') : ''}`;
     const tile = ([v, n]) => {
@@ -5153,15 +5164,16 @@ function renderStudySheet() {
 })();
 
 /* ── Boot ─────────────────────────────────────────────────────────────── */
-/* The page loads q/manifest.js (or data.js) before this file. Once the first screen and the questions it needs are in,
-   the atlas terms and the rest of the parts follow, and then the service worker is registered (theme.js waits for
-   window.QBANK_SW_AFTER), so on a first visit its install does not compete with them for a slow connection. */
+/* The page loads q/manifest.js before this file. Once the first screen and the questions it needs are in,
+   the atlas terms load, and the other question parts wait until the browser is idle. The service worker is
+   registered after that (theme.js waits for window.QBANK_SW_AFTER), so on a first visit its install does not
+   compete with them for a slow connection. */
 let SW_AFTER_DONE = () => {};
 window.QBANK_SW_AFTER = new Promise(res => { SW_AFTER_DONE = res; });
 function boot() {
   try {
     DATA = window.QUIZ_DATA || window.QUIZ_MANIFEST;
-    if (!DATA) throw new Error('q/manifest.js (or data.js) did not load — check your connection and reload.');
+    if (!DATA) throw new Error('q/manifest.js did not load — check your connection and reload.');
     if (!window.QUIZ_DATA) {
       const names = Array.isArray(DATA.chunks) ? DATA.chunks : [];
       QPARTS = { names, done: names.map(() => false), loading: [], waits: [], focus: null };
@@ -5172,14 +5184,6 @@ function boot() {
       });
     });
     render();
-    // a screen that needs nothing yet (the block home, an SDL list): start the part the next tap most likely wants —
-    // the first part of the exam on screen, else the SDL last answered, else the first part — so it is not queued
-    // behind atlas-terms.js (m67)
-    if (QPARTS && QPARTS.names.length && !QPARTS.loading.some(Boolean)) {
-      const last = loadAttempts().slice(-1)[0];
-      const p = QPARTS.focus != null ? partsForExam(QPARTS.focus) : last ? partsForSdl(last.sdlNumber) : [];
-      loadPart(p.length ? p[0] : 0).catch(() => {});
-    }
   } catch (err) {
     main.innerHTML = `<p class="empty-state">Could not load question bank: ${escapeHtml(err.message)}</p>`;
     SW_AFTER_DONE();
@@ -5188,17 +5192,15 @@ function boot() {
   const first = QPARTS ? Promise.all(QPARTS.loading.filter(Boolean)).catch(() => {}) : Promise.resolve();
   first.then(() => {
     ATLAS_TERMS_GO();
-    // after the page's load event, so the browser's loading indicator does not wait for the background load
-    if (document.readyState === 'complete') prefetchParts(); else window.addEventListener('load', prefetchParts);
+    // The on-screen chunk (if any) is already in. Other chunks wait until the atlas terms for this screen
+    // have arrived and the browser is idle, so they don't compete with what's visible.
+    const arm = () => {
+      if (document.readyState === 'complete') prefetchParts();
+      else window.addEventListener('load', prefetchParts);
+    };
+    ATLAS_READY.then(arm, arm);
     whenAllQuestions().then(SW_AFTER_DONE);
     setTimeout(SW_AFTER_DONE, 60000);
   });
 }
-// a block page without q/manifest.js (not built yet) falls back to its data.js
-if (window.QUIZ_DATA || window.QUIZ_MANIFEST) boot();
-else {
-  const s = document.createElement('script');
-  s.src = 'data.js';
-  s.onload = s.onerror = boot;
-  document.head.appendChild(s);
-}
+boot();
