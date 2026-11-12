@@ -17,6 +17,7 @@
  */
 
 const ANNOUNCEMENTS = [
+  { date: '11/12/26', text: 'Gastro: Reworked batch 2 and Trials to match exam format' },
   { date: '11/6/26', text: 'Gastro: Reworked active-recall and trial Qs block-wide' },
   { date: '10/27/26', text: 'Gastro: Exam 1 Qs pushed, Exam 2 and 3 under review, Atlas: New maps pushed' },
   { date: '10/14/26', text: 'Research: added 10 questions per SDL for upcoming midterm, 50 in total, Nephro: Pushed finalized exam 3 questions and exam 4 trial Qs, minor fixes for existing exam 3 Qs too' },
