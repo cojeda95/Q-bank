@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OCOM Question Hub</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600&display=swap"></noscript>
 <style>
   :root {
     --navy: #1f4e79;
@@ -135,7 +138,7 @@
   .sys-main:hover { background: var(--surface-hover); }
   .sys-main b { font-size: 0.95rem; font-weight: 600; }
   .sys-main span { font-size: 0.82rem; color: var(--grey-text); }
-  .sys-x { margin: -6px 14px 10px; font-size: 0.82rem; font-weight: 600; text-decoration: none; }
+  .sys-x { display: inline-flex; align-items: center; min-height: 24px; margin: -6px 14px 10px; font-size: 0.82rem; font-weight: 600; text-decoration: none; }
   .sys-x:hover { text-decoration: underline; }
 
   .news { background: var(--card-bg); border: 1px solid var(--grey-border); border-radius: 14px; overflow: hidden; }
@@ -231,9 +234,8 @@
     .wrap, .topbar-inner { padding-left: 16px; padding-right: 16px; }
     .topbar-inner { padding-top: 12px; padding-bottom: 6px; gap: 6px 12px; }
     .topbar-actions { order: 2; }
-    .mainnav { order: 3; flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; gap: 18px; margin: 0 -16px; padding: 0 16px; font-size: 0.9rem; scrollbar-width: none; }
-    .mainnav::-webkit-scrollbar { display: none; }
-    .mainnav a { white-space: nowrap; padding: 8px 0; flex: none; }   /* m67: never shrink under the text (the 32px tap rule below) */
+    .mainnav { order: 3; flex: 1 1 100%; min-width: 0; flex-wrap: wrap; gap: 0 14px; margin: 0; padding: 0; font-size: 0.9rem; }
+    .mainnav a { white-space: nowrap; padding: 8px 0; flex: none; }   /* m67: never shrink under the text; wrap so every link stays on screen */
     .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
     .chips::-webkit-scrollbar { display: none; }
     .chips a { flex: none; }
@@ -552,7 +554,7 @@
       <div class="hero-main">
         <span class="eyebrow">Lesion Atlas</span>
         <h1 id="askH">What are you studying?</h1>
-        <p class="lede" id="heroLede">192 maps and 2,054 cards, every one sourced, and linked to your practice questions.</p>
+        <p class="lede" id="heroLede">395 maps and 2,213 cards, every one sourced, and linked to 9,898 of your practice questions.</p>
         <form class="search" role="search" id="hubSearch" autocomplete="off">
           <div class="sbox">
             <label class="sr" for="hubQ">Search the atlas and question bank</label>
@@ -607,54 +609,55 @@
       </div>
     <section class="blocks" id="blocks" aria-labelledby="blocksH">
       <h2 id="blocksH">Practice by block</h2>
+      <!-- Card counts and #heroLede are written by tools/build-atlas.py (tools/stamp_hub.py) from resources/qbank-counts.js and resources/atlas-home.js. The same sentences are set again once those files load. -->
       <div class="block-grid">
         <a class="block-card" href="gastro/index.html">
           <div class="block-title">Gastroenterology Block</div>
-          <div class="block-desc">3 exams &middot; 40 SDLs &middot; 588 questions + 124 trial</div>
+          <div class="block-desc">3 exams · 40 SDLs · 1,068 questions</div>
         </a>
         <a class="block-card" href="geriatrics/index.html">
           <div class="block-title">Geriatrics Block</div>
-          <div class="block-desc">1 exam &middot; 24 SDLs &middot; coming soon</div>
+          <div class="block-desc">1 exam · 24 SDLs · coming soon</div>
         </a>
         <a class="block-card" href="nephro/index.html">
           <div class="block-title">Nephrology/Urology/Men's Health Block</div>
-          <div class="block-desc">4 exams &middot; 48 SDLs &middot; 1,122 questions + 46 trial</div>
+          <div class="block-desc">4 exams · 48 SDLs · 1,122 questions</div>
         </a>
         <a class="block-card" href="psych/index.html">
           <div class="block-title">Psychiatry Block</div>
-          <div class="block-desc">4 exams &middot; 42 SDLs &middot; 1,356 questions</div>
+          <div class="block-desc">4 exams · 42 SDLs · 1,356 questions</div>
         </a>
         <a class="block-card" href="neuro/index.html">
           <div class="block-title">Neuro Block</div>
-          <div class="block-desc">36 SDLs &middot; 1,100+ questions (incl. Bloom Batch trial)</div>
+          <div class="block-desc">4 exams · 48 SDLs · 1,440 questions</div>
         </a>
         <a class="block-card" href="endocrine/index.html">
           <div class="block-title">Endocrine Block</div>
-          <div class="block-desc">29 SDLs across 2 exams &middot; 660 questions</div>
+          <div class="block-desc">2 exams · 29 SDLs · 700 questions</div>
         </a>
         <a class="block-card" href="eent/index.html">
           <div class="block-title">EENT Block</div>
-          <div class="block-desc">18 SDLs &middot; 450 questions</div>
+          <div class="block-desc">1 exam · 18 SDLs · 450 questions</div>
         </a>
         <a class="block-card" href="pulm/index.html">
           <div class="block-title">Pulmonology Block</div>
-          <div class="block-desc">38 SDLs across 2 exams &middot; 1,019 questions</div>
+          <div class="block-desc">2 exams · 38 SDLs · 1,014 questions</div>
         </a>
         <a class="block-card" href="ortho/index.html">
           <div class="block-title">Orthopedics Block</div>
-          <div class="block-desc">19 SDLs &middot; 636 questions</div>
+          <div class="block-desc">1 exam · 19 SDLs · 636 questions</div>
         </a>
         <a class="block-card" href="rheum/index.html">
           <div class="block-title">Rheumatology Block</div>
-          <div class="block-desc">22 SDLs &middot; 534 questions</div>
+          <div class="block-desc">1 exam · 22 SDLs · 534 questions</div>
         </a>
         <a class="block-card" href="omm/index.html">
           <div class="block-title">OMM III Written Midterm</div>
-          <div class="block-desc">22 SDLs &middot; 594 questions</div>
+          <div class="block-desc">1 exam · 22 SDLs · 594 questions</div>
         </a>
         <a class="block-card" href="research/index.html">
           <div class="block-title">Research Midterm</div>
-          <div class="block-desc">5 SDLs &middot; 50 questions</div>
+          <div class="block-desc">1 exam · 5 SDLs · 50 questions</div>
         </a>
       </div>
     </section>
@@ -760,14 +763,18 @@
   </section>
   </details>
   <div class="footer">Your progress stays in this browser unless you sync it with a PIN. Anything you have opened once works offline.</div>
-<script src="announcements.js"></script>
-<script src="resources/atlas-home.js"></script>
+<script src="announcements.js" defer></script>
+<script src="resources/qbank-counts.js" defer></script>
+<script src="resources/atlas-home.js" defer></script>
 <script>
   /* The atlas on the home page, from resources/atlas-home.js (built by tools/build-atlas.py):
      the hero line and system shortcuts, "Pick up where you left off" (the map last open in
      the atlas on this device, 'mla-view' — or the newest map), the Daily mix or your due
-     cards, Graph of the day, the newest maps, and Browse by system. */
+     cards, Graph of the day, the newest maps, and Browse by system.
+     Deferred with announcements.js and qbank-counts.js so they do not block first paint;
+     this runs on DOMContentLoaded, after those scripts. */
   (function () {
+    function start() {
     var H = window.ATLAS_HOME, ATLAS = 'resources/metabolic-atlas.html';
     if (!H) return;
     function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -781,6 +788,20 @@
     var S = H.stats;
     document.getElementById('heroLede').textContent = fmt(S.maps) + ' maps and ' + fmt(S.cards) + ' cards, every one sourced, and linked to ' +
       fmt(S.linked) + ' of your practice questions.';
+    /* same sentences tools/stamp_hub.py writes into the cards, so a rebuild of the two data files updates the tiles */
+    (function () {
+      var C = window.QBANK_COUNTS, blocks = H.blocks || [], nSdl = {};
+      if (!C) return;
+      (H.sdls || []).forEach(function (s) { nSdl[s[0]] = (nSdl[s[0]] || 0) + 1; });
+      blocks.forEach(function (b, i) {
+        var info = C[b[0]]; if (!info || !info.exams) return;
+        var card = document.querySelector('.block-card[href="' + b[0] + '/index.html"] .block-desc');
+        if (!card) return;
+        var nEx = info.exams.length, nQ = info.exams.reduce(function (sum, e) { return sum + e[1]; }, 0), n = nSdl[i] || 0;
+        var ex = nEx + ' exam' + (nEx === 1 ? '' : 's'), sdl = n + ' SDL' + (n === 1 ? '' : 's');
+        card.textContent = nQ ? ex + ' · ' + sdl + ' · ' + fmt(nQ) + ' questions' : ex + ' · ' + sdl + ' · coming soon';
+      });
+    })();
     document.getElementById('azLink').textContent = 'A–Z index of all ' + fmt(S.cards) + ' cards →';
 
     /* system shortcuts under the search */
@@ -890,6 +911,9 @@
     refresh();
     window.addEventListener('pageshow', refresh);
     window.addEventListener('storage', function (e) { if (e.key === 'mla-progress' || e.key === 'mla-review' || e.key === 'mla-view') refresh(); });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+    else start();
   })();
 </script>
 <script>
@@ -897,6 +921,7 @@
      titles (resources/atlas-home.js) at once, and atlas cards by name and link terms
      (resources/atlas-terms.js, loaded the first time you search). */
   (function () {
+    function start() {
     var H = window.ATLAS_HOME, form = document.getElementById('hubSearch'), q = document.getElementById('hubQ'), box = document.getElementById('hubResults');
     var ATLAS = 'resources/metabolic-atlas.html';
     if (!H || !form) { if (form) form.addEventListener('submit', function (e) { e.preventDefault(); location.href = ATLAS; }); return; }
@@ -1097,6 +1122,9 @@
       var pq = new URLSearchParams(location.search).get('q');
       if (pq) { q.value = pq.slice(0, 120); loadCards(); show(); q.focus(); }
     } catch (e) {}
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+    else start();
   })();
 </script>
 <script>
@@ -1111,6 +1139,7 @@
      or the start of a longer word ("pheochromo" → pheochromocytoma); then questions of an SDL whose title names the words. Abbreviations are spelled out with the atlas search's
      list (HUB_NORM.variants: "MS" → multiple sclerosis, mitral stenosis), a shade lower than a literal match. */
   (function () {
+    function start() {
     var U = window.HUB_NORM, panel = document.getElementById('qsearch'), hubQ = document.getElementById('hubQ');
     if (!U || !panel) return;
     var qi = document.getElementById('qsQ'), form = document.getElementById('qsForm'), sum = document.getElementById('qsSum'),
@@ -1383,6 +1412,9 @@
     function fromHash() { if (location.hash === '#qsearch') open(null, false); }
     window.addEventListener('hashchange', fromHash);
     fromHash();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+    else start();
   })();
 </script>
 <script>
@@ -1390,6 +1422,7 @@
      three show and the rest fold under "Show older". (An old single-banner announcements.js,
      window.ANNOUNCEMENT, still shows as the first entry.) */
   (function () {
+    function start() {
     var root = document.getElementById('newsList');
     if (!root) return;
     var list = (Array.isArray(window.ANNOUNCEMENTS) ? window.ANNOUNCEMENTS : []).filter(function (a) { return a && a.text; });
@@ -1405,9 +1438,12 @@
     var SHOW = 1;
     root.innerHTML = list.slice(0, SHOW).map(item).join('') +
       (list.length > SHOW ? '<details class="older"><summary>Show ' + (list.length - SHOW) + ' older</summary>' + list.slice(SHOW).map(item).join('') + '</details>' : '');
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+    else start();
   })();
 </script>
-<script src="sync.js"></script>
+<script src="sync.js" defer></script>
 <script>
   /* m69 Sam mode (off by default; the switch under Settings, or index.html#sam): one giant button. It goes back to the last place you were in a block ('qhub-last', as the
      Continue card), else to the first block on the list. On for this device ('qhub-sam') until "Leave Sam mode";
@@ -1543,8 +1579,12 @@
 <script>
   /* the header's Sync link shows your sync PIN once you have one (sync.js) */
   (function () {
-    var a = document.getElementById('navSync');
-    try { var pin = typeof getSavedPin === 'function' && getSavedPin(); if (a && pin) a.textContent = 'Sync · ' + pin; } catch (e) {}
+    function start() {
+      var a = document.getElementById('navSync');
+      try { var pin = typeof getSavedPin === 'function' && getSavedPin(); if (a && pin) a.textContent = 'Sync · ' + pin; } catch (e) {}
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+    else start();
   })();
 </script>
 <script>
@@ -1719,7 +1759,8 @@
     }
     function refresh() { progress(); countdown(); }
     refresh();
-    if (!window.QBANK_COUNTS) {
+    document.addEventListener('DOMContentLoaded', refresh);
+    if (!window.QBANK_COUNTS && !document.querySelector('script[src="resources/qbank-counts.js"]')) {
       var qc = document.createElement('script'); qc.src = 'resources/qbank-counts.js'; qc.onload = refresh; document.head.appendChild(qc);
     }
     window.addEventListener('storage', function (e) { if (e.key && (/_attempts_v1$/.test(e.key) || e.key === 'qhub-examdates')) refresh(); });

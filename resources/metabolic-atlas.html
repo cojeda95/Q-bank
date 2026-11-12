@@ -425,8 +425,8 @@ html.card-drag,html.card-drag *{cursor:ew-resize!important;user-select:none!impo
 .empty{padding:44px 10px;text-align:center;color:var(--ink-3);font-size:13.5px}
 
 /* ── topic bar and its map row ────────────────────── */
-.subbar{flex-basis:100%;order:5;display:flex;min-width:0;margin:-4px 0 -2px}
-.subtabs{display:flex;gap:5px;overflow-x:auto;max-width:100%;scrollbar-width:none;padding:1px}
+.subbar{flex-basis:100%;order:5;display:flex;align-items:center;gap:5px;min-width:0;margin:-4px 0 -2px}
+.subtabs{display:flex;gap:5px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none;padding:1px}
 .subtabs::-webkit-scrollbar{display:none}
 .tiers{display:inline-flex;gap:2px;align-items:center;padding-right:6px;margin-right:4px;border-right:1px solid var(--line-2);flex:none}
 .tier{padding:4px 9px;border-radius:9px;font:600 11px var(--font-ui);letter-spacing:.03em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap;cursor:pointer;border:0;background:none}
@@ -434,7 +434,7 @@ html.card-drag,html.card-drag *{cursor:ew-resize!important;user-select:none!impo
 .tctl{display:inline-flex;align-items:center;gap:6px;flex:none;padding-right:6px;margin-right:4px;border-right:1px solid var(--line-2)}.tctl .tiers{border-right:0;padding-right:0;margin-right:0}
 .tsel{font:600 11.5px var(--font-ui);color:var(--ink-2);background:var(--surface);border:1px solid var(--line-2);border-radius:9px;padding:4px 6px;max-width:190px;cursor:pointer}
 .tab.paired{display:inline-flex;align-items:center;gap:7px}
-.pairsw{display:inline-flex;align-items:center;font:700 11.5px var(--font-ui);line-height:1;padding:4px 8px;border-radius:999px;background:var(--surface);color:var(--ink);border:1.5px solid var(--ink-3);white-space:nowrap}
+.pairsw{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-width:24px;min-height:24px;font:700 11.5px var(--font-ui);line-height:1;padding:4px 8px;border-radius:999px;background:var(--surface);color:var(--ink);border:1.5px solid var(--ink-3);white-space:nowrap}
 .tab[aria-selected="true"] .pairsw{background:var(--accent);color:var(--surface);border-color:var(--accent);box-shadow:0 0 0 2px var(--surface),0 1px 3px 2px rgba(0,0,0,.25)}
 .pairsw:hover,.pairsw:focus-visible{background:var(--accent);color:var(--surface);border-color:var(--accent);outline:none}
 .tnone{font-size:12px;color:var(--ink-3);padding:6px 10px;white-space:nowrap}
@@ -884,7 +884,7 @@ body{display:flex;flex-direction:column}
       </div>
       <button class="btn" id="themeBtn" title="Toggle light / dark" aria-label="Light or dark theme">◐</button>
     </div>
-    <div class="subbar" id="subbar" hidden><div class="subtabs" role="tablist" id="tabs" aria-label="Maps in this topic"></div></div>
+    <div class="subbar" id="subbar" hidden><span class="tctl" id="tabCtl" hidden></span><div class="subtabs" role="tablist" id="tabs" aria-label="Maps in this topic"></div></div>
   </header>
 
   <div class="shell" role="main">
@@ -30243,17 +30243,23 @@ function renderNav(){
   const ctl=(present.length>1?`<span class="tiers" role="group" aria-label="Kinds of map">${[["all","All"],...present.map(k=>[k,TIER_L[k]])].map(([k,l])=>`<button class="tier${k===tf?" on":""}" type="button" data-tier="${k}">${esc(l)}${k==="all"?"":`<small>${vs.filter(v=>TIER[v]===k).length}</small>`}</button>`).join("")}</span>`:"")
     +(groups.length?sel("tgrp","Topic",[["","All topics"],...groups.map(([g,ids])=>[g,`${g} (${ids.length})`])],GRPF[t]||""):"")
     +(blkOpts.length?sel("tblk","Block",[["all","All blocks"],...blkOpts.map(([d,l,n])=>[d,`${l} block (${n})`])],BLKF):"");
-  tabsEl.innerHTML=(ctl?`<span class="tctl">${ctl}</span>`:"")+slots.map(sl=>{ const v=face(sl), o=sl.length>1?sl.find(m=>m!==v):null, on=sl.includes(state.view);
-      return `<button class="tab${o?" paired":""}" role="tab" data-v="${v}" aria-selected="${on}">${esc((VIEWS.find(x=>x[0]===v)||[v,v])[1])}${o?`<span class="pairsw" data-swap="${o}" role="button" tabindex="0" title="${TIER[o]==="motion"?"Open the moving version":"Open the static reference"}">⇄${on?(TIER[o]==="motion"?" In motion":" Static"):""}</span>`:""}${sl.some(isNewMap)?'<span class="newpill">New</span>':""}${(M=>M?`<span class="mprog${M.solid?"":" zero"}" title="${M.solid} of ${M.n} cards on this map answered right more often than missed, or marked known">${Math.round(M.solid/M.n*100)}%</span>`:"")(mastery(mapIds(v)))}</button>`; }).join("")
-    +(!slots.length?`<span class="tnone">No maps match these filters</span>`:"");
+  const tabCtl=document.getElementById("tabCtl");
+  if(tabCtl){ tabCtl.innerHTML=ctl; tabCtl.hidden=!ctl; }
+  tabsEl.innerHTML=slots.map(sl=>{ const v=face(sl), o=sl.length>1?sl.find(m=>m!==v):null, on=sl.includes(state.view);
+      return `<button class="tab${o?" paired":""}" role="tab" data-v="${v}" aria-selected="${on}">${esc((VIEWS.find(x=>x[0]===v)||[v,v])[1])}${o?`<span class="pairsw" data-swap="${o}" role="button" tabindex="0" title="${TIER[o]==="motion"?"Open the moving version":"Open the static reference"}">⇄${on?(TIER[o]==="motion"?" In motion":" Static"):""}</span>`:""}${sl.some(isNewMap)?'<span class="newpill">New</span>':""}${(M=>M?`<span class="mprog${M.solid?"":" zero"}" title="${M.solid} of ${M.n} cards on this map answered right more often than missed, or marked known">${Math.round(M.solid/M.n*100)}%</span>`:"")(mastery(mapIds(v)))}</button>`; }).join("");
+  tabsEl.hidden=!slots.length;
+  let none=subbar.querySelector(":scope > .tnone");
+  if(!slots.length){ if(!none){ none=document.createElement("span"); none.className="tnone"; none.textContent="No maps match these filters"; subbar.appendChild(none); } }
+  else if(none) none.remove();
   tabsEl.querySelectorAll(".tab").forEach(b=>b.onclick=e=>{ const sw=e.target.closest(".pairsw"); setView(sw?sw.dataset.swap:b.dataset.v); });
   tabsEl.querySelectorAll(".pairsw").forEach(b=>b.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); e.stopPropagation(); setView(b.dataset.swap); } });
   const firstShown=()=>{ for(const v of vs){ if(PAIR_OF[v]&&!PAIR[v]&&twin(v)) continue; if(inGrp(v)&&(!(BLKF==="all")?slotOf(v).some(m=>(blkMaps(BLKF)||new Set()).has(m)):true)&&(TIERF==="all"||slotOf(v).some(m=>TIER[m]===TIERF))) return face(slotOf(v)); } return null; };
   const apply=()=>{ save(); const vis=[...tabsEl.querySelectorAll(".tab")].length; const keep=inGrp(state.view)&&(BLKF==="all"||slotOf(state.view).some(m=>(blkMaps(BLKF)||new Set()).has(m)))&&(TIERF==="all"||slotOf(state.view).some(m=>TIER[m]===TIERF));
     const f=keep?null:firstShown(); if(f){ const sl=slotOf(f), pick=TIERF!=="all"&&sl.find(m=>TIER[m]===TIERF)||f; setView(pick); } else renderNav(); };
-  tabsEl.querySelectorAll(".tier").forEach(b=>b.onclick=()=>{ TIERF=b.dataset.tier; apply(); });
-  const grpSel=tabsEl.querySelector(".tgrp"); if(grpSel) grpSel.onchange=()=>{ if(grpSel.value) GRPF[t]=grpSel.value; else delete GRPF[t]; apply(); };
-  const blkSel=tabsEl.querySelector(".tblk"); if(blkSel) blkSel.onchange=()=>{ BLKF=blkSel.value; apply(); };
+  const ctlRoot=tabCtl||subbar;
+  ctlRoot.querySelectorAll(".tier").forEach(b=>b.onclick=()=>{ TIERF=b.dataset.tier; apply(); });
+  const grpSel=ctlRoot.querySelector(".tgrp"); if(grpSel) grpSel.onchange=()=>{ if(grpSel.value) GRPF[t]=grpSel.value; else delete GRPF[t]; apply(); };
+  const blkSel=ctlRoot.querySelector(".tblk"); if(blkSel) blkSel.onchange=()=>{ BLKF=blkSel.value; apply(); };
   [topicsEl,tabsEl].forEach(el=>{ const cur=el.querySelector('[aria-selected="true"]');
     if(cur) el.scrollLeft=Math.max(0,cur.offsetLeft-el.clientWidth/2+cur.offsetWidth/2); });
   /* the header names the open map and its system — the hub's header above it already says Lesion Atlas */
@@ -30608,9 +30614,10 @@ function secbarRender(){
     el.querySelectorAll(".sb").forEach((x,j)=>x.classList.toggle("on",j===SECI)); });
 }
 function phoneFrame(){
+  /* phones open with Fit applied (the whole map, same as the Fit button); the Sections bar still jumps to a section */
   SECI=0; secbarRender();
   const m=MAPS[state.view]; if(!m||m.art==="kit"||innerWidth>1000||WALK) return;
-  const steps=walkSteps(state.view); if(steps.length) frameSection(steps[0].box);
+  state.z=1; state.tx=0; state.ty=0; applyCam();
 }
 function startWalk(){
   if(state.view==="index"||!MAPS[state.view]) return;

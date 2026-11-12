@@ -39,6 +39,7 @@ const BLOCKS = [
   { key: 'nephro', label: 'Nephrology/Urology', batch3Label: 'Batch 3 — Trial: shorter clinical stems + shorter answer choices', batch4Label: 'Batch 4 — Trial: grid answer choices' },
   { key: 'gastro', label: 'Gastroenterology', batch5Label: '📚 Textbook' },
   { key: 'omm', label: 'OMM III' },
+  { key: 'research', label: 'Research' },
 ];
 
 const POLL_MS = 2000;
