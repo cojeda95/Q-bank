@@ -1559,7 +1559,7 @@
     try { return m ? JSON.parse(m[1]) : []; } catch (e) { return []; }
   };
   (function () {
-    var CACHE = 'qhub-v2', KEY = 'qhub-offline-at';
+    var CACHE = 'qhub-v3', KEY = 'qhub-offline-at';
     var btn = document.getElementById('offlineBtn'), status = document.getElementById('offlineStatus');
     var bar = document.getElementById('offlineBar'), fill = document.getElementById('offlineFill');
     if (!btn) return;
@@ -1633,7 +1633,7 @@
      deploy even for unchanged files, so it is ignored. The atlas has no tile here any more,
      so its status shows only in the Use offline summary. */
   (function () {
-    var CACHE = 'qhub-v2';
+    var CACHE = 'qhub-v3';
     var tiles = [].slice.call(document.querySelectorAll('.block-grid a.block-card[href$=".html"]'));
     var blocks = tiles.filter(function (a) { return /\/index\.html$/.test(a.getAttribute('href')); });
     var atlas = document.createElement('div');   // stands in for the atlas: checked, but no chips on the page

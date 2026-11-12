@@ -1267,14 +1267,14 @@ function prefetchParts() {
   next();
 }
 window.addEventListener('online', prefetchParts);
-/* After every part is in: the page, its manifest and its parts go into the service worker's cache ('qhub-v2', as in
+/* After every part is in: the page, its manifest and its parts go into the service worker's cache ('qhub-v3', as in
    sw.js), so the block works without signal after this one visit — sw.js saves what passes through it, but on a first
    visit the page and the first parts arrive before it is running. Parts of older builds are dropped. */
 function saveBlockOffline() {
   if (!QPARTS || !('caches' in window) || !navigator.serviceWorker || !/^https?:$/.test(location.protocol)) return;
   const abs = u => new URL(u, location.href).href;
   const keep = new Set([QDIR + 'manifest.js', QDIR + 'atlas-terms.js'].concat(QPARTS.names.map(n => QDIR + n)).map(abs));
-  navigator.serviceWorker.ready.then(() => caches.open('qhub-v2')).then(async c => {
+  navigator.serviceWorker.ready.then(() => caches.open('qhub-v3')).then(async c => {
     for (const url of [location.href.split('#')[0]].concat([...keep])) {
       if (!(await c.match(url, { ignoreSearch: true }))) await c.add(url);
     }
