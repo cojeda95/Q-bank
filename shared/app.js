@@ -663,9 +663,10 @@ function bindMissWhy(q, rec, rerender) {
 /* ── Report a problem with a question ────────────────────────────────
    "Report" under a question opens a short form (what's wrong + an optional note). The
    report is written as its own document in the cloud project the PIN sync uses
-   (syncs/QREPORT-<block>-<time>-<random>, no PIN or personal data), so the site owner
-   can list them all with tools/reports.py. Reports that can't be sent (offline) wait in
-   this browser and go out the next time a block page opens. */
+   (syncs/QREPORT-<block>-<time>-<random>, no PIN or personal data). firestore.rules
+   lets a client create or delete that exact id and does not let it list the collection;
+   the owner reads reports in the Firebase console. Reports that can't be sent (offline)
+   wait in this browser and go out the next time a block page opens. */
 const REPORT_DB = { projectId: 'q-bank-cache', apiKey: 'AIzaSyAvYYQ5gAjcRN4W52ulCZ5nuA9BsuvNqN4' };   // the same project as sync.js
 const LS_REPORTS = 'qbank_reports_v1';
 const REPORT_WHY = [['key', 'The answer key is wrong'], ['explain', 'The explanation is wrong or unclear'],
@@ -680,9 +681,21 @@ function reportedIds() {
   const dir = blockDirName();
   return new Set(loadReports().filter(r => r.block === dir).map(r => String(r.qid)));
 }
+function reportApiOrigin() {
+  // Same localhost opt-in as sync.js / live.js. A normal visit never sets this.
+  try {
+    const host = location.hostname;
+    const local = host === 'localhost' || host === '127.0.0.1' || host === '::1';
+    if (local && (new URLSearchParams(location.search).get('emulator') === '1' || localStorage.getItem('qbank_firestore_emulator') === '1')) {
+      if (new URLSearchParams(location.search).get('emulator') === '1') localStorage.setItem('qbank_firestore_emulator', '1');
+      return `http://${host === '::1' ? '127.0.0.1' : host}:8080`;
+    }
+  } catch (e) {}
+  return 'https://firestore.googleapis.com';
+}
 async function sendReport(r) {
   const id = `QREPORT-${r.block}-${r.ts}-${r.nonce}`;
-  const url = `https://firestore.googleapis.com/v1/projects/${REPORT_DB.projectId}/databases/(default)/documents/syncs/${encodeURIComponent(id)}?key=${REPORT_DB.apiKey}`;
+  const url = `${reportApiOrigin()}/v1/projects/${REPORT_DB.projectId}/databases/(default)/documents/syncs/${encodeURIComponent(id)}?key=${REPORT_DB.apiKey}`;
   const s = v => ({ stringValue: String(v == null ? '' : v) });
   const fields = { kind: s('question-report'), block: s(r.block), qid: s(r.qid), reason: s(r.reason), note: s(r.note),
     exam: s(r.exam), sdl: s(r.sdl), picked: s(r.picked), stem: s((r.stem || '').slice(0, 160)), _createdAt: { timestampValue: new Date(r.ts).toISOString() } };

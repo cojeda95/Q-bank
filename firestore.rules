@@ -1,0 +1,447 @@
+rules_version = '2';
+// Firestore rules for the OCOM Question Hub (Firebase project q-bank-cache).
+//
+// Paste this whole file into:
+//   Firebase console → Build → Firestore Database → Rules → replace the editor → Publish
+// Publishing replaces the entire ruleset. The site only uses `syncs` and
+// `live_sessions`; every other path is denied. The console uses admin
+// credentials, so it can still list documents after these rules are live.
+// `tools/reports.py` uses the public API key and will no longer be able to
+// list reports; delete-by-id still works, and the console can read them.
+//
+// There is no Firebase Auth. Knowing a document id (a 6-character PIN, a
+// 5-character room code, a player id) is what lets a client get or write
+// THAT document. List and query are denied, so the collection cannot be
+// enumerated. That closes the "read every PIN and every live room" hole.
+// It does not stop someone who already has the PIN, and it does not stop
+// guessing. App Check would slow scripted guessing and report spam; it is
+// not required for the checks below and is not enabled here.
+//
+// Host (and player) secrets never sit on a world-readable document.
+// `live_sessions/{code}/private/host` holds only the current host token and
+// cannot be read or listed. Each host commit replaces that token with
+// SHA-256(old token) as uppercase hex. Rules recompute the hash, so a writer
+// who does not already know the token cannot produce the next one, and a
+// partial update that leaves the token untouched does not match. The room
+// document itself has no token field. The same chain guards each player's
+// score and answers (`participants/{pid}/secret/key`), because player ids
+// are listed on the room document so the host can fetch them without a query.
+//
+// SHA-256 here is `hashing.sha256(string).toHexString()`, which is uppercase.
+// The client must hash the same uppercase hex string (UTF-8), not raw bytes.
+//
+// Local check, without touching the live project:
+//   npx firebase-tools emulators:exec --only firestore --project q-bank-cache \
+//     "node tools/test-firestore-rules.mjs"
+// The site talks to that emulator only at http://localhost with ?emulator=1.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function pinOk(p) {
+      return p is string && p.matches('^[A-Z0-9]{6}$');
+    }
+    function roomOk(code) {
+      return code is string && code.matches('^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{5}$');
+    }
+    function pidOk(pid) {
+      return pid is string && pid.matches('^[a-f0-9]{32}$');
+    }
+    // Uppercase hex, 32 bytes. SHA-256 hex stays in this shape, so the chain never leaves it.
+    function secretOk(token) {
+      return token is string && token.matches('^[A-F0-9]{64}$');
+    }
+    function nextSecret(token) {
+      return hashing.sha256(token).toHexString();
+    }
+    // matches() is a full-string match, so the pattern has to cover the whole value.
+    function jsonBlob(v) {
+      return v is string && v.size() >= 2 && v.size() <= 1048576
+        && (v.matches('\\{.*') || v.matches('\\[.*'));
+    }
+    function blob(d, key) {
+      return !(key in d) || jsonBlob(d[key]);
+    }
+    function liveBlock(b) {
+      return b == 'psych' || b == 'neuro' || b == 'endocrine' || b == 'eent'
+        || b == 'pulm' || b == 'ortho' || b == 'rheum' || b == 'nephro'
+        || b == 'gastro' || b == 'omm' || b == 'research';
+    }
+    function syncBlock(block) {
+      return block == 'neuro' || block == 'pulm' || block == 'eent'
+        || block == 'endocrine' || block == 'ortho' || block == 'rheum'
+        || block == 'psych' || block == 'nephro' || block == 'gastro'
+        || block == 'omm' || block == 'geriatrics' || block == 'research';
+    }
+    // A room dated more than a day ago can be deleted without the host token.
+    // createdAt is milliseconds. request.time is the commit time.
+    function olderThanADay(createdAt) {
+      return createdAt is int && request.time.toMillis() - createdAt > 86400000;
+    }
+
+    function sessionPath(code) {
+      return /databases/$(database)/documents/live_sessions/$(code);
+    }
+    function hostPath(code) {
+      return /databases/$(database)/documents/live_sessions/$(code)/private/host;
+    }
+    function playerPath(code, pid) {
+      return /databases/$(database)/documents/live_sessions/$(code)/participants/$(pid);
+    }
+    function playerKeyPath(code, pid) {
+      return /databases/$(database)/documents/live_sessions/$(code)/participants/$(pid)/secret/key;
+    }
+
+    // True when THIS commit moved the secret doc from token T to SHA-256(T).
+    function advanced(path) {
+      let before = get(path).data;
+      let after = getAfter(path).data;
+      return before.keys().hasOnly(['token'])
+        && after.keys().hasOnly(['token'])
+        && secretOk(before.token)
+        && after.token == nextSecret(before.token);
+    }
+    function hostProved(code) {
+      return advanced(hostPath(code));
+    }
+    function playerProved(code, pid) {
+      return advanced(playerKeyPath(code, pid));
+    }
+
+    // ============================== syncs ==============================
+    // syncs/{PIN}                          old combined blob, or a _migratedAt marker
+    // syncs/{PIN}_{block}                  one block's flags, scores, attempts, settings
+    // syncs/{PIN}_atlas                    Lesion Atlas progress (field mla-progress)
+    // syncs/QREPORT-{block}-{ms}-{nonce}   a question report; create and delete only
+
+    function legacyKeys() {
+      return [
+        'neuro_flags_v1', 'neuro_progress_v1', 'neuro_attempts_v1', 'neuro_settings_v1',
+        'pulm_flags_v1', 'pulm_progress_v1', 'pulm_attempts_v1', 'pulm_settings_v1',
+        'eent_flags_v1', 'eent_progress_v1', 'eent_attempts_v1', 'eent_settings_v1',
+        'endocrine_flags_v1', 'endocrine_progress_v1', 'endocrine_attempts_v1', 'endocrine_settings_v1',
+        'ortho_flags_v1', 'ortho_progress_v1', 'ortho_attempts_v1', 'ortho_settings_v1',
+        'rheum_flags_v1', 'rheum_progress_v1', 'rheum_attempts_v1', 'rheum_settings_v1',
+        'psych_flags_v1', 'psych_progress_v1', 'psych_attempts_v1', 'psych_settings_v1',
+        'nephro_flags_v1', 'nephro_progress_v1', 'nephro_attempts_v1', 'nephro_settings_v1',
+        'gastro_flags_v1', 'gastro_progress_v1', 'gastro_attempts_v1', 'gastro_settings_v1',
+        'omm_flags_v1', 'omm_progress_v1', 'omm_attempts_v1', 'omm_settings_v1',
+        'geriatrics_flags_v1', 'geriatrics_progress_v1', 'geriatrics_attempts_v1', 'geriatrics_settings_v1',
+        'research_flags_v1', 'research_progress_v1', 'research_attempts_v1', 'research_settings_v1',
+        'mla-progress', '_updatedAt', '_migratedAt'
+      ];
+    }
+    function legacyBlobs(d) {
+      return blob(d, 'neuro_flags_v1') && blob(d, 'neuro_progress_v1') && blob(d, 'neuro_attempts_v1') && blob(d, 'neuro_settings_v1')
+        && blob(d, 'pulm_flags_v1') && blob(d, 'pulm_progress_v1') && blob(d, 'pulm_attempts_v1') && blob(d, 'pulm_settings_v1')
+        && blob(d, 'eent_flags_v1') && blob(d, 'eent_progress_v1') && blob(d, 'eent_attempts_v1') && blob(d, 'eent_settings_v1')
+        && blob(d, 'endocrine_flags_v1') && blob(d, 'endocrine_progress_v1') && blob(d, 'endocrine_attempts_v1') && blob(d, 'endocrine_settings_v1')
+        && blob(d, 'ortho_flags_v1') && blob(d, 'ortho_progress_v1') && blob(d, 'ortho_attempts_v1') && blob(d, 'ortho_settings_v1')
+        && blob(d, 'rheum_flags_v1') && blob(d, 'rheum_progress_v1') && blob(d, 'rheum_attempts_v1') && blob(d, 'rheum_settings_v1')
+        && blob(d, 'psych_flags_v1') && blob(d, 'psych_progress_v1') && blob(d, 'psych_attempts_v1') && blob(d, 'psych_settings_v1')
+        && blob(d, 'nephro_flags_v1') && blob(d, 'nephro_progress_v1') && blob(d, 'nephro_attempts_v1') && blob(d, 'nephro_settings_v1')
+        && blob(d, 'gastro_flags_v1') && blob(d, 'gastro_progress_v1') && blob(d, 'gastro_attempts_v1') && blob(d, 'gastro_settings_v1')
+        && blob(d, 'omm_flags_v1') && blob(d, 'omm_progress_v1') && blob(d, 'omm_attempts_v1') && blob(d, 'omm_settings_v1')
+        && blob(d, 'geriatrics_flags_v1') && blob(d, 'geriatrics_progress_v1') && blob(d, 'geriatrics_attempts_v1') && blob(d, 'geriatrics_settings_v1')
+        && blob(d, 'research_flags_v1') && blob(d, 'research_progress_v1') && blob(d, 'research_attempts_v1') && blob(d, 'research_settings_v1')
+        && blob(d, 'mla-progress');
+    }
+    function validLegacy(d) {
+      return d.keys().hasOnly(legacyKeys()) && (
+        (d.keys().hasOnly(['_migratedAt']) && d._migratedAt is timestamp)
+        || ('_updatedAt' in d && d._updatedAt is timestamp && !('_migratedAt' in d)
+            && d.keys().size() >= 2 && legacyBlobs(d))
+      );
+    }
+    function validBlock(docId, d) {
+      let block = docId.split('_')[1];
+      return syncBlock(block)
+        && d.keys().hasOnly([
+          block + '_flags_v1', block + '_progress_v1', block + '_attempts_v1',
+          block + '_settings_v1', '_updatedAt'
+        ])
+        && d.keys().hasAll(['_updatedAt'])
+        && d.keys().size() >= 2
+        && d._updatedAt is timestamp
+        && blob(d, block + '_flags_v1')
+        && blob(d, block + '_progress_v1')
+        && blob(d, block + '_attempts_v1')
+        && blob(d, block + '_settings_v1');
+    }
+    function validAtlas(d) {
+      return d.keys().hasOnly(['mla-progress', '_updatedAt'])
+        && d.keys().hasAll(['mla-progress', '_updatedAt'])
+        && d._updatedAt is timestamp
+        && jsonBlob(d['mla-progress']);
+    }
+    function isBlockDoc(docId) {
+      return docId.matches('^[A-Z0-9]{6}_(neuro|pulm|eent|endocrine|ortho|rheum|psych|nephro|gastro|omm|geriatrics|research)$');
+    }
+    function isAtlasDoc(docId) {
+      return docId.matches('^[A-Z0-9]{6}_atlas$');
+    }
+    function isProgressId(docId) {
+      return pinOk(docId) || isBlockDoc(docId) || isAtlasDoc(docId);
+    }
+    function validProgress(docId) {
+      let d = request.resource.data;
+      return request.resource.size() <= 1048576 && (
+        (pinOk(docId) && validLegacy(d))
+        || (isBlockDoc(docId) && validBlock(docId, d))
+        || (isAtlasDoc(docId) && validAtlas(d))
+      );
+    }
+    function isReportId(docId) {
+      return docId.matches('^QREPORT-[a-z0-9]{1,24}-[0-9]{13}-[a-z0-9]{1,12}$');
+    }
+    function validReport(docId) {
+      let d = request.resource.data;
+      let block = docId.split('-')[1];
+      return isReportId(docId)
+        && request.resource.size() <= 8192
+        && d.keys().hasOnly(['kind', 'block', 'qid', 'reason', 'note', 'exam', 'sdl', 'picked', 'stem', '_createdAt'])
+        && d.kind == 'question-report'
+        && d.block == block
+        && d.block.matches('^[a-z0-9]{1,24}$')
+        && d.qid is string && d.qid.size() > 0 && d.qid.size() <= 40
+        && (d.reason == 'key' || d.reason == 'explain' || d.reason == 'typo' || d.reason == 'other')
+        && d.note is string && d.note.size() <= 600
+        && d.exam is string && d.exam.size() <= 12
+        && d.sdl is string && d.sdl.size() <= 12
+        && d.picked is string && d.picked.size() <= 8
+        && d.stem is string && d.stem.size() <= 160
+        && d._createdAt is timestamp;
+    }
+
+    match /syncs/{docId} {
+      allow list: if false;
+      allow get: if isProgressId(docId) || isReportId(docId);
+      allow create, update: if validProgress(docId);
+      // Reports are insert-only. A second create of the same id fails because it already exists.
+      allow create: if validReport(docId);
+      allow delete: if isProgressId(docId) || isReportId(docId);
+    }
+
+    // ============================== live_sessions ==============================
+
+    function sessionShape(d) {
+      return d.keys().hasOnly([
+          'block', 'status', 'currentIndex', 'revealed', 'locked',
+          'questionIds', 'autoAdvanceSeconds', 'createdAt', 'participantIds', 'joinPid'
+        ])
+        && liveBlock(d.block)
+        && (d.status == 'lobby' || d.status == 'active' || d.status == 'ended')
+        && d.currentIndex is int && d.currentIndex >= 0
+        && d.revealed is bool
+        && d.locked is bool
+        && d.questionIds is list && d.questionIds.size() >= 1 && d.questionIds.size() <= 3000
+        && d.currentIndex < d.questionIds.size()
+        && d.autoAdvanceSeconds is int && d.autoAdvanceSeconds >= 0 && d.autoAdvanceSeconds <= 300
+        && d.createdAt is int && d.createdAt >= 1577836800000 && d.createdAt <= 4102444800000
+        && d.participantIds is list && d.participantIds.size() <= 300
+        && d.joinPid is string && (d.joinPid == '' || pidOk(d.joinPid))
+        && request.resource.size() <= 400000;
+    }
+    function freshSecret(data) {
+      return data.keys().hasOnly(['token']) && secretOk(data.token);
+    }
+    function validCreate(code) {
+      let d = request.resource.data;
+      return sessionShape(d)
+        && d.status == 'lobby'
+        && d.currentIndex == 0
+        && d.revealed == false
+        && d.locked == false
+        && d.participantIds.size() == 0
+        && d.joinPid == ''
+        && freshSecret(getAfter(hostPath(code)).data);
+    }
+    function statusStep(before, after) {
+      return before == after
+        || (before == 'lobby' && after == 'active')
+        || (before == 'active' && after == 'ended');
+    }
+    // Cheap checks first so a joiner's write does not have to touch the host secret.
+    function hostSessionUpdate(code) {
+      let before = resource.data;
+      let after = request.resource.data;
+      let changed = after.diff(before).affectedKeys();
+      return before.status != 'ended'
+        && changed.hasOnly(['status', 'currentIndex', 'revealed', 'locked'])
+        && statusStep(before.status, after.status)
+        && after.currentIndex >= 0
+        && after.currentIndex < before.questionIds.size()
+        && (after.currentIndex == before.currentIndex
+            || after.currentIndex == before.currentIndex + 1
+            || after.currentIndex == before.currentIndex - 1)
+        && (after.status != 'lobby' || (after.revealed == false && after.currentIndex == 0))
+        && after.block == before.block
+        && after.questionIds == before.questionIds
+        && after.autoAdvanceSeconds == before.autoAdvanceSeconds
+        && after.createdAt == before.createdAt
+        && after.participantIds == before.participantIds
+        && after.joinPid == before.joinPid
+        && sessionShape(after)
+        && hostProved(code);
+    }
+    function joinSessionUpdate(code) {
+      let before = resource.data;
+      let after = request.resource.data;
+      let pid = after.joinPid;
+      return before.status != 'ended'
+        && before.locked == false
+        && after.diff(before).affectedKeys().hasOnly(['participantIds', 'joinPid'])
+        && pidOk(pid)
+        && !before.participantIds.hasAny([pid])
+        && after.participantIds.size() == before.participantIds.size() + 1
+        && after.participantIds.size() <= 300
+        && after.participantIds.hasAll(before.participantIds)
+        && after.participantIds.hasAny([pid])
+        && existsAfter(playerPath(code, pid))
+        && existsAfter(playerKeyPath(code, pid));
+    }
+
+    function playerShape(d) {
+      return d.keys().hasOnly(['name', 'score', 'joinedAt', 'scored'])
+        && d.name is string && d.name.size() >= 1 && d.name.size() <= 30
+        && d.name.matches('.*\\S.*')
+        && d.score is int && d.score >= 0 && d.score <= 3000
+        && d.joinedAt is int && d.joinedAt >= 1577836800000 && d.joinedAt <= 4102444800000
+        && d.scored is map && d.scored.size() <= 3000;
+    }
+    function validPlayerCreate(code, pid) {
+      let d = request.resource.data;
+      let room = getAfter(sessionPath(code)).data;
+      return pidOk(pid)
+        && playerShape(d)
+        && d.score == 0
+        && d.scored.size() == 0
+        && room.joinPid == pid
+        && room.participantIds.hasAny([pid])
+        && room.locked == false
+        && room.status != 'ended'
+        && freshSecret(getAfter(playerKeyPath(code, pid)).data);
+    }
+    function playerRename(code, pid) {
+      let before = resource.data;
+      let after = request.resource.data;
+      return playerShape(after)
+        && after.diff(before).affectedKeys().hasOnly(['name'])
+        && after.score == before.score
+        && after.joinedAt == before.joinedAt
+        && after.scored == before.scored
+        && playerProved(code, pid);
+    }
+    // One point per question index, only while that question is on screen and revealed.
+    function playerScore(code, pid) {
+      let before = resource.data;
+      let after = request.resource.data;
+      let room = get(sessionPath(code)).data;
+      let added = after.scored.diff(before.scored).addedKeys();
+      let key = string(room.currentIndex);
+      return playerShape(after)
+        && room.status == 'active'
+        && room.revealed == true
+        && after.diff(before).affectedKeys().hasOnly(['score', 'scored'])
+        && after.name == before.name
+        && after.joinedAt == before.joinedAt
+        && after.score == before.score + 1
+        && added.size() == 1
+        && added.hasOnly([key])
+        && after.scored.diff(before.scored).removedKeys().size() == 0
+        && after.scored.diff(before.scored).changedKeys().size() == 0
+        && after.scored[key] == true
+        && playerProved(code, pid);
+    }
+
+    function answerParts(answerId) {
+      return answerId.split('_');
+    }
+    function answerShape(data, answerId) {
+      let parts = answerParts(answerId);
+      return parts.size() == 2
+        && parts[0].matches('^\\d{1,4}$')
+        && pidOk(parts[1])
+        && data.keys().hasOnly(['choice', 'qIndex', 'ts'])
+        && data.choice is string && data.choice.matches('^[A-E]$')
+        && data.qIndex is int && data.qIndex == int(parts[0])
+        && data.ts is int && data.ts >= 1577836800000 && data.ts <= 4102444800000
+        && request.resource.size() <= 2048;
+    }
+    function answerAllowed(code, answerId) {
+      let room = get(sessionPath(code)).data;
+      let pid = answerParts(answerId)[1];
+      return answerShape(request.resource.data, answerId)
+        && room.status == 'active'
+        && room.revealed == false
+        && room.currentIndex == request.resource.data.qIndex
+        && room.participantIds.hasAny([pid])
+        && playerProved(code, pid);
+    }
+
+    match /live_sessions/{code} {
+      allow list: if false;
+      allow get: if roomOk(code);
+      allow create: if roomOk(code) && validCreate(code);
+      allow update: if roomOk(code) && (hostSessionUpdate(code) || joinSessionUpdate(code));
+      allow delete: if roomOk(code) && (hostProved(code) || olderThanADay(resource.data.createdAt));
+
+      match /private/host {
+        allow read: if false;
+        allow create: if roomOk(code) && freshSecret(request.resource.data)
+          && !exists(sessionPath(code))
+          && existsAfter(sessionPath(code));
+        allow update: if roomOk(code)
+          && request.resource.data.keys().hasOnly(['token'])
+          && secretOk(resource.data.token)
+          && request.resource.data.token == nextSecret(resource.data.token);
+        // After the room is gone, or in the same commit that deletes an expired room.
+        allow delete: if roomOk(code) && (
+          !exists(sessionPath(code))
+          || (!existsAfter(sessionPath(code)) && olderThanADay(get(sessionPath(code)).data.createdAt))
+        );
+      }
+
+      match /participants/{pid} {
+        allow list: if false;
+        allow get: if roomOk(code) && pidOk(pid);
+        allow create: if roomOk(code) && validPlayerCreate(code, pid);
+        allow update: if roomOk(code) && (playerRename(code, pid) || playerScore(code, pid));
+        allow delete: if roomOk(code) && (
+          hostProved(code)
+          || !exists(sessionPath(code))
+          || olderThanADay(get(sessionPath(code)).data.createdAt)
+        );
+
+        match /secret/key {
+          allow read: if false;
+          allow create: if roomOk(code) && pidOk(pid) && freshSecret(request.resource.data)
+            && existsAfter(playerPath(code, pid))
+            && getAfter(sessionPath(code)).data.joinPid == pid;
+          allow update: if roomOk(code)
+            && request.resource.data.keys().hasOnly(['token'])
+            && secretOk(resource.data.token)
+            && request.resource.data.token == nextSecret(resource.data.token);
+          allow delete: if roomOk(code) && (
+            hostProved(code)
+            || !exists(sessionPath(code))
+            || olderThanADay(get(sessionPath(code)).data.createdAt)
+          );
+        }
+      }
+
+      match /answers/{answerId} {
+        allow list: if false;
+        allow get: if roomOk(code) && answerParts(answerId).size() == 2 && pidOk(answerParts(answerId)[1]);
+        allow create: if roomOk(code) && answerAllowed(code, answerId);
+        allow update: if roomOk(code) && answerAllowed(code, answerId)
+          && resource.data.qIndex == request.resource.data.qIndex;
+        allow delete: if roomOk(code) && (
+          hostProved(code)
+          || !exists(sessionPath(code))
+          || olderThanADay(get(sessionPath(code)).data.createdAt)
+        );
+      }
+    }
+  }
+}
