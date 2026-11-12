@@ -755,6 +755,9 @@ function loadSettings() {
   catch (e) { return Object.assign({}, defaults); }
 }
 function saveSettings(s) {
+  // sync.js keeps whichever device saved settings last. The stamp lives in
+  // this JSON string, next to the toggles, so it doesn't need its own key.
+  s.updatedAt = Date.now();
   localStorage.setItem(LS_SETTINGS, JSON.stringify(s));
 }
 // On unless the user has switched it off.
