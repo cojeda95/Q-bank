@@ -192,22 +192,96 @@ function choiceListOpen(q) {
 }
 
 let loadedBlockKey = null;
-function loadBlockData(blockKey) {
+let loadGen = 0;
+const chunkLoads = new Map(); // chunk file name -> Promise, for the block loaded above
+
+function loadScript(src) {
   return new Promise((resolve, reject) => {
-    if (loadedBlockKey === blockKey && window.QUIZ_DATA) { resolve(window.QUIZ_DATA); return; }
-    window.QUIZ_DATA = undefined;
-    const existing = document.getElementById('blockDataScript');
-    if (existing) existing.remove();
     const script = document.createElement('script');
-    script.id = 'blockDataScript';
-    script.src = `${blockKey}/data.js`;
-    script.onload = () => {
-      loadedBlockKey = blockKey;
-      if (window.QUIZ_DATA) resolve(window.QUIZ_DATA);
-      else reject(new Error('data.js loaded but QUIZ_DATA was not set'));
-    };
-    script.onerror = () => reject(new Error(`Could not load ${blockKey}/data.js`));
+    script.src = src;
+    script.async = true;
+    script.onload = () => { script.remove(); resolve(); };
+    script.onerror = () => { script.remove(); reject(new Error('Could not load ' + src)); };
     document.head.appendChild(script);
+  });
+}
+// The SDL picker only needs ids and batches, which q/manifest.js carries. Full stems load
+// with the one chunk that holds the question on screen (ensureQuestion), not the whole data.js.
+function loadBlockData(blockKey) {
+  if (loadedBlockKey === blockKey && window.QUIZ_DATA) return Promise.resolve(window.QUIZ_DATA);
+  const gen = ++loadGen;
+  window.QUIZ_DATA = undefined;
+  window.QUIZ_MANIFEST = undefined;
+  window.QUIZ_CHUNKS = undefined;
+  loadedBlockKey = null;
+  chunkLoads.clear();
+  return loadScript(`${blockKey}/q/manifest.js`).then(() => {
+    if (gen !== loadGen) return new Promise(() => {});
+    const man = window.QUIZ_MANIFEST;
+    if (!man || !man.exams) throw new Error('manifest.js loaded but QUIZ_MANIFEST was not set');
+    window.QUIZ_DATA = man;
+    loadedBlockKey = blockKey;
+    return window.QUIZ_DATA;
+  });
+}
+function chunkNameForId(id) {
+  const data = window.QUIZ_DATA;
+  if (!data) return null;
+  for (const exam of data.exams || []) {
+    for (const sdl of exam.sdls || []) {
+      if (sdl.chunk == null) continue;
+      if ((sdl.questions || []).some(q => q.id === id)) return (data.chunks || [])[sdl.chunk] || null;
+    }
+  }
+  return null;
+}
+function mergeChunk(part) {
+  Object.keys(part).forEach(n => {
+    const sdlNum = Number(n);
+    for (const exam of window.QUIZ_DATA.exams || []) {
+      const sdl = (exam.sdls || []).find(s => s.sdlNumber === sdlNum);
+      if (!sdl) continue;
+      part[n].forEach(full => {
+        const stub = (sdl.questions || []).find(x => x.id === full.id);
+        if (stub) Object.assign(stub, full);
+      });
+    }
+  });
+}
+function questionReady(q) {
+  return !!(q && q.stem && q.choices);
+}
+function ensureQuestion(id) {
+  const q = questionById(window.QUIZ_DATA, id);
+  if (questionReady(q)) return Promise.resolve(q);
+  const name = chunkNameForId(id);
+  if (!name) return Promise.resolve(q);
+  if (!chunkLoads.has(name)) {
+    chunkLoads.set(name, loadScript(`${loadedBlockKey}/q/${name}`).then(() => {
+      const part = window.QUIZ_CHUNKS && window.QUIZ_CHUNKS[name];
+      if (!part) throw new Error(name + ' did not load');
+      delete window.QUIZ_CHUNKS[name];
+      mergeChunk(part);
+    }).catch(err => { chunkLoads.delete(name); throw err; }));
+  }
+  return chunkLoads.get(name).then(() => questionById(window.QUIZ_DATA, id));
+}
+// The question on screen: leave the placeholder up while its chunk loads, then draw again.
+function showQuestionWhenReady(qid) {
+  if (root().dataset.loadingQ === qid) return;
+  root().dataset.loadingQ = qid;
+  root().innerHTML = `<div class="live-card"><p class="loading">Loading question…</p></div>`;
+  const screen = state.screen, code = state.code;
+  ensureQuestion(qid).then(full => {
+    if (root().dataset.loadingQ !== qid) return;
+    if (!(state.screen === screen && state.code === code && state.session && state.session.questionIds[state.session.currentIndex] === qid)) return;
+    if (!questionReady(full)) {
+      root().innerHTML = `<div class="live-card"><p class="live-error">That question did not load.</p></div>`;
+      return;
+    }
+    render();
+  }).catch(err => {
+    if (root().dataset.loadingQ === qid) root().innerHTML = `<div class="live-card"><p class="live-error">${esc(err.message)}</p></div>`;
   });
 }
 function flattenSdls(quizData) {
@@ -687,7 +761,10 @@ function renderHostRoom() {
   }
 
   if (s.status === 'active') {
-    const q = questionById(state.quizData, s.questionIds[s.currentIndex]);
+    const qid = s.questionIds[s.currentIndex];
+    const qLoaded = questionById(state.quizData, qid);
+    if (!questionReady(qLoaded)) { showQuestionWhenReady(qid); return; }
+    const q = qLoaded;
     const answers = state.answers || [];
     const tally = {};
     answers.forEach(a => { tally[a.choice] = (tally[a.choice] || 0) + 1; });
@@ -930,7 +1007,7 @@ function startJoinPolling() {
       if (session.status === 'active' && session.revealed && answeredThisQ) {
         const scored = loadScoredIndexes(state.code);
         if (!scored.includes(session.currentIndex)) {
-          const q = questionById(state.quizData, session.questionIds[session.currentIndex]);
+          const q = await ensureQuestion(session.questionIds[session.currentIndex]);
           if (q && answeredThisQ === q.correct) {
             const me = await getDoc(`live_sessions/${state.code}/participants/${state.pid}`);
             await putDoc(`live_sessions/${state.code}/participants/${state.pid}`, {
@@ -963,7 +1040,10 @@ function renderJoinRoom() {
   }
 
   if (s.status === 'active') {
-    const q = questionById(state.quizData, s.questionIds[s.currentIndex]);
+    const qid = s.questionIds[s.currentIndex];
+    const qLoaded = questionById(state.quizData, qid);
+    if (!questionReady(qLoaded)) { showQuestionWhenReady(qid); return; }
+    const q = qLoaded;
     const mine = state.answeredThisQ;
     root().innerHTML = `
       <div class="live-card">
@@ -1009,11 +1089,27 @@ function renderJoinRoom() {
     stopPolling();
     const myAnswers = state.myAnswers || {};
     const showBreakdown = !!state.showBreakdown;
+    if (showBreakdown) {
+      const missing = (s.questionIds || []).filter(id => !questionReady(questionById(state.quizData, id)));
+      if (missing.length) {
+        if (root().dataset.loadingQ !== 'ended') {
+          root().dataset.loadingQ = 'ended';
+          root().innerHTML = `<div class="live-card"><p class="loading">Loading questions…</p></div>`;
+          Promise.all(missing.map(ensureQuestion)).then(() => {
+            if (state.screen === 'joinRoom' && state.session && state.session.status === 'ended' && state.showBreakdown) render();
+          }).catch(err => {
+            if (root().dataset.loadingQ === 'ended') root().innerHTML = `<div class="live-card"><p class="live-error">${esc(err.message)}</p></div>`;
+          });
+        }
+        return;
+      }
+      delete root().dataset.loadingQ;
+    }
     let correctCount = 0;
     const rows = s.questionIds.map((qid, i) => {
       const q = questionById(state.quizData, qid);
       const mine = myAnswers[i];
-      const isCorrect = q && mine === q.correct;
+      const isCorrect = !!(q && mine && mine === q.correct);
       if (isCorrect) correctCount++;
       if (!q) return '';
       return `
