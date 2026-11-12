@@ -17,7 +17,7 @@
    first visit and drops parts of older builds (saveBlockOffline in shared/app.js).
    Requests to other sites (the Firestore sync, CDNs) are left alone, so sync and
    Live Session still need a connection. */
-const CACHE = 'qhub-v1';
+const CACHE = 'qhub-v2';
 const CORE = ['./', 'index.html', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
   'announcements.js', 'sync.js', 'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js',
   'resources/qbank-counts.js', 'resources/atlas-home.js', 'resources/atlas-cards.js', 'resources/atlas-qstates.js'];

@@ -97,7 +97,7 @@ button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
 .btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
 
 /* ── shell ──────────────────────────────────────────── */
-:root{--rail-w:262px}
+:root{--rail-w:262px;--card-w:404px}
 :root[data-rail="off"]{--rail-w:0px}
 .shell{flex:1;min-height:0;display:grid;grid-template-columns:var(--rail-w) minmax(0,1fr);transition:grid-template-columns .22s ease}
 @media (prefers-reduced-motion:reduce){.shell{transition:none}}
@@ -162,7 +162,7 @@ svg.map.drag{cursor:grabbing}
 .minimap{position:absolute;right:16px;top:14px;z-index:6;background:var(--surface);border:1px solid var(--line);border-radius:10px;
   padding:6px;box-shadow:var(--shadow);line-height:0}
 .minimap svg{display:block;cursor:pointer;touch-action:none}
-.drawer:not([hidden]) ~ .minimap{right:calc(min(404px,92%) + 16px)}
+.drawer:not([hidden]) ~ .minimap{right:calc(var(--drawer-w, var(--card-w)) + 16px)}
 .mm-c{fill:var(--surface-2);stroke:var(--line);stroke-width:8}
 .mm-p{fill:var(--surface-3)}
 .mm-n{opacity:.8}
@@ -335,8 +335,17 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 @media (max-width:620px){ .weakmap{grid-template-columns:minmax(0,1fr) auto} .weakmap .qbar{display:none} }
 
 /* ── detail drawer ──────────────────────────────────── */
-.drawer{position:absolute;top:0;right:0;bottom:0;width:404px;max-width:92%;background:var(--surface);
+.drawer{position:absolute;top:0;right:0;bottom:0;width:var(--card-w);max-width:100%;background:var(--surface);
   border-left:1px solid var(--line);box-shadow:var(--shadow);overflow-y:auto;z-index:20;padding:0 0 36px}
+/* the open card takes its width off the Index, so the pathway cards beside it reflow instead of sliding under it */
+.mapwrap.card-open .indexwrap{right:var(--drawer-w, var(--card-w))}
+.card-resize{position:absolute;top:0;bottom:0;z-index:25;width:18px;margin:0;padding:0;border:0;border-radius:0;
+  right:calc(var(--drawer-w, var(--card-w)) - 9px);cursor:ew-resize;touch-action:none;background:transparent;user-select:none}
+.card-resize::after{content:"";position:absolute;top:50%;left:6px;width:4px;height:52px;transform:translateY(-50%);
+  border-radius:3px;background:var(--ink-3);opacity:.55}
+.card-resize:hover::after,.card-resize:focus-visible::after{opacity:1;background:var(--accent)}
+html.card-drag,html.card-drag *{cursor:ew-resize!important;user-select:none!important}
+.drawer[hidden] ~ .card-resize{display:none}
 .dhead{position:relative;background:var(--surface);border-bottom:1px solid var(--line-2);padding:18px 20px 14px;z-index:2}
 /* the header scrolls away; a slim bar slides in over the top. Its slot is zero-height, so nothing in the page ever moves */
 .dmini{position:sticky;top:0;height:0;z-index:4}
@@ -478,7 +487,7 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
 .pagehit{padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:12px;color:var(--ink-2)}
 .pagehit:hover{border-color:var(--ink-3);color:var(--ink)}
 /* compare two cards */
-.drawer.cmp{width:min(900px,96%)}
+.drawer.cmp{width:min(100%,max(var(--card-w),900px))}
 .cmpgrid{display:grid;grid-template-columns:120px 1fr 1fr;border-top:1px solid var(--line-2)}
 .cmpgrid > div{padding:10px 12px;border-bottom:1px solid var(--line-2);font-size:13px;line-height:1.45;min-width:0}
 .cmpgrid .rh{font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding-left:0}
@@ -527,6 +536,8 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
   #railBtn{display:none}
   .drawer{width:100%;max-width:100%;top:auto;height:70%;border-left:none;border-top:1px solid var(--line);border-radius:18px 18px 0 0;
     padding-bottom:calc(36px + env(safe-area-inset-bottom,0px))}
+  .mapwrap.card-open .indexwrap{right:0}
+  .card-resize{display:none}
   .hint{display:none}
 }
 @media (max-width:620px){
@@ -790,7 +801,9 @@ kbd{font-family:var(--font-ui);font-size:12px;font-weight:600;background:var(--s
   html body .hdr{padding:6px 14px;gap:6px 10px}
 }
 @media (max-width:1000px) and (min-width:700px) and (orientation:landscape){
-  .drawer{top:0;bottom:0;height:auto;width:min(420px,48%);max-width:none;border-top:none;border-left:1px solid var(--line);border-radius:0}
+  .drawer{top:0;bottom:0;height:auto;width:min(var(--card-w),48%);max-width:none;border-top:none;border-left:1px solid var(--line);border-radius:0}
+  .card-resize:not([hidden]){display:block}
+  .mapwrap.card-open .indexwrap{right:var(--drawer-w, var(--card-w))}
   .dynsheet:not([hidden]){left:auto;top:0;bottom:0;width:min(360px,42%);max-height:none;border-top:none;border-left:1px solid var(--line);
     border-radius:0;box-shadow:-6px 0 18px rgba(0,0,0,.08)}
   .dynsheet.ds-full:not([hidden]){max-height:none}
@@ -892,6 +905,7 @@ body{display:flex;flex-direction:column}
       <div class="hint" id="hint">drag to pan · scroll to zoom · click any pin · ? for shortcuts</div>
       <div class="indexwrap" id="indexwrap" hidden></div>
       <aside class="drawer" id="drawer" hidden aria-label="Card"></aside>
+      <div class="card-resize" id="cardResize" hidden role="separator" aria-orientation="vertical" aria-label="Resize card" aria-valuemin="404" aria-valuemax="404" aria-valuenow="404" tabindex="0" title="Drag to resize the card. Arrow keys resize it. Double-click to reset."></div>
       <div class="secbar" id="secBar" hidden role="navigation" aria-label="Sections of this map"></div>
       <button class="dynbtn" id="dynBtn" hidden aria-label="Show this map’s switches">Switches ▴</button>
       <div class="dynsheet" id="dynSheet" hidden aria-label="Switches for this map"></div>
@@ -28908,6 +28922,80 @@ function closeDrawer(){
   drawer.hidden=true; state.sel=null; state.info=false;
   if(state.view!=="index") render();
   renderRail(); writeHash();
+  syncCardChrome();
+}
+/* The detail card starts at 404px. Drag the grip on its left edge — the edge that
+   moves — to widen it up to the map, or narrow it back. Double-click or Home resets.
+   One width for every card, remembered on this device (mla-cardw). On a phone the
+   card is already the full width, so the grip stays hidden. */
+const CARD_MIN=404, CARD_KEY="mla-cardw";
+let cardPref=CARD_MIN;
+function cardPhone(){ return matchMedia("(max-width:1000px)").matches && !matchMedia("(max-width:1000px) and (min-width:700px) and (orientation:landscape)").matches; }
+function cardMax(){
+  const full=mapwrap?mapwrap.clientWidth:CARD_MIN;
+  if(matchMedia("(max-width:1000px) and (min-width:700px) and (orientation:landscape)").matches) return Math.max(CARD_MIN, Math.floor(full*0.48));
+  return Math.max(CARD_MIN, full);
+}
+function shownCardW(){ return Math.round(Math.min(cardMax(), Math.max(CARD_MIN, cardPref))); }
+function syncCardChrome(){
+  const open=drawer&&!drawer.hidden;
+  const w=open?Math.round(drawer.getBoundingClientRect().width):0;
+  document.documentElement.style.setProperty("--drawer-w", (w||shownCardW())+"px");
+  if(mapwrap) mapwrap.classList.toggle("card-open", !!(open && state.view==="index"));
+  const h=document.getElementById("cardResize");
+  if(!h) return;
+  h.hidden=!open||cardPhone();
+  const max=Math.round(cardMax()), now=open?w:shownCardW();
+  h.setAttribute("aria-valuemin", String(CARD_MIN));
+  h.setAttribute("aria-valuemax", String(max));
+  h.setAttribute("aria-valuenow", String(now));
+}
+function applyCardW(px, save){
+  cardPref=Math.round(Math.max(CARD_MIN, px));
+  const shown=shownCardW();
+  if(cardPref<=CARD_MIN) document.documentElement.style.removeProperty("--card-w");
+  else document.documentElement.style.setProperty("--card-w", shown+"px");
+  if(save){ try{ if(cardPref<=CARD_MIN) localStorage.removeItem(CARD_KEY); else localStorage.setItem(CARD_KEY, String(cardPref)); }catch(e){} }
+  syncCardChrome();
+}
+function resetCardW(){ applyCardW(CARD_MIN, true); }
+try{ const n=+localStorage.getItem(CARD_KEY); if(n>CARD_MIN) cardPref=n; }catch(e){}
+if(cardPref>CARD_MIN) applyCardW(cardPref, false);
+new MutationObserver(()=>{ syncCardChrome(); requestAnimationFrame(syncCardChrome); }).observe(drawer,{attributes:true,attributeFilter:["hidden","class"]});
+addEventListener("resize",()=>{ if(cardPref>CARD_MIN) applyCardW(cardPref, false); else syncCardChrome(); });
+{
+  const h=document.getElementById("cardResize");
+  if(h){
+    let lastTap=0;
+    h.addEventListener("pointerdown",ev=>{
+      if(ev.button!=null&&ev.button!==0) return;
+      ev.preventDefault(); ev.stopPropagation();
+      const startX=ev.clientX, startW=drawer.getBoundingClientRect().width;
+      let lastX=startX;
+      try{ h.setPointerCapture(ev.pointerId); }catch(e){}
+      document.documentElement.classList.add("card-drag");
+      const move=e=>{ lastX=e.clientX; applyCardW(startW+(startX-lastX), false); };
+      const up=()=>{
+        h.removeEventListener("pointermove", move);
+        h.removeEventListener("pointerup", up);
+        h.removeEventListener("pointercancel", up);
+        document.documentElement.classList.remove("card-drag");
+        const moved=Math.abs(lastX-startX), now=Date.now();
+        if(moved<5 && now-lastTap<450){ lastTap=0; resetCardW(); }
+        else { lastTap=moved<5?now:0; applyCardW(startW+(startX-lastX), true); }
+      };
+      h.addEventListener("pointermove", move);
+      h.addEventListener("pointerup", up);
+      h.addEventListener("pointercancel", up);
+    });
+    h.addEventListener("dblclick",ev=>{ ev.preventDefault(); ev.stopPropagation(); lastTap=0; resetCardW(); });
+    h.addEventListener("keydown",ev=>{
+      const step=ev.shiftKey?80:24, w=drawer.getBoundingClientRect().width;
+      if(ev.key==="ArrowLeft"||ev.key==="ArrowUp"){ ev.preventDefault(); ev.stopPropagation(); applyCardW(w+step, true); }
+      else if(ev.key==="ArrowRight"||ev.key==="ArrowDown"){ ev.preventDefault(); ev.stopPropagation(); applyCardW(w-step, true); }
+      else if(ev.key==="Home"){ ev.preventDefault(); ev.stopPropagation(); resetCardW(); }
+    });
+  }
 }
 function copyLink(){
   /* phones get the share sheet (straight into a group chat); elsewhere copy it */
@@ -30191,6 +30279,7 @@ function setView(v){ nitCommit(false); { const o=DYN[state.view]; if(o&&o.cs&&v!
   renderRail(); updateScore(); writeHash();
   if(state.info){ if(isIdx) closeDrawer(); else openMapInfo(); }
   try{localStorage.setItem("mla-view",v);}catch(e){}
+  syncCardChrome();
 }
 function toVB(cx,cy){
   const ctm=svg.getScreenCTM(); if(!ctm) return {x:0,y:0};

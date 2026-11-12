@@ -959,7 +959,7 @@ def test_split(C):
         # manifest and every part are saved for offline use (saveBlockOffline)
         want = ["/%s/q/manifest.js" % block, "/%s/q/atlas-terms.js" % block] + ["/%s/q/%s" % (block, n) for n in M["chunks"]]
         try:
-            p.wait("""(async()=>{ if(!('caches' in window)) return null; const c = await caches.open('qhub-v1');
+            p.wait("""(async()=>{ if(!('caches' in window)) return null; const c = await caches.open('qhub-v2');
               const k = new Set((await c.keys()).map(r => new URL(r.url).pathname)); return %s.every(x => k.has(x)) && k.has('/%s/index.html'); })()"""
                    % (json.dumps(want), block), timeout=30)
             record(S, "split: first visit saves the block for offline use", True, "page + manifest + atlas terms + %d parts" % (len(want) - 2))
@@ -1236,7 +1236,7 @@ def test_offline(C):
         # visit the atlas once online, with its card text, so it is saved
         p.goto(C.server.base + "resources/metabolic-atlas.html")
         p.wait("typeof LESFULL!=='undefined' && LESFULL && booted", timeout=30)
-        p.wait("""(async()=>{ const c = await caches.open('qhub-v1'); const k = (await c.keys()).map(r => new URL(r.url).pathname);
+        p.wait("""(async()=>{ const c = await caches.open('qhub-v2'); const k = (await c.keys()).map(r => new URL(r.url).pathname);
           return k.some(x => /metabolic-atlas\\.html$/.test(x)) && k.some(x => /atlas-les\\.[0-9a-f]+\\.js$/.test(x)) && k.some(x => /\\/index\\.html$|\\/$/.test(x)); })()""", timeout=20)
         # m66: a block opened once online is saved with its manifest and every question part (saveBlockOffline)
         blk = "gastro" if "gastro" in block_dirs() else block_dirs()[0]
@@ -1245,11 +1245,11 @@ def test_offline(C):
         last_sdl = [x["sdlNumber"] for e in man["exams"] for x in e["sdls"] if x.get("chunk") == len(man["chunks"]) - 1][0]
         p.goto(C.server.base + blk + "/index.html")
         try:
-            p.wait("""(async()=>{ const c = await caches.open('qhub-v1'); const k = new Set((await c.keys()).map(r => new URL(r.url).pathname));
+            p.wait("""(async()=>{ const c = await caches.open('qhub-v2'); const k = new Set((await c.keys()).map(r => new URL(r.url).pathname));
               return %s.every(x => k.has(x)) && k.has('/%s/index.html'); })()""" % (json.dumps(want), blk), timeout=30)
             record(S, "a block opened once is saved: page, manifest, every part", True, "%s: %d parts" % (blk, len(want) - 2))
         except CDPError:
-            have = p.js("""(async()=>(await (await caches.open('qhub-v1')).keys()).map(r=>new URL(r.url).pathname).filter(x=>x.indexOf('/%s/')===0))()""" % blk)
+            have = p.js("""(async()=>(await (await caches.open('qhub-v2')).keys()).map(r=>new URL(r.url).pathname).filter(x=>x.indexOf('/%s/')===0))()""" % blk)
             record(S, "a block opened once is saved: page, manifest, every part", False, "cached: %s" % ", ".join(have or []))
         # cut the network: the server drops every connection and the tab is emulated offline
         C.server.offline = True
@@ -1296,7 +1296,7 @@ def test_saveall(C):
         for b in block_dirs():
             man = js_json(os.path.join(ROOT, b, "q", "manifest.js"), "window.QUIZ_MANIFEST=")
             want += ["/%s/index.html" % b, "/%s/q/manifest.js" % b, "/%s/q/atlas-terms.js" % b] + ["/%s/q/%s" % (b, n) for n in man["chunks"]]
-        have = set(p.js("(async()=>(await (await caches.open('qhub-v1')).keys()).map(r=>new URL(r.url).pathname))()") or [])
+        have = set(p.js("(async()=>(await (await caches.open('qhub-v2')).keys()).map(r=>new URL(r.url).pathname))()") or [])
         miss = [x for x in want if x not in have]
         record(S, "Save all: every block's page, manifest and question parts saved", str(st).isdigit() and not miss,
                ("%d block files" % len(want)) if not miss else "status %s; missing %s" % (str(st)[:60], ", ".join(miss[:5])), time.time() - t0)
