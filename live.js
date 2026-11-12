@@ -10,16 +10,21 @@
  * the same Firestore project, called directly via REST (no SDK).
  *
  * Firestore layout (collection `live_sessions`, separate from `syncs` so
- * it can't collide with the progress-sync feature):
+ * it can't collide with the progress-sync feature). Rules live in
+ * firestore.rules: list/query is denied, and the host token is NOT on the
+ * room document.
  *
- *   live_sessions/{code}                        session state — HOST writes this doc
- *   live_sessions/{code}/participants/{pid}      one doc per responder — only THAT responder writes it
- *   live_sessions/{code}/answers/{qIdx}_{pid}    one doc per (question, responder) — only THAT responder writes it
+ *   live_sessions/{code}                          public room state (no token)
+ *   live_sessions/{code}/private/host             host token, unreadable
+ *   live_sessions/{code}/participants/{pid}       one doc per responder
+ *   live_sessions/{code}/participants/{pid}/secret/key   that player's token, unreadable
+ *   live_sessions/{code}/answers/{qIndex}_{pid}   one answer per responder per question
  *
- * Every document has exactly one writer, so plain overwrite PATCHes are
- * safe — there's no scenario where two different people race on the same
- * doc and clobber each other, even though everyone is polling/writing the
- * same Firestore project concurrently during a session.
+ * Host writes and player writes are commits: the secret doc's token is
+ * replaced with SHA-256(old) (uppercase hex) in the same commit as the
+ * change. Someone who can read the room still cannot mint the next token.
+ * Player ids are copied onto the room doc so the host can get each person
+ * and each answer by id, without listing the subcollections.
  */
 
 // ---- Same Firebase project as sync.js ----
@@ -48,11 +53,39 @@ const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
 
 // ============================== Firestore REST ==============================
 
+// Production always uses Cloud Firestore. The emulator is opt-in, and only
+// from this machine: open http://localhost:<port>/live.html?emulator=1 while
+// `firebase emulators:start --only firestore` is listening on port 8080.
+// The flag is remembered for other localhost pages (the question bank) so a
+// test click cannot fall through to the live project.
+function useFirestoreEmulator() {
+  try {
+    const host = location.hostname;
+    const local = host === 'localhost' || host === '127.0.0.1' || host === '::1';
+    if (!local) return false;
+    if (new URLSearchParams(location.search).get('emulator') === '1') {
+      localStorage.setItem('qbank_firestore_emulator', '1');
+      return true;
+    }
+    return localStorage.getItem('qbank_firestore_emulator') === '1';
+  } catch (e) {
+    return false;
+  }
+}
+function apiRoot() {
+  const origin = useFirestoreEmulator()
+    ? `http://${location.hostname === '::1' ? '127.0.0.1' : location.hostname}:8080`
+    : 'https://firestore.googleapis.com';
+  return `${origin}/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)`;
+}
 function baseUrl() {
-  return `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents`;
+  return `${apiRoot()}/documents`;
 }
 function withKey(url) {
   return url + (url.includes('?') ? '&' : '?') + `key=${FIREBASE_CONFIG.apiKey}`;
+}
+function docName(path) {
+  return `projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/${path}`;
 }
 
 function encodeValue(v) {
@@ -60,6 +93,11 @@ function encodeValue(v) {
   if (typeof v === 'boolean') return { booleanValue: v };
   if (typeof v === 'number') return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
   if (Array.isArray(v)) return { arrayValue: { values: v.map(encodeValue) } };
+  if (typeof v === 'object') {
+    const fields = {};
+    Object.keys(v).forEach(k => { fields[k] = encodeValue(v[k]); });
+    return { mapValue: { fields } };
+  }
   return { stringValue: String(v) };
 }
 function decodeValue(fv) {
@@ -69,6 +107,12 @@ function decodeValue(fv) {
   if ('doubleValue' in fv) return fv.doubleValue;
   if ('booleanValue' in fv) return fv.booleanValue;
   if ('arrayValue' in fv) return (fv.arrayValue.values || []).map(decodeValue);
+  if ('mapValue' in fv) {
+    const out = {};
+    const fields = fv.mapValue.fields || {};
+    Object.keys(fields).forEach(k => { out[k] = decodeValue(fields[k]); });
+    return out;
+  }
   if ('nullValue' in fv) return null;
   return null;
 }
@@ -88,66 +132,130 @@ async function getDoc(path) {
   const res = await fetch(withKey(`${baseUrl()}/${path}`), { cache: 'no-store' });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Firestore read failed (HTTP ${res.status})`);
-  return fromDoc(await res.json());
-}
-// Full-document overwrite. Safe here because every path we ever call this
-// on has exactly one writer (see layout note above).
-async function putDoc(path, obj) {
-  const res = await fetch(withKey(`${baseUrl()}/${path}`), {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(toFields(obj)),
-  });
-  if (!res.ok) throw new Error(`Firestore write failed (HTTP ${res.status})`);
-  return res.json();
-}
-async function listDocs(path) {
-  const res = await fetch(withKey(`${baseUrl()}/${path}?pageSize=300`), { cache: 'no-store' });
-  if (res.status === 404) return [];
-  if (!res.ok) throw new Error(`Firestore list failed (HTTP ${res.status})`);
   const json = await res.json();
-  return (json.documents || []).map(d => {
-    const row = fromDoc(d);
-    row._id = d.name.split('/').pop();
-    return row;
-  });
+  const doc = fromDoc(json);
+  // Not a stored field. Join uses it so two people appending themselves don't overwrite each other.
+  if (json.updateTime) doc._updateTime = json.updateTime;
+  return doc;
 }
-async function deleteDoc(path) {
-  await fetch(withKey(`${baseUrl()}/${path}`), { method: 'DELETE' }).catch(() => {});
-}
-// Server-side filtered query (cheaper than listDocs+filter: only the matching
-// docs count as reads, instead of the whole collection every poll tick).
-async function queryEquals(parentPath, collectionId, fieldPath, value) {
-  const res = await fetch(withKey(`${baseUrl()}/${parentPath}:runQuery`), {
+async function commitWrites(writes) {
+  const res = await fetch(withKey(`${apiRoot()}/documents:commit`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      structuredQuery: {
-        from: [{ collectionId }],
-        where: { fieldFilter: { field: { fieldPath }, op: 'EQUAL', value: encodeValue(value) } },
-      },
-    }),
+    body: JSON.stringify({ writes }),
   });
-  if (!res.ok) throw new Error(`Firestore query failed (HTTP ${res.status})`);
-  const rows = await res.json();
-  return rows.filter(r => r.document).map(r => {
-    const row = fromDoc(r.document);
-    row._id = r.document.name.split('/').pop();
-    return row;
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    const err = new Error(`Firestore write failed (HTTP ${res.status}) ${text.slice(0, 240)}`);
+    err.status = res.status;
+    throw err;
+  }
+  return res.json();
+}
+function tokenWrite(path, token) {
+  return {
+    update: {
+      name: docName(path),
+      fields: { token: { stringValue: token } },
+    },
+    updateMask: { fieldPaths: ['token'] },
+    currentDocument: { exists: true },
+  };
+}
+// One proof chain per secret doc, so two clicks can't both hash the same token.
+const proofQueues = new Map();
+function enqueueProof(path, fn) {
+  const prev = proofQueues.get(path) || Promise.resolve();
+  const run = prev.then(fn, fn);
+  proofQueues.set(path, run.then(() => {}, () => {}));
+  return run;
+}
+// Replace the stored token T with SHA-256(T). On success the returned token is
+// what the server now holds. A denied commit is retried once as if the server
+// were already one step ahead (a response we never saw). If that retry's
+// action is rejected but a token-only catch-up lands, the error carries the
+// token the server now holds and `resync` so the caller can treat the earlier
+// action as already saved.
+async function commitAdvance(path, token, extraWrites) {
+  const next = await sha256hex(token);
+  const send = (advanced, extras) => commitWrites([tokenWrite(path, advanced)].concat(extras));
+  try {
+    await send(next, extraWrites);
+    return next;
+  } catch (err) {
+    if (err.status !== 403) throw err;
+    const next2 = await sha256hex(next);
+    try {
+      await send(next2, extraWrites);
+      return next2;
+    } catch (err2) {
+      try {
+        await send(next2, []);
+      } catch (err3) {
+        throw err;
+      }
+      const resync = new Error('The last change was already saved. Continuing.');
+      resync.resync = true;
+      resync.token = next2;
+      throw resync;
+    }
+  }
+}
+async function provenCommit(storage, storageKey, path, extraWrites, missingMessage) {
+  return enqueueProof(path, async () => {
+    const token = storage.getItem(storageKey);
+    if (!/^[A-F0-9]{64}$/.test(token || '')) throw new Error(missingMessage);
+    try {
+      const next = await commitAdvance(path, token, extraWrites);
+      storage.setItem(storageKey, next);
+      return next;
+    } catch (err) {
+      if (err.resync && err.token) {
+        storage.setItem(storageKey, err.token);
+        return err.token;
+      }
+      throw err;
+    }
   });
 }
-// Deletes an entire session and its subcollections. Best-effort — used when
-// a host explicitly ends/cancels a room so rooms don't pile up in Firestore.
+function hostSecretKey(code) { return `live_host_${code}`; }
+function playerSecretKey(code) { return `live_secret_${code}`; }
+function hostCommit(code, extraWrites) {
+  return provenCommit(sessionStorage, hostSecretKey(code), `live_sessions/${code}/private/host`, extraWrites,
+    'This browser does not have the host token for that room.');
+}
+function playerCommit(code, pid, extraWrites) {
+  return provenCommit(localStorage, playerSecretKey(code), `live_sessions/${code}/participants/${pid}/secret/key`, extraWrites,
+    'This browser does not have your player token for that room. Join again.');
+}
+// Deletes the room and every doc the host can name (player ids and answer ids).
+// List is denied, so cleanup cannot discover documents it does not already know.
+// A room older than a day can be deleted without the host token; rules allow that.
+// A live room still needs the token chain.
 async function deleteSessionTree(code) {
-  const [participants, answers] = await Promise.all([
-    listDocs(`live_sessions/${code}/participants`).catch(() => []),
-    listDocs(`live_sessions/${code}/answers`).catch(() => []),
-  ]);
-  await Promise.all([
-    ...participants.map(p => deleteDoc(`live_sessions/${code}/participants/${p._id}`)),
-    ...answers.map(a => deleteDoc(`live_sessions/${code}/answers/${a._id}`)),
-  ]);
-  await deleteDoc(`live_sessions/${code}`);
+  const session = (state && state.code === code && state.session) || await getDoc(`live_sessions/${code}`);
+  const pids = (session && session.participantIds) || [];
+  const qCount = (session && session.questionIds && session.questionIds.length) || 0;
+  const names = [];
+  pids.forEach(pid => {
+    names.push(docName(`live_sessions/${code}/participants/${pid}/secret/key`));
+    names.push(docName(`live_sessions/${code}/participants/${pid}`));
+    for (let i = 0; i < qCount; i++) names.push(docName(`live_sessions/${code}/answers/${i}_${pid}`));
+  });
+  names.push(docName(`live_sessions/${code}`));
+  const token = sessionStorage.getItem(hostSecretKey(code));
+  const CHUNK = 400;
+  if (/^[A-F0-9]{64}$/.test(token || '')) {
+    for (let i = 0; i < names.length; i += CHUNK) {
+      await hostCommit(code, names.slice(i, i + CHUNK).map(name => ({ delete: name })));
+    }
+    await commitWrites([{ delete: docName(`live_sessions/${code}/private/host`) }]).catch(() => {});
+    return;
+  }
+  names.push(docName(`live_sessions/${code}/private/host`));
+  for (let i = 0; i < names.length; i += CHUNK) {
+    await commitWrites(names.slice(i, i + CHUNK).map(name => ({ delete: name })));
+  }
 }
 
 // ============================== helpers ==============================
@@ -176,8 +284,21 @@ function roomExpired(session) {
   if (!created) return false;
   return Date.now() - created > ROOM_TTL_MS;
 }
-function randomId() {
-  return Math.random().toString(36).slice(2, 10);
+// Lowercase hex for document ids (player ids). Uppercase hex for tokens, which
+// have to match hashing.sha256(...).toHexString() in firestore.rules.
+function randomHex(bytes, upper) {
+  const buf = new Uint8Array(bytes);
+  crypto.getRandomValues(buf);
+  let out = '';
+  for (let i = 0; i < buf.length; i++) out += buf[i].toString(16).padStart(2, '0');
+  return upper ? out.toUpperCase() : out;
+}
+async function sha256hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  let out = '';
+  const bytes = new Uint8Array(buf);
+  for (let i = 0; i < bytes.length; i++) out += bytes[i].toString(16).padStart(2, '0');
+  return out.toUpperCase();
 }
 function esc(str) {
   const d = document.createElement('div');
@@ -362,7 +483,12 @@ function blockQuestionIdsBefore(quizData, examNumber) {
 }
 function joinUrl(code) {
   const here = location.origin + location.pathname;
-  return `${here}?join=${code}`;
+  const q = new URLSearchParams();
+  q.set('join', code);
+  // Keep a localhost emulator session pointed at the emulator. Production
+  // hostnames ignore the flag, and this query is omitted there.
+  if (useFirestoreEmulator()) q.set('emulator', '1');
+  return `${here}?${q.toString()}`;
 }
 
 // ============================== app state ==============================
@@ -435,6 +561,7 @@ function renderHostSetup() {
       <button class="link-btn" id="backBtn">&larr; Back</button>
       <h1>Host a Session</h1>
       <p class="subtitle">Pick a block, then pick which SDL(s) to pull questions from.</p>
+      ${state.pollError ? `<p class="live-error">${esc(state.pollError)}</p>` : ''}
       <label class="live-label">Block</label>
       <select id="blockSelect" class="live-select">
         <option value="">Choose a block…</option>
@@ -693,62 +820,100 @@ async function createMockExamSession(count, examNumber, pctCurrent) {
 
 async function createSessionWithQuestionIds(questionIds) {
   if (!questionIds.length) return;
+  if (questionIds.length > 3000) {
+    setState({ screen: 'hostSetup', pollError: 'Too many questions for one room (3000 max).' });
+    return;
+  }
 
   const autoAdvanceSeconds = state.autoAdvanceOn ? (state.autoAdvanceSecs || 20) : 0;
 
-  setState({ screen: 'creating' });
+  setState({ screen: 'creating', pollError: '' });
+  const hostToken = randomHex(32, true);
   let code = generateCode();
-  for (let tries = 0; tries < 5; tries++) {
-    const existing = await getDoc(`live_sessions/${code}`).catch(() => null);
-    if (!existing) break;
-    // A day-old room can give its code back. If the delete is refused, pick another.
-    if (roomExpired(existing)) {
-      await deleteSessionTree(code).catch(() => {});
-      const still = await getDoc(`live_sessions/${code}`).catch(() => existing);
-      if (!still) break;
+  let created = false;
+  let lastErr = null;
+  for (let tries = 0; tries < 5 && !created; tries++) {
+    if (tries) code = generateCode();
+    try {
+      const existing = await getDoc(`live_sessions/${code}`);
+      if (existing) {
+        // A day-old room can give its code back. If the delete is refused, pick another.
+        if (roomExpired(existing)) {
+          await deleteSessionTree(code).catch(() => {});
+          if (await getDoc(`live_sessions/${code}`)) continue;
+        } else continue;
+      }
+      await commitWrites([
+        {
+          update: {
+            name: docName(`live_sessions/${code}`),
+            fields: toFields({
+              block: state.blockKey,
+              status: 'lobby',
+              currentIndex: 0,
+              revealed: false,
+              locked: false,
+              questionIds,
+              autoAdvanceSeconds,
+              createdAt: Date.now(),
+              participantIds: [],
+              joinPid: '',
+            }).fields,
+          },
+          currentDocument: { exists: false },
+        },
+        {
+          update: {
+            name: docName(`live_sessions/${code}/private/host`),
+            fields: { token: { stringValue: hostToken } },
+          },
+          currentDocument: { exists: false },
+        },
+      ]);
+      created = true;
+    } catch (err) {
+      lastErr = err;
     }
-    code = generateCode();
   }
-  const hostToken = randomId();
-  await putDoc(`live_sessions/${code}`, {
-    block: state.blockKey,
-    status: 'lobby',
-    currentIndex: 0,
-    revealed: false,
-    locked: false,
-    questionIds,
-    autoAdvanceSeconds,
-    createdAt: Date.now(),
-    hostToken,
-  });
-  sessionStorage.setItem(`live_host_${code}`, hostToken);
-  setState({ screen: 'hostRoom', code, hostToken, session: null, participants: [], answers: [] });
+  if (!created) {
+    setState({ screen: 'hostSetup', pollError: (lastErr && lastErr.message) || 'Could not create a room.' });
+    return;
+  }
+  sessionStorage.setItem(hostSecretKey(code), hostToken);
+  setState({ screen: 'hostRoom', code, hostToken, session: null, participants: [], answers: [], pollError: '' });
   startHostPolling();
 }
 
 // ============================== host: room ==============================
 
+async function docsByIds(paths) {
+  const rows = await Promise.all(paths.map(async p => {
+    const doc = await getDoc(p);
+    if (!doc) return null;
+    doc._id = p.split('/').pop();
+    return doc;
+  }));
+  return rows.filter(Boolean);
+}
 function startHostPolling() {
   startPolling(async () => {
     const code = state.code;
     const genAtStart = hostWriteGen;
     try {
-      const [session, participants] = await Promise.all([
-        getDoc(`live_sessions/${code}`),
-        listDocs(`live_sessions/${code}/participants`),
-      ]);
+      const session = await getDoc(`live_sessions/${code}`);
       if (state.code !== code || hostPollStale(genAtStart)) return;
       if (!session) return;
       if (roomExpired(session)) { expireRoom(code); return; }
+      const ids = session.participantIds || [];
+      const participants = await docsByIds(ids.map(pid => `live_sessions/${code}/participants/${pid}`));
+      if (state.code !== code || hostPollStale(genAtStart)) return;
       let answers = [];
       if (session.status === 'active') {
-        // Server-side filter by qIndex — only reads this question's answers,
-        // not the whole answer history (which otherwise grows every question).
-        answers = await queryEquals(`live_sessions/${code}`, 'answers', 'qIndex', session.currentIndex);
+        // One get per joined player for this question. The answer id is
+        // `{index}_{pid}`, so this does not list or query the collection.
+        answers = await docsByIds(ids.map(pid => `live_sessions/${code}/answers/${session.currentIndex}_${pid}`));
         if (state.code !== code || hostPollStale(genAtStart)) return;
       }
-      // hostToken may move out of this doc; keep the copy from when we created the room.
-      if (session.hostToken == null && state.hostToken) session.hostToken = state.hostToken;
       setState({ session, participants, answers, pollError: '' });
     } catch (err) {
       if (state.code === code) setState({ pollError: err.message });
@@ -768,6 +933,7 @@ function expireRoom(code) {
 function renderHostRoom() {
   const s = state.session;
   if (!s) { root().innerHTML = `<div class="live-card"><p class="loading">Loading session…</p></div>`; return; }
+  const errHtml = state.pollError ? `<p class="live-error">${esc(state.pollError)}</p>` : '';
 
   const participants = state.participants || [];
   const url = joinUrl(state.code);
@@ -776,6 +942,7 @@ function renderHostRoom() {
     clearAutoAdvanceTimer();
     root().innerHTML = `
       <div class="live-card" data-view="host-lobby" data-code="${esc(state.code)}">
+        ${errHtml}
         <h1>Room Code</h1>
         <div class="room-code">${state.code}</div>
         <div id="qrCode" class="qr-wrap"></div>
@@ -832,6 +999,7 @@ function renderHostRoom() {
 
     root().innerHTML = `
       <div class="live-card" data-view="host-active" data-code="${esc(state.code)}" data-q="${s.currentIndex}" data-revealed="${s.revealed ? '1' : '0'}">
+        ${errHtml}
         <div class="host-meta">
           <span id="hostMetaText">${hostActiveMetaHtml(s, participants, answers)}</span>
           <button class="link-btn-inline" id="lockBtn">${s.locked ? '🔒 Locked' : '🔓 Lock room'}</button>
@@ -905,6 +1073,7 @@ function renderHostRoom() {
     const sorted = participants.slice().sort((a, b) => (b.score || 0) - (a.score || 0));
     root().innerHTML = `
       <div class="live-card" data-view="host-ended" data-code="${esc(state.code)}">
+        ${errHtml}
         <h1>Session Ended</h1>
         <h2>Leaderboard</h2>
         <ol class="leaderboard">
@@ -937,21 +1106,24 @@ async function hostPatch(patch) {
   const gen = ++hostWriteGen;
   const code = state.code;
   const merged = Object.assign({}, state.session, patch);
+  delete merged.hostToken;
   // Paint the click before the round trip. A poll already in flight is
   // stale (hostPollStale) and will not put the previous document back.
-  setState({ session: merged });
+  setState({ session: merged, pollError: '' });
   try {
-    await putDoc(`live_sessions/${code}`, {
-      block: merged.block,
-      status: merged.status,
-      currentIndex: merged.currentIndex,
-      revealed: merged.revealed,
-      locked: !!merged.locked,
-      questionIds: merged.questionIds,
-      autoAdvanceSeconds: merged.autoAdvanceSeconds || 0,
-      createdAt: merged.createdAt,
-      hostToken: merged.hostToken,
-    });
+    await hostCommit(code, [{
+      update: {
+        name: docName(`live_sessions/${code}`),
+        fields: {
+          status: encodeValue(merged.status),
+          currentIndex: encodeValue(merged.currentIndex),
+          revealed: encodeValue(!!merged.revealed),
+          locked: encodeValue(!!merged.locked),
+        },
+      },
+      updateMask: { fieldPaths: ['status', 'currentIndex', 'revealed', 'locked'] },
+      currentDocument: { exists: true },
+    }]);
   } catch (err) {
     if (state.code === code && gen === hostWriteGen) setState({ pollError: err.message });
   } finally {
@@ -1030,21 +1202,79 @@ async function submitJoin() {
     if (session.status === 'ended') { statusEl.textContent = 'That session has already ended.'; return; }
 
     let pid = localStorage.getItem(`live_pid_${code}`);
-    const existingP = pid ? await getDoc(`live_sessions/${code}/participants/${pid}`) : null;
+    let secret = localStorage.getItem(playerSecretKey(code));
+    if (!/^[a-f0-9]{32}$/.test(pid || '') || !/^[A-F0-9]{64}$/.test(secret || '')) {
+      pid = randomHex(16, false);
+      secret = randomHex(32, true);
+      localStorage.setItem(`live_pid_${code}`, pid);
+      localStorage.setItem(playerSecretKey(code), secret);
+    }
+    const existingP = await getDoc(`live_sessions/${code}/participants/${pid}`);
 
     if (session.locked && !existingP) {
       statusEl.textContent = '🔒 This room is locked. Ask the host to unlock it before you can join.';
       return;
     }
 
-    if (!pid) { pid = randomId(); localStorage.setItem(`live_pid_${code}`, pid); }
     localStorage.setItem(`live_name_${code}`, name);
 
-    await putDoc(`live_sessions/${code}/participants/${pid}`, {
-      name,
-      score: existingP ? (existingP.score || 0) : 0,
-      joinedAt: existingP ? existingP.joinedAt : Date.now(),
-    });
+    if (existingP) {
+      await playerCommit(code, pid, [{
+        update: {
+          name: docName(`live_sessions/${code}/participants/${pid}`),
+          fields: { name: { stringValue: name } },
+        },
+        updateMask: { fieldPaths: ['name'] },
+        currentDocument: { exists: true },
+      }]);
+    } else {
+      let room = session;
+      let joined = false;
+      let lastErr = null;
+      for (let attempt = 0; attempt < 5 && !joined; attempt++) {
+        if (attempt) room = await getDoc(`live_sessions/${code}`);
+        if (!room) throw new Error('That room is gone.');
+        if (room.locked) throw new Error('🔒 This room is locked. Ask the host to unlock it before you can join.');
+        const ids = (room.participantIds || []).slice();
+        if (!ids.includes(pid)) ids.push(pid);
+        try {
+          await commitWrites([
+            {
+              update: {
+                name: docName(`live_sessions/${code}`),
+                fields: {
+                  participantIds: encodeValue(ids),
+                  joinPid: { stringValue: pid },
+                },
+              },
+              updateMask: { fieldPaths: ['participantIds', 'joinPid'] },
+              currentDocument: room._updateTime ? { updateTime: room._updateTime } : { exists: true },
+            },
+            {
+              update: {
+                name: docName(`live_sessions/${code}/participants/${pid}`),
+                fields: toFields({ name, score: 0, joinedAt: Date.now(), scored: {} }).fields,
+              },
+              currentDocument: { exists: false },
+            },
+            {
+              update: {
+                name: docName(`live_sessions/${code}/participants/${pid}/secret/key`),
+                fields: { token: { stringValue: secret } },
+              },
+              currentDocument: { exists: false },
+            },
+          ]);
+          joined = true;
+        } catch (err) {
+          lastErr = err;
+          const text = String(err.message || '');
+          const raced = err.status === 400 || err.status === 409 || /FAILED_PRECONDITION|ABORTED/i.test(text);
+          if (!raced || attempt === 4) throw err;
+        }
+      }
+      if (!joined) throw lastErr || new Error('Could not join.');
+    }
 
     const data = await loadBlockData(session.block);
     setState({
@@ -1107,11 +1337,24 @@ function startJoinPolling() {
           const q = await ensureQuestion(session.questionIds[session.currentIndex]);
           if (q && answeredThisQ === q.correct) {
             const me = await getDoc(`live_sessions/${state.code}/participants/${state.pid}`);
-            await putDoc(`live_sessions/${state.code}/participants/${state.pid}`, {
-              name: state.name,
-              score: (me && me.score ? me.score : 0) + 1,
-              joinedAt: me ? me.joinedAt : Date.now(),
-            });
+            const scoredMap = Object.assign({}, (me && me.scored) || {});
+            scoredMap[String(session.currentIndex)] = true;
+            try {
+              await playerCommit(state.code, state.pid, [{
+                update: {
+                  name: docName(`live_sessions/${state.code}/participants/${state.pid}`),
+                  fields: {
+                    score: encodeValue((me && me.score ? me.score : 0) + 1),
+                    scored: encodeValue(scoredMap),
+                  },
+                },
+                updateMask: { fieldPaths: ['score', 'scored'] },
+                currentDocument: { exists: true },
+              }]);
+            } catch (err) {
+              const still = state.session && state.session.currentIndex === session.currentIndex && state.session.revealed;
+              if (still) throw err;
+            }
           }
           markScored(state.code, session.currentIndex);
         }
@@ -1125,10 +1368,12 @@ function startJoinPolling() {
 function renderJoinRoom() {
   const s = state.session;
   if (!s) { root().innerHTML = `<div class="live-card"><p class="loading">Loading…</p></div>`; return; }
+  const errHtml = state.pollError ? `<p class="live-error">${esc(state.pollError)}</p>` : '';
 
   if (s.status === 'lobby') {
     root().innerHTML = `
       <div class="live-card" data-view="join-lobby" data-code="${esc(state.code)}">
+        ${errHtml}
         <h1>You're in, ${esc(state.name)} 👋</h1>
         <p class="subtitle">Waiting for the host to start room <b>${state.code}</b>…</p>
       </div>
@@ -1144,6 +1389,7 @@ function renderJoinRoom() {
     const mine = state.answeredThisQ;
     root().innerHTML = `
       <div class="live-card" data-view="join-active" data-code="${esc(state.code)}" data-q="${s.currentIndex}" data-revealed="${s.revealed ? '1' : '0'}" data-mine="${esc(mine || '')}">
+        ${errHtml}
         <div class="host-meta">Room ${state.code} &middot; Question ${s.currentIndex + 1} of ${s.questionIds.length}</div>
         <h2 class="q-stem">${esc(q ? q.stem : '')}</h2>
         ${q ? choiceListOpen(q) : '<div class="choice-list">'}
@@ -1225,6 +1471,7 @@ function renderJoinRoom() {
 
     root().innerHTML = `
       <div class="live-card" data-view="join-ended" data-breakdown="${showBreakdown ? '1' : '0'}">
+        ${errHtml}
         <h1>Session Ended</h1>
         <p class="subtitle">Thanks for playing, ${esc(state.name)}! You got ${correctCount} of ${s.questionIds.length} correct.</p>
         <div class="live-actions" style="margin-top:16px;">
@@ -1240,15 +1487,20 @@ function renderJoinRoom() {
 }
 
 async function submitAnswer(letter) {
-  setState({ answeredThisQ: letter, myAnswers: Object.assign({}, state.myAnswers, { [state.session.currentIndex]: letter }) });
+  const prev = state.answeredThisQ;
+  const qIndex = state.session.currentIndex;
+  setState({ answeredThisQ: letter, myAnswers: Object.assign({}, state.myAnswers, { [qIndex]: letter }), pollError: '' });
   try {
-    await putDoc(`live_sessions/${state.code}/answers/${state.session.currentIndex}_${state.pid}`, {
-      choice: letter,
-      qIndex: state.session.currentIndex,
-      ts: Date.now(),
-    });
+    await playerCommit(state.code, state.pid, [{
+      update: {
+        name: docName(`live_sessions/${state.code}/answers/${qIndex}_${state.pid}`),
+        fields: toFields({ choice: letter, qIndex, ts: Date.now() }).fields,
+      },
+    }]);
   } catch (err) {
-    setState({ answeredThisQ: null, pollError: err.message });
+    const mine = Object.assign({}, state.myAnswers);
+    if (prev) mine[qIndex] = prev; else delete mine[qIndex];
+    setState({ answeredThisQ: prev, myAnswers: mine, pollError: err.message });
   }
 }
 
@@ -1316,7 +1568,7 @@ function patchHostActive(s) {
 }
 function patchLiveRoom() {
   const s = state.session;
-  if (!s) return false;
+  if (!s || state.pollError) return false;
   if (state.screen === 'hostRoom') {
     if (s.status === 'lobby') return patchHostLobby(s);
     if (s.status === 'active') return patchHostActive(s);

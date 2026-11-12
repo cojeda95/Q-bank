@@ -4,8 +4,12 @@
 #
 # shared/app.js writes each report as its own document, syncs/QREPORT-<block>-<time>-<random>, in the
 # Firestore project sync.js uses (no PIN or personal data: block, question id, reason, note, the answer
-# picked, the first 160 characters of the stem). This lists them newest first.
-import json, re, sys, pathlib, argparse, urllib.request, urllib.parse
+# picked, the first 160 characters of the stem).
+#
+# firestore.rules denies listing `syncs`. After those rules are published, this list
+# gets HTTP 403. Read the documents in Firebase console → Firestore → syncs (the console
+# bypasses security rules). --delete still works: it names the exact document id.
+import json, re, sys, pathlib, argparse, urllib.request, urllib.parse, urllib.error
 from datetime import datetime
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -16,8 +20,18 @@ BASE = f'https://firestore.googleapis.com/v1/projects/{PROJECT}/databases/(defau
 WHY = {'key': 'answer key wrong', 'explain': 'explanation wrong/unclear', 'typo': 'typo/wording', 'other': 'other'}
 
 def get(url):
-    with urllib.request.urlopen(url, timeout=30) as r:
-        return json.load(r)
+    try:
+        with urllib.request.urlopen(url, timeout=30) as r:
+            return json.load(r)
+    except urllib.error.HTTPError as e:
+        if e.code == 403:
+            raise SystemExit(
+                'Firestore denied listing syncs.\n'
+                'firestore.rules allows get and write of a document only by its exact id.\n'
+                'Open Firebase console → Firestore Database → syncs and filter document ids starting with QREPORT-.\n'
+                'To remove one you already know: python3 -I tools/reports.py --delete QREPORT-…'
+            )
+        raise
 
 def reports():
     out, token = [], ''

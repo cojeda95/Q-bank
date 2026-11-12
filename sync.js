@@ -23,6 +23,8 @@
  *
  * Storage: Cloud Firestore, accessed directly via its REST API (no SDK load,
  * stays consistent with the rest of this site being plain vanilla JS).
+ * Who can read a PIN is decided by firestore.rules: the collection cannot be
+ * listed, and a document is readable only by its exact id.
  *
  * Push and Pull are both NON-DESTRUCTIVE: each one computes a union merge of
  * local + remote data first, so neither action can silently lose progress.
@@ -275,8 +277,27 @@ function cloudBlockBlob(blob, block) {
 }
 
 // ---- Firestore REST helpers ----
+// Same opt-in as live.js. Production hostnames never use the emulator.
+// http://localhost:<port>/index.html?emulator=1 with the Firestore emulator on port 8080.
+function useFirestoreEmulator() {
+  try {
+    const host = location.hostname;
+    const local = host === 'localhost' || host === '127.0.0.1' || host === '::1';
+    if (!local) return false;
+    if (new URLSearchParams(location.search).get('emulator') === '1') {
+      localStorage.setItem('qbank_firestore_emulator', '1');
+      return true;
+    }
+    return localStorage.getItem('qbank_firestore_emulator') === '1';
+  } catch (e) {
+    return false;
+  }
+}
 function docUrl(docId) {
-  return `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/syncs/${encodeURIComponent(docId)}?key=${FIREBASE_CONFIG.apiKey}`;
+  const origin = useFirestoreEmulator()
+    ? `http://${location.hostname === '::1' ? '127.0.0.1' : location.hostname}:8080`
+    : 'https://firestore.googleapis.com';
+  return `${origin}/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/syncs/${encodeURIComponent(docId)}?key=${FIREBASE_CONFIG.apiKey}`;
 }
 
 function toFirestoreFields(blob) {
@@ -309,22 +330,32 @@ function conflictError(status) {
   return err;
 }
 
-// updateTime is the document's updateTime from the last read. The PATCH
-// carries it as a precondition so a concurrent push fails instead of
+// updateTime is the document's updateTime from the last read. The write is a
+// commit with that precondition so a concurrent push fails instead of
 // overwriting that device's attempts. A missing time means we observed no
-// document, so the write may only create one.
+// document, so the write may only create one. The precondition is in the
+// commit body: a timestamp query parameter on PATCH is not applied by the
+// emulator (it becomes "version 0" and every update fails).
 async function patchDoc(docId, body, updateTime) {
-  let url = docUrl(docId);
-  if (updateTime) url += `&currentDocument.updateTime=${encodeURIComponent(updateTime)}`;
-  else url += '&currentDocument.exists=false';
+  const origin = useFirestoreEmulator()
+    ? `http://${location.hostname === '::1' ? '127.0.0.1' : location.hostname}:8080`
+    : 'https://firestore.googleapis.com';
+  const url = `${origin}/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents:commit?key=${FIREBASE_CONFIG.apiKey}`;
+  const write = {
+    update: {
+      name: `projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/syncs/${docId}`,
+      fields: body.fields,
+    },
+    currentDocument: updateTime ? { updateTime } : { exists: false },
+  };
   const res = await fetch(url, {
-    method: 'PATCH',
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify({ writes: [write] }),
   });
   if (res.ok) return;
   const text = await res.text().catch(() => '');
-  if (res.status === 409 || res.status === 412 || /ABORTED|FAILED_PRECONDITION/.test(text)) throw conflictError(res.status);
+  if (res.status === 409 || res.status === 412 || /ABORTED|FAILED_PRECONDITION|ALREADY_EXISTS/.test(text)) throw conflictError(res.status);
   throw new Error(`Cloud write failed (HTTP ${res.status}) ${text}`);
 }
 
@@ -549,7 +580,10 @@ function initSyncUI() {
       });
       document.getElementById('usePinBtn').addEventListener('click', () => {
         const val = document.getElementById('pinInput').value.trim().toUpperCase();
-        if (!val) return;
+        if (!/^[A-Z0-9]{6}$/.test(val)) {
+          render('❌ A PIN is 6 letters or numbers.');
+          return;
+        }
         savePin(val);
         doAction('pull', val);
       });
