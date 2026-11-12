@@ -5,10 +5,13 @@
    signal. If the network is slow and a saved copy exists, the saved copy is
    shown when the whole file has not arrived after a few seconds, and the fresh
    one replaces it in the background.
-   The Lesion Atlas is big (about 1 MB on the wire), so it is shown from the
-   saved copy at once and refreshed in the background; when that refresh brings
-   a new build, the open atlas is told (postMessage "atlas-updated") and offers
-   a reload. Its card text (resources/atlas-les.<hash>.js) and the moving-map
+   Install precaches only the hub shell (CORE). The Lesion Atlas is about 2.5 MB
+   on the wire, so it is not in that list: the page, its card text and its scripts
+   are saved when the atlas is opened (atlasPage / cardText / networkFirst, and
+   catchOpenAtlas when that open is what installed this worker). Once a copy is
+   saved it is shown at once and refreshed in the background; when that refresh
+   brings a new build, the open atlas is told (postMessage "atlas-updated") and
+   offers a reload. Its card text (resources/atlas-les.<hash>.js) and the moving-map
    drawings (resources/dyn/<map>.js?v=<hash>) are named by their content, so a
    saved copy of the same name is served as is. A block's questions (m66) are
    <block>/q/manifest.js (network first, like a page) and the part files it names,
@@ -17,11 +20,12 @@
    first visit and drops parts of older builds (saveBlockOffline in shared/app.js).
    Requests to other sites (the Firestore sync, CDNs) are left alone, so sync and
    Live Session still need a connection. */
-const CACHE = 'qhub-v2';
+const CACHE = 'qhub-v3';
 const CORE = ['./', 'index.html', 'shared/theme.css', 'shared/theme.js', 'shared/style.css', 'shared/app.js',
-  'announcements.js', 'sync.js', 'resources/metabolic-atlas.html', 'resources/atlas-terms.js', 'resources/atlas-practice.js', 'resources/atlas-qlinks.js',
-  'resources/qbank-counts.js', 'resources/atlas-home.js', 'resources/atlas-cards.js', 'resources/atlas-qstates.js'];
-// + the atlas's card text, resources/atlas-les.<hash>.js: its name changes with every build, so it is read from the saved atlas (pairLes)
+  'announcements.js', 'sync.js', 'resources/qbank-counts.js', 'resources/atlas-home.js'];
+// resources/atlas-home.js is the hub's own map list (index.html loads it on every visit).
+// The atlas page, atlas-les.<hash>.js (pairLes, name changes every build) and
+// atlas-terms/cards/practice/qlinks/qstates are saved when they are actually fetched.
 // resources/qsearch.js (m66, the hub's question search index, ~1.4 MB) is not in CORE: the hub loads it the first time a search
 // box is focused, and networkFirst saves it then (and the hub's Save all saves it), so question search works offline after one use
 
@@ -53,21 +57,41 @@ async function pruneLes(c, keep) {
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)
-    .then(c => Promise.allSettled(CORE.map(u => c.add(u))).then(() => pairLes(c)).catch(() => {}))
+    .then(c => Promise.allSettled(CORE.map(u => c.add(u))).catch(() => {}))
     .then(() => self.skipWaiting()));
 });
+
+/* the atlas was already open when this worker installed (its own first visit): the page and its
+   scripts arrived before the worker could see them, so save them now. A later visit is saved by the fetch handlers. */
+async function catchOpenAtlas() {
+  const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+  if (!wins.some(w => ATLAS.test(new URL(w.url).pathname))) return;
+  const c = await caches.open(CACHE);
+  const key = at('resources/metabolic-atlas.html');
+  if (!(await c.match(key))) {
+    const res = await fetch(key, { cache: 'no-cache' });
+    if (res.ok && res.type === 'basic') {
+      await pairLes(c, await res.clone().text()).catch(() => {});
+      await c.put(key, res);
+    }
+  }
+  for (const u of ['resources/atlas-practice.js', 'resources/atlas-qlinks.js']) {
+    if (!(await c.match(at(u)))) await c.add(u).catch(() => {});
+  }
+}
 
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
     .then(ks => Promise.all(ks.filter(k => k.startsWith('qhub-') && k !== CACHE).map(k => caches.delete(k))))
-    .then(() => self.clients.claim()));
+    .then(() => self.clients.claim())
+    .then(() => catchOpenAtlas().catch(() => {})));
 });
 
 const offlinePage = () => `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Offline</title><body style="font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:15vh auto;padding:0 20px;color:#22241F">
 <h1 style="font-size:22px">You're offline</h1>
 <p>This page hasn't been saved on this device yet. Open it once while you're online and it will work without signal after that.</p>
-<p><a href="${self.registration.scope}" style="color:#1f4e79">Back to the hub</a> — the hub, the Lesion Atlas and any block you've opened before still work.</p></body>`;
+<p><a href="${self.registration.scope}" style="color:#1f4e79">Back to the hub</a> — the hub and anything you've already opened still work.</p></body>`;
 function saved(req) {
   return caches.open(CACHE).then(c => c.match(req, { ignoreSearch: true }))
     .then(m => m || (req.mode === 'navigate'

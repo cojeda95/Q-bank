@@ -740,14 +740,17 @@ once keep working without signal. A page never opened before shows a short "you'
 notice. Requests to other sites (the Firestore sync, CDNs) pass straight through.
 
 Nothing extra is needed when you publish. If a shared file is renamed, update the `CORE`
-list at the top of `sw.js`, which pre-saves the hub, `shared/` and the atlas on first visit.
-To throw away everyone's saved copies, change `CACHE` (`qhub-v1` → `qhub-v2`).
+list at the top of `sw.js`, which pre-saves the hub shell (the hub page, `shared/`, `sync.js`,
+`announcements.js`, and the hub's own `atlas-home.js` / `qbank-counts.js`) on first visit.
+The Lesion Atlas is not in that list — it is saved when a student opens it.
+To throw away everyone's saved copies, change `CACHE` (`qhub-v2` → `qhub-v3`).
 
 The hub's **Use Offline → Save all** button fetches every block's `index.html`, `q/manifest.js`
 and the question parts it names (from the hub's block links; see *Split question files* below), the atlas files and `shared/`, and puts them straight into the
 service worker's cache with the Cache API — so it works even on a first visit, before the
-worker controls the tab. The cache name is written in the hub's script too: **if `CACHE` in
-`sw.js` changes, change it in `index.html` as well**, or the saved copies land in a cache the
+worker controls the tab. The cache name is written in the hub's script too, and in
+`saveBlockOffline` in `shared/app.js`: **if `CACHE` in `sw.js` changes, change it in
+`index.html` and `shared/app.js` as well**, or the saved copies land in a cache the
 worker no longer reads (and its activate step deletes). The time of the last full save is
 kept per device under `qhub-offline-at`. Pages needing a CDN (the sacral explorer's three.js)
 are left out — they cannot work offline anyway.
@@ -1008,7 +1011,7 @@ Question bank (shared/app.js, self-contained "See it move →" block after atlas
 through it. seeMoveLoad() lazy-loads atlas-qstates.js on the first miss and seeMoveFillSlots() fills slots drawn before it
 arrived. No state → the moving map of the best card as it opens, with no switch guessed (the old CTA's first-switch-for-the-card
 guess opened RTA Type 2 for every RTA question). Styles: `.amc-slot` block at the end of shared/style.css. sw.js caches the file
-on first fetch; add 'resources/atlas-qstates.js' to its CORE list and the hub's "Save all" list (index.html) to precache it.
+on first fetch (it is not in CORE; the atlas payload is saved when it is opened). It stays in the hub's "Save all" list (index.html).
 
 m54/m55 (2026-10-19): 8 new moving maps (b_reflexsim, f_psychclock ⇄ psychdx, c_hpgsim, g_pulmflow, b_strokesim, r_gfrsim,
 m_vascsim ⇄ vasc, j_kneesim; drafts modules, m47 PASSED + groups.json, dated 2026-10-19 via NEW19 in assemble) from the
