@@ -345,11 +345,11 @@
       <div class="ax-notes">
         <ul class="ax-key" id="zoneKey">
           <li data-q="normal"><i class="ax-swatch" data-q="normal"></i>Normal −30° to +90°</li>
-          <li data-q="lad"><i class="ax-swatch" data-q="lad"></i>Left axis deviation −30° to −90°</li>
-          <li data-q="rad"><i class="ax-swatch" data-q="rad"></i>Right axis deviation +90° to +180°</li>
-          <li data-q="extreme"><i class="ax-swatch" data-q="extreme"></i>Extreme axis −90° to −180°</li>
+          <li data-q="lad"><i class="ax-swatch" data-q="lad"></i>Left axis deviation beyond −30° through −90°</li>
+          <li data-q="rad"><i class="ax-swatch" data-q="rad"></i>Right axis deviation beyond +90° through ±180°</li>
+          <li data-q="extreme"><i class="ax-swatch" data-q="extreme"></i>Extreme axis beyond −90° up to −180°</li>
         </ul>
-        <p class="ax-formula">0° is lead I, to the right. Positive angles run clockwise. Net QRS height is cos(axis − lead angle): the same direction as a lead is positive, the opposite direction is negative, and a right angle to the lead is equiphasic.</p>
+        <p class="ax-formula">0° is lead I. The right side of the diagram is the patient’s left. Positive angles run clockwise. Net QRS height is cos(axis − lead angle): the same direction as the lead’s positive pole is positive, the opposite direction is negative, and a right angle to the lead is equiphasic. P and T are drawn at a fixed normal axis (~+60°); only the QRS rotates. Normal limits vary by source; Guyton gives about +20° to +100°. This page uses −30° to +90°.</p>
       </div>
     </div>
 
@@ -369,7 +369,7 @@
     { id: 'I', angle: 0 },
     { id: 'II', angle: 60 },
     { id: 'III', angle: 120 },
-    { id: 'aVR', angle: -150 },
+    { id: 'aVR', angle: -150, degLabel: '\u2212150\u00b0 (+210\u00b0)' },
     { id: 'aVL', angle: -30 },
     { id: 'aVF', angle: 90 }
   ];
@@ -381,7 +381,7 @@
   ];
 
   var CX = 210, CY = 208, R = 150;
-  var BASE = 60, AMP = 40, T_H = 14;
+  var BASE = 60, AMP = 40, P_H = 9, T_H = 14, PT_AXIS = 60;
   var NS = 'http://www.w3.org/2000/svg';
 
   var guess = 60;
@@ -427,7 +427,10 @@
     return Math.cos((axis - leadAngle) * Math.PI / 180);
   }
   function quadrant(a) {
-    if (a > 90) return { key: 'rad', name: 'Right axis deviation' };
+    /* Normal is −30° to +90° inclusive. LAD is beyond −30° through −90°.
+       RAD is beyond +90° through +180°. Extreme is beyond −90° and short of −180°.
+       ±180° is one direction, so both read as right axis deviation. */
+    if (a > 90 || a === -180) return { key: 'rad', name: 'Right axis deviation' };
     if (a >= -30) return { key: 'normal', name: 'Normal' };
     if (a >= -90) return { key: 'lad', name: 'Left axis deviation' };
     return { key: 'extreme', name: 'Extreme axis' };
@@ -477,7 +480,7 @@
     dial = el('svg', {
       id: 'dial',
       class: 'ax-dial',
-      viewBox: '-44 36 500 384',
+      viewBox: '-88 36 544 384',
       role: 'slider',
       tabindex: '0',
       'aria-label': 'Mean QRS axis',
@@ -534,7 +537,7 @@
       var name = el('tspan', {}, text);
       name.textContent = L.id;
       var deg = el('tspan', { class: 'ax-ld' }, text);
-      deg.textContent = '  ' + fmt(L.angle);
+      deg.textContent = '  ' + (L.degLabel || fmt(L.angle));
     });
 
     answerArrow = arrowGroup('answerArrow', 'ax-answer', false);
@@ -567,16 +570,19 @@
       pts.push([x0 + w * t, BASE - Math.sin(Math.PI * t) * h]);
     }
   }
-  function tracePath(p) {
+  function tracePath(p, leadAngle) {
+    /* P and T stay on a normal axis of +60°. Only the QRS follows the slider.
+       A negative height inverts the hump (aVR). */
+    var pt = proj(PT_AXIS, leadAngle);
     var Rwave = (1 + p) / 2 * AMP;
     var Swave = (1 - p) / 2 * AMP;
     var pts = [[2, BASE], [34, BASE]];
-    hump(pts, 34, 26, 9, 10);
+    hump(pts, 34, 26, P_H * pt, 10);
     pts.push([92, BASE]);
     var x = 96;
     pts.push([x, BASE], [x + 8, BASE - Rwave], [x + 18, BASE + Swave], [x + 28, BASE]);
     pts.push([150, BASE]);
-    hump(pts, 150, 48, T_H, 12);
+    hump(pts, 150, 48, T_H * pt, 12);
     pts.push([298, BASE]);
     var d = '', i;
     for (i = 0; i < pts.length; i++) {
@@ -675,12 +681,15 @@
     }
     cards.forEach(function (c) {
       var p = proj(drawn, c.lead.angle);
-      c.path.setAttribute('d', tracePath(p));
+      var pt = proj(PT_AXIS, c.lead.angle);
+      c.path.setAttribute('d', tracePath(p, c.lead.angle));
       c.card.dataset.p = p.toFixed(4);
+      c.card.dataset.pt = pt.toFixed(4);
       var on = iso.indexOf(c.lead.id) !== -1;
       c.card.classList.toggle('is-iso', on);
       c.card.querySelector('.ax-iso').textContent = Math.abs(p) < 0.08 ? 'Isoelectric' : 'Most isoelectric';
-      c.desc.textContent = 'Lead ' + c.lead.id + ', ' + morph(p) + (on ? ', most isoelectric.' : '.');
+      var ptWord = Math.abs(pt) < 0.12 ? 'near equiphasic' : (pt > 0 ? 'upright' : 'inverted');
+      c.desc.textContent = 'Lead ' + c.lead.id + ', QRS ' + morph(p) + (on ? ', most isoelectric' : '') + '. P and T ' + ptWord + '.';
     });
     var result = document.getElementById('quizResult');
     if (quizzing && revealed) {
