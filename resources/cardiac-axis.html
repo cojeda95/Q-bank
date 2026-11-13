@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Rotate the mean QRS axis and see its projection on the six limb leads. Normal, left, right, and extreme axis are marked on a hexaxial diagram.">
+<title>Cardiac axis — OCOM Question Hub</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/theme.css">
+<script src="../shared/theme.js"></script>
+<style>
+  .ax-main { max-width: 1120px; }
+  .ax-main h1 { margin-bottom: 6px; }
+  .ax-intro { margin-bottom: 18px; }
+  .ax-intro .subtitle { max-width: 42rem; line-height: 1.5; }
+
+  .ax-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 480px) minmax(0, 1fr);
+    gap: 18px 28px;
+    align-items: start;
+  }
+  .ax-notes { grid-column: 1 / -1; }
+  .ax-panel, .ax-lead {
+    background: var(--card-bg);
+    border: 1px solid var(--grey-border);
+    border-radius: 16px;
+  }
+  .ax-panel { padding: 12px 14px 16px; }
+
+  .ax-main {
+    --ax-normal: #1f6f68;
+    --ax-normal-bg: rgba(31, 111, 104, 0.16);
+    --ax-normal-on: rgba(31, 111, 104, 0.32);
+    --ax-normal-ink: #14584f;
+    --ax-lad: #a56b12;
+    --ax-lad-bg: rgba(194, 140, 28, 0.20);
+    --ax-lad-on: rgba(194, 140, 28, 0.38);
+    --ax-lad-ink: #6e4808;
+    --ax-rad: #1f4e79;
+    --ax-rad-bg: rgba(31, 78, 121, 0.14);
+    --ax-rad-on: rgba(31, 78, 121, 0.28);
+    --ax-rad-ink: #1f4e79;
+    --ax-ext: #6a3d7a;
+    --ax-ext-bg: rgba(106, 61, 122, 0.15);
+    --ax-ext-on: rgba(106, 61, 122, 0.30);
+    --ax-ext-ink: #5b2d6e;
+    --ax-arrow: #1a3f66;
+    --ax-halo: #ffffff;
+    --ax-paper: #fff7f5;
+    --ax-grid: rgba(176, 84, 84, 0.16);
+    --ax-grid-strong: rgba(176, 84, 84, 0.34);
+    --ax-trace: #1c1e1a;
+    --ax-iso: #1f6f68;
+    --ax-base: rgba(28, 30, 26, 0.28);
+  }
+  :root[data-theme="dark"] .ax-main {
+    --ax-normal: #7ed4c6;
+    --ax-normal-bg: rgba(126, 212, 198, 0.16);
+    --ax-normal-on: rgba(126, 212, 198, 0.30);
+    --ax-normal-ink: #b7efe4;
+    --ax-lad: #e6c36a;
+    --ax-lad-bg: rgba(230, 195, 106, 0.16);
+    --ax-lad-on: rgba(230, 195, 106, 0.30);
+    --ax-lad-ink: #f3dd9e;
+    --ax-rad: #9cc4ef;
+    --ax-rad-bg: rgba(156, 196, 239, 0.14);
+    --ax-rad-on: rgba(156, 196, 239, 0.28);
+    --ax-rad-ink: #c5ddf8;
+    --ax-ext: #ddb6ea;
+    --ax-ext-bg: rgba(221, 182, 234, 0.14);
+    --ax-ext-on: rgba(221, 182, 234, 0.28);
+    --ax-ext-ink: #efd3f6;
+    --ax-arrow: #f4f7fb;
+    --ax-halo: #1e2126;
+    --ax-paper: #2a2224;
+    --ax-grid: rgba(232, 150, 150, 0.14);
+    --ax-grid-strong: rgba(232, 150, 150, 0.32);
+    --ax-trace: #f3f1ea;
+    --ax-iso: #7ed4c6;
+    --ax-base: rgba(243, 241, 234, 0.28);
+  }
+
+  .ax-dial {
+    display: block;
+    width: 100%;
+    height: auto;
+    touch-action: none;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .ax-dial.is-drag { cursor: grabbing; }
+  .ax-dial text { font-family: var(--sans); }
+  .ax-ll, .ax-zl {
+    paint-order: stroke fill;
+    stroke: var(--card-bg);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+  }
+  .ax-ll { fill: var(--text); font-size: 15px; font-weight: 700; }
+  .ax-ld { font-size: 11px; font-weight: 600; fill: var(--grey-text); }
+  .ax-zl { font-size: 12px; font-weight: 700; letter-spacing: 0.03em; }
+  .ax-zl[data-z="normal"] { fill: var(--ax-normal-ink); }
+  .ax-zl[data-z="lad"] { fill: var(--ax-lad-ink); }
+  .ax-zl[data-z="rad"] { fill: var(--ax-rad-ink); }
+  .ax-zl[data-z="extreme"] { fill: var(--ax-ext-ink); }
+  .ax-zone[data-z="normal"] { fill: var(--ax-normal-bg); }
+  .ax-zone[data-z="lad"] { fill: var(--ax-lad-bg); }
+  .ax-zone[data-z="rad"] { fill: var(--ax-rad-bg); }
+  .ax-zone[data-z="extreme"] { fill: var(--ax-ext-bg); }
+  .ax-zone.is-on[data-z="normal"] { fill: var(--ax-normal-on); }
+  .ax-zone.is-on[data-z="lad"] { fill: var(--ax-lad-on); }
+  .ax-zone.is-on[data-z="rad"] { fill: var(--ax-rad-on); }
+  .ax-zone.is-on[data-z="extreme"] { fill: var(--ax-ext-on); }
+  .ax-ring { fill: none; stroke: var(--grey-border); stroke-width: 1.5; }
+  .ax-tick { stroke: var(--text-faint); stroke-width: 1.25; }
+  .ax-tick.maj { stroke: var(--grey-text); stroke-width: 1.6; }
+  .ax-spoke { stroke: var(--text-faint); stroke-width: 1.35; }
+  .ax-plus { fill: var(--text); }
+  .ax-hub { fill: var(--card-bg); stroke: var(--grey-border); stroke-width: 1.5; }
+  .ax-arrow-halo { stroke: var(--ax-halo); stroke-width: 9; stroke-linecap: round; }
+  .ax-arrow-shaft { stroke: var(--ax-arrow); stroke-width: 3.5; stroke-linecap: round; }
+  .ax-arrow-head { fill: var(--ax-arrow); }
+  .ax-knob { fill: var(--ax-arrow); stroke: var(--ax-halo); stroke-width: 3; }
+  .ax-answer .ax-arrow-halo { stroke: var(--ax-halo); stroke-width: 6; stroke-dasharray: 6 5; }
+  .ax-answer .ax-arrow-shaft { stroke: var(--ax-iso); stroke-width: 2.5; stroke-dasharray: 6 5; }
+  .ax-answer .ax-arrow-head { fill: var(--ax-iso); }
+  #answerArrow { display: none; }
+  #answerArrow.is-on { display: block; }
+
+  .ax-read { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; margin: 2px 2px 8px; }
+  .ax-angle-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; }
+  .ax-angle {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .ax-quad { margin: 0; font-size: 1rem; font-weight: 700; }
+  .ax-quad[data-q="normal"] { color: var(--ax-normal-ink); }
+  .ax-quad[data-q="lad"] { color: var(--ax-lad-ink); }
+  .ax-quad[data-q="rad"] { color: var(--ax-rad-ink); }
+  .ax-quad[data-q="extreme"] { color: var(--ax-ext-ink); }
+
+  .ax-slider-row { display: flex; align-items: center; gap: 8px; }
+  .ax-end {
+    flex: none;
+    width: 3.4rem;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--grey-text);
+  }
+  .ax-end:last-child { text-align: right; }
+  .ax-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1 1 auto;
+    width: 100%;
+    height: 44px;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .ax-slider::-webkit-slider-runnable-track {
+    height: 8px;
+    background: var(--track);
+    border-radius: 999px;
+  }
+  .ax-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    margin-top: -10px;
+    border-radius: 50%;
+    background: var(--navy-fill);
+    border: 2px solid var(--card-bg);
+    box-shadow: 0 0 0 1px var(--navy-fill);
+  }
+  .ax-slider::-moz-range-track {
+    height: 8px;
+    background: var(--track);
+    border-radius: 999px;
+    border: 0;
+  }
+  .ax-slider::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--navy-fill);
+    border: 2px solid var(--card-bg);
+    box-shadow: 0 0 0 1px var(--navy-fill);
+  }
+  .ax-hint { margin: 6px 0 0; font-size: 0.8rem; line-height: 1.45; color: var(--grey-text); }
+  .ax-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .ax-main :focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+  .ax-dial:focus-visible { border-radius: 18px; }
+
+  .ax-quiz { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line-soft); }
+  .ax-quiz > p { margin: 0 0 8px; font-size: 0.9rem; line-height: 1.45; }
+  .ax-result {
+    margin: 10px 0 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--sky-bg);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .ax-result:empty { display: none; }
+  .ax-result.is-exact { background: var(--green-bg); }
+
+  .ax-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .ax-key li { display: inline-flex; align-items: center; gap: 6px; }
+  .ax-key li.is-on { font-weight: 700; }
+  .ax-swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+  .ax-swatch[data-q="normal"] { background: var(--ax-normal); }
+  .ax-swatch[data-q="lad"] { background: var(--ax-lad); }
+  .ax-swatch[data-q="rad"] { background: var(--ax-rad); }
+  .ax-swatch[data-q="extreme"] { background: var(--ax-ext); }
+  .ax-formula { margin: 8px 0 0; font-size: 0.84rem; line-height: 1.5; color: var(--grey-text); }
+
+  .ax-leads { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ax-lead[data-lead="I"] { grid-column: 1; grid-row: 1; }
+  .ax-lead[data-lead="II"] { grid-column: 1; grid-row: 2; }
+  .ax-lead[data-lead="III"] { grid-column: 1; grid-row: 3; }
+  .ax-lead[data-lead="aVR"] { grid-column: 2; grid-row: 1; }
+  .ax-lead[data-lead="aVL"] { grid-column: 2; grid-row: 2; }
+  .ax-lead[data-lead="aVF"] { grid-column: 2; grid-row: 3; }
+  .ax-lead { padding: 8px 10px 10px; }
+  .ax-lead.is-iso { border-color: var(--ax-iso); box-shadow: inset 0 0 0 1px var(--ax-iso); }
+  .ax-lead-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; min-height: 24px; }
+  .ax-lead h2 {
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+  }
+  .ax-iso {
+    display: none;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ax-iso);
+  }
+  .ax-lead.is-iso .ax-iso { display: inline; }
+  .ax-strip { display: block; width: 100%; height: auto; background: var(--ax-paper); border-radius: 10px; }
+  .ax-gmin { stroke: var(--ax-grid); stroke-width: 1; }
+  .ax-gmaj { stroke: var(--ax-grid-strong); stroke-width: 1.15; }
+  .ax-baseline { stroke: var(--ax-base); stroke-width: 1; stroke-dasharray: 3 3; }
+  .ax-trace { fill: none; stroke: var(--ax-trace); stroke-width: 2.15; stroke-linecap: round; stroke-linejoin: round; }
+
+  .ax-credit { margin: 22px 0 0; font-size: 0.8rem; line-height: 1.5; color: var(--text-muted); }
+  .ax-credit a { font-weight: 600; }
+
+  @media (max-width: 860px) {
+    .ax-layout { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .ax-main h1 { font-size: 1.6rem; }
+    .ax-leads { grid-template-columns: 1fr; }
+    .ax-lead[data-lead] { grid-column: auto; grid-row: auto; }
+    .ax-angle { font-size: 2.2rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ax-main *, .ax-main *::before, .ax-main *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="hub-brand" href="../index.html">OCOM Question Hub</a>
+      <nav class="hub-nav" aria-label="Main">
+        <a href="metabolic-atlas.html">Lesion Atlas</a>
+        <a href="cardiac-axis.html" aria-current="page">Cardiac axis</a>
+        <a href="../index.html#blocks">Blocks</a>
+        <a href="../live.html">Live Session</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container ax-main">
+    <div class="ax-intro">
+      <p class="crumbs"><a href="../index.html">← Question hub</a></p>
+      <h1>Cardiac axis</h1>
+      <p class="subtitle">Rotate the mean QRS axis. Each limb lead shows that axis projected onto the lead.</p>
+    </div>
+
+    <div class="ax-layout">
+      <section class="ax-panel" aria-labelledby="dialHeading">
+        <h2 class="sr" id="dialHeading">Hexaxial reference</h2>
+        <div id="dialMount"></div>
+        <div class="ax-read">
+          <p class="kicker" id="readKicker">Axis</p>
+          <div class="ax-angle-row">
+            <p class="ax-angle" id="angleText">+60°</p>
+            <p class="ax-quad" id="quadText" data-q="normal">Normal</p>
+          </div>
+        </div>
+        <div class="ax-slider-row">
+          <span class="ax-end" aria-hidden="true">−180°</span>
+          <label class="sr" id="rangeLabel" for="axisRange">Mean QRS axis, degrees</label>
+          <input class="ax-slider" id="axisRange" type="range" min="-180" max="180" step="1" value="60" aria-describedby="dialHelp">
+          <span class="ax-end" aria-hidden="true">+180°</span>
+        </div>
+        <p class="ax-hint" id="dialHelp">Drag the arrow, or use the slider. Arrow keys move 5°, Shift+arrow 15°, Home returns to +60°.</p>
+        <div class="ax-actions">
+          <button type="button" class="btn secondary" id="resetBtn">Reset to +60°</button>
+          <button type="button" class="btn" id="quizBtn" aria-pressed="false" aria-controls="quizBox">Quiz</button>
+        </div>
+        <div class="ax-quiz" id="quizBox" hidden>
+          <p id="quizPrompt">These six leads are one axis. Move the arrow to your guess, then check.</p>
+          <div class="ax-actions">
+            <button type="button" class="btn" id="checkBtn">Check guess</button>
+            <button type="button" class="btn secondary" id="nextBtn">New leads</button>
+          </div>
+          <p class="ax-result" id="quizResult"></p>
+        </div>
+      </section>
+
+      <div class="ax-leads" id="leadGrid" role="list" aria-label="Limb leads"></div>
+      <div class="ax-notes">
+        <ul class="ax-key" id="zoneKey">
+          <li data-q="normal"><i class="ax-swatch" data-q="normal"></i>Normal −30° to +90°</li>
+          <li data-q="lad"><i class="ax-swatch" data-q="lad"></i>Left axis deviation −30° to −90°</li>
+          <li data-q="rad"><i class="ax-swatch" data-q="rad"></i>Right axis deviation +90° to +180°</li>
+          <li data-q="extreme"><i class="ax-swatch" data-q="extreme"></i>Extreme axis −90° to −180°</li>
+        </ul>
+        <p class="ax-formula">0° is lead I, to the right. Positive angles run clockwise. Net QRS height is cos(axis − lead angle): the same direction as a lead is positive, the opposite direction is negative, and a right angle to the lead is equiphasic.</p>
+      </div>
+    </div>
+
+    <p class="ax-credit">Inspired by the <a href="https://cardiacaxis.com">Cardiac Axis Trainer</a> by David Schaack and Mike Cadogan (LITFL).</p>
+    <p id="angleLive" class="sr" aria-live="polite" aria-atomic="true">Axis plus 60 degrees. Normal. Isoelectric lead aVL.</p>
+    <noscript><p>This page needs JavaScript to move the axis and draw the leads.</p></noscript>
+  </main>
+</div>
+<script>
+(function () {
+  'use strict';
+
+  /* Net QRS = cos(axis − lead angle). 0° is lead I to the right; positive is clockwise.
+     +60°: II = 1, aVL = 0.  −45°: aVL is the tallest positive, II = cos 105° ≈ −0.26.
+     +150°: aVL = −1, II = 0, III = cos 30°, I = cos 150°. */
+  var LEADS = [
+    { id: 'I', angle: 0 },
+    { id: 'II', angle: 60 },
+    { id: 'III', angle: 120 },
+    { id: 'aVR', angle: -150 },
+    { id: 'aVL', angle: -30 },
+    { id: 'aVF', angle: 90 }
+  ];
+  var ZONES = [
+    { key: 'normal', from: -30, to: 90, label: 'Normal' },
+    { key: 'lad', from: -90, to: -30, label: 'LAD' },
+    { key: 'rad', from: 90, to: 180, label: 'RAD' },
+    { key: 'extreme', from: -180, to: -90, label: 'Extreme' }
+  ];
+
+  var CX = 210, CY = 208, R = 150;
+  var BASE = 60, AMP = 40, T_H = 14;
+  var NS = 'http://www.w3.org/2000/svg';
+
+  var guess = 60;
+  var quizzing = false;
+  var revealed = false;
+  var secret = null;
+  var dragging = false;
+  var cards = [];
+
+  var dial, answerArrow, axisArrow, range;
+
+  function el(name, attrs, parent) {
+    var n = document.createElementNS(NS, name);
+    if (attrs) Object.keys(attrs).forEach(function (k) { n.setAttribute(k, attrs[k]); });
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function polar(deg, r) {
+    var t = deg * Math.PI / 180;
+    return [CX + r * Math.cos(t), CY + r * Math.sin(t)];
+  }
+  function fmt(n) {
+    n = Math.round(n);
+    if (n > 0) return '+' + n + '\u00b0';
+    if (n < 0) return '\u2212' + Math.abs(n) + '\u00b0';
+    return '0\u00b0';
+  }
+  function fmtPlain(n) {
+    n = Math.round(n);
+    if (n > 0) return 'plus ' + n + ' degrees';
+    if (n < 0) return 'minus ' + Math.abs(n) + ' degrees';
+    return '0 degrees';
+  }
+  function wrap(d) {
+    var a = Math.round(Number(d));
+    if (!isFinite(a)) return 60;
+    if (a === -180) return -180;
+    a = ((a % 360) + 360) % 360;
+    if (a > 180) a -= 360;
+    return a;
+  }
+  function proj(axis, leadAngle) {
+    return Math.cos((axis - leadAngle) * Math.PI / 180);
+  }
+  function quadrant(a) {
+    if (a > 90) return { key: 'rad', name: 'Right axis deviation' };
+    if (a >= -30) return { key: 'normal', name: 'Normal' };
+    if (a >= -90) return { key: 'lad', name: 'Left axis deviation' };
+    return { key: 'extreme', name: 'Extreme axis' };
+  }
+  function isoelectric(axis) {
+    var best = Infinity, ids = [];
+    LEADS.forEach(function (L) {
+      var a = Math.abs(proj(axis, L.angle));
+      if (a < best - 1e-9) { best = a; ids = [L.id]; }
+      else if (Math.abs(a - best) <= 1e-9) ids.push(L.id);
+    });
+    return ids;
+  }
+  function listNames(ids) {
+    if (ids.length <= 1) return ids[0] || '';
+    if (ids.length === 2) return ids[0] + ' and ' + ids[1];
+    return ids.slice(0, -1).join(', ') + ', and ' + ids[ids.length - 1];
+  }
+  function morph(p) {
+    var a = Math.abs(p);
+    if (a < 0.08) return 'equiphasic';
+    if (a > 0.75) return p > 0 ? 'tall positive' : 'deep negative';
+    if (a > 0.35) return p > 0 ? 'positive' : 'negative';
+    return p > 0 ? 'slightly positive' : 'slightly negative';
+  }
+  function angDist(a, b) {
+    var d = Math.abs(a - b) % 360;
+    if (d > 180) d = 360 - d;
+    return d;
+  }
+  function tracingAxis() {
+    return quizzing ? secret : guess;
+  }
+
+  function wedge(from, to) {
+    var a = polar(from, R), b = polar(to, R);
+    var delta = to - from;
+    if (delta <= 0) delta += 360;
+    var large = delta > 180 ? 1 : 0;
+    return 'M ' + CX + ' ' + CY +
+      ' L ' + a[0].toFixed(2) + ' ' + a[1].toFixed(2) +
+      ' A ' + R + ' ' + R + ' 0 ' + large + ' 1 ' +
+      b[0].toFixed(2) + ' ' + b[1].toFixed(2) + ' Z';
+  }
+
+  function buildDial() {
+    dial = el('svg', {
+      id: 'dial',
+      class: 'ax-dial',
+      viewBox: '-44 36 500 384',
+      role: 'slider',
+      tabindex: '0',
+      'aria-label': 'Mean QRS axis',
+      'aria-describedby': 'dialHelp',
+      'aria-valuemin': '-180',
+      'aria-valuemax': '180'
+    });
+    ZONES.forEach(function (z) {
+      z.path = el('path', { d: wedge(z.from, z.to), class: 'ax-zone', 'data-z': z.key }, dial);
+    });
+    el('circle', { cx: CX, cy: CY, r: R, class: 'ax-ring' }, dial);
+    var ticks = el('g', { 'aria-hidden': 'true' }, dial);
+    for (var d = -180; d < 180; d += 30) {
+      var inner = d % 90 === 0 ? R - 12 : R - 7;
+      var p1 = polar(d, inner), p2 = polar(d, R - 1);
+      el('line', {
+        x1: p1[0].toFixed(2), y1: p1[1].toFixed(2),
+        x2: p2[0].toFixed(2), y2: p2[1].toFixed(2),
+        class: d % 90 === 0 ? 'ax-tick maj' : 'ax-tick'
+      }, ticks);
+    }
+    var spokes = el('g', { 'aria-hidden': 'true' }, dial);
+    LEADS.forEach(function (L) {
+      var pos = polar(L.angle, R - 1);
+      var neg = polar(L.angle + 180, R - 1);
+      el('line', {
+        x1: neg[0].toFixed(2), y1: neg[1].toFixed(2),
+        x2: pos[0].toFixed(2), y2: pos[1].toFixed(2),
+        class: 'ax-spoke'
+      }, spokes);
+      el('circle', { cx: pos[0].toFixed(2), cy: pos[1].toFixed(2), r: 4.2, class: 'ax-plus' }, spokes);
+    });
+    ZONES.forEach(function (z) {
+      var mid = z.from + (z.to - z.from) / 2;
+      var p = polar(mid, R * 0.56);
+      var text = el('text', {
+        x: p[0].toFixed(2), y: p[1].toFixed(2),
+        'text-anchor': 'middle', 'dominant-baseline': 'middle',
+        class: 'ax-zl', 'data-z': z.key
+      }, dial);
+      text.textContent = z.label;
+    });
+    LEADS.forEach(function (L) {
+      var c = Math.cos(L.angle * Math.PI / 180);
+      var s = Math.sin(L.angle * Math.PI / 180);
+      var p = polar(L.angle, R + 30);
+      var anchor = c > 0.4 ? 'start' : c < -0.4 ? 'end' : 'middle';
+      var dy = s > 0.55 ? 6 : s < -0.55 ? -4 : 0;
+      var text = el('text', {
+        x: p[0].toFixed(2), y: (p[1] + dy).toFixed(2),
+        'text-anchor': anchor, 'dominant-baseline': 'middle',
+        class: 'ax-ll'
+      }, dial);
+      var name = el('tspan', {}, text);
+      name.textContent = L.id;
+      var deg = el('tspan', { class: 'ax-ld' }, text);
+      deg.textContent = '  ' + fmt(L.angle);
+    });
+
+    answerArrow = arrowGroup('answerArrow', 'ax-answer', false);
+    dial.appendChild(answerArrow);
+    axisArrow = arrowGroup('axisArrow', 'ax-guess', true);
+    dial.appendChild(axisArrow);
+    el('circle', { cx: CX, cy: CY, r: 7, class: 'ax-hub' }, dial);
+    document.getElementById('dialMount').appendChild(dial);
+  }
+
+  function arrowGroup(id, cls, knob) {
+    var g = el('g', { id: id, class: cls, 'aria-hidden': 'true' });
+    el('line', { x1: CX - 40, y1: CY, x2: CX + 122, y2: CY, class: 'ax-arrow-halo' }, g);
+    el('line', { x1: CX - 40, y1: CY, x2: CX + 122, y2: CY, class: 'ax-arrow-shaft' }, g);
+    el('polygon', {
+      points: (CX + 112) + ',' + (CY - 10) + ' ' + (CX + 140) + ',' + CY + ' ' + (CX + 112) + ',' + (CY + 10),
+      class: 'ax-arrow-head'
+    }, g);
+    if (knob) {
+      el('circle', { cx: CX + 118, cy: CY, r: 18, class: 'ax-knob' }, g);
+      el('circle', { cx: CX + 118, cy: CY, r: 34, fill: 'transparent' }, g);
+    }
+    return g;
+  }
+
+  function hump(pts, x0, w, h, n) {
+    var i, t;
+    for (i = 0; i <= n; i++) {
+      t = i / n;
+      pts.push([x0 + w * t, BASE - Math.sin(Math.PI * t) * h]);
+    }
+  }
+  function tracePath(p) {
+    var Rwave = (1 + p) / 2 * AMP;
+    var Swave = (1 - p) / 2 * AMP;
+    var pts = [[2, BASE], [34, BASE]];
+    hump(pts, 34, 26, 9, 10);
+    pts.push([92, BASE]);
+    var x = 96;
+    pts.push([x, BASE], [x + 8, BASE - Rwave], [x + 18, BASE + Swave], [x + 28, BASE]);
+    pts.push([150, BASE]);
+    hump(pts, 150, 48, T_H, 12);
+    pts.push([298, BASE]);
+    var d = '', i;
+    for (i = 0; i < pts.length; i++) {
+      d += (i ? 'L' : 'M') + pts[i][0].toFixed(1) + ' ' + pts[i][1].toFixed(1) + ' ';
+    }
+    return d;
+  }
+
+  function buildStrips() {
+    var grid = document.getElementById('leadGrid');
+    LEADS.forEach(function (L) {
+      var card = document.createElement('article');
+      card.className = 'ax-lead';
+      card.setAttribute('role', 'listitem');
+      card.setAttribute('data-lead', L.id);
+      var head = document.createElement('div');
+      head.className = 'ax-lead-h';
+      var h = document.createElement('h2');
+      h.textContent = L.id;
+      var badge = document.createElement('span');
+      badge.className = 'ax-iso';
+      badge.textContent = 'Isoelectric';
+      head.appendChild(h);
+      head.appendChild(badge);
+      var svg = el('svg', { viewBox: '0 0 300 118', class: 'ax-strip', 'aria-hidden': 'true' });
+      var x, y, major;
+      for (x = 0; x <= 300; x += 5) {
+        major = x % 25 === 0;
+        el('line', { x1: x, y1: 0, x2: x, y2: 118, class: major ? 'ax-gmaj' : 'ax-gmin' }, svg);
+      }
+      for (y = 0; y <= 118; y += 5) {
+        major = y % 25 === 0;
+        el('line', { x1: 0, y1: y, x2: 300, y2: y, class: major ? 'ax-gmaj' : 'ax-gmin' }, svg);
+      }
+      el('line', { x1: 0, y1: BASE, x2: 300, y2: BASE, class: 'ax-baseline' }, svg);
+      var path = el('path', { class: 'ax-trace' }, svg);
+      var desc = document.createElement('p');
+      desc.className = 'sr';
+      card.appendChild(head);
+      card.appendChild(svg);
+      card.appendChild(desc);
+      grid.appendChild(card);
+      cards.push({ lead: L, card: card, path: path, desc: desc });
+    });
+  }
+
+  function resultVisible() {
+    var off = angDist(guess, secret);
+    var q = quadrant(secret);
+    var tail = 'The axis was ' + fmt(secret) + ' (' + q.name.toLowerCase() + ').';
+    return (off === 0 ? 'Exact. ' : 'Off by ' + off + '\u00b0. ') + tail;
+  }
+  function resultSpoken() {
+    var off = angDist(guess, secret);
+    var q = quadrant(secret);
+    var tail = 'The axis was ' + fmtPlain(secret) + ', ' + q.name.toLowerCase() + '.';
+    if (off === 0) return 'Exact. ' + tail;
+    return 'Off by ' + off + (off === 1 ? ' degree. ' : ' degrees. ') + tail;
+  }
+  function angleSentence() {
+    var q = quadrant(guess);
+    var sentence = (quizzing ? 'Your guess, ' : 'Axis ') + fmtPlain(guess) + '. ' + q.name + '.';
+    if (!quizzing) {
+      var iso = isoelectric(guess);
+      sentence += ' Isoelectric ' + (iso.length > 1 ? 'leads ' : 'lead ') + listNames(iso) + '.';
+    }
+    return sentence;
+  }
+  function speechText() {
+    var s = angleSentence();
+    if (quizzing && revealed) s += ' ' + resultSpoken();
+    return s;
+  }
+
+  function paint() {
+    var q = quadrant(guess);
+    var drawn = tracingAxis();
+    var iso = isoelectric(drawn);
+    document.getElementById('angleText').textContent = fmt(guess);
+    var quad = document.getElementById('quadText');
+    quad.textContent = q.name;
+    quad.setAttribute('data-q', q.key);
+    document.getElementById('readKicker').textContent = quizzing ? 'Your guess' : 'Axis';
+    document.getElementById('rangeLabel').textContent = quizzing ? 'Your guess, degrees' : 'Mean QRS axis, degrees';
+    range.value = String(guess);
+    ZONES.forEach(function (z) { z.path.classList.toggle('is-on', z.key === q.key); });
+    Array.prototype.forEach.call(document.querySelectorAll('#zoneKey li'), function (li) {
+      li.classList.toggle('is-on', li.getAttribute('data-q') === q.key);
+    });
+    axisArrow.setAttribute('transform', 'rotate(' + guess + ' ' + CX + ' ' + CY + ')');
+    if (quizzing && revealed) {
+      answerArrow.classList.add('is-on');
+      answerArrow.setAttribute('transform', 'rotate(' + secret + ' ' + CX + ' ' + CY + ')');
+    } else {
+      answerArrow.classList.remove('is-on');
+    }
+    cards.forEach(function (c) {
+      var p = proj(drawn, c.lead.angle);
+      c.path.setAttribute('d', tracePath(p));
+      c.card.dataset.p = p.toFixed(4);
+      var on = iso.indexOf(c.lead.id) !== -1;
+      c.card.classList.toggle('is-iso', on);
+      c.card.querySelector('.ax-iso').textContent = Math.abs(p) < 0.08 ? 'Isoelectric' : 'Most isoelectric';
+      c.desc.textContent = 'Lead ' + c.lead.id + ', ' + morph(p) + (on ? ', most isoelectric.' : '.');
+    });
+    var result = document.getElementById('quizResult');
+    if (quizzing && revealed) {
+      var off = angDist(guess, secret);
+      result.textContent = resultVisible();
+      result.classList.toggle('is-exact', off === 0);
+    } else {
+      result.textContent = '';
+      result.classList.remove('is-exact');
+    }
+  }
+
+  function speak(text) {
+    dial.setAttribute('aria-valuetext', text);
+    dial.setAttribute('aria-valuenow', String(guess));
+    range.setAttribute('aria-valuetext', text);
+    var live = document.getElementById('angleLive');
+    live.textContent = '';
+    requestAnimationFrame(function () { live.textContent = text; });
+  }
+  function setGuess(next, speakNow) {
+    guess = wrap(next);
+    paint();
+    if (speakNow) speak(speechText());
+  }
+  function onKey(e) {
+    var step = e.shiftKey ? 15 : 5;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { setGuess(guess + step, true); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { setGuess(guess - step, true); e.preventDefault(); }
+    else if (e.key === 'Home') { setGuess(60, true); e.preventDefault(); }
+  }
+  function pointerAngle(e) {
+    var pt = dial.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    var m = dial.getScreenCTM();
+    if (!m) return null;
+    var p = pt.matrixTransform(m.inverse());
+    var dx = p.x - CX, dy = p.y - CY;
+    if (dx * dx + dy * dy < 20 * 20) return null;
+    return Math.round(Math.atan2(dy, dx) * 180 / Math.PI);
+  }
+  function pickSecret() {
+    var s = Math.floor(Math.random() * 360) - 180;
+    if (s === 60) s = -120;
+    return s;
+  }
+  function setQuiz(on) {
+    quizzing = on;
+    var btn = document.getElementById('quizBtn');
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? 'Leave quiz' : 'Quiz';
+    document.getElementById('quizBox').hidden = !on;
+    revealed = false;
+    if (on) {
+      secret = pickSecret();
+      setGuess(60, true);
+      dial.focus({ preventScroll: true });
+    } else {
+      secret = null;
+      setGuess(guess, true);
+    }
+  }
+
+  buildDial();
+  buildStrips();
+  range = document.getElementById('axisRange');
+  paint();
+  dial.setAttribute('aria-valuetext', angleSentence());
+  dial.setAttribute('aria-valuenow', '60');
+  range.setAttribute('aria-valuetext', angleSentence());
+
+  range.addEventListener('input', function () { setGuess(range.value, false); });
+  range.addEventListener('change', function () { setGuess(range.value, true); });
+  range.addEventListener('keydown', onKey);
+  dial.addEventListener('keydown', onKey);
+  dial.addEventListener('pointerdown', function (e) {
+    if (e.button != null && e.button !== 0) return;
+    dragging = true;
+    dial.classList.add('is-drag');
+    dial.setPointerCapture(e.pointerId);
+    dial.focus({ preventScroll: true });
+    var a = pointerAngle(e);
+    if (a != null) setGuess(a, false);
+  });
+  dial.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    var a = pointerAngle(e);
+    if (a != null) setGuess(a, false);
+  });
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    dial.classList.remove('is-drag');
+    setGuess(guess, true);
+  }
+  dial.addEventListener('pointerup', endDrag);
+  dial.addEventListener('pointercancel', endDrag);
+
+  document.getElementById('resetBtn').addEventListener('click', function () { setGuess(60, true); });
+  document.getElementById('quizBtn').addEventListener('click', function () { setQuiz(!quizzing); });
+  document.getElementById('checkBtn').addEventListener('click', function () {
+    if (!quizzing) return;
+    revealed = true;
+    paint();
+    speak(speechText());
+  });
+  document.getElementById('nextBtn').addEventListener('click', function () {
+    revealed = false;
+    secret = pickSecret();
+    setGuess(60, true);
+    dial.focus({ preventScroll: true });
+  });
+})();
+</script>
+</body>
+</html>

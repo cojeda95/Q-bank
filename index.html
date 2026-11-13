@@ -492,6 +492,7 @@
     <a class="brand" href="./">OCOM Question Hub</a>
     <nav class="mainnav" aria-label="Main">
       <a class="primary" href="resources/metabolic-atlas.html">Lesion Atlas</a>
+      <a href="resources/cardiac-axis.html">Cardiac axis</a>
       <a href="#blocks">Blocks</a>
       <a href="#qsearch" id="navQs">Search questions</a>
       <a href="live.html">Live Session</a>
@@ -809,11 +810,12 @@
     document.getElementById('heroChips').innerHTML = CHIPS.filter(function (c) { return TOP[c[0]]; })
       .map(function (c) { return '<a href="' + topicHref(TOP[c[0]]) + '">' + esc(c[1]) + '</a>'; }).join('');
 
-    /* Browse by system — most maps first; OMM also carries the Sacral OMM Explorer */
+    /* Browse by system — most maps first. OMM also carries the sacrum explorer; Cardiac carries the axis trainer. */
     document.getElementById('systems').innerHTML = H.topics.slice().sort(function (a, b) { return b[2].length - a[2].length; }).map(function (t) {
       return '<div class="sys" style="--c:' + (COLOR[t[0]] || '#1f4e79') + '"><a class="sys-main" href="' + topicHref(t) + '"><b>' + esc(t[1]) + '</b><span>' +
         t[2].length + (t[2].length === 1 ? ' map' : ' maps') + '</span></a>' +
-        (t[0] === 'omm' ? '<a class="sys-x" href="resources/sacral-omm-explorer.html">+ 3D sacrum explorer</a>' : '') + '</div>';
+        (t[0] === 'omm' ? '<a class="sys-x" href="resources/sacral-omm-explorer.html">+ 3D sacrum explorer</a>' : '') +
+        (t[0] === 'cardio' ? '<a class="sys-x" href="resources/cardiac-axis.html">+ Cardiac axis trainer</a>' : '') + '</div>';
     }).join('');
 
     /* the Moving-map mix tile: how many moving maps, and your Name-it score (atlas progress, synced with the PIN) */
