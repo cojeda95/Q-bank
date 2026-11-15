@@ -1960,12 +1960,7 @@ function renderHome() {
         <div id="blockNews"></div>
         <section class="side-box" aria-labelledby="setH">
           <h2 class="side-h" id="setH">Settings</h2>
-          <label class="switch-row"><span><b>High-yield only</b><span>Practice and simulations use only questions tagged high-yield</span></span>
-            <input type="checkbox" class="switch" id="hyToggle" ${settings.hyOnly ? 'checked' : ''}></label>
-          <label class="switch-row"><span><b>Show answers in simulations</b><span>Reveal right or wrong and the explanation after each question, as in Practice, instead of when you submit</span></span>
-            <input type="checkbox" class="switch" id="instantFeedbackToggle" ${settings.examInstantFeedback ? 'checked' : ''}></label>
-          <label class="switch-row"><span><b>Wrong-answer flash</b><span>Red flash and image burst when you miss (every block)</span></span>
-            <input type="checkbox" class="switch" id="wrongFlashToggle" ${wrongFlashEnabled() ? 'checked' : ''}></label>
+          ${examToggleRowsHtml()}
         </section>
       </aside>
     </div>
@@ -2024,21 +2019,7 @@ function renderHome() {
   document.getElementById('reviewCard').addEventListener('click', () => setRoute('review'));
   document.getElementById('analyticsCard').addEventListener('click', () => setRoute('analytics'));
   document.getElementById('sheetCard').addEventListener('click', () => setRoute('studysheet'));
-  document.getElementById('hyToggle').addEventListener('change', (e) => {
-    const s = loadSettings();
-    s.hyOnly = e.target.checked;
-    saveSettings(s);
-    renderHome();
-  });
-  document.getElementById('instantFeedbackToggle').addEventListener('change', (e) => {
-    const s = loadSettings();
-    s.examInstantFeedback = e.target.checked;
-    saveSettings(s);
-    renderHome();
-  });
-  document.getElementById('wrongFlashToggle').addEventListener('change', (e) => {
-    setWrongFlashEnabled(e.target.checked);
-  });
+  bindExamSimToggles(() => renderHome());
 }
 
 /* Search this block's SDLs from the band at the top of its home: "23" or "SDL 23" finds that
@@ -2268,6 +2249,202 @@ function fillExamAtlas(exam) {
 const MOVE_GLYPH = '<svg class="g-glyph m-glyph" viewBox="0 0 220 70" aria-hidden="true"><path class="ax" d="M10 35H210"/><circle class="c1" cx="60" cy="35" r="7"/><circle class="c2" cx="120" cy="35" r="7"/><circle class="c1" cx="180" cy="35" r="7"/></svg>';
 const GRAPH_GLYPH = '<svg class="g-glyph" viewBox="0 0 220 70" aria-hidden="true"><path class="ax" d="M14 4V62H214"/><path class="c1" d="M14 50C60 50 84 14 130 12S200 10 212 10"/><path class="c2" d="M14 60C80 60 130 48 212 30"/></svg>';
 
+/* ── Exam simulation settings ───────────────────────────────────────────
+   The same three toggles as the home screen (same localStorage keys), plus
+   the timer, on a Settings tab of every page that builds an exam. */
+function examToggleRowsHtml() {
+  const settings = loadSettings();
+  return `
+          <label class="switch-row"><span><b>High-yield only</b><span>Practice and simulations use only questions tagged high-yield</span></span>
+            <input type="checkbox" class="switch" id="hyToggle" ${settings.hyOnly ? 'checked' : ''}></label>
+          <label class="switch-row"><span><b>Show answers in simulations</b><span>Reveal right or wrong and the explanation after each question, as in Practice, instead of when you submit</span></span>
+            <input type="checkbox" class="switch" id="instantFeedbackToggle" ${settings.examInstantFeedback ? 'checked' : ''}></label>
+          <label class="switch-row"><span><b>Wrong-answer flash</b><span>Red flash and image burst when you miss (every block)</span></span>
+            <input type="checkbox" class="switch" id="wrongFlashToggle" ${wrongFlashEnabled() ? 'checked' : ''}></label>`;
+}
+function examSettingsCardHtml() {
+  const on = loadSettings().examInstantFeedback;
+  return `
+    <div class="setup-card">
+      <div class="setup-row">
+        <div class="setup-label-row"><label>Timer</label></div>
+        <label class="radio-option">
+          <input type="checkbox" id="timerToggle" checked>
+          <span>&#9201; Timed — default 1.5 min per question</span>
+        </label>
+        <div id="timerMinutesRow" style="margin-top:8px;">
+          <div class="setup-label-row">
+            <label for="minutesPerQInput">Minutes per question</label>
+            <span id="timerReadout" class="setup-readout"></span>
+          </div>
+          <input type="number" id="minutesPerQInput" class="number-input" min="0.5" max="30" step="0.5" value="1.5">
+        </div>
+        <div class="setup-hint" id="instantHint"${on ? '' : ' hidden'}>📝 Instant Feedback is ON — answers are revealed after each question.</div>
+      </div>
+      <div class="setup-row">
+        ${examToggleRowsHtml()}
+      </div>
+    </div>`;
+}
+function examBuilderTabsHtml(buildHtml) {
+  return `
+    <div class="setup-tabs">
+      <div class="setup-tablist" role="tablist" aria-label="Exam builder">
+        <button type="button" class="setup-tab" role="tab" id="setupTabBuild" aria-selected="true" aria-controls="setupPanelBuild" tabindex="0">Build</button>
+        <button type="button" class="setup-tab" role="tab" id="setupTabSettings" aria-selected="false" aria-controls="setupPanelSettings" tabindex="-1">Settings</button>
+      </div>
+      <div class="setup-panel" role="tabpanel" id="setupPanelBuild" aria-labelledby="setupTabBuild">
+        ${buildHtml}
+      </div>
+      <div class="setup-panel" role="tabpanel" id="setupPanelSettings" aria-labelledby="setupTabSettings" hidden>
+        ${examSettingsCardHtml()}
+      </div>
+    </div>`;
+}
+function bindExamBuilderTabs() {
+  const list = document.querySelector('.setup-tablist');
+  if (!list) return;
+  const tabs = Array.from(list.querySelectorAll('[role="tab"]'));
+  function select(tab, focus) {
+    tabs.forEach(t => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      const panel = document.getElementById(t.getAttribute('aria-controls'));
+      if (panel) panel.hidden = !on;
+    });
+    if (focus) tab.focus();
+  }
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => select(tab, false));
+    tab.addEventListener('keydown', (e) => {
+      let next = -1;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % tabs.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = tabs.length - 1;
+      else return;
+      e.preventDefault();
+      select(tabs[next], true);
+    });
+  });
+}
+// totalOf() is the question count the readout multiplies by (a number, or the Total Questions field).
+function bindExamTimer(totalOf) {
+  const timerToggle = document.getElementById('timerToggle');
+  const minutesPerQInput = document.getElementById('minutesPerQInput');
+  const timerMinutesRow = document.getElementById('timerMinutesRow');
+  const timerReadout = document.getElementById('timerReadout');
+  if (!timerToggle) return { timed: () => true, minutesPerQuestion: () => 1.5 };
+  function update() {
+    const timed = timerToggle.checked;
+    timerMinutesRow.style.opacity = timed ? '1' : '0.45';
+    minutesPerQInput.disabled = !timed;
+    if (!timed) { timerReadout.textContent = 'No time limit'; return; }
+    const total = Number(typeof totalOf === 'function' ? totalOf() : totalOf) || 0;
+    const minutesPerQ = Number(minutesPerQInput.value) || 1.5;
+    timerReadout.textContent = `~${Math.round(total * minutesPerQ)} min total`;
+  }
+  timerToggle.addEventListener('change', update);
+  minutesPerQInput.addEventListener('input', update);
+  const totalInput = document.getElementById('totalInput');
+  if (totalInput && typeof totalOf === 'function') totalInput.addEventListener('input', update);
+  update();
+  return {
+    timed: () => timerToggle.checked,
+    minutesPerQuestion: () => Number(minutesPerQInput.value) || 1.5,
+  };
+}
+function bindExamSimToggles(onChange) {
+  const hy = document.getElementById('hyToggle');
+  const instant = document.getElementById('instantFeedbackToggle');
+  const flash = document.getElementById('wrongFlashToggle');
+  if (hy) hy.addEventListener('change', (e) => {
+    const s = loadSettings();
+    s.hyOnly = e.target.checked;
+    saveSettings(s);
+    if (onChange) onChange('hy');
+  });
+  if (instant) instant.addEventListener('change', (e) => {
+    const s = loadSettings();
+    s.examInstantFeedback = e.target.checked;
+    saveSettings(s);
+    const hint = document.getElementById('instantHint');
+    if (hint) hint.hidden = !e.target.checked;
+    if (onChange) onChange('instant');
+  });
+  if (flash) flash.addEventListener('change', (e) => setWrongFlashEnabled(e.target.checked));
+}
+// High-yield only changes which questions the builder can draw. Re-render so the
+// pools, the slider and the preset counts match, and put the form back as it was.
+let builderRestore = null;
+function captureBuilder() {
+  const active = document.activeElement;
+  const pct = document.getElementById('pctSlider');
+  const total = document.getElementById('totalInput');
+  const minutes = document.getElementById('minutesPerQInput');
+  const timerToggle = document.getElementById('timerToggle');
+  const batch = document.querySelector('input[name="batchMode"]:checked');
+  const settingsTab = document.getElementById('setupTabSettings');
+  return {
+    pct: pct ? pct.value : null,
+    total: total ? total.value : null,
+    minutes: minutes ? minutes.value : null,
+    timed: timerToggle ? timerToggle.checked : true,
+    batch: batch ? batch.value : null,
+    settings: !!(settingsTab && settingsTab.getAttribute('aria-selected') === 'true'),
+    focusId: active && active.id ? active.id : '',
+  };
+}
+function applyBuilderRestore() {
+  const r = builderRestore;
+  builderRestore = null;
+  if (!r) return;
+  const pct = document.getElementById('pctSlider');
+  if (pct && r.pct != null && pct.value !== r.pct) {
+    pct.value = r.pct;
+    pct.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  if (r.batch) {
+    const batch = document.querySelector(`input[name="batchMode"][value="${r.batch}"]`);
+    if (batch && !batch.checked) {
+      batch.checked = true;
+      batch.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  }
+  const total = document.getElementById('totalInput');
+  if (total && r.total != null && total.value !== String(r.total)) {
+    total.value = r.total;
+    total.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  const timerToggle = document.getElementById('timerToggle');
+  if (timerToggle && timerToggle.checked !== r.timed) {
+    timerToggle.checked = r.timed;
+    timerToggle.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  const minutes = document.getElementById('minutesPerQInput');
+  if (minutes && r.minutes != null && minutes.value !== String(r.minutes)) {
+    minutes.value = r.minutes;
+    minutes.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  if (r.settings) {
+    const tab = document.getElementById('setupTabSettings');
+    if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
+  }
+  if (r.focusId) {
+    const el = document.getElementById(r.focusId);
+    if (el) el.focus();
+  }
+}
+function bindBuilderSettings(rerender) {
+  bindExamSimToggles((kind) => {
+    if (kind !== 'hy' || !rerender) return;
+    builderRestore = captureBuilder();
+    rerender();
+  });
+  applyBuilderRestore();
+}
+
 /* ── Custom Exam Builder (weighted current/prior content + batch mix) ── */
 function renderExamSetup(examNumber) {
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
@@ -2284,18 +2461,10 @@ function renderExamSetup(examNumber) {
   const defaultPct = 70;
   const defaultBatch = 'mix';
   const defaultTotal = currentAllCount;
-  const splitCards = splitCardsHtml(examNumber, 'using the timer setting below');
+  const splitCards = splitCardsHtml(examNumber, 'using the timer in Settings');
 
-  main.innerHTML = `
-    <button class="back-link" id="backExam">&larr; ${examLabel(examNumber)}</button>
-    <h1>Build a Practice Exam</h1>
-    <p class="subtitle">Mirror the real exam's structure, or customize the mix.</p>
-    ${splitCards ? `
-    <div class="section-label">One-Click Presets</div>
-    ${splitCards}
-    <div class="section-label">Custom Mix</div>` : ''}
+  const buildHtml = `
     <div class="setup-card">
-
       ${hasPrior ? `
       <div class="setup-row">
         <div class="setup-label-row">
@@ -2326,59 +2495,42 @@ function renderExamSetup(examNumber) {
         <div class="setup-hint" id="poolHint"></div>
         <div class="setup-hint" id="totalError" style="color: var(--red); display: none;"></div>
       </div>
+    </div>`;
 
-      <div class="setup-row">
-        <div class="setup-label-row"><label>Timer</label></div>
-        <label class="radio-option" style="cursor:pointer;">
-          <input type="checkbox" id="timerToggle" checked>
-          <span>&#9201; Timed — default 1.5 min per question</span>
-        </label>
-        <div id="timerMinutesRow" style="margin-top:8px;">
-          <div class="setup-label-row">
-            <label for="minutesPerQInput">Minutes per question</label>
-            <span id="timerReadout" class="setup-readout"></span>
-          </div>
-          <input type="number" id="minutesPerQInput" class="number-input" min="0.5" max="30" step="0.5" value="1.5">
-        </div>
-      </div>
-
-      <button class="btn" id="startSetupBtn" style="width:100%; margin-top:10px;">Start Simulation</button>
-    </div>
+  main.innerHTML = `
+    <button class="back-link" id="backExam">&larr; ${examLabel(examNumber)}</button>
+    <h1>Build a Practice Exam</h1>
+    <p class="subtitle">Mirror the real exam's structure, or customize the mix.</p>
+    ${splitCards ? `
+    <div class="section-label">One-Click Presets</div>
+    ${splitCards}
+    <div class="section-label">Custom Mix</div>` : ''}
+    ${examBuilderTabsHtml(buildHtml)}
+    <button class="btn setup-start" id="startSetupBtn">Start Simulation</button>
   `;
 
   document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
+  bindExamBuilderTabs();
 
   const pctSlider = document.getElementById('pctSlider');
   const pctReadout = document.getElementById('pctReadout');
   const totalInput = document.getElementById('totalInput');
   const poolHint = document.getElementById('poolHint');
   const totalError = document.getElementById('totalError');
-  const timerToggle = document.getElementById('timerToggle');
-  const minutesPerQInput = document.getElementById('minutesPerQInput');
-  const timerMinutesRow = document.getElementById('timerMinutesRow');
-  const timerReadout = document.getElementById('timerReadout');
-
-  function updateTimerReadout() {
-    const timed = timerToggle.checked;
-    timerMinutesRow.style.opacity = timed ? '1' : '0.45';
-    minutesPerQInput.disabled = !timed;
-    if (!timed) { timerReadout.textContent = 'No time limit'; return; }
-    const total = Number(totalInput.value) || 0;
-    const minutesPerQ = Number(minutesPerQInput.value) || 1.5;
-    timerReadout.textContent = `~${Math.round(total * minutesPerQ)} min total`;
-  }
-  timerToggle.addEventListener('change', updateTimerReadout);
-  minutesPerQInput.addEventListener('input', updateTimerReadout);
-  totalInput.addEventListener('input', updateTimerReadout);
-  updateTimerReadout();
+  const timer = bindExamTimer(() => totalInput.value);
 
   function currentSettings() {
     const pctCurrent = hasPrior && pctSlider ? Number(pctSlider.value) : 100;
     const batchMode = document.querySelector('input[name="batchMode"]:checked').value;
     const total = Number(totalInput.value);
-    const timed = timerToggle.checked;
-    const minutesPerQuestion = Number(minutesPerQInput.value) || 1.5;
-    return { pctCurrent, batchMode, total, timed, minutesPerQuestion };
+    return { pctCurrent, batchMode, total, timed: timer.timed(), minutesPerQuestion: timer.minutesPerQuestion() };
+  }
+
+  function showBuildError(text) {
+    totalError.textContent = text;
+    totalError.style.display = 'block';
+    const tab = document.getElementById('setupTabBuild');
+    if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
   }
 
   function poolSizes(batchMode) {
@@ -2399,7 +2551,7 @@ function renderExamSetup(examNumber) {
       pctReadout.textContent = `${pctSlider.value}% ${examLabel(examNumber)} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
     });
   }
-  // A split card here starts right away, using this page's timer setting.
+  // A split card here starts right away, using the timer on the Settings tab.
   main.querySelectorAll('.split-card').forEach(card => {
     card.addEventListener('click', () => {
       const preset = findSplitPreset(card.dataset.split);
@@ -2416,20 +2568,19 @@ function renderExamSetup(examNumber) {
   document.getElementById('startSetupBtn').addEventListener('click', () => {
     const { pctCurrent, batchMode, total, timed, minutesPerQuestion } = currentSettings();
     if (!Number.isFinite(total) || total < 1) {
-      totalError.textContent = 'Enter a valid number of questions (at least 1).';
-      totalError.style.display = 'block';
+      showBuildError('Enter a valid number of questions (at least 1).');
       return;
     }
     const { curPool, priorPool } = poolSizes(batchMode);
     if (total > curPool + priorPool) {
-      totalError.textContent = `Only ${curPool + priorPool} questions are available with this batch filter — you asked for ${total}. Lower the count or switch to "Mix Both Batches."`;
-      totalError.style.display = 'block';
+      showBuildError(`Only ${curPool + priorPool} questions are available with this batch filter — you asked for ${total}. Lower the count or switch to "Mix Both Batches."`);
       return;
     }
     totalError.style.display = 'none';
     const composed = buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior });
     beginExamSession(examNumber, composed.questions, { timed, secondsPerQuestion: minutesPerQuestion * 60 });
   });
+  bindBuilderSettings(() => renderExamSetup(examNumber));
 }
 
 /* Randomly composes a question set for a custom exam simulation, blending
@@ -2727,31 +2878,8 @@ function renderSplitSetup(id) {
   const xs = splitExtraExams(preset), xName = preset.extraLabel || (xs ? `${examLabel(xs.join(' & '))}` : '');
   const extraWhere = xs ? `from ${extra} different random objectives of ${xName} (${examLabel(xs.join(' & '))}) — ${Math.round(100 * extra / total)}% of the run` : `at random from the rest of ${examLabel(preset.exam)}`;
 
-  main.innerHTML = `
-    <button class="back-link" id="backHome">&larr; Home</button>
-    <h1>${escapeHtml(preset.name)}</h1>
-    <p class="subtitle">Every objective in ${examLabel(preset.exam)}: ${per} random question${per === 1 ? '' : 's'} from each of its ${objectives} objectives, in SDL order (${core} questions)${extra ? `, then ${extra} more picked ${extraWhere} as ${extraPositions}` : ''}. ${total} questions in all, drawn fresh every run.</p>
-    ${score ? `<p class="setup-hint">Last run: ${score.last.correct}/${score.last.total}${score.best.correct === score.last.correct && score.best.total === score.last.total ? '' : ` · Best: ${score.best.correct}/${score.best.total}`}</p>` : ''}
+  const buildHtml = `
     ${settings.hyOnly ? '<p class="setup-hint">⚡ High-Yield Only Mode does not apply here: this split always covers every objective, including those with no high-yield questions.</p>' : ''}
-    <div class="setup-card">
-      <div class="setup-row">
-        <div class="setup-label-row"><label>Timer</label></div>
-        <label class="radio-option" style="cursor:pointer;">
-          <input type="checkbox" id="timerToggle" checked>
-          <span>&#9201; Timed — default 1.5 min per question</span>
-        </label>
-        <div id="timerMinutesRow" style="margin-top:8px;">
-          <div class="setup-label-row">
-            <label for="minutesPerQInput">Minutes per question</label>
-            <span id="timerReadout" class="setup-readout"></span>
-          </div>
-          <input type="number" id="minutesPerQInput" class="number-input" min="0.5" max="30" step="0.5" value="1.5">
-        </div>
-        ${settings.examInstantFeedback ? '<div class="setup-hint">📝 Instant Feedback is ON — answers are revealed after each question.</div>' : ''}
-      </div>
-      <button class="btn" id="startSplitBtn" style="width:100%; margin-top:10px;">Start ${escapeHtml(preset.name)}</button>
-    </div>
-
     <div class="section-label">What Each Run Draws</div>
     <table class="breakdown-table">
       <thead><tr><th>SDL</th><th>Objectives</th><th>Questions</th></tr></thead>
@@ -2760,31 +2888,25 @@ function renderSplitSetup(id) {
         ${extra ? `<tr><td>${xs ? `${escapeHtml(xName)} review — one each from random ${examLabel(xs.join(' & '))} objectives` : `Random extras from any ${examLabel(preset.exam)} SDL`}</td><td>—</td><td>${extra}</td></tr>` : ''}
         <tr><td><b>Total</b></td><td><b>${objectives}</b></td><td><b>${total}</b></td></tr>
       </tbody>
-    </table>
+    </table>`;
+
+  main.innerHTML = `
+    <button class="back-link" id="backHome">&larr; Home</button>
+    <h1>${escapeHtml(preset.name)}</h1>
+    <p class="subtitle">Every objective in ${examLabel(preset.exam)}: ${per} random question${per === 1 ? '' : 's'} from each of its ${objectives} objectives, in SDL order (${core} questions)${extra ? `, then ${extra} more picked ${extraWhere} as ${extraPositions}` : ''}. ${total} questions in all, drawn fresh every run.</p>
+    ${score ? `<p class="setup-hint">Last run: ${score.last.correct}/${score.last.total}${score.best.correct === score.last.correct && score.best.total === score.last.total ? '' : ` · Best: ${score.best.correct}/${score.best.total}`}</p>` : ''}
+    ${examBuilderTabsHtml(buildHtml)}
+    <button class="btn setup-start" id="startSplitBtn">Start ${escapeHtml(preset.name)}</button>
   `;
 
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
-  const timerToggle = document.getElementById('timerToggle');
-  const minutesPerQInput = document.getElementById('minutesPerQInput');
-  const timerMinutesRow = document.getElementById('timerMinutesRow');
-  const timerReadout = document.getElementById('timerReadout');
-
-  function updateTimerReadout() {
-    const timed = timerToggle.checked;
-    timerMinutesRow.style.opacity = timed ? '1' : '0.45';
-    minutesPerQInput.disabled = !timed;
-    if (!timed) { timerReadout.textContent = 'No time limit'; return; }
-    const minutesPerQ = Number(minutesPerQInput.value) || 1.5;
-    timerReadout.textContent = `~${Math.round(total * minutesPerQ)} min total`;
-  }
-  timerToggle.addEventListener('change', updateTimerReadout);
-  minutesPerQInput.addEventListener('input', updateTimerReadout);
-  updateTimerReadout();
+  bindExamBuilderTabs();
+  const timer = bindExamTimer(total);
 
   document.getElementById('startSplitBtn').addEventListener('click', () => {
-    const minutesPerQuestion = Number(minutesPerQInput.value) || 1.5;
-    startSplit(preset, { timed: timerToggle.checked, secondsPerQuestion: minutesPerQuestion * 60 });
+    startSplit(preset, { timed: timer.timed(), secondsPerQuestion: timer.minutesPerQuestion() * 60 });
   });
+  bindBuilderSettings(() => renderSplitSetup(id));
 }
 
 function renderFinalExamSetup() {
@@ -2807,22 +2929,17 @@ function renderFinalExamSetup() {
     main.innerHTML = `
       <button class="back-link" id="backHome">&larr; Home</button>
       <h1>Final Exam Simulation</h1>
-      <p class="empty-state">Final Exam mode needs at least two exam blocks — only ${examLabel(examNumber)} exists so far. Come back once an earlier exam's content is available to blend in.</p>
+      ${examBuilderTabsHtml(`<p class="empty-state">Final Exam mode needs at least two exam blocks — only ${examLabel(examNumber)} exists so far. Come back once an earlier exam's content is available to blend in.</p>`)}
     `;
     document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+    bindExamBuilderTabs();
+    bindExamTimer(0);
+    bindBuilderSettings(() => renderFinalExamSetup());
     return;
   }
 
-  main.innerHTML = `
-    <button class="back-link" id="backHome">&larr; Home</button>
-    <h1>Final Exam Simulation</h1>
-    <p class="subtitle">Cumulative structure: ~50% ${examLabel(examNumber)} (the most recent week's material), ~50% pooled from every week before it (${priorRangeLabel}) — not weighted toward just the last exam.</p>
-    ${finalPresets().length ? `
-    <div class="section-label">One-Click Presets</div>
-    ${finalPresetCardsHtml('using the timer setting below')}
-    <div class="section-label">Custom Mix</div>` : ''}
+  const buildHtml = `
     <div class="setup-card">
-
       <div class="setup-row">
         <div class="setup-label-row">
           <label for="pctSlider">Content Source</label>
@@ -2847,59 +2964,42 @@ function renderFinalExamSetup() {
         <div class="setup-hint" id="poolHint"></div>
         <div class="setup-hint" id="totalError" style="color: var(--red); display: none;"></div>
       </div>
+    </div>`;
 
-      <div class="setup-row">
-        <div class="setup-label-row"><label>Timer</label></div>
-        <label class="radio-option" style="cursor:pointer;">
-          <input type="checkbox" id="timerToggle" checked>
-          <span>&#9201; Timed — default 1.5 min per question</span>
-        </label>
-        <div id="timerMinutesRow" style="margin-top:8px;">
-          <div class="setup-label-row">
-            <label for="minutesPerQInput">Minutes per question</label>
-            <span id="timerReadout" class="setup-readout"></span>
-          </div>
-          <input type="number" id="minutesPerQInput" class="number-input" min="0.5" max="30" step="0.5" value="1.5">
-        </div>
-      </div>
-
-      <button class="btn" id="startSetupBtn" style="width:100%; margin-top:10px;">Start Final Exam Simulation</button>
-    </div>
+  main.innerHTML = `
+    <button class="back-link" id="backHome">&larr; Home</button>
+    <h1>Final Exam Simulation</h1>
+    <p class="subtitle">Cumulative structure: ~50% ${examLabel(examNumber)} (the most recent week's material), ~50% pooled from every week before it (${priorRangeLabel}) — not weighted toward just the last exam.</p>
+    ${finalPresets().length ? `
+    <div class="section-label">One-Click Presets</div>
+    ${finalPresetCardsHtml('using the timer in Settings')}
+    <div class="section-label">Custom Mix</div>` : ''}
+    ${examBuilderTabsHtml(buildHtml)}
+    <button class="btn setup-start" id="startSetupBtn">Start Final Exam Simulation</button>
   `;
 
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
+  bindExamBuilderTabs();
 
   const pctSlider = document.getElementById('pctSlider');
   const pctReadout = document.getElementById('pctReadout');
   const totalInput = document.getElementById('totalInput');
   const poolHint = document.getElementById('poolHint');
   const totalError = document.getElementById('totalError');
-  const timerToggle = document.getElementById('timerToggle');
-  const minutesPerQInput = document.getElementById('minutesPerQInput');
-  const timerMinutesRow = document.getElementById('timerMinutesRow');
-  const timerReadout = document.getElementById('timerReadout');
-
-  function updateTimerReadout() {
-    const timed = timerToggle.checked;
-    timerMinutesRow.style.opacity = timed ? '1' : '0.45';
-    minutesPerQInput.disabled = !timed;
-    if (!timed) { timerReadout.textContent = 'No time limit'; return; }
-    const total = Number(totalInput.value) || 0;
-    const minutesPerQ = Number(minutesPerQInput.value) || 1.5;
-    timerReadout.textContent = `~${Math.round(total * minutesPerQ)} min total`;
-  }
-  timerToggle.addEventListener('change', updateTimerReadout);
-  minutesPerQInput.addEventListener('input', updateTimerReadout);
-  totalInput.addEventListener('input', updateTimerReadout);
-  updateTimerReadout();
+  const timer = bindExamTimer(() => totalInput.value);
 
   function currentSettings() {
     const pctCurrent = Number(pctSlider.value);
     const batchMode = document.querySelector('input[name="batchMode"]:checked').value;
     const total = Number(totalInput.value);
-    const timed = timerToggle.checked;
-    const minutesPerQuestion = Number(minutesPerQInput.value) || 1.5;
-    return { pctCurrent, batchMode, total, timed, minutesPerQuestion };
+    return { pctCurrent, batchMode, total, timed: timer.timed(), minutesPerQuestion: timer.minutesPerQuestion() };
+  }
+
+  function showBuildError(text) {
+    totalError.textContent = text;
+    totalError.style.display = 'block';
+    const tab = document.getElementById('setupTabBuild');
+    if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
   }
 
   function poolSizes(batchMode) {
@@ -2934,20 +3034,19 @@ function renderFinalExamSetup() {
   document.getElementById('startSetupBtn').addEventListener('click', () => {
     const { pctCurrent, batchMode, total, timed, minutesPerQuestion } = currentSettings();
     if (!Number.isFinite(total) || total < 1) {
-      totalError.textContent = 'Enter a valid number of questions (at least 1).';
-      totalError.style.display = 'block';
+      showBuildError('Enter a valid number of questions (at least 1).');
       return;
     }
     const { curPool, priorPool } = poolSizes(batchMode);
     if (total > curPool + priorPool) {
-      totalError.textContent = `Only ${curPool + priorPool} questions are available with this batch filter — you asked for ${total}. Lower the count or switch to "Mix Both Batches."`;
-      totalError.style.display = 'block';
+      showBuildError(`Only ${curPool + priorPool} questions are available with this batch filter — you asked for ${total}. Lower the count or switch to "Mix Both Batches."`);
       return;
     }
     totalError.style.display = 'none';
     const composed = buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior });
     beginExamSession(examNumber, composed.questions, { isFinal: true, timed, secondsPerQuestion: minutesPerQuestion * 60 });
   });
+  bindBuilderSettings(() => renderFinalExamSetup());
 }
 
 /* ── Batch picker (per-SDL) ───────────────────────────────────────────── */
