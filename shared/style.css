@@ -262,6 +262,40 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
 .radio-option:hover { border-color: var(--navy); background: var(--surface-hover); }
 .radio-option input { accent-color: var(--navy); cursor: pointer; }
 
+/* Exam builder: Build | Settings on every simulation setup page (shared/app.js). */
+.setup-tabs { display: flex; flex-direction: column; gap: 14px; }
+.setup-tablist { display: flex; gap: 8px; }
+.setup-tab {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--grey-border);
+  background: var(--card-bg);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.setup-tab:hover { border-color: var(--navy); }
+.setup-tab[aria-selected="true"] {
+  background: var(--navy-fill);
+  border-color: var(--navy-fill);
+  color: #fff;
+}
+.setup-tab:focus { outline: none; }
+.setup-tab:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+.setup-panel[hidden] { display: none; }
+.setup-panel .section-label { margin-top: 0; }
+.setup-start { width: 100%; margin-top: 14px; }
+@media (max-width: 480px) {
+  .setup-tablist { gap: 6px; }
+  .setup-tab { padding: 10px 8px; }
+  .setup-readout { white-space: normal; }
+}
+
 /* ── SDL list ── */
 .sdl-list { display: flex; flex-direction: column; gap: 10px; }
 
