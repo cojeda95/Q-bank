@@ -1224,7 +1224,8 @@ def test_features(C, A):
 
 def test_offline(C):
     S, t0 = "offline", time.time()
-    p = C.page()
+    # Fresh context: earlier atlas/block tabs in this Chrome already filled qhub-v3 with atlas files.
+    p = C.page(isolated=True)
     try:
         p.goto(C.server.base + "index.html")
         r = p.wait("""(async()=>{ if(!navigator.serviceWorker) return 'no serviceWorker API';
@@ -1331,6 +1332,11 @@ def test_skip(C):
         p.cmd("Emulation.setTouchEmulationEnabled", enabled=True, maxTouchPoints=5)
         p.goto(C.server.base + "gastro/index.html")
         p.wait("typeof DATA!=='undefined' && DATA && document.querySelectorAll('.exam-card').length", timeout=20)
+        # Home paints from the manifest (no stems). Wait for background parts so classic-batch stems are present.
+        p.wait("""(()=>{ for (const e of DATA.exams) for (const s of e.sdls) {
+            const n = s.questions.filter(q => q.batch !== 3 && q.batch !== 4 && q.batch !== 5 && q.stem && q.correct).length;
+            if (n >= 3) return true;
+          } return false; })()""", timeout=20)
         pick = p.js("""(()=>{ for (const e of DATA.exams) for (const s of e.sdls) {
             const n = s.questions.filter(q => q.batch !== 3 && q.batch !== 4 && q.batch !== 5 && q.stem && q.correct).length;
             if (n >= 3) return {sdl: s.sdlNumber, exam: e.examNumber};
