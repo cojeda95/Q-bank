@@ -24,7 +24,40 @@
     <p>Client-side only — all progress is stored in this browser via localStorage.</p>
   </footer>
 </div>
-<script>window.QUIZ_CONFIG = { title: 'Geriatrics Block Question Bank', storageKey: 'geriatrics' };</script>
+<script>window.QUIZ_CONFIG = {
+  title: 'Geriatrics Block Question Bank',
+  storageKey: 'geriatrics',
+  // Exam 1 = SDLs 1–24. Questions are in data.js (same schema as gastro/data.js); an empty
+  // questions array renders as "coming soon".
+  // Batch 3 (shared/app.js BATCH3) is the opt-in trial set, as in Gastro: 6 per SDL,
+  // shorter clinical stems + shorter answer choices. Extras only, never replacing
+  // Batches 1–2, and kept out of exam totals, Full Exam Simulation and the builder.
+  batch3: {
+    name: 'Trial',
+    listLabel: 'trial questions',
+    icon: '🧪',
+    title: '🧪 Trial: shorter clinical stems + shorter answer choices',
+    meta: 'experimental format, kept separate from Batches 1–2',
+    hint: 'Trial set: the same exam content written with shorter clinical stems and shorter answer choices. It is kept out of the exam totals, Full Exam Simulation and the Custom Exam Builder.',
+    banner: '🧪 Trial: shorter clinical stems + shorter answer choices',
+    afterBatch2: true
+  },
+  // Batch 5 (shared/app.js TRIAL_BATCHES, group "textbook") holds questions tagged
+  // enrichmentSource. Own picker row; left out of exam totals, simulations, and the builder.
+  batch5: {
+    name: 'Textbook',
+    listLabel: 'textbook',
+    icon: '📚',
+    title: '📚 Textbook',
+    meta: 'textbook-specific, kept separate from Batches 1–2',
+    hint: 'Textbook questions are details that are not in this SDL’s lecture notes. They are their own set and are left out of exam totals, Full Exam Simulation, and the Custom Exam Builder.',
+    banner: '📚 Textbook — detail not in this SDL’s lecture notes',
+    afterBatch2: false,
+    rowClass: 'textbook-row',
+    bannerClass: 'textbook-banner',
+    group: 'textbook'
+  }
+};</script>
 <script src="q/manifest.js"></script>
 <script src="../shared/app.js"></script>
 <script src="../sync.js"></script>
