@@ -2335,7 +2335,7 @@ function bindExamTimer(totalOf) {
   const minutesPerQInput = document.getElementById('minutesPerQInput');
   const timerMinutesRow = document.getElementById('timerMinutesRow');
   const timerReadout = document.getElementById('timerReadout');
-  if (!timerToggle) return { timed: () => true, minutesPerQuestion: () => 1.5 };
+  if (!timerToggle) return { timed: () => true, minutesPerQuestion: () => 1.5, update() {} };
   function update() {
     const timed = timerToggle.checked;
     timerMinutesRow.style.opacity = timed ? '1' : '0.45';
@@ -2353,6 +2353,7 @@ function bindExamTimer(totalOf) {
   return {
     timed: () => timerToggle.checked,
     minutesPerQuestion: () => Number(minutesPerQInput.value) || 1.5,
+    update,
   };
 }
 function bindExamSimToggles(onChange) {
@@ -2445,6 +2446,320 @@ function bindBuilderSettings(rerender) {
   applyBuilderRestore();
 }
 
+/* ── SDL picker for exam simulations ───────────────────────────────────
+   Same idea as Live Session's host picker (live.js renderSdlPicker): a
+   checkbox per SDL, Select all / Select none, a count on each row, and a
+   live total. Live Session also picks a batch inside each SDL; these
+   builders already have Batch Mix (and the split draws by objective), so
+   this picker selects SDLs and the other controls narrow that pool.
+   Nothing checked disables Start, as on Live Session. The default is every
+   SDL that currently has questions, so an untouched builder draws the same
+   pool as before. Choices stay in memory for this page (not localStorage)
+   so a High-yield re-render keeps them and saved settings keys stay put. */
+const sdlPickExcluded = new Map(); // scope -> Set of "exam-sdl" keys the user turned off
+function sdlPickKey(examNumber, sdlNumber) {
+  return examNumber + '-' + sdlNumber;
+}
+// Titles are stored either as "SDL 1 — …" or as a bare topic. Don't prefix twice.
+function sdlPickName(s) {
+  const title = String(s.title || '').trim();
+  if (new RegExp('^SDL\\s*' + s.sdlNumber + '\\b', 'i').test(title)) return title;
+  return 'SDL ' + s.sdlNumber + ' — ' + title;
+}
+function sdlPickExclusions(scope) {
+  let set = sdlPickExcluded.get(scope);
+  if (!set) { set = new Set(); sdlPickExcluded.set(scope, set); }
+  return set;
+}
+function sdlPickKeys(scope, groups) {
+  const ex = sdlPickExcluded.get(scope);
+  const keys = new Set();
+  groups.forEach(g => g.sdls.forEach(s => {
+    const k = sdlPickKey(s.examNumber, s.sdlNumber);
+    if (s.count > 0 && !(ex && ex.has(k))) keys.add(k);
+  }));
+  return keys;
+}
+function sdlPickQuestionTotal(groups, keys) {
+  let n = 0;
+  groups.forEach(g => g.sdls.forEach(s => {
+    if (keys.has(sdlPickKey(s.examNumber, s.sdlNumber))) n += s.count;
+  }));
+  return n;
+}
+function sdlPickAllOn(scope, groups) {
+  const keys = sdlPickKeys(scope, groups);
+  let available = 0;
+  groups.forEach(g => g.sdls.forEach(s => { if (s.count > 0) available++; }));
+  return available > 0 && keys.size === available;
+}
+// Questions the simulation can draw: trials already removed, high-yield applied,
+// then the batch mix and the checked SDLs. sdlKeys null means every SDL.
+function filterSimPool(qs, batchMode, sdlKeys, examOf) {
+  return qs.filter(q => {
+    if (batchMode && batchMode !== 'mix' && q.batch !== Number(batchMode)) return false;
+    if (sdlKeys && !sdlKeys.has(sdlPickKey(examOf(q), q.sdlNumber))) return false;
+    return true;
+  });
+}
+function simCountMap(examNumbers, batchMode) {
+  const map = new Map();
+  examNumbers.forEach(en => {
+    allQuestionsForExam(en).forEach(q => {
+      if (batchMode && batchMode !== 'mix' && q.batch !== Number(batchMode)) return;
+      const k = sdlPickKey(en, q.sdlNumber);
+      map.set(k, (map.get(k) || 0) + 1);
+    });
+  });
+  return map;
+}
+// One group per exam. SDLs that are only trial/textbook are omitted — they never
+// enter a simulation. An SDL filtered to 0 by high-yield or batch stays, disabled.
+function simSdlGroups(examNumbers, batchMode) {
+  const map = simCountMap(examNumbers, batchMode);
+  const groups = [];
+  examNumbers.forEach(en => {
+    const exam = DATA.exams.find(e => e.examNumber === en);
+    if (!exam) return;
+    const sdls = [];
+    exam.sdls.forEach(sdl => {
+      if (!(sdl.questions || []).some(q => !isTrialQ(q))) return;
+      sdls.push({
+        examNumber: en,
+        sdlNumber: sdl.sdlNumber,
+        title: sdl.title,
+        count: map.get(sdlPickKey(en, sdl.sdlNumber)) || 0,
+      });
+    });
+    if (sdls.length) groups.push({ examNumber: en, sdls });
+  });
+  return groups;
+}
+function simPoolSizes(examNumber, hasPrior, batchMode, sdlKeys) {
+  const curPool = filterSimPool(allQuestionsForExam(examNumber), batchMode, sdlKeys, () => examNumber).length;
+  const priorPool = hasPrior ? filterSimPool(allQuestionsForExamsBefore(examNumber), batchMode, sdlKeys, q => q._srcExam).length : 0;
+  return { curPool, priorPool };
+}
+function sdlPickerHtml(scope, groups) {
+  if (!groups.length) {
+    return `<div class="setup-row sdl-pick" id="sdlPick">
+      <div class="setup-label-row"><span class="sdl-pick-heading" id="sdlPickLabel">SDLs to include</span></div>
+      <p class="setup-hint" id="sdlPickHint">No SDLs with questions are available for this exam.</p>
+    </div>`;
+  }
+  const selected = sdlPickKeys(scope, groups);
+  const total = sdlPickQuestionTotal(groups, selected);
+  const multi = groups.length > 1;
+  const status = selected.size
+    ? `${total} question${total === 1 ? '' : 's'} selected`
+    : 'Select at least one SDL';
+  return `
+    <div class="setup-row sdl-pick" id="sdlPick">
+      <div class="setup-label-row">
+        <span class="sdl-pick-heading" id="sdlPickLabel">SDLs to include</span>
+        <span class="setup-readout" id="sdlPickTotal" aria-live="polite">${status}</span>
+      </div>
+      <div class="sdl-pick-actions">
+        <button type="button" class="btn secondary sdl-pick-all">Select all</button>
+        <button type="button" class="btn secondary sdl-pick-none">Select none</button>
+        ${multi ? groups.map(g => `<button type="button" class="btn secondary" data-pick-exam="${g.examNumber}">Select ${escapeHtml(examLabel(g.examNumber))}</button>`).join('') : ''}
+      </div>
+      <div class="sdl-pick-list" id="sdlPickList" role="group" aria-labelledby="sdlPickLabel">
+        ${groups.map(g => `
+          <div class="sdl-pick-group">
+            ${multi ? `<div class="sdl-pick-exam">${escapeHtml(examLabel(g.examNumber))}</div>` : ''}
+            ${g.sdls.map(s => {
+              const key = sdlPickKey(s.examNumber, s.sdlNumber);
+              const id = 'sdlPick-' + key;
+              const empty = s.count === 0;
+              const on = !empty && selected.has(key);
+              return `<label class="sdl-pick-row${empty ? ' is-empty' : ''}">
+                <input type="checkbox" id="${id}" data-sdl-key="${key}" ${on ? 'checked' : ''} ${empty ? 'disabled' : ''}>
+                <span class="sdl-pick-name">${escapeHtml(sdlPickName(s))}</span>
+                <span class="sdl-pick-count">(${s.count} question${s.count === 1 ? '' : 's'})</span>
+              </label>`;
+            }).join('')}
+          </div>`).join('')}
+      </div>
+      <p class="setup-hint" id="sdlPickHint">${selected.size ? 'The exam draws only from the SDLs checked here. Total Questions, below, is how many of those to use.' : 'Select at least one SDL to start.'}</p>
+    </div>`;
+}
+function bindSdlPicker(scope, groups, opts) {
+  opts = opts || {};
+  const root = document.getElementById('sdlPick');
+  function emit() {
+    const keys = sdlPickKeys(scope, groups);
+    const total = sdlPickQuestionTotal(groups, keys);
+    if (root) root.querySelectorAll('input[data-sdl-key]').forEach(cb => {
+      const key = cb.dataset.sdlKey;
+      let sdl = null;
+      groups.forEach(g => g.sdls.forEach(s => { if (sdlPickKey(s.examNumber, s.sdlNumber) === key) sdl = s; }));
+      if (!sdl) return;
+      const empty = sdl.count === 0;
+      cb.disabled = empty;
+      cb.checked = !empty && keys.has(key);
+      const row = cb.closest('.sdl-pick-row');
+      if (row) row.classList.toggle('is-empty', empty);
+      const countEl = row && row.querySelector('.sdl-pick-count');
+      if (countEl) countEl.textContent = `(${sdl.count} question${sdl.count === 1 ? '' : 's'})`;
+    });
+    const status = document.getElementById('sdlPickTotal');
+    const fallback = keys.size
+      ? `${total} question${total === 1 ? '' : 's'} selected`
+      : 'Select at least one SDL';
+    if (status) status.textContent = opts.statusText ? opts.statusText(keys, total) : fallback;
+    const hint = document.getElementById('sdlPickHint');
+    if (hint) hint.textContent = keys.size
+      ? (opts.hint || 'The exam draws only from the SDLs checked here. Total Questions, below, is how many of those to use.')
+      : 'Select at least one SDL to start.';
+    if (opts.onChange) opts.onChange(keys, total);
+  }
+  function refresh() {
+    if (opts.recount) {
+      const map = opts.recount();
+      groups.forEach(g => g.sdls.forEach(s => {
+        s.count = map.get(sdlPickKey(s.examNumber, s.sdlNumber)) || 0;
+      }));
+    }
+    emit();
+  }
+  if (root) {
+    root.querySelectorAll('input[data-sdl-key]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const ex = sdlPickExclusions(scope);
+        if (cb.checked) ex.delete(cb.dataset.sdlKey); else ex.add(cb.dataset.sdlKey);
+        emit();
+      });
+    });
+    const allBtn = root.querySelector('.sdl-pick-all');
+    if (allBtn) allBtn.addEventListener('click', () => {
+      const ex = sdlPickExclusions(scope);
+      groups.forEach(g => g.sdls.forEach(s => ex.delete(sdlPickKey(s.examNumber, s.sdlNumber))));
+      emit();
+    });
+    const noneBtn = root.querySelector('.sdl-pick-none');
+    if (noneBtn) noneBtn.addEventListener('click', () => {
+      const ex = sdlPickExclusions(scope);
+      groups.forEach(g => g.sdls.forEach(s => ex.add(sdlPickKey(s.examNumber, s.sdlNumber))));
+      emit();
+    });
+    root.querySelectorAll('[data-pick-exam]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const en = Number(btn.dataset.pickExam);
+        const ex = sdlPickExclusions(scope);
+        groups.forEach(g => {
+          if (g.examNumber !== en) return;
+          g.sdls.forEach(s => ex.delete(sdlPickKey(s.examNumber, s.sdlNumber)));
+        });
+        emit();
+      });
+    });
+  }
+  emit();
+  return { refresh };
+}
+// Shared by Build a Practice Exam and Final Exam Simulation: the SDL picker,
+// the batch mix, the pool hint, and Start. One-click presets keep their own buttons.
+function bindSimExamControls({ scope, groups, examNumber, hasPrior, priorRangeLabel, isFinal }) {
+  const pctSlider = document.getElementById('pctSlider');
+  const pctReadout = document.getElementById('pctReadout');
+  const totalInput = document.getElementById('totalInput');
+  const poolHint = document.getElementById('poolHint');
+  const totalError = document.getElementById('totalError');
+  const startBtn = document.getElementById('startSetupBtn');
+  const timer = bindExamTimer(() => totalInput.value);
+  let totalTouched = false;
+
+  function currentSettings() {
+    const pctCurrent = hasPrior && pctSlider ? Number(pctSlider.value) : 100;
+    const batchMode = document.querySelector('input[name="batchMode"]:checked').value;
+    const total = Number(totalInput.value);
+    return { pctCurrent, batchMode, total, timed: timer.timed(), minutesPerQuestion: timer.minutesPerQuestion() };
+  }
+  function poolOf(batchMode) {
+    return simPoolSizes(examNumber, hasPrior, batchMode, sdlPickKeys(scope, groups));
+  }
+  function showBuildError(text) {
+    totalError.textContent = text;
+    totalError.style.display = 'block';
+    const tab = document.getElementById('setupTabBuild');
+    if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
+  }
+  function syncPool(fromPicker) {
+    const { batchMode, total } = currentSettings();
+    const { curPool, priorPool } = poolOf(batchMode);
+    const max = curPool + priorPool;
+    const none = sdlPickKeys(scope, groups).size === 0;
+    const from = `${curPool} from ${examLabel(examNumber)}` + (hasPrior ? `, ${priorPool} from ${priorRangeLabel}` : '');
+    if (poolHint) poolHint.textContent = `Available with this batch filter and the SDLs selected above: ${from} (combined max ${max}).`;
+    if (totalInput) totalInput.max = String(Math.max(1, max));
+    // Until Total Questions is edited by hand, a subset uses every question
+    // those SDLs have. A hand-typed total is only pulled down when the pool
+    // shrinks past it, so Start and the timer stay on a real count.
+    const allOn = sdlPickAllOn(scope, groups);
+    let shown = total;
+    if (totalInput && !none && max > 0) {
+      if (fromPicker && !totalTouched && !allOn) shown = max;
+      else if (Number.isFinite(shown) && shown > max) shown = max;
+      if (Number.isFinite(shown) && shown >= 1 && totalInput.value !== String(shown)) totalInput.value = String(shown);
+    }
+    let message = '';
+    if (none) message = 'Select at least one SDL.';
+    else if (!Number.isFinite(shown) || shown < 1) message = 'Enter a valid number of questions (at least 1).';
+    else if (shown > max) message = `Only ${max} questions are available with this batch filter and the selected SDLs — you asked for ${shown}. Lower the count, select more SDLs, or switch to "Mix Both Batches."`;
+    if (totalError) {
+      totalError.textContent = message;
+      totalError.style.display = message ? 'block' : 'none';
+    }
+    if (startBtn) {
+      startBtn.disabled = !!message;
+      if (none) startBtn.title = 'Select at least one SDL';
+      else if (message) startBtn.title = 'Lower Total Questions to fit the selected SDLs';
+      else startBtn.removeAttribute('title');
+    }
+    timer.update();
+  }
+
+  if (pctSlider && pctReadout) {
+    pctSlider.addEventListener('input', () => {
+      pctReadout.textContent = `${pctSlider.value}% ${examLabel(examNumber)} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
+    });
+  }
+  const picker = bindSdlPicker(scope, groups, {
+    onChange: () => syncPool(true),
+    recount() {
+      const mode = (document.querySelector('input[name="batchMode"]:checked') || {}).value || 'mix';
+      return simCountMap(groups.map(g => g.examNumber), mode);
+    },
+  });
+  document.querySelectorAll('input[name="batchMode"]').forEach(radio => {
+    radio.addEventListener('change', () => picker.refresh());
+  });
+  if (totalInput) totalInput.addEventListener('input', (e) => {
+    if (e.isTrusted) totalTouched = true;
+    syncPool(false);
+  });
+  if (startBtn) startBtn.addEventListener('click', () => {
+    const { pctCurrent, batchMode, total, timed, minutesPerQuestion } = currentSettings();
+    const keys = sdlPickKeys(scope, groups);
+    if (!keys.size) { showBuildError('Select at least one SDL.'); return; }
+    if (!Number.isFinite(total) || total < 1) {
+      showBuildError('Enter a valid number of questions (at least 1).');
+      return;
+    }
+    const { curPool, priorPool } = poolOf(batchMode);
+    if (total > curPool + priorPool) {
+      showBuildError(`Only ${curPool + priorPool} questions are available with this batch filter and the selected SDLs — you asked for ${total}. Lower the count, select more SDLs, or switch to "Mix Both Batches."`);
+      return;
+    }
+    if (totalError) totalError.style.display = 'none';
+    const composed = buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior, sdlKeys: keys });
+    if (!composed.questions.length) { showBuildError('No questions match these filters.'); return; }
+    beginExamSession(examNumber, composed.questions, { isFinal: !!isFinal, timed, secondsPerQuestion: minutesPerQuestion * 60 });
+  });
+  return { currentSettings, syncPool };
+}
+
 /* ── Custom Exam Builder (weighted current/prior content + batch mix) ── */
 function renderExamSetup(examNumber) {
   const exam = DATA.exams.find(e => e.examNumber === examNumber);
@@ -2460,8 +2775,12 @@ function renderExamSetup(examNumber) {
   // Sensible defaults, recalculated client-side as controls change.
   const defaultPct = 70;
   const defaultBatch = 'mix';
+  const initialBatch = (builderRestore && builderRestore.batch) || defaultBatch;
   const defaultTotal = currentAllCount;
   const splitCards = splitCardsHtml(examNumber, 'using the timer in Settings');
+  const examNumbers = DATA.exams.map(e => e.examNumber).filter(n => n <= examNumber).sort((a, b) => a - b);
+  const sdlScope = 'examsetup-' + examNumber;
+  const sdlGroups = simSdlGroups(examNumbers, initialBatch);
 
   const buildHtml = `
     <div class="setup-card">
@@ -2483,11 +2802,13 @@ function renderExamSetup(examNumber) {
       <div class="setup-row">
         <div class="setup-label-row"><label>Batch Mix</label></div>
         <div class="radio-group" id="batchGroup">
-          <label class="radio-option"><input type="radio" name="batchMode" value="mix" ${defaultBatch === 'mix' ? 'checked' : ''}> Mix Both Batches</label>
-          <label class="radio-option"><input type="radio" name="batchMode" value="1"> Batch 1 Only — Quick Recall</label>
-          <label class="radio-option"><input type="radio" name="batchMode" value="2"> Batch 2 Only — Deep Vignettes</label>
+          <label class="radio-option"><input type="radio" name="batchMode" value="mix" ${initialBatch === 'mix' ? 'checked' : ''}> Mix Both Batches</label>
+          <label class="radio-option"><input type="radio" name="batchMode" value="1" ${initialBatch === '1' ? 'checked' : ''}> Batch 1 Only — Quick Recall</label>
+          <label class="radio-option"><input type="radio" name="batchMode" value="2" ${initialBatch === '2' ? 'checked' : ''}> Batch 2 Only — Deep Vignettes</label>
         </div>
       </div>
+
+      ${sdlPickerHtml(sdlScope, sdlGroups)}
 
       <div class="setup-row">
         <div class="setup-label-row"><label for="totalInput">Total Questions</label></div>
@@ -2512,88 +2833,33 @@ function renderExamSetup(examNumber) {
   document.getElementById('backExam').addEventListener('click', () => setRoute(`exam-sdls/${examNumber}`));
   bindExamBuilderTabs();
 
-  const pctSlider = document.getElementById('pctSlider');
-  const pctReadout = document.getElementById('pctReadout');
-  const totalInput = document.getElementById('totalInput');
-  const poolHint = document.getElementById('poolHint');
-  const totalError = document.getElementById('totalError');
-  const timer = bindExamTimer(() => totalInput.value);
-
-  function currentSettings() {
-    const pctCurrent = hasPrior && pctSlider ? Number(pctSlider.value) : 100;
-    const batchMode = document.querySelector('input[name="batchMode"]:checked').value;
-    const total = Number(totalInput.value);
-    return { pctCurrent, batchMode, total, timed: timer.timed(), minutesPerQuestion: timer.minutesPerQuestion() };
-  }
-
-  function showBuildError(text) {
-    totalError.textContent = text;
-    totalError.style.display = 'block';
-    const tab = document.getElementById('setupTabBuild');
-    if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
-  }
-
-  function poolSizes(batchMode) {
-    const filterBatch = (qs) => batchMode === 'mix' ? qs : qs.filter(q => q.batch === Number(batchMode));
-    const curPool = filterBatch(allQuestionsForExam(examNumber)).length;
-    const priorPool = hasPrior ? filterBatch(allQuestionsForExamsBefore(examNumber)).length : 0;
-    return { curPool, priorPool };
-  }
-
-  function updatePoolHint() {
-    const { batchMode } = currentSettings();
-    const { curPool, priorPool } = poolSizes(batchMode);
-    poolHint.textContent = `Available with this batch filter: ${curPool} from ${examLabel(examNumber)}${hasPrior ? `, ${priorPool} from ${priorRangeLabel}` : ''} (combined max ${curPool + priorPool}).`;
-  }
-
-  if (pctSlider) {
-    pctSlider.addEventListener('input', () => {
-      pctReadout.textContent = `${pctSlider.value}% ${examLabel(examNumber)} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
-    });
-  }
+  const controls = bindSimExamControls({
+    scope: sdlScope, groups: sdlGroups, examNumber, hasPrior, priorRangeLabel, isFinal: false,
+  });
   // A split card here starts right away, using the timer on the Settings tab.
+  // It is the one-click preset, so it keeps the full split rather than the SDL subset.
   main.querySelectorAll('.split-card').forEach(card => {
     card.addEventListener('click', () => {
       const preset = findSplitPreset(card.dataset.split);
       if (!preset) return;
-      const { timed, minutesPerQuestion } = currentSettings();
+      const { timed, minutesPerQuestion } = controls.currentSettings();
       startSplit(preset, { timed, secondsPerQuestion: minutesPerQuestion * 60 });
     });
   });
-  document.querySelectorAll('input[name="batchMode"]').forEach(radio => {
-    radio.addEventListener('change', updatePoolHint);
-  });
-  updatePoolHint();
-
-  document.getElementById('startSetupBtn').addEventListener('click', () => {
-    const { pctCurrent, batchMode, total, timed, minutesPerQuestion } = currentSettings();
-    if (!Number.isFinite(total) || total < 1) {
-      showBuildError('Enter a valid number of questions (at least 1).');
-      return;
-    }
-    const { curPool, priorPool } = poolSizes(batchMode);
-    if (total > curPool + priorPool) {
-      showBuildError(`Only ${curPool + priorPool} questions are available with this batch filter — you asked for ${total}. Lower the count or switch to "Mix Both Batches."`);
-      return;
-    }
-    totalError.style.display = 'none';
-    const composed = buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior });
-    beginExamSession(examNumber, composed.questions, { timed, secondsPerQuestion: minutesPerQuestion * 60 });
-  });
   bindBuilderSettings(() => renderExamSetup(examNumber));
+  controls.syncPool();
 }
 
 /* Randomly composes a question set for a custom exam simulation, blending
    current-exam content with prior-weeks content per the requested percentage,
-   optionally restricted to a single batch. The "prior" pool spans every exam
+   optionally restricted to a single batch and to the checked SDLs (sdlKeys).
+   The "prior" pool spans every exam
    block before this one (Exam 1..examNumber-1), not just the exam immediately
    before it — real exam structure carries content forward from any earlier
    week, not specifically the last exam. */
-function buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior }) {
-  const filterBatch = (qs) => batchMode === 'mix' ? qs : qs.filter(q => q.batch === Number(batchMode));
-
-  const currentPool = filterBatch(allQuestionsForExam(examNumber));
-  const priorPool = hasPrior ? filterBatch(allQuestionsForExamsBefore(examNumber)) : [];
+function buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior, sdlKeys }) {
+  const currentPool = filterSimPool(allQuestionsForExam(examNumber), batchMode, sdlKeys, () => examNumber);
+  const priorPool = hasPrior ? filterSimPool(allQuestionsForExamsBefore(examNumber), batchMode, sdlKeys, q => q._srcExam) : [];
 
   let currentTarget, priorTarget;
   if (!hasPrior || priorPool.length === 0) {
@@ -2792,8 +3058,11 @@ function examObjectiveGroups(examNumber) {
   return groups;
 }
 // How many objectives the split covers, and how many questions a run holds.
-function splitCounts(preset) {
-  const groups = splitObjectiveGroups(preset);
+function splitGroupAllowed(preset, g, sdlKeys) {
+  return !sdlKeys || sdlKeys.has(sdlPickKey(preset.exam, g.sdl.sdlNumber));
+}
+function splitCounts(preset, sdlKeys) {
+  const groups = splitObjectiveGroups(preset).filter(g => splitGroupAllowed(preset, g, sdlKeys));
   const per = splitPerObjective(preset);
   const core = groups.reduce((s, g) => s + Math.min(per, g.questions.length), 0);
   const xs = splitExtraExams(preset);
@@ -2802,10 +3071,11 @@ function splitCounts(preset) {
   const extra = Math.min(splitExtra(preset), pool - core);
   return { objectives: groups.length, core, extra, total: core + extra };
 }
-function buildSplitQuestions(preset) {
+function buildSplitQuestions(preset, sdlKeys) {
   const per = splitPerObjective(preset);
   const core = [], rest = [];
   splitObjectiveGroups(preset).forEach(g => {
+    if (!splitGroupAllowed(preset, g, sdlKeys)) return;
     const picked = shuffle(g.questions);
     core.push(...picked.slice(0, per));
     rest.push(...picked.slice(per));
@@ -2819,9 +3089,9 @@ function buildSplitQuestions(preset) {
   }
   return core.concat(shuffle(rest).slice(0, splitExtra(preset)));
 }
-function startSplit(preset, { timed = true, secondsPerQuestion = 90 } = {}) {
+function startSplit(preset, { timed = true, secondsPerQuestion = 90, sdlKeys = null } = {}) {
   if (loadExamSessionSnapshot() && !confirm('Start a new exam? The exam you have in progress will be discarded.')) return;
-  const questions = buildSplitQuestions(preset);
+  const questions = buildSplitQuestions(preset, sdlKeys);
   if (questions.length === 0) {
     alert(`No questions are available for ${preset.name}.`);
     return;
@@ -2856,44 +3126,78 @@ function bindSplitCards() {
   });
 }
 
-function renderSplitSetup(id) {
-  const preset = findSplitPreset(id);
-  if (!preset) { renderHome(); return; }
+// SDLs the split can draw its core from, with how many questions each one adds to a run.
+function splitSdlGroups(preset) {
+  const exam = DATA.exams.find(e => e.examNumber === preset.exam);
+  if (!exam) return [];
   const per = splitPerObjective(preset);
-  const { objectives, core, extra, total } = splitCounts(preset);
-  const settings = loadSettings();
-  const score = getScore(`split-${preset.id}`);
-
-  const bySdl = new Map(); // sdlNumber -> { title, objectives, questions }
+  const counts = new Map();
   splitObjectiveGroups(preset).forEach(g => {
+    const row = counts.get(g.sdl.sdlNumber) || {
+      examNumber: preset.exam, sdlNumber: g.sdl.sdlNumber, title: g.sdl.title, count: 0,
+    };
+    row.count += Math.min(per, g.questions.length);
+    counts.set(g.sdl.sdlNumber, row);
+  });
+  const sdls = [];
+  exam.sdls.forEach(sdl => { const row = counts.get(sdl.sdlNumber); if (row) sdls.push(row); });
+  return sdls.length ? [{ examNumber: preset.exam, sdls }] : [];
+}
+function splitLeadText(preset, counts, allOn) {
+  const per = splitPerObjective(preset);
+  const { objectives, core, extra, total } = counts;
+  if (!objectives) return 'Select at least one SDL. A run is drawn only from the SDLs you check.';
+  const xs = splitExtraExams(preset);
+  const xName = preset.extraLabel || (xs ? examLabel(xs.join(' & ')) : '');
+  const extraWhere = xs
+    ? `from ${extra} different random objectives of ${xName} (${examLabel(xs.join(' & '))}) — ${total ? Math.round(100 * extra / total) : 0}% of the run`
+    : (allOn ? `at random from the rest of ${examLabel(preset.exam)}` : 'at random from the rest of the selected SDLs');
+  const extraPositions = extra === 1 ? `question ${total}` : `questions ${core + 1}–${total}`;
+  const head = allOn ? `Every objective in ${examLabel(preset.exam)}` : `Selected SDLs of ${examLabel(preset.exam)}`;
+  return `${head}: ${per} random question${per === 1 ? '' : 's'} from each of its ${objectives} objectives, in SDL order (${core} questions)${extra ? `, then ${extra} more picked ${extraWhere} as ${extraPositions}` : ''}. ${total} questions in all, drawn fresh every run.`;
+}
+function splitTableRows(preset, keys, counts, allOn) {
+  const per = splitPerObjective(preset);
+  const bySdl = new Map();
+  splitObjectiveGroups(preset).forEach(g => {
+    if (keys && !keys.has(sdlPickKey(preset.exam, g.sdl.sdlNumber))) return;
     const row = bySdl.get(g.sdl.sdlNumber) || { title: g.sdl.title, objectives: 0, questions: 0 };
     row.objectives++;
     row.questions += Math.min(per, g.questions.length);
     bySdl.set(g.sdl.sdlNumber, row);
   });
+  const xs = splitExtraExams(preset);
+  const xName = preset.extraLabel || (xs ? examLabel(xs.join(' & ')) : '');
   const rows = Array.from(bySdl.values())
     .map(r => `<tr><td>${escapeHtml(r.title)}</td><td>${r.objectives}</td><td>${r.questions}</td></tr>`)
     .join('');
-  const extraPositions = extra === 1 ? `question ${total}` : `questions ${core + 1}–${total}`;
-  const xs = splitExtraExams(preset), xName = preset.extraLabel || (xs ? `${examLabel(xs.join(' & '))}` : '');
-  const extraWhere = xs ? `from ${extra} different random objectives of ${xName} (${examLabel(xs.join(' & '))}) — ${Math.round(100 * extra / total)}% of the run` : `at random from the rest of ${examLabel(preset.exam)}`;
+  const extraLabel = xs
+    ? `${escapeHtml(xName)} review — one each from random ${examLabel(xs.join(' & '))} objectives`
+    : (allOn ? `Random extras from any ${examLabel(preset.exam)} SDL` : 'Random extras from the selected SDLs');
+  const extra = counts.extra ? `<tr><td>${extraLabel}</td><td>—</td><td>${counts.extra}</td></tr>` : '';
+  return `${rows}${extra}<tr><td><b>Total</b></td><td><b>${counts.objectives}</b></td><td><b>${counts.total}</b></td></tr>`;
+}
+function renderSplitSetup(id) {
+  const preset = findSplitPreset(id);
+  if (!preset) { renderHome(); return; }
+  const settings = loadSettings();
+  const score = getScore(`split-${preset.id}`);
+  const sdlScope = 'split-' + preset.id;
+  const sdlGroups = splitSdlGroups(preset);
 
   const buildHtml = `
     ${settings.hyOnly ? '<p class="setup-hint">⚡ High-Yield Only Mode does not apply here: this split always covers every objective, including those with no high-yield questions.</p>' : ''}
+    ${sdlPickerHtml(sdlScope, sdlGroups)}
     <div class="section-label">What Each Run Draws</div>
     <table class="breakdown-table">
       <thead><tr><th>SDL</th><th>Objectives</th><th>Questions</th></tr></thead>
-      <tbody>
-        ${rows}
-        ${extra ? `<tr><td>${xs ? `${escapeHtml(xName)} review — one each from random ${examLabel(xs.join(' & '))} objectives` : `Random extras from any ${examLabel(preset.exam)} SDL`}</td><td>—</td><td>${extra}</td></tr>` : ''}
-        <tr><td><b>Total</b></td><td><b>${objectives}</b></td><td><b>${total}</b></td></tr>
-      </tbody>
+      <tbody id="splitTableBody"></tbody>
     </table>`;
 
   main.innerHTML = `
     <button class="back-link" id="backHome">&larr; Home</button>
     <h1>${escapeHtml(preset.name)}</h1>
-    <p class="subtitle">Every objective in ${examLabel(preset.exam)}: ${per} random question${per === 1 ? '' : 's'} from each of its ${objectives} objectives, in SDL order (${core} questions)${extra ? `, then ${extra} more picked ${extraWhere} as ${extraPositions}` : ''}. ${total} questions in all, drawn fresh every run.</p>
+    <p class="subtitle" id="splitLead"></p>
     ${score ? `<p class="setup-hint">Last run: ${score.last.correct}/${score.last.total}${score.best.correct === score.last.correct && score.best.total === score.last.total ? '' : ` · Best: ${score.best.correct}/${score.best.total}`}</p>` : ''}
     ${examBuilderTabsHtml(buildHtml)}
     <button class="btn setup-start" id="startSplitBtn">Start ${escapeHtml(preset.name)}</button>
@@ -2901,10 +3205,39 @@ function renderSplitSetup(id) {
 
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
   bindExamBuilderTabs();
-  const timer = bindExamTimer(total);
+  let runTotal = 0;
+  let pickedKeys = sdlPickKeys(sdlScope, sdlGroups);
+  const timer = bindExamTimer(() => runTotal);
+  function paintSplit(keys) {
+    pickedKeys = keys;
+    const counts = keys.size ? splitCounts(preset, keys) : { objectives: 0, core: 0, extra: 0, total: 0 };
+    const allOn = sdlPickAllOn(sdlScope, sdlGroups);
+    runTotal = counts.total;
+    const lead = document.getElementById('splitLead');
+    if (lead) lead.textContent = splitLeadText(preset, counts, allOn);
+    const body = document.getElementById('splitTableBody');
+    if (body) body.innerHTML = splitTableRows(preset, keys, counts, allOn);
+    const start = document.getElementById('startSplitBtn');
+    if (start) {
+      start.disabled = !keys.size || counts.total < 1;
+      if (!keys.size) start.title = 'Select at least one SDL';
+      else start.removeAttribute('title');
+    }
+    timer.update();
+  }
+  bindSdlPicker(sdlScope, sdlGroups, {
+    onChange: paintSplit,
+    hint: 'A run draws from the SDLs checked here. The count on each row is how many questions that SDL adds.',
+    statusText(keys) {
+      if (!keys.size) return 'Select at least one SDL';
+      const n = splitCounts(preset, keys).total;
+      return `${n} question${n === 1 ? '' : 's'} this run`;
+    },
+  });
 
   document.getElementById('startSplitBtn').addEventListener('click', () => {
-    startSplit(preset, { timed: timer.timed(), secondsPerQuestion: timer.minutesPerQuestion() * 60 });
+    if (!pickedKeys.size) return;
+    startSplit(preset, { timed: timer.timed(), secondsPerQuestion: timer.minutesPerQuestion() * 60, sdlKeys: pickedKeys });
   });
   bindBuilderSettings(() => renderSplitSetup(id));
 }
@@ -2923,7 +3256,11 @@ function renderFinalExamSetup() {
 
   const defaultPct = 50;
   const defaultBatch = 'mix';
+  const initialBatch = (builderRestore && builderRestore.batch) || defaultBatch;
   const defaultTotal = currentAllCount + priorAllCount;
+  const examNumbers = DATA.exams.map(e => e.examNumber).sort((a, b) => a - b);
+  const sdlScope = 'final-examsetup';
+  const sdlGroups = simSdlGroups(examNumbers, initialBatch);
 
   if (!hasPrior) {
     main.innerHTML = `
@@ -2952,11 +3289,13 @@ function renderFinalExamSetup() {
       <div class="setup-row">
         <div class="setup-label-row"><label>Batch Mix</label></div>
         <div class="radio-group" id="batchGroup">
-          <label class="radio-option"><input type="radio" name="batchMode" value="mix" ${defaultBatch === 'mix' ? 'checked' : ''}> Mix Both Batches</label>
-          <label class="radio-option"><input type="radio" name="batchMode" value="1"> Batch 1 Only — Quick Recall</label>
-          <label class="radio-option"><input type="radio" name="batchMode" value="2"> Batch 2 Only — Deep Vignettes</label>
+          <label class="radio-option"><input type="radio" name="batchMode" value="mix" ${initialBatch === 'mix' ? 'checked' : ''}> Mix Both Batches</label>
+          <label class="radio-option"><input type="radio" name="batchMode" value="1" ${initialBatch === '1' ? 'checked' : ''}> Batch 1 Only — Quick Recall</label>
+          <label class="radio-option"><input type="radio" name="batchMode" value="2" ${initialBatch === '2' ? 'checked' : ''}> Batch 2 Only — Deep Vignettes</label>
         </div>
       </div>
+
+      ${sdlPickerHtml(sdlScope, sdlGroups)}
 
       <div class="setup-row">
         <div class="setup-label-row"><label for="totalInput">Total Questions</label></div>
@@ -2981,72 +3320,20 @@ function renderFinalExamSetup() {
   document.getElementById('backHome').addEventListener('click', () => setRoute(''));
   bindExamBuilderTabs();
 
-  const pctSlider = document.getElementById('pctSlider');
-  const pctReadout = document.getElementById('pctReadout');
-  const totalInput = document.getElementById('totalInput');
-  const poolHint = document.getElementById('poolHint');
-  const totalError = document.getElementById('totalError');
-  const timer = bindExamTimer(() => totalInput.value);
-
-  function currentSettings() {
-    const pctCurrent = Number(pctSlider.value);
-    const batchMode = document.querySelector('input[name="batchMode"]:checked').value;
-    const total = Number(totalInput.value);
-    return { pctCurrent, batchMode, total, timed: timer.timed(), minutesPerQuestion: timer.minutesPerQuestion() };
-  }
-
-  function showBuildError(text) {
-    totalError.textContent = text;
-    totalError.style.display = 'block';
-    const tab = document.getElementById('setupTabBuild');
-    if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
-  }
-
-  function poolSizes(batchMode) {
-    const filterBatch = (qs) => batchMode === 'mix' ? qs : qs.filter(q => q.batch === Number(batchMode));
-    const curPool = filterBatch(allQuestionsForExam(examNumber)).length;
-    const priorPool = filterBatch(allQuestionsForExamsBefore(examNumber)).length;
-    return { curPool, priorPool };
-  }
-
-  function updatePoolHint() {
-    const { batchMode } = currentSettings();
-    const { curPool, priorPool } = poolSizes(batchMode);
-    poolHint.textContent = `Available with this batch filter: ${curPool} from ${examLabel(examNumber)}, ${priorPool} from ${priorRangeLabel} (combined max ${curPool + priorPool}).`;
-  }
-
-  pctSlider.addEventListener('input', () => {
-    pctReadout.textContent = `${pctSlider.value}% ${examLabel(examNumber)} · ${100 - pctSlider.value}% ${priorRangeLabel}`;
+  const controls = bindSimExamControls({
+    scope: sdlScope, groups: sdlGroups, examNumber, hasPrior, priorRangeLabel, isFinal: true,
   });
+  // One-click presets keep the announced per-SDL distribution; the picker filters Custom Mix.
   main.querySelectorAll('.final-preset-card').forEach(card => {
     card.addEventListener('click', () => {
       const preset = findFinalPreset(card.dataset.preset);
       if (!preset) return;
-      const { timed, minutesPerQuestion } = currentSettings();
+      const { timed, minutesPerQuestion } = controls.currentSettings();
       startFinalPreset(preset, { timed, secondsPerQuestion: minutesPerQuestion * 60 });
     });
   });
-  document.querySelectorAll('input[name="batchMode"]').forEach(radio => {
-    radio.addEventListener('change', updatePoolHint);
-  });
-  updatePoolHint();
-
-  document.getElementById('startSetupBtn').addEventListener('click', () => {
-    const { pctCurrent, batchMode, total, timed, minutesPerQuestion } = currentSettings();
-    if (!Number.isFinite(total) || total < 1) {
-      showBuildError('Enter a valid number of questions (at least 1).');
-      return;
-    }
-    const { curPool, priorPool } = poolSizes(batchMode);
-    if (total > curPool + priorPool) {
-      showBuildError(`Only ${curPool + priorPool} questions are available with this batch filter — you asked for ${total}. Lower the count or switch to "Mix Both Batches."`);
-      return;
-    }
-    totalError.style.display = 'none';
-    const composed = buildCustomExamQuestions(examNumber, { pctCurrent, batchMode, total, hasPrior });
-    beginExamSession(examNumber, composed.questions, { isFinal: true, timed, secondsPerQuestion: minutesPerQuestion * 60 });
-  });
   bindBuilderSettings(() => renderFinalExamSetup());
+  controls.syncPool();
 }
 
 /* ── Batch picker (per-SDL) ───────────────────────────────────────────── */
