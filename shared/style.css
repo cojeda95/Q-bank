@@ -296,6 +296,61 @@ p.subtitle { color: var(--grey-text); margin-top: 0; }
   .setup-readout { white-space: normal; }
 }
 
+/* Per-SDL picker on the exam Build tab (shared/app.js). Same pattern as Live Session's
+   SDL list: select all / none, a count on each row, and a live total. */
+.sdl-pick-heading { font-weight: 600; font-size: 0.95rem; color: var(--navy); }
+.sdl-pick-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.sdl-pick-actions .btn { min-height: 44px; padding: 8px 12px; font-size: 0.85rem; }
+.sdl-pick-list {
+  border: 1px solid var(--grey-border);
+  border-radius: 10px;
+  max-height: 320px;
+  overflow: auto;
+  background: var(--card-bg);
+}
+.sdl-pick-exam {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px 12px 4px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--navy);
+  background: var(--card-bg);
+}
+.sdl-pick-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 12px;
+  border-top: 1px solid var(--line-soft);
+  cursor: pointer;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+.sdl-pick-list > .sdl-pick-group:first-child > .sdl-pick-row:first-of-type { border-top: 0; }
+.sdl-pick-row input {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  flex: none;
+  accent-color: var(--navy);
+  cursor: pointer;
+}
+.sdl-pick-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.sdl-pick-count { color: var(--text-faint); white-space: nowrap; }
+.sdl-pick-row.is-empty { opacity: 0.55; cursor: default; }
+.sdl-pick-row input:focus-visible,
+.sdl-pick-actions .btn:focus-visible {
+  outline: 3px solid var(--navy);
+  outline-offset: 2px;
+}
+@media (max-width: 480px) {
+  .sdl-pick-list { max-height: 280px; }
+  .sdl-pick-actions .btn { flex: 1 1 calc(50% - 8px); }
+}
+
 /* ── SDL list ── */
 .sdl-list { display: flex; flex-direction: column; gap: 10px; }
 
