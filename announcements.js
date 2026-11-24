@@ -17,6 +17,7 @@
  */
 
 const ANNOUNCEMENTS = [
+   { date: '11/23/26', text: 'Pushed 1/2 of Geriatrics, Cardiac Axis finalized' },
   { date: '11/15/26', text: 'General: Added auto-syncing, fingers crossed no need to manually push/pull from cloud, could break tho FYI' },
   { date: '11/12/26', text: 'Gastro: Reworked batch 2 and Trials to match exam format' },
   { date: '11/6/26', text: 'Gastro: Reworked active-recall and trial Qs block-wide' },
